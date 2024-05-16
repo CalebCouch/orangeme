@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/screens/savings/savings_dashboard.dart';
 import 'package:orange/screens/settings/backup.dart';
 import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/styles/constants.dart';
 import 'receive.dart';
 import 'send1.dart';
 import 'premium.dart';
@@ -15,6 +16,8 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
 import 'package:orange/widgets/DashBoardNavBar.dart';
+import 'package:orange/widgets/dashboard_value.dart';
+import 'package:orange/widgets/receive_send.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -245,111 +248,6 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  Widget BalanceDisplay() {
-    return ValueListenableBuilder<int>(
-        valueListenable: balance,
-        builder: (BuildContext context, int balance, child) {
-          return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return ValueListenableBuilder<double>(
-                      valueListenable: price,
-                      builder: (BuildContext context, double price, child) {
-                        return Text(
-                          "\$ ${FormatSatsToDollars(balance, price)}",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 48,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-                Text(
-                  "$balance Sats",
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 24,
-                  ),
-                ),
-              ]);
-        });
-  }
-
-  Widget SendReceive() {
-    return Row(
-      children: [
-        Expanded(
-          child: ValueListenableBuilder<int>(
-            valueListenable: balance,
-            builder: (BuildContext context, int balance, child) {
-              return ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Send1(balance: balance),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-                ),
-                child: const Text(
-                  'Send',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Receive(),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 16,
-              ),
-            ),
-            child: const Text(
-              'Receive',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -357,7 +255,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(_currentIndex == 0 ? 'Spending' : 'Savings'),
+        title: const TextMarkLG(),
         actions: [
           PopupMenuButton<int>(
             icon: const Icon(Icons.menu),
@@ -417,11 +315,17 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              BalanceDisplay(),
-                              const SizedBox(width: 10),
-                              SendReceive(),
+                              DashboardValue(
+                                  fiatAmount: FormatSatsToDollars(
+                                      balance.value, price.value),
+                                  quantity: (balance.value * 100000000)),
                               const SizedBox(height: 10),
                               Transactions(),
+                              const SizedBox(width: 10),
+                              ReceiveSend(
+                                receiveRoute: () => Receive(),
+                                sendRoute: () => Send1(balance: balance.value),
+                              )
                             ],
                           ),
                         ),
@@ -435,32 +339,32 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey[800],
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.white,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-            );
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.attach_money),
-            label: 'Spending',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.security),
-            label: 'Savings',
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   backgroundColor: Colors.grey[800],
+      //   selectedItemColor: Colors.orange,
+      //   unselectedItemColor: Colors.white,
+      //   currentIndex: _currentIndex,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _currentIndex = index;
+      //       _pageController.animateToPage(
+      //         index,
+      //         duration: const Duration(milliseconds: 500),
+      //         curve: Curves.easeInOut,
+      //       );
+      //     });
+      //   },
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.attach_money),
+      //       label: 'Spending',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.security),
+      //       label: 'Savings',
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

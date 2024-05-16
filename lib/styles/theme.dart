@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
+import 'constants.dart';
 
 ThemeData theme() {
   Color secondaryColor = Colors.orange.withOpacity(.8);
   Color primaryColor = Colors.orange.withOpacity(.8);
-  Color globalBackgroundColor = Colors.black;
+  Color globalBackgroundColor = AppColors.background;
   return ThemeData(
       primaryColor: primaryColor,
       secondaryHeaderColor: secondaryColor,
       scaffoldBackgroundColor: globalBackgroundColor,
       appBarTheme: const AppBarTheme(
-        titleTextStyle: TextStyle(
-          color: Colors.white, // Desired text color
-          fontSize: 20.0, // Optional: Adjust the font size
-          fontWeight: FontWeight.bold, // Optional: Adjust the font weight
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
+        titleTextStyle: AppTextStyles.heading4,
+        iconTheme: IconThemeData(color: AppColors.primary),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.background,
       ),
       textTheme: TextTheme(
           displayLarge: const TextStyle(
