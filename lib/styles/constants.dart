@@ -37,3 +37,139 @@ class AppColors {
   static const Color success = Color(0xFF00CC00);
   static const Color bitcoin = Color(0xFFFF6623);
 }
+
+class AppTextStyles {
+  //Headings
+  static const TextStyle heading1 = TextStyle(
+      fontSize: 48,
+      color: AppColors.heading,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w700,
+      height: 0);
+  static const TextStyle heading2 = TextStyle(
+      fontSize: 32,
+      color: AppColors.heading,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w700,
+      height: 0);
+  static const TextStyle heading3 = TextStyle(
+      fontSize: 24,
+      color: AppColors.heading,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w700,
+      height: 0);
+  static const TextStyle heading4 = TextStyle(
+      fontSize: 20,
+      color: AppColors.heading,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w700,
+      height: 0);
+  static const TextStyle heading5 = TextStyle(
+      fontSize: 16,
+      color: AppColors.heading,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w700,
+      height: 0);
+  static const TextStyle heading6 = TextStyle(
+      fontSize: 14,
+      color: AppColors.heading,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w700,
+      height: 0);
+
+  //Text
+  static const TextStyle textXL = TextStyle(
+      fontSize: 24,
+      color: AppColors.text,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w400,
+      height: 0);
+  static const TextStyle textLG = TextStyle(
+      fontSize: 20,
+      color: AppColors.text,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w400,
+      height: 0);
+  static const TextStyle textMD = TextStyle(
+      fontSize: 16,
+      color: AppColors.text,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w400,
+      height: 0);
+  static const TextStyle textSM = TextStyle(
+      fontSize: 14,
+      color: AppColors.text,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w400,
+      height: 0);
+  static const TextStyle textXS = TextStyle(
+      fontSize: 12,
+      color: AppColors.text,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w400,
+      height: 0);
+
+  //Labels
+  static const TextStyle labelXL = TextStyle(
+      fontSize: 24,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w500,
+      height: 0);
+  static const TextStyle labelLG = TextStyle(
+      fontSize: 20,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w500,
+      height: 0);
+  static const TextStyle labelMD = TextStyle(
+      fontSize: 16,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w500,
+      height: 0);
+  static const TextStyle labelSM = TextStyle(
+      fontSize: 14,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w500,
+      height: 0);
+  static const TextStyle labelXS = TextStyle(
+      fontSize: 12,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w500,
+      height: 0);
+
+  //Brand
+  static const TextStyle brandXL = TextStyle(
+      fontSize: 24,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w900,
+      height: 0);
+  static const TextStyle brandLG = TextStyle(
+      fontSize: 20,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w900,
+      height: 0);
+  static const TextStyle brandMD = TextStyle(
+      fontSize: 16,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w900,
+      height: 0);
+  static const TextStyle brandSM = TextStyle(
+      fontSize: 14,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w900,
+      height: 0);
+  static const TextStyle brandXS = TextStyle(
+      fontSize: 12,
+      color: AppColors.primary,
+      fontFamily: "Outfit",
+      fontWeight: FontWeight.w900,
+      height: 0);
+}
