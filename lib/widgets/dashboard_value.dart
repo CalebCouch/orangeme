@@ -3,7 +3,7 @@ import 'package:orange/styles/constants.dart';
 
 class DashboardValue extends StatelessWidget {
   final String fiatAmount;
-  final int quantity;
+  final double quantity;
 
   const DashboardValue({
     super.key,

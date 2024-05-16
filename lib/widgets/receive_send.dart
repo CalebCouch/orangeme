@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/styles/constants.dart';
+import 'package:orange/components/buttons/orange_lg.dart';
 
 class ReceiveSend extends StatelessWidget {
   final Widget Function() receiveRoute;
@@ -23,41 +23,17 @@ class ReceiveSend extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => receiveRoute())),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              child: const Text(
-                'Receive',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.labelLG,
-              ),
-            ),
+            child: ButtonOrangeLG(
+                label: "Receive",
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => receiveRoute()))),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => sendRoute())),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              child: const Text(
-                'Send',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.labelLG,
-              ),
-            ),
+            child: ButtonOrangeLG(
+                label: "Send",
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => sendRoute()))),
           ),
         ],
       ),

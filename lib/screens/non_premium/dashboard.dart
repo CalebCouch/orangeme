@@ -15,7 +15,6 @@ import 'package:orange/classes.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
-import 'package:orange/widgets/DashBoardNavBar.dart';
 import 'package:orange/widgets/dashboard_value.dart';
 import 'package:orange/widgets/receive_send.dart';
 
@@ -318,7 +317,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                               DashboardValue(
                                   fiatAmount: FormatSatsToDollars(
                                       balance.value, price.value),
-                                  quantity: (balance.value * 100000000)),
+                                  quantity: (balance.value / 100000000)),
                               const SizedBox(height: 10),
                               Transactions(),
                               const SizedBox(width: 10),

@@ -35,8 +35,7 @@ class CustomStatefulButtonState extends State<ButtonGhostMD> {
         },
         borderRadius: BorderRadius.circular(24),
         child: Container(
-          width: 64,
-          height: 32,
+          constraints: const BoxConstraints(minWidth: 64, minHeight: 32),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: ShapeDecoration(
             color: backgroundColor,
