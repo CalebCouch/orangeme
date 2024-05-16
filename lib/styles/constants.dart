@@ -199,3 +199,61 @@ class AppIcons {
   static const String up = 'assets/icons/Icon=up.svg';
   static const String wallet = 'assets/icons/Icon=wallet.svg';
 }
+
+//Text Mark Base
+class _TextMarkBase extends StatelessWidget {
+  final double fontSize;
+
+  const _TextMarkBase({super.key, required this.fontSize});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: 'orange',
+            style: TextStyle(
+              color: AppColors.orange,
+              fontFamily: 'Outfit',
+              fontSize: fontSize,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
+          ),
+          TextSpan(
+            text: '.me',
+            style: TextStyle(
+              color: AppColors.grey,
+              fontFamily: 'Outfit',
+              fontSize: fontSize,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//Text Marks
+class TextMarkXL extends _TextMarkBase {
+  const TextMarkXL({super.key}) : super(fontSize: 24);
+}
+
+class TextMarkLG extends _TextMarkBase {
+  const TextMarkLG({super.key}) : super(fontSize: 20);
+}
+
+class TextMarkMD extends _TextMarkBase {
+  const TextMarkMD({super.key}) : super(fontSize: 16);
+}
+
+class TextMarkSM extends _TextMarkBase {
+  const TextMarkSM({super.key}) : super(fontSize: 14);
+}
+
+class TextMarkXS extends _TextMarkBase {
+  const TextMarkXS({super.key}) : super(fontSize: 12);
+}
