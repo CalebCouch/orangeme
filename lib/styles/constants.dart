@@ -173,3 +173,12 @@ class AppTextStyles {
       fontWeight: FontWeight.w900,
       height: 0);
 }
+
+class AppIcons {
+  //brand mark
+  static const String brandmarkXL = 'assets/icons/brandmarkXL.svg';
+  static const String brandmarkLG = 'assets/icons/brandmarkLG.svg';
+  static const String brandmarkMD = 'assets/icons/brandmarkMD.svg';
+  static const String brandmarkSM = 'assets/icons/brandmarkSM.svg';
+  static const String brandmarkXS = 'assets/icons/brandmarkXS.svg';
+}
