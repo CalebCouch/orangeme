@@ -175,10 +175,27 @@ class AppTextStyles {
 }
 
 class AppIcons {
-  //brand mark
+  //Brand Mark
   static const String brandmarkXL = 'assets/icons/brandmarkXL.svg';
   static const String brandmarkLG = 'assets/icons/brandmarkLG.svg';
   static const String brandmarkMD = 'assets/icons/brandmarkMD.svg';
   static const String brandmarkSM = 'assets/icons/brandmarkSM.svg';
   static const String brandmarkXS = 'assets/icons/brandmarkXS.svg';
+
+  //Icons
+  static const String back = 'assets/icons/Icon=back.svg';
+  static const String bitcoin = 'assets/icons/Icon=bitcoin.svg';
+  static const String close = 'assets/icons/Icon=close.svg';
+  static const String down = 'assets/icons/Icon=down.svg';
+  static const String edit = 'assets/icons/Icon=edit.svg';
+  static const String home = 'assets/icons/Icon=home.svg';
+  static const String left = 'assets/icons/Icon=left.svg';
+  static const String paste = 'assets/icons/Icon=paste.svg';
+  static const String qrcode = 'assets/icons/Icon=qr-code.svg';
+  static const String radioFilled = 'assets/icons/Icon=radio-filled.svg';
+  static const String radio = 'assets/icons/Icon=radio.svg';
+  static const String right = 'assets/icons/Icon=right.svg';
+  static const String scan = 'assets/icons/Icon=scan.svg';
+  static const String up = 'assets/icons/Icon=up.svg';
+  static const String wallet = 'assets/icons/Icon=wallet.svg';
 }
