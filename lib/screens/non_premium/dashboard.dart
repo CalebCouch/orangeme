@@ -255,39 +255,39 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: const TextMarkLG(),
-        actions: [
-          PopupMenuButton<int>(
-            icon: const Icon(Icons.menu),
-            offset: Offset(0, AppBar().preferredSize.height),
-            onSelected: (int result) {
-              switch (result) {
-                case 0:
-                  navigateBackUp();
-                  break;
-                case 1:
-                  navigateImportOptOut();
-                  break;
-                case 2:
-                  navigateDuplicate();
-                  break;
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-              const PopupMenuItem<int>(
-                value: 0,
-                child: Text('Back Up'),
-              ),
-              const PopupMenuItem<int>(
-                value: 1,
-                child: Text('Import'),
-              ),
-              const PopupMenuItem<int>(
-                value: 2,
-                child: Text('Duplicate'),
-              ),
-            ],
-          ),
-        ],
+        // actions: [
+        //   PopupMenuButton<int>(
+        //     icon: const Icon(Icons.menu),
+        //     offset: Offset(0, AppBar().preferredSize.height),
+        //     onSelected: (int result) {
+        //       switch (result) {
+        //         case 0:
+        //           navigateBackUp();
+        //           break;
+        //         case 1:
+        //           navigateImportOptOut();
+        //           break;
+        //         case 2:
+        //           navigateDuplicate();
+        //           break;
+        //       }
+        //     },
+        //     itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        //       const PopupMenuItem<int>(
+        //         value: 0,
+        //         child: Text('Back Up'),
+        //       ),
+        //       const PopupMenuItem<int>(
+        //         value: 1,
+        //         child: Text('Import'),
+        //       ),
+        //       const PopupMenuItem<int>(
+        //         value: 2,
+        //         child: Text('Duplicate'),
+        //       ),
+        //     ],
+        //   ),
+        // ],
       ),
       body: RefreshIndicator(
         onRefresh: handleRefresh,
