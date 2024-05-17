@@ -16,7 +16,7 @@ class TransactionDetails extends StatelessWidget {
     final displayPrice = price ?? 0;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transaction Details'),
+        title: Text(transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin"),
       ),
       body: Column(
         children: [
