@@ -37,7 +37,8 @@ class CustomButtonState extends State<ButtonOrangeLG> {
         },
         borderRadius: BorderRadius.circular(24),
         child: Container(
-          constraints: const BoxConstraints(minWidth: 82, minHeight: 48),
+          constraints: const BoxConstraints(minHeight: 48),
+          width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: ShapeDecoration(
             color: backgroundColor,

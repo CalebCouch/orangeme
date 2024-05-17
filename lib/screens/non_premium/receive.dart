@@ -5,6 +5,9 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:orange/components/buttons/orange_lg.dart';
+import 'package:orange/styles/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Receive extends StatefulWidget {
   const Receive({super.key});
@@ -37,25 +40,24 @@ class ReceiveState extends State<Receive> {
         context);
 
     setState(() {
-      shortenedAddress = shortenAddress(address.value);
       isLoading = false;
     });
   }
 
-  String shortenAddress(address) {
-    if (address.length > 30) {
-      final firstPart = address.substring(0, 15);
-      final lastPart = address.substring(address.length - 15);
-      return '$firstPart...$lastPart';
-    }
-    return address;
-  }
+  // String shortenAddress(address) {
+  //   if (address.length > 30) {
+  //     final firstPart = address.substring(0, 15);
+  //     final lastPart = address.substring(address.length - 15);
+  //     return '$firstPart...$lastPart';
+  //   }
+  //   return address;
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Receive'),
+        title: const Text('Receive Bitcoin'),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -67,8 +69,8 @@ class ReceiveState extends State<Receive> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 250,
-                      height: 250,
+                      width: 312,
+                      height: 312,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
@@ -82,7 +84,7 @@ class ReceiveState extends State<Receive> {
                         ],
                       ),
                       child: Padding(
-                          padding: const EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: ValueListenableBuilder<String>(
                             valueListenable: address,
                             builder:
@@ -90,61 +92,58 @@ class ReceiveState extends State<Receive> {
                               return QrImageView(
                                   data: value,
                                   version: QrVersions.auto,
+                                  size: 200.0,
+                                  gapless: false,
+                                  embeddedImage: const AssetImage(
+                                      'assets/icons/qrcode_brandmark.png'),
+                                  embeddedImageStyle:
+                                      const QrEmbeddedImageStyle(
+                                          size: Size(68, 68)),
                                   backgroundColor: Colors.white);
                             },
                           )),
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Your Address:',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    const SizedBox(height: 24),
+
+                    Text(
+                      'Scan to receive Bitcoin.',
+                      style: AppTextStyles.textMD
+                          .copyWith(color: AppColors.textSecondary),
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            shortenedAddress,
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.white),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        IconButton(
-                          onPressed: () {
-                            Clipboard.setData(
-                                ClipboardData(text: address.value));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Address copied to clipboard')),
-                            );
-                          },
-                          icon: const Icon(Icons.content_copy,
-                              color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await getNewAddress();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text(
-                        'Generate New Address',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                    // const SizedBox(height: 10),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Flexible(
+                    //       child: Text(
+                    //         shortenedAddress,
+                    //         style: const TextStyle(
+                    //             fontSize: 16, color: Colors.white),
+                    //         textAlign: TextAlign.center,
+                    //       ),
+                    //     ),
+                    //     const SizedBox(width: 5),
+                    //     IconButton(
+                    //       onPressed: () {
+                    //         Clipboard.setData(
+                    //             ClipboardData(text: address.value));
+                    //         ScaffoldMessenger.of(context).showSnackBar(
+                    //           const SnackBar(
+                    //               content: Text('Address copied to clipboard')),
+                    //         );
+                    //       },
+                    //       icon: const Icon(Icons.content_copy,
+                    //           color: Colors.white),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox(height: 150),
+                    Expanded(
+                      child: ButtonOrangeLG(
+                        label: "Share",
+                        onTap: () => print("sharing QR code"),
                       ),
                     ),
-                    const SizedBox(height: 50),
                   ],
                 ),
               ),
