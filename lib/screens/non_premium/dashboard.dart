@@ -25,12 +25,6 @@ class Dashboard extends StatefulWidget {
 
 class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   Timer? _timer;
-
-  late AnimationController _controller;
-  late PageController _pageController;
-  int _currentIndex = 0;
-  final _pageViewNotifier = ValueNotifier<int>(0);
-
   final transactions = ValueNotifier<List<Transaction>>([]);
   final expandedTXID = ValueNotifier<String?>(null);
   final balance = ValueNotifier<int>(0);
@@ -40,18 +34,11 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _pageController = PageController(initialPage: _currentIndex);
     _timer = Timer(const Duration(seconds: 0), () => handleRefresh());
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    _pageController.dispose();
     _timer?.cancel();
     super.dispose();
   }
@@ -268,35 +255,24 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                        _pageViewNotifier.value = index;
-                      },
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              DashboardValue(
-                                  fiatAmount: formatSatsToDollars(
-                                      balance.value, price.value),
-                                  quantity: (balance.value / 100000000)),
-                              const SizedBox(height: 10),
-                              transactionsList(),
-                              const SizedBox(width: 10),
-                              ReceiveSend(
-                                receiveRoute: () => const Receive(),
-                                sendRoute: () => Send1(balance: balance.value),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          DashboardValue(
+                              fiatAmount: formatSatsToDollars(
+                                  balance.value, price.value),
+                              quantity: (balance.value / 100000000)),
+                          const SizedBox(height: 10),
+                          transactionsList(),
+                          const SizedBox(width: 10),
+                          ReceiveSend(
+                            receiveRoute: () => const Receive(),
+                            sendRoute: () => Send1(balance: balance.value),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -305,32 +281,6 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           ],
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   backgroundColor: Colors.grey[800],
-      //   selectedItemColor: Colors.orange,
-      //   unselectedItemColor: Colors.white,
-      //   currentIndex: _currentIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //       _pageController.animateToPage(
-      //         index,
-      //         duration: const Duration(milliseconds: 500),
-      //         curve: Curves.easeInOut,
-      //       );
-      //     });
-      //   },
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.attach_money),
-      //       label: 'Spending',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.security),
-      //       label: 'Savings',
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
