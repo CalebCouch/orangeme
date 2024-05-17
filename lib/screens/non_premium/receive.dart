@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
-
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:share/share.dart';
 
 class Receive extends StatefulWidget {
   const Receive({super.key});
@@ -17,7 +14,6 @@ class Receive extends StatefulWidget {
 }
 
 final address = ValueNotifier<String>("...");
-String shortenedAddress = '';
 bool isLoading = true;
 
 class ReceiveState extends State<Receive> {
@@ -42,6 +38,11 @@ class ReceiveState extends State<Receive> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  void onShare() {
+    final String textToShare = address.value;
+    Share.share(textToShare);
   }
 
   // String shortenAddress(address) {
@@ -104,44 +105,16 @@ class ReceiveState extends State<Receive> {
                           )),
                     ),
                     const SizedBox(height: 24),
-
                     Text(
                       'Scan to receive Bitcoin.',
                       style: AppTextStyles.textMD
                           .copyWith(color: AppColors.textSecondary),
                     ),
-                    // const SizedBox(height: 10),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Flexible(
-                    //       child: Text(
-                    //         shortenedAddress,
-                    //         style: const TextStyle(
-                    //             fontSize: 16, color: Colors.white),
-                    //         textAlign: TextAlign.center,
-                    //       ),
-                    //     ),
-                    //     const SizedBox(width: 5),
-                    //     IconButton(
-                    //       onPressed: () {
-                    //         Clipboard.setData(
-                    //             ClipboardData(text: address.value));
-                    //         ScaffoldMessenger.of(context).showSnackBar(
-                    //           const SnackBar(
-                    //               content: Text('Address copied to clipboard')),
-                    //         );
-                    //       },
-                    //       icon: const Icon(Icons.content_copy,
-                    //           color: Colors.white),
-                    //     ),
-                    //   ],
-                    // ),
                     const SizedBox(height: 150),
                     Expanded(
                       child: ButtonOrangeLG(
                         label: "Share",
-                        onTap: () => print("sharing QR code"),
+                        onTap: () => onShare(),
                       ),
                     ),
                   ],
