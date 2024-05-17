@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/widgets/dashboard_value.dart';
 import 'package:orange/classes.dart';
 import 'transaction_list.dart'; // Assuming this file contains formatSatsToDollars and other necessary functions.
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 class TransactionDetails extends StatelessWidget {
   final Transaction transaction;
@@ -27,14 +27,14 @@ class TransactionDetails extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                DetailRow(label: "Date", value: "date placeholder")
+                const DetailRow(label: "Date", value: "date placeholder")
                 // DateFormat('MMMM d, yyyy')
                 //     .format(transaction.timestamp!))
                 ,
-                DetailRow(label: "Time", value: "time placeholder"),
+                const DetailRow(label: "Time", value: "time placeholder"),
 
                 // DateFormat('jm').format(transaction.timestamp!)),
-                DetailRow(
+                const DetailRow(
                     label: "Received to address", value: "address placeholder"
                     // transaction.address
                     ),
@@ -60,7 +60,7 @@ class DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  DetailRow({required this.label, required this.value});
+  const DetailRow({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class DetailRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
           Text(value),
         ],
       ),

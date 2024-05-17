@@ -55,7 +55,6 @@ Widget buildTransactionCard(BuildContext context, Transaction transaction,
     ValueNotifier<double> price) {
   return Card(
     color: AppColors.background,
-    elevation: 3,
     margin: const EdgeInsets.symmetric(vertical: 8),
     child: Padding(
       padding: const EdgeInsets.all(12.0),
