@@ -26,7 +26,6 @@ class Dashboard extends StatefulWidget {
 class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   Timer? _timer;
   final transactions = ValueNotifier<List<Transaction>>([]);
-  final expandedTXID = ValueNotifier<String?>(null);
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
   bool initialLoad = true;
@@ -138,7 +137,6 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   //       context, MaterialPageRoute(builder: (context) => const ImportCloud()));
   // }
 
-  // ignore: non_constant_identifier_names
   Widget transactionsList() {
     return ValueListenableBuilder<List<Transaction>>(
       valueListenable: transactions,
