@@ -23,7 +23,7 @@ class DashboardValue extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "\$ ${fiatAmount.toString()}",
+            fiatAmount.toString(),
             style: AppTextStyles.heading1,
           ),
           Row(
