@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orange/screens/settings/backup.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/styles/constants.dart';
 import 'receive.dart';
 import 'send1.dart';
 import 'package:intl/intl.dart';
-import 'package:orange/screens/settings/import_cloud.dart';
-import 'package:orange/screens/settings/duplicate_phone.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'dart:convert';
@@ -14,6 +11,10 @@ import 'dart:async';
 import 'dart:core';
 import 'package:orange/widgets/dashboard_value.dart';
 import 'package:orange/widgets/receive_send.dart';
+
+// import 'package:orange/screens/settings/import_cloud.dart';
+// import 'package:orange/screens/settings/duplicate_phone.dart';
+// import 'package:orange/screens/settings/backup.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -98,8 +99,19 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     if (time == null) {
       return "Pending";
     } else {
-      var formattedDate = DateFormat('MM/dd/yyyy').format(time);
-      return formattedDate;
+      DateTime now = DateTime.now();
+      DateTime justNow = DateTime.now().subtract(const Duration(minutes: 1));
+      DateTime localTime = time.toLocal();
+
+      if (localTime.isAfter(justNow)) {
+        return 'Just now';
+      } else if (localTime.isAfter(now.subtract(const Duration(days: 1)))) {
+        return 'Yesterday';
+      } else if (localTime.year == now.year) {
+        return DateFormat('MMMM d').format(time);
+      } else {
+        return DateFormat('MMMM d, yyyy').format(time);
+      }
     }
   }
 
