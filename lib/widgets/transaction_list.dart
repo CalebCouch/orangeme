@@ -95,9 +95,12 @@ Widget buildTransactionCard(BuildContext context, Transaction transaction,
                     style: AppTextStyles.textMD
                         .copyWith(decoration: TextDecoration.underline)),
                 onTap: () {
+                  double currentPrice = price.value;
+                  print("current price before navigating: $currentPrice");
+                  print("transaction before navigating: $transaction");
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => TransactionDetails(
-                        transaction: transaction, price: price.value),
+                        transaction: transaction, price: currentPrice),
                   ));
                 },
               ),

@@ -6,13 +6,14 @@ import 'package:intl/intl.dart';
 
 class TransactionDetails extends StatelessWidget {
   final Transaction transaction;
-  final double price;
+  final double? price;
 
-  TransactionDetails(
+  const TransactionDetails(
       {super.key, required this.transaction, required this.price});
 
   @override
   Widget build(BuildContext context) {
+    final displayPrice = price ?? 0;
     return Scaffold(
       appBar: AppBar(
         title: Text('Transaction Details'),
@@ -20,19 +21,19 @@ class TransactionDetails extends StatelessWidget {
       body: Column(
         children: [
           DashboardValue(
-            fiatAmount: formatSatsToDollars(transaction.net, price),
+            fiatAmount: formatSatsToDollars(transaction.net, displayPrice),
             quantity: (transaction.net / 100000000),
           ),
           Expanded(
             child: ListView(
               children: [
-                DetailRow(
-                    label: "Date",
-                    value: DateFormat('MMMM d, yyyy')
-                        .format(transaction.timestamp!)),
-                DetailRow(
-                    label: "Time",
-                    value: DateFormat('jm').format(transaction.timestamp!)),
+                DetailRow(label: "Date", value: "date placeholder")
+                // DateFormat('MMMM d, yyyy')
+                //     .format(transaction.timestamp!))
+                ,
+                DetailRow(label: "Time", value: "time placeholder"),
+
+                // DateFormat('jm').format(transaction.timestamp!)),
                 DetailRow(
                     label: "Received to address", value: "address placeholder"
                     // transaction.address
@@ -41,10 +42,11 @@ class TransactionDetails extends StatelessWidget {
                     label: "Amount Received", value: "${transaction.net} sats"),
                 DetailRow(
                     label: "Bitcoin Price",
-                    value: "\$${price.toStringAsFixed(2)}"),
+                    value: "\$${displayPrice.toStringAsFixed(2)}"),
                 DetailRow(
                     label: "USD value received",
-                    value: "\$${formatSatsToDollars(transaction.net, price)}"),
+                    value:
+                        "\$${formatSatsToDollars(transaction.net, displayPrice)}"),
               ],
             ),
           ),
