@@ -80,11 +80,6 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     _timer = Timer(const Duration(seconds: 15), () => handleRefresh());
   }
 
-  String formatSatsToDollars(int sats, double price) {
-    double amount = (sats / 100000000) * price;
-    return "${amount >= 0 ? '' : '- '}\$${amount.abs().toStringAsFixed(2)}";
-  }
-
   // Sort transactions in ascending order with null timestamps being shown at the top
   void sortTransactions(bool ascending) {
     transactions.value.sort((a, b) {
