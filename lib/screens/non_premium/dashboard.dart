@@ -55,10 +55,6 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> fakeSpinner() async {
-    await Future.delayed(const Duration(seconds: 1));
-  }
-
   Future<void> handleRefresh() async {
     print('Refresh Initiatied...');
     var descriptors =
@@ -127,23 +123,23 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     });
   }
 
-  void navigateBackUp() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const BackUp()));
-  }
+  // void navigateBackUp() {
+  //   Navigator.push(
+  //       context, MaterialPageRoute(builder: (context) => const BackUp()));
+  // }
 
-  void navigateDuplicate() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const DuplicatePhone()));
-  }
+  // void navigateDuplicate() {
+  //   Navigator.push(context,
+  //       MaterialPageRoute(builder: (context) => const DuplicatePhone()));
+  // }
 
-  void navigateImportOptOut() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ImportCloud()));
-  }
+  // void navigateImportOptOut() {
+  //   Navigator.push(
+  //       context, MaterialPageRoute(builder: (context) => const ImportCloud()));
+  // }
 
   // ignore: non_constant_identifier_names
-  Widget Transactions() {
+  Widget transactionsList() {
     return ValueListenableBuilder<List<Transaction>>(
       valueListenable: transactions,
       builder: (BuildContext context, List<Transaction> value, child) {
@@ -160,86 +156,50 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   Widget buildTransactionCard(Transaction transaction) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          // Check if the current transaction is already expanded
-          if (expandedTXID.value == transaction.txid) {
-            // If it is, set expandedTXID to null to collapse it
-            expandedTXID.value = null;
-          } else {
-            // Otherwise, expand it
-            expandedTXID.value = transaction.txid;
-          }
-        });
-      },
-      child: Card(
-        color: Colors.grey[900],
-        elevation: 3,
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                  text: formatTimestamp(transaction.timestamp),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+    return Card(
+      color: AppColors.background,
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin",
+                    style: AppTextStyles.textMD),
+                ValueListenableBuilder<double>(
+                  valueListenable: price,
+                  builder: (BuildContext context, double value, Widget? child) {
+                    return Text(
+                        "\$${formatSatsToDollars(transaction.net, value)}",
+                        style: AppTextStyles.textMD);
+                  },
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: formatTimestamp(transaction.timestamp),
+                          style: AppTextStyles.textMD
+                              .copyWith(color: AppColors.textSecondary)),
+                    ],
                   ),
                 ),
-              ])),
-              ValueListenableBuilder<double>(
-                valueListenable: price,
-                builder: (BuildContext context, double value, child) {
-                  return Text(
-                    "  ${transaction.net} sats  (\$ ${formatSatsToDollars(transaction.net, value)} )",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: (transaction.net) < 0 ? Colors.red : Colors.green,
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 4),
-              ValueListenableBuilder<String?>(
-                valueListenable: expandedTXID,
-                builder: (BuildContext context, String? value, child) {
-                  if (value != null && transaction.txid == value) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'TXID: ${transaction.txid}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Timestamp: ${formatTimestamp(transaction.timestamp)}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Fee: ${transaction.fee}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                  return const Column();
-                },
-              ),
-            ],
-          ),
+                Text("Details",
+                    style: AppTextStyles.textMD.copyWith(
+                        color: AppColors.textSecondary,
+                        decoration: TextDecoration.underline)),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -315,7 +275,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                       balance.value, price.value),
                                   quantity: (balance.value / 100000000)),
                               const SizedBox(height: 10),
-                              Transactions(),
+                              transactionsList(),
                               const SizedBox(width: 10),
                               ReceiveSend(
                                 receiveRoute: () => const Receive(),
