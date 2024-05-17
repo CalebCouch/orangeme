@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:orange/screens/savings/savings_dashboard.dart';
 import 'package:orange/screens/settings/backup.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/styles/constants.dart';
 import 'receive.dart';
 import 'send1.dart';
-import 'premium.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/screens/settings/import_cloud.dart';
 import 'package:orange/screens/settings/duplicate_phone.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-
 import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
@@ -34,7 +31,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   final _pageViewNotifier = ValueNotifier<int>(0);
 
   final transactions = ValueNotifier<List<Transaction>>([]);
-  final expanded_txid = ValueNotifier<String?>(null);
+  final expandedTXID = ValueNotifier<String?>(null);
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
   bool initialLoad = true;
@@ -47,7 +44,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 500),
     );
     _pageController = PageController(initialPage: _currentIndex);
-    _timer = Timer(const Duration(seconds: 0), () => HandleRefresh());
+    _timer = Timer(const Duration(seconds: 0), () => handleRefresh());
   }
 
   @override
@@ -58,11 +55,11 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> FakeSpinner() async {
+  Future<void> fakeSpinner() async {
     await Future.delayed(const Duration(seconds: 1));
   }
 
-  Future<void> HandleRefresh() async {
+  Future<void> handleRefresh() async {
     print('Refresh Initiatied...');
     var descriptors =
         HandleNull(await STORAGE.read(key: "descriptors"), context);
@@ -97,11 +94,11 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     price.value = double.parse(HandleError(
         await invoke(method: "get_price", args: [descriptors]), context));
 
-    _timer = Timer(const Duration(seconds: 15), () => HandleRefresh());
+    _timer = Timer(const Duration(seconds: 15), () => handleRefresh());
   }
 
   //used to format a unix timestamp into either a string representing unconfirmed or a standard date time
-  String FormatTimestamp(DateTime? time) {
+  String formatTimestamp(DateTime? time) {
     if (time == null) {
       return "Pending";
     } else {
@@ -110,7 +107,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     }
   }
 
-  String FormatSatsToDollars(int sats, double price) {
+  String formatSatsToDollars(int sats, double price) {
     return (((sats) / 100000000) * price).toStringAsFixed(2);
   }
 
@@ -145,6 +142,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
         context, MaterialPageRoute(builder: (context) => const ImportCloud()));
   }
 
+  // ignore: non_constant_identifier_names
   Widget Transactions() {
     return ValueListenableBuilder<List<Transaction>>(
       valueListenable: transactions,
@@ -153,7 +151,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           child: ListView.builder(
             itemCount: value.length,
             itemBuilder: (context, index) {
-              return BuildTransactionCard(value[index]);
+              return buildTransactionCard(value[index]);
             },
           ),
         );
@@ -161,17 +159,17 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  Widget BuildTransactionCard(Transaction transaction) {
+  Widget buildTransactionCard(Transaction transaction) {
     return GestureDetector(
       onTap: () {
         setState(() {
           // Check if the current transaction is already expanded
-          if (expanded_txid.value == transaction.txid) {
-            // If it is, set expanded_txid to null to collapse it
-            expanded_txid.value = null;
+          if (expandedTXID.value == transaction.txid) {
+            // If it is, set expandedTXID to null to collapse it
+            expandedTXID.value = null;
           } else {
             // Otherwise, expand it
-            expanded_txid.value = transaction.txid;
+            expandedTXID.value = transaction.txid;
           }
         });
       },
@@ -187,7 +185,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               RichText(
                   text: TextSpan(children: [
                 TextSpan(
-                  text: FormatTimestamp(transaction.timestamp),
+                  text: formatTimestamp(transaction.timestamp),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -198,7 +196,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 valueListenable: price,
                 builder: (BuildContext context, double value, child) {
                   return Text(
-                    "  ${transaction.net} sats  (\$ ${FormatSatsToDollars(transaction.net, value)} )",
+                    "  ${transaction.net} sats  (\$ ${formatSatsToDollars(transaction.net, value)} )",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: (transaction.net) < 0 ? Colors.red : Colors.green,
@@ -208,7 +206,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               ),
               const SizedBox(height: 4),
               ValueListenableBuilder<String?>(
-                valueListenable: expanded_txid,
+                valueListenable: expandedTXID,
                 builder: (BuildContext context, String? value, child) {
                   if (value != null && transaction.txid == value) {
                     return Column(
@@ -222,7 +220,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Timestamp: ${FormatTimestamp(transaction.timestamp)}',
+                          'Timestamp: ${formatTimestamp(transaction.timestamp)}',
                           style: const TextStyle(
                             color: Colors.white,
                           ),
@@ -237,7 +235,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                       ],
                     );
                   }
-                  return Column();
+                  return const Column();
                 },
               ),
             ],
@@ -251,9 +249,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
         title: const TextMarkLG(),
         // actions: [
         //   PopupMenuButton<int>(
@@ -315,20 +311,19 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               DashboardValue(
-                                  fiatAmount: FormatSatsToDollars(
+                                  fiatAmount: formatSatsToDollars(
                                       balance.value, price.value),
                                   quantity: (balance.value / 100000000)),
                               const SizedBox(height: 10),
                               Transactions(),
                               const SizedBox(width: 10),
                               ReceiveSend(
-                                receiveRoute: () => Receive(),
+                                receiveRoute: () => const Receive(),
                                 sendRoute: () => Send1(balance: balance.value),
                               )
                             ],
                           ),
                         ),
-                        Premium(),
                       ],
                     ),
                   ),
