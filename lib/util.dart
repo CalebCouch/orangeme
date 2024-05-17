@@ -7,9 +7,11 @@ import 'package:orange/screens/error.dart';
 final STORAGE = new FlutterSecureStorage();
 
 Future<String> GetDBPath() async {
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    Directory mydir = await new Directory(appDocDirectory.path+'/'+'sqlitedata3.db').create(recursive: true);
-    return mydir.path;
+  Directory appDocDirectory = await getApplicationDocumentsDirectory();
+  Directory mydir =
+      await new Directory(appDocDirectory.path + '/' + 'sqlitedata6.db')
+          .create(recursive: true);
+  return mydir.path;
 }
 
 String HandleNull(nullable, context) {

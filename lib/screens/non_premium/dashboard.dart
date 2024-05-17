@@ -29,6 +29,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
   bool initialLoad = true;
+  bool loading = true;
 
   @override
   void initState() {
@@ -61,6 +62,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     balance.value = int.parse(HandleError(
         await invoke(method: "get_balance", args: [path, descriptors]),
         context));
+    print("Balance: ${balance.value}");
 
     print('Getting Transactions...');
     String json = HandleError(
@@ -76,8 +78,22 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     print('Getting Price...');
     price.value = double.parse(HandleError(
         await invoke(method: "get_price", args: [descriptors]), context));
+    print("Price: ${price.value}");
+
+    if (loading == true) {
+      setState(() {
+        loading = false;
+      });
+    }
 
     _timer = Timer(const Duration(seconds: 15), () => handleRefresh());
+  }
+
+  String formatSatsToDollars(int sats, double price) {
+    print("formatting...sats: $sats price: $price");
+    double amount = (sats / 100000000) * price;
+    print("formatted balance: $amount");
+    return "${amount >= 0 ? '' : '- '}\$${amount.abs().toStringAsFixed(2)}";
   }
 
   // Sort transactions in ascending order with null timestamps being shown at the top
@@ -111,7 +127,6 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   //       context, MaterialPageRoute(builder: (context) => const ImportCloud()));
   // }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -151,43 +166,55 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
         //   ),
         // ],
       ),
-      body: RefreshIndicator(
-        onRefresh: handleRefresh,
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: true,
-              fillOverscroll: true,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          DashboardValue(
-                              fiatAmount: formatSatsToDollars(
-                                  balance.value, price.value),
-                              quantity: (balance.value / 100000000)),
-                          const SizedBox(height: 10),
-                          transactionsList(transactions, price),
-                          const SizedBox(width: 10),
-                          ReceiveSend(
-                            receiveRoute: () => const Receive(),
-                            sendRoute: () => Send1(balance: balance.value),
-                          )
-                        ],
-                      ),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: handleRefresh,
+              child: CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: true,
+                    fillOverscroll: true,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ValueListenableBuilder<int>(
+                                  valueListenable: balance,
+                                  builder: (context, balanceValue, child) =>
+                                      ValueListenableBuilder<double>(
+                                    valueListenable: price,
+                                    builder: (context, priceValue, child) =>
+                                        DashboardValue(
+                                      fiatAmount: formatSatsToDollars(
+                                          balanceValue, priceValue),
+                                      quantity: (balanceValue / 100000000.0),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                transactionsList(transactions, price),
+                                const SizedBox(width: 10),
+                                ReceiveSend(
+                                  receiveRoute: () => const Receive(),
+                                  sendRoute: () =>
+                                      Send1(balance: balance.value),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

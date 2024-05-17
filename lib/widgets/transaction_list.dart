@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/widgets/transaction_details.dart';
 
 String formatTimestamp(DateTime? time) {
   if (time == null) {
     return "Pending";
   } else {
     DateTime now = DateTime.now();
-    DateTime justNow = DateTime.now().subtract(const Duration(minutes: 1));
+    DateTime today = DateTime(now.year, now.month, now.day);
     DateTime localTime = time.toLocal();
-    if (localTime.isAfter(justNow)) {
+    DateTime localDate =
+        DateTime(localTime.year, localTime.month, localTime.day);
+
+    if (localTime.isAfter(now.subtract(const Duration(minutes: 1)))) {
       return 'Just now';
-    } else if (localTime.isAfter(now.subtract(const Duration(days: 1)))) {
+    } else if (localDate.isAtSameMomentAs(today)) {
+      return 'Today';
+    } else if (localDate
+        .isAtSameMomentAs(today.subtract(const Duration(days: 1)))) {
       return 'Yesterday';
     } else if (localTime.year == now.year) {
       return DateFormat('MMMM d').format(time);
@@ -36,7 +43,7 @@ Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
         child: ListView.builder(
           itemCount: value.length,
           itemBuilder: (context, index) {
-            return buildTransactionCard(value[index], price);
+            return buildTransactionCard(context, value[index], price);
           },
         ),
       );
@@ -44,8 +51,8 @@ Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
   );
 }
 
-Widget buildTransactionCard(
-    Transaction transaction, ValueNotifier<double> price) {
+Widget buildTransactionCard(BuildContext context, Transaction transaction,
+    ValueNotifier<double> price) {
   return Card(
     color: AppColors.background,
     elevation: 3,
@@ -62,7 +69,8 @@ Widget buildTransactionCard(
                   style: AppTextStyles.textMD),
               ValueListenableBuilder<double>(
                 valueListenable: price,
-                builder: (BuildContext context, double value, Widget? child) {
+                builder:
+                    (BuildContext innerContext, double value, Widget? child) {
                   return Text(formatSatsToDollars(transaction.net, value),
                       style: AppTextStyles.textMD);
                 },
@@ -82,10 +90,17 @@ Widget buildTransactionCard(
                   ],
                 ),
               ),
-              Text("Details",
-                  style: AppTextStyles.textMD.copyWith(
-                      color: AppColors.textSecondary,
-                      decoration: TextDecoration.underline)),
+              InkWell(
+                child: Text("Details",
+                    style: AppTextStyles.textMD
+                        .copyWith(decoration: TextDecoration.underline)),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => TransactionDetails(
+                        transaction: transaction, price: price.value),
+                  ));
+                },
+              ),
             ],
           ),
         ],
