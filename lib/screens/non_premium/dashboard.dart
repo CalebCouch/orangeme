@@ -116,7 +116,8 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   String formatSatsToDollars(int sats, double price) {
-    return (((sats) / 100000000) * price).toStringAsFixed(2);
+    double amount = (sats / 100000000) * price;
+    return "${amount >= 0 ? '' : '- '}\$${amount.abs().toStringAsFixed(2)}";
   }
 
   // Sort transactions in ascending order with null timestamps being shown at the top
@@ -185,8 +186,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 ValueListenableBuilder<double>(
                   valueListenable: price,
                   builder: (BuildContext context, double value, Widget? child) {
-                    return Text(
-                        "\$${formatSatsToDollars(transaction.net, value)}",
+                    return Text(formatSatsToDollars(transaction.net, value),
                         style: AppTextStyles.textMD);
                   },
                 ),
