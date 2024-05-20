@@ -23,7 +23,8 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => DashboardState();
 }
 
-class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
+class DashboardState extends State<Dashboard>
+    with RouteAware, TickerProviderStateMixin {
   Timer? _timer;
   final transactions = ValueNotifier<List<Transaction>>([]);
   final balance = ValueNotifier<int>(0);
@@ -34,13 +35,23 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 0), () => handleRefresh());
+    handleRefresh();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void _startTimer() {
+    print("start timer....");
+    _timer = Timer(const Duration(seconds: 15), () => handleRefresh());
+  }
+
+  void _stopTimer() {
+    print("stop timer...");
+    _timer?.cancel();
   }
 
   Future<void> handleRefresh() async {
@@ -57,6 +68,7 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
       setState(() {
         initialLoad = false;
       });
+      _startTimer();
     }
     print('Getting Balance...');
     balance.value = int.parse(HandleError(
@@ -85,8 +97,6 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
         loading = false;
       });
     }
-
-    _timer = Timer(const Duration(seconds: 15), () => handleRefresh());
   }
 
   String formatSatsToDollars(int sats, double price) {
@@ -204,6 +214,8 @@ class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                   receiveRoute: () => const Receive(),
                                   sendRoute: () =>
                                       Send1(balance: balance.value),
+                                  onPause: _stopTimer,
+                                  onResume: _startTimer,
                                 )
                               ],
                             ),

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/screens/init.dart';
 import 'package:orange/styles/theme.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-//import 'package:orange/error.dart';
-import 'package:orange/util.dart';
 
 Future<void> main() async {
   await RustLib.init();
@@ -16,7 +12,6 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
- 
   const MyApp({super.key});
 
   @override
@@ -25,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Orange',
       theme: theme(),
-      home: InitPage(),
+      home: const InitPage(),
     );
   }
 }

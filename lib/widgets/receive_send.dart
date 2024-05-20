@@ -4,11 +4,15 @@ import 'package:orange/components/buttons/orange_lg.dart';
 class ReceiveSend extends StatelessWidget {
   final Widget Function() receiveRoute;
   final Widget Function() sendRoute;
+  final VoidCallback onPause;
+  final VoidCallback onResume;
 
   const ReceiveSend({
     super.key,
     required this.receiveRoute,
     required this.sendRoute,
+    required this.onPause,
+    required this.onResume,
   });
 
   @override
@@ -25,15 +29,25 @@ class ReceiveSend extends StatelessWidget {
           Expanded(
             child: ButtonOrangeLG(
                 label: "Receive",
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => receiveRoute()))),
+                onTap: () {
+                  onPause();
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => receiveRoute()))
+                      .then((_) => onResume());
+                }),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: ButtonOrangeLG(
                 label: "Send",
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => sendRoute()))),
+                onTap: () {
+                  onPause();
+                  Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => sendRoute()))
+                      .then((_) => onResume());
+                }),
           ),
         ],
       ),
