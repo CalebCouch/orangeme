@@ -1,167 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 
-class FeeSelector extends StatefulWidget {
-  final Function(bool) onOptionSelected;
+class FeeOption {
+  final String title;
+  final String subtitle;
 
-  const FeeSelector({Key? key, required this.onOptionSelected}) : super(key: key);
-
-  @override
-  _FeeSelectorState createState() => _FeeSelectorState();
+  FeeOption({required this.title, required this.subtitle});
 }
 
-class _FeeSelectorState extends State<FeeSelector> {
-  bool _isPrioritySelected = false;
+class FeeSelector extends StatefulWidget {
+  final List<FeeOption> options;
+  final Function(int) onOptionSelected;
+
+  const FeeSelector({Key? key, required this.options, required this.onOptionSelected}) : super(key: key);
+
+  @override
+  FeeSelectorState createState() => FeeSelectorState();
+}
+
+class FeeSelectorState extends State<FeeSelector> {
+  int _selectedOptionIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: PriorityOption(
-            isSelected: _isPrioritySelected,
-            onSelected: (selected) {
-              setState(() {
-                _isPrioritySelected = selected;
-                widget.onOptionSelected(_isPrioritySelected);
-              });
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: StandardOption(
-            isSelected: !_isPrioritySelected,
-            onSelected: (selected) {
-              setState(() {
-                _isPrioritySelected = !selected;
-                widget.onOptionSelected(_isPrioritySelected);
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class PriorityOption extends StatefulWidget {
-  final bool isSelected;
-  final Function(bool) onSelected;
-
-  const PriorityOption({Key? key, required this.isSelected, required this.onSelected}) : super(key: key);
-
-  @override
-  _PriorityOptionState createState() => _PriorityOptionState();
-}
-
-class _PriorityOptionState extends State<PriorityOption> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (!widget.isSelected) {
-          widget.onSelected(true);
-        }
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Radio<bool>(
-            value: true,
-            groupValue: widget.isSelected,
-            visualDensity: const VisualDensity(horizontal: -2, vertical: -2), 
-            activeColor: AppColors.white, 
-            onChanged: (bool? value) {
-              if (value != null && value != widget.isSelected) {
-                widget.onSelected(value);
-              }
-            },
-          ),
-          Column(
+      children: widget.options.asMap().entries.map((entry) {
+        final index = entry.key;
+        final option = entry.value;
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedOptionIndex = index;
+              widget.onOptionSelected(_selectedOptionIndex);
+            });
+          },
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Priority',
-                  style: AppTextStyles.textLG.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              Radio<int>(
+                value: index,
+                groupValue: _selectedOptionIndex,
+                onChanged: (int? value) {
+                  if (value != null) {
+                    setState(() {
+                      _selectedOptionIndex = value;
+                      widget.onOptionSelected(_selectedOptionIndex);
+                    });
+                  }
+                },
               ),
-              Text(
-                'Arrives in ~30 minutes\n\$3.19 bitcoin network fee',
-                style: AppTextStyles.textMD.copyWith(
-                  color: AppColors.grey,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      option.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    option.subtitle,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.grey,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class StandardOption extends StatefulWidget {
-  final bool isSelected;
-  final Function(bool) onSelected;
-
-  const StandardOption({Key? key, required this.isSelected, required this.onSelected}) : super(key: key);
-
-  @override
-  _StandardOptionState createState() => _StandardOptionState();
-}
-
-class _StandardOptionState extends State<StandardOption> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (!widget.isSelected) {
-          widget.onSelected(true);
-        }
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Radio<bool>(
-            value: true,
-            groupValue: widget.isSelected,
-            visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
-            activeColor: AppColors.white, 
-            onChanged: (bool? value) {
-              if (value != null && value != widget.isSelected) {
-                widget.onSelected(value);
-              }
-            },
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Standard',
-                  style: AppTextStyles.textLG.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Text(
-                'Arrives in ~2 hours\n\$2.08 bitcoin network fee',
-                style: AppTextStyles.textMD.copyWith(
-                  color: AppColors.grey,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 }
