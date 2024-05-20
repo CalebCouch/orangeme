@@ -18,6 +18,7 @@ use bdk::database::SqliteDatabase;
 use bdk::electrum_client::ElectrumApi;
 use bdk::bitcoin::consensus::{Encodable, Decodable};
 use std::str::FromStr;
+use bdk::FeeRate;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Transaction {
@@ -138,8 +139,24 @@ fn create_transaction(db_path: String, descs: DescriptorSet, addr: Address, sats
     let mut transaction: Transaction = from_details(tx_details)?;
     transaction.receiver = Some(addr.to_string());
     transaction.raw = Some(raw);
+
     Ok(serde_json::to_string(&transaction)?)
 }
+
+fn estimate_fees() -> Result<String, Error> {
+    let client = get_client()?;
+    let blockchain = ElectrumBlockchain::from(client);
+
+    let priority_target: usize = 6;
+
+    // let priority_fee = &client.estimate_fee(target)?;
+    // let standard_fee = &client.estimate_fee(6);
+
+    // let fees = Fees {
+    //     priority_fee,
+    //     standard_fee
+    // }
+    Ok(serde_json::to_string(&blockchain.estimate_fee(priority_target)?)?)}
 
 fn broadcast_transaction(db_path: String, descs: DescriptorSet, tx: bdk::bitcoin::Transaction) -> Result<String, Error> {
     let client = get_client()?;
@@ -168,6 +185,12 @@ struct Price {
 #[derive(Deserialize)]
 struct PriceRes {
     data: Price
+}
+
+// #[derive(Serialize)]
+struct Fees {
+    priority_fee: FeeRate,
+    standard_fee: FeeRate
 }
 
 fn get_price() -> Result<String, Error> {
@@ -236,6 +259,9 @@ fn handle_request(method: String, args: Vec<String>) -> Result<Response, Error> 
             let mut stream: Vec<u8> = hex::decode(args.get(2).ok_or(Error::OutOfBounds())?)?;
             let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
             handle_error(broadcast_transaction(db_path, descs, tx))
+        }
+        "estimate_fees" =>{
+            handle_error(estimate_fees())
         }
         unknown_method => Ok(Response::new(404, format!("Method Not Found({})", unknown_method)))
     }

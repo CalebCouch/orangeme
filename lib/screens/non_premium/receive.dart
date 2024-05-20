@@ -75,14 +75,6 @@ class ReceiveState extends State<Receive> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.8),
-                            blurRadius: 15,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
                       ),
                       child: Padding(
                           padding: const EdgeInsets.all(10.0),

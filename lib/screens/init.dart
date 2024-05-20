@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'non_premium/dashboard.dart';
-
+import 'package:orange/classes.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
@@ -77,6 +77,13 @@ class InitPageState extends State<InitPage> {
     print("dropeddb");
   }
 
+  void estimateFees() async {
+    print("estimating fees");
+    var fees =
+        HandleError(await invoke(method: "estimate_fees", args: []), context);
+    print("Fees: $fees");
+  }
+
   void throwError() async {
     HandleError(await invoke(method: "throw_error", args: []), context);
   }
@@ -143,6 +150,10 @@ class InitPageState extends State<InitPage> {
                     child: const Text('drop'),
                   ),
                   const SizedBox(height: 50),
+                  ElevatedButton(
+                    onPressed: () => {estimateFees()},
+                    child: const Text('estimate fee'),
+                  ),
                 ],
               ),
       ),
