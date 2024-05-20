@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 
-
 class TextInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
@@ -9,12 +8,12 @@ class TextInputField extends StatefulWidget {
   final VoidCallback? onEditingComplete;
 
   const TextInputField({
-    super.key,
+    Key? key,
     required this.controller,
-    this.hint = 'Enter your text here',
+    this.hint = 'Enter the text here',
     this.onChanged,
     this.onEditingComplete,
-  });
+  }) : super(key: key);
 
   @override
   _TextInputFieldState createState() => _TextInputFieldState();
@@ -88,7 +87,7 @@ class _TextInputFieldState extends State<TextInputField> {
               controller: widget.controller,
               focusNode: focusNode,
               cursorWidth: 2.0,
-              cursorColor: Colors.grey,
+              cursorColor: AppColors.grey, 
               style: TextStyle(color: textColor),
               onChanged: (value) {
                 setState(() {
@@ -121,17 +120,3 @@ class _TextInputFieldState extends State<TextInputField> {
     );
   }
 }
-
-//place this in the file you want this textfiled to be
-//              TextInputField(
-//                controller: TextEditingController(),
-//                hint: 'Enter your text here',
-//                onChanged: (value) {
-//                  // do somthing with the value
-//                },
-//                onEditingComplete: () {
-//                  //do somthing when it is done or completed or filled somthing..
-//                },
-//              ),
-
-
