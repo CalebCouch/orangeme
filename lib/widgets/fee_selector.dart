@@ -4,14 +4,18 @@ import 'package:orange/styles/constants.dart';
 class FeeSelector extends StatefulWidget {
   final Function(bool) onOptionSelected;
 
-  const FeeSelector({Key? key, required this.onOptionSelected}) : super(key: key);
+  const FeeSelector({super.key, required this.onOptionSelected});
 
   @override
-  _FeeSelectorState createState() => _FeeSelectorState();
+  FeeSelectorState createState() => FeeSelectorState();
+
+  
 }
 
-class _FeeSelectorState extends State<FeeSelector> {
+class FeeSelectorState extends State<FeeSelector> {
   bool _isPrioritySelected = false;
+
+  bool get isPrioritySelected => _isPrioritySelected;
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +53,15 @@ class _FeeSelectorState extends State<FeeSelector> {
 class PriorityOption extends StatefulWidget {
   final bool isSelected;
   final Function(bool) onSelected;
+  bool get selected => isSelected;
 
   const PriorityOption({Key? key, required this.isSelected, required this.onSelected}) : super(key: key);
 
   @override
-  _PriorityOptionState createState() => _PriorityOptionState();
+  PriorityOptionState createState() => PriorityOptionState();
 }
 
-class _PriorityOptionState extends State<PriorityOption> {
+class PriorityOptionState extends State<PriorityOption> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -79,14 +84,15 @@ class _PriorityOptionState extends State<PriorityOption> {
               }
             },
           ),
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+                padding: EdgeInsets.only(top: 8.0),
                 child: Text(
                   'Priority',
-                  style: AppTextStyles.textLG.copyWith(
+                  style: TextStyle(
+                    fontSize: 18,
                     color: AppColors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -94,7 +100,8 @@ class _PriorityOptionState extends State<PriorityOption> {
               ),
               Text(
                 'Arrives in ~30 minutes\n\$3.19 bitcoin network fee',
-                style: AppTextStyles.textMD.copyWith(
+                style: TextStyle(
+                  fontSize: 16,
                   color: AppColors.grey,
                 ),
               ),
@@ -109,14 +116,15 @@ class _PriorityOptionState extends State<PriorityOption> {
 class StandardOption extends StatefulWidget {
   final bool isSelected;
   final Function(bool) onSelected;
+  bool get selected => isSelected;
 
-  const StandardOption({Key? key, required this.isSelected, required this.onSelected}) : super(key: key);
+  const StandardOption({super.key, required this.isSelected, required this.onSelected});
 
   @override
-  _StandardOptionState createState() => _StandardOptionState();
+  StandardOptionState createState() => StandardOptionState();
 }
 
-class _StandardOptionState extends State<StandardOption> {
+class StandardOptionState extends State<StandardOption> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -139,14 +147,15 @@ class _StandardOptionState extends State<StandardOption> {
               }
             },
           ),
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+                padding: EdgeInsets.only(top: 8.0),
                 child: Text(
                   'Standard',
-                  style: AppTextStyles.textLG.copyWith(
+                  style: TextStyle(
+                    fontSize: 18,
                     color: AppColors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -154,7 +163,8 @@ class _StandardOptionState extends State<StandardOption> {
               ),
               Text(
                 'Arrives in ~2 hours\n\$2.08 bitcoin network fee',
-                style: AppTextStyles.textMD.copyWith(
+                style: TextStyle(
+                  fontSize: 16,
                   color: AppColors.grey,
                 ),
               ),
