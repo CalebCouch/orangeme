@@ -95,11 +95,11 @@ class ReceiveState extends State<Receive> {
                                   version: QrVersions.auto,
                                   size: 200.0,
                                   gapless: false,
-                                  embeddedImage: const AssetImage(
-                                      'assets/icons/qrcode_brandmark.png'),
-                                  embeddedImageStyle:
-                                      const QrEmbeddedImageStyle(
-                                          size: Size(68, 68)),
+                                  // embeddedImage: const AssetImage(
+                                  //     'assets/icons/qrcode_brandmark.png'),
+                                  // embeddedImageStyle:
+                                  //     const QrEmbeddedImageStyle(
+                                  //         size: Size(68, 68)),
                                   backgroundColor: Colors.white);
                             },
                           )),
