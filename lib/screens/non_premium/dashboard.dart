@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 import 'package:orange/styles/constants.dart';
 import 'receive.dart';
 import 'send1.dart';
 import 'package:orange/widgets/transaction_list.dart';
-import 'package:orange/util.dart';
-import 'package:orange/classes.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
@@ -88,8 +88,8 @@ class DashboardState extends State<Dashboard>
     print(transactions.value);
 
     print('Getting Price...');
-    price.value = double.parse(HandleError(
-        await invoke(method: "get_price", args: [descriptors]), context));
+    price.value = double.parse(
+        HandleError(await invoke(method: "get_price", args: []), context));
     print("Price: ${price.value}");
 
     if (loading == true) {
@@ -137,6 +137,7 @@ class DashboardState extends State<Dashboard>
   //       context, MaterialPageRoute(builder: (context) => const ImportCloud()));
   // }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,

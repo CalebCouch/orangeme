@@ -17,7 +17,7 @@ class ValueDisplay extends StatelessWidget {
     if (number == null) {
       return "0.00";
     } else {
-      String absFiatAmount = number.abs().toString();
+      String absFiatAmount = number.abs().toStringAsFixed(2);
       if (absFiatAmount.length > 4) {
         NumberFormat format = NumberFormat("#,##0.00", "en_US");
         String formatted = format.format(number);

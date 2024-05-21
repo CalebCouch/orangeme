@@ -197,6 +197,14 @@ fn get_price() -> Result<String, Error> {
     Ok(reqwest::blocking::get("https://api.coinbase.com/v2/prices/BTC-USD/buy")?.json::<PriceRes>()?.data.amount)
 }
 
+fn get_historic_price(date: String) -> Result<String, Error> {
+    let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
+    let url = match date {
+        some(d) => format!("{}?date={}", base_url, d)
+    };
+    Ok(reqwest::blocking::get(&url)?.json::<PriceRes>()?.data.amount)
+}
+
 fn handle_error(result: Result<String, Error>) -> Result<Response, Error> {
     Ok(match result {
         Ok(s) => Response::new(200, s),
@@ -216,6 +224,7 @@ fn handle_request(method: String, args: Vec<String>) -> Result<Response, Error> 
             handle_error(sync_wallet(db_path, descs))
         }
         "get_price" => handle_error(get_price()),
+        "get_historical_price" => handle_error(get_historical_price(args.get(1).ok_or(Error::OutOfBounds())?))?,
         "throw_error" => Ok(Response::error("RustErrorMsg".to_string())),
         "get_balance" => {
             let db_path: String = args.first().ok_or(Error::OutOfBounds())?.to_string();
