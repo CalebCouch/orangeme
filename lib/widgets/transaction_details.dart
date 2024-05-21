@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/widgets/dashboard_value.dart';
 import 'package:orange/classes.dart';
-import 'transaction_list.dart'; // Assuming this file contains formatSatsToDollars and other necessary functions.
-// import 'package:intl/intl.dart';
+import 'transaction_list.dart';
 
 class TransactionDetails extends StatelessWidget {
   final Transaction transaction;
@@ -11,9 +10,17 @@ class TransactionDetails extends StatelessWidget {
   const TransactionDetails(
       {super.key, required this.transaction, required this.price});
 
+  String formatSatsToDollars(int sats, double price) {
+    double amount = (sats / 100000000) * price;
+    return amount.toStringAsFixed(2);
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("Transaction Details Builder...");
+    print("transaction net: ${transaction.net}");
     final displayPrice = price ?? 0;
+    print("display price: $displayPrice");
     return Scaffold(
       appBar: AppBar(
         title: Text(transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin"),

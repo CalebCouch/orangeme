@@ -13,6 +13,14 @@ class DashboardValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Dashboard Value Builder...");
+    print("fiat Amount: $fiatAmount");
+    print("quantity: $quantity");
+    bool negativeValue = false;
+    double? fiatAmountNull = double.tryParse(fiatAmount);
+    if (fiatAmountNull != null && double.parse(fiatAmount) < 0) {
+      negativeValue = true;
+    }
     return Container(
       width: 288,
       height: 221,
@@ -22,19 +30,26 @@ class DashboardValue extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            fiatAmount.toString(),
-            style: AppTextStyles.heading1,
+          Text.rich(
+            TextSpan(
+              children: <TextSpan>[
+                TextSpan(
+                    text: negativeValue ? "- \$" : "\$",
+                    style: AppTextStyles.heading1),
+                TextSpan(
+                    text: negativeValue
+                        ? double.parse(fiatAmount).abs().toString()
+                        : fiatAmount,
+                    style: AppTextStyles.heading1),
+              ],
+            ),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                quantity.toString(),
-                style: AppTextStyles.textLG,
-              ),
+              Text(quantity.toString(), style: AppTextStyles.textLG),
               const SizedBox(width: 6),
               const Text(
                 ' BTC',

@@ -103,7 +103,7 @@ class DashboardState extends State<Dashboard>
     print("formatting...sats: $sats price: $price");
     double amount = (sats / 100000000) * price;
     print("formatted balance: $amount");
-    return "${amount >= 0 ? '' : '- '}\$${amount.abs().toStringAsFixed(2)}";
+    return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
   }
 
   // Sort transactions in ascending order with null timestamps being shown at the top
