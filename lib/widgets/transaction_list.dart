@@ -53,59 +53,59 @@ Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
 
 Widget buildTransactionCard(BuildContext context, Transaction transaction,
     ValueNotifier<double> price) {
-  return Card(
-    color: AppColors.background,
-    margin: const EdgeInsets.symmetric(vertical: 8),
-    child: Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin",
-                  style: AppTextStyles.textMD),
-              ValueListenableBuilder<double>(
-                valueListenable: price,
-                builder:
-                    (BuildContext innerContext, double value, Widget? child) {
-                  return Text(formatSatsToDollars(transaction.net, value),
-                      style: AppTextStyles.textMD);
-                },
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                        text: formatTimestamp(transaction.timestamp),
-                        style: AppTextStyles.textMD
-                            .copyWith(color: AppColors.textSecondary)),
-                  ],
+  return InkWell(
+    onTap: () {
+      double currentPrice = price.value;
+      print("current price before navigating: $currentPrice");
+      print("transaction before navigating: $transaction");
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            TransactionDetails(transaction: transaction, price: currentPrice),
+      ));
+    },
+    child: Card(
+      color: AppColors.background,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin",
+                    style: AppTextStyles.textMD),
+                ValueListenableBuilder<double>(
+                  valueListenable: price,
+                  builder:
+                      (BuildContext innerContext, double value, Widget? child) {
+                    return Text(formatSatsToDollars(transaction.net, value),
+                        style: AppTextStyles.textMD);
+                  },
                 ),
-              ),
-              InkWell(
-                child: Text("Details",
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: formatTimestamp(transaction.timestamp),
+                          style: AppTextStyles.textMD
+                              .copyWith(color: AppColors.textSecondary)),
+                    ],
+                  ),
+                ),
+                Text("Details",
                     style: AppTextStyles.textMD
                         .copyWith(decoration: TextDecoration.underline)),
-                onTap: () {
-                  double currentPrice = price.value;
-                  print("current price before navigating: $currentPrice");
-                  print("transaction before navigating: $transaction");
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => TransactionDetails(
-                        transaction: transaction, price: currentPrice),
-                  ));
-                },
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );

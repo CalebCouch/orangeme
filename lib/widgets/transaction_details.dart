@@ -63,7 +63,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
       print('Getting Price...');
       var price = double.parse(HandleError(
           await invoke(method: "get_price", args: [date]), context));
-      print("Price: ${price}");
+      print("Price: $price");
       setState(() {
         historicalPrice = price.toStringAsFixed(2);
       });
@@ -76,7 +76,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
     print("transaction net: ${widget.transaction.net}");
     String title =
         widget.transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin";
-    final displayPrice = widget.price.toString() ?? '0';
+    final displayPrice = widget.price.toString();
     print("display price: $displayPrice");
     String date = formatTimestamp(widget.transaction.timestamp);
     String time = formatTime(widget.transaction.timestamp);
