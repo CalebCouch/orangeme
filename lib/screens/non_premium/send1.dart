@@ -57,7 +57,8 @@ class Send1State extends State<Send1> {
         print("cleanParse failed, user deletion, button disabled");
         isButtonEnabled = false;
         //users input results in a value exceeding one penny, enable button (set dust limit here?)
-      } else if (double.parse(cleanParse) >= 0.01) {
+        //threshold is set to 1/100 of a penny due to temp value (amount + input concatenation)'s effect on baseline 0.00, inputs < 0.01 are rejected
+      } else if (double.parse(cleanParse) >= 0.001) {
         print("cleanParse exceeds one penny, button enabled");
         isButtonEnabled = true;
         //users input does not exceed one penny, disable button
@@ -70,8 +71,16 @@ class Send1State extends State<Send1> {
     if (cleanParse.contains(".")) {
       parts = cleanParse.split('.');
       print("parts: $parts");
-      //user is not attempting to exceed the decimal threshold, proceed with input & terminate
-      if (cleanParse.contains("0.00") && input != "backspace" && input != ".") {
+      //user attempts to enter more than one trailing zero after the decimal, force stop input and terminate
+      if (cleanParse == "0.00" && input == "0") {
+        setState(() {
+          amount = amount;
+        });
+        return;
+        //user is attempting to exceed the decimal threshold but can be assumed to be entering a leading whole number from 0.00, proceed with input & terminate
+      } else if (cleanParse.contains("0.00") &&
+          input != "backspace" &&
+          input != ".") {
         setState(() {
           print("cleanParse 0.00 detected, proceeding with input");
           amount = "\$$input";
