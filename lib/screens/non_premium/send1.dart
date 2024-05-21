@@ -20,7 +20,8 @@ class Send1State extends State<Send1> {
 
   void _updateAmount(String input) {
     //determine the max amount the user can input in dollar terms
-    double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
+    // double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
+    double maxDollarAmount = 9999999;
     print("Max Dollar Amount to spend: $maxDollarAmount");
     //define a temporary value for parsing user input
     String tempAmount = '0.00';
