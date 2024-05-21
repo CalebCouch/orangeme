@@ -40,7 +40,9 @@ class ValueDisplay extends StatelessWidget {
     }
     bool bigNumber = false;
     if (fiatAmountNull != null &&
-        double.parse(fiatAmount).abs().toString().length >= 7) {
+        (double.parse(fiatAmount).abs().toString().length >= 7 ||
+            (double.parse(fiatAmount).abs().toString().length >= 7 &&
+                negativeValue == true))) {
       print("BIG NUMBER FOUND");
       bigNumber = true;
     }
@@ -57,7 +59,7 @@ class ValueDisplay extends StatelessWidget {
             TextSpan(
               children: <TextSpan>[
                 TextSpan(
-                    text: negativeValue ? "- \$" : "\$",
+                    text: negativeValue ? "-\$" : "\$",
                     style: !bigNumber
                         ? AppTextStyles.heading1
                         : AppTextStyles.heading2),
