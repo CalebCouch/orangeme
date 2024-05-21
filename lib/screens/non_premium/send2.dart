@@ -147,6 +147,7 @@ class Send2State extends State<Send2> {
 
   @override
   Widget build(BuildContext context) {
+    print("Amount to send: ${widget.amount}");
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
