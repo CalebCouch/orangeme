@@ -5,7 +5,7 @@ import 'package:orange/styles/constants.dart';
 class NumberPad extends StatelessWidget {
   final void Function(String) onNumberPressed;
 
-  NumberPad({required this.onNumberPressed});
+  const NumberPad({super.key, required this.onNumberPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,8 @@ class NumberButton extends StatelessWidget {
   final String? svgIcon;
   final void Function(String) onPressed;
 
-  NumberButton({required this.number, this.svgIcon, required this.onPressed});
+  const NumberButton(
+      {super.key, required this.number, this.svgIcon, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -78,4 +79,3 @@ class NumberButton extends StatelessWidget {
     );
   }
 }
-

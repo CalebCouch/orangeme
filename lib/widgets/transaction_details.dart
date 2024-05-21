@@ -22,7 +22,7 @@ class TransactionDetails extends StatelessWidget {
         children: [
           DashboardValue(
             fiatAmount: formatSatsToDollars(transaction.net, displayPrice),
-            quantity: (transaction.net / 100000000),
+            quantity: (transaction.net / 100000000).toStringAsFixed(8),
           ),
           Expanded(
             child: ListView(

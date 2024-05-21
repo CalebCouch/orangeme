@@ -8,18 +8,18 @@ class TextInputField extends StatefulWidget {
   final VoidCallback? onEditingComplete;
 
   const TextInputField({
-    Key? key,
+    super.key,
     required this.controller,
     this.hint = 'Enter the text here',
     this.onChanged,
     this.onEditingComplete,
-  }) : super(key: key);
+  });
 
   @override
-  _TextInputFieldState createState() => _TextInputFieldState();
+  TextInputFieldState createState() => TextInputFieldState();
 }
 
-class _TextInputFieldState extends State<TextInputField> {
+class TextInputFieldState extends State<TextInputField> {
   late Color borderColor;
   late Color textColor;
   late Color errorMessageColor;
@@ -87,7 +87,7 @@ class _TextInputFieldState extends State<TextInputField> {
               controller: widget.controller,
               focusNode: focusNode,
               cursorWidth: 2.0,
-              cursorColor: AppColors.grey, 
+              cursorColor: AppColors.grey,
               style: TextStyle(color: textColor),
               onChanged: (value) {
                 setState(() {
@@ -98,7 +98,7 @@ class _TextInputFieldState extends State<TextInputField> {
               },
               decoration: InputDecoration(
                 hintText: isFocused ? '' : widget.hint,
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                   color: AppColors.outline,
                 ),
                 border: InputBorder.none,

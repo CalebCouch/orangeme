@@ -203,7 +203,8 @@ class DashboardState extends State<Dashboard>
                                         DashboardValue(
                                       fiatAmount: formatSatsToDollars(
                                           balanceValue, priceValue),
-                                      quantity: (balanceValue / 100000000.0),
+                                      quantity: (balanceValue / 100000000.0)
+                                          .toStringAsFixed(8),
                                     ),
                                   ),
                                 ),
@@ -212,8 +213,9 @@ class DashboardState extends State<Dashboard>
                                 const SizedBox(width: 10),
                                 ReceiveSend(
                                   receiveRoute: () => const Receive(),
-                                  sendRoute: () =>
-                                      Send1(balance: balance.value),
+                                  sendRoute: () => Send1(
+                                      balance: balance.value,
+                                      price: price.value),
                                   onPause: _stopTimer,
                                   onResume: _startTimer,
                                 )

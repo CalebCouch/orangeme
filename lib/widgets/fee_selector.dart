@@ -4,13 +4,13 @@ import 'package:orange/styles/constants.dart';
 class FeeSelector extends StatefulWidget {
   final Function(bool) onOptionSelected;
 
-  const FeeSelector({Key? key, required this.onOptionSelected}) : super(key: key);
+  const FeeSelector({super.key, required this.onOptionSelected});
 
   @override
-  _FeeSelectorState createState() => _FeeSelectorState();
+  FeeSelectorState createState() => FeeSelectorState();
 }
 
-class _FeeSelectorState extends State<FeeSelector> {
+class FeeSelectorState extends State<FeeSelector> {
   bool _isPrioritySelected = false;
 
   @override
@@ -50,13 +50,14 @@ class PriorityOption extends StatefulWidget {
   final bool isSelected;
   final Function(bool) onSelected;
 
-  const PriorityOption({Key? key, required this.isSelected, required this.onSelected}) : super(key: key);
+  const PriorityOption(
+      {super.key, required this.isSelected, required this.onSelected});
 
   @override
-  _PriorityOptionState createState() => _PriorityOptionState();
+  PriorityOptionState createState() => PriorityOptionState();
 }
 
-class _PriorityOptionState extends State<PriorityOption> {
+class PriorityOptionState extends State<PriorityOption> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -71,8 +72,8 @@ class _PriorityOptionState extends State<PriorityOption> {
           Radio<bool>(
             value: true,
             groupValue: widget.isSelected,
-            visualDensity: const VisualDensity(horizontal: -2, vertical: -2), 
-            activeColor: AppColors.white, 
+            visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
+            activeColor: AppColors.white,
             onChanged: (bool? value) {
               if (value != null && value != widget.isSelected) {
                 widget.onSelected(value);
@@ -110,13 +111,14 @@ class StandardOption extends StatefulWidget {
   final bool isSelected;
   final Function(bool) onSelected;
 
-  const StandardOption({Key? key, required this.isSelected, required this.onSelected}) : super(key: key);
+  const StandardOption(
+      {super.key, required this.isSelected, required this.onSelected});
 
   @override
-  _StandardOptionState createState() => _StandardOptionState();
+  StandardOptionState createState() => StandardOptionState();
 }
 
-class _StandardOptionState extends State<StandardOption> {
+class StandardOptionState extends State<StandardOption> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -132,7 +134,7 @@ class _StandardOptionState extends State<StandardOption> {
             value: true,
             groupValue: widget.isSelected,
             visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
-            activeColor: AppColors.white, 
+            activeColor: AppColors.white,
             onChanged: (bool? value) {
               if (value != null && value != widget.isSelected) {
                 widget.onSelected(value);
