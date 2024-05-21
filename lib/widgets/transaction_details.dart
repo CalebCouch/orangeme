@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/widgets/dashboard_value.dart';
+import 'package:orange/widgets/value_display.dart';
 import 'package:orange/classes.dart';
 import 'transaction_list.dart';
 
@@ -27,7 +27,7 @@ class TransactionDetails extends StatelessWidget {
       ),
       body: Column(
         children: [
-          DashboardValue(
+          ValueDisplay(
             fiatAmount: formatSatsToDollars(transaction.net, displayPrice),
             quantity: (transaction.net / 100000000).toStringAsFixed(8),
           ),

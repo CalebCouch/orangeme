@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 
-class DashboardValue extends StatelessWidget {
+class ValueDisplay extends StatelessWidget {
   final String fiatAmount;
   final String quantity;
 
-  const DashboardValue({
+  const ValueDisplay({
     super.key,
     required this.fiatAmount,
     required this.quantity,

@@ -9,7 +9,7 @@ import 'package:orange/classes.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
-import 'package:orange/widgets/dashboard_value.dart';
+import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
 
 // import 'package:orange/screens/settings/import_cloud.dart';
@@ -200,7 +200,7 @@ class DashboardState extends State<Dashboard>
                                       ValueListenableBuilder<double>(
                                     valueListenable: price,
                                     builder: (context, priceValue, child) =>
-                                        DashboardValue(
+                                        ValueDisplay(
                                       fiatAmount: formatSatsToDollars(
                                           balanceValue, priceValue),
                                       quantity: (balanceValue / 100000000.0)

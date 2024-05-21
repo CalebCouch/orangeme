@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/widgets/numberpad.dart';
-import 'package:orange/widgets/dashboard_value.dart';
+import 'package:orange/widgets/value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 
@@ -196,7 +196,7 @@ class Send1State extends State<Send1> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            DashboardValue(
+            ValueDisplay(
               fiatAmount: amount == '' ? '0' : amount,
               quantity: amount == ''
                   ? formatDollarsToSats('0', widget.price)
