@@ -19,12 +19,9 @@ class Send1State extends State<Send1> {
   bool isButtonEnabled = false;
 
   void _updateAmount(String input) {
-    // Maximum amount set to 9999999 for testing
-    double maxDollarAmount = 9999999;
+    double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
     print("Max Dollar Amount to spend: $maxDollarAmount");
-
     String tempAmount = amount;
-
     // Handle backspace
     if (input == "backspace") {
       if (tempAmount.length > 1) {
@@ -40,18 +37,15 @@ class Send1State extends State<Send1> {
         tempAmount += input;
       }
     }
-
     // Ensure tempAmount is a valid dollar amount
     if (!RegExp(r"^\d*\.?\d{0,2}$").hasMatch(tempAmount)) {
       return;
     }
-
     // Limit the amount to maxDollarAmount
     double? tempAmountDouble = double.tryParse(tempAmount);
     if (tempAmountDouble != null && tempAmountDouble > maxDollarAmount) {
       return;
     }
-
     setState(() {
       amount = tempAmount;
       evaluateButton();
@@ -125,4 +119,3 @@ class Send1State extends State<Send1> {
     );
   }
 }
-
