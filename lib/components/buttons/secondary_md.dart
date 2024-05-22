@@ -5,13 +5,14 @@ class ButtonSecondaryMD extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
   final bool isEnabled;
+  final String? icon;
 
-  const ButtonSecondaryMD({
-    super.key,
-    required this.label,
-    this.onTap,
-    this.isEnabled = true,
-  });
+  const ButtonSecondaryMD(
+      {super.key,
+      required this.label,
+      this.onTap,
+      this.isEnabled = true,
+      this.icon});
 
   @override
   StatefulCustomButtonState createState() => StatefulCustomButtonState();
@@ -19,6 +20,20 @@ class ButtonSecondaryMD extends StatefulWidget {
 
 class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
   bool _isHovering = false;
+
+  IconData getIconFromString(String? iconName) {
+    if (iconName == null) {
+      return Icons.error;
+    }
+    switch (iconName.toLowerCase()) {
+      case 'clipboard':
+        return Icons.content_paste;
+      case 'qrcode':
+        return Icons.qr_code_sharp;
+      default:
+        return Icons.error;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +62,31 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                widget.label,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.labelMD,
-              ),
+              widget.icon != null
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          getIconFromString(widget.icon),
+                          color: AppColors.primary,
+                          size: 15,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: RichText(
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                                text: widget.label,
+                                style: AppTextStyles.labelMD),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Text(
+                      widget.label,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.labelMD,
+                    ),
             ],
           ),
         ),

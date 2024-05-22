@@ -49,9 +49,15 @@ class TextInputFieldState extends State<TextInputField> {
   void _onFocusChange() {
     setState(() {
       isFocused = focusNode.hasFocus;
+      borderColor = isFocused
+          ? AppColors.primary
+          : AppColors.darkGrey; // Change primary to your preferred focus color
+      textColor = AppColors.primary;
+      errorMessageColor = Colors.transparent;
+      errorMessage = '';
+
       if (!isFocused && widget.controller.text.isEmpty) {
         borderColor = AppColors.darkGrey;
-        textColor = AppColors.primary;
       } else if (!isFocused &&
           widget.controller.text.isNotEmpty &&
           widget.controller.text != 'Value') {
@@ -59,11 +65,6 @@ class TextInputFieldState extends State<TextInputField> {
         textColor = AppColors.danger;
         errorMessage = 'Error message';
         errorMessageColor = AppColors.danger;
-      } else {
-        borderColor = AppColors.darkGrey;
-        textColor = AppColors.primary;
-        errorMessage = '';
-        errorMessageColor = Colors.transparent;
       }
     });
   }

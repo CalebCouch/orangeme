@@ -46,7 +46,11 @@ class DashboardState extends State<Dashboard>
 
   void _startTimer() {
     print("start timer....");
-    _timer = Timer(const Duration(seconds: 15), () => handleRefresh());
+    _timer = Timer(const Duration(seconds: 15), () {
+      if (mounted) {
+        handleRefresh();
+      }
+    });
   }
 
   void _stopTimer() {
@@ -55,6 +59,7 @@ class DashboardState extends State<Dashboard>
   }
 
   Future<void> handleRefresh() async {
+    if (!mounted) return;
     print('Refresh Initiatied...');
     var descriptors =
         HandleNull(await STORAGE.read(key: "descriptors"), context);

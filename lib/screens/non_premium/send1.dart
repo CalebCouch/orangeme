@@ -125,7 +125,7 @@ class Send1State extends State<Send1> {
             ),
             const SizedBox(height: 15),
             ButtonOrangeLG(
-              label: "Continue",
+              label: "Send",
               onTap: () => onContinue(),
               isEnabled: isButtonEnabled,
             ),

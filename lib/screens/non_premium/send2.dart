@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:orange/screens/non_premium/receive.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'send3.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
+import 'package:orange/components/textfield.dart';
+import 'package:orange/components/buttons/orange_lg.dart';
+import 'package:orange/components/buttons/secondary_md.dart';
+import 'package:orange/styles/constants.dart';
 
 class Send2 extends StatefulWidget {
   final double amount;
@@ -19,18 +24,48 @@ class Send2 extends StatefulWidget {
 
 class Send2State extends State<Send2> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  late QRViewController controller;
+  late QRViewController? controller;
   final TextEditingController recipientAddressController =
       TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-  bool _isSending = false;
   bool isAddressValid = false;
+  bool isButtonEnabled = false;
+  String clipboardData = '';
+  Timer? clipboardCheckTimer;
 
   @override
   void initState() {
     super.initState();
-    recipientAddressController.addListener(trimAddressPrefix);
-    recipientAddressController.addListener(checkAddress);
+    // recipientAddressController
+    //     .addListener(trimAddressPrefix(recipientAddressController.text));
+    // recipientAddressController
+    //     .addListener(checkAddress(recipientAddressController.text));
+    // fetchAndValidateClipboard();
+    clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) {
+        fetchAndValidateClipboard();
+      }
+    });
+  }
+
+  Future<void> fetchAndValidateClipboard() async {
+    if (!mounted) return;
+
+    print("Checking Clipboard Data");
+    ClipboardData? clipboardData =
+        await Clipboard.getData(Clipboard.kTextPlain);
+    if (clipboardData?.text != null) {
+      String trimmedData = trimAddressPrefix(clipboardData!.text);
+      bool isValid = await checkAddress(trimmedData);
+      if (isValid) {
+        setState(() {
+          this.clipboardData = clipboardData.text!;
+        });
+      } else {
+        setState(() {
+          this.clipboardData = "";
+        });
+      }
+    }
   }
 
   void _startQRScanner() {
@@ -63,210 +98,131 @@ class Send2State extends State<Send2> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) async {
+  void _onQRViewCreated(QRViewController newController) {
+    controller = newController;
+    controller!.scannedDataStream.listen((scanData) async {
       print('Scanned Data: ${scanData.code}');
       recipientAddressController.text = scanData.code ?? '';
-      await controller.stopCamera(); // Stop the camera
-      Navigator.of(context).pop(); // Close the QR code scanner dialog
+      await controller!.stopCamera(); // Stop the camera
+      closeDialog(); // Close the QR code scanner dialog
     });
   }
 
-  void trimAddressPrefix() {
-    String currentText = recipientAddressController.text;
-    if (currentText.startsWith('bitcoin:')) {
-      //remove the bitcoin: prefix if applicable
-      String updatedText = currentText.substring(8);
-      recipientAddressController.value = TextEditingValue(
-        text: updatedText,
-        selection: TextSelection.collapsed(offset: updatedText.length),
-      );
+  void closeDialog() {
+    Navigator.of(context).pop();
+    if (controller != null && mounted) {
+      controller!.dispose();
     }
   }
 
-  Future<void> checkAddress() async {
+  pasteAddress() {
+    recipientAddressController.text = clipboardData;
+    setState(() {
+      isButtonEnabled = true;
+    });
+  }
+
+  String trimAddressPrefix(String? contents) {
+    if (contents!.startsWith('bitcoin:')) {
+      //remove the bitcoin: prefix if applicable
+      String updatedText = contents.substring(8);
+      return updatedText;
+    } else {
+      return contents;
+    }
+  }
+
+  Future<bool> checkAddress(String address) async {
     print("address check:");
     var res = HandleError(
-        await invoke(
-            method: "check_address", args: [recipientAddressController.text]),
-        context);
-    if (res == "true") {
-      setState(() {
-        isAddressValid = true;
-      });
-      FocusScope.of(context).unfocus();
-    } else {
-      setState(() {
-        isAddressValid = false;
-      });
-    }
+        await invoke(method: "check_address", args: [address]), context);
+    return res == "true";
   }
 
-  void createTransaction() async {
-    var desc = await STORAGE.read(key: "descriptors");
-    String db = await GetDBPath();
-    if (desc != null) {
-      print("database: $db");
-      print("descriptor: $desc");
-      print("Address: ${recipientAddressController.text}");
-      print("Amount: ${widget.amount}");
-      var json = HandleError(
-          await invoke(method: "create_transaction", args: [
-            db.toString(),
-            desc.toString(),
-            recipientAddressController.text.toString(),
-            widget.amount.round().toString()
-          ]),
-          context);
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Send3(tx: json),
-        ),
-      );
-    }
-    print("building tx and sending user to confirmation screen");
+  void onContinue() {
+    _stopTimer();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Send3()));
   }
 
-  void resetField() {
-    recipientAddressController.clear();
+  String shortenAddress(address) {
+    if (address.length > 30) {
+      final firstPart = address.substring(0, 15);
+      return '$firstPart...';
+    }
+    return address;
   }
 
   void _stopQRScanner() {
-    Navigator.pop(context);
-    controller.dispose();
+    if (controller != null) {
+      Navigator.pop(context);
+      controller!.dispose();
+    }
+  }
+
+  void _stopTimer() {
+    print("stop timer...");
+    clipboardCheckTimer?.cancel();
   }
 
   @override
   void dispose() {
     recipientAddressController.dispose();
-    _noteController.dispose();
-    _stopQRScanner();
+    clipboardCheckTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     print("Amount to send: ${widget.amount}");
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text(
-          'Destination',
-          style: TextStyle(color: Colors.white),
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (bool didPop) async {
+        _stopTimer();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          title: const Text('Bitcoin Address'),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  _startQRScanner();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color.fromARGB(255, 0, 0, 131),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.qr_code,
-                    size: 100,
-                    color: Colors.white,
-                  ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TextInputField(
+                  controller: recipientAddressController,
+                  hint: "Bitcoin address...",
                 ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: recipientAddressController,
-                decoration: InputDecoration(
-                  hintText: 'Enter recipient address',
-                  suffixIcon: isAddressValid
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : IconButton(
-                          icon: const Icon(Icons.close, color: Colors.red),
-                          onPressed: resetField,
-                        ),
-                  hintStyle: TextStyle(color: Colors.grey[400]),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue[800]!),
-                    borderRadius: BorderRadius.circular(10.0),
+                const SizedBox(height: 10),
+                if (clipboardData != '') ...[
+                  ButtonSecondaryMD(
+                    label: shortenAddress(clipboardData),
+                    icon: "clipboard",
+                    onTap: () => pasteAddress(),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue[800]!),
-                    borderRadius: BorderRadius.circular(10.0),
+                  const SizedBox(height: 5),
+                  Text(
+                    "or",
+                    style: AppTextStyles.textSM
+                        .copyWith(color: AppColors.textSecondary),
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[900],
+                  const SizedBox(height: 5),
+                ],
+                ButtonSecondaryMD(
+                  label: "Scan QR Code",
+                  icon: 'qrcode',
+                  onTap: _startQRScanner,
                 ),
-                style: const TextStyle(color: Colors.white),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _noteController,
-                decoration: InputDecoration(
-                  hintText: 'Add a note (optional)',
-                  hintStyle: TextStyle(color: Colors.grey[400]),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue[800]!),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue[800]!),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[900],
+                const SizedBox(height: 30),
+                ButtonOrangeLG(
+                  label: "Continue",
+                  onTap: () => onContinue(),
+                  isEnabled: isButtonEnabled,
                 ),
-                style: const TextStyle(color: Colors.white),
-              ),
-              const SizedBox(height: 20),
-              _isSending
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: isAddressValid ? createTransaction : null,
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.resolveWith<Color>(
-                          (states) {
-                            if (states.contains(MaterialState.disabled)) {
-                              return Colors.grey; // Gray when disabled
-                            }
-                            return Colors.orange; // Bright orange when enabled
-                          },
-                        ),
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 16,
-                          ),
-                        ),
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        'Next',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
