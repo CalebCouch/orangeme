@@ -5,6 +5,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
+import 'package:orange/components/buttons/secondary_lg.dart';
 
 class TransactionDetails extends StatefulWidget {
   final Transaction transaction;
@@ -23,7 +24,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
   @override
   void initState() {
     super.initState();
-    getHistoricalPrice(formatTimestamp(widget.transaction.timestamp));
+    getHistoricalPrice(formatTimestamp(widget.transaction.timestamp, true));
   }
 
   @override
@@ -40,11 +41,13 @@ class TransactionDetailsState extends State<TransactionDetails> {
     return amount.toStringAsFixed(2);
   }
 
-  String formatTimestamp(DateTime? time) {
+  String formatTimestamp(DateTime? time, bool api) {
     if (time == null) {
       return "Pending";
-    } else {
+    } else if (api == false) {
       return DateFormat('MM/dd/yyyy').format(time);
+    } else {
+      return DateFormat('yyyy/MM/dd').format(time);
     }
   }
 
@@ -61,13 +64,20 @@ class TransactionDetailsState extends State<TransactionDetails> {
   Future<void> getHistoricalPrice(String date) async {
     if (widget.transaction.timestamp != null) {
       print('Getting Price...');
-      var price = double.parse(HandleError(
-          await invoke(method: "get_price", args: [date]), context));
-      print("Price: $price");
+      // var price = double.parse(HandleError(
+      //     // await invoke(method: "get_historical_price", args: [date]), context));
+      //     await invoke(method: "get_price")
+      print("Price: ${widget.price}");
       setState(() {
-        historicalPrice = price.toStringAsFixed(2);
+        if (widget.price != null) {
+          historicalPrice = widget.price.toString();
+        }
       });
     }
+  }
+
+  void goBack(BuildContext context) {
+    Navigator.pop(context);
   }
 
   @override
@@ -78,7 +88,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
         widget.transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin";
     final displayPrice = widget.price.toString();
     print("display price: $displayPrice");
-    String date = formatTimestamp(widget.transaction.timestamp);
+    String date = formatTimestamp(widget.transaction.timestamp, false);
     String time = formatTime(widget.transaction.timestamp);
     String sendReceiveTitle =
         widget.transaction.net < 0 ? "Sent to Address" : "Received to Address";
@@ -125,6 +135,13 @@ class TransactionDetailsState extends State<TransactionDetails> {
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            child: ButtonSecondaryLG(
+              label: "Done",
+              onTap: () => goBack(context),
+            ),
+          )
         ],
       ),
     );
