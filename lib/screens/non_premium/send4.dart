@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/screens/settings/settings.dart';
 import 'dashboard.dart';
 import 'dart:convert';
 import 'package:orange/src/rust/api/simple.dart';
@@ -20,6 +21,10 @@ class Send4 extends StatefulWidget {
 }
 
 class Send4State extends State<Send4> {
+  double price = 0.0;
+  String transactionFee = '0';
+  String sendAmount = '0';
+  String totalAmount = '0';
   @override
   void initState() {
     super.initState();
@@ -30,56 +35,6 @@ class Send4State extends State<Send4> {
   void dispose() {
     super.dispose();
   }
-  // void _showSuccessAnimation(BuildContext context) {
-  //   if (_isSuccessDisplayed) return;
-  //   _isSuccessDisplayed = true;
-
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return Center(
-  //         child: Material(
-  //           color: Colors.transparent,
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               AnimatedContainer(
-  //                 duration: const Duration(seconds: 1),
-  //                 width: 100,
-  //                 height: 100,
-  //                 decoration: const BoxDecoration(
-  //                   color: Colors.black54,
-  //                   shape: BoxShape.circle,
-  //                 ),
-  //                 child: const Icon(
-  //                   Icons.check,
-  //                   color: Colors.green,
-  //                   size: 60,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 20),
-  //               const Text(
-  //                 'Success!',
-  //                 style: TextStyle(
-  //                   color: Colors.white,
-  //                   fontSize: 24,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-
-  //   Future.delayed(const Duration(seconds: 1), () {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => const Dashboard()),
-  //     );
-  //   });
-  // }
 
   void broadcastTransaction(String transaction) async {
     if (!mounted) return;
@@ -109,8 +64,32 @@ class Send4State extends State<Send4> {
     );
   }
 
-  void updatePrice() {
-    print("getting latest price");
+  Future<void> updatePrice() async {
+    print('Getting Price...');
+    var priceRes = await invoke(method: "get_price", args: []);
+    if (!mounted) return;
+    setState(() {
+      price = double.parse(handleError(priceRes, context));
+    });
+    print("Price: $price");
+    updateValues();
+  }
+
+  void updateValues() {
+    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
+    setState(() {
+      transactionFee = (transaction.fee! / 100000000 * price) == 0.0
+          ? '<0.01'
+          : (transaction.fee! / 100000000 * price).toStringAsFixed(2);
+      print("transaction fee: $transactionFee");
+      sendAmount =
+          ((transaction.net.abs() - transaction.fee!) / 100000000 * price)
+              .toStringAsFixed(2);
+      print("send amount: $sendAmount");
+      totalAmount =
+          (transaction.net.abs() / 100000000 * price).toStringAsFixed(2);
+      print("total amount: $totalAmount");
+    });
   }
 
   void editAddress() {
@@ -127,6 +106,7 @@ class Send4State extends State<Send4> {
 
   @override
   Widget build(BuildContext context) {
+    print("Price: $price");
     print("Send4 Transaction: ${widget.tx}");
     final decodeJson = jsonDecode(widget.tx);
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
@@ -225,7 +205,7 @@ class Send4State extends State<Send4> {
                         style: AppTextStyles.textSM,
                       ),
                       Text(
-                        '\$${transaction.net.abs()}',
+                        '\$$sendAmount',
                         style: AppTextStyles.textSM,
                       ),
                     ],
@@ -239,7 +219,7 @@ class Send4State extends State<Send4> {
                         style: AppTextStyles.textSM,
                       ),
                       Text(
-                        '\$${transaction.fee}',
+                        '\$$transactionFee',
                         style: AppTextStyles.textSM,
                       ),
                     ],
@@ -253,7 +233,7 @@ class Send4State extends State<Send4> {
                         style: AppTextStyles.textSM,
                       ),
                       Text(
-                        '\$${transaction.net}',
+                        '\$$totalAmount',
                         style: AppTextStyles.textSM,
                       ),
                     ],
