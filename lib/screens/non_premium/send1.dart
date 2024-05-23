@@ -112,28 +112,40 @@ class Send1State extends State<Send1> {
         title: const Text('Send Bitcoin'),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            KeyboardValueDisplay(
-              key: _displayKey,
-              fiatAmount: amount == '' ? '0' : amount,
-              quantity: amount == ''
-                  ? formatDollarsToSats('0', widget.price)
-                  : formatDollarsToSats(amount, widget.price),
-              onShake: () {},
-            ),
-            const SizedBox(height: 10),
-            NumberPad(
-              onNumberPressed: _updateAmount,
-            ),
-            const SizedBox(height: 15),
-            ButtonOrangeLG(
-              label: "Send",
-              onTap: () => onContinue(),
-              isEnabled: isButtonEnabled,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              KeyboardValueDisplay(
+                key: _displayKey,
+                fiatAmount: amount == '' ? '0' : amount,
+                quantity: amount == ''
+                    ? formatDollarsToSats('0', widget.price)
+                    : formatDollarsToSats(amount, widget.price),
+                onShake: () {},
+              ),
+              const SizedBox(height: 10),
+              NumberPad(
+                onNumberPressed: _updateAmount,
+              ),
+              const SizedBox(height: 15),
+              // This SizedBox expands to fill the available space, pushing the button down
+              SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ButtonOrangeLG(
+                      label: "Send",
+                      onTap: () => onContinue(),
+                      isEnabled: isButtonEnabled,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

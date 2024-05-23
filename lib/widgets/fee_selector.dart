@@ -83,16 +83,14 @@ class PriorityOptionState extends State<PriorityOption> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
                 child: Text(
                   'Priority',
-                  style: AppTextStyles.textLG.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.heading5,
                 ),
               ),
+              const SizedBox(height: 10),
               Text(
                 'Arrives in ~30 minutes\n\$3.19 bitcoin network fee',
                 style: AppTextStyles.textMD.copyWith(
@@ -144,16 +142,11 @@ class StandardOptionState extends State<StandardOption> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Standard',
-                  style: AppTextStyles.textLG.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Text('Standard', style: AppTextStyles.heading5),
               ),
+              const SizedBox(height: 10),
               Text(
                 'Arrives in ~2 hours\n\$2.08 bitcoin network fee',
                 style: AppTextStyles.textMD.copyWith(

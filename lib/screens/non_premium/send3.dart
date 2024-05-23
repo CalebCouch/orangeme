@@ -55,23 +55,49 @@ class Send3State extends State<Send3> {
     print("building tx and sending user to confirmation screen");
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: const Text('Transaction Speed'),
+  //     ),
+  //     body: Center(
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: <Widget>[
+  //           FeeSelector(onOptionSelected: onOptionSelected),
+  //           const SizedBox(height: 20),
+  //           ButtonOrangeLG(
+  //             label: "Continue",
+  //             onTap: createTransaction,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction Speed'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             FeeSelector(onOptionSelected: onOptionSelected),
-            const SizedBox(height: 20),
-            ButtonOrangeLG(
-              label: "Continue",
-              onTap: createTransaction,
-            ),
+            const Spacer(),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ButtonOrangeLG(
+          label: "Continue",
+          onTap: createTransaction,
         ),
       ),
     );

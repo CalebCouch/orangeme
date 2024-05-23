@@ -208,7 +208,7 @@ class Send2State extends State<Send2> {
     print("Amount to send: ${widget.amount}");
     return PopScope(
       canPop: true,
-      //prevents clipboard parse from running off screen
+      //prevents clipboard refresh timer from continuing to run off screen
       onPopInvoked: (bool didPop) async {
         _stopTimer();
       },
@@ -217,46 +217,43 @@ class Send2State extends State<Send2> {
           elevation: 0,
           title: const Text('Bitcoin Address'),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TextInputField(
-                  controller: recipientAddressController,
-                  hint: "Bitcoin address...",
-                ),
-                const SizedBox(height: 10),
-                //only show this section if the users clipboard contains a valid address
-                if (clipboardData != '') ...[
-                  ButtonSecondaryMD(
-                    label: truncateAddress(clipboardData),
-                    icon: "clipboard",
-                    onTap: () => pasteAddress(),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "or",
-                    style: AppTextStyles.textSM
-                        .copyWith(color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: 5),
-                ],
-                //always show this section
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextInputField(
+                controller: recipientAddressController,
+                hint: "Bitcoin address...",
+              ),
+              const SizedBox(height: 10),
+              //only show this section if the user's clipboard contains a valid BTC address
+              if (clipboardData != '') ...[
                 ButtonSecondaryMD(
-                  label: "Scan QR Code",
-                  icon: 'qrcode',
-                  onTap: _startQRScanner,
+                  label: truncateAddress(clipboardData),
+                  icon: "clipboard",
+                  onTap: () => pasteAddress(),
                 ),
-                const SizedBox(height: 30),
-                ButtonOrangeLG(
-                  label: "Continue",
-                  onTap: () => onContinue(),
-                  isEnabled: isButtonEnabled,
+                const SizedBox(height: 5),
+                Text(
+                  "or",
+                  style: AppTextStyles.textSM
+                      .copyWith(color: AppColors.textSecondary),
                 ),
+                const SizedBox(height: 5),
               ],
-            ),
+              ButtonSecondaryMD(
+                label: "Scan QR Code",
+                icon: 'qrcode',
+                onTap: _startQRScanner,
+              ),
+              const Spacer(),
+              ButtonOrangeLG(
+                label: "Continue",
+                onTap: () => onContinue(),
+                isEnabled: isButtonEnabled,
+              ),
+            ],
           ),
         ),
       ),
