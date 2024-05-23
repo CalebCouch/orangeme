@@ -35,7 +35,7 @@ class Send3State extends State<Send3> {
   //create the transaction for display on the next page of the flow
   void createTransaction() async {
     var desc = await STORAGE.read(key: "descriptors");
-    String db = await GetDBPath();
+    String db = await getDBPath();
     double convertedAmount = widget.amount * 100000000;
     if (desc != null) {
       print("database: $db");
@@ -49,7 +49,7 @@ class Send3State extends State<Send3> {
         convertedAmount.round().toString()
       ]);
       if (!mounted) return;
-      var json = HandleError(jsonRes, context);
+      var json = handleError(jsonRes, context);
       navigate(json);
     }
     print("building tx and sending user to confirmation screen");

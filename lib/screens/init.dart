@@ -31,16 +31,16 @@ class InitPageState extends State<InitPage> {
       var descriptorsRes =
           await invoke(method: "get_new_singlesig_descriptor", args: []);
       if (!mounted) return;
-      descriptors = HandleError(descriptorsRes, context);
+      descriptors = handleError(descriptorsRes, context);
       await STORAGE.write(key: "descriptors", value: descriptors);
     }
     print("desc: $descriptors");
-    String path = await GetDBPath();
+    String path = await getDBPath();
     print('Syncing Wallet...');
     var syncRes =
         await invoke(method: "sync_wallet", args: [path, descriptors]);
     if (!mounted) return;
-    HandleError(syncRes, context);
+    handleError(syncRes, context);
     setState(() {
       loading = false;
     });
@@ -50,7 +50,7 @@ class InitPageState extends State<InitPage> {
     var descriptorsRes =
         await invoke(method: "get_new_singlesig_descriptor", args: []);
     if (!mounted) return;
-    var descriptors = HandleError(descriptorsRes, context);
+    var descriptors = handleError(descriptorsRes, context);
     await STORAGE.write(key: "descriptors", value: descriptors);
     print("desc: $descriptors");
   }
@@ -75,7 +75,7 @@ class InitPageState extends State<InitPage> {
     print("dropdb");
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
-    HandleNull(descriptorsRes, context);
+    handleNull(descriptorsRes, context);
     //await dropdb(path: path, descriptors: descriptors);
     print("dropeddb");
   }
@@ -84,14 +84,14 @@ class InitPageState extends State<InitPage> {
     print("estimating fees");
     var feesRes = await invoke(method: "estimate_fees", args: []);
     if (!mounted) return;
-    var fees = HandleError(feesRes, context);
+    var fees = handleError(feesRes, context);
     print("Fees: $fees");
   }
 
   void throwError() async {
     var errorRes = await invoke(method: "throw_error", args: []);
     if (!mounted) return;
-    HandleError(errorRes, context);
+    handleError(errorRes, context);
   }
 
   void navigate() {

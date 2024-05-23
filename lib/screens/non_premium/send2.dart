@@ -145,7 +145,7 @@ class Send2State extends State<Send2> {
     print("address check:");
     var checkRes = await invoke(method: "check_address", args: [address]);
     if (!mounted) return false;
-    var check = HandleError(checkRes, context);
+    var check = handleError(checkRes, context);
     return check == "true";
   }
 

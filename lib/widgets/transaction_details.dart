@@ -69,7 +69,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
   Future<void> getHistoricalPrice(String date) async {
     if (widget.transaction.timestamp != null) {
       print('Getting Price...');
-      // var price = double.parse(HandleError(
+      // var price = double.parse(handleError(
       //     // await invoke(method: "get_historical_price", args: [date]), context));
       //     await invoke(method: "get_price")
       print("Price: ${widget.price}");

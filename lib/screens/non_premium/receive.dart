@@ -32,11 +32,11 @@ class ReceiveState extends State<Receive> {
   Future<void> getNewAddress() async {
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
-    var descriptors = HandleNull(descriptorsRes, context);
+    var descriptors = handleNull(descriptorsRes, context);
     var addressRes = await invoke(
-        method: "get_new_address", args: [await GetDBPath(), descriptors]);
+        method: "get_new_address", args: [await getDBPath(), descriptors]);
     if (!mounted) return;
-    address.value = HandleError(addressRes, context);
+    address.value = handleError(addressRes, context);
 
     setState(() {
       isLoading = false;

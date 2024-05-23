@@ -85,15 +85,15 @@ class Send4State extends State<Send4> {
     if (!mounted) return;
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
-    var descriptors = HandleNull(descriptorsRes, context);
-    String path = await GetDBPath();
+    var descriptors = handleNull(descriptorsRes, context);
+    String path = await getDBPath();
     print(transaction);
     if (!mounted) return;
     var res = await invoke(
         method: "broadcast_transaction",
         args: [path, descriptors, transaction]);
     if (mounted) {
-      HandleError(res, context);
+      handleError(res, context);
       await navigateHome();
     }
   }

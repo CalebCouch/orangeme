@@ -66,14 +66,14 @@ class DashboardState extends State<Dashboard>
     print('Refresh Initiatied...');
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
-    var descriptors = HandleNull(descriptorsRes, context);
-    String path = await GetDBPath();
+    var descriptors = handleNull(descriptorsRes, context);
+    String path = await getDBPath();
     if (initialLoad == false) {
       print('Sync Wallet...');
       var syncRes =
           await invoke(method: "sync_wallet", args: [path, descriptors]);
       if (!mounted) return;
-      HandleError(syncRes, context);
+      handleError(syncRes, context);
     } else if (initialLoad == true) {
       setState(() {
         initialLoad = false;
@@ -84,14 +84,14 @@ class DashboardState extends State<Dashboard>
     var balanceRes =
         await invoke(method: "get_balance", args: [path, descriptors]);
     if (!mounted) return;
-    balance.value = int.parse(HandleError(balanceRes, context));
+    balance.value = int.parse(handleError(balanceRes, context));
     print("Balance: ${balance.value}");
 
     print('Getting Transactions...');
     var jsonRes =
         await invoke(method: "get_transactions", args: [path, descriptors]);
     if (!mounted) return;
-    String json = HandleError(jsonRes, context);
+    String json = handleError(jsonRes, context);
     print("json: $json");
     final Iterable decodeJson = jsonDecode(json);
     transactions.value =
@@ -102,7 +102,7 @@ class DashboardState extends State<Dashboard>
     print('Getting Price...');
     var priceRes = await invoke(method: "get_price", args: []);
     if (!mounted) return;
-    price.value = double.parse(HandleError(priceRes, context));
+    price.value = double.parse(handleError(priceRes, context));
     print("Price: ${price.value}");
 
     if (loading == true) {
