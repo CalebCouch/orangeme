@@ -154,7 +154,11 @@ class Send2State extends State<Send2> {
   void onContinue() {
     _stopTimer();
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Send3()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => Send3(
+                amount: widget.amount,
+                address: recipientAddressController.text)));
   }
 
   String truncateAddress(address) {

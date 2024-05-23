@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:orange/screens/spending/spending_dashboard.dart';
 
 class Send3 extends StatefulWidget {
-  const Send3({super.key});
+  final double amount;
+  final String address;
+
+  const Send3({super.key, required this.amount, required this.address});
 
   @override
   Send3State createState() => Send3State();
