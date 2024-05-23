@@ -143,9 +143,10 @@ class Send2State extends State<Send2> {
   //check whether or not a string is a valid bitcoin address
   Future<bool> checkAddress(String address) async {
     print("address check:");
-    var res = HandleError(
-        await invoke(method: "check_address", args: [address]), context);
-    return res == "true";
+    var checkRes = await invoke(method: "check_address", args: [address]);
+    if (!mounted) return false;
+    var check = HandleError(checkRes, context);
+    return check == "true";
   }
 
   //watches for updates to the address text field and validates the address to enable/disable the continue button

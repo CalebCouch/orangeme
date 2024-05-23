@@ -71,7 +71,7 @@ class InitPageState extends State<InitPage> {
     }
   }
 
-  void DropDB() async {
+  void dropDB() async {
     print("dropdb");
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
@@ -106,7 +106,7 @@ class InitPageState extends State<InitPage> {
         // Enables scrolling
         padding: const EdgeInsets.all(16.0),
         child: loading
-            ? Container(
+            ? SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: const Center(child: CircularProgressIndicator()))
@@ -152,7 +152,7 @@ class InitPageState extends State<InitPage> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => {DropDB()},
+                    onPressed: () => {dropDB()},
                     child: const Text('drop'),
                   ),
                   const SizedBox(height: 50),

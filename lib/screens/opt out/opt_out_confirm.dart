@@ -64,7 +64,7 @@ class OptOutConfirmState extends State<OptOutConfirm> {
               ),
             ),
             const SizedBox(height: 30),
-            Text('Enter \"$message\" to continue',
+            Text('Enter $message to continue',
                 style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 20),
             TextField(
