@@ -35,10 +35,10 @@ class Send2State extends State<Send2> {
   @override
   void initState() {
     super.initState();
+    fetchAndValidateClipboard();
     // recipientAddressController
     //     .addListener(trimAddressPrefix(recipientAddressController.text));
-    // recipientAddressController
-    //     .addListener(checkAddress(recipientAddressController.text));
+    recipientAddressController.addListener(buttonListner);
     // fetchAndValidateClipboard();
     clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) {
@@ -49,7 +49,6 @@ class Send2State extends State<Send2> {
 
   Future<void> fetchAndValidateClipboard() async {
     if (!mounted) return;
-
     print("Checking Clipboard Data");
     ClipboardData? clipboardData =
         await Clipboard.getData(Clipboard.kTextPlain);
@@ -102,7 +101,11 @@ class Send2State extends State<Send2> {
     controller = newController;
     controller!.scannedDataStream.listen((scanData) async {
       print('Scanned Data: ${scanData.code}');
-      recipientAddressController.text = scanData.code ?? '';
+      String trimmed = trimAddressPrefix(scanData.code);
+      var validAddress = await checkAddress(trimmed);
+      if (validAddress) {
+        recipientAddressController.text = trimmed;
+      }
       await controller!.stopCamera(); // Stop the camera
       closeDialog(); // Close the QR code scanner dialog
     });
@@ -117,9 +120,6 @@ class Send2State extends State<Send2> {
 
   pasteAddress() {
     recipientAddressController.text = clipboardData;
-    setState(() {
-      isButtonEnabled = true;
-    });
   }
 
   String trimAddressPrefix(String? contents) {
@@ -139,13 +139,25 @@ class Send2State extends State<Send2> {
     return res == "true";
   }
 
+  void buttonListner() async {
+    if (await checkAddress(recipientAddressController.text) == true) {
+      setState(() {
+        isButtonEnabled = true;
+      });
+    } else {
+      setState(() {
+        isButtonEnabled = false;
+      });
+    }
+  }
+
   void onContinue() {
     _stopTimer();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => Send3()));
   }
 
-  String shortenAddress(address) {
+  String truncateAddress(address) {
     if (address.length > 30) {
       final firstPart = address.substring(0, 15);
       return '$firstPart...';
@@ -198,7 +210,7 @@ class Send2State extends State<Send2> {
                 const SizedBox(height: 10),
                 if (clipboardData != '') ...[
                   ButtonSecondaryMD(
-                    label: shortenAddress(clipboardData),
+                    label: truncateAddress(clipboardData),
                     icon: "clipboard",
                     onTap: () => pasteAddress(),
                   ),
