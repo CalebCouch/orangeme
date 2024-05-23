@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/components/buttons/orange_lg.dart';
 
 class Send4 extends StatefulWidget {
   final String tx;
@@ -90,11 +91,8 @@ class Send4State extends State<Send4> {
     await navigateHome();
   }
 
-  void discard() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const Dashboard()),
-    );
+  void confirmSend() {
+    broadcastTransaction(widget.tx);
   }
 
   Future<void> navigateHome() async {
@@ -115,7 +113,7 @@ class Send4State extends State<Send4> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Confirm Details',
+          'Confirm Send',
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -139,19 +137,10 @@ class Send4State extends State<Send4> {
             ),
             const SizedBox(height: 20),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => {broadcastTransaction(transaction.raw ?? '')},
-              child: const Text(
-                'Send',
-              ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => {discard()},
-              child: const Text(
-                'Discard',
-              ),
-            ),
+            ButtonOrangeLG(
+              label: "Confirm & send",
+              onTap: confirmSend,
+            )
           ],
         ),
       ),
