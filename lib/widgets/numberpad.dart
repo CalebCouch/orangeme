@@ -67,7 +67,8 @@ class NumberButton extends StatelessWidget {
                   height: 24,
                   child: SvgPicture.asset(
                     svgIcon!,
-                    color: AppColors.white,
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.white, BlendMode.srcIn),
                   ),
                 )
               : Text(

@@ -64,14 +64,16 @@ class DashboardState extends State<Dashboard>
   Future<void> handleRefresh() async {
     if (!mounted) return;
     print('Refresh Initiatied...');
-    var descriptors =
-        HandleNull(await STORAGE.read(key: "descriptors"), context);
+    var descriptorsRes = await STORAGE.read(key: "descriptors");
+    if (!mounted) return;
+    var descriptors = HandleNull(descriptorsRes, context);
     String path = await GetDBPath();
     if (initialLoad == false) {
       print('Sync Wallet...');
-      HandleError(
-          await invoke(method: "sync_wallet", args: [path, descriptors]),
-          context);
+      var syncRes =
+          await invoke(method: "sync_wallet", args: [path, descriptors]);
+      if (!mounted) return;
+      HandleError(syncRes, context);
     } else if (initialLoad == true) {
       setState(() {
         initialLoad = false;
@@ -79,16 +81,18 @@ class DashboardState extends State<Dashboard>
       _startTimer();
     }
     print('Getting Balance...');
-    balance.value = int.parse(HandleError(
-        await invoke(method: "get_balance", args: [path, descriptors]),
-        context));
+    var balanceRes =
+        await invoke(method: "get_balance", args: [path, descriptors]);
+    if (!mounted) return;
+    balance.value = int.parse(HandleError(balanceRes, context));
     print("Balance: ${balance.value}");
 
     print('Getting Transactions...');
-    String json = HandleError(
-        await invoke(method: "get_transactions", args: [path, descriptors]),
-        context);
-    print("json: ${json}");
+    var jsonRes =
+        await invoke(method: "get_transactions", args: [path, descriptors]);
+    if (!mounted) return;
+    String json = HandleError(jsonRes, context);
+    print("json: $json");
     final Iterable decodeJson = jsonDecode(json);
     transactions.value =
         decodeJson.map((item) => Transaction.fromJson(item)).toList();
@@ -96,8 +100,9 @@ class DashboardState extends State<Dashboard>
     print(transactions.value);
 
     print('Getting Price...');
-    price.value = double.parse(
-        HandleError(await invoke(method: "get_price", args: []), context));
+    var priceRes = await invoke(method: "get_price", args: []);
+    if (!mounted) return;
+    price.value = double.parse(HandleError(priceRes, context));
     print("Price: ${price.value}");
 
     if (loading == true) {

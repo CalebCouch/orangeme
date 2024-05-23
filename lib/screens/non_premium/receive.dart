@@ -30,12 +30,13 @@ class ReceiveState extends State<Receive> {
 
   //generate a fresh Bitcoin address
   Future<void> getNewAddress() async {
-    var descriptors =
-        HandleNull(await STORAGE.read(key: "descriptors"), context);
-    address.value = HandleError(
-        await invoke(
-            method: "get_new_address", args: [await GetDBPath(), descriptors]),
-        context);
+    var descriptorsRes = await STORAGE.read(key: "descriptors");
+    if (!mounted) return;
+    var descriptors = HandleNull(descriptorsRes, context);
+    var addressRes = await invoke(
+        method: "get_new_address", args: [await GetDBPath(), descriptors]);
+    if (!mounted) return;
+    address.value = HandleError(addressRes, context);
 
     setState(() {
       isLoading = false;

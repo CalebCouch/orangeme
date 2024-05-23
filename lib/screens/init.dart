@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'non_premium/dashboard.dart';
-import 'package:orange/classes.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
@@ -29,27 +28,31 @@ class InitPageState extends State<InitPage> {
     var descriptors = await STORAGE.read(key: "descriptors");
     print("read from DB");
     if (descriptors == null) {
-      descriptors = HandleError(
-          await invoke(method: "get_new_singlesig_descriptor", args: []),
-          context);
+      var descriptorsRes =
+          await invoke(method: "get_new_singlesig_descriptor", args: []);
+      if (!mounted) return;
+      descriptors = HandleError(descriptorsRes, context);
       await STORAGE.write(key: "descriptors", value: descriptors);
     }
     print("desc: $descriptors");
     String path = await GetDBPath();
     print('Syncing Wallet...');
-    HandleError(await invoke(method: "sync_wallet", args: [path, descriptors]),
-        context);
+    var syncRes =
+        await invoke(method: "sync_wallet", args: [path, descriptors]);
+    if (!mounted) return;
+    HandleError(syncRes, context);
     setState(() {
       loading = false;
     });
   }
 
   void genSeed() async {
-    var descriptors = HandleError(
-        await invoke(method: "get_new_singlesig_descriptor", args: []),
-        context);
+    var descriptorsRes =
+        await invoke(method: "get_new_singlesig_descriptor", args: []);
+    if (!mounted) return;
+    var descriptors = HandleError(descriptorsRes, context);
     await STORAGE.write(key: "descriptors", value: descriptors);
-    print("desc: ${descriptors}");
+    print("desc: $descriptors");
   }
 
   void checkPlatform() {
@@ -70,27 +73,30 @@ class InitPageState extends State<InitPage> {
 
   void DropDB() async {
     print("dropdb");
-    var descriptors =
-        HandleNull(await STORAGE.read(key: "descriptors"), context);
-    String path = await GetDBPath();
+    var descriptorsRes = await STORAGE.read(key: "descriptors");
+    if (!mounted) return;
+    HandleNull(descriptorsRes, context);
     //await dropdb(path: path, descriptors: descriptors);
     print("dropeddb");
   }
 
   void estimateFees() async {
     print("estimating fees");
-    var fees =
-        HandleError(await invoke(method: "estimate_fees", args: []), context);
+    var feesRes = await invoke(method: "estimate_fees", args: []);
+    if (!mounted) return;
+    var fees = HandleError(feesRes, context);
     print("Fees: $fees");
   }
 
   void throwError() async {
-    HandleError(await invoke(method: "throw_error", args: []), context);
+    var errorRes = await invoke(method: "throw_error", args: []);
+    if (!mounted) return;
+    HandleError(errorRes, context);
   }
 
   void navigate() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Dashboard()));
+        context, MaterialPageRoute(builder: (context) => const Dashboard()));
   }
 
   @override
