@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:orange/screens/error.dart';
 
-final STORAGE = new FlutterSecureStorage();
+// ignore: constant_identifier_names
+const STORAGE = FlutterSecureStorage();
 
 Future<String> getDBPath() async {
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
-  Directory mydir =
-      await new Directory(appDocDirectory.path + '/' + 'sqlitedata6.db')
-          .create(recursive: true);
+  Directory mydir = await Directory('${appDocDirectory.path}/sqlitedata6.db')
+      .create(recursive: true);
   return mydir.path;
 }
 
