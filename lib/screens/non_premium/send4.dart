@@ -5,6 +5,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
+import 'package:orange/styles/constants.dart';
 
 class Send4 extends StatefulWidget {
   final String tx;
@@ -120,22 +121,60 @@ class Send4State extends State<Send4> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'Address: ${transaction.receiver}',
-              style: Theme.of(context).textTheme.displayLarge,
+            const Text(
+              'Confirm Address',
+              style: AppTextStyles.heading5,
+            ),
+            const SizedBox(height: 10),
+            Text("${transaction.receiver}", style: AppTextStyles.textSM),
+            const SizedBox(height: 10),
+            Text("Bitcion sent to the wrong address can never be recovered",
+                style: AppTextStyles.textSM
+                    .copyWith(color: AppColors.textSecondary)),
+            const SizedBox(height: 20),
+            const Text(
+              'Confirm Amount',
+              style: AppTextStyles.heading5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                const Text(
+                  'Send Amount',
+                  style: AppTextStyles.textSM,
+                ),
+                Text('${transaction.net.abs()}', style: AppTextStyles.textSM),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                const Text(
+                  'Fee Amount',
+                  style: AppTextStyles.textSM,
+                ),
+                Text('${transaction.fee}', style: AppTextStyles.textSM),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                const Text(
+                  'Total Amount',
+                  style: AppTextStyles.textSM,
+                ),
+                Text('${transaction.net.abs()}', style: AppTextStyles.textSM),
+              ],
             ),
             const SizedBox(height: 20),
-            Text(
-              'Amount: ${transaction.net}',
-              style: Theme.of(context).textTheme.displayLarge,
+            const Text(
+              'Confirm Amount',
+              style: AppTextStyles.heading5,
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Fee: ${transaction.fee}',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            const SizedBox(height: 20),
             const SizedBox(height: 20),
             ButtonOrangeLG(
               label: "Confirm & send",
