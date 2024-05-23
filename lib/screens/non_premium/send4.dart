@@ -137,81 +137,150 @@ class Send4State extends State<Send4> {
       appBar: AppBar(
         title: const Text(
           'Confirm Send',
-          style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              'Confirm Address',
-              style: AppTextStyles.heading5,
-            ),
-            const SizedBox(height: 10),
-            Text("${transaction.receiver}", style: AppTextStyles.textSM),
-            const SizedBox(height: 10),
-            Text("Bitcion sent to the wrong address can never be recovered",
-                style: AppTextStyles.textSM
-                    .copyWith(color: AppColors.textSecondary)),
-            const SizedBox(height: 10),
-            ButtonSecondaryMD(
-                label: "Address", icon: "edit", onTap: editAddress),
-            const SizedBox(height: 20),
-            const Text(
-              'Confirm Amount',
-              style: AppTextStyles.heading5,
-            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                const Text(
-                  'Send Amount',
-                  style: AppTextStyles.textSM,
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.offBlack,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    '1',
+                    style: AppTextStyles.heading6,
+                  ),
                 ),
-                Text('${transaction.net.abs()}', style: AppTextStyles.textSM),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const Text(
-                  'Fee Amount',
-                  style: AppTextStyles.textSM,
-                ),
-                Text('${transaction.fee}', style: AppTextStyles.textSM),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const Text(
-                  'Total Amount',
-                  style: AppTextStyles.textSM,
-                ),
-                Text('${transaction.net.abs()}', style: AppTextStyles.textSM),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                ButtonSecondaryMD(
-                    label: "Amount", icon: "edit", onTap: editAmount),
                 const SizedBox(width: 10),
-                ButtonSecondaryMD(
-                    label: "Speed", icon: "edit", onTap: editSpeed),
+                const Text(
+                  'Confirm Address',
+                  style: AppTextStyles.heading5,
+                ),
               ],
             ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 42),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "${transaction.receiver}",
+                    style: AppTextStyles.textSM,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Bitcoin sent to the wrong address can never be recovered.",
+                    style: AppTextStyles.textSM
+                        .copyWith(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 20),
+                  ButtonSecondaryMD(
+                      label: "Address", icon: "edit", onTap: editAddress),
+                ],
+              ),
+            ),
             const SizedBox(height: 20),
-            ButtonOrangeLG(
-              label: "Confirm & send",
-              onTap: confirmSend,
-            )
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[850],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    '2',
+                    style: AppTextStyles.heading6,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  'Confirm Amount',
+                  style: AppTextStyles.heading5,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 42),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        'Send Amount',
+                        style: AppTextStyles.textSM,
+                      ),
+                      Text(
+                        '\$${transaction.net.abs()}',
+                        style: AppTextStyles.textSM,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        'Fee Amount',
+                        style: AppTextStyles.textSM,
+                      ),
+                      Text(
+                        '\$${transaction.fee}',
+                        style: AppTextStyles.textSM,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        'Total Amount',
+                        style: AppTextStyles.textSM,
+                      ),
+                      Text(
+                        '\$${transaction.net}',
+                        style: AppTextStyles.textSM,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      ButtonSecondaryMD(
+                          label: "Amount", icon: "edit", onTap: editAmount),
+                      const SizedBox(width: 10),
+                      ButtonSecondaryMD(
+                          label: "Speed", icon: "edit", onTap: editSpeed),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ButtonOrangeLG(
+          label: "Confirm & Send",
+          onTap: confirmSend,
+          isEnabled: true,
         ),
       ),
     );
