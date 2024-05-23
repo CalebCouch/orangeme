@@ -26,32 +26,6 @@ class Send4State extends State<Send4> {
   void dispose() {
     super.dispose();
   }
-
-  // void createTransaction() async {
-  //   var desc = await STORAGE.read(key: "descriptors");
-  //   String db = await GetDBPath();
-  //   if (desc != null) {
-  //     print("database: $db");
-  //     print("descriptor: $desc");
-  //     print("Address: ${recipientAddressController.text}");
-  //     print("Amount: ${widget.amount}");
-  //     var json = HandleError(
-  //         await invoke(method: "create_transaction", args: [
-  //           db.toString(),
-  //           desc.toString(),
-  //           recipientAddressController.text.toString(),
-  //           widget.amount.round().toString()
-  //         ]),
-  //         context);
-  //     Navigator.of(context).push(
-  //       MaterialPageRoute(
-  //         builder: (context) => Send3(tx: json),
-  //       ),
-  //     );
-  //   }
-  //   print("building tx and sending user to confirmation screen");
-  // }
-
   // void _showSuccessAnimation(BuildContext context) {
   //   if (_isSuccessDisplayed) return;
   //   _isSuccessDisplayed = true;
