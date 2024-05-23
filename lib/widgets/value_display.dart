@@ -12,6 +12,7 @@ class ValueDisplay extends StatelessWidget {
     required this.quantity,
   });
 
+  //formats an amount of dollars with commas if necessary
   String formatFiatAmount(String fiatAmount) {
     double? number = double.tryParse(fiatAmount);
     if (number == null) {

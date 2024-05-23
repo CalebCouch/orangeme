@@ -20,9 +20,10 @@ class Send1State extends State<Send1> {
       GlobalKey<KeyboardValueDisplayState>();
   bool isButtonEnabled = false;
 
+  //algorithim used to control the logic of the virtual keyboard
   void _updateAmount(String input) {
     double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
-    String tempAmount = amount; // Current displayed amount
+    String tempAmount = amount; // Currently displayed amount
 
     if (input == "backspace") {
       // When input is backspace, handle deletion
@@ -62,10 +63,11 @@ class Send1State extends State<Send1> {
     }
     setState(() {
       amount = tempAmount;
-      evaluateButton(); // Evaluate if the send/submit button should be active
+      evaluateButton();
     });
   }
 
+  //evalute if the send button should be activated
   void evaluateButton() {
     double? amountDouble = double.tryParse(amount);
     if (amountDouble != null && amountDouble >= 0.01) {
@@ -75,6 +77,7 @@ class Send1State extends State<Send1> {
     }
   }
 
+  //format a number of satoshis into dollars at the last known exchange rate
   String formatDollarsToSats(String amount, double? price) {
     if (amount == "" || amount == "0.00" || amount == "0." || amount == "0") {
       return "0.00000000";
@@ -91,6 +94,7 @@ class Send1State extends State<Send1> {
     }
   }
 
+  //used to navigate to the next page in the send flow
   void onContinue() {
     String qty = formatDollarsToSats(amount, widget.price);
     Navigator.pushReplacement(

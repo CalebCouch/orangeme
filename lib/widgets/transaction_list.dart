@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/widgets/transaction_details.dart';
 
+//formats a unix timestamp into a human readable date
 String formatTimestamp(DateTime? time) {
   if (time == null) {
     return "Pending";
@@ -29,11 +30,13 @@ String formatTimestamp(DateTime? time) {
   }
 }
 
+//formats a number of satoshis into dollars at the current price
 String formatSatsToDollars(int sats, double price) {
   double amount = (sats / 100000000) * price;
   return "${amount >= 0 ? '' : '- '}\$${amount.abs().toStringAsFixed(2)}";
 }
 
+//lists all of the transaction cards
 Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
     ValueNotifier<double> price) {
   return ValueListenableBuilder<List<Transaction>>(
@@ -51,6 +54,7 @@ Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
   );
 }
 
+//each transaction card represents a single transaction
 Widget buildTransactionCard(BuildContext context, Transaction transaction,
     ValueNotifier<double> price) {
   return InkWell(

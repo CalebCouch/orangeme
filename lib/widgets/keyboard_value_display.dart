@@ -46,11 +46,13 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     super.dispose();
   }
 
+  //displays a short shaking animation to warn a user against an illegal keyboard input
   void shake() {
     _animationController.forward(from: 0);
     HapticFeedback.mediumImpact();
   }
 
+  //formats a provided amount with commas if necessary
   String formatFiatAmount(String fiatAmount) {
     if (fiatAmount.endsWith(".") ||
         fiatAmount.endsWith(".0") ||
@@ -100,6 +102,7 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                 TextSpan(
                   children: <TextSpan>[
                     TextSpan(
+                        //conditionally decrease the font size if the text field grows beyond a certain length
                         text: "\$",
                         style: widget.fiatAmount.length >= 7
                             ? AppTextStyles.heading2

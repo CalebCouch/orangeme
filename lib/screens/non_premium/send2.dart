@@ -36,10 +36,7 @@ class Send2State extends State<Send2> {
   void initState() {
     super.initState();
     fetchAndValidateClipboard();
-    // recipientAddressController
-    //     .addListener(trimAddressPrefix(recipientAddressController.text));
     recipientAddressController.addListener(buttonListner);
-    // fetchAndValidateClipboard();
     clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) {
         fetchAndValidateClipboard();
@@ -47,13 +44,17 @@ class Send2State extends State<Send2> {
     });
   }
 
+  //used to periodically parse the users clipboard for display within an onscreen button
   Future<void> fetchAndValidateClipboard() async {
+    //will only fire if the widget lifecyle is still mounted (prevents async errors when navigating away)
     if (!mounted) return;
     print("Checking Clipboard Data");
     ClipboardData? clipboardData =
         await Clipboard.getData(Clipboard.kTextPlain);
     if (clipboardData?.text != null) {
+      //trim 'bitcoin:' address prefixes
       String trimmedData = trimAddressPrefix(clipboardData!.text);
+      //the address will only populate the button if it first passes this valid btc address check
       bool isValid = await checkAddress(trimmedData);
       if (isValid) {
         setState(() {
@@ -67,6 +68,7 @@ class Send2State extends State<Send2> {
     }
   }
 
+  //starts the qr code scanner and builds the dialog box
   void _startQRScanner() {
     showDialog(
       context: context,
@@ -97,11 +99,14 @@ class Send2State extends State<Send2> {
     );
   }
 
+  //handles the data intercepted by a good QR code scan
   void _onQRViewCreated(QRViewController newController) {
     controller = newController;
     controller!.scannedDataStream.listen((scanData) async {
       print('Scanned Data: ${scanData.code}');
+      //trim "bitcoin:" address prefix
       String trimmed = trimAddressPrefix(scanData.code);
+      //the address will only populate the text field if it first passes this valid btc address check
       var validAddress = await checkAddress(trimmed);
       if (validAddress) {
         recipientAddressController.text = trimmed;
@@ -111,6 +116,7 @@ class Send2State extends State<Send2> {
     });
   }
 
+  //close the QR code dialog window
   void closeDialog() {
     Navigator.of(context).pop();
     if (controller != null && mounted) {
@@ -118,10 +124,12 @@ class Send2State extends State<Send2> {
     }
   }
 
+  //paste the contents of the users clipboard into the address text input field
   pasteAddress() {
     recipientAddressController.text = clipboardData;
   }
 
+  //used to check for and then trim the "bitcoin:" address prefix included on some addresses
   String trimAddressPrefix(String? contents) {
     if (contents!.startsWith('bitcoin:')) {
       //remove the bitcoin: prefix if applicable
@@ -132,6 +140,7 @@ class Send2State extends State<Send2> {
     }
   }
 
+  //check whether or not a string is a valid bitcoin address
   Future<bool> checkAddress(String address) async {
     print("address check:");
     var res = HandleError(
@@ -139,6 +148,7 @@ class Send2State extends State<Send2> {
     return res == "true";
   }
 
+  //watches for updates to the address text field and validates the address to enable/disable the continue button
   void buttonListner() async {
     if (await checkAddress(recipientAddressController.text) == true) {
       setState(() {
@@ -151,8 +161,9 @@ class Send2State extends State<Send2> {
     }
   }
 
+  //navigate to the next page in the send flow
   void onContinue() {
-    _stopTimer();
+    _stopTimer(); //prevents clipboard parse from running off screen
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -161,6 +172,7 @@ class Send2State extends State<Send2> {
                 address: recipientAddressController.text)));
   }
 
+  //used to shorten a bitcoin address on the users clipboard for button display
   String truncateAddress(address) {
     if (address.length > 30) {
       final firstPart = address.substring(0, 15);
@@ -169,6 +181,7 @@ class Send2State extends State<Send2> {
     return address;
   }
 
+  //stops the QR code scanner
   void _stopQRScanner() {
     if (controller != null) {
       Navigator.pop(context);
@@ -176,6 +189,7 @@ class Send2State extends State<Send2> {
     }
   }
 
+  //used to stop the clipbard parse timer
   void _stopTimer() {
     print("stop timer...");
     clipboardCheckTimer?.cancel();
@@ -193,6 +207,7 @@ class Send2State extends State<Send2> {
     print("Amount to send: ${widget.amount}");
     return PopScope(
       canPop: true,
+      //prevents clipboard parse from running off screen
       onPopInvoked: (bool didPop) async {
         _stopTimer();
       },
@@ -212,6 +227,7 @@ class Send2State extends State<Send2> {
                   hint: "Bitcoin address...",
                 ),
                 const SizedBox(height: 10),
+                //only show this section if the users clipboard contains a valid address
                 if (clipboardData != '') ...[
                   ButtonSecondaryMD(
                     label: truncateAddress(clipboardData),
@@ -226,6 +242,7 @@ class Send2State extends State<Send2> {
                   ),
                   const SizedBox(height: 5),
                 ],
+                //always show this section
                 ButtonSecondaryMD(
                   label: "Scan QR Code",
                   icon: 'qrcode',

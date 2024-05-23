@@ -32,6 +32,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
     super.dispose();
   }
 
+  //formats a provided number of satoshis into dollars at the current price
   String formatSatsToDollars(int sats, String price) {
     print("formatting sats to dollars...");
     print("sats: $sats");
@@ -41,6 +42,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
     return amount.toStringAsFixed(2);
   }
 
+  //formats a unix time stamps into the necessary date format for either spot API or widget display
   String formatTimestamp(DateTime? time, bool api) {
     if (time == null) {
       return "Pending";
@@ -51,6 +53,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
     }
   }
 
+  //formats a unix time stamps into the local time
   String formatTime(DateTime? time) {
     if (time == null) {
       return "Pending";
@@ -61,6 +64,8 @@ class TransactionDetailsState extends State<TransactionDetails> {
     }
   }
 
+  //used to retrieve the historical spot price from the date of transaction confirmation
+  //Currently broken
   Future<void> getHistoricalPrice(String date) async {
     if (widget.transaction.timestamp != null) {
       print('Getting Price...');
@@ -76,6 +81,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
     }
   }
 
+  //navigate out of the detailed transaction popup (returns to dashboard)
   void goBack(BuildContext context) {
     Navigator.pop(context);
   }
@@ -84,6 +90,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
   Widget build(BuildContext context) {
     print("Transaction Details Builder...");
     print("transaction net: ${widget.transaction.net}");
+    //logic used to evaluate the format of the transaction details widget based on send or receive tx
     String title =
         widget.transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin";
     final displayPrice = widget.price.toString();

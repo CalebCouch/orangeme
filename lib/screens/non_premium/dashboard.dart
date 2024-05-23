@@ -44,6 +44,7 @@ class DashboardState extends State<Dashboard>
     super.dispose();
   }
 
+  //start the timer that periodically runs a data refresh
   void _startTimer() {
     print("start timer....");
     _timer = Timer(const Duration(seconds: 15), () {
@@ -53,11 +54,13 @@ class DashboardState extends State<Dashboard>
     });
   }
 
+  //stop the timer controlling the data refresh
   void _stopTimer() {
     print("stop timer...");
     _timer?.cancel();
   }
 
+  //sync wallet and get transaction list, current price, and balance
   Future<void> handleRefresh() async {
     if (!mounted) return;
     print('Refresh Initiatied...');
@@ -104,6 +107,7 @@ class DashboardState extends State<Dashboard>
     }
   }
 
+  //format a number of satoshis into dollars at the current price
   String formatSatsToDollars(int sats, double price) {
     print("formatting...sats: $sats price: $price");
     double amount = (sats / 100000000) * price;

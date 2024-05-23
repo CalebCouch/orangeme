@@ -23,10 +23,12 @@ class ReceiveState extends State<Receive> {
     super.initState();
   }
 
+  //page initialization
   void onPageLoad() async {
     await getNewAddress();
   }
 
+  //generate a fresh Bitcoin address
   Future<void> getNewAddress() async {
     var descriptors =
         HandleNull(await STORAGE.read(key: "descriptors"), context);
@@ -40,19 +42,11 @@ class ReceiveState extends State<Receive> {
     });
   }
 
+  //used to bring up the OS native share window
   void onShare() {
     final String textToShare = address.value;
     Share.share(textToShare);
   }
-
-  // String shortenAddress(address) {
-  //   if (address.length > 30) {
-  //     final firstPart = address.substring(0, 15);
-  //     final lastPart = address.substring(address.length - 15);
-  //     return '$firstPart...$lastPart';
-  //   }
-  //   return address;
-  // }
 
   @override
   Widget build(BuildContext context) {
