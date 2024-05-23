@@ -6,6 +6,7 @@ import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:orange/components/buttons/secondary_md.dart';
 
 class Send4 extends StatefulWidget {
   final String tx;
@@ -22,6 +23,7 @@ class Send4State extends State<Send4> {
   @override
   void initState() {
     super.initState();
+    updatePrice();
   }
 
   @override
@@ -80,16 +82,21 @@ class Send4State extends State<Send4> {
   // }
 
   void broadcastTransaction(String transaction) async {
+    if (!mounted) return;
     var descriptors =
         HandleNull(await STORAGE.read(key: "descriptors"), context);
     String path = await GetDBPath();
     print(transaction);
-    var res = HandleError(
-        await invoke(
-            method: "broadcast_transaction",
-            args: [path, descriptors, transaction]),
-        context);
-    await navigateHome();
+    if (!mounted) return;
+
+    var res = await invoke(
+        method: "broadcast_transaction",
+        args: [path, descriptors, transaction]);
+
+    if (mounted) {
+      HandleError(res, context);
+      await navigateHome();
+    }
   }
 
   void confirmSend() {
@@ -101,6 +108,22 @@ class Send4State extends State<Send4> {
       context,
       MaterialPageRoute(builder: (context) => const Dashboard()),
     );
+  }
+
+  void updatePrice() {
+    print("getting latest price");
+  }
+
+  void editAddress() {
+    print("edit address selected");
+  }
+
+  void editAmount() {
+    print("edit amount selected");
+  }
+
+  void editSpeed() {
+    print("edit speed selected");
   }
 
   @override
@@ -133,6 +156,9 @@ class Send4State extends State<Send4> {
             Text("Bitcion sent to the wrong address can never be recovered",
                 style: AppTextStyles.textSM
                     .copyWith(color: AppColors.textSecondary)),
+            const SizedBox(height: 10),
+            ButtonSecondaryMD(
+                label: "Address", icon: "edit", onTap: editAddress),
             const SizedBox(height: 20),
             const Text(
               'Confirm Amount',
@@ -170,10 +196,16 @@ class Send4State extends State<Send4> {
                 Text('${transaction.net.abs()}', style: AppTextStyles.textSM),
               ],
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Confirm Amount',
-              style: AppTextStyles.heading5,
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                ButtonSecondaryMD(
+                    label: "Amount", icon: "edit", onTap: editAmount),
+                const SizedBox(width: 10),
+                ButtonSecondaryMD(
+                    label: "Speed", icon: "edit", onTap: editSpeed),
+              ],
             ),
             const SizedBox(height: 20),
             ButtonOrangeLG(
