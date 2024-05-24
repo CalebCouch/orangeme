@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/components/buttons/secondary_lg.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/classes.dart';
 
 class Send5 extends StatefulWidget {
   final int amount;
