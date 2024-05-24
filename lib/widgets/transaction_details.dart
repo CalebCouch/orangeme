@@ -1,8 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:orange/widgets/value_display.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/util.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/components/buttons/secondary_lg.dart';
@@ -89,6 +89,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
   @override
   Widget build(BuildContext context) {
     print("Transaction Details Builder...");
+    print("transaction: ${widget.transaction}");
     print("transaction net: ${widget.transaction.net}");
     //logic used to evaluate the format of the transaction details widget based on send or receive tx
     String title =

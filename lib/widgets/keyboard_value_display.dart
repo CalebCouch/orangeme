@@ -118,9 +118,9 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
         );
       },
       child: Container(
-        width: 300,
+        width: 310,
         height: 221,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 45),
+        padding: const EdgeInsets.symmetric(vertical: 45),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -140,31 +140,31 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                     TextSpan(
                         //conditionally decrease the font size if the text field grows beyond a certain length
                         text: "\$",
-                        style: widget.fiatAmount.length > 6
+                        style: widget.fiatAmount.length > 7
                             ? AppTextStyles.heading2
                             : widget.fiatAmount.length > 4
                                 ? AppTextStyles.heading1.copyWith(fontSize: 55)
                                 : AppTextStyles.heading1
-                                    .copyWith(fontSize: 80)),
+                                    .copyWith(fontSize: 70)),
                     TextSpan(
                         text: formatFiatAmount(widget.fiatAmount),
-                        style: widget.fiatAmount.length > 6
+                        style: widget.fiatAmount.length > 7
                             ? AppTextStyles.heading2
                             : widget.fiatAmount.length > 4
                                 ? AppTextStyles.heading1.copyWith(fontSize: 55)
                                 : AppTextStyles.heading1
-                                    .copyWith(fontSize: 80)),
+                                    .copyWith(fontSize: 70)),
                     if (showCents)
                       TextSpan(
                           text: decimalExtension,
-                          style: widget.fiatAmount.length > 6
+                          style: widget.fiatAmount.length > 7
                               ? AppTextStyles.heading2
                                   .copyWith(color: AppColors.grey)
                               : widget.fiatAmount.length > 4
                                   ? AppTextStyles.heading1.copyWith(
                                       color: AppColors.grey, fontSize: 55)
                                   : AppTextStyles.heading1.copyWith(
-                                      color: AppColors.grey, fontSize: 80)),
+                                      color: AppColors.grey, fontSize: 70)),
                   ],
                 ),
               ),
