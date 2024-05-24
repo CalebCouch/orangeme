@@ -57,45 +57,48 @@ class ReceiveState extends State<Receive> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 312,
-                    height: 312,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 312,
+                      height: 312,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ValueListenableBuilder<String>(
+                            valueListenable: address,
+                            builder:
+                                (BuildContext context, String value, child) {
+                              return QrImageView(
+                                  data: value,
+                                  version: QrVersions.auto,
+                                  size: 200.0,
+                                  gapless: false,
+                                  // embeddedImage: const AssetImage(
+                                  //     'assets/icons/qrcode_brandmark.png'),
+                                  // embeddedImageStyle:
+                                  //     const QrEmbeddedImageStyle(
+                                  //         size: Size(68, 68)),
+                                  backgroundColor: Colors.white);
+                            },
+                          )),
                     ),
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ValueListenableBuilder<String>(
-                          valueListenable: address,
-                          builder: (BuildContext context, String value, child) {
-                            return QrImageView(
-                                data: value,
-                                version: QrVersions.auto,
-                                size: 200.0,
-                                gapless: false,
-                                // embeddedImage: const AssetImage(
-                                //     'assets/icons/qrcode_brandmark.png'),
-                                // embeddedImageStyle:
-                                //     const QrEmbeddedImageStyle(
-                                //         size: Size(68, 68)),
-                                backgroundColor: Colors.white);
-                          },
-                        )),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Scan to receive Bitcoin.',
-                    style: AppTextStyles.textMD
-                        .copyWith(color: AppColors.textSecondary),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    Text(
+                      'Scan to receive Bitcoin.',
+                      style: AppTextStyles.textMD
+                          .copyWith(color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
               ),
             ),
       bottomNavigationBar: Padding(

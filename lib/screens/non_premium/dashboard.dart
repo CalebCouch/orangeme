@@ -166,6 +166,7 @@ class DashboardState extends State<Dashboard>
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const TextMarkLG(),
+        automaticallyImplyLeading: false,
         //app bar menu, currently disabled
         // actions: [
         //   PopupMenuButton<int>(
