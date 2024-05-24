@@ -14,11 +14,12 @@ import 'send5.dart';
 class Send4 extends StatefulWidget {
   final String tx;
   final int balance;
-  const Send4({
-    super.key,
-    required this.tx,
-    required this.balance,
-  });
+  final int amount;
+  const Send4(
+      {super.key,
+      required this.tx,
+      required this.balance,
+      required this.amount});
 
   @override
   Send4State createState() => Send4State();
@@ -42,21 +43,26 @@ class Send4State extends State<Send4> {
   }
 
   void broadcastTransaction(String transaction) async {
-    // if (!mounted) return;
-    // var descriptorsRes = await STORAGE.read(key: "descriptors");
-    // if (!mounted) return;
-    // var descriptors = handleNull(descriptorsRes, context);
-    // String path = await getDBPath();
-    // print(transaction);
-    // if (!mounted) return;
-    // var res = await invoke(
-    //     method: "broadcast_transaction",
-    //     args: [path, descriptors, transaction]);
-    if (mounted) {
-      // handleError(res, context);
-
-      await navigateNext('transaction');
-    }
+    print("broadcasting transaction");
+    if (!mounted) return;
+    var descriptorsRes = await STORAGE.read(key: "descriptors");
+    if (!mounted) return;
+    var descriptors = handleNull(descriptorsRes, context);
+    print("Descriptors: ${descriptors.toString()}");
+    String path = await getDBPath();
+    print('Path: $path');
+    final transactionDecoded = Transaction.fromJson(jsonDecode(widget.tx));
+    print("transaction: ${transactionDecoded.toString()}");
+    if (!mounted) return;
+    var res = await invoke(method: "broadcast_transaction", args: [
+      path.toString(),
+      descriptors.toString(),
+      transactionDecoded.raw.toString()
+    ]);
+    if (!mounted) return;
+    var resHandled = handleError(res, context);
+    print("broadcast response: $resHandled");
+    await navigateNext(resHandled);
   }
 
   void confirmSend() {
@@ -66,7 +72,8 @@ class Send4State extends State<Send4> {
   Future<void> navigateNext(String transaction) async {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => Send5(transaction: transaction)),
+      MaterialPageRoute(
+          builder: (context) => Send5(amount: widget.amount, price: price)),
     );
   }
 
@@ -76,24 +83,26 @@ class Send4State extends State<Send4> {
     if (!mounted) return;
     setState(() {
       price = double.parse(handleError(priceRes, context));
+      print("Price response: $price");
+      updateValues();
     });
-    print("Price: $price");
-    updateValues();
   }
 
   void updateValues() {
+    print("updating values");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
+    print("transaction net: ${transaction.net}");
+    print("transaction fee: ${transaction.fee}");
+    print("price: $price");
     setState(() {
       transactionFee = (transaction.fee! / 100000000 * price) == 0.0
           ? '<0.01'
           : (transaction.fee! / 100000000 * price).toStringAsFixed(2);
       print("transaction fee: $transactionFee");
-      sendAmount =
-          ((transaction.net.abs() - transaction.fee!) / 100000000 * price)
-              .toStringAsFixed(2);
+      sendAmount = (widget.amount / 100000000 * price).toStringAsFixed(2);
       print("send amount: $sendAmount");
-      totalAmount =
-          (transaction.net.abs() / 100000000 * price).toStringAsFixed(2);
+      totalAmount = ((widget.amount + transaction.fee!) / 100000000 * price)
+          .toStringAsFixed(2);
       print("total amount: $totalAmount");
     });
   }

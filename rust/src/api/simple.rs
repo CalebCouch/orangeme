@@ -121,6 +121,8 @@ fn get_transactions(db_path: String, descs: DescriptorSet) -> Result<String, Err
     Ok(serde_json::to_string(&transactions)?)
 }
 
+
+// fn create_transaction(sats: u64) -> Result<String, Error> {
 fn create_transaction(db_path: String, descs: DescriptorSet, addr: Address, sats: u64) -> Result<String, Error> {
     let wallet = get_wallet(db_path, descs)?;
     let (mut psbt, tx_details) = {

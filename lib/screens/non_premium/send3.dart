@@ -27,7 +27,8 @@ class Send3State extends State<Send3> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => Send4(tx: json, balance: widget.balance)));
+            builder: (context) => Send4(
+                tx: json, balance: widget.balance, amount: widget.amount)));
   }
 
   //fired when user selects priority
@@ -47,15 +48,17 @@ class Send3State extends State<Send3> {
       print("database: $db");
       print("descriptor: $desc");
       print("Address: ${widget.address}");
-      print("Amount: ${widget.amount}");
+      print("Amount: ${widget.amount.toString()}");
       var jsonRes = await invoke(method: "create_transaction", args: [
         db.toString(),
         desc.toString(),
         widget.address.toString(),
         widget.amount.toString()
       ]);
+
       if (!mounted) return;
       var json = handleError(jsonRes, context);
+      print("create tx response: $json");
       navigate(json);
     }
     print("building tx and sending user to confirmation screen");

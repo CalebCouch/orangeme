@@ -64,7 +64,7 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     if (number == null) {
       return "0"; // Default to 0 if parsing fails
     } else {
-      NumberFormat format = NumberFormat("#,##0.00", "en_US");
+      NumberFormat format = NumberFormat("#,###.##", "en_US");
       return format.format(number);
     }
   }
