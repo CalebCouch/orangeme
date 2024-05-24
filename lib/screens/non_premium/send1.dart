@@ -22,7 +22,8 @@ class Send1State extends State<Send1> {
 
   //algorithim used to control the logic of the virtual keyboard
   void _updateAmount(String input) {
-    double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
+    // double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
+    double maxDollarAmount = 99999999999;
     String tempAmount = amount; // Currently displayed amount
 
     if (input == "backspace") {
@@ -126,39 +127,31 @@ class Send1State extends State<Send1> {
       appBar: AppBar(
         title: const Text('Send Bitcoin'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              KeyboardValueDisplay(
-                key: _displayKey,
-                fiatAmount: amount == '' ? '0' : amount,
-                quantity: amount == ''
-                    ? formatDollarsToBTC('0', widget.price, false)
-                    : formatDollarsToBTC(amount, widget.price, false),
-                onShake: () {},
-              ),
-              const SizedBox(height: 10),
-              NumberPad(
-                onNumberPressed: _updateAmount,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ButtonOrangeLG(
-                      label: "Send",
-                      onTap: () => onContinue(),
-                      isEnabled: isButtonEnabled,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            KeyboardValueDisplay(
+              key: _displayKey,
+              fiatAmount: amount == '' ? '0' : amount,
+              quantity: amount == ''
+                  ? formatDollarsToBTC('0', widget.price, false)
+                  : formatDollarsToBTC(amount, widget.price, false),
+              onShake: () {},
+            ),
+            NumberPad(
+              onNumberPressed: _updateAmount,
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ButtonOrangeLG(
+          label: "Send",
+          onTap: () => onContinue(),
+          isEnabled: isButtonEnabled,
         ),
       ),
     );

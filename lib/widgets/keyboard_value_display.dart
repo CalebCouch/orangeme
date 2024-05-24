@@ -57,15 +57,29 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     if (fiatAmount.endsWith(".") ||
         fiatAmount.endsWith(".0") ||
         fiatAmount.endsWith(".00")) {
-      // If the amount ends with a decimal point or zeroes, return as is.
+      // If the amount ends with a decimal or specific zeroes after a decimal, return as is.
       return fiatAmount;
     }
     double? number = double.tryParse(fiatAmount);
     if (number == null) {
-      return "0"; // Default to 0 if parsing fails
+      return "0"; // Default to 0 if parsing fails.
     } else {
+      // Create a format that shows up to two decimal places only if there are non-zero decimals.
       NumberFormat format = NumberFormat("#,###.##", "en_US");
-      return format.format(number);
+      String formattedAmount = format.format(number);
+      // Check if original input had decimals and adjust accordingly.
+      if (fiatAmount.contains('.') && fiatAmount.endsWith('0')) {
+        print("refined formatting");
+        int decimalIndex = fiatAmount.indexOf('.');
+        print("decimal index: $decimalIndex");
+        int decimals = fiatAmount.length - decimalIndex - 1;
+        print("decimals: $decimals");
+        if (decimals == 2) {
+          formattedAmount += "0";
+        }
+      }
+      print("formattedAmount: $formattedAmount");
+      return formattedAmount;
     }
   }
 
@@ -73,6 +87,28 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
   Widget build(BuildContext context) {
     print("widget fiat amount: ${widget.fiatAmount}");
     print("Formatted fiat amount: ${formatFiatAmount(widget.fiatAmount)}");
+    String amountToDisplay = widget.fiatAmount;
+    String decimalExtension = '';
+    bool showCents = false;
+    if (amountToDisplay.contains('.')) {
+      int decimalCount =
+          amountToDisplay.length - amountToDisplay.indexOf('.') - 1;
+      switch (decimalCount) {
+        case 0:
+          decimalExtension = '00';
+          showCents = true;
+          break;
+        case 1:
+          decimalExtension = '0';
+          showCents = true;
+          break;
+        case 2:
+          decimalExtension = '';
+          break;
+        default:
+          decimalExtension = '';
+      }
+    }
     return AnimatedBuilder(
       animation: _shakeAnimation,
       builder: (context, child) {
@@ -82,9 +118,9 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
         );
       },
       child: Container(
-        width: 288,
+        width: 300,
         height: 221,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 64),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 45),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -104,14 +140,31 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                     TextSpan(
                         //conditionally decrease the font size if the text field grows beyond a certain length
                         text: "\$",
-                        style: widget.fiatAmount.length >= 7
+                        style: widget.fiatAmount.length > 6
                             ? AppTextStyles.heading2
-                            : AppTextStyles.heading1),
+                            : widget.fiatAmount.length > 4
+                                ? AppTextStyles.heading1.copyWith(fontSize: 55)
+                                : AppTextStyles.heading1
+                                    .copyWith(fontSize: 80)),
                     TextSpan(
                         text: formatFiatAmount(widget.fiatAmount),
-                        style: widget.fiatAmount.length >= 7
+                        style: widget.fiatAmount.length > 6
                             ? AppTextStyles.heading2
-                            : AppTextStyles.heading1),
+                            : widget.fiatAmount.length > 4
+                                ? AppTextStyles.heading1.copyWith(fontSize: 55)
+                                : AppTextStyles.heading1
+                                    .copyWith(fontSize: 80)),
+                    if (showCents)
+                      TextSpan(
+                          text: decimalExtension,
+                          style: widget.fiatAmount.length > 6
+                              ? AppTextStyles.heading2
+                                  .copyWith(color: AppColors.grey)
+                              : widget.fiatAmount.length > 4
+                                  ? AppTextStyles.heading1.copyWith(
+                                      color: AppColors.grey, fontSize: 55)
+                                  : AppTextStyles.heading1.copyWith(
+                                      color: AppColors.grey, fontSize: 80)),
                   ],
                 ),
               ),
@@ -121,11 +174,14 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(widget.quantity.toString(), style: AppTextStyles.textLG),
+                Text(widget.quantity.toString(),
+                    style: AppTextStyles.textLG
+                        .copyWith(color: AppColors.textSecondary)),
                 const SizedBox(width: 6),
-                const Text(
+                Text(
                   ' BTC',
-                  style: AppTextStyles.textLG,
+                  style: AppTextStyles.textLG
+                      .copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),
