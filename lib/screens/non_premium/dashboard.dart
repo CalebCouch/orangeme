@@ -65,6 +65,7 @@ class DashboardState extends State<Dashboard>
     if (!mounted) return;
     print('Refresh Initiatied...');
     var descriptorsRes = await STORAGE.read(key: "descriptors");
+    print("descriptorRes: $descriptorsRes");
     if (!mounted) return;
     var descriptors = handleNull(descriptorsRes, context);
     String path = await getDBPath();
@@ -72,6 +73,7 @@ class DashboardState extends State<Dashboard>
       print('Sync Wallet...');
       var syncRes =
           await invoke(method: "sync_wallet", args: [path, descriptors]);
+      print("SyncRes: $syncRes");
       if (!mounted) return;
       handleError(syncRes, context);
     } else if (initialLoad == true) {
@@ -83,6 +85,7 @@ class DashboardState extends State<Dashboard>
     print('Getting Balance...');
     var balanceRes =
         await invoke(method: "get_balance", args: [path, descriptors]);
+    print("Balanceres: $balanceRes");
     if (!mounted) return;
     balance.value = int.parse(handleError(balanceRes, context));
     print("Balance: ${balance.value}");
@@ -90,6 +93,8 @@ class DashboardState extends State<Dashboard>
     print('Getting Transactions...');
     var jsonRes =
         await invoke(method: "get_transactions", args: [path, descriptors]);
+    print("Transactionsres: $jsonRes");
+
     if (!mounted) return;
     String json = handleError(jsonRes, context);
     print("json: $json");
@@ -100,11 +105,14 @@ class DashboardState extends State<Dashboard>
     print(transactions.value);
 
     print('Getting Price...');
-    var priceRes = await invoke(method: "get_price", args: []);
-    if (!mounted) return;
-    price.value = double.parse(handleError(priceRes, context));
-    print("Price: ${price.value}");
 
+    // var priceRes = await invoke(method: "get_price", args: []);
+    if (!mounted) return;
+    var priceRes = await invoke(method: "get_price", args: []);
+    if (priceRes.status == 200) {
+      price.value = double.parse(priceRes.message);
+    }
+    print("Price: ${price.value}");
     if (loading == true) {
       setState(() {
         loading = false;
@@ -136,6 +144,7 @@ class DashboardState extends State<Dashboard>
     });
   }
 
+  //these are used to activate the app bar menu links, currently disabled
   // void navigateBackUp() {
   //   Navigator.push(
   //       context, MaterialPageRoute(builder: (context) => const BackUp()));
@@ -157,6 +166,7 @@ class DashboardState extends State<Dashboard>
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const TextMarkLG(),
+        //app bar menu, currently disabled
         // actions: [
         //   PopupMenuButton<int>(
         //     icon: const Icon(Icons.menu),

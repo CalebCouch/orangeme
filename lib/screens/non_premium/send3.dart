@@ -6,10 +6,15 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 
 class Send3 extends StatefulWidget {
-  final double amount;
+  final int amount;
   final String address;
+  final int balance;
 
-  const Send3({super.key, required this.amount, required this.address});
+  const Send3(
+      {super.key,
+      required this.amount,
+      required this.address,
+      required this.balance});
 
   @override
   Send3State createState() => Send3State();
@@ -20,7 +25,9 @@ class Send3State extends State<Send3> {
 
   void navigate(String json) {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Send4(tx: json)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => Send4(tx: json, balance: widget.balance)));
   }
 
   //fired when user selects priority
@@ -36,17 +43,16 @@ class Send3State extends State<Send3> {
   void createTransaction() async {
     var desc = await STORAGE.read(key: "descriptors");
     String db = await getDBPath();
-    double convertedAmount = widget.amount * 100000000;
     if (desc != null) {
       print("database: $db");
       print("descriptor: $desc");
       print("Address: ${widget.address}");
-      print("Amount: $convertedAmount");
+      print("Amount: ${widget.amount}");
       var jsonRes = await invoke(method: "create_transaction", args: [
         db.toString(),
         desc.toString(),
         widget.address.toString(),
-        convertedAmount.round().toString()
+        widget.amount.toString()
       ]);
       if (!mounted) return;
       var json = handleError(jsonRes, context);

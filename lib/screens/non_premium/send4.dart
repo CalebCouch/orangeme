@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/screens/settings/settings.dart';
 import 'dashboard.dart';
 import 'dart:convert';
 import 'package:orange/src/rust/api/simple.dart';
@@ -8,12 +7,17 @@ import 'package:orange/classes.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
+import 'send2.dart';
+import 'send3.dart';
+import 'send1.dart';
 
 class Send4 extends StatefulWidget {
   final String tx;
+  final int balance;
   const Send4({
     super.key,
     required this.tx,
+    required this.balance,
   });
 
   @override
@@ -25,6 +29,7 @@ class Send4State extends State<Send4> {
   String transactionFee = '0';
   String sendAmount = '0';
   String totalAmount = '0';
+
   @override
   void initState() {
     super.initState();
@@ -94,14 +99,37 @@ class Send4State extends State<Send4> {
 
   void editAddress() {
     print("edit address selected");
+    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
+    final amount = (transaction.net.abs() - transaction.fee!).toInt();
+    print("Sending to Address screen with Amount: $amount");
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                Send2(amount: amount, balance: widget.balance)));
   }
 
   void editAmount() {
     print("edit amount selected");
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                Send1(price: price, balance: widget.balance)));
   }
 
   void editSpeed() {
     print("edit speed selected");
+    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
+    final amount = (transaction.net.abs() - transaction.fee!).toInt();
+    print("sending to edit screen with Amount: $amount");
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Send3(
+                amount: amount,
+                balance: widget.balance,
+                address: transaction.receiver!)));
   }
 
   @override

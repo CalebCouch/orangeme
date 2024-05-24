@@ -78,29 +78,44 @@ class Send1State extends State<Send1> {
   }
 
   //format a number of satoshis into dollars at the last known exchange rate
-  String formatDollarsToSats(String amount, double? price) {
-    if (amount == "" || amount == "0.00" || amount == "0." || amount == "0") {
-      return "0.00000000";
-    } else {
-      print("formatting...sat qty: $amount price: $price");
-      double? qtyNull = double.tryParse(amount);
-      if (qtyNull != null) {
-        double qty = (double.parse(amount) / price!);
-        print("formatted quantity: $qty");
-        return qty.abs().toStringAsFixed(8);
-      } else {
+  String formatDollarsToBTC(String amount, double? price, bool satsFormat) {
+    if (!satsFormat) {
+      print("sats format false, giving decimal format");
+      if (amount == "" || amount == "0.00" || amount == "0." || amount == "0") {
         return "0.00000000";
+      } else {
+        print("formatting...USD qty: $amount price: $price");
+        double? qtyNull = double.tryParse(amount);
+        if (qtyNull != null) {
+          double qty = (double.parse(amount) / price!);
+          print("formatted quantity: $qty");
+          return qty.abs().toStringAsFixed(8);
+        } else {
+          return "0.00000000";
+        }
+      }
+    } else {
+      print("sats format true, giving sats format");
+      if (amount == "" || amount == "0.00" || amount == "0." || amount == "0") {
+        return "0";
+      } else {
+        print("formatting...USD qty: $amount price: $price");
+        double qty = (double.parse(amount) / price!);
+        print("sats quantity: $qty");
+        double sats = (qty * 100000000);
+        print("formatted quantity: $sats");
+        return sats.round().toString();
       }
     }
   }
 
   //used to navigate to the next page in the send flow
   void onContinue() {
-    String qty = formatDollarsToSats(amount, widget.price);
+    int qty = int.parse(formatDollarsToBTC(amount, widget.price, true));
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => Send2(amount: double.parse(qty))));
+            builder: (context) => Send2(amount: qty, balance: widget.balance)));
   }
 
   @override
@@ -121,8 +136,8 @@ class Send1State extends State<Send1> {
                 key: _displayKey,
                 fiatAmount: amount == '' ? '0' : amount,
                 quantity: amount == ''
-                    ? formatDollarsToSats('0', widget.price)
-                    : formatDollarsToSats(amount, widget.price),
+                    ? formatDollarsToBTC('0', widget.price, false)
+                    : formatDollarsToBTC(amount, widget.price, false),
                 onShake: () {},
               ),
               const SizedBox(height: 10),
@@ -130,7 +145,6 @@ class Send1State extends State<Send1> {
                 onNumberPressed: _updateAmount,
               ),
               const SizedBox(height: 15),
-              // This SizedBox expands to fill the available space, pushing the button down
               SizedBox(
                 width: double.infinity,
                 child: Column(
