@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart';
 import 'dart:convert';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
@@ -10,6 +9,7 @@ import 'package:orange/components/buttons/secondary_md.dart';
 import 'send2.dart';
 import 'send3.dart';
 import 'send1.dart';
+import 'send5.dart';
 
 class Send4 extends StatefulWidget {
   final String tx;
@@ -42,19 +42,20 @@ class Send4State extends State<Send4> {
   }
 
   void broadcastTransaction(String transaction) async {
-    if (!mounted) return;
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
-    if (!mounted) return;
-    var descriptors = handleNull(descriptorsRes, context);
-    String path = await getDBPath();
-    print(transaction);
-    if (!mounted) return;
-    var res = await invoke(
-        method: "broadcast_transaction",
-        args: [path, descriptors, transaction]);
+    // if (!mounted) return;
+    // var descriptorsRes = await STORAGE.read(key: "descriptors");
+    // if (!mounted) return;
+    // var descriptors = handleNull(descriptorsRes, context);
+    // String path = await getDBPath();
+    // print(transaction);
+    // if (!mounted) return;
+    // var res = await invoke(
+    //     method: "broadcast_transaction",
+    //     args: [path, descriptors, transaction]);
     if (mounted) {
-      handleError(res, context);
-      await navigateHome();
+      // handleError(res, context);
+
+      await navigateNext('transaction');
     }
   }
 
@@ -62,10 +63,10 @@ class Send4State extends State<Send4> {
     broadcastTransaction(widget.tx);
   }
 
-  Future<void> navigateHome() async {
+  Future<void> navigateNext(String transaction) async {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const Dashboard()),
+      MaterialPageRoute(builder: (context) => Send5(transaction: transaction)),
     );
   }
 

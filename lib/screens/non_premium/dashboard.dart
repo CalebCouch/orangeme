@@ -235,15 +235,18 @@ class DashboardState extends State<Dashboard>
                                 ),
                                 const SizedBox(height: 10),
                                 transactionsList(transactions, price),
-                                const SizedBox(width: 10),
-                                ReceiveSend(
-                                  receiveRoute: () => const Receive(),
-                                  sendRoute: () => Send1(
-                                      balance: balance.value,
-                                      price: price.value),
-                                  onPause: _stopTimer,
-                                  onResume: _startTimer,
-                                )
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: ReceiveSend(
+                                    receiveRoute: () => const Receive(),
+                                    sendRoute: () => Send1(
+                                        balance: balance.value,
+                                        price: price.value),
+                                    onPause: _stopTimer,
+                                    onResume: _startTimer,
+                                  ),
+                                ),
                               ],
                             ),
                           ),

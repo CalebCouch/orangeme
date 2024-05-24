@@ -143,7 +143,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            padding: const EdgeInsets.all(20.0),
             child: ButtonSecondaryLG(
               label: "Done",
               onTap: () => goBack(context),

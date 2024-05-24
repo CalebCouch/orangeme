@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -113,17 +112,19 @@ class Send2State extends State<Send2> {
       if (validAddress) {
         recipientAddressController.text = trimmed;
       }
-      await controller!.stopCamera(); // Stop the camera
+      // Stop the camera
+      await controller!.stopCamera();
       closeDialog(); // Close the QR code scanner dialog
     });
   }
 
-  //close the QR code dialog window
+  //close the QR code dialog window & dispose the controller
   void closeDialog() {
-    Navigator.of(context).pop();
     if (controller != null && mounted) {
+      print("controller disposed");
       controller!.dispose();
     }
+    Navigator.of(context).pop();
   }
 
   //paste the contents of the users clipboard into the address text input field

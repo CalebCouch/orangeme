@@ -144,7 +144,6 @@ class Send1State extends State<Send1> {
               NumberPad(
                 onNumberPressed: _updateAmount,
               ),
-              const SizedBox(height: 15),
               SizedBox(
                 width: double.infinity,
                 child: Column(
