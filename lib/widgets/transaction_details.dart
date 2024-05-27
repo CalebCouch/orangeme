@@ -4,6 +4,7 @@ import 'package:orange/classes.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/components/buttons/secondary_lg.dart';
+import 'dart:convert';
 
 class TransactionDetails extends StatefulWidget {
   final Transaction transaction;
@@ -31,13 +32,19 @@ class TransactionDetailsState extends State<TransactionDetails> {
   }
 
   //formats a provided number of satoshis into dollars at the current price
-  String formatSatsToDollars(int sats, String price) {
+  String formatSatsToDollars(int sats, String price, bool absolute) {
     print("formatting sats to dollars...");
     print("sats: $sats");
     print("price within formatting sats to dollar: $price");
-    double amount = (sats / 100000000) * double.parse(price);
-    print("formatted amount: $amount");
-    return amount.toStringAsFixed(2);
+    if (absolute == true) {
+      double amount = (sats.abs() / 100000000) * double.parse(price);
+      print("formatted amount: $amount");
+      return amount.toStringAsFixed(2);
+    } else {
+      double amount = (sats / 100000000) * double.parse(price);
+      print("formatted amount: $amount");
+      return amount.toStringAsFixed(2);
+    }
   }
 
   //formats a unix time stamps into the necessary date format for either spot API or widget display
@@ -72,9 +79,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
       //     await invoke(method: "get_price")
       print("Price: ${widget.price}");
       setState(() {
-        if (widget.price != null) {
-          historicalPrice = widget.price!.toStringAsFixed(2);
-        }
+        historicalPrice = widget.price!.toStringAsFixed(2);
       });
     }
   }
@@ -87,32 +92,61 @@ class TransactionDetailsState extends State<TransactionDetails> {
   @override
   Widget build(BuildContext context) {
     print("Transaction Details Builder...");
+    print("transaction fee: ${widget.transaction.fee}");
     print("transaction: ${widget.transaction}");
     print("transaction net: ${widget.transaction.net}");
+    String displayPrice = widget.price!.toStringAsFixed(2);
+    print("display price: $displayPrice");
     //logic used to evaluate the format of the transaction details widget based on send or receive tx
+    bool send = widget.transaction.net < 0;
+    //calculate the fees in dollar terms
+    String feeAmount = '0';
+    if (send == true) {
+      print("This is a send transaction");
+      print("Historical price: $historicalPrice");
+      if (widget.transaction.timestamp != null) {
+        feeAmount = formatSatsToDollars(
+            widget.transaction.fee!, historicalPrice, false);
+        print("Fee Amount: $feeAmount");
+      } else {
+        feeAmount =
+            formatSatsToDollars(widget.transaction.fee!, displayPrice, false);
+        print("Fee Amount: $feeAmount");
+      }
+    } else {
+      print("this is a receive transaction");
+    }
+    //format the header title
     String title =
         widget.transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin";
-    String displayPrice = '0.00';
-    if (widget.price != null) {
-      displayPrice = widget.price!.toStringAsFixed(2);
-    }
-    print("display price: $displayPrice");
+    //format the date display
     String date = formatTimestamp(widget.transaction.timestamp, false);
+    //format the time display
     String time = formatTime(widget.transaction.timestamp);
+    //format the sent to or received from title
     String sendReceiveTitle =
         widget.transaction.net < 0 ? "Sent to Address" : "Received to Address";
     print("Receiver: ${widget.transaction.sender}");
     print("Sender: ${widget.transaction.receiver}");
+    //obtain the address
     String address = widget.transaction.net < 0
         ? (widget.transaction.sender ?? "null")
         : (widget.transaction.receiver ?? "null");
+    //format the amount title
     String amountSendReceiveTitle =
         widget.transaction.net < 0 ? "Amount Sent" : "Amount Received";
     String valueTitle =
         widget.transaction.net < 0 ? "USD Value Sent" : "USD Value Received";
+    //calcuate total
+    String totalAmount = widget.transaction.timestamp != null
+        ? formatSatsToDollars(widget.transaction.net, historicalPrice, true)
+        : formatSatsToDollars(widget.transaction.net, displayPrice, true);
+    String totalDisplay = widget.transaction.timestamp != null
+        ? formatSatsToDollars(widget.transaction.net, historicalPrice, false)
+        : formatSatsToDollars(widget.transaction.net, displayPrice, false);
+
     String amountSentReceived =
         (widget.transaction.net / 100000000).toStringAsFixed(8);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -120,8 +154,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
       body: Column(
         children: [
           ValueDisplay(
-            fiatAmount:
-                formatSatsToDollars(widget.transaction.net, displayPrice),
+            fiatAmount: totalDisplay,
             quantity: (widget.transaction.net / 100000000).toStringAsFixed(8),
           ),
           Expanded(
@@ -140,9 +173,21 @@ class TransactionDetailsState extends State<TransactionDetails> {
                         : "\$$displayPrice"),
                 DetailRow(
                     label: valueTitle,
-                    value: widget.transaction.timestamp != null
-                        ? "\$${formatSatsToDollars(widget.transaction.net, historicalPrice)}"
-                        : "\$${formatSatsToDollars(widget.transaction.net, displayPrice)}"),
+                    value: widget.transaction.timestamp != null && send == true
+                        ? "-\$${formatSatsToDollars((widget.transaction.net + widget.transaction.fee!), historicalPrice, true)}"
+                        : widget.transaction.timestamp != null && send == false
+                            ? "\$${formatSatsToDollars(widget.transaction.net, historicalPrice, false)}"
+                            : send == true
+                                ? "-\$${formatSatsToDollars((widget.transaction.net + widget.transaction.fee!), displayPrice, true)}"
+                                : "\$${formatSatsToDollars(widget.transaction.net, displayPrice, false)}"),
+                if (send) const SizedBox(height: 15),
+                if (send)
+                  DetailRow(label: "Fee Amount", value: "-\$$feeAmount"),
+                if (send)
+                  DetailRow(
+                    label: "Total Amount",
+                    value: send == true ? "-\$$totalAmount" : "\$$totalAmount",
+                  ),
               ],
             ),
           ),
