@@ -4,7 +4,6 @@ import 'package:orange/classes.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/components/buttons/secondary_lg.dart';
-import 'dart:convert';
 
 class TransactionDetails extends StatefulWidget {
   final Transaction transaction;
