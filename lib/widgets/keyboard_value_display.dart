@@ -46,13 +46,13 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     super.dispose();
   }
 
-  //displays a short shaking animation to warn a user against an illegal keyboard input
+  // Displays a short shaking animation to warn a user against an illegal keyboard input
   void shake() {
     _animationController.forward(from: 0);
     HapticFeedback.mediumImpact();
   }
 
-  //formats a provided amount with commas if necessary
+  // Formats a provided amount with commas if necessary
   String formatFiatAmount(String fiatAmount) {
     if (fiatAmount.endsWith(".") ||
         fiatAmount.endsWith(".0") ||
@@ -69,24 +69,18 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
       String formattedAmount = format.format(number);
       // Check if original input had decimals and adjust accordingly.
       if (fiatAmount.contains('.') && fiatAmount.endsWith('0')) {
-        print("refined formatting");
         int decimalIndex = fiatAmount.indexOf('.');
-        print("decimal index: $decimalIndex");
         int decimals = fiatAmount.length - decimalIndex - 1;
-        print("decimals: $decimals");
         if (decimals == 2) {
           formattedAmount += "0";
         }
       }
-      print("formattedAmount: $formattedAmount");
       return formattedAmount;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print("widget fiat amount: ${widget.fiatAmount}");
-    print("Formatted fiat amount: ${formatFiatAmount(widget.fiatAmount)}");
     String amountToDisplay = widget.fiatAmount;
     String decimalExtension = '';
     bool showCents = false;
@@ -109,6 +103,18 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
           decimalExtension = '';
       }
     }
+
+    double fontSize = 70.0;
+    if (widget.fiatAmount.length > 6) {
+      fontSize = 55.0;
+    }
+    if (widget.fiatAmount.length > 10) {
+      fontSize = 40.0;
+    }
+
+    // Adjust width dynamically based on the length of fiatAmount
+    double containerWidth = (widget.fiatAmount.length <= 8) ? 310 : 360;
+
     return AnimatedBuilder(
       animation: _shakeAnimation,
       builder: (context, child) {
@@ -118,8 +124,7 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
         );
       },
       child: Container(
-        width: 310,
-        height: 221,
+        width: containerWidth,
         padding: const EdgeInsets.symmetric(vertical: 45),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -134,38 +139,31 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                   child: child,
                 );
               },
-              child: Text.rich(
-                TextSpan(
-                  children: <TextSpan>[
+              child: Container(
+                constraints: BoxConstraints(maxWidth: containerWidth),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text.rich(
                     TextSpan(
-                        //conditionally decrease the font size if the text field grows beyond a certain length
-                        text: "\$",
-                        style: widget.fiatAmount.length > 7
-                            ? AppTextStyles.heading2
-                            : widget.fiatAmount.length > 4
-                                ? AppTextStyles.heading1.copyWith(fontSize: 55)
-                                : AppTextStyles.heading1
-                                    .copyWith(fontSize: 70)),
-                    TextSpan(
-                        text: formatFiatAmount(widget.fiatAmount),
-                        style: widget.fiatAmount.length > 7
-                            ? AppTextStyles.heading2
-                            : widget.fiatAmount.length > 4
-                                ? AppTextStyles.heading1.copyWith(fontSize: 55)
-                                : AppTextStyles.heading1
-                                    .copyWith(fontSize: 70)),
-                    if (showCents)
-                      TextSpan(
-                          text: decimalExtension,
-                          style: widget.fiatAmount.length > 7
-                              ? AppTextStyles.heading2
-                                  .copyWith(color: AppColors.grey)
-                              : widget.fiatAmount.length > 4
-                                  ? AppTextStyles.heading1.copyWith(
-                                      color: AppColors.grey, fontSize: 55)
-                                  : AppTextStyles.heading1.copyWith(
-                                      color: AppColors.grey, fontSize: 70)),
-                  ],
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: "\$",
+                          style: AppTextStyles.heading1.copyWith(fontSize: fontSize),
+                        ),
+                        TextSpan(
+                          text: formatFiatAmount(widget.fiatAmount),
+                          style: AppTextStyles.heading1.copyWith(fontSize: fontSize),
+                        ),
+                        if (showCents)
+                          TextSpan(
+                            text: decimalExtension,
+                            style: AppTextStyles.heading1.copyWith(color: AppColors.grey, fontSize: fontSize),
+                          ),
+                      ],
+                    ),
+                    // Apply softWrap: false to prevent text from wrapping
+                    softWrap: false,
+                  ),
                 ),
               ),
             ),
@@ -174,14 +172,14 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(widget.quantity.toString(),
-                    style: AppTextStyles.textLG
-                        .copyWith(color: AppColors.textSecondary)),
+                Text(
+                  widget.quantity.toString(),
+                  style: AppTextStyles.textLG.copyWith(color: AppColors.textSecondary),
+                ),
                 const SizedBox(width: 6),
                 Text(
                   ' BTC',
-                  style: AppTextStyles.textLG
-                      .copyWith(color: AppColors.textSecondary),
+                  style: AppTextStyles.textLG.copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -191,3 +189,4 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     );
   }
 }
+
