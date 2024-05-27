@@ -15,8 +15,8 @@ class NumberPad extends StatelessWidget {
         child: GridView.count(
           crossAxisCount: 3,
           childAspectRatio: 2.0,
-          mainAxisSpacing: 16.0,
-          crossAxisSpacing: 16.0,
+          mainAxisSpacing: 36.0,
+          crossAxisSpacing: 36.0,
           shrinkWrap: true,
           children: [
             NumberButton(number: '1', onPressed: onNumberPressed),
@@ -63,8 +63,8 @@ class NumberButton extends StatelessWidget {
           height: 48,
           child: svgIcon != null
               ? SizedBox(
-                  width: 24,
-                  height: 24,
+                  width: 30,
+                  height: 30,
                   child: SvgPicture.asset(
                     svgIcon!,
                     colorFilter: const ColorFilter.mode(
@@ -80,3 +80,4 @@ class NumberButton extends StatelessWidget {
     );
   }
 }
+
