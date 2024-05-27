@@ -109,6 +109,8 @@ class TransactionDetailsState extends State<TransactionDetails> {
         widget.transaction.net < 0 ? "Amount Sent" : "Amount Received";
     String valueTitle =
         widget.transaction.net < 0 ? "USD Value Sent" : "USD Value Received";
+    String amountSentReceived =
+        (widget.transaction.net / 100000000).toStringAsFixed(8);
 
     return Scaffold(
       appBar: AppBar(
@@ -129,7 +131,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
                 DetailRow(label: sendReceiveTitle, value: address),
                 DetailRow(
                     label: amountSendReceiveTitle,
-                    value: "${widget.transaction.net} sats"),
+                    value: "$amountSentReceived BTC"),
                 DetailRow(
                     label: "Bitcoin Price",
                     value: widget.transaction.timestamp != null
