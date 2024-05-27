@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:orange/widgets/value_display.dart';
 import 'package:orange/classes.dart';
@@ -75,7 +73,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
       print("Price: ${widget.price}");
       setState(() {
         if (widget.price != null) {
-          historicalPrice = widget.price.toString();
+          historicalPrice = widget.price!.toStringAsFixed(2);
         }
       });
     }
@@ -94,7 +92,10 @@ class TransactionDetailsState extends State<TransactionDetails> {
     //logic used to evaluate the format of the transaction details widget based on send or receive tx
     String title =
         widget.transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin";
-    final displayPrice = widget.price.toString();
+    String displayPrice = '0.00';
+    if (widget.price != null) {
+      displayPrice = widget.price!.toStringAsFixed(2);
+    }
     print("display price: $displayPrice");
     String date = formatTimestamp(widget.transaction.timestamp, false);
     String time = formatTime(widget.transaction.timestamp);
@@ -136,7 +137,7 @@ class TransactionDetailsState extends State<TransactionDetails> {
                     label: "Bitcoin Price",
                     value: widget.transaction.timestamp != null
                         ? "\$$historicalPrice"
-                        : "\$${widget.price.toString()}"),
+                        : "\$$displayPrice"),
                 DetailRow(
                     label: valueTitle,
                     value: widget.transaction.timestamp != null
