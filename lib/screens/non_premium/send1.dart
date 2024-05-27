@@ -132,6 +132,7 @@ class Send1State extends State<Send1> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 20), // Adjust the height as needed
             KeyboardValueDisplay(
               key: _displayKey,
               fiatAmount: amount == '' ? '0' : amount,
@@ -140,18 +141,17 @@ class Send1State extends State<Send1> {
                   : formatDollarsToBTC(amount, widget.price, false),
               onShake: () {},
             ),
+            const Spacer(),
             NumberPad(
               onNumberPressed: _updateAmount,
             ),
+            const SizedBox(height: 10),
+            ButtonOrangeLG(
+              label: "Send",
+              onTap: () => onContinue(),
+              isEnabled: isButtonEnabled,
+            ),
           ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ButtonOrangeLG(
-          label: "Send",
-          onTap: () => onContinue(),
-          isEnabled: isButtonEnabled,
         ),
       ),
     );
