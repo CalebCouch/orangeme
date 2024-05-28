@@ -3,8 +3,14 @@ import 'package:orange/styles/constants.dart';
 
 class FeeSelector extends StatefulWidget {
   final Function(bool) onOptionSelected;
+  final double price;
+  final int standardFee;
 
-  const FeeSelector({super.key, required this.onOptionSelected});
+  const FeeSelector(
+      {super.key,
+      required this.onOptionSelected,
+      required this.price,
+      required this.standardFee});
 
   @override
   FeeSelectorState createState() => FeeSelectorState();
@@ -32,14 +38,15 @@ class FeeSelectorState extends State<FeeSelector> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: StandardOption(
-            isSelected: !_isPrioritySelected,
-            onSelected: (selected) {
-              setState(() {
-                _isPrioritySelected = !selected;
-                widget.onOptionSelected(_isPrioritySelected);
-              });
-            },
-          ),
+              isSelected: !_isPrioritySelected,
+              onSelected: (selected) {
+                setState(() {
+                  _isPrioritySelected = !selected;
+                  widget.onOptionSelected(_isPrioritySelected);
+                });
+              },
+              price: widget.price,
+              standardFee: widget.standardFee),
         ),
       ],
     );
@@ -74,11 +81,12 @@ class PriorityOptionState extends State<PriorityOption> {
             groupValue: widget.isSelected,
             visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
             activeColor: AppColors.white,
-            onChanged: (bool? value) {
-              if (value != null && value != widget.isSelected) {
-                widget.onSelected(value);
-              }
-            },
+            // onChanged: (bool? value) {
+            //   if (value != null && value != widget.isSelected) {
+            //     widget.onSelected(value);
+            //   }
+            // },
+            onChanged: null,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,13 +94,13 @@ class PriorityOptionState extends State<PriorityOption> {
               const Padding(
                 padding: EdgeInsets.only(top: 8.0),
                 child: Text(
-                  'Priority',
+                  'Priority (Disabled)',
                   style: AppTextStyles.heading5,
                 ),
               ),
               const SizedBox(height: 10),
               Text(
-                'Arrives in ~30 minutes\n\$3.19 bitcoin network fee',
+                'Arrives in ~30 minutes\n\$N/A bitcoin network fee',
                 style: AppTextStyles.textMD.copyWith(
                   color: AppColors.grey,
                 ),
@@ -108,9 +116,15 @@ class PriorityOptionState extends State<PriorityOption> {
 class StandardOption extends StatefulWidget {
   final bool isSelected;
   final Function(bool) onSelected;
+  final double price;
+  final int standardFee;
 
   const StandardOption(
-      {super.key, required this.isSelected, required this.onSelected});
+      {super.key,
+      required this.isSelected,
+      required this.onSelected,
+      required this.price,
+      required this.standardFee});
 
   @override
   StandardOptionState createState() => StandardOptionState();
@@ -119,6 +133,8 @@ class StandardOption extends StatefulWidget {
 class StandardOptionState extends State<StandardOption> {
   @override
   Widget build(BuildContext context) {
+    String standardPrice =
+        ((widget.standardFee / 100000000) * widget.price).toStringAsFixed(2);
     return GestureDetector(
       onTap: () {
         if (!widget.isSelected) {
@@ -148,7 +164,7 @@ class StandardOptionState extends State<StandardOption> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Arrives in ~2 hours\n\$2.08 bitcoin network fee',
+                'Arrives in ~2 hours\n\$$standardPrice bitcoin network fee',
                 style: AppTextStyles.textMD.copyWith(
                   color: AppColors.grey,
                 ),

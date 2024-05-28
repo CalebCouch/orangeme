@@ -35,6 +35,7 @@ class Send4State extends State<Send4> {
   @override
   void initState() {
     super.initState();
+    updateValues();
   }
 
   @override

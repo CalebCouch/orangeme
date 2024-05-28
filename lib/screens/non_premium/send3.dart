@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:orange/screens/non_premium/send4.dart';
 import 'package:orange/widgets/fee_selector.dart';
@@ -5,13 +7,15 @@ import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 
+import '../../classes.dart';
+
 class Send3 extends StatefulWidget {
   final int amount;
   final String address;
   final int balance;
   final double price;
 
-  const Send3(
+  Send3(
       {super.key,
       required this.amount,
       required this.address,
@@ -22,18 +26,32 @@ class Send3 extends StatefulWidget {
   Send3State createState() => Send3State();
 }
 
+String transaction = '';
+int standardFee = 0;
+
 class Send3State extends State<Send3> {
   bool isPrioritySelected = false; //state to keep track of selection
 
-  void navigate(String json) {
+  void navigate() {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => Send4(
-                tx: json,
+                tx: transaction,
                 balance: widget.balance,
                 amount: widget.amount,
                 price: widget.price)));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    createTransaction();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   //fired when user selects priority
@@ -64,9 +82,19 @@ class Send3State extends State<Send3> {
       if (!mounted) return;
       var json = handleError(jsonRes, context);
       print("create tx response: $json");
-      navigate(json);
+      calculateStandardFee(json);
+      setState(() {
+        transaction = json;
+      });
     }
     print("building tx and sending user to confirmation screen");
+  }
+
+  void calculateStandardFee(String transaction) {
+    final transactionDecoded = Transaction.fromJson(jsonDecode(transaction));
+    setState(() {
+      standardFee = transactionDecoded.fee!;
+    });
   }
 
   @override
@@ -81,7 +109,10 @@ class Send3State extends State<Send3> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            FeeSelector(onOptionSelected: onOptionSelected),
+            FeeSelector(
+                onOptionSelected: onOptionSelected,
+                price: widget.price,
+                standardFee: standardFee),
             const Spacer(),
           ],
         ),
@@ -90,7 +121,7 @@ class Send3State extends State<Send3> {
         padding: const EdgeInsets.all(20.0),
         child: ButtonOrangeLG(
           label: "Continue",
-          onTap: createTransaction,
+          onTap: navigate,
         ),
       ),
     );
