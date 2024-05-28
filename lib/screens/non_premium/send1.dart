@@ -141,7 +141,8 @@ class Send1State extends State<Send1> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => Send2(amount: qty, balance: widget.balance)));
+            builder: (context) => Send2(
+                amount: qty, balance: widget.balance, price: widget.price!)));
   }
 
   @override

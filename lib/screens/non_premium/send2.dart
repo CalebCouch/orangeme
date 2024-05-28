@@ -13,10 +13,12 @@ import 'package:orange/styles/constants.dart';
 class Send2 extends StatefulWidget {
   final int amount;
   final int balance;
+  final double price;
   const Send2({
     super.key,
     required this.amount,
     required this.balance,
+    required this.price,
   });
 
   @override
@@ -174,7 +176,8 @@ class Send2State extends State<Send2> {
             builder: (context) => Send3(
                 amount: widget.amount,
                 address: recipientAddressController.text,
-                balance: widget.balance)));
+                balance: widget.balance,
+                price: widget.price)));
   }
 
   //used to shorten a bitcoin address on the users clipboard for button display

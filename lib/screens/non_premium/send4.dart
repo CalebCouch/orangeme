@@ -15,18 +15,19 @@ class Send4 extends StatefulWidget {
   final String tx;
   final int balance;
   final int amount;
+  final double price;
   const Send4(
       {super.key,
       required this.tx,
       required this.balance,
-      required this.amount});
+      required this.amount,
+      required this.price});
 
   @override
   Send4State createState() => Send4State();
 }
 
 class Send4State extends State<Send4> {
-  double price = 0.0;
   String transactionFee = '0';
   String sendAmount = '0';
   String totalAmount = '0';
@@ -34,7 +35,6 @@ class Send4State extends State<Send4> {
   @override
   void initState() {
     super.initState();
-    updatePrice();
   }
 
   @override
@@ -73,19 +73,9 @@ class Send4State extends State<Send4> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => Send5(amount: widget.amount, price: price)),
+          builder: (context) =>
+              Send5(amount: widget.amount, price: widget.price)),
     );
-  }
-
-  Future<void> updatePrice() async {
-    print('Getting Price...');
-    var priceRes = await invoke(method: "get_price", args: []);
-    if (!mounted) return;
-    setState(() {
-      price = double.parse(handleError(priceRes, context));
-      print("Price response: $price");
-      updateValues();
-    });
   }
 
   void updateValues() {
@@ -93,16 +83,18 @@ class Send4State extends State<Send4> {
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
     print("transaction net: ${transaction.net}");
     print("transaction fee: ${transaction.fee}");
-    print("price: $price");
+    print("price: ${widget.price}");
     setState(() {
-      transactionFee = (transaction.fee! / 100000000 * price) == 0.0
+      transactionFee = (transaction.fee! / 100000000 * widget.price) == 0.0
           ? '<0.01'
-          : (transaction.fee! / 100000000 * price).toStringAsFixed(2);
+          : (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
       print("transaction fee: $transactionFee");
-      sendAmount = (widget.amount / 100000000 * price).toStringAsFixed(2);
+      sendAmount =
+          (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
       print("send amount: $sendAmount");
-      totalAmount = ((widget.amount + transaction.fee!) / 100000000 * price)
-          .toStringAsFixed(2);
+      totalAmount =
+          ((widget.amount + transaction.fee!) / 100000000 * widget.price)
+              .toStringAsFixed(2);
       print("total amount: $totalAmount");
     });
   }
@@ -115,8 +107,8 @@ class Send4State extends State<Send4> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                Send2(amount: amount, balance: widget.balance)));
+            builder: (context) => Send2(
+                amount: amount, balance: widget.balance, price: widget.price)));
   }
 
   void editAmount() {
@@ -125,7 +117,7 @@ class Send4State extends State<Send4> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                Send1(price: price, balance: widget.balance)));
+                Send1(price: widget.price, balance: widget.balance)));
   }
 
   void editSpeed() {
@@ -139,12 +131,13 @@ class Send4State extends State<Send4> {
             builder: (context) => Send3(
                 amount: amount,
                 balance: widget.balance,
-                address: transaction.receiver!)));
+                address: transaction.receiver!,
+                price: widget.price)));
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Price: $price");
+    print("Price: ${widget.price}");
     print("Send4 Transaction: ${widget.tx}");
     final decodeJson = jsonDecode(widget.tx);
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));

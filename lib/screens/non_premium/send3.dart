@@ -9,12 +9,14 @@ class Send3 extends StatefulWidget {
   final int amount;
   final String address;
   final int balance;
+  final double price;
 
   const Send3(
       {super.key,
       required this.amount,
       required this.address,
-      required this.balance});
+      required this.balance,
+      required this.price});
 
   @override
   Send3State createState() => Send3State();
@@ -28,7 +30,10 @@ class Send3State extends State<Send3> {
         context,
         MaterialPageRoute(
             builder: (context) => Send4(
-                tx: json, balance: widget.balance, amount: widget.amount)));
+                tx: json,
+                balance: widget.balance,
+                amount: widget.amount,
+                price: widget.price)));
   }
 
   //fired when user selects priority
