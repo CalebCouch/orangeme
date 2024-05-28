@@ -7,13 +7,14 @@ class KeyboardValueDisplay extends StatefulWidget {
   final String fiatAmount;
   final String quantity;
   final VoidCallback onShake;
+  final bool exceedMaxBalance;
 
-  const KeyboardValueDisplay({
-    super.key,
-    required this.fiatAmount,
-    required this.quantity,
-    required this.onShake,
-  });
+  const KeyboardValueDisplay(
+      {super.key,
+      required this.fiatAmount,
+      required this.quantity,
+      required this.onShake,
+      required this.exceedMaxBalance});
 
   @override
   KeyboardValueDisplayState createState() => KeyboardValueDisplayState();
@@ -46,17 +47,15 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     super.dispose();
   }
 
-  
 // Displays a short shaking animation to warn a user against an illegal keyboard input
   void shake() {
     _animationController.forward(from: 0);
-    _vibrate(); 
+    _vibrate();
   }
 
-
   void _vibrate() {
-    const int vibrationDuration = 1; 
-    const int totalDuration = 200; 
+    const int vibrationDuration = 1;
+    const int totalDuration = 200;
     int numberOfVibrations = totalDuration ~/ vibrationDuration;
     for (int i = 0; i < numberOfVibrations; i++) {
       Future.delayed(Duration(milliseconds: i * vibrationDuration), () {
@@ -64,16 +63,20 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
       });
     }
   }
+
   // Formats a provided amount with commas if necessary
   String formatFiatAmount(String fiatAmount) {
+    print("formatting fiat amount");
     if (fiatAmount.endsWith(".") ||
         fiatAmount.endsWith(".0") ||
         fiatAmount.endsWith(".00")) {
+      print("amount already contains decimals");
       // If the amount ends with a decimal or specific zeroes after a decimal, return as is.
       return fiatAmount;
     }
     double? number = double.tryParse(fiatAmount);
     if (number == null) {
+      print('failed parse when formatting, return 0');
       return "0"; // Default to 0 if parsing fails.
     } else {
       // Create a format that shows up to two decimal places only if there are non-zero decimals.
@@ -85,6 +88,7 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
         int decimals = fiatAmount.length - decimalIndex - 1;
         if (decimals == 2) {
           formattedAmount += "0";
+          print("formatting decimal with placeholder zeroes");
         }
       }
       return formattedAmount;
@@ -93,6 +97,8 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "keyboard value display widget: exceed max balance: ${widget.exceedMaxBalance}");
     String amountToDisplay = widget.fiatAmount;
     String decimalExtension = '';
     bool showCents = false;
@@ -118,9 +124,11 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
 
     double fontSize = 70.0;
     if (widget.fiatAmount.length > 6) {
+      print("Font size exceeds char length 6");
       fontSize = 55.0;
     }
     if (widget.fiatAmount.length > 10) {
+      print("font size exceeds char length 10");
       fontSize = 40.0;
     }
 
@@ -160,16 +168,19 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                       children: <TextSpan>[
                         TextSpan(
                           text: "\$",
-                          style: AppTextStyles.heading1.copyWith(fontSize: fontSize),
+                          style: AppTextStyles.heading1
+                              .copyWith(fontSize: fontSize),
                         ),
                         TextSpan(
                           text: formatFiatAmount(widget.fiatAmount),
-                          style: AppTextStyles.heading1.copyWith(fontSize: fontSize),
+                          style: AppTextStyles.heading1
+                              .copyWith(fontSize: fontSize),
                         ),
                         if (showCents)
                           TextSpan(
                             text: decimalExtension,
-                            style: AppTextStyles.heading1.copyWith(color: AppColors.grey, fontSize: fontSize),
+                            style: AppTextStyles.heading1.copyWith(
+                                color: AppColors.grey, fontSize: fontSize),
                           ),
                       ],
                     ),
@@ -184,15 +195,41 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  widget.quantity.toString(),
-                  style: AppTextStyles.textLG.copyWith(color: AppColors.textSecondary),
-                ),
+                if (!widget.exceedMaxBalance)
+                  Text(
+                    widget.quantity.toString(),
+                    style: AppTextStyles.textLG
+                        .copyWith(color: AppColors.textSecondary),
+                  ),
                 const SizedBox(width: 6),
-                Text(
-                  ' BTC',
-                  style: AppTextStyles.textLG.copyWith(color: AppColors.textSecondary),
-                ),
+                if (!widget.exceedMaxBalance)
+                  Text(
+                    ' BTC',
+                    style: AppTextStyles.textLG
+                        .copyWith(color: AppColors.textSecondary),
+                  ),
+                if (widget.exceedMaxBalance)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.report_problem_rounded,
+                        color: AppColors.danger,
+                        size: 15,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: RichText(
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                            text: "Not enough Bitcoin",
+                            style: AppTextStyles.textLG
+                                .copyWith(color: AppColors.danger),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ],
@@ -201,5 +238,3 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     );
   }
 }
-
-

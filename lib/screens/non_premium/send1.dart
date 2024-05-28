@@ -19,19 +19,31 @@ class Send1State extends State<Send1> {
   final GlobalKey<KeyboardValueDisplayState> _displayKey =
       GlobalKey<KeyboardValueDisplayState>();
   bool isButtonEnabled = false;
+  bool exceedMaxBalance = false;
 
   //algorithim used to control the logic of the virtual keyboard
   void _updateAmount(String input) {
-    // double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
-    double maxDollarAmount = 99999999999;
+    print('keyboard input received: $input');
+    print("current amount: $amount");
+    double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
+    print("max amount to spend: $maxDollarAmount");
+    // double maxDollarAmount = 99999999999;
     String tempAmount = amount; // Currently displayed amount
-
     if (input == "backspace") {
       // When input is backspace, handle deletion
       if (tempAmount.length > 1) {
         tempAmount = tempAmount.substring(0, tempAmount.length - 1);
+        double? tempAmountDouble = double.tryParse(tempAmount);
+        print('accept backspace: new temp amount: $tempAmount');
+        if (tempAmountDouble! <= maxDollarAmount && exceedMaxBalance == true) {
+          setState(() {
+            print('amount below max: reset warning');
+            exceedMaxBalance = false;
+          });
+        }
         //if tempAmount becomes empty after backspacing, reset to 0
         if (tempAmount == "" || tempAmount == "0") {
+          print("backspace on empty field, reset field to zero");
           tempAmount = "0";
         }
         //default to 0 catchall
@@ -52,26 +64,39 @@ class Send1State extends State<Send1> {
       }
     }
     // Ensure tempAmount is a valid dollar amount with at most two decimal places
-    if (!RegExp(r"^\d*\.?\d{0,2}$").hasMatch(tempAmount)) {
+    if (!RegExp(r"^\d*\.?\d{0,2}$").hasMatch(tempAmount) &&
+        input != 'backspace') {
+      print("invalid input: engage haptics");
       _displayKey.currentState?.shake();
       return; // Return if not a valid format
     }
-    // Convert tempAmount to a double and check it doesn't exceed max amount
+    //check if tempamount exceeds max amount
     double? tempAmountDouble = double.tryParse(tempAmount);
     if (tempAmountDouble != null && tempAmountDouble > maxDollarAmount) {
-      _displayKey.currentState?.shake();
-      return; // Prevent exceeding the maximum amount
+      // _displayKey.currentState?.shake();
+      print(
+          "Attempting to exceed max balance current amount: $amount temp amount: $tempAmount");
+      setState(() {
+        exceedMaxBalance = true;
+        amount = tempAmount;
+        evaluateButton(tempAmount, maxDollarAmount);
+      });
+    } else {
+      setState(() {
+        print("standard input amount: $amount temp amount: $tempAmount");
+        amount = tempAmount;
+        evaluateButton(tempAmount, maxDollarAmount);
+      });
     }
-    setState(() {
-      amount = tempAmount;
-      evaluateButton();
-    });
   }
 
   //evalute if the send button should be activated
-  void evaluateButton() {
+  void evaluateButton(String tempAmount, maxDollarAmount) {
     double? amountDouble = double.tryParse(amount);
-    if (amountDouble != null && amountDouble >= 0.01) {
+    double? tempAmountDouble = double.tryParse(tempAmount);
+    if (amountDouble != null &&
+        amountDouble >= 0.01 &&
+        tempAmountDouble! <= maxDollarAmount) {
       isButtonEnabled = true;
     } else {
       isButtonEnabled = false;
@@ -122,6 +147,7 @@ class Send1State extends State<Send1> {
   @override
   Widget build(BuildContext context) {
     print("Price: ${widget.price}");
+    print("Exceed max balance: $exceedMaxBalance");
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -140,6 +166,7 @@ class Send1State extends State<Send1> {
                   ? formatDollarsToBTC('0', widget.price, false)
                   : formatDollarsToBTC(amount, widget.price, false),
               onShake: () {},
+              exceedMaxBalance: exceedMaxBalance == true ? true : false,
             ),
             const Spacer(),
             NumberPad(
