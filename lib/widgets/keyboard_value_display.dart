@@ -46,12 +46,24 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     super.dispose();
   }
 
-  // Displays a short shaking animation to warn a user against an illegal keyboard input
+  
+// Displays a short shaking animation to warn a user against an illegal keyboard input
   void shake() {
     _animationController.forward(from: 0);
-    HapticFeedback.mediumImpact();
+    _vibrate(); 
   }
 
+
+  void _vibrate() {
+    const int vibrationDuration = 1; 
+    const int totalDuration = 200; 
+    int numberOfVibrations = totalDuration ~/ vibrationDuration;
+    for (int i = 0; i < numberOfVibrations; i++) {
+      Future.delayed(Duration(milliseconds: i * vibrationDuration), () {
+        SystemChannels.platform.invokeMethod('HapticFeedback.vibrate');
+      });
+    }
+  }
   // Formats a provided amount with commas if necessary
   String formatFiatAmount(String fiatAmount) {
     if (fiatAmount.endsWith(".") ||
@@ -189,4 +201,5 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
     );
   }
 }
+
 
