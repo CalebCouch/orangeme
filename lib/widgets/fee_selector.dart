@@ -81,12 +81,11 @@ class PriorityOptionState extends State<PriorityOption> {
             groupValue: widget.isSelected,
             visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
             activeColor: AppColors.white,
-            // onChanged: (bool? value) {
-            //   if (value != null && value != widget.isSelected) {
-            //     widget.onSelected(value);
-            //   }
-            // },
-            onChanged: null,
+            onChanged: (bool? value) {
+              if (value != null && value != widget.isSelected) {
+                widget.onSelected(value);
+              }
+            },
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
