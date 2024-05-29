@@ -99,6 +99,13 @@ class Send1State extends State<Send1> {
         tempAmount = "0";
       }
     } else {
+      //enforce a 9
+      if ((amount.contains('.') && amount.length >= 12) ||
+          (!amount.contains('.') && amount.length == 9 && input != '.')) {
+        print("invalid input: max digits");
+        _displayKey.currentState?.shake();
+        return;
+      }
       if (tempAmount == "0.00" || tempAmount == "0") {
         // Avoid leading zero unless entering a decimal
         tempAmount = (input == ".") ? "0." : input;
