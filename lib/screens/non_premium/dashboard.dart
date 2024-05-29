@@ -57,20 +57,20 @@ class DashboardState extends State<Dashboard>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print("widgets binding observer thrown");
     if (state == AppLifecycleState.resumed) {
-      print("starting refresh timer from life cycle change");
+      print("starting refresh timer due to life cycle change");
       startTimer();
     } else if (state == AppLifecycleState.paused) {
-      print("stopping refresh timer from life cycle change");
+      print("stopping refresh timer due to life cycle change");
       _stopTimer();
     }
   }
 
   //start the timer to periodically get a data refresh
   void startTimer() {
-    print("start dashboard refresh timer....");
+    print("request to start dashboard refresh timer....");
     if (refreshTimer == null || !refreshTimer!.isActive) {
       refreshTimer = Timer(const Duration(seconds: 15), () {
-        print("dashboard timer started");
+        print("dashboard refresh was not running... timer started");
         if (mounted) {
           handleRefresh();
         } else {
@@ -85,7 +85,7 @@ class DashboardState extends State<Dashboard>
 
   //stop the timer controlling the data refresh
   void _stopTimer() {
-    print("stop dashboard refresh timer...");
+    print("stopping dashboard refresh timer...");
     refreshTimer?.cancel();
   }
 
