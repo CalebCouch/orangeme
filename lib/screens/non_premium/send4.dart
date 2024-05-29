@@ -6,22 +6,29 @@ import 'package:orange/classes.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
+import 'package:orange/widgets/session_timer.dart';
 import 'send2.dart';
 import 'send3.dart';
 import 'send1.dart';
 import 'send5.dart';
+import 'dashboard.dart';
 
 class Send4 extends StatefulWidget {
   final String tx;
   final int balance;
   final int amount;
   final double price;
+  final SessionTimerManager sessionTimer;
+  final VoidCallback onPopBack;
+
   const Send4(
       {super.key,
       required this.tx,
       required this.balance,
       required this.amount,
-      required this.price});
+      required this.price,
+      required this.onPopBack,
+      required this.sessionTimer});
 
   @override
   Send4State createState() => Send4State();
@@ -34,15 +41,28 @@ class Send4State extends State<Send4> {
 
   @override
   void initState() {
+    print("initializing send4");
     super.initState();
     updateValues();
+    //provide the session timer with a destination for when it's callback is fired (ie: timer expires)
+    widget.sessionTimer.setOnSessionEnd(() {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Dashboard()),
+        );
+        widget.sessionTimer.dispose();
+      }
+    });
   }
 
   @override
   void dispose() {
+    print("disposing send4");
     super.dispose();
   }
 
+  //broadcast the transaction confirmed by the user
   void broadcastTransaction(String transaction) async {
     print("broadcasting transaction");
     if (!mounted) return;
@@ -66,19 +86,25 @@ class Send4State extends State<Send4> {
     await navigateNext(resHandled);
   }
 
+  //dispose of the session timer and broadcast
   void confirmSend() {
     broadcastTransaction(widget.tx);
   }
 
+  //navigate to the success screen
   Future<void> navigateNext(String transaction) async {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              Send5(amount: widget.amount, price: widget.price)),
+          builder: (context) => Send5(
+                amount: widget.amount,
+                price: widget.price,
+                onPopBack: widget.onPopBack,
+              )),
     );
   }
 
+  //update the values displayed onscreen based on the current price
   void updateValues() {
     print("updating values");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
@@ -100,6 +126,7 @@ class Send4State extends State<Send4> {
     });
   }
 
+  //navigate to the address input screen, user activates by clicking the "edit address" button
   void editAddress() {
     print("edit address selected");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
@@ -109,18 +136,28 @@ class Send4State extends State<Send4> {
         context,
         MaterialPageRoute(
             builder: (context) => Send2(
-                amount: amount, balance: widget.balance, price: widget.price)));
+                amount: amount,
+                balance: widget.balance,
+                price: widget.price,
+                onPopBack: widget.onPopBack,
+                sessionTimer: widget.sessionTimer)));
   }
 
+  //navigate to the amount input screen, user activates by clicking the "edit amount" button
   void editAmount() {
     print("edit amount selected");
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                Send1(price: widget.price, balance: widget.balance)));
+            builder: (context) => Send1(
+                  price: widget.price,
+                  balance: widget.balance,
+                  onPopBack: widget.onPopBack,
+                  sessionTimer: widget.sessionTimer,
+                )));
   }
 
+  //navigate to the fee selector screen, user activates by clicking the "edit speed" button
   void editSpeed() {
     print("edit speed selected");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
@@ -133,11 +170,14 @@ class Send4State extends State<Send4> {
                 amount: amount,
                 balance: widget.balance,
                 address: transaction.receiver!,
-                price: widget.price)));
+                price: widget.price,
+                onPopBack: widget.onPopBack,
+                sessionTimer: widget.sessionTimer)));
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
     print("Price: ${widget.price}");
     print("Send4 Transaction: ${widget.tx}");
     final decodeJson = jsonDecode(widget.tx);
@@ -145,154 +185,167 @@ class Send4State extends State<Send4> {
     print("DecodeJSON*************: $decodeJson");
     print("Transaction:************ $transaction");
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Confirm Send',
+    return PopScope(
+      canPop: true,
+      //prevents session timer from continuing to run off screen
+      onPopInvoked: (bool didPop) async {
+        widget.sessionTimer.dispose();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Confirm Send',
+          ),
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                widget.onPopBack();
+                Navigator.pop(context);
+              }),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: AppColors.offBlack,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    '1',
-                    style: AppTextStyles.heading6,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'Confirm Address',
-                  style: AppTextStyles.heading5,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 42),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
                 children: <Widget>[
-                  Text(
-                    "${transaction.receiver}",
-                    style: AppTextStyles.textSM,
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.offBlack,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      '1',
+                      style: AppTextStyles.heading6,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Bitcoin sent to the wrong address can never be recovered.",
-                    style: AppTextStyles.textSM
-                        .copyWith(color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: 20),
-                  ButtonSecondaryMD(
-                      label: "Address", icon: "edit", onTap: editAddress),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: <Widget>[
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[850],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    '2',
-                    style: AppTextStyles.heading6,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'Confirm Amount',
-                  style: AppTextStyles.heading5,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 42),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text(
-                        'Send Amount',
-                        style: AppTextStyles.textSM,
-                      ),
-                      Text(
-                        '\$$sendAmount',
-                        style: AppTextStyles.textSM,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text(
-                        'Fee Amount',
-                        style: AppTextStyles.textSM,
-                      ),
-                      Text(
-                        '\$$transactionFee',
-                        style: AppTextStyles.textSM,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text(
-                        'Total Amount',
-                        style: AppTextStyles.textSM,
-                      ),
-                      Text(
-                        '\$$totalAmount',
-                        style: AppTextStyles.textSM,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      ButtonSecondaryMD(
-                          label: "Amount", icon: "edit", onTap: editAmount),
-                      const SizedBox(width: 10),
-                      ButtonSecondaryMD(
-                          label: "Speed", icon: "edit", onTap: editSpeed),
-                    ],
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Confirm Address',
+                    style: AppTextStyles.heading5,
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(left: 42),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "${transaction.receiver}",
+                      style: AppTextStyles.textSM,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Bitcoin sent to the wrong address can never be recovered.",
+                      style: AppTextStyles.textSM
+                          .copyWith(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 20),
+                    ButtonSecondaryMD(
+                        label: "Address", icon: "edit", onTap: editAddress),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[850],
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      '2',
+                      style: AppTextStyles.heading6,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Confirm Amount',
+                    style: AppTextStyles.heading5,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(left: 42),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const Text(
+                          'Send Amount',
+                          style: AppTextStyles.textSM,
+                        ),
+                        Text(
+                          '\$$sendAmount',
+                          style: AppTextStyles.textSM,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const Text(
+                          'Fee Amount',
+                          style: AppTextStyles.textSM,
+                        ),
+                        Text(
+                          '\$$transactionFee',
+                          style: AppTextStyles.textSM,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const Text(
+                          'Total Amount',
+                          style: AppTextStyles.textSM,
+                        ),
+                        Text(
+                          '\$$totalAmount',
+                          style: AppTextStyles.textSM,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        ButtonSecondaryMD(
+                            label: "Amount", icon: "edit", onTap: editAmount),
+                        const SizedBox(width: 10),
+                        ButtonSecondaryMD(
+                            label: "Speed", icon: "edit", onTap: editSpeed),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ButtonOrangeLG(
-          label: "Confirm & Send",
-          onTap: confirmSend,
-          isEnabled: true,
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ButtonOrangeLG(
+            label: "Confirm & Send",
+            onTap: confirmSend,
+            isEnabled: true,
+          ),
         ),
       ),
     );

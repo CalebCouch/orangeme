@@ -20,12 +20,12 @@ class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
   @override
-  State<Dashboard> createState() => DashboardState();
+  State<Dashboard> createState() => new DashboardState();
 }
 
 class DashboardState extends State<Dashboard>
-    with RouteAware, TickerProviderStateMixin {
-  Timer? _timer;
+    with WidgetsBindingObserver, TickerProviderStateMixin {
+  Timer? refreshTimer;
   final transactions = ValueNotifier<List<Transaction>>([]);
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
@@ -34,35 +34,63 @@ class DashboardState extends State<Dashboard>
 
   @override
   void initState() {
+    print("INITIALIZING DASHBOARD");
     super.initState();
     handleRefresh();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    print("DISPOSING DASHBOARD");
+    _stopTimer();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
+  //this is used to stop the refresh timer from running while the program is minimized
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("widgets binding observer thrown");
+    if (state == AppLifecycleState.resumed) {
+      print("starting refresh timer from life cycle change");
+      startTimer();
+    } else if (state == AppLifecycleState.paused) {
+      print("stopping refresh timer from life cycle change");
+      _stopTimer();
+    }
+  }
+
   //start the timer that periodically runs a data refresh
-  void _startTimer() {
-    print("start timer....");
-    _timer = Timer(const Duration(seconds: 15), () {
-      if (mounted) {
-        handleRefresh();
-      }
-    });
+  void startTimer() {
+    print("start dashboard refresh timer....");
+    if (refreshTimer == null || !refreshTimer!.isActive) {
+      refreshTimer = Timer(const Duration(seconds: 15), () {
+        print("dashboard timer started");
+        if (mounted) {
+          handleRefresh();
+        } else {
+          print("unmounted parent, stopping dashboard refresh timer");
+          _stopTimer();
+        }
+      });
+    } else {
+      print("Timer is already active, no need to start another");
+    }
   }
 
   //stop the timer controlling the data refresh
   void _stopTimer() {
-    print("stop timer...");
-    _timer?.cancel();
+    print("stop dashboard refresh timer...");
+    refreshTimer?.cancel();
   }
 
   //sync wallet and get transaction list, current price, and balance
   Future<void> handleRefresh() async {
     if (!mounted) return;
+    if (refreshTimer == null || !refreshTimer!.isActive) {
+      startTimer();
+    }
     print('Refresh Initiatied...');
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     print("descriptorRes: $descriptorsRes");
@@ -80,7 +108,6 @@ class DashboardState extends State<Dashboard>
       setState(() {
         initialLoad = false;
       });
-      _startTimer();
     }
     print('Getting Balance...');
     var balanceRes =
@@ -162,6 +189,11 @@ class DashboardState extends State<Dashboard>
 
   @override
   Widget build(BuildContext context) {
+    print("Refresh Timer: $refreshTimer");
+    if (refreshTimer != null && refreshTimer!.isActive == false) {
+      print("timer wasn't running, let me start that for you");
+      startTimer();
+    }
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -240,12 +272,15 @@ class DashboardState extends State<Dashboard>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20),
                                   child: ReceiveSend(
-                                    receiveRoute: () => const Receive(),
+                                    receiveRoute: () => Receive(
+                                      onPopBack: handleRefresh,
+                                    ),
                                     sendRoute: () => Send1(
-                                        balance: balance.value,
-                                        price: price.value),
+                                      balance: balance.value,
+                                      price: price.value,
+                                      onPopBack: handleRefresh,
+                                    ),
                                     onPause: _stopTimer,
-                                    onResume: _startTimer,
                                   ),
                                 ),
                               ],

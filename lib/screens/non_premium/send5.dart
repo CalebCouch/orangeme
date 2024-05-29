@@ -7,8 +7,13 @@ import 'package:orange/styles/constants.dart';
 class Send5 extends StatefulWidget {
   final int amount;
   final double price;
+  final VoidCallback onPopBack;
 
-  const Send5({super.key, required this.amount, required this.price});
+  const Send5(
+      {super.key,
+      required this.amount,
+      required this.price,
+      required this.onPopBack});
 
   @override
   Send5State createState() => Send5State();
@@ -16,8 +21,8 @@ class Send5 extends StatefulWidget {
 
 class Send5State extends State<Send5> {
   void navigateHome() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const Dashboard()));
+    widget.onPopBack();
+    Navigator.pop(context);
   }
 
   @override
@@ -27,7 +32,12 @@ class Send5State extends State<Send5> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Send Confirmed'),
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              widget.onPopBack();
+              Navigator.pop(context);
+            }),
       ),
       body: Center(
         child: Padding(

@@ -9,16 +9,22 @@ import 'package:orange/components/textfield.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/screens/non_premium/dashboard.dart';
 
 class Send2 extends StatefulWidget {
   final int amount;
   final int balance;
   final double price;
+  final VoidCallback onPopBack;
+  final SessionTimerManager sessionTimer;
   const Send2({
     super.key,
     required this.amount,
     required this.balance,
     required this.price,
+    required this.onPopBack,
+    required this.sessionTimer,
   });
 
   @override
@@ -37,12 +43,22 @@ class Send2State extends State<Send2> {
 
   @override
   void initState() {
+    print("initializing send2");
     super.initState();
     fetchAndValidateClipboard();
     recipientAddressController.addListener(buttonListner);
     clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) {
         fetchAndValidateClipboard();
+      }
+    });
+    widget.sessionTimer.setOnSessionEnd(() {
+      if (mounted) {
+        widget.sessionTimer.dispose();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Dashboard()),
+        );
       }
     });
   }
@@ -177,7 +193,9 @@ class Send2State extends State<Send2> {
                 amount: widget.amount,
                 address: recipientAddressController.text,
                 balance: widget.balance,
-                price: widget.price)));
+                price: widget.price,
+                onPopBack: widget.onPopBack,
+                sessionTimer: widget.sessionTimer)));
   }
 
   //used to shorten a bitcoin address on the users clipboard for button display
@@ -199,30 +217,39 @@ class Send2State extends State<Send2> {
 
   //used to stop the clipbard parse timer
   void _stopTimer() {
-    print("stop timer...");
+    print("stop clipboard check timer...");
     clipboardCheckTimer?.cancel();
   }
 
   @override
   void dispose() {
+    print("disposing send2");
     recipientAddressController.dispose();
-    clipboardCheckTimer?.cancel();
+    _stopTimer();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
     print("Amount to send: ${widget.amount}");
     return PopScope(
       canPop: true,
-      //prevents clipboard refresh timer from continuing to run off screen
+      //prevents clipboard refresh timer & session timer from continuing to run off screen
       onPopInvoked: (bool didPop) async {
         _stopTimer();
+        widget.sessionTimer.dispose();
       },
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
           title: const Text('Bitcoin Address'),
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                widget.onPopBack();
+                Navigator.pop(context);
+              }),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),

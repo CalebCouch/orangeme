@@ -3,12 +3,21 @@ import 'package:orange/widgets/numberpad.dart';
 import 'package:orange/widgets/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
+import 'package:orange/screens/non_premium/dashboard.dart';
+import 'package:orange/widgets/session_timer.dart';
 
 class Send1 extends StatefulWidget {
   final int balance;
   final double? price;
+  final SessionTimerManager? sessionTimer;
+  final VoidCallback onPopBack;
 
-  const Send1({super.key, required this.balance, required this.price});
+  const Send1(
+      {super.key,
+      required this.balance,
+      required this.price,
+      required this.onPopBack,
+      this.sessionTimer});
 
   @override
   Send1State createState() => Send1State();
@@ -20,6 +29,45 @@ class Send1State extends State<Send1> {
       GlobalKey<KeyboardValueDisplayState>();
   bool isButtonEnabled = false;
   bool exceedMaxBalance = false;
+  late SessionTimerManager sessionTimer;
+
+  @override
+  void initState() {
+    print("initializing send1");
+    super.initState();
+    print("WIDGET TIMER MANAGER: ${widget.sessionTimer}");
+    if (widget.sessionTimer != null) {
+      print("TIMER MANAGER IS NOT NULL, PRESERVE STATE");
+      // Use the existing timer manager passed from another screen
+      sessionTimer = widget.sessionTimer!;
+      sessionTimer.setOnSessionEnd(() {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Dashboard()),
+          );
+        }
+      });
+    } else {
+      print("TIMER MANAGER IS NULL, START TIMER");
+      // Create a new timer manager if none was passed
+      sessionTimer = SessionTimerManager(onSessionEnd: () {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Dashboard()),
+          );
+        }
+      });
+      sessionTimer.startTimer();
+    }
+  }
+
+  @override
+  void dispose() {
+    print("disposing send1");
+    super.dispose();
+  }
 
   //algorithim used to control the logic of the virtual keyboard
   void _updateAmount(String input) {
@@ -142,44 +190,65 @@ class Send1State extends State<Send1> {
         context,
         MaterialPageRoute(
             builder: (context) => Send2(
-                amount: qty, balance: widget.balance, price: widget.price!)));
+                amount: qty,
+                balance: widget.balance,
+                price: widget.price!,
+                onPopBack: widget.onPopBack,
+                sessionTimer: sessionTimer)));
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Time left ${sessionTimer.getTimeLeftFormatted()}");
     print("Price: ${widget.price}");
     print("Exceed max balance: $exceedMaxBalance");
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Send Bitcoin'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20), // Adjust the height as needed
-            KeyboardValueDisplay(
-              key: _displayKey,
-              fiatAmount: amount == '' ? '0' : amount,
-              quantity: amount == ''
-                  ? formatDollarsToBTC('0', widget.price, false)
-                  : formatDollarsToBTC(amount, widget.price, false),
-              onShake: () {},
-              exceedMaxBalance: exceedMaxBalance == true ? true : false,
-            ),
-            const Spacer(),
-            NumberPad(
-              onNumberPressed: _updateAmount,
-            ),
-            const SizedBox(height: 10),
-            ButtonOrangeLG(
-              label: "Send",
-              onTap: () => onContinue(),
-              isEnabled: isButtonEnabled,
-            ),
-          ],
+    return PopScope(
+      canPop: true,
+      //prevents session timer from continuing to run off screen
+      onPopInvoked: (bool didPop) async {
+        sessionTimer.dispose();
+        if (widget.sessionTimer != null) {
+          widget.sessionTimer!.dispose();
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('Send Bitcoin'),
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                widget.onPopBack();
+                Navigator.pop(context);
+              }),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20), // Adjust the height as needed
+              KeyboardValueDisplay(
+                key: _displayKey,
+                fiatAmount: amount == '' ? '0' : amount,
+                quantity: amount == ''
+                    ? formatDollarsToBTC('0', widget.price, false)
+                    : formatDollarsToBTC(amount, widget.price, false),
+                onShake: () {},
+                exceedMaxBalance: exceedMaxBalance == true ? true : false,
+              ),
+              const Spacer(),
+              NumberPad(
+                onNumberPressed: _updateAmount,
+              ),
+              const SizedBox(height: 10),
+              ButtonOrangeLG(
+                label: "Send",
+                onTap: () => onContinue(),
+                isEnabled: isButtonEnabled,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -7,7 +7,9 @@ import 'package:orange/styles/constants.dart';
 import 'package:share/share.dart';
 
 class Receive extends StatefulWidget {
-  const Receive({super.key});
+  final VoidCallback onPopBack;
+
+  const Receive({super.key, required this.onPopBack});
 
   @override
   ReceiveState createState() => ReceiveState();
@@ -54,6 +56,12 @@ class ReceiveState extends State<Receive> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Receive Bitcoin'),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              widget.onPopBack();
+              Navigator.pop(context);
+            }),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

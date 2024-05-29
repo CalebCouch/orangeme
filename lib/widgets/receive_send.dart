@@ -5,19 +5,17 @@ class ReceiveSend extends StatelessWidget {
   final Widget Function() receiveRoute;
   final Widget Function() sendRoute;
   final VoidCallback onPause;
-  final VoidCallback onResume;
 
   const ReceiveSend({
     super.key,
     required this.receiveRoute,
     required this.sendRoute,
     required this.onPause,
-    required this.onResume,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 393,
       height: 80,
       child: Row(
@@ -33,7 +31,7 @@ class ReceiveSend extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => receiveRoute()),
-                  ).then((_) => onResume());
+                  );
                 },
               ),
             ),
@@ -49,7 +47,7 @@ class ReceiveSend extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => sendRoute()),
-                  ).then((_) => onResume());
+                  );
                 },
               ),
             ),

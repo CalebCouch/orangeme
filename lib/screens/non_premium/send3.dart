@@ -6,7 +6,8 @@ import 'package:orange/widgets/fee_selector.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
-
+import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/screens/non_premium/dashboard.dart';
 import '../../classes.dart';
 
 class Send3 extends StatefulWidget {
@@ -14,13 +15,17 @@ class Send3 extends StatefulWidget {
   final String address;
   final int balance;
   final double price;
+  final SessionTimerManager sessionTimer;
+  final VoidCallback onPopBack;
 
   Send3(
       {super.key,
       required this.amount,
       required this.address,
       required this.balance,
-      required this.price});
+      required this.price,
+      required this.onPopBack,
+      required this.sessionTimer});
 
   @override
   Send3State createState() => Send3State();
@@ -40,17 +45,30 @@ class Send3State extends State<Send3> {
                 tx: transaction,
                 balance: widget.balance,
                 amount: widget.amount,
-                price: widget.price)));
+                price: widget.price,
+                onPopBack: widget.onPopBack,
+                sessionTimer: widget.sessionTimer)));
   }
 
   @override
   void initState() {
+    print("initializing send3");
     super.initState();
     createTransaction();
+    widget.sessionTimer.setOnSessionEnd(() {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Dashboard()),
+        );
+        widget.sessionTimer.dispose();
+      }
+    });
   }
 
   @override
   void dispose() {
+    print("disposing send3");
     super.dispose();
   }
 
@@ -99,29 +117,43 @@ class Send3State extends State<Send3> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transaction Speed'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FeeSelector(
-                onOptionSelected: onOptionSelected,
-                price: widget.price,
-                standardFee: standardFee),
-            const Spacer(),
-          ],
+    print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
+    return PopScope(
+      canPop: true,
+      //prevents session timer from continuing to run off screen
+      onPopInvoked: (bool didPop) async {
+        widget.sessionTimer.dispose();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Transaction Speed'),
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                widget.onPopBack();
+                Navigator.pop(context);
+              }),
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ButtonOrangeLG(
-          label: "Continue",
-          onTap: navigate,
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FeeSelector(
+                  onOptionSelected: onOptionSelected,
+                  price: widget.price,
+                  standardFee: standardFee),
+              const Spacer(),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ButtonOrangeLG(
+            label: "Continue",
+            onTap: navigate,
+          ),
         ),
       ),
     );
