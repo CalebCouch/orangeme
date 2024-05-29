@@ -7,9 +7,9 @@ import 'package:orange/styles/constants.dart';
 import 'package:share/share.dart';
 
 class Receive extends StatefulWidget {
-  final VoidCallback onPopBack;
+  final VoidCallback onDashboardPopBack;
 
-  const Receive({super.key, required this.onPopBack});
+  const Receive({super.key, required this.onDashboardPopBack});
 
   @override
   ReceiveState createState() => ReceiveState();
@@ -59,7 +59,7 @@ class ReceiveState extends State<Receive> {
         leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              widget.onPopBack();
+              widget.onDashboardPopBack();
               Navigator.pop(context);
             }),
       ),

@@ -3,20 +3,19 @@ import 'package:orange/widgets/numberpad.dart';
 import 'package:orange/widgets/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
-import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/widgets/session_timer.dart';
 
 class Send1 extends StatefulWidget {
   final int balance;
   final double? price;
   final SessionTimerManager? sessionTimer;
-  final VoidCallback onPopBack;
+  final VoidCallback onDashboardPopBack;
 
   const Send1(
       {super.key,
       required this.balance,
       required this.price,
-      required this.onPopBack,
+      required this.onDashboardPopBack,
       this.sessionTimer});
 
   @override
@@ -36,29 +35,28 @@ class Send1State extends State<Send1> {
     print("initializing send1");
     super.initState();
     print("WIDGET TIMER MANAGER: ${widget.sessionTimer}");
+    //initialize the send flow session timer
     if (widget.sessionTimer != null) {
       print("TIMER MANAGER IS NOT NULL, PRESERVE STATE");
-      // Use the existing timer manager passed from another screen
+      // Use the existing timer manager if passed from another screen
       sessionTimer = widget.sessionTimer!;
+      //send the user back to the dashboard if the session expires
       sessionTimer.setOnSessionEnd(() {
         if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const Dashboard()),
-          );
+          widget.onDashboardPopBack();
+          Navigator.pop(context);
         }
       });
     } else {
       print("TIMER MANAGER IS NULL, START TIMER");
-      // Create a new timer manager if none was passed
+      // Create a new timer manager if none was passed which sends the user back to the dashboard if session expires
       sessionTimer = SessionTimerManager(onSessionEnd: () {
         if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const Dashboard()),
-          );
+          widget.onDashboardPopBack();
+          Navigator.pop(context);
         }
       });
+      //start the new timer
       sessionTimer.startTimer();
     }
   }
@@ -75,16 +73,17 @@ class Send1State extends State<Send1> {
     print("current amount: $amount");
     double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
     print("max amount to spend: $maxDollarAmount");
-    // double maxDollarAmount = 99999999999;
     String tempAmount = amount; // Currently displayed amount
     if (input == "backspace") {
       // When input is backspace, handle deletion
       if (tempAmount.length > 1) {
+        //accept the backspace
         tempAmount = tempAmount.substring(0, tempAmount.length - 1);
         double? tempAmountDouble = double.tryParse(tempAmount);
         print('accept backspace: new temp amount: $tempAmount');
         if (tempAmountDouble! <= maxDollarAmount && exceedMaxBalance == true) {
           setState(() {
+            //reset exceedMaxBalance warning after backspace
             print('amount below max: reset warning');
             exceedMaxBalance = false;
           });
@@ -99,7 +98,7 @@ class Send1State extends State<Send1> {
         tempAmount = "0";
       }
     } else {
-      //enforce a 9
+      //enforce a 9 digit number or 12 digits with decimal
       if ((amount.contains('.') && amount.length >= 12) ||
           (!amount.contains('.') && amount.length == 9 && input != '.')) {
         print("invalid input: max digits");
@@ -128,14 +127,15 @@ class Send1State extends State<Send1> {
     //check if tempamount exceeds max amount
     double? tempAmountDouble = double.tryParse(tempAmount);
     if (tempAmountDouble != null && tempAmountDouble > maxDollarAmount) {
-      // _displayKey.currentState?.shake();
       print(
           "Attempting to exceed max balance current amount: $amount temp amount: $tempAmount");
       setState(() {
+        //show error feedback to the user, disable the continue button
         exceedMaxBalance = true;
         amount = tempAmount;
         evaluateButton(tempAmount, maxDollarAmount);
       });
+      //standard key input
     } else {
       setState(() {
         print("standard input amount: $amount temp amount: $tempAmount");
@@ -149,10 +149,12 @@ class Send1State extends State<Send1> {
   void evaluateButton(String tempAmount, maxDollarAmount) {
     double? amountDouble = double.tryParse(amount);
     double? tempAmountDouble = double.tryParse(tempAmount);
+    //button only activates if you are not exceed max dollar amount of your wallet, and you enter an amount greater than $0.01
     if (amountDouble != null &&
         amountDouble >= 0.01 &&
         tempAmountDouble! <= maxDollarAmount) {
       isButtonEnabled = true;
+      //otherwise it deactivates
     } else {
       isButtonEnabled = false;
     }
@@ -162,6 +164,7 @@ class Send1State extends State<Send1> {
   String formatDollarsToBTC(String amount, double? price, bool satsFormat) {
     if (!satsFormat) {
       print("sats format false, giving decimal format");
+      //with sats format false, here we format into BTC
       if (amount == "" || amount == "0.00" || amount == "0." || amount == "0") {
         return "0.00000000";
       } else {
@@ -176,6 +179,7 @@ class Send1State extends State<Send1> {
         }
       }
     } else {
+      //with satsFormat true, here we format into Satoshis
       print("sats format true, giving sats format");
       if (amount == "" || amount == "0.00" || amount == "0." || amount == "0") {
         return "0";
@@ -200,7 +204,7 @@ class Send1State extends State<Send1> {
                 amount: qty,
                 balance: widget.balance,
                 price: widget.price!,
-                onPopBack: widget.onPopBack,
+                onDashboardPopBack: widget.onDashboardPopBack,
                 sessionTimer: sessionTimer)));
   }
 
@@ -225,7 +229,8 @@ class Send1State extends State<Send1> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                widget.onPopBack();
+                //dashboard timer callback function
+                widget.onDashboardPopBack();
                 Navigator.pop(context);
               }),
         ),
@@ -234,7 +239,7 @@ class Send1State extends State<Send1> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 20), // Adjust the height as needed
+              const SizedBox(height: 20),
               KeyboardValueDisplay(
                 key: _displayKey,
                 fiatAmount: amount == '' ? '0' : amount,

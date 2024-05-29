@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class SessionTimerManager extends ChangeNotifier {
   Timer? sessionTimer;
-  Duration _timeLeft = const Duration(minutes: 15);
+  Duration _timeLeft = const Duration(minutes: 1);
   Function? onSessionEnd;
 
   SessionTimerManager({this.onSessionEnd, Duration? initialTime}) {

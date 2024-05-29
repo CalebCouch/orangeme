@@ -7,7 +7,6 @@ import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/widgets/session_timer.dart';
-import 'package:orange/screens/non_premium/dashboard.dart';
 import '../../classes.dart';
 
 class Send3 extends StatefulWidget {
@@ -16,7 +15,7 @@ class Send3 extends StatefulWidget {
   final int balance;
   final double price;
   final SessionTimerManager sessionTimer;
-  final VoidCallback onPopBack;
+  final VoidCallback onDashboardPopBack;
 
   Send3(
       {super.key,
@@ -24,7 +23,7 @@ class Send3 extends StatefulWidget {
       required this.address,
       required this.balance,
       required this.price,
-      required this.onPopBack,
+      required this.onDashboardPopBack,
       required this.sessionTimer});
 
   @override
@@ -46,7 +45,7 @@ class Send3State extends State<Send3> {
                 balance: widget.balance,
                 amount: widget.amount,
                 price: widget.price,
-                onPopBack: widget.onPopBack,
+                onDashboardPopBack: widget.onDashboardPopBack,
                 sessionTimer: widget.sessionTimer)));
   }
 
@@ -55,13 +54,11 @@ class Send3State extends State<Send3> {
     print("initializing send3");
     super.initState();
     createTransaction();
+    //send the user back to the dashboard if the session expires
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Dashboard()),
-        );
-        widget.sessionTimer.dispose();
+        widget.onDashboardPopBack();
+        Navigator.pop(context);
       }
     });
   }
@@ -108,6 +105,7 @@ class Send3State extends State<Send3> {
     print("building tx and sending user to confirmation screen");
   }
 
+  //calcuate a standard fee as returned by create_transaction with no fee specified
   void calculateStandardFee(String transaction) {
     final transactionDecoded = Transaction.fromJson(jsonDecode(transaction));
     setState(() {
@@ -130,7 +128,8 @@ class Send3State extends State<Send3> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                widget.onPopBack();
+                //dashboard timer callback function
+                widget.onDashboardPopBack();
                 Navigator.pop(context);
               }),
         ),

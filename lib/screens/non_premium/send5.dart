@@ -6,21 +6,22 @@ import 'package:orange/styles/constants.dart';
 class Send5 extends StatefulWidget {
   final int amount;
   final double price;
-  final VoidCallback onPopBack;
+  final VoidCallback onDashboardPopBack;
 
   const Send5(
       {super.key,
       required this.amount,
       required this.price,
-      required this.onPopBack});
+      required this.onDashboardPopBack});
 
   @override
   Send5State createState() => Send5State();
 }
 
 class Send5State extends State<Send5> {
+  //send the user back to the dashboard
   void navigateHome() {
-    widget.onPopBack();
+    widget.onDashboardPopBack();
     Navigator.pop(context);
   }
 
@@ -34,7 +35,8 @@ class Send5State extends State<Send5> {
         leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              widget.onPopBack();
+              //dashboard timer callback function
+              widget.onDashboardPopBack();
               Navigator.pop(context);
             }),
       ),

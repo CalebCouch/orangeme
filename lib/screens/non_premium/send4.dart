@@ -11,7 +11,6 @@ import 'send2.dart';
 import 'send3.dart';
 import 'send1.dart';
 import 'send5.dart';
-import 'dashboard.dart';
 
 class Send4 extends StatefulWidget {
   final String tx;
@@ -19,7 +18,7 @@ class Send4 extends StatefulWidget {
   final int amount;
   final double price;
   final SessionTimerManager sessionTimer;
-  final VoidCallback onPopBack;
+  final VoidCallback onDashboardPopBack;
 
   const Send4(
       {super.key,
@@ -27,7 +26,7 @@ class Send4 extends StatefulWidget {
       required this.balance,
       required this.amount,
       required this.price,
-      required this.onPopBack,
+      required this.onDashboardPopBack,
       required this.sessionTimer});
 
   @override
@@ -44,14 +43,11 @@ class Send4State extends State<Send4> {
     print("initializing send4");
     super.initState();
     updateValues();
-    //provide the session timer with a destination for when it's callback is fired (ie: timer expires)
+    //send the user back to the dashboard if the session expires
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Dashboard()),
-        );
-        widget.sessionTimer.dispose();
+        widget.onDashboardPopBack();
+        Navigator.pop(context);
       }
     });
   }
@@ -99,7 +95,7 @@ class Send4State extends State<Send4> {
           builder: (context) => Send5(
                 amount: widget.amount,
                 price: widget.price,
-                onPopBack: widget.onPopBack,
+                onDashboardPopBack: widget.onDashboardPopBack,
               )),
     );
   }
@@ -139,7 +135,7 @@ class Send4State extends State<Send4> {
                 amount: amount,
                 balance: widget.balance,
                 price: widget.price,
-                onPopBack: widget.onPopBack,
+                onDashboardPopBack: widget.onDashboardPopBack,
                 sessionTimer: widget.sessionTimer)));
   }
 
@@ -152,7 +148,7 @@ class Send4State extends State<Send4> {
             builder: (context) => Send1(
                   price: widget.price,
                   balance: widget.balance,
-                  onPopBack: widget.onPopBack,
+                  onDashboardPopBack: widget.onDashboardPopBack,
                   sessionTimer: widget.sessionTimer,
                 )));
   }
@@ -171,7 +167,7 @@ class Send4State extends State<Send4> {
                 balance: widget.balance,
                 address: transaction.receiver!,
                 price: widget.price,
-                onPopBack: widget.onPopBack,
+                onDashboardPopBack: widget.onDashboardPopBack,
                 sessionTimer: widget.sessionTimer)));
   }
 
@@ -199,7 +195,8 @@ class Send4State extends State<Send4> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                widget.onPopBack();
+                //dashboard timer callback function
+                widget.onDashboardPopBack();
                 Navigator.pop(context);
               }),
         ),

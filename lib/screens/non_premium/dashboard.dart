@@ -36,14 +36,18 @@ class DashboardState extends State<Dashboard>
   void initState() {
     print("INITIALIZING DASHBOARD");
     super.initState();
+    //sync and obtain data on page load
     handleRefresh();
+    //monitor for application reactivation and init
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     print("DISPOSING DASHBOARD");
+    //dispose of the dashboard refresh timer
     _stopTimer();
+    //monitor for application minimizing and dispose
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -61,7 +65,7 @@ class DashboardState extends State<Dashboard>
     }
   }
 
-  //start the timer that periodically runs a data refresh
+  //start the timer to periodically get a data refresh
   void startTimer() {
     print("start dashboard refresh timer....");
     if (refreshTimer == null || !refreshTimer!.isActive) {
@@ -99,6 +103,7 @@ class DashboardState extends State<Dashboard>
     String path = await getDBPath();
     if (initialLoad == false) {
       print('Sync Wallet...');
+      //sync wallet data
       var syncRes =
           await invoke(method: "sync_wallet", args: [path, descriptors]);
       print("SyncRes: $syncRes");
@@ -110,6 +115,7 @@ class DashboardState extends State<Dashboard>
       });
     }
     print('Getting Balance...');
+    //get the wallet balance
     var balanceRes =
         await invoke(method: "get_balance", args: [path, descriptors]);
     print("Balanceres: $balanceRes");
@@ -118,6 +124,7 @@ class DashboardState extends State<Dashboard>
     print("Balance: ${balance.value}");
 
     print('Getting Transactions...');
+    //get the wallet transaction history
     var jsonRes =
         await invoke(method: "get_transactions", args: [path, descriptors]);
     print("Transactionsres: $jsonRes");
@@ -132,8 +139,7 @@ class DashboardState extends State<Dashboard>
     print(transactions.value);
 
     print('Getting Price...');
-
-    // var priceRes = await invoke(method: "get_price", args: []);
+    //get the latest price
     if (!mounted) return;
     var priceRes = await invoke(method: "get_price", args: []);
     if (priceRes.status == 200) {
@@ -172,6 +178,7 @@ class DashboardState extends State<Dashboard>
   }
 
   //these are used to activate the app bar menu links, currently disabled
+
   // void navigateBackUp() {
   //   Navigator.push(
   //       context, MaterialPageRoute(builder: (context) => const BackUp()));
@@ -199,7 +206,7 @@ class DashboardState extends State<Dashboard>
       appBar: AppBar(
         title: const TextMarkLG(),
         automaticallyImplyLeading: false,
-        //app bar menu, currently disabled
+        //app bar drop down settings/nav menu, currently disabled
         // actions: [
         //   PopupMenuButton<int>(
         //     icon: const Icon(Icons.menu),
@@ -273,12 +280,12 @@ class DashboardState extends State<Dashboard>
                                       horizontal: 20),
                                   child: ReceiveSend(
                                     receiveRoute: () => Receive(
-                                      onPopBack: handleRefresh,
+                                      onDashboardPopBack: handleRefresh,
                                     ),
                                     sendRoute: () => Send1(
                                       balance: balance.value,
                                       price: price.value,
-                                      onPopBack: handleRefresh,
+                                      onDashboardPopBack: handleRefresh,
                                     ),
                                     onPause: _stopTimer,
                                   ),

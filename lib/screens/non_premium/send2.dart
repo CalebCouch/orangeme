@@ -10,20 +10,19 @@ import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/session_timer.dart';
-import 'package:orange/screens/non_premium/dashboard.dart';
 
 class Send2 extends StatefulWidget {
   final int amount;
   final int balance;
   final double price;
-  final VoidCallback onPopBack;
+  final VoidCallback onDashboardPopBack;
   final SessionTimerManager sessionTimer;
   const Send2({
     super.key,
     required this.amount,
     required this.balance,
     required this.price,
-    required this.onPopBack,
+    required this.onDashboardPopBack,
     required this.sessionTimer,
   });
 
@@ -47,18 +46,17 @@ class Send2State extends State<Send2> {
     super.initState();
     fetchAndValidateClipboard();
     recipientAddressController.addListener(buttonListner);
+    //check the users clipboard contents every 1 second
     clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) {
         fetchAndValidateClipboard();
       }
     });
+    //send user back to dashboard if session expires
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
-        widget.sessionTimer.dispose();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Dashboard()),
-        );
+        widget.onDashboardPopBack();
+        Navigator.pop(context);
       }
     });
   }
@@ -194,7 +192,7 @@ class Send2State extends State<Send2> {
                 address: recipientAddressController.text,
                 balance: widget.balance,
                 price: widget.price,
-                onPopBack: widget.onPopBack,
+                onDashboardPopBack: widget.onDashboardPopBack,
                 sessionTimer: widget.sessionTimer)));
   }
 
@@ -247,7 +245,8 @@ class Send2State extends State<Send2> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                widget.onPopBack();
+                //dashboard timer callback function
+                widget.onDashboardPopBack();
                 Navigator.pop(context);
               }),
         ),
