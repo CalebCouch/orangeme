@@ -11,6 +11,7 @@ import 'dart:async';
 import 'dart:core';
 import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
+import 'package:orange/widgets/mode_navigator.dart';
 
 // import 'package:orange/screens/settings/import_cloud.dart';
 // import 'package:orange/screens/settings/duplicate_phone.dart';
@@ -290,6 +291,7 @@ class DashboardState extends State<Dashboard>
                                     onPause: _stopTimer,
                                   ),
                                 ),
+                                ModeNavigator()
                               ],
                             ),
                           ),
