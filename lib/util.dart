@@ -9,7 +9,7 @@ const STORAGE = FlutterSecureStorage();
 
 Future<String> getDBPath() async {
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
-  Directory mydir = await Directory('${appDocDirectory.path}/sqlitedata6.db')
+  Directory mydir = await Directory('${appDocDirectory.path}/sqlitedata7.db')
       .create(recursive: true);
   return mydir.path;
 }

@@ -17,9 +17,9 @@ class ReceiveSend extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 393,
-      height: 80,
+      height: 60,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Padding(

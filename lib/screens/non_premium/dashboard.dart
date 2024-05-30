@@ -21,7 +21,7 @@ class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
   @override
-  State<Dashboard> createState() => new DashboardState();
+  State<Dashboard> createState() => DashboardState();
 }
 
 class DashboardState extends State<Dashboard>
@@ -32,6 +32,7 @@ class DashboardState extends State<Dashboard>
   final price = ValueNotifier<double>(0);
   bool initialLoad = true;
   bool loading = true;
+  int navIndex = 0;
 
   @override
   void initState() {
@@ -291,7 +292,6 @@ class DashboardState extends State<Dashboard>
                                     onPause: _stopTimer,
                                   ),
                                 ),
-                                ModeNavigator()
                               ],
                             ),
                           ),
@@ -302,6 +302,12 @@ class DashboardState extends State<Dashboard>
                 ],
               ),
             ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 15),
+        child: ModeNavigator(
+          navIndex: navIndex,
+        ),
+      ),
     );
   }
 }

@@ -1,21 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:orange/screens/non_premium/dashboard.dart';
+import 'package:orange/screens/social/social.dart';
 
 class ModeNavigator extends StatefulWidget {
-  const ModeNavigator({super.key});
+  late int navIndex;
+
+  ModeNavigator({super.key, required this.navIndex});
 
   @override
   ModeNavigatorState createState() => ModeNavigatorState();
 }
 
 class ModeNavigatorState extends State<ModeNavigator> {
-  int _selectedIndex = 0;
+  void navigateWallet() {
+    Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const Dashboard(),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ));
+  }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  void navigateSocial() {
+    Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const SocialDashboard(),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ));
   }
 
   @override
@@ -28,7 +58,7 @@ class ModeNavigatorState extends State<ModeNavigator> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           IconButton(
-            icon: _selectedIndex == 0
+            icon: widget.navIndex == 0
                 ? SvgPicture.asset(
                     'assets/icons/Icon=wallet_filled.svg',
                     colorFilter: const ColorFilter.mode(
@@ -44,24 +74,28 @@ class ModeNavigatorState extends State<ModeNavigator> {
                     height: 50,
                   ),
             onPressed: () {
-              setState(() {
-                _selectedIndex = 0;
-              });
+              if (widget.navIndex != 0) {
+                navigateWallet();
+              } else {
+                return;
+              }
             },
           ),
           IconButton(
             icon: SvgPicture.asset(
               'assets/icons/Icon=chat.svg',
               colorFilter: ColorFilter.mode(
-                  _selectedIndex == 1 ? AppColors.orange : AppColors.grey,
+                  widget.navIndex == 1 ? AppColors.orange : AppColors.grey,
                   BlendMode.srcIn),
               width: 22,
               height: 22,
             ),
             onPressed: () {
-              setState(() {
-                _selectedIndex = 1;
-              });
+              if (widget.navIndex != 1) {
+                navigateSocial();
+              } else {
+                return;
+              }
             },
           ),
         ],
