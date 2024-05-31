@@ -136,11 +136,13 @@ class Send4State extends State<Send4> {
                 balance: widget.balance,
                 price: widget.price,
                 onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: widget.sessionTimer)));
+                sessionTimer: widget.sessionTimer,
+                address: transaction.receiver!)));
   }
 
   //navigate to the amount input screen, user activates by clicking the "edit amount" button
   void editAmount() {
+    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
     print("edit amount selected");
     Navigator.pushReplacement(
         context,
@@ -150,6 +152,8 @@ class Send4State extends State<Send4> {
                   balance: widget.balance,
                   onDashboardPopBack: widget.onDashboardPopBack,
                   sessionTimer: widget.sessionTimer,
+                  address: transaction.receiver!,
+                  amount: sendAmount,
                 )));
   }
 

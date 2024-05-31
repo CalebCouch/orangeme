@@ -17,14 +17,15 @@ class Send2 extends StatefulWidget {
   final double price;
   final VoidCallback onDashboardPopBack;
   final SessionTimerManager sessionTimer;
-  const Send2({
-    super.key,
-    required this.amount,
-    required this.balance,
-    required this.price,
-    required this.onDashboardPopBack,
-    required this.sessionTimer,
-  });
+  final String? address;
+  const Send2(
+      {super.key,
+      required this.amount,
+      required this.balance,
+      required this.price,
+      required this.onDashboardPopBack,
+      required this.sessionTimer,
+      this.address});
 
   @override
   Send2State createState() => Send2State();
@@ -46,6 +47,10 @@ class Send2State extends State<Send2> {
     super.initState();
     fetchAndValidateClipboard();
     recipientAddressController.addListener(buttonListner);
+    //this condition applies if user is returning from further in the flow
+    if (widget.address != null) {
+      recipientAddressController.text = widget.address!;
+    }
     //check the users clipboard contents every 1 second
     clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) {

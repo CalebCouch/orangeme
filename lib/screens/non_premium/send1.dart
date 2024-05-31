@@ -10,13 +10,18 @@ class Send1 extends StatefulWidget {
   final double? price;
   final SessionTimerManager? sessionTimer;
   final VoidCallback onDashboardPopBack;
+  final String? address;
+  final String? amount;
 
-  const Send1(
-      {super.key,
-      required this.balance,
-      required this.price,
-      required this.onDashboardPopBack,
-      this.sessionTimer});
+  const Send1({
+    super.key,
+    required this.balance,
+    required this.price,
+    required this.onDashboardPopBack,
+    this.sessionTimer,
+    this.address,
+    this.amount,
+  });
 
   @override
   Send1State createState() => Send1State();
@@ -34,6 +39,14 @@ class Send1State extends State<Send1> {
   void initState() {
     print("initializing send1");
     super.initState();
+    //this condition applies if the user is returning from further in the flow
+    if (widget.amount != null) {
+      setState(() {
+        amount = widget.amount!;
+      });
+      double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
+      evaluateButton(widget.amount!, maxDollarAmount);
+    }
     print("WIDGET TIMER MANAGER: ${widget.sessionTimer}");
     //initialize the send flow session timer
     if (widget.sessionTimer != null) {
@@ -205,7 +218,8 @@ class Send1State extends State<Send1> {
                 balance: widget.balance,
                 price: widget.price!,
                 onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: sessionTimer)));
+                sessionTimer: sessionTimer,
+                address: widget.address)));
   }
 
   @override
