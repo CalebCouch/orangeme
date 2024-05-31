@@ -8,13 +8,15 @@ class KeyboardValueDisplay extends StatefulWidget {
   final String quantity;
   final VoidCallback onShake;
   final bool exceedMaxBalance;
+  final String maxBalance;
 
   const KeyboardValueDisplay(
       {super.key,
       required this.fiatAmount,
       required this.quantity,
       required this.onShake,
-      required this.exceedMaxBalance});
+      required this.exceedMaxBalance,
+      required this.maxBalance});
 
   @override
   KeyboardValueDisplayState createState() => KeyboardValueDisplayState();
@@ -222,7 +224,7 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                         child: RichText(
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                            text: "Not enough Bitcoin",
+                            text: "\$${widget.maxBalance} maximum.",
                             style: AppTextStyles.textLG
                                 .copyWith(color: AppColors.danger),
                           ),

@@ -262,6 +262,8 @@ class Send1State extends State<Send1> {
                     : formatDollarsToBTC(amount, widget.price, false),
                 onShake: () {},
                 exceedMaxBalance: exceedMaxBalance == true ? true : false,
+                maxBalance: ((widget.balance / 100000000) * widget.price!)
+                    .toStringAsFixed(2),
               ),
               const Spacer(),
               NumberPad(
