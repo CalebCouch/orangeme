@@ -161,13 +161,12 @@ class Send4State extends State<Send4> {
   void editSpeed() {
     print("edit speed selected");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    final amount = (transaction.net.abs() - transaction.fee!).toInt();
-    print("sending to edit screen with Amount: $amount");
+    print("sending to edit screen with Amount: ${widget.amount}");
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => Send3(
-                amount: amount,
+                amount: widget.amount,
                 balance: widget.balance,
                 address: transaction.receiver!,
                 price: widget.price,
@@ -200,8 +199,16 @@ class Send4State extends State<Send4> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 //dashboard timer callback function
-                widget.onDashboardPopBack();
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Send3(
+                            amount: widget.amount,
+                            balance: widget.balance,
+                            address: transaction.receiver!,
+                            price: widget.price,
+                            onDashboardPopBack: widget.onDashboardPopBack,
+                            sessionTimer: widget.sessionTimer)));
               }),
         ),
         body: Padding(

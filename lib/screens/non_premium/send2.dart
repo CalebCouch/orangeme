@@ -10,6 +10,7 @@ import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/screens/non_premium/send1.dart';
 
 class Send2 extends StatefulWidget {
   final int amount;
@@ -251,8 +252,18 @@ class Send2State extends State<Send2> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 //dashboard timer callback function
-                widget.onDashboardPopBack();
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Send1(
+                              price: widget.price,
+                              balance: widget.balance,
+                              onDashboardPopBack: widget.onDashboardPopBack,
+                              sessionTimer: widget.sessionTimer,
+                              amount:
+                                  ((widget.amount / 100000000) * widget.price)
+                                      .toStringAsFixed(2),
+                            )));
               }),
         ),
         body: Padding(

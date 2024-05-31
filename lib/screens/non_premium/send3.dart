@@ -8,6 +8,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/widgets/session_timer.dart';
 import '../../classes.dart';
+import 'package:orange/screens/non_premium/send2.dart';
 
 class Send3 extends StatefulWidget {
   final int amount;
@@ -129,8 +130,16 @@ class Send3State extends State<Send3> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 //dashboard timer callback function
-                widget.onDashboardPopBack();
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Send2(
+                            amount: widget.amount,
+                            balance: widget.balance,
+                            price: widget.price,
+                            onDashboardPopBack: widget.onDashboardPopBack,
+                            sessionTimer: widget.sessionTimer,
+                            address: widget.address)));
               }),
         ),
         body: Padding(
