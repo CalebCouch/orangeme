@@ -92,12 +92,8 @@ class DashboardState extends State<Dashboard>
   }
 
   void handleError(Object error, BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error: $error'),
-        backgroundColor: Colors.red,
-      ),
-    );
+      print("network error");
+      //error display here
   }
 
 // Sync wallet and get transaction list, current price, and balance
