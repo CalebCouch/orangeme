@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:custom_qr_generator/custom_qr_generator.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share/share.dart';
 
 class Receive extends StatefulWidget {
@@ -68,42 +69,55 @@ class ReceiveState extends State<Receive> {
           : Center(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 312,
-                      height: 312,
+                      width: 300,
+                      height: 300,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ValueListenableBuilder<String>(
-                            valueListenable: address,
-                            builder:
-                                (BuildContext context, String value, child) {
-                              return QrImageView(
-                                  data: value,
-                                  version: QrVersions.auto,
-                                  size: 200.0,
-                                  gapless: false,
-                                  // embeddedImage: const AssetImage(
-                                  //     'assets/icons/qrcode_brandmark.png'),
-                                  // embeddedImageStyle:
-                                  //     const QrEmbeddedImageStyle(
-                                  //         size: Size(68, 68)),
-                                  backgroundColor: Colors.white);
-                            },
-                          )),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: ValueListenableBuilder<String>(
+                          valueListenable: address,
+                          builder: (BuildContext context, String value, child) {
+                            return CustomPaint(
+                              size: const Size(300, 300),
+                              painter: QrPainter(
+                                data: value,
+                                options: const QrOptions(
+                                  shapes: QrShapes(
+                                    darkPixel: QrPixelShapeCircle(),
+                                    frame: QrFrameShapeRoundCorners(
+                                      cornerFraction: .25,
+                                    ),
+                                    ball: QrBallShapeRoundCorners(
+                                      cornerFraction: .25,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Scan to receive Bitcoin.',
-                      style: AppTextStyles.textMD
-                          .copyWith(color: AppColors.textSecondary),
+                    Positioned(
+                      child: SvgPicture.asset(
+                        AppIcons.brandmarkSM,
+                        width: 63,
+                        height: 63,
+                      ),
                     ),
                   ],
                 ),

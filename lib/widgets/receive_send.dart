@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
+import 'package:connectivity/connectivity.dart';
 
-class ReceiveSend extends StatelessWidget {
+class ReceiveSend extends StatefulWidget {
   final Widget Function() receiveRoute;
   final Widget Function() sendRoute;
   final VoidCallback onPause;
@@ -12,6 +13,31 @@ class ReceiveSend extends StatelessWidget {
     required this.sendRoute,
     required this.onPause,
   });
+
+  @override
+  ReceiveSendState createState() => ReceiveSendState();
+}
+
+class ReceiveSendState extends State<ReceiveSend> {
+  bool isConnected = true;
+
+  @override
+  void initState() {
+    super.initState();
+    checkConnectivity();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        isConnected = (result != ConnectivityResult.none);
+      });
+    });
+  }
+
+  Future<void> checkConnectivity() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    setState(() {
+      isConnected = (connectivityResult != ConnectivityResult.none);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +53,13 @@ class ReceiveSend extends StatelessWidget {
               child: ButtonOrangeLG(
                 label: "Receive",
                 onTap: () {
-                  onPause();
+                  widget.onPause();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => receiveRoute()),
+                    MaterialPageRoute(builder: (context) => widget.receiveRoute()),
                   );
                 },
+                isEnabled: isConnected,
               ),
             ),
           ),
@@ -43,12 +70,13 @@ class ReceiveSend extends StatelessWidget {
               child: ButtonOrangeLG(
                 label: "Send",
                 onTap: () {
-                  onPause();
+                  widget.onPause();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => sendRoute()),
+                    MaterialPageRoute(builder: (context) => widget.sendRoute()),
                   );
                 },
+                isEnabled: isConnected,
               ),
             ),
           ),

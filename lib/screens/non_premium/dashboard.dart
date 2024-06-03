@@ -39,7 +39,7 @@ class DashboardState extends State<Dashboard>
     print("INITIALIZING DASHBOARD");
     super.initState();
     //sync and obtain data on page load
-    handleRefresh();
+    handleRefresh(context);
     //monitor for application reactivation and init
     WidgetsBinding.instance.addObserver(this);
   }
@@ -74,7 +74,7 @@ class DashboardState extends State<Dashboard>
       refreshTimer = Timer(const Duration(seconds: 15), () {
         print("dashboard refresh was not running... timer started");
         if (mounted) {
-          handleRefresh();
+          handleRefresh(context);
         } else {
           print("unmounted parent, stopping dashboard refresh timer");
           _stopTimer();
@@ -91,67 +91,82 @@ class DashboardState extends State<Dashboard>
     refreshTimer?.cancel();
   }
 
-  //sync wallet and get transaction list, current price, and balance
-  Future<void> handleRefresh() async {
-    if (!mounted) return;
+  void handleError(Object error, BuildContext context) {
+      print("network error");
+      //error display here
+  }
+
+// Sync wallet and get transaction list, current price, and balance
+  Future<void> handleRefresh(BuildContext context) async {
+    if (!mounted) return; // Check if the widget is still mounted
     if (refreshTimer == null || !refreshTimer!.isActive) {
       startTimer();
     }
-    print('Refresh Initiatied...');
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
-    print("descriptorRes: $descriptorsRes");
-    if (!mounted) return;
-    var descriptors = handleNull(descriptorsRes, context);
-    String path = await getDBPath();
-    if (initialLoad == false) {
-      print('Sync Wallet...');
-      //sync wallet data
-      var syncRes =
-          await invoke(method: "sync_wallet", args: [path, descriptors]);
-      print("SyncRes: $syncRes");
+    print('Refresh Initiated...');
+    try {
+      var descriptorsRes = await STORAGE.read(key: "descriptors");
+      print("descriptorRes: $descriptorsRes");
       if (!mounted) return;
-      handleError(syncRes, context);
-    } else if (initialLoad == true) {
-      setState(() {
-        initialLoad = false;
-      });
-    }
-    print('Getting Balance...');
-    //get the wallet balance
-    var balanceRes =
-        await invoke(method: "get_balance", args: [path, descriptors]);
-    print("Balanceres: $balanceRes");
-    if (!mounted) return;
-    balance.value = int.parse(handleError(balanceRes, context));
-    print("Balance: ${balance.value}");
+      var descriptors = handleNull(descriptorsRes, context);
+      String path = await getDBPath();
 
-    print('Getting Transactions...');
-    //get the wallet transaction history
-    var jsonRes =
-        await invoke(method: "get_transactions", args: [path, descriptors]);
-    print("Transactionsres: $jsonRes");
+      if (!initialLoad) {
+        print('Sync Wallet...');
+        // Sync wallet data
+        var syncRes =
+            await invoke(method: "sync_wallet", args: [path, descriptors]);
+        print("SyncRes: $syncRes");
+        if (!mounted) return;
+        handleError(syncRes, context); // Handle any errors during sync
+      } else {
+        setState(() {
+          initialLoad = false;
+        });
+      }
 
-    if (!mounted) return;
-    String json = handleError(jsonRes, context);
-    print("json: $json");
-    final Iterable decodeJson = jsonDecode(json);
-    transactions.value =
-        decodeJson.map((item) => Transaction.fromJson(item)).toList();
-    sortTransactions(false);
-    print(transactions.value);
+      print('Getting Balance...');
+      // Get the wallet balance
+      var balanceRes =
+          await invoke(method: "get_balance", args: [path, descriptors]);
+      print("BalanceRes: $balanceRes");
+      if (!mounted) return;
+      balance.value =
+          int.tryParse(balanceRes.message) ?? 0; // Ensure proper parsing
 
-    print('Getting Price...');
-    //get the latest price
-    if (!mounted) return;
-    var priceRes = await invoke(method: "get_price", args: []);
-    if (priceRes.status == 200) {
-      price.value = double.parse(priceRes.message);
-    }
-    print("Price: ${price.value}");
-    if (loading == true) {
-      setState(() {
-        loading = false;
-      });
+      print("Balance: ${balance.value}");
+
+      print('Getting Transactions...');
+      // Get the wallet transaction history
+      var jsonRes =
+          await invoke(method: "get_transactions", args: [path, descriptors]);
+      print("TransactionsRes: $jsonRes");
+
+      if (!mounted) return;
+      handleError(jsonRes, context); // Handle any errors in the JSON response
+      String json = jsonRes.message; // Get the JSON message
+      print("json: $json");
+      final Iterable decodeJson = jsonDecode(json);
+      transactions.value =
+          decodeJson.map((item) => Transaction.fromJson(item)).toList();
+      sortTransactions(false);
+      print(transactions.value);
+
+      print('Getting Price...');
+      // Get the latest price
+      if (!mounted) return;
+      var priceRes = await invoke(method: "get_price", args: []);
+      if (priceRes.status == 200) {
+        price.value =
+            double.tryParse(priceRes.message) ?? 0.0; // Ensure proper parsing
+      }
+      print("Price: ${price.value}");
+      if (loading) {
+        setState(() {
+          loading = false;
+        });
+      }
+    } catch (error) {
+      handleError(error, context); 
     }
   }
 
@@ -246,7 +261,7 @@ class DashboardState extends State<Dashboard>
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: handleRefresh,
+              onRefresh: () => handleRefresh(context),
               child: CustomScrollView(
                 slivers: [
                   SliverFillRemaining(
@@ -282,12 +297,14 @@ class DashboardState extends State<Dashboard>
                                       horizontal: 20),
                                   child: ReceiveSend(
                                     receiveRoute: () => Receive(
-                                      onDashboardPopBack: handleRefresh,
+                                      onDashboardPopBack: () =>
+                                          handleRefresh(context),
                                     ),
                                     sendRoute: () => Send1(
                                       balance: balance.value,
                                       price: price.value,
-                                      onDashboardPopBack: handleRefresh,
+                                      onDashboardPopBack: () =>
+                                          handleRefresh(context),
                                     ),
                                     onPause: _stopTimer,
                                   ),
