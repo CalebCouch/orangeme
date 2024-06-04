@@ -77,11 +77,14 @@ class ValueDisplay extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(quantity.toString(), style: AppTextStyles.textLG),
+              Text(quantity.toString(),
+                  style: AppTextStyles.textLG
+                      .copyWith(color: AppColors.textSecondary)),
               const SizedBox(width: 6),
-              const Text(
+              Text(
                 ' BTC',
-                style: AppTextStyles.textLG,
+                style: AppTextStyles.textLG
+                    .copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),
