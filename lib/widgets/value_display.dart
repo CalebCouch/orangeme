@@ -72,6 +72,7 @@ class ValueDisplay extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 5),
           Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
