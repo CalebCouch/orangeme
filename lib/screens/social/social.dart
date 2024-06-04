@@ -3,6 +3,7 @@ import 'package:orange/widgets/mode_navigator.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
+import 'new_message.dart';
 
 class SocialDashboard extends StatefulWidget {
   const SocialDashboard({super.key});
@@ -21,7 +22,8 @@ class SocialDashboardState extends State<SocialDashboard> {
   }
 
   void newMessage() {
-    print("New message button selected");
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const NewMessage()));
   }
 
   @override
