@@ -1,9 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:orange/widgets/mode_navigator.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:flutter/material.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
-import 'new_message.dart';
 
 class SocialDashboard extends StatefulWidget {
   const SocialDashboard({super.key});
@@ -14,6 +13,7 @@ class SocialDashboard extends StatefulWidget {
 
 class SocialDashboardState extends State<SocialDashboard> {
   int navIndex = 1;
+  bool messageHistory = false;
 
   void navigate() {
     Navigator.pushReplacement(
@@ -21,8 +21,7 @@ class SocialDashboardState extends State<SocialDashboard> {
   }
 
   void newMessage() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const NewMessage()));
+    print("New message button selected");
   }
 
   @override
@@ -33,26 +32,42 @@ class SocialDashboardState extends State<SocialDashboard> {
         title: const Text('Messages'),
         automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'No chats yet.\nGet stated by messaging a friend.',
-              textAlign: TextAlign.center,
-              style:
-                  AppTextStyles.textMD.copyWith(color: AppColors.textSecondary),
+      body: Column(
+        children: [
+          Expanded(
+            child: messageHistory
+                ? SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Scrollable message content goes here.',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.textMD
+                              .copyWith(color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      'No chats yet.\nGet started by messaging a friend.',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.textMD
+                          .copyWith(color: AppColors.textSecondary),
+                    ),
+                  ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            child: ButtonOrangeLG(
+              label: "New Message",
+              onTap: newMessage,
             ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ButtonOrangeLG(
-                label: "New Message",
-                onTap: () => newMessage(),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 15),
