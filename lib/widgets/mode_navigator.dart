@@ -61,15 +61,15 @@ class ModeNavigatorState extends State<ModeNavigator> {
             icon: widget.navIndex == 0
                 ? SvgPicture.asset(
                     'assets/icons/Icon=wallet_filled.svg',
-                    colorFilter: const ColorFilter.mode(
-                        AppColors.orange, BlendMode.srcIn),
+                    colorFilter:
+                        const ColorFilter.mode(AppColors.text, BlendMode.srcIn),
                     width: 50,
                     height: 50,
                   )
                 : SvgPicture.asset(
                     'assets/icons/Icon=wallet_filled.svg',
-                    colorFilter:
-                        const ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.textSecondary, BlendMode.srcIn),
                     width: 50,
                     height: 50,
                   ),
@@ -85,7 +85,9 @@ class ModeNavigatorState extends State<ModeNavigator> {
             icon: SvgPicture.asset(
               'assets/icons/Icon=chat.svg',
               colorFilter: ColorFilter.mode(
-                  widget.navIndex == 1 ? AppColors.orange : AppColors.grey,
+                  widget.navIndex == 1
+                      ? AppColors.text
+                      : AppColors.textSecondary,
                   BlendMode.srcIn),
               width: 22,
               height: 22,

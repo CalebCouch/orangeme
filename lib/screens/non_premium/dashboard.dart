@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/styles/constants.dart';
+// import 'package:orange/styles/constants.dart';
 import 'receive.dart';
 import 'send1.dart';
 import 'package:orange/widgets/transaction_list.dart';
@@ -16,7 +16,6 @@ import 'package:orange/widgets/mode_navigator.dart';
 // import 'package:orange/screens/settings/import_cloud.dart';
 // import 'package:orange/screens/settings/duplicate_phone.dart';
 // import 'package:orange/screens/settings/backup.dart';
-
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -207,7 +206,8 @@ class DashboardState extends State<Dashboard>
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const TextMarkLG(),
+        // title: const TextMarkLG(),
+        title: const Text('Wallet'),
         automaticallyImplyLeading: false,
         //app bar drop down settings/nav menu, currently disabled
         // actions: [
