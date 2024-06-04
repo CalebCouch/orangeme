@@ -1,4 +1,3 @@
-import 'package:orange/widgets/mode_navigator.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
@@ -31,8 +30,7 @@ class NewMessageState extends State<NewMessage> {
       appBar: AppBar(
         title: const Text('New message'),
       ),
-      body: const SizedBox(height: 10),
-      TextInputField(
+      body: TextInputField(
         controller: recipientAddressController,
         hint: "Profile Name",
       ),
