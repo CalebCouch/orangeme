@@ -104,8 +104,10 @@ Widget buildTransactionCard(BuildContext context, Transaction transaction,
                   ),
                 ),
                 Text("Details",
-                    style: AppTextStyles.textMD
-                        .copyWith(decoration: TextDecoration.underline)),
+                    style: AppTextStyles.textMD.copyWith(
+                        color: AppColors.textSecondary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.textSecondary)),
               ],
             ),
           ],

@@ -149,15 +149,8 @@ fn estimate_fees() -> Result<String, Error> {
     let client = get_client()?;
     let blockchain = ElectrumBlockchain::from(client);
 
-    let priority_target: usize = 6;
+    let priority_target: usize = 1;
 
-    // let priority_fee = &client.estimate_fee(target)?;
-    // let standard_fee = &client.estimate_fee(6);
-
-    // let fees = Fees {
-    //     priority_fee,
-    //     standard_fee
-    // }
     Ok(serde_json::to_string(&blockchain.estimate_fee(priority_target)?)?)}
 
 fn broadcast_transaction(db_path: String, descs: DescriptorSet, tx: bdk::bitcoin::Transaction) -> Result<String, Error> {

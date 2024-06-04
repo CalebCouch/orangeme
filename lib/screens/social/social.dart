@@ -23,17 +23,18 @@ class SocialDashboardState extends State<SocialDashboard> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const TextMarkLG(),
+        title: const Text('Messages'),
         automaticallyImplyLeading: false,
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Coming Soon!',
-              style: AppTextStyles.textLG,
+              'No chats yet.\nGet stated by messaging a friend.',
+              style:
+                  AppTextStyles.textMD.copyWith(color: AppColors.textSecondary),
             ),
           ],
         ),
