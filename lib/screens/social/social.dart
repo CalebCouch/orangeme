@@ -61,7 +61,7 @@ class SocialDashboardState extends State<SocialDashboard> {
           ),
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
             child: ButtonOrangeLG(
               label: "New Message",
               onTap: newMessage,
