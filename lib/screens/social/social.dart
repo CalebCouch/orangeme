@@ -31,8 +31,13 @@ class SocialDashboardState extends State<SocialDashboard> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        elevation: 0,
         title: const Text('Messages'),
-        automaticallyImplyLeading: false,
+        leading: Image.asset(
+          AppImages.defaultProfileMD,
+          width: 10,
+          height: 10,
+        ),
       ),
       body: Column(
         children: [
