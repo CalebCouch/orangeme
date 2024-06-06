@@ -200,6 +200,14 @@ class AppIcons {
   static const String wallet = 'assets/icons/Icon=wallet.svg';
 }
 
+class AppImages {
+  //images
+  static const String defaultProfileXL = 'assets/images/default_profileXL.png';
+  static const String defaultProfileLG = 'assets/images/default_profileLG.png';
+  static const String defaultProfileMD = 'assets/images/default_profileMD.png';
+  static const String defaultProfileSM = 'assets/images/default_profileSM.png';
+}
+
 //Text Mark Base
 class _TextMarkBase extends StatelessWidget {
   final double fontSize;
