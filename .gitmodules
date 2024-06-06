@@ -1,0 +1,6 @@
+[submodule "android/app/src/main/assets/fllw_api"]
+	path = android/app/src/main/assets/fllw_api
+	url = git@github.com:CalebCouch/fllw_api.git
+[submodule "ios/fllw_api"]
+	path = ios/fllw_api
+	url = git@github.com:CalebCouch/fllw_api.git

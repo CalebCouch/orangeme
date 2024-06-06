@@ -44,3 +44,5 @@ app.*.map.json
 
 /rust/target/
 *.swo
+
+node_modules

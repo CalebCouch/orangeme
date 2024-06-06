@@ -41,6 +41,3 @@ To startup the app
 
 `flutter run`
 
-
-TODO List:
-
