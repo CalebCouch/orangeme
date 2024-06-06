@@ -4,6 +4,8 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
 
+import 'package:flutter_js/flutter_js.dart';
+
 class InitPage extends StatefulWidget {
   const InitPage({super.key});
 
@@ -18,6 +20,7 @@ class InitPageState extends State<InitPage> {
   @override
   void initState() {
     super.initState();
+    JavascriptRuntime flutterJs = getJavascriptRuntime();
     print('Welcome Page loaded');
     print('Checking for seed...');
     onPageLoad();

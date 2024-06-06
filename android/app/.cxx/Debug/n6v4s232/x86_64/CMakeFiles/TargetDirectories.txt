@@ -1,0 +1,3 @@
+/home/orange/orangeme/android/app/.cxx/Debug/n6v4s232/x86_64/CMakeFiles/rebuild_cache.dir
+/home/orange/orangeme/android/app/.cxx/Debug/n6v4s232/x86_64/CMakeFiles/edit_cache.dir
+/home/orange/orangeme/android/app/.cxx/Debug/n6v4s232/x86_64/CMakeFiles/native-lib.dir
