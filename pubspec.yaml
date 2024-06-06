@@ -47,6 +47,7 @@ dependencies:
   share: ^2.0.4 
   custom_qr_generator: 0.1.2
   flutter_js: ^0.8.0
+  http: ^1.2.1
 
 
 dev_dependencies:
