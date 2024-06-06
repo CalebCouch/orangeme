@@ -13,7 +13,7 @@ class AppColors {
   //Colors
   static const Color red = Color(0xFFFF3B00);
   static const Color green = Color(0xFF00CC00);
-  static const Color orange = Color(0xFFFF773C);
+  static const Color orange = Color(0xFFFB513B);
 
   //Layout
   static const Color background = Colors.black;
@@ -35,7 +35,7 @@ class AppColors {
   static const Color brand = Colors.white;
   static const Color danger = Color(0xFFFF3800);
   static const Color success = Color(0xFF00CC00);
-  static const Color bitcoin = Color(0xFFFF773C);
+  static const Color bitcoin = Color(0xFFFB513B);
 }
 
 class AppTextStyles {
@@ -198,6 +198,14 @@ class AppIcons {
   static const String scan = 'assets/icons/Icon=scan.svg';
   static const String up = 'assets/icons/Icon=up.svg';
   static const String wallet = 'assets/icons/Icon=wallet.svg';
+}
+
+class AppImages {
+  //images
+  static const String defaultProfileXL = 'assets/images/default_profileXL.png';
+  static const String defaultProfileLG = 'assets/images/default_profileLG.png';
+  static const String defaultProfileMD = 'assets/images/default_profileMD.png';
+  static const String defaultProfileSM = 'assets/images/default_profileSM.png';
 }
 
 //Text Mark Base
