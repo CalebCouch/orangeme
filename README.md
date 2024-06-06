@@ -29,7 +29,10 @@ Install deps
       libgtk-3-dev liblzma-dev \
       libstdc++-12-dev`
 
-Clone directory and cd into it
+Clone directory and submodules
+`git clone --recurse-submodules https://github.com/CalebCouch/fllw_api.git`
+
+Install more dups
 
 `flutter pub get`
 
