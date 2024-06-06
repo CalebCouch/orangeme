@@ -11,7 +11,8 @@
 #import <Foundation/Foundation.h>
 
 @interface NodeRunner : NSObject {}
-- (void)startNode;
++ (void) startNode;
++ (void) startNodeJS;
 + (void) startEngineWithArguments:(NSArray*)arguments;
 @end
 

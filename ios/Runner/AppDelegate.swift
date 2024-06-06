@@ -10,9 +10,7 @@ import Flutter
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-      //let thread = Thread.init(target: self, selector: #selector(NodeRunner.startNode), object: nil);
-      //thread.start()
-      
+      NodeRunner.startNode();
       GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

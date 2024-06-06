@@ -12,7 +12,19 @@
 
 @implementation NodeRunner
 
-- (void)startNode {
++ (void)startNode {
+    NSThread* nodejsThread = nil;
+    nodejsThread = [[NSThread alloc]
+        initWithTarget:self
+        selector:@selector(startNodeJS)
+        object:nil
+    ];
+    [nodejsThread setStackSize:2*1024*1024];
+    [nodejsThread start];
+    
+}
+
++ (void)startNodeJS {
     NSString* srcPath = [[NSBundle mainBundle] pathForResource:@"nodejs/main.js" ofType:@""];
     NSArray* nodeArguments = [NSArray arrayWithObjects:
                                 @"node",
@@ -21,6 +33,7 @@
                                 ];
     [NodeRunner startEngineWithArguments:nodeArguments];
 }
+
 //node's libUV requires all arguments being on contiguous memory.
 + (void) startEngineWithArguments:(NSArray*)arguments
 {
