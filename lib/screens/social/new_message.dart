@@ -30,9 +30,12 @@ class NewMessageState extends State<NewMessage> {
       appBar: AppBar(
         title: const Text('New message'),
       ),
-      body: TextInputField(
-        controller: recipientAddressController,
-        hint: "Profile Name",
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        child: TextInputField(
+          controller: recipientAddressController,
+          hint: "Profile Name",
+        ),
       ),
     );
   }
