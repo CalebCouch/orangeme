@@ -3,7 +3,10 @@ package com.example.orange
 import io.flutter.embedding.android.FlutterActivity
 import android.os.Bundle
 import android.content.Context;
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.AssetManager;
+import android.util.Log
 import java.io.*;
 
 class MainActivity: FlutterActivity() {
@@ -50,18 +53,16 @@ class MainActivity: FlutterActivity() {
     }
 
     private fun copyAsset(assetManager: AssetManager, fromAssetPath: String, toPath: String): Boolean {
-        var inputStream: InputStream? = null
-        var outputStream: OutputStream? = null
+        var inputStream: InputStream?
+        var outputStream: OutputStream?
         return try {
             inputStream = assetManager.open(fromAssetPath)
             File(toPath).createNewFile()
             outputStream = FileOutputStream(toPath)
             copyFile(inputStream, outputStream)
             inputStream.close()
-            inputStream = null
             outputStream.flush()
             outputStream.close()
-            outputStream = null
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -78,6 +79,33 @@ class MainActivity: FlutterActivity() {
         }
     }
 
+    private fun wasAPKUpdated(): Boolean {
+        val prefs = applicationContext.getSharedPreferences("NODEJS_MOBILE_PREFS", Context.MODE_PRIVATE)
+        val previousLastUpdateTime = prefs.getLong("NODEJS_MOBILE_APK_LastUpdateTime", 0)
+        var lastUpdateTime: Long = 1
+        try {
+            val packageInfo: PackageInfo = applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
+            lastUpdateTime = packageInfo.lastUpdateTime
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return lastUpdateTime != previousLastUpdateTime
+    }
+
+    private fun saveLastUpdateTime() {
+        var lastUpdateTime: Long = 1
+        try {
+            val packageInfo: PackageInfo = applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
+            lastUpdateTime = packageInfo.lastUpdateTime
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        val prefs = applicationContext.getSharedPreferences("NODEJS_MOBILE_PREFS", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.putLong("NODEJS_MOBILE_APK_LastUpdateTime", lastUpdateTime)
+        editor.commit()
+    }
+
     init {
         System.loadLibrary("native-lib")
     }
@@ -85,21 +113,24 @@ class MainActivity: FlutterActivity() {
     external fun startNodeWithArguments(args: Array<String>): Void
 
     var _startedNodeAlready: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         if (!_startedNodeAlready) {
             _startedNodeAlready = true
             Thread(Runnable {
-                // The path where we expect the node project to be at runtime.
                 val nodeDir = applicationContext.filesDir.absolutePath + "/nodejs"
-// Recursively delete any existing nodejs-project.
-                val nodeDirReference = File(nodeDir)
-                if (nodeDirReference.exists()) {
-                    deleteFolderRecursively(File(nodeDir))
+                if (wasAPKUpdated()) {
+                    val nodeDirReference = File(nodeDir)
+                    if (nodeDirReference.exists()) {
+                        deleteFolderRecursively(File(nodeDir))
+                    }
+                    copyAssetFolder(applicationContext.assets, "nodejs", nodeDir)
+                    saveLastUpdateTime();
                 }
-// Copy the node project from assets into the application's data path.
-                copyAssetFolder(applicationContext.assets, "nodejs", nodeDir)
                 startNodeWithArguments(arrayOf("node", "$nodeDir/main.js"))
             }).start()
         }

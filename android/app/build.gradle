@@ -63,6 +63,9 @@ android {
         }
     }
 
+    assetPacks = [":nodejs-asset-pack"]
+
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
