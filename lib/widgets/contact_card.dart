@@ -18,7 +18,10 @@ class ContactCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Message()),
+          MaterialPageRoute(
+              builder: (context) => Message(
+                    contactName: name,
+                  )),
         );
       },
       child: Container(
