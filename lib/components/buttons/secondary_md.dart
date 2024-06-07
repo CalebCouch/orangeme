@@ -32,6 +32,8 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
         return Icons.qr_code_sharp;
       case 'edit':
         return Icons.create_outlined;
+      case 'clear':
+        return Icons.clear;
       default:
         return Icons.error;
     }
