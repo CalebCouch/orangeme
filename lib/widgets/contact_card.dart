@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/screens/social/message.dart';
 
 class ContactCard extends StatelessWidget {
   final String name;
   final String imagePath;
+  final VoidCallback onTap;
 
   const ContactCard({
     super.key,
     required this.name,
+    required this.onTap,
     this.imagePath = AppImages.defaultProfileLG,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Message(
-                    contactName: name,
-                  )),
-        );
-      },
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
