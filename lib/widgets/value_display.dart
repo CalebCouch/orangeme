@@ -50,7 +50,7 @@ class ValueDisplay extends StatelessWidget {
     return Container(
       width: 288,
       height: 221,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 64),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
