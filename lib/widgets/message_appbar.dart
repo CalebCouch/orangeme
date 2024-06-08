@@ -43,7 +43,7 @@ class MessageAppBar extends StatelessWidget {
                         const SizedBox(height: 10),
                         Text(
                           title,
-                          style: AppTextStyles.heading4,
+                          style: AppTextStyles.heading5,
                         ),
                       ],
                     ),
