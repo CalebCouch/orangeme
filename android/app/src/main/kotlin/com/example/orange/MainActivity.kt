@@ -121,18 +121,22 @@ class MainActivity: FlutterActivity() {
 
         if (!_startedNodeAlready) {
             _startedNodeAlready = true
-            Thread(Runnable {
-                val nodeDir = applicationContext.filesDir.absolutePath + "/fllw_api"
-                if (wasAPKUpdated()) {
-                    val nodeDirReference = File(nodeDir)
-                    if (nodeDirReference.exists()) {
-                        deleteFolderRecursively(File(nodeDir))
+            try {
+                Thread(Runnable {
+                    val nodeDir = applicationContext.filesDir.absolutePath + "/fllw_api"
+                    if (wasAPKUpdated()) {
+                        val nodeDirReference = File(nodeDir)
+                        if (nodeDirReference.exists()) {
+                            deleteFolderRecursively(File(nodeDir))
+                        }
+                        copyAssetFolder(applicationContext.assets, "fllw_api", nodeDir)
+                        saveLastUpdateTime();
                     }
-                    copyAssetFolder(applicationContext.assets, "fllw_api", nodeDir)
-                    saveLastUpdateTime();
-                }
-                startNodeWithArguments(arrayOf("node", "$nodeDir/main.js"))
-            }).start()
+                    startNodeWithArguments(arrayOf("node", "$nodeDir/main.js"))
+                }).start()
+            } catch(ex: Exception) {
+                ex.message?.let { Log.e("NodeJs Thread", it) };
+            }
         }
     }
 }
