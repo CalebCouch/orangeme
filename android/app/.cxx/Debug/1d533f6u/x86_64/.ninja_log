@@ -1,0 +1,4 @@
+# ninja log v5
+1	1963	1718035593	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o	18b7e4adf5685dbe
+1965	2198	1718035593	/home/lappy/orangeme/build/app/intermediates/cxx/Debug/1d533f6u/obj/x86_64/libnative-lib.so	505201a060dd9a43
+16	298	1718039014	/home/lappy/orangeme/build/app/intermediates/cxx/Debug/1d533f6u/obj/x86_64/libnative-lib.so	505201a060dd9a43

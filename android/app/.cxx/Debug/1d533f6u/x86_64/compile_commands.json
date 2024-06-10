@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/lappy/orangeme/android/app/.cxx/Debug/1d533f6u/x86_64",
+  "command": "/home/lappy/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --gcc-toolchain=/home/lappy/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/lappy/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot -Dnative_lib_EXPORTS -I../../../../libnode/include/node -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/native-lib.dir/src/main/cpp/native-lib.cpp.o -c /home/lappy/orangeme/android/app/src/main/cpp/native-lib.cpp",
+  "file": "/home/lappy/orangeme/android/app/src/main/cpp/native-lib.cpp"
+}
+]

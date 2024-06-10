@@ -6,8 +6,10 @@ import 'package:orange/screens/social/social.dart';
 
 class ModeNavigator extends StatefulWidget {
   final int navIndex;
+  final VoidCallback onDashboardPopBack;
 
-  const ModeNavigator({super.key, required this.navIndex});
+  const ModeNavigator(
+      {super.key, required this.navIndex, required this.onDashboardPopBack});
 
   @override
   ModeNavigatorState createState() => ModeNavigatorState();
