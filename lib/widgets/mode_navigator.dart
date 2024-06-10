@@ -17,7 +17,8 @@ class ModeNavigator extends StatefulWidget {
 
 class ModeNavigatorState extends State<ModeNavigator> {
   void navigateWallet() {
-    Navigator.pushReplacement(
+    widget.onDashboardPopBack();
+    Navigator.push(
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
@@ -34,11 +35,13 @@ class ModeNavigatorState extends State<ModeNavigator> {
   }
 
   void navigateSocial() {
-    Navigator.pushReplacement(
+    Navigator.push(
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              const SocialDashboard(),
+              SocialDashboard(
+            onDashboardPopBack: widget.onDashboardPopBack,
+          ),
           transitionDuration: const Duration(milliseconds: 500),
           reverseTransitionDuration: const Duration(milliseconds: 500),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {

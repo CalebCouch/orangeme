@@ -6,7 +6,8 @@ import 'package:orange/components/buttons/orange_lg.dart';
 import 'new_message.dart';
 
 class SocialDashboard extends StatefulWidget {
-  const SocialDashboard({super.key});
+  final VoidCallback onDashboardPopBack;
+  const SocialDashboard({super.key, required this.onDashboardPopBack});
 
   @override
   SocialDashboardState createState() => SocialDashboardState();
@@ -80,6 +81,7 @@ class SocialDashboardState extends State<SocialDashboard> {
         padding: const EdgeInsets.only(bottom: 15),
         child: ModeNavigator(
           navIndex: navIndex,
+          onDashboardPopBack: widget.onDashboardPopBack,
         ),
       ),
     );

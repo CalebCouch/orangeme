@@ -307,6 +307,7 @@ class DashboardState extends State<Dashboard>
         padding: const EdgeInsets.only(bottom: 15),
         child: ModeNavigator(
           navIndex: navIndex,
+          onDashboardPopBack: handleRefresh,
         ),
       ),
     );
