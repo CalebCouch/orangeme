@@ -97,14 +97,17 @@ class DashboardState extends State<Dashboard>
       startTimer();
     }
     print('Refresh Initiatied...');
+    if (!mounted) return;
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     print("descriptorRes: $descriptorsRes");
     if (!mounted) return;
     var descriptors = handleNull(descriptorsRes, context);
+    if (!mounted) return;
     String path = await getDBPath();
     if (initialLoad == false) {
       print('Sync Wallet...');
       //sync wallet data
+      if (!mounted) return;
       var syncRes =
           await invoke(method: "sync_wallet", args: [path, descriptors]);
       print("SyncRes: $syncRes");
@@ -117,25 +120,30 @@ class DashboardState extends State<Dashboard>
     }
     print('Getting Balance...');
     //get the wallet balance
+    if (!mounted) return;
     var balanceRes =
         await invoke(method: "get_balance", args: [path, descriptors]);
     print("Balanceres: $balanceRes");
     if (!mounted) return;
-    balance.value = int.parse(handleError(balanceRes, context));
+    if (balance.value != null) {
+      balance.value = int.parse(handleError(balanceRes, context));
+    }
     print("Balance: ${balance.value}");
-
     print('Getting Transactions...');
     //get the wallet transaction history
+    if (!mounted) return;
     var jsonRes =
         await invoke(method: "get_transactions", args: [path, descriptors]);
     print("Transactionsres: $jsonRes");
-
     if (!mounted) return;
     String json = handleError(jsonRes, context);
     print("json: $json");
+    if (!mounted) return;
     final Iterable decodeJson = jsonDecode(json);
+    if (!mounted) return;
     transactions.value =
         decodeJson.map((item) => Transaction.fromJson(item)).toList();
+    if (!mounted) return;
     sortTransactions(false);
     print(transactions.value);
 
@@ -144,6 +152,7 @@ class DashboardState extends State<Dashboard>
     if (!mounted) return;
     var priceRes = await invoke(method: "get_price", args: []);
     if (priceRes.status == 200) {
+      if (!mounted) return;
       price.value = double.parse(priceRes.message);
     }
     print("Price: ${price.value}");
@@ -153,6 +162,14 @@ class DashboardState extends State<Dashboard>
         loading = false;
       });
     }
+  }
+
+  void dashboardPopBack() async {
+    setState(() {
+      loading = false;
+    });
+    await Future.delayed(const Duration(seconds: 2));
+    await handleRefresh();
   }
 
   //format a number of satoshis into dollars at the current price
@@ -283,12 +300,12 @@ class DashboardState extends State<Dashboard>
                                       horizontal: 20),
                                   child: ReceiveSend(
                                     receiveRoute: () => Receive(
-                                      onDashboardPopBack: handleRefresh,
+                                      onDashboardPopBack: dashboardPopBack,
                                     ),
                                     sendRoute: () => Send1(
                                       balance: balance.value,
                                       price: price.value,
-                                      onDashboardPopBack: handleRefresh,
+                                      onDashboardPopBack: dashboardPopBack,
                                     ),
                                     onPause: _stopTimer,
                                   ),
@@ -307,7 +324,7 @@ class DashboardState extends State<Dashboard>
         padding: const EdgeInsets.only(bottom: 15),
         child: ModeNavigator(
           navIndex: navIndex,
-          onDashboardPopBack: handleRefresh,
+          onDashboardPopBack: dashboardPopBack,
           stopTimer: _stopTimer,
         ),
       ),

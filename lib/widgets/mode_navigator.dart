@@ -22,7 +22,7 @@ class ModeNavigator extends StatefulWidget {
 class ModeNavigatorState extends State<ModeNavigator> {
   void navigateWallet() {
     widget.onDashboardPopBack();
-    Navigator.pop(
+    Navigator.push(
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>

@@ -4,6 +4,9 @@ import 'package:orange/styles/constants.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'new_message.dart';
+import 'package:orange/widgets/message_history_card.dart';
+import 'message.dart';
+import 'group_message.dart';
 
 class SocialDashboard extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
@@ -18,7 +21,33 @@ class SocialDashboard extends StatefulWidget {
 
 class SocialDashboardState extends State<SocialDashboard> {
   int navIndex = 1;
-  bool messageHistory = false;
+  List<Map<String, String>> messages = [
+    {
+      "name": "Pam Beesley",
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": "Dwight Schrute",
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": "Michael Scott",
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": "Jim Halpert",
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": "Ryan Howard",
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+  ];
 
   void navigate() {
     Navigator.pushReplacement(
@@ -28,6 +57,26 @@ class SocialDashboardState extends State<SocialDashboard> {
   void newMessage() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const NewMessage()));
+  }
+
+  void navigateToMessage(messages) {
+    // if (messages.length == 1) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Message(
+                contactName: messages["name"],
+              )),
+    );
+    //   } else {
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //           builder: (context) => MessageGroup(
+    //                 contactName: messages["name"],
+    //               )),
+    //     );
+    //   }
   }
 
   @override
@@ -46,20 +95,16 @@ class SocialDashboardState extends State<SocialDashboard> {
       body: Column(
         children: [
           Expanded(
-            child: messageHistory
-                ? SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Scrollable message content goes here.',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.textMD
-                              .copyWith(color: AppColors.textSecondary),
-                        ),
-                      ],
-                    ),
+            child: messages.isNotEmpty
+                ? ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return MessageHistoryCard(
+                          name: messages[index]["name"] ?? "Unnamed",
+                          lastMessage: messages[index]["lastMessage"] ??
+                              "No last message",
+                          onTap: () => navigateToMessage(messages[index]));
+                    },
                   )
                 : Center(
                     child: Text(
