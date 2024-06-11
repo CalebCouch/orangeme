@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-// import 'package:orange/styles/constants.dart';
 import 'receive.dart';
 import 'send1.dart';
 import 'package:orange/widgets/transaction_list.dart';
@@ -150,6 +149,7 @@ class DashboardState extends State<Dashboard>
     print("Price: ${price.value}");
     if (loading == true) {
       setState(() {
+        print("loading set to false");
         loading = false;
       });
     }
@@ -308,6 +308,7 @@ class DashboardState extends State<Dashboard>
         child: ModeNavigator(
           navIndex: navIndex,
           onDashboardPopBack: handleRefresh,
+          stopTimer: _stopTimer,
         ),
       ),
     );

@@ -7,7 +7,10 @@ import 'new_message.dart';
 
 class SocialDashboard extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
-  const SocialDashboard({super.key, required this.onDashboardPopBack});
+  final VoidCallback stopTimer;
+
+  const SocialDashboard(
+      {super.key, required this.onDashboardPopBack, required this.stopTimer});
 
   @override
   SocialDashboardState createState() => SocialDashboardState();
@@ -80,9 +83,9 @@ class SocialDashboardState extends State<SocialDashboard> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 15),
         child: ModeNavigator(
-          navIndex: navIndex,
-          onDashboardPopBack: widget.onDashboardPopBack,
-        ),
+            navIndex: navIndex,
+            onDashboardPopBack: widget.onDashboardPopBack,
+            stopTimer: widget.stopTimer),
       ),
     );
   }

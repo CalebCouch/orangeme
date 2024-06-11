@@ -7,9 +7,13 @@ import 'package:orange/screens/social/social.dart';
 class ModeNavigator extends StatefulWidget {
   final int navIndex;
   final VoidCallback onDashboardPopBack;
+  final VoidCallback stopTimer;
 
   const ModeNavigator(
-      {super.key, required this.navIndex, required this.onDashboardPopBack});
+      {super.key,
+      required this.navIndex,
+      required this.onDashboardPopBack,
+      required this.stopTimer});
 
   @override
   ModeNavigatorState createState() => ModeNavigatorState();
@@ -18,7 +22,7 @@ class ModeNavigator extends StatefulWidget {
 class ModeNavigatorState extends State<ModeNavigator> {
   void navigateWallet() {
     widget.onDashboardPopBack();
-    Navigator.push(
+    Navigator.pop(
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
@@ -35,12 +39,14 @@ class ModeNavigatorState extends State<ModeNavigator> {
   }
 
   void navigateSocial() {
+    widget.stopTimer();
     Navigator.push(
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
               SocialDashboard(
             onDashboardPopBack: widget.onDashboardPopBack,
+            stopTimer: widget.stopTimer,
           ),
           transitionDuration: const Duration(milliseconds: 500),
           reverseTransitionDuration: const Duration(milliseconds: 500),
