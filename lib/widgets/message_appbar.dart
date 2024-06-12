@@ -52,6 +52,7 @@ class MessageAppBar extends StatelessWidget {
                 const SizedBox(width: 48),
               ],
             ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
