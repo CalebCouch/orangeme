@@ -99,7 +99,9 @@ class InitPageState extends State<InitPage> {
 
   void navigate() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const Dashboard()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Dashboard(loading: true)));
   }
 
   @override

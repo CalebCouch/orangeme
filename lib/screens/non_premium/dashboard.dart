@@ -32,13 +32,23 @@ class DashboardState extends State<Dashboard>
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
   bool initialLoad = true;
-  bool loading = true;
+  bool loading = false;
   int navIndex = 0;
 
   @override
   void initState() {
     print("INITIALIZING DASHBOARD");
     super.initState();
+    if (widget.loading == true) {
+      setState(() {
+        loading = true;
+      });
+    } else if (widget.loading == false) {
+      setState(() {
+        loading = false;
+        ;
+      });
+    }
     //sync and obtain data on page load
     handleRefresh();
     //monitor for application reactivation and init
@@ -165,11 +175,6 @@ class DashboardState extends State<Dashboard>
   }
 
   void dashboardPopBack() async {
-    if (widget.loading == false) {
-      setState(() {
-        loading = false;
-      });
-    }
     await Future.delayed(const Duration(seconds: 2));
     await handleRefresh();
   }

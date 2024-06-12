@@ -47,6 +47,11 @@ class SocialDashboardState extends State<SocialDashboard> {
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
     },
+    {
+      "name": "Andy Bernard",
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
   ];
 
   void navigate() {
