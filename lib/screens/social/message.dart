@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/message_appbar.dart';
 import 'package:orange/components/textfield.dart';
+import 'package:orange/widgets/text_bauble.dart';
 
 class Message extends StatefulWidget {
   final String contactName;
@@ -18,7 +19,18 @@ class Message extends StatefulWidget {
 
 class MessageState extends State<Message> {
   final TextEditingController messageController = TextEditingController();
-  List<String> messages = [];
+  List<Map<String, String>> messages = [
+    {
+      "message":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+      "incoming": "true"
+    },
+    {
+      "message":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+      "incoming": "false"
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +43,24 @@ class MessageState extends State<Message> {
             imagePath: widget.imagePath,
           ),
           Expanded(
-            child: messages.isEmpty
-                ? Center(
-                    child: Text(
-                      'No messages yet.',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.textMD
-                          .copyWith(color: AppColors.textSecondary),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(messages[index]),
-                      );
-                    },
-                  ),
-          ),
+              child: messages.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No messages yet.',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.textMD
+                            .copyWith(color: AppColors.textSecondary),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: messages.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return MessageBauble(
+                          message: messages[index]["message"]!,
+                          incoming: messages[index]["incoming"]!,
+                        );
+                      },
+                    )),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextInputField(

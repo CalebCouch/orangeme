@@ -3,55 +3,55 @@ import 'package:orange/styles/constants.dart';
 
 import 'dart:async';
 
-enum MessageType {
-  Send,
-  Receive,
-}
-
 class MessageBauble extends StatefulWidget {
   final String message;
-  final MessageType messageType;
+  final String incoming;
+  final String? timestamp;
 
-  const MessageBauble({
-    Key? key,
-    required this.message,
-    required this.messageType,
-  }) : super(key: key);
+  const MessageBauble(
+      {super.key,
+      required this.message,
+      required this.incoming,
+      this.timestamp});
 
   @override
-  _MessageBaubleState createState() => _MessageBaubleState();
+  MessageBaubleState createState() => MessageBaubleState();
 }
 
-class _MessageBaubleState extends State<MessageBauble> {
+class MessageBaubleState extends State<MessageBauble> {
   String? timeStamp;
 
   @override
   void initState() {
     super.initState();
     // Start a timer to add a timestamp after 10 seconds
-    if (widget.messageType == MessageType.Send || widget.messageType == MessageType.Receive) {
-      Timer(Duration(seconds: 10), () {
-        if (mounted) {
-          setState(() {
-            timeStamp = _getCurrentTime();
-          });
-        }
-      });
-    }
+    Timer(const Duration(seconds: 10), () {
+      if (mounted) {
+        setState(() {
+          timeStamp = _getCurrentTime();
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: widget.messageType == MessageType.Send ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: widget.incoming == "false"
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Container(
-          constraints: BoxConstraints(maxWidth: 300), // Maximum width set to 300
+          constraints:
+              const BoxConstraints(maxWidth: 300), // Maximum width set to 300
           decoration: BoxDecoration(
-            color: widget.messageType == MessageType.Send ? AppColors.orange : AppColors.darkGrey,
+            color: widget.incoming == "false"
+                ? AppColors.orange
+                : AppColors.darkGrey,
             borderRadius: BorderRadius.circular(8),
           ),
-          padding: const EdgeInsets.all(6.0), // 6px padding around the container
+          padding:
+              const EdgeInsets.all(6.0), // 6px padding around the container
           child: Padding(
             padding: const EdgeInsets.all(12.0), // 12px padding around the text
             child: Text(
