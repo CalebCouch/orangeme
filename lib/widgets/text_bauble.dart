@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
-
-import 'dart:async';
+import 'package:intl/intl.dart';
 
 class MessageBauble extends StatefulWidget {
   final String message;
@@ -29,11 +28,54 @@ class MessageBaubleState extends State<MessageBauble> {
   String formatTimestamp(String timestamp) {
     DateTime now = DateTime.now();
     DateTime time = DateTime.parse(timestamp);
-
+    String namePrefix = "";
+    //only show the name prefix if the message is receieved from another
     if (widget.incoming == "true") {
-      return "${widget.name} · ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+      namePrefix = "${widget.name} · ";
+    }
+    int dayDifference = now.difference(time).inDays.abs();
+    bool isSameDay =
+        now.year == time.year && now.month == time.month && now.day == time.day;
+    DateTime yesterday = now.subtract(const Duration(days: 1));
+    bool isYesterday = yesterday.year == time.year &&
+        yesterday.month == time.month &&
+        yesterday.day == time.day;
+    print("day difference $dayDifference");
+    String dayResult = '';
+    if (isSameDay) {
+      dayResult = '';
+    } else if (isYesterday) {
+      dayResult = "Yesterday, ";
+    } else if (dayDifference <= 7) {
+      dayResult = "${truncateDayName(time.weekday)} ";
     } else {
-      return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+      dayResult = "${time.month} ${time.day}, ${time.year}, ";
+    }
+
+    String timeFormatted = DateFormat('h:mm a').format(time);
+
+    String timeResult = "$dayResult$timeFormatted";
+
+    return "$namePrefix$timeResult";
+  }
+
+  String truncateDayName(int weekday) {
+    if (weekday == 1) {
+      return "Mon";
+    } else if (weekday == 2) {
+      return "Tues";
+    } else if (weekday == 3) {
+      return "Wed";
+    } else if (weekday == 4) {
+      return "Thurs";
+    } else if (weekday == 5) {
+      return "Fri";
+    } else if (weekday == 6) {
+      return "Sat";
+    } else if (weekday == 7) {
+      return "Sun";
+    } else {
+      return '';
     }
   }
 

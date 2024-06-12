@@ -30,7 +30,13 @@ class MessageState extends State<Message> {
       "message":
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
       "incoming": "false",
-      "timestamp": "2024-06-11 12:32:09"
+      "timestamp": "2024-06-11 13:32:09"
+    },
+    {
+      "message":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+      "incoming": "false",
+      "timestamp": "2024-06-12 12:29:09"
     },
   ];
 
