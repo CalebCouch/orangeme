@@ -17,7 +17,9 @@ import 'package:orange/widgets/mode_navigator.dart';
 // import 'package:orange/screens/settings/backup.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+  final bool? loading;
+
+  const Dashboard({super.key, this.loading});
 
   @override
   State<Dashboard> createState() => DashboardState();
@@ -125,9 +127,7 @@ class DashboardState extends State<Dashboard>
         await invoke(method: "get_balance", args: [path, descriptors]);
     print("Balanceres: $balanceRes");
     if (!mounted) return;
-    if (balance.value != null) {
-      balance.value = int.parse(handleError(balanceRes, context));
-    }
+    balance.value = int.parse(handleError(balanceRes, context));
     print("Balance: ${balance.value}");
     print('Getting Transactions...');
     //get the wallet transaction history
@@ -165,9 +165,11 @@ class DashboardState extends State<Dashboard>
   }
 
   void dashboardPopBack() async {
-    setState(() {
-      loading = false;
-    });
+    if (widget.loading == false) {
+      setState(() {
+        loading = false;
+      });
+    }
     await Future.delayed(const Duration(seconds: 2));
     await handleRefresh();
   }

@@ -23,12 +23,14 @@ class MessageState extends State<Message> {
     {
       "message":
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
-      "incoming": "true"
+      "incoming": "true",
+      "timestamp": "2024-06-10 11:59:53"
     },
     {
       "message":
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
-      "incoming": "false"
+      "incoming": "false",
+      "timestamp": "2024-06-11 12:32:09"
     },
   ];
 
@@ -56,9 +58,10 @@ class MessageState extends State<Message> {
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
                         return MessageBauble(
-                          message: messages[index]["message"]!,
-                          incoming: messages[index]["incoming"]!,
-                        );
+                            message: messages[index]["message"]!,
+                            incoming: messages[index]["incoming"]!,
+                            timestamp: messages[index]["timestamp"]!,
+                            name: widget.contactName);
                       },
                     )),
           Padding(

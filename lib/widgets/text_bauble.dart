@@ -6,32 +6,35 @@ import 'dart:async';
 class MessageBauble extends StatefulWidget {
   final String message;
   final String incoming;
-  final String? timestamp;
+  final String timestamp;
+  final String name;
 
   const MessageBauble(
       {super.key,
       required this.message,
       required this.incoming,
-      this.timestamp});
+      required this.name,
+      required this.timestamp});
 
   @override
   MessageBaubleState createState() => MessageBaubleState();
 }
 
 class MessageBaubleState extends State<MessageBauble> {
-  String? timeStamp;
-
   @override
   void initState() {
     super.initState();
-    // Start a timer to add a timestamp after 10 seconds
-    Timer(const Duration(seconds: 10), () {
-      if (mounted) {
-        setState(() {
-          timeStamp = _getCurrentTime();
-        });
-      }
-    });
+  }
+
+  String formatTimestamp(String timestamp) {
+    DateTime now = DateTime.now();
+    DateTime time = DateTime.parse(timestamp);
+
+    if (widget.incoming == "true") {
+      return "${widget.name} · ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+    } else {
+      return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+    }
   }
 
   @override
@@ -68,7 +71,8 @@ class MessageBaubleState extends State<MessageBauble> {
         Padding(
           padding: const EdgeInsets.only(top: 4.0),
           child: Text(
-            timeStamp ?? '', // Display the timestamp if it's not null
+            formatTimestamp(
+                widget.timestamp), // Display the timestamp if it's not null
             style: const TextStyle(
               color: AppColors.grey,
               fontSize: 14,
@@ -80,10 +84,5 @@ class MessageBaubleState extends State<MessageBauble> {
         ),
       ],
     );
-  }
-
-  String _getCurrentTime() {
-    final now = DateTime.now();
-    return "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
   }
 }
