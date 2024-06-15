@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
-import 'package:custom_qr_generator/custom_qr_generator.dart';
+import '../../components/custom_qr_generator/custom_qr_generator.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -73,10 +73,8 @@ class ReceiveState extends State<Receive> {
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 300,
-                      height: 300,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: const Color.fromARGB(255, 0, 0, 0),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: ClipRRect(
@@ -85,18 +83,15 @@ class ReceiveState extends State<Receive> {
                           valueListenable: address,
                           builder: (BuildContext context, String value, child) {
                             return CustomPaint(
-                              size: const Size(300, 300),
+                              size: const Size(312, 312),
                               painter: QrPainter(
                                 data: value,
                                 options: const QrOptions(
                                   shapes: QrShapes(
+
                                     darkPixel: QrPixelShapeCircle(),
-                                    frame: QrFrameShapeRoundCorners(
-                                      cornerFraction: .25,
-                                    ),
-                                    ball: QrBallShapeRoundCorners(
-                                      cornerFraction: .25,
-                                    ),
+                                    
+                                    
                                   ),
                                 ),
                               ),
