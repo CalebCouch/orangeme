@@ -21,6 +21,7 @@ class MessageState extends State<Message> {
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   bool showSubmitButton = false;
+  bool submitEnabled = false;
   List<Map<String, String>> messages = [
     {
       "message":
@@ -48,20 +49,29 @@ class MessageState extends State<Message> {
       if (messageController.text.isNotEmpty) {
         setState(() {
           showSubmitButton = true;
+          if (validateMessage(messageController.text)) {
+            submitEnabled = true;
+          } else {
+            submitEnabled = false;
+          }
         });
       } else {
         setState(() {
           showSubmitButton = false;
+          submitEnabled = false;
         });
       }
     });
-    scrollController.addListener(() {
-      print("scrolling");
-      if (scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        print("Scrolling up");
-        FocusScope.of(context).unfocus();
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollController.addListener(() {
+        print("scrolling");
+        if (scrollController.hasClients &&
+            scrollController.position.userScrollDirection ==
+                ScrollDirection.forward) {
+          print('scrolling up, diposing focus');
+          FocusScope.of(context).unfocus();
+        }
+      });
     });
   }
 
@@ -75,23 +85,38 @@ class MessageState extends State<Message> {
   void submitMessage() {
     print("adding message");
     String formattedTimestamp = DateTime.now().toString();
+    String formattedMessage = formatMessage(messageController.text);
     setState(() {
       messages.add({
-        "message": messageController.text,
+        "message": formattedMessage,
         "incoming": "false",
         "timestamp": formattedTimestamp
       });
       messageController.text = '';
       showSubmitButton = false;
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (scrollController.hasClients) {
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
+      scrollToBottom();
+    });
+  }
+
+  String formatMessage(String input) {
+    String trimmed = input.trim();
+    String normalized = trimmed.replaceAll(RegExp(r'\n+'), '\n');
+    return normalized;
+  }
+
+  bool validateMessage(String input) {
+    return RegExp(r'[^\s]').hasMatch(input);
+  }
+
+  void scrollToBottom() async {
+    await Future.delayed(const Duration(milliseconds: 200), () {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -134,6 +159,7 @@ class MessageState extends State<Message> {
               showSubmit: showSubmitButton,
               onEditingComplete: submitMessage,
               showNewLine: true,
+              submitEnabled: submitEnabled,
             ),
           ),
         ],

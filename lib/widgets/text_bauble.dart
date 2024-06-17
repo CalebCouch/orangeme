@@ -40,7 +40,6 @@ class MessageBaubleState extends State<MessageBauble> {
     bool isYesterday = yesterday.year == time.year &&
         yesterday.month == time.month &&
         yesterday.day == time.day;
-    print("day difference $dayDifference");
     String dayResult = '';
     if (isSameDay) {
       dayResult = '';
