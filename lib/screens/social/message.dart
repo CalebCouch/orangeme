@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/message_appbar.dart';
 import 'package:orange/components/textfield.dart';
@@ -12,13 +13,14 @@ class Message extends StatefulWidget {
     required this.contactName,
     this.imagePath = AppImages.defaultProfileMD,
   });
-
   @override
   MessageState createState() => MessageState();
 }
 
 class MessageState extends State<Message> {
   final TextEditingController messageController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  bool showSubmitButton = false;
   List<Map<String, String>> messages = [
     {
       "message":
@@ -39,6 +41,59 @@ class MessageState extends State<Message> {
       "timestamp": "2024-06-12 12:29:09"
     },
   ];
+  @override
+  void initState() {
+    super.initState();
+    messageController.addListener(() {
+      if (messageController.text.isNotEmpty) {
+        setState(() {
+          showSubmitButton = true;
+        });
+      } else {
+        setState(() {
+          showSubmitButton = false;
+        });
+      }
+    });
+    scrollController.addListener(() {
+      print("scrolling");
+      if (scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        print("Scrolling up");
+        FocusScope.of(context).unfocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    messageController.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  void submitMessage() {
+    print("adding message");
+    String formattedTimestamp = DateTime.now().toString();
+    setState(() {
+      messages.add({
+        "message": messageController.text,
+        "incoming": "false",
+        "timestamp": formattedTimestamp
+      });
+      messageController.text = '';
+      showSubmitButton = false;
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (scrollController.hasClients) {
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +116,7 @@ class MessageState extends State<Message> {
                       ),
                     )
                   : ListView.builder(
+                      controller: scrollController,
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
                         return MessageBauble(
@@ -75,6 +131,9 @@ class MessageState extends State<Message> {
             child: TextInputField(
               controller: messageController,
               hint: "Message",
+              showSubmit: showSubmitButton,
+              onEditingComplete: submitMessage,
+              showNewLine: true,
             ),
           ),
         ],

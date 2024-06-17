@@ -6,6 +6,8 @@ class TextInputField extends StatefulWidget {
   final String hint;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
+  final bool showSubmit;
+  final bool showNewLine;
 
   const TextInputField({
     super.key,
@@ -13,6 +15,8 @@ class TextInputField extends StatefulWidget {
     this.hint = 'Enter the text here',
     this.onChanged,
     this.onEditingComplete,
+    this.showSubmit = false,
+    this.showNewLine = false,
   });
 
   @override
@@ -49,9 +53,7 @@ class TextInputFieldState extends State<TextInputField> {
   void _onFocusChange() {
     setState(() {
       isFocused = focusNode.hasFocus;
-      borderColor = isFocused
-          ? AppColors.primary
-          : AppColors.darkGrey; // Change primary to your preferred focus color
+      borderColor = isFocused ? AppColors.primary : AppColors.darkGrey;
       textColor = AppColors.primary;
       errorMessageColor = Colors.transparent;
       errorMessage = '';
@@ -69,6 +71,51 @@ class TextInputFieldState extends State<TextInputField> {
     });
   }
 
+  Widget _buildTextField() {
+    return Expanded(
+      child: TextField(
+        maxLines: null,
+        controller: widget.controller,
+        focusNode: focusNode,
+        cursorWidth: 2.0,
+        cursorColor: AppColors.grey,
+        style: TextStyle(color: textColor),
+        onChanged: widget.onChanged,
+        textInputAction: widget.showNewLine == true
+            ? TextInputAction.newline
+            : TextInputAction.done,
+        decoration: InputDecoration(
+          hintText: isFocused ? '' : widget.hint,
+          hintStyle: const TextStyle(color: AppColors.outline),
+          border: InputBorder.none,
+          filled: true,
+          fillColor: AppColors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    double circleDiameter = 40;
+    double iconSize = 20;
+    return Container(
+      width: circleDiameter,
+      height: circleDiameter,
+      margin: const EdgeInsets.only(left: 8),
+      decoration: const BoxDecoration(
+        color: AppColors.orange,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: IconButton(
+          icon: const Icon(Icons.arrow_forward_rounded, color: AppColors.white),
+          iconSize: iconSize,
+          onPressed: widget.onEditingComplete,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -84,29 +131,11 @@ class TextInputFieldState extends State<TextInputField> {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: TextField(
-              controller: widget.controller,
-              focusNode: focusNode,
-              cursorWidth: 2.0,
-              cursorColor: AppColors.grey,
-              style: TextStyle(color: textColor),
-              onChanged: (value) {
-                setState(() {
-                  errorMessage = '';
-                  errorMessageColor = Colors.transparent;
-                });
-                widget.onChanged?.call(value);
-              },
-              decoration: InputDecoration(
-                hintText: isFocused ? '' : widget.hint,
-                hintStyle: const TextStyle(
-                  color: AppColors.outline,
-                ),
-                border: InputBorder.none,
-                filled: true,
-                fillColor: AppColors.black,
-              ),
-              onEditingComplete: widget.onEditingComplete,
+            child: Row(
+              children: [
+                _buildTextField(),
+                if (widget.showSubmit) _buildSubmitButton(),
+              ],
             ),
           ),
         ),
