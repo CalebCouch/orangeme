@@ -9,6 +9,7 @@ class TextInputField extends StatefulWidget {
   final bool showSubmit;
   final bool showNewLine;
   final bool submitEnabled;
+  final String error;
 
   const TextInputField({
     super.key,
@@ -19,6 +20,7 @@ class TextInputField extends StatefulWidget {
     this.showSubmit = false,
     this.showNewLine = false,
     this.submitEnabled = false,
+    this.error = 'error',
   });
 
   @override
@@ -67,7 +69,7 @@ class TextInputFieldState extends State<TextInputField> {
           widget.controller.text != 'Value') {
         borderColor = AppColors.danger;
         textColor = AppColors.danger;
-        errorMessage = 'Error message';
+        errorMessage = widget.error;
         errorMessageColor = AppColors.danger;
       }
     });

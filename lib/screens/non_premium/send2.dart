@@ -272,9 +272,9 @@ class Send2State extends State<Send2> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextInputField(
-                controller: recipientAddressController,
-                hint: "Bitcoin address...",
-              ),
+                  controller: recipientAddressController,
+                  hint: "Bitcoin address...",
+                  error: 'invalid address'),
               const SizedBox(height: 10),
               //only show this section if the user's clipboard contains a valid BTC address
               if (clipboardData != '') ...[
