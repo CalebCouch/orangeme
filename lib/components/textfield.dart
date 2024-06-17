@@ -64,14 +64,16 @@ class TextInputFieldState extends State<TextInputField> {
 
       if (!isFocused && widget.controller.text.isEmpty) {
         borderColor = AppColors.darkGrey;
-      } else if (!isFocused &&
-          widget.controller.text.isNotEmpty &&
-          widget.controller.text != 'Value') {
-        borderColor = AppColors.danger;
-        textColor = AppColors.danger;
-        errorMessage = widget.error;
-        errorMessageColor = AppColors.danger;
       }
+      //we are not currently using this error text anywhere, consider removing
+      // else if (!isFocused &&
+      //     widget.controller.text.isNotEmpty &&
+      //     widget.controller.text != 'Value') {
+      //   borderColor = AppColors.danger;
+      //   textColor = AppColors.danger;
+      //   errorMessage = widget.error;
+      //   errorMessageColor = AppColors.danger;
+      // }
     });
   }
 
