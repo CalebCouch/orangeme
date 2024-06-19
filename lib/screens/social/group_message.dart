@@ -15,6 +15,10 @@ class MessageGroup extends StatefulWidget {
   MessageGroupState createState() => MessageGroupState();
 }
 
+void showParticipants() {
+  print("Showing message participants");
+}
+
 class MessageGroupState extends State<MessageGroup> {
   final TextEditingController messageController = TextEditingController();
   List<String> messages = [];
@@ -27,6 +31,7 @@ class MessageGroupState extends State<MessageGroup> {
           MessageAppBar(
             title: "Group Message",
             imagePath: widget.imagePath,
+            showParticipants: showParticipants,
           ),
           Expanded(
             child: messages.isEmpty
