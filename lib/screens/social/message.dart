@@ -20,7 +20,6 @@ class Message extends StatefulWidget {
 class MessageState extends State<Message> {
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
-  bool showSubmitButton = false;
   bool submitEnabled = false;
   List<Map<String, String>> messages = [
     {
@@ -48,7 +47,6 @@ class MessageState extends State<Message> {
     messageController.addListener(() {
       if (messageController.text.isNotEmpty) {
         setState(() {
-          showSubmitButton = true;
           if (validateMessage(messageController.text)) {
             submitEnabled = true;
           } else {
@@ -57,7 +55,6 @@ class MessageState extends State<Message> {
         });
       } else {
         setState(() {
-          showSubmitButton = false;
           submitEnabled = false;
         });
       }
@@ -93,7 +90,7 @@ class MessageState extends State<Message> {
         "timestamp": formattedTimestamp
       });
       messageController.text = '';
-      showSubmitButton = false;
+      submitEnabled = false;
       scrollToBottom();
     });
   }
@@ -156,7 +153,7 @@ class MessageState extends State<Message> {
             child: TextInputField(
               controller: messageController,
               hint: "Message",
-              showSubmit: showSubmitButton,
+              showSubmit: true,
               onEditingComplete: submitMessage,
               showNewLine: true,
               submitEnabled: submitEnabled,
