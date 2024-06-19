@@ -102,26 +102,13 @@ class TextInputFieldState extends State<TextInputField> {
   }
 
   Widget _buildSubmitButton() {
-    double circleDiameter = 40;
     double iconSize = 20;
-
-    Color backgroundColor =
-        widget.submitEnabled ? AppColors.orange : Colors.transparent;
     Color iconColor = widget.submitEnabled ? AppColors.white : AppColors.grey;
-    return Container(
-      width: circleDiameter,
-      height: circleDiameter,
-      margin: const EdgeInsets.only(left: 8),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: IconButton(
-          icon: Icon(Icons.arrow_forward_rounded, color: iconColor),
-          iconSize: iconSize,
-          onPressed: widget.submitEnabled ? widget.onEditingComplete : null,
-        ),
+    return Center(
+      child: IconButton(
+        icon: Icon(Icons.send, color: iconColor),
+        iconSize: iconSize,
+        onPressed: widget.submitEnabled ? widget.onEditingComplete : null,
       ),
     );
   }
@@ -144,7 +131,7 @@ class TextInputFieldState extends State<TextInputField> {
             child: Row(
               children: [
                 _buildTextField(),
-                if (widget.showSubmit) _buildSubmitButton(),
+                _buildSubmitButton(),
               ],
             ),
           ),
