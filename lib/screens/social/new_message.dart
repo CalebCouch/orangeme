@@ -54,7 +54,7 @@ class NewMessageState extends State<NewMessage> {
         context,
         MaterialPageRoute(
             builder: (context) => MessageGroup(
-                  contactName: recipients,
+                  recipients: recipients,
                 )),
       );
     }
