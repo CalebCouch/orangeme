@@ -21,7 +21,7 @@ class GroupMessageListState extends State<GroupMessageList> {
         children: [
           Padding(
             padding:
-                const EdgeInsets.only(left: 24, right: 24, top: 18, bottom: 4),
+                const EdgeInsets.only(left: 24, right: 24, top: 18, bottom: 24),
             child: Text('This group has ${widget.recipients.length} members',
                 style: AppTextStyles.textSM
                     .copyWith(color: AppColors.textSecondary)),
