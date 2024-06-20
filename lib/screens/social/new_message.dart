@@ -42,11 +42,13 @@ class NewMessageState extends State<NewMessage> {
 
   void navigateToMessage() {
     if (recipients.length == 1) {
+      List<String> recipientsList = [];
+      recipientsList.add(recipients.first);
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => Message(
-                  contactName: recipients.first,
+                  recipients: recipientsList,
                 )),
       );
     } else {

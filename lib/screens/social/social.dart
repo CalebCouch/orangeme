@@ -21,34 +21,34 @@ class SocialDashboard extends StatefulWidget {
 
 class SocialDashboardState extends State<SocialDashboard> {
   int navIndex = 1;
-  List<Map<String, String>> messages = [
+  List<Map<String, dynamic>> messages = [
     {
-      "name": "Pam Beesley",
+      "name": ["Pam Beesley"],
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
     },
     {
-      "name": "Dwight Schrute",
+      "name": ["Dwight Schrute"],
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
     },
     {
-      "name": "Michael Scott",
+      "name": ["Michael Scott"],
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
     },
     {
-      "name": "Jim Halpert",
+      "name": ["Jim Halpert"],
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
     },
     {
-      "name": "Ryan Howard",
+      "name": ["Ryan Howard"],
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
     },
     {
-      "name": "Andy Bernard",
+      "name": ["Andy Bernard"],
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
     },
@@ -65,23 +65,27 @@ class SocialDashboardState extends State<SocialDashboard> {
   }
 
   void navigateToMessage(messages) {
-    // if (messages.length == 1) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => Message(
-                contactName: messages["name"],
-              )),
-    );
-    //   } else {
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //           builder: (context) => MessageGroup(
-    //                 contactName: messages["name"],
-    //               )),
-    //     );
-    //   }
+    if (messages['name'].length == 1) {
+      List<String> recipientsList = [];
+      recipientsList.add(messages['name'][0]);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Message(
+                  recipients: recipientsList,
+                )),
+      );
+    } else {
+      List<String> recipientsList = [];
+      recipientsList.add(messages['name']);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MessageGroup(
+                  recipients: recipientsList,
+                )),
+      );
+    }
   }
 
   @override
@@ -105,7 +109,7 @@ class SocialDashboardState extends State<SocialDashboard> {
                     itemCount: messages.length,
                     itemBuilder: (BuildContext context, int index) {
                       return MessageHistoryCard(
-                          name: messages[index]["name"] ?? "Unnamed",
+                          name: messages[index]["name"][0] ?? "Unnamed",
                           lastMessage: messages[index]["lastMessage"] ??
                               "No last message",
                           onTap: () => navigateToMessage(messages[index]));
