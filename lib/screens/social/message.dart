@@ -6,11 +6,11 @@ import 'package:orange/components/textfield.dart';
 import 'package:orange/widgets/text_bauble.dart';
 
 class Message extends StatefulWidget {
-  final List<String> recipients;
+  final String contactName;
   final String imagePath;
   const Message({
     super.key,
-    required this.recipients,
+    required this.contactName,
     this.imagePath = AppImages.defaultProfileMD,
   });
   @override
@@ -124,9 +124,9 @@ class MessageState extends State<Message> {
       body: Column(
         children: [
           MessageAppBar(
-              title: widget.recipients.first,
-              imagePath: widget.imagePath,
-              recipients: widget.recipients),
+            title: widget.contactName,
+            imagePath: widget.imagePath,
+          ),
           Expanded(
               child: messages.isEmpty
                   ? Center(
@@ -145,7 +145,7 @@ class MessageState extends State<Message> {
                             message: messages[index]["message"]!,
                             incoming: messages[index]["incoming"]!,
                             timestamp: messages[index]["timestamp"]!,
-                            name: widget.recipients.first);
+                            name: widget.contactName);
                       },
                     )),
           Padding(

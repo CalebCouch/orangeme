@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
-import 'dart:math' as math;
 
 class MessageAppBar extends StatelessWidget {
   final String title;
   final String imagePath;
-  final VoidCallback? showRecipients;
-  final List<String> recipients;
+  final VoidCallback? showParticipants;
+
   const MessageAppBar({
     super.key,
     required this.title,
-    required this.recipients,
     this.imagePath = 'assets/images/default_profile.png',
-    this.showRecipients,
+    this.showParticipants,
   });
+
   @override
   Widget build(BuildContext context) {
-    int avatarCount = math.min(5, recipients.length);
-    double radius = 20;
-    double overlap = 10;
-    double totalWidth = 2 * radius + (avatarCount - 1) * (2 * radius - overlap);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: const BoxDecoration(
@@ -43,46 +38,24 @@ class MessageAppBar extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        if (recipients.length == 1)
-                          CircleAvatar(
-                            backgroundImage: AssetImage(imagePath),
-                            radius: radius,
-                          )
-                        else if (recipients.isNotEmpty)
-                          Center(
-                            child: SizedBox(
-                              height: 2 * radius,
-                              width: totalWidth,
-                              child: Stack(
-                                children: List.generate(
-                                  avatarCount,
-                                  (index) => Positioned(
-                                    left: index * (2 * radius - overlap),
-                                    child: CircleAvatar(
-                                      backgroundImage: AssetImage(imagePath),
-                                      radius: radius,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                        CircleAvatar(
+                          backgroundImage: AssetImage(imagePath),
+                          radius: 20,
+                        ),
                         const SizedBox(height: 10),
                         Text(
                           title,
                           style: AppTextStyles.heading5,
-                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
                   ),
                 ),
-                if (showRecipients != null)
+                if (showParticipants == null) const SizedBox(width: 48),
+                if (showParticipants != null)
                   IconButton(
-                    icon: const Icon(Icons.info, color: AppColors.white),
-                    onPressed: showRecipients,
-                  ),
-                if (showRecipients == null) const SizedBox(width: 48),
+                      icon: const Icon(Icons.info, color: AppColors.white),
+                      onPressed: () => showParticipants!()),
               ],
             ),
             const SizedBox(height: 10),
