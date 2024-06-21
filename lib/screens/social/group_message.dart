@@ -130,7 +130,7 @@ class MessageGroupState extends State<MessageGroup> {
     });
   }
 
-  void showParticipants() {
+  void showRecipients() {
     print("Showing message participants");
     Navigator.push(
         context,
@@ -148,7 +148,8 @@ class MessageGroupState extends State<MessageGroup> {
           MessageAppBar(
             title: "Group Message",
             imagePath: widget.imagePath,
-            showParticipants: showParticipants,
+            recipients: widget.recipients,
+            showRecipients: showRecipients,
           ),
           Expanded(
               child: messages.isEmpty

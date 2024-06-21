@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
+import 'dart:math' as math;
 
 class MessageAppBar extends StatelessWidget {
   final String title;
   final String imagePath;
-  final VoidCallback? showParticipants;
-
+  final VoidCallback? showRecipients;
+  final List<String> recipients;
   const MessageAppBar({
     super.key,
     required this.title,
+    required this.recipients,
     this.imagePath = 'assets/images/default_profile.png',
-    this.showParticipants,
+    this.showRecipients,
   });
-
   @override
   Widget build(BuildContext context) {
+    int avatarCount = math.min(5, recipients.length);
+    double radius = 20;
+    double overlap = 10;
+    double totalWidth = 2 * radius + (avatarCount - 1) * (2 * radius - overlap);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: const BoxDecoration(
@@ -38,24 +43,46 @@ class MessageAppBar extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        CircleAvatar(
-                          backgroundImage: AssetImage(imagePath),
-                          radius: 20,
-                        ),
+                        if (recipients.length == 1)
+                          CircleAvatar(
+                            backgroundImage: AssetImage(imagePath),
+                            radius: radius,
+                          )
+                        else if (recipients.isNotEmpty)
+                          Center(
+                            child: SizedBox(
+                              height: 2 * radius,
+                              width: totalWidth,
+                              child: Stack(
+                                children: List.generate(
+                                  avatarCount,
+                                  (index) => Positioned(
+                                    left: index * (2 * radius - overlap),
+                                    child: CircleAvatar(
+                                      backgroundImage: AssetImage(imagePath),
+                                      radius: radius,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         const SizedBox(height: 10),
                         Text(
                           title,
                           style: AppTextStyles.heading5,
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
                   ),
                 ),
-                if (showParticipants == null) const SizedBox(width: 48),
-                if (showParticipants != null)
+                if (showRecipients != null)
                   IconButton(
-                      icon: const Icon(Icons.info, color: AppColors.white),
-                      onPressed: () => showParticipants!()),
+                    icon: const Icon(Icons.info, color: AppColors.white),
+                    onPressed: showRecipients,
+                  ),
+                if (showRecipients == null) const SizedBox(width: 48),
               ],
             ),
             const SizedBox(height: 10),
