@@ -6,12 +6,14 @@ class MessageHistoryCard extends StatelessWidget {
   final String imagePath;
   final VoidCallback onTap;
   final String lastMessage;
+  final bool group;
 
   const MessageHistoryCard({
     super.key,
     required this.name,
     required this.onTap,
     required this.lastMessage,
+    required this.group,
     this.imagePath = AppImages.defaultProfileLG,
   });
   @override
@@ -26,8 +28,13 @@ class MessageHistoryCard extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage(imagePath),
               radius: 24,
+              backgroundImage: group ? null : AssetImage(imagePath),
+              backgroundColor:
+                  group ? AppColors.backgroundSecondary : Colors.transparent,
+              child: group
+                  ? const Icon(Icons.group, color: AppColors.textSecondary)
+                  : null,
             ),
             const SizedBox(width: 16),
             Expanded(

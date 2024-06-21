@@ -23,6 +23,11 @@ class SocialDashboardState extends State<SocialDashboard> {
   int navIndex = 1;
   List<Map<String, dynamic>> messages = [
     {
+      "name": ["Pam Beesley", "Michael Scott", "Andy Bernard"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
       "name": ["Pam Beesley"],
       "lastMessage":
           "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
@@ -76,8 +81,7 @@ class SocialDashboardState extends State<SocialDashboard> {
                 )),
       );
     } else {
-      List<String> recipientsList = [];
-      recipientsList.add(messages['name']);
+      List<String> recipientsList = messages['name'];
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -108,10 +112,23 @@ class SocialDashboardState extends State<SocialDashboard> {
                 ? ListView.builder(
                     itemCount: messages.length,
                     itemBuilder: (BuildContext context, int index) {
+                      print(messages.length);
+                      var lastMessage =
+                          messages[index]['lastMessage'] ?? 'No Last Message';
+                      var title = messages[index]["name"][0] ?? "Unnamed";
+                      var group = false;
+                      if (messages[index]["name"].length > 1) {
+                        print("group message found");
+                        lastMessage = messages[index]['name'].join(", ");
+                        title = "Group Message";
+                        group = true;
+                      } else {
+                        print("group message not found");
+                      }
                       return MessageHistoryCard(
-                          name: messages[index]["name"][0] ?? "Unnamed",
-                          lastMessage: messages[index]["lastMessage"] ??
-                              "No last message",
+                          name: title,
+                          lastMessage: lastMessage,
+                          group: group,
                           onTap: () => navigateToMessage(messages[index]));
                     },
                   )
