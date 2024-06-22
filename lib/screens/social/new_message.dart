@@ -3,7 +3,6 @@ import 'package:orange/styles/constants.dart';
 import 'package:orange/components/textfield.dart';
 import 'package:orange/widgets/contact_card.dart';
 import 'package:orange/screens/social/message.dart';
-import 'package:orange/screens/social/group_message.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 
 class NewMessage extends StatefulWidget {
@@ -55,7 +54,7 @@ class NewMessageState extends State<NewMessage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MessageGroup(
+            builder: (context) => Message(
                   recipients: recipients,
                 )),
       );

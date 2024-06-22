@@ -4,6 +4,7 @@ import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/message_appbar.dart';
 import 'package:orange/components/textfield.dart';
 import 'package:orange/widgets/text_bauble.dart';
+import 'package:orange/screens/social/group_message_list.dart';
 
 class Message extends StatefulWidget {
   final List<String> recipients;
@@ -21,29 +22,35 @@ class MessageState extends State<Message> {
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   bool submitEnabled = false;
-  List<Map<String, String>> messages = [
-    {
-      "message":
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
-      "incoming": "true",
-      "timestamp": "2024-06-10 11:59:53"
-    },
-    {
-      "message":
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
-      "incoming": "false",
-      "timestamp": "2024-06-11 13:32:09"
-    },
-    {
-      "message":
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
-      "incoming": "false",
-      "timestamp": "2024-06-12 12:29:09"
-    },
-  ];
+  String sender = '';
+  List<Map<String, String>> messages = [];
   @override
   void initState() {
     super.initState();
+    sender = widget.recipients.first;
+    messages = [
+      {
+        "message":
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+        "incoming": "true",
+        "sender": sender,
+        "timestamp": "2024-06-10 11:59:53"
+      },
+      {
+        "message":
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+        "incoming": "false",
+        "sender": "me",
+        "timestamp": "2024-06-11 13:32:09"
+      },
+      {
+        "message":
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+        "incoming": "false",
+        "sender": "me",
+        "timestamp": "2024-06-12 12:29:09"
+      },
+    ];
     messageController.addListener(() {
       if (messageController.text.isNotEmpty) {
         setState(() {
@@ -87,6 +94,7 @@ class MessageState extends State<Message> {
       messages.add({
         "message": formattedMessage,
         "incoming": "false",
+        "sender": "me",
         "timestamp": formattedTimestamp
       });
       messageController.text = '';
@@ -117,6 +125,15 @@ class MessageState extends State<Message> {
     });
   }
 
+  void showRecipients() {
+    print("Showing message participants");
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                GroupMessageList(recipients: widget.recipients)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,9 +141,13 @@ class MessageState extends State<Message> {
       body: Column(
         children: [
           MessageAppBar(
-              title: widget.recipients.first,
+              title: widget.recipients.length > 1
+                  ? "Group Message"
+                  : widget.recipients.first,
               imagePath: widget.imagePath,
-              recipients: widget.recipients),
+              recipients: widget.recipients,
+              showRecipients:
+                  widget.recipients.length > 1 ? showRecipients : null),
           Expanded(
               child: messages.isEmpty
                   ? Center(
@@ -145,7 +166,9 @@ class MessageState extends State<Message> {
                             message: messages[index]["message"]!,
                             incoming: messages[index]["incoming"]!,
                             timestamp: messages[index]["timestamp"]!,
-                            name: widget.recipients.first);
+                            name: widget.recipients.length > 1
+                                ? messages[index]["sender"]!
+                                : widget.recipients.first);
                       },
                     )),
           Padding(
