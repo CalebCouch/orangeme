@@ -122,13 +122,12 @@ class MessageBaubleState extends State<MessageBauble> {
           decoration: BoxDecoration(
             color: widget.incoming == "false"
                 ? AppColors.orange
-                : AppColors.darkGrey,
+                : AppColors.offBlack,
             borderRadius: BorderRadius.circular(8),
           ),
-          padding:
-              const EdgeInsets.all(6.0), // 6px padding around the container
+          padding: const EdgeInsets.all(6.0),
           child: Padding(
-            padding: const EdgeInsets.all(12.0), // 12px padding around the text
+            padding: const EdgeInsets.all(12.0),
             child: Text(
               widget.message,
               style: const TextStyle(
@@ -143,8 +142,7 @@ class MessageBaubleState extends State<MessageBauble> {
         Padding(
           padding: const EdgeInsets.only(top: 4.0),
           child: Text(
-            formatTimestamp(
-                widget.timestamp), // Display the timestamp if it's not null
+            formatTimestamp(widget.timestamp),
             style: const TextStyle(
               color: AppColors.grey,
               fontSize: 14,
@@ -154,6 +152,7 @@ class MessageBaubleState extends State<MessageBauble> {
             ),
           ),
         ),
+        const SizedBox(height: 24),
       ],
     );
   }
