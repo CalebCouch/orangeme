@@ -175,6 +175,7 @@ class MessageGroupState extends State<MessageGroup> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextInputField(
+              rightIcon: true,
               controller: messageController,
               hint: "Message",
               showSubmit: true,

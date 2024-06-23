@@ -124,33 +124,37 @@ class MessageState extends State<Message> {
       body: Column(
         children: [
           MessageAppBar(
-              title: widget.recipients.first,
-              imagePath: widget.imagePath,
-              recipients: widget.recipients),
+            title: widget.recipients.first,
+            imagePath: widget.imagePath,
+            recipients: widget.recipients
+          ),
           Expanded(
-              child: messages.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No messages yet.',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.textMD
-                            .copyWith(color: AppColors.textSecondary),
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: scrollController,
-                      itemCount: messages.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return MessageBauble(
-                            message: messages[index]["message"]!,
-                            incoming: messages[index]["incoming"]!,
-                            timestamp: messages[index]["timestamp"]!,
-                            name: widget.recipients.first);
-                      },
-                    )),
+            child: Padding (
+              padding: const EdgeInsets.all(24.0),
+              child: messages.isEmpty ? Center(
+                child: Text(
+                  'No messages yet.',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.textMD.copyWith(color: AppColors.textSecondary),
+                ),
+              ) : ListView.builder(
+                controller: scrollController,
+                itemCount: messages.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return MessageBauble(
+                    message: messages[index]["message"]!,
+                    incoming: messages[index]["incoming"]!,
+                    timestamp: messages[index]["timestamp"]!,
+                    name: widget.recipients.first
+                  );
+                },
+              )
+            )
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextInputField(
+              rightIcon: true,
               controller: messageController,
               hint: "Message",
               showSubmit: true,

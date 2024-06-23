@@ -11,6 +11,7 @@ import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/session_timer.dart';
 import 'package:orange/screens/non_premium/send1.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Send2 extends StatefulWidget {
   final int amount;
@@ -247,24 +248,27 @@ class Send2State extends State<Send2> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          title: const Text('Bitcoin Address'),
+          title: const Text(
+            'Bitcoin address',
+            style: AppTextStyles.heading3
+          ),
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                //dashboard timer callback function
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Send1(
-                              price: widget.price,
-                              balance: widget.balance,
-                              onDashboardPopBack: widget.onDashboardPopBack,
-                              sessionTimer: widget.sessionTimer,
-                              amount:
-                                  ((widget.amount / 100000000) * widget.price)
-                                      .toStringAsFixed(2),
-                            )));
-              }),
+            icon: SvgPicture.asset(AppIcons.left),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Send1(
+                    price: widget.price,
+                    balance: widget.balance,
+                    onDashboardPopBack: widget.onDashboardPopBack,
+                    sessionTimer: widget.sessionTimer,
+                    amount: ((widget.amount / 100000000) * widget.price).toStringAsFixed(2),
+                  )
+                )
+              );
+            }
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -272,9 +276,11 @@ class Send2State extends State<Send2> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextInputField(
-                  controller: recipientAddressController,
-                  hint: "Bitcoin address...",
-                  error: 'invalid address'),
+                controller: recipientAddressController,
+                hint: "Bitcoin address...",
+                error: 'invalid address',
+                rightIcon: true,
+              ),
               const SizedBox(height: 10),
               //only show this section if the user's clipboard contains a valid BTC address
               if (clipboardData != '') ...[

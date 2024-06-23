@@ -3,9 +3,11 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:custom_qr_generator/custom_qr_generator.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
+import 'package:orange/components/headings/stack.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share/share.dart';
+import 'dashboard.dart';
 
 class Receive extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
@@ -55,14 +57,9 @@ class ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Receive Bitcoin'),
-        leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              widget.onDashboardPopBack();
-              Navigator.pop(context);
-            }),
+      appBar: PreferredSize (
+        preferredSize: Size.fromHeight(64.0),
+        child: HeadingStack(label: "Receive bitcoin"),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

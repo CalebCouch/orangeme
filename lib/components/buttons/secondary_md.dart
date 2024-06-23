@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ButtonSecondaryMD extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
   final bool isEnabled;
-  final String? icon;
+  final String icon;
 
   const ButtonSecondaryMD(
       {super.key,
       required this.label,
       this.onTap,
       this.isEnabled = true,
-      this.icon});
+      this.icon = 'error'});
 
   @override
   StatefulCustomButtonState createState() => StatefulCustomButtonState();
@@ -21,7 +22,7 @@ class ButtonSecondaryMD extends StatefulWidget {
 class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
   bool _isHovering = false;
 
-  IconData getIconFromString(String? iconName) {
+  /* IconData getIconFromString(String? iconName) {
     if (iconName == null) {
       return Icons.error;
     }
@@ -37,7 +38,7 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
       default:
         return Icons.error;
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +71,7 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          getIconFromString(widget.icon),
-                          color: AppColors.primary,
-                          size: 15,
-                        ),
+                        SvgPicture.asset(widget.icon, width: 20, height: 20),
                         const SizedBox(width: 8),
                         Flexible(
                           child: RichText(

@@ -5,6 +5,7 @@ import 'package:orange/classes.dart';
 import 'receive.dart';
 import 'send1.dart';
 import 'package:orange/widgets/transaction_list.dart';
+import 'package:orange/styles/constants.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
@@ -231,7 +232,10 @@ class DashboardState extends State<Dashboard>
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         // title: const TextMarkLG(),
-        title: const Text('Wallet'),
+        title: const Text(
+          'Wallet',
+          style: AppTextStyles.heading3
+        ),
         automaticallyImplyLeading: false,
         //app bar drop down settings/nav menu, currently disabled
         // actions: [
@@ -281,44 +285,37 @@ class DashboardState extends State<Dashboard>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                ValueListenableBuilder<int>(
-                                  valueListenable: balance,
-                                  builder: (context, balanceValue, child) =>
-                                      ValueListenableBuilder<double>(
-                                    valueListenable: price,
-                                    builder: (context, priceValue, child) =>
-                                        ValueDisplay(
-                                      fiatAmount: formatSatsToDollars(
-                                          balanceValue, priceValue),
-                                      quantity: (balanceValue / 100000000.0)
-                                          .toStringAsFixed(8),
-                                    ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ValueListenableBuilder<int>(
+                                valueListenable: balance,
+                                builder: (context, balanceValue, child) =>
+                                    ValueListenableBuilder<double>(
+                                  valueListenable: price,
+                                  builder: (context, priceValue, child) =>
+                                      ValueDisplay(
+                                    fiatAmount: formatSatsToDollars(
+                                        balanceValue, priceValue),
+                                    quantity: (balanceValue / 100000000.0)
+                                        .toStringAsFixed(8),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                                transactionsList(transactions, price),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: ReceiveSend(
-                                    receiveRoute: () => Receive(
-                                      onDashboardPopBack: dashboardPopBack,
-                                    ),
-                                    sendRoute: () => Send1(
-                                      balance: balance.value,
-                                      price: price.value,
-                                      onDashboardPopBack: dashboardPopBack,
-                                    ),
-                                    onPause: _stopTimer,
-                                  ),
+                              ),
+                              const SizedBox(height: 10),
+                              transactionsList(transactions, price),
+                              ReceiveSend(
+                                receiveRoute: () => Receive(
+                                  onDashboardPopBack: dashboardPopBack,
                                 ),
-                              ],
-                            ),
+                                sendRoute: () => Send1(
+                                  balance: balance.value,
+                                  price: price.value,
+                                  onDashboardPopBack: dashboardPopBack,
+                                ),
+                                onPause: _stopTimer,
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -328,7 +325,7 @@ class DashboardState extends State<Dashboard>
               ),
             ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 15),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: ModeNavigator(
           navIndex: navIndex,
           onDashboardPopBack: dashboardPopBack,

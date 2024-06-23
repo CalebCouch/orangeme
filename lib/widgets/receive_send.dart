@@ -16,44 +16,46 @@ class ReceiveSend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 393,
-      height: 60,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16),
+      width: MediaQuery.of(context).size.width,
+      child: Padding (
+        padding: new EdgeInsets.symmetric(horizontal: 24.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
               child: ButtonOrangeLG(
                 label: "Receive",
                 onTap: () {
                   onPause();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => receiveRoute()),
+                    PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => receiveRoute(),
+                      transitionDuration: Duration.zero,
+                    ),
                   );
                 },
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16),
+            const SizedBox(width: 16),
+            Expanded(
               child: ButtonOrangeLG(
                 label: "Send",
                 onTap: () {
                   onPause();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => sendRoute()),
+                    PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => sendRoute(),
+                      transitionDuration: Duration.zero,
+                    ),
                   );
                 },
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )
     );
   }
 }

@@ -13,7 +13,7 @@ class AppColors {
   //Colors
   static const Color red = Color(0xFFFF3B00);
   static const Color green = Color(0xFF00CC00);
-  static const Color orange = Color(0xFFFB513B);
+  static const Color orange = Color(0xFFF3474D);
 
   //Layout
   static const Color background = Colors.black;
@@ -35,7 +35,7 @@ class AppColors {
   static const Color brand = Colors.white;
   static const Color danger = Color(0xFFFF3800);
   static const Color success = Color(0xFF00CC00);
-  static const Color bitcoin = Color(0xFFFB513B);
+  static const Color bitcoin = Color(0xFFF3474D);
 }
 
 class AppTextStyles {
@@ -188,14 +188,19 @@ class AppIcons {
   static const String close = 'assets/icons/Icon=close.svg';
   static const String down = 'assets/icons/Icon=down.svg';
   static const String edit = 'assets/icons/Icon=edit.svg';
+  static const String error = 'assets/icons/Icon=error.svg';
+  static const String group = 'assets/icons/Icon=group.svg';
   static const String home = 'assets/icons/Icon=home.svg';
+  static const String info = 'assets/icons/Icon=info.svg';
   static const String left = 'assets/icons/Icon=left.svg';
   static const String paste = 'assets/icons/Icon=paste.svg';
+  static const String profile = 'assets/icons/Icon=profile.svg';
   static const String qrcode = 'assets/icons/Icon=qr-code.svg';
   static const String radioFilled = 'assets/icons/Icon=radio-filled.svg';
   static const String radio = 'assets/icons/Icon=radio.svg';
   static const String right = 'assets/icons/Icon=right.svg';
   static const String scan = 'assets/icons/Icon=scan.svg';
+  static const String send = 'assets/icons/Icon=send.svg';
   static const String up = 'assets/icons/Icon=up.svg';
   static const String wallet = 'assets/icons/Icon=wallet.svg';
 }
