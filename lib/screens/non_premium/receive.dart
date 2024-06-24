@@ -7,7 +7,6 @@ import 'package:orange/components/headings/stack.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share/share.dart';
-import 'dashboard.dart';
 
 class Receive extends StatefulWidget {
   final VoidCallback onDashboardPopBack;

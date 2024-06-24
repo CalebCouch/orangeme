@@ -4,8 +4,6 @@ import 'package:orange/widgets/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/widgets/session_timer.dart';
-import 'package:orange/styles/constants.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/components/headings/stack.dart';
 
 class Send1 extends StatefulWidget {
