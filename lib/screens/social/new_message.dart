@@ -27,6 +27,44 @@ class NewMessageState extends State<NewMessage> {
     {"name": "Stanley Hudson", "imagePath": "assets/images/stanley.png"},
   ];
 
+  List<Map<String, dynamic>> messages = [
+    {
+      "name": ["Pam Beesley", "Michael Scott", "Andy Bernard"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": ["Pam Beesley"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": ["Dwight Schrute"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": ["Michael Scott"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": ["Jim Halpert"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": ["Ryan Howard"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+    {
+      "name": ["Andy Bernard"],
+      "lastMessage":
+          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+    },
+  ];
+
   void addRecipient(String name) {
     if (recipients.contains(name)) return;
 
@@ -102,7 +140,7 @@ class NewMessageState extends State<NewMessage> {
       appBar: PreferredSize (
         preferredSize: Size.fromHeight(56.0),
         child: HeadingStackMessages(
-          recipients: recipients
+          messages: messages,
         ),
       ),
       body: Column(
