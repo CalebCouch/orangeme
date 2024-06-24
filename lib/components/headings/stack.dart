@@ -5,8 +5,6 @@ import 'package:orange/styles/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/screens/social/message.dart';
-import 'package:orange/screens/social/group_message.dart';
-
 
 class HeadingStack extends StatefulWidget {
   final String label;
@@ -29,7 +27,7 @@ class CustomHeadingState extends State<HeadingStack> {
         Align (
           alignment: Alignment.centerLeft,
           child: Padding (
-            padding: new EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 16.0),
             child: IconButton(
               icon: SvgPicture.asset(AppIcons.left, width: 32, height: 32),
               onPressed: () {
@@ -53,11 +51,11 @@ class CustomHeadingState extends State<HeadingStack> {
 
 
 class HeadingStackMessages extends StatefulWidget {
-  final List<String> recipients;
+  final List<String> messages;
 
   const HeadingStackMessages({
     super.key,
-    required this.recipients,
+    required this.messages,
   });
 
   @override
@@ -66,10 +64,10 @@ class HeadingStackMessages extends StatefulWidget {
 
 class CustomHeadingMState extends State<HeadingStackMessages> {
 
-  void navigateToMessage() {
-    if (widget.recipients.length == 1) {
+  void navigateToMessage(messages) {
+    if (messages['name'].length == 1) {
       List<String> recipientsList = [];
-      recipientsList.add(widget.recipients.first);
+      recipientsList.add(messages['name'][0]);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -79,11 +77,12 @@ class CustomHeadingMState extends State<HeadingStackMessages> {
         ),
       );
     } else {
+      List<String> recipientsList = messages['name'];
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MessageGroup(
-            recipients: widget.recipients,
+          builder: (context) => Message(
+            recipients: recipientsList,
           )
         ),
       );
@@ -97,7 +96,7 @@ class CustomHeadingMState extends State<HeadingStackMessages> {
         Align (
           alignment: Alignment.centerLeft,
           child: Padding (
-            padding: new EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 16.0),
             child: IconButton(
               icon: SvgPicture.asset(AppIcons.left, width: 32, height: 32),
               onPressed: () {
@@ -119,7 +118,7 @@ class CustomHeadingMState extends State<HeadingStackMessages> {
             padding: const EdgeInsets.only(right: 28),
             child: GestureDetector(
               onTap: () {
-                navigateToMessage();
+                navigateToMessage(widget.messages);
               },
               child: const Text("Next", style: AppTextStyles.labelMD),
             ),
