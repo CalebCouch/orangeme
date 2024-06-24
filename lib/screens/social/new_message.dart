@@ -3,7 +3,6 @@ import 'package:orange/styles/constants.dart';
 import 'package:orange/components/textfield.dart';
 import 'package:orange/widgets/contact_card.dart';
 import 'package:orange/screens/social/message.dart';
-import 'package:orange/screens/social/group_message.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/components/headings/stack.dart';
@@ -42,6 +41,30 @@ class NewMessageState extends State<NewMessage> {
     });
   }
 
+<<<<<<< HEAD
+=======
+  void navigateToMessage() {
+    if (recipients.length == 1) {
+      List<String> recipientsList = [];
+      recipientsList.add(recipients.first);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Message(
+                  recipients: recipientsList,
+                )),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Message(
+                  recipients: recipients,
+                )),
+      );
+    }
+  }
+>>>>>>> master
 
   Widget _buildRecipientList() {
     if (recipients.length == 1) {
