@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'non_premium/dashboard.dart';
+//import 'non_premium/dashboard.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
-
-import 'package:flutter_js/flutter_js.dart';
 
 class InitPage extends StatefulWidget {
   const InitPage({super.key});
@@ -20,7 +18,6 @@ class InitPageState extends State<InitPage> {
   @override
   void initState() {
     super.initState();
-    JavascriptRuntime flutterJs = getJavascriptRuntime();
     print('Welcome Page loaded');
     print('Checking for seed...');
     onPageLoad();
@@ -28,34 +25,19 @@ class InitPageState extends State<InitPage> {
 
   void onPageLoad() async {
     checkPlatform();
-    var descriptors = await STORAGE.read(key: "descriptors");
-    print("read from DB");
-    if (descriptors == null) {
-      var descriptorsRes =
-          await invoke(method: "get_new_singlesig_descriptor", args: []);
-      if (!mounted) return;
-      descriptors = handleError(descriptorsRes, context);
-      await STORAGE.write(key: "descriptors", value: descriptors);
-    }
-    print("desc: $descriptors");
-    String path = await getDBPath();
-    print('Syncing Wallet...');
-    var syncRes =
-        await invoke(method: "sync_wallet", args: [path, descriptors]);
-    if (!mounted) return;
-    handleError(syncRes, context);
     setState(() {
       loading = false;
     });
   }
 
-  void genSeed() async {
-    var descriptorsRes =
-        await invoke(method: "get_new_singlesig_descriptor", args: []);
-    if (!mounted) return;
-    var descriptors = handleError(descriptorsRes, context);
-    await STORAGE.write(key: "descriptors", value: descriptors);
-    print("desc: $descriptors");
+  void dropseed() async {
+    await invoke("drop_descs", "");
+    print("dropped");
+  }
+
+  void estimateFees() async {
+    text.value = (await invoke("get_price", "")).data;
+    print("estimating fees");
   }
 
   void checkPlatform() {
@@ -74,29 +56,6 @@ class InitPageState extends State<InitPage> {
     }
   }
 
-  void dropDB() async {
-    print("dropdb");
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
-    if (!mounted) return;
-    handleNull(descriptorsRes, context);
-    //await dropdb(path: path, descriptors: descriptors);
-    print("dropeddb");
-  }
-
-  void estimateFees() async {
-    print("estimating fees");
-    var feesRes = await invoke(method: "estimate_fees", args: []);
-    if (!mounted) return;
-    var fees = handleError(feesRes, context);
-    print("Fees: $fees");
-  }
-
-  void throwError() async {
-    var errorRes = await invoke(method: "throw_error", args: []);
-    if (!mounted) return;
-    handleError(errorRes, context);
-  }
-
   void navigate() {
     Navigator.pushReplacement(
         context,
@@ -106,9 +65,9 @@ class InitPageState extends State<InitPage> {
 
   @override
   Widget build(BuildContext context) {
+    checkError(context);
     return Scaffold(
       body: SingleChildScrollView(
-        // Enables scrolling
         padding: const EdgeInsets.all(16.0),
         child: loading
             ? SizedBox(
@@ -145,19 +104,7 @@ class InitPageState extends State<InitPage> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => {},
-                    child: const Text(
-                      'Gendesc(disabled)',
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => {throwError()},
-                    child: const Text('Error'),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => {dropDB()},
+                    onPressed: () => {dropseed()},
                     child: const Text('drop'),
                   ),
                   const SizedBox(height: 50),

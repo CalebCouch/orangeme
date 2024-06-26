@@ -48,6 +48,7 @@ dependencies:
   custom_qr_generator: 0.1.2
   flutter_js: ^0.8.0
   http: ^1.2.1
+  uuid: ^4.4.0
 
 
 dev_dependencies:

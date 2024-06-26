@@ -6,51 +6,16 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// The type `DartCommand` is not used by any `pub` functions, thus it is ignored.
 // The type `DescriptorSet` is not used by any `pub` functions, thus it is ignored.
-// The type `Fees` is not used by any `pub` functions, thus it is ignored.
 // The type `Price` is not used by any `pub` functions, thus it is ignored.
 // The type `PriceRes` is not used by any `pub` functions, thus it is ignored.
-// The type `Spot` is not used by any `pub` functions, thus it is ignored.
-// The type `SpotRes` is not used by any `pub` functions, thus it is ignored.
-// The type `Transaction` is not used by any `pub` functions, thus it is ignored.
-// The functions `from_details`, `generate_singlesig_descriptor`, `get_database`, `get_wallet`, `get_mnemonic`, `get_new_address`, `get_balance`, `get_transactions`, `create_transaction`, `estimate_fees`, `broadcast_transaction`, `get_client`, `sync_wallet`, `get_price`, `get_historical_price`, `handle_error`, `handle_request`, `fmt`, `fmt` are not `pub`, thus are ignored.
+// The type `RustCommand` is not used by any `pub` functions, thus it is ignored.
+// The type `RustResponse` is not used by any `pub` functions, thus it is ignored.
+// The functions `handleError`, `invoke`, `start_rust`, `fmt`, `fmt`, `fmt`, `fmt` are not `pub`, thus are ignored.
 
-Future<void> dropdb({required String path, required String descriptors}) =>
+Future<String> rustStart(
+        {required String path,
+        required FutureOr<String> Function(String) dartCallback}) =>
     RustLib.instance.api
-        .crateApiSimpleDropdb(path: path, descriptors: descriptors);
-
-Future<Response> invoke({required String method, required List<String> args}) =>
-    RustLib.instance.api.crateApiSimpleInvoke(method: method, args: args);
-
-class Response {
-  final int status;
-  final String message;
-
-  const Response({
-    required this.status,
-    required this.message,
-  });
-
-  static Future<Response> badRequest({required String method}) =>
-      RustLib.instance.api.crateApiSimpleResponseBadRequest(method: method);
-
-  static Future<Response> error({required String message}) =>
-      RustLib.instance.api.crateApiSimpleResponseError(message: message);
-
-  // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
-  static Future<Response> newInstance(
-          {required int status, required String message}) =>
-      RustLib.instance.api
-          .crateApiSimpleResponseNew(status: status, message: message);
-
-  @override
-  int get hashCode => status.hashCode ^ message.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Response &&
-          runtimeType == other.runtimeType &&
-          status == other.status &&
-          message == other.message;
-}
+        .crateApiSimpleRustStart(path: path, dartCallback: dartCallback);

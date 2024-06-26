@@ -23,3 +23,59 @@ class Transaction {
         json['raw'] as String?);
   }
 }
+
+class DartCommand {
+  final String method;
+  final String data;
+
+  DartCommand(this.method, this.data);
+
+  factory DartCommand.fromJson(Map<String, dynamic> json) {
+    return DartCommand(
+        json['method'] as String,
+        json['data'] as String
+    );
+  }
+}
+
+class RustC {
+  final String uid;
+  final String method;
+  final String data;
+
+  RustC(this.uid, this.method, this.data);
+
+  factory RustC.fromJson(Map<String, dynamic> json) {
+    return RustC(
+        json['uid'] as String,
+        json['method'] as String,
+        json['data'] as String
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'uid': this.uid,
+    'method': this.method,
+    'data': this.data,
+  };
+}
+
+class RustR {
+  final String uid;
+  final String data;
+
+  RustR(this.uid, this.data);
+
+  factory RustR.fromJson(Map<String, dynamic> json) {
+    return RustR(
+        json['uid'] as String,
+        json['data'] as String
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'uid': this.uid,
+    'data': this.data,
+  };
+
+}

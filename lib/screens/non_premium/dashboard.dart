@@ -12,10 +12,6 @@ import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
 import 'package:orange/widgets/mode_navigator.dart';
 
-// import 'package:orange/screens/settings/import_cloud.dart';
-// import 'package:orange/screens/settings/duplicate_phone.dart';
-// import 'package:orange/screens/settings/backup.dart';
-
 class Dashboard extends StatefulWidget {
   final bool? loading;
 
@@ -231,7 +227,7 @@ class DashboardState extends State<Dashboard>
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         // title: const TextMarkLG(),
-        title: const Text('Wallet'),
+        title: const ,
         automaticallyImplyLeading: false,
         //app bar drop down settings/nav menu, currently disabled
         // actions: [

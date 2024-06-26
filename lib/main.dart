@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/screens/init.dart';
 import 'package:orange/styles/theme.dart';
 
-import 'dart:math';
-//import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
-
-import 'package:http/http.dart' as http;
-
-Future<void> fetch() async {
-  var response = await http.get(Uri.parse('http://localhost:3000/'));
-  print("resp");
-  print(response.statusCode);
-  print(response.body);
-}
+import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
+import 'dart:convert';
+import 'dart:math';
+import 'dart:io';
 
 Future<void> main() async {
   await RustLib.init();
   runApp(const MyApp());
-  fetch();
   SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  var path = await getDocPath();
+  print(path);
+  ERROR = await rustStart(path: path, dartCallback: dartCallback);
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Orange',
       theme: theme(),
-      home: const InitPage(),
+      home: const InitPage()
     );
   }
 }
