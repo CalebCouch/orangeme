@@ -20,6 +20,7 @@ class InitPageState extends State<InitPage> {
   @override
   void initState() {
     super.initState();
+    // ignore: unused_local_variable
     JavascriptRuntime flutterJs = getJavascriptRuntime();
     print('Welcome Page loaded');
     print('Checking for seed...');
