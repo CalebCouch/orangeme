@@ -115,7 +115,7 @@ class NewMessageState extends State<NewMessage> {
               alignment: Alignment.center,
               child: Text(
                 "New message",
-                style: AppTextStyles.heading3
+                style: AppTextStyles.heading4
               ),
             ),
             Align (
