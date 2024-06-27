@@ -243,15 +243,15 @@ class Send1State extends State<Send1> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: PreferredSize (
-          preferredSize: Size.fromHeight(64.0),
-          child: HeadingStack(label: "Send bitcoin"),
+          preferredSize: const Size.fromHeight(64.0),
+          child: HeadingStack(label: "Send bitcoin", onDashboardPopBack: widget.onDashboardPopBack),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const SizedBox(height: 20),
               KeyboardValueDisplay(
                 key: _displayKey,
                 fiatAmount: amount == '' ? '0' : amount,

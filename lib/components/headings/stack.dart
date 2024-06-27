@@ -4,10 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class HeadingStack extends StatefulWidget {
   final String label;
+  final VoidCallback? onDashboardPopBack;
 
   const HeadingStack({
     super.key,
     required this.label,
+    this.onDashboardPopBack
   });
 
   @override
@@ -27,6 +29,7 @@ class CustomHeadingState extends State<HeadingStack> {
             child: IconButton(
               icon: SvgPicture.asset(AppIcons.left, width: 32, height: 32),
               onPressed: () {
+                widget.onDashboardPopBack!();
                 Navigator.pop(context);
               }
             ),
@@ -36,7 +39,7 @@ class CustomHeadingState extends State<HeadingStack> {
           alignment: Alignment.center,
           child: Text(
             widget.label,
-            style: AppTextStyles.heading3
+            style: AppTextStyles.heading4
           ),
         )
       ]

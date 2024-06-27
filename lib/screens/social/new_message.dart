@@ -140,7 +140,6 @@ class NewMessageState extends State<NewMessage> {
             child: TextInputField(
               controller: recipientAddressController,
               hint: "Profile Name",
-              rightIcon: false,
             ),
           ),
           _buildRecipientList(),

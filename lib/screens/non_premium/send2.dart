@@ -279,14 +279,13 @@ class Send2State extends State<Send2> {
                 controller: recipientAddressController,
                 hint: "Bitcoin address...",
                 error: 'invalid address',
-                rightIcon: true,
               ),
               const SizedBox(height: 10),
               //only show this section if the user's clipboard contains a valid BTC address
               if (clipboardData != '') ...[
                 ButtonSecondaryMD(
                   label: truncateAddress(clipboardData),
-                  icon: "clipboard",
+                  icon: AppIcons.paste,
                   onTap: () => pasteAddress(),
                 ),
                 const SizedBox(height: 5),
@@ -299,7 +298,7 @@ class Send2State extends State<Send2> {
               ],
               ButtonSecondaryMD(
                 label: "Scan QR Code",
-                icon: 'qrcode',
+                icon: AppIcons.qrcode,
                 onTap: _startQRScanner,
               ),
               const Spacer(),

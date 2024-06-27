@@ -58,7 +58,7 @@ class ReceiveState extends State<Receive> {
     return Scaffold(
       appBar: PreferredSize (
         preferredSize: Size.fromHeight(64.0),
-        child: HeadingStack(label: "Receive bitcoin"),
+        child: HeadingStack(label: "Receive bitcoin", onDashboardPopBack: widget.onDashboardPopBack),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

@@ -6,14 +6,14 @@ class ButtonSecondaryMD extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
   final bool isEnabled;
-  final String icon;
+  final String? icon;
 
   const ButtonSecondaryMD(
       {super.key,
       required this.label,
       this.onTap,
       this.isEnabled = true,
-      this.icon = 'error'});
+      this.icon});
 
   @override
   StatefulCustomButtonState createState() => StatefulCustomButtonState();
@@ -71,7 +71,7 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SvgPicture.asset(widget.icon, width: 20, height: 20),
+                        SvgPicture.asset(widget.icon!, width: 20, height: 20),
                         const SizedBox(width: 8),
                         Flexible(
                           child: RichText(

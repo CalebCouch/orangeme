@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class TextInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
-  final bool rightIcon;
+  final String? rightIcon;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
   final bool showSubmit;
@@ -17,7 +17,7 @@ class TextInputField extends StatefulWidget {
     super.key,
     required this.controller,
     this.hint = 'Enter the text here',
-    required this.rightIcon,
+    this.rightIcon,
     this.onChanged,
     this.onEditingComplete,
     this.showSubmit = false,
@@ -109,7 +109,7 @@ class TextInputFieldState extends State<TextInputField> {
     Color iconColor = widget.submitEnabled ? AppColors.white : AppColors.grey;
     return Center(
       child: IconButton(
-        icon: SvgPicture.asset(AppIcons.send, color: iconColor, width: 32, height: 32),
+        icon: SvgPicture.asset(widget.rightIcon!, color: iconColor, width: 32, height: 32),
         iconSize: iconSize,
         onPressed: widget.submitEnabled ? widget.onEditingComplete : null,
       ),
@@ -134,7 +134,7 @@ class TextInputFieldState extends State<TextInputField> {
             child: Row(
               children: [
                 _buildTextField(),
-                widget.rightIcon ? _buildSubmitButton() : SizedBox(height: 0)
+                widget.rightIcon != null ? _buildSubmitButton() : const SizedBox(height: 0)
               ],
             ),
           ),

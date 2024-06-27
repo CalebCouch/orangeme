@@ -256,7 +256,7 @@ class Send4State extends State<Send4> {
                     ),
                     const SizedBox(height: 20),
                     ButtonSecondaryMD(
-                        label: "Address", icon: "edit", onTap: editAddress),
+                        label: "Address", icon: AppIcons.edit, onTap: editAddress),
                   ],
                 ),
               ),
@@ -335,10 +335,10 @@ class Send4State extends State<Send4> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         ButtonSecondaryMD(
-                            label: "Amount", icon: "edit", onTap: editAmount),
+                            label: "Amount", icon: AppIcons.edit, onTap: editAmount),
                         const SizedBox(width: 10),
                         ButtonSecondaryMD(
-                            label: "Speed", icon: "edit", onTap: editSpeed),
+                            label: "Speed", icon: AppIcons.edit, onTap: editSpeed),
                       ],
                     ),
                   ],
