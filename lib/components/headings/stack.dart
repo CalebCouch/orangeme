@@ -29,7 +29,9 @@ class CustomHeadingState extends State<HeadingStack> {
             child: IconButton(
               icon: SvgPicture.asset(AppIcons.left, width: 32, height: 32),
               onPressed: () {
-                widget.onDashboardPopBack!();
+                if(widget.onDashboardPopBack != null){
+                  widget.onDashboardPopBack!();
+                }
                 Navigator.pop(context);
               }
             ),

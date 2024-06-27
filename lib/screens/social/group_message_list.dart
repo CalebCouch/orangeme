@@ -15,7 +15,7 @@ class GroupMessageListState extends State<GroupMessageList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize (
+      appBar: const PreferredSize (
         preferredSize: Size.fromHeight(64.0),
         child: HeadingStack(label: "Group message"),
       ),
