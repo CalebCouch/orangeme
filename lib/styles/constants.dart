@@ -196,6 +196,7 @@ class AppIcons {
   static const String radio = 'assets/icons/Icon=radio.svg';
   static const String right = 'assets/icons/Icon=right.svg';
   static const String scan = 'assets/icons/Icon=scan.svg';
+  static const String send = 'assets/icons/Icon=send.svg';
   static const String up = 'assets/icons/Icon=up.svg';
   static const String wallet = 'assets/icons/Icon=wallet.svg';
 }

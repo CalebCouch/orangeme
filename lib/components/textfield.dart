@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TextInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
+  final String? rightIcon;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
   final bool showSubmit;
@@ -15,6 +17,7 @@ class TextInputField extends StatefulWidget {
     super.key,
     required this.controller,
     this.hint = 'Enter the text here',
+    this.rightIcon,
     this.onChanged,
     this.onEditingComplete,
     this.showSubmit = false,
@@ -102,11 +105,14 @@ class TextInputFieldState extends State<TextInputField> {
   }
 
   Widget _buildSubmitButton() {
-    double iconSize = 20;
+    double iconSize = 32;
     Color iconColor = widget.submitEnabled ? AppColors.white : AppColors.grey;
     return Center(
       child: IconButton(
-        icon: Icon(Icons.send, color: iconColor),
+        icon: SvgPicture.asset(AppIcons.send,
+            colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+            width: 32,
+            height: 32),
         iconSize: iconSize,
         onPressed: widget.submitEnabled ? widget.onEditingComplete : null,
       ),
@@ -131,13 +137,15 @@ class TextInputFieldState extends State<TextInputField> {
             child: Row(
               children: [
                 _buildTextField(),
-                _buildSubmitButton(),
+                widget.showSubmit == true
+                    ? _buildSubmitButton()
+                    : const SizedBox(height: 0),
               ],
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, top: 8.0),
+          padding: const EdgeInsets.only(left: 20.0),
           child: Text(
             errorMessage,
             style: TextStyle(color: errorMessageColor),
