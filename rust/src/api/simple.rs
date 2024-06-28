@@ -136,16 +136,16 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     let amount = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount;
                     serde_json::to_string(&amount)?
                 },
-              //  "get_historical_price" => {
-              //      let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
-              //      let date = chrono::Utc::today().format("%Y-%m-%d").to_string();
-              //      let url = format!("{}?date={}", base_url, date);
-              //      let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
-              //      spot_res.data.amount.to_string()
-              //  },
-              //  "get_balance" => {
-              //      wallet.get_address(AddressIndex::New).unwrap().address.to_string()
-              //  },
+                "get_historical_price" => {
+                    let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
+                    let date = chrono::Utc::today().format("%Y-%m-%d").to_string();
+                    let url = format!("{}?date={}", base_url, date);
+                    let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
+                    spot_res.data.amount.to_string()
+                },
+                "get_balance" => {
+                    wallet.get_address(AddressIndex::New).unwrap().address.to_string()
+                },
          
               //  "get_address" => {
               //      wallet.get_address(AddressIndex::New)?.address.to_string()

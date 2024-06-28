@@ -47,6 +47,18 @@ class InitPageState extends State<InitPage> {
     print(text.value);
   }
 
+  void historical_price() async {
+    var historical_prices;
+    historical_prices.value = (await invoke("get_historical_price", "")).data;
+    print(historical_prices.value);
+  }
+
+  void get_balance() async {
+    var get_balance;
+    get_balance.value = (await invoke("get_balance", "")).data;
+    print(get_balance.value);
+  }
+
   void checkPlatform() {
     if (Platform.isAndroid) {
       print("Android device detected");
@@ -114,14 +126,25 @@ class InitPageState extends State<InitPage> {
                     onPressed: () => {dropseed()},
                     child: const Text('drop'),
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => {estimateFees()},
                     child: const Text('estimate fee'),
                   ),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => {messges()},
                     child: const Text('messages'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {historical_price()},
+                    child: const Text('Historical price'),
+                  ),
+                   const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {get_balance()},
+                    child: const Text('balance'),
                   ),
                 ],
               ),
