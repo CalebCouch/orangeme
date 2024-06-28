@@ -129,7 +129,6 @@ class Send3State extends State<Send3> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                //dashboard timer callback function
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
