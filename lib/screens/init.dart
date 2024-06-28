@@ -59,6 +59,18 @@ class InitPageState extends State<InitPage> {
     print(get_balance.value);
   }
 
+  void get_address() async {
+    var address;
+    address.value = (await invoke("get_address", "")).data;
+    print(address.value);
+  }
+
+  void get_new_address() async {
+    var new_address;
+    new_address.value = (await invoke("get_new_address", "")).data;
+    print(new_address.value);
+  }
+
   void checkPlatform() {
     if (Platform.isAndroid) {
       print("Android device detected");
@@ -141,10 +153,20 @@ class InitPageState extends State<InitPage> {
                     onPressed: () => {historical_price()},
                     child: const Text('Historical price'),
                   ),
-                   const SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => {get_balance()},
                     child: const Text('balance'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {get_address()},
+                    child: const Text('address'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {get_new_address()},
+                    child: const Text('New address'),
                   ),
                 ],
               ),

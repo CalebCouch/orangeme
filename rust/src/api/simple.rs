@@ -147,13 +147,13 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     wallet.get_address(AddressIndex::New).unwrap().address.to_string()
                 },
          
-              //  "get_address" => {
-              //      wallet.get_address(AddressIndex::New)?.address.to_string()
-              //  },
+                "get_address" => {
+                    wallet.get_address(AddressIndex::New)?.address.to_string()
+                },
   
-              //  "get_new_address" => {
-              //      wallet.get_address(AddressIndex::New)?.address.to_string()
-              //  },
+                "get_new_address" => {
+                    wallet.get_address(AddressIndex::New)?.address.to_string()
+                },
 
               // "check_address" => {
               //      let addr = args.first().ok_or(Error::OutOfBounds())?;
