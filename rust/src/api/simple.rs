@@ -160,7 +160,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
                 "check_address" => {
                     let args: Vec<String> = env::args().collect();
-                    if args.len() < 1 {
+                    if args.len() < 2 {
                         return Err(Error::OutOfBounds());
                     }
                     let addr = &args[1];
