@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class KeyboardValueDisplay extends StatefulWidget {
   final String fiatAmount;
@@ -214,10 +215,12 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.report_problem_rounded,
-                        color: AppColors.danger,
-                        size: 15,
+                      SvgPicture.asset(
+                        AppIcons.error,
+                        width: 16,
+                        height: 16,
+                        colorFilter: const ColorFilter.mode(
+                            AppColors.danger, BlendMode.srcIn),
                       ),
                       const SizedBox(width: 8),
                       Flexible(
