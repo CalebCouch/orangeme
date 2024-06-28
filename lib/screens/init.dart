@@ -68,7 +68,7 @@ class InitPageState extends State<InitPage> {
   }
 
   void check_address() async {
-    var check_address = (await invoke("check_address", (await invoke("get_new_address", "")).data )).data;
+    var check_address = (await invoke("check_address", "new_address()")).data;
     print(check_address);
   }
 
