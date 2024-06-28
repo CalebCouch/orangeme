@@ -248,27 +248,23 @@ class Send2State extends State<Send2> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          title: const Text(
-            'Bitcoin address',
-            style: AppTextStyles.heading3
-          ),
+          title: const Text('Bitcoin address', style: AppTextStyles.heading4),
           leading: IconButton(
-            icon: SvgPicture.asset(AppIcons.left),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Send1(
-                    price: widget.price,
-                    balance: widget.balance,
-                    onDashboardPopBack: widget.onDashboardPopBack,
-                    sessionTimer: widget.sessionTimer,
-                    amount: ((widget.amount / 100000000) * widget.price).toStringAsFixed(2),
-                  )
-                )
-              );
-            }
-          ),
+              icon: SvgPicture.asset(AppIcons.left),
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Send1(
+                              price: widget.price,
+                              balance: widget.balance,
+                              onDashboardPopBack: widget.onDashboardPopBack,
+                              sessionTimer: widget.sessionTimer,
+                              amount:
+                                  ((widget.amount / 100000000) * widget.price)
+                                      .toStringAsFixed(2),
+                            )));
+              }),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
