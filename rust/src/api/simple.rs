@@ -157,12 +157,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 "get_new_address" => {
                     wallet.get_address(AddressIndex::New)?.address.to_string()
                 },
-            /** 
+             
                 "check_address" => {
-                    let args: Vec<String> = env::args().collect();
-                    if args.len() < 2 {
-                        return Err(Error::OutOfBounds());
-                    }
+                    let args = command.data;
+                
                     let addr = &args[1];
                     let result = match Address::from_str(addr) {
                         Ok(address) => {
@@ -176,7 +174,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     };
                     Ok::<String, Error>(result)
                 }?,
-            */
+            
 
 
 
@@ -228,14 +226,14 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
         //            serd_json::to_string(&client.transaction_broadcast(&tx)?)?
          //        },
 
-                 "estimate_fees" => {
+          /**        "estimate_fees" => {
   
                      let blockchain = ElectrumBlockchain::from(client)?
 
                      let priority_target: usize = 1;
 
                      serde_json::to_string(&blockchain.estimate_fee(priority_target)?)?
-                 },
+                 },  */
 
                 "drop_descs" => {
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, "")).await?;

@@ -43,7 +43,7 @@ class InitPageState extends State<InitPage> {
   }
 
   void estimateFees() async {
-    text.value = (await invoke("estimate_fees", "")).data;
+    text.value = (await invoke("get_price", "")).data;
     print(text.value);
   }
 
