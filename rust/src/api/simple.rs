@@ -157,18 +157,23 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 },
 
                "check_address" => {
-                    let addr = args.first().ok_or(Error::OutOfBounds())?;
-                    let result = if let Ok(address) = Address::from_str(addr) {
-                        if let Ok(_) = address.require_network(Network::Bitcoin) {
-                            "true".to_owned()
-                        } else {
-                            "false".to_owned()
-                        }
+                let args: Vec<String> = env::args().collect();
+                if args.len() < 2 {
+                    return Err(Error::OutOfBounds());
+                }
+                let addr = &args[1];
+                let result = if let Ok(address) = Address::from_str(addr) {
+                    if let Ok(_) = address.require_network(Network::Bitcoin) {
+                        "true".to_owned()
                     } else {
                         "false".to_owned()
-                    };
-                    Ok(result)
-                }?,
+                    }
+                } else {
+                    "false".to_owned()
+                };
+                result
+            },
+
 
 
          
