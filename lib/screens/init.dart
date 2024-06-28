@@ -31,6 +31,12 @@ class InitPageState extends State<InitPage> {
     });
   }
 
+  void messges() async {
+    var message;
+    message.value = (await invoke("messages", "")).data;
+    print(message);
+  }
+
   void dropseed() async {
     await invoke("drop_descs", "");
     print("dropped");
@@ -38,7 +44,7 @@ class InitPageState extends State<InitPage> {
 
   void estimateFees() async {
     text.value = (await invoke("get_price", "")).data;
-    print("estimating fees");
+    print(text.value);
   }
 
   void checkPlatform() {
@@ -112,6 +118,10 @@ class InitPageState extends State<InitPage> {
                   ElevatedButton(
                     onPressed: () => {estimateFees()},
                     child: const Text('estimate fee'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => {messges()},
+                    child: const Text('messages'),
                   ),
                 ],
               ),

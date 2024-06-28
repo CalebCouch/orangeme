@@ -132,10 +132,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     }];
                     serde_json::to_string(&messages)?
                 },
-              //  "get_price" => {
-              //      let amount = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount;
-              //      amount.to_string()
-              //  },
+                "get_price" => {
+                    let amount = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount;
+                    serde_json::to_string(&amount)?
+                },
               //  "get_historical_price" => {
               //      let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
               //      let date = chrono::Utc::today().format("%Y-%m-%d").to_string();

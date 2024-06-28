@@ -87,7 +87,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     var syncRes = await invoke(method: "sync_wallet", args: [path, descriptors]);
     handleError(syncRes, context);
   }
-
+/:
   Future<void> _updateBalance(String path, String descriptors) async {
     var balanceRes = await invoke(method: "get_balance", args: [path, descriptors]);
     balance.value = int.parse(handleError(balanceRes, context));
