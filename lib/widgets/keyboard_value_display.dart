@@ -227,7 +227,7 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
                         child: RichText(
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                            text: "\$${widget.maxBalance} maximum.",
+                            text: "\$${widget.maxBalance} maximum",
                             style: AppTextStyles.textLG
                                 .copyWith(color: AppColors.danger),
                           ),

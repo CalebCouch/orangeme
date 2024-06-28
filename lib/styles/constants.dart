@@ -13,7 +13,7 @@ class AppColors {
   //Colors
   static const Color red = Color(0xFFFF3B00);
   static const Color green = Color(0xFF00CC00);
-  static const Color orange = Color(0xFFFB513B);
+  static const Color orange = Color(0xFFF3474D);
 
   //Layout
   static const Color background = Colors.black;
@@ -35,7 +35,7 @@ class AppColors {
   static const Color brand = Colors.white;
   static const Color danger = Color(0xFFFF3800);
   static const Color success = Color(0xFF00CC00);
-  static const Color bitcoin = Color(0xFFFB513B);
+  static const Color bitcoin = Color(0xFFF3474D);
 }
 
 class AppTextStyles {
