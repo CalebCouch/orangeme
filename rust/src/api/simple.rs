@@ -182,40 +182,40 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
          
 
-          //      "create_transaction" => {
-          //          let addr: Address;
-          //          let sats: u64;
-          //          let (mut psbt, tx_details) = {
-          //              let mut builder = wallet.build_tx();
-          //              builder.add_recipient(addr.script_pubkey(), sats);
-          //              builder.finish()?
-          //          };
-          //          let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-          //          if !finalized {
-          //              return Err(Error::CouldNotSign());
-          //          }
-         //           let tx = psbt.clone().extract_tx();
-         //           let mut stream: Vec<u8> = Vec::new();
-         //           tx.consensus_encode(&mut stream)?;
-         //           let raw = hex::encode(&stream);
+                "create_transaction" => {
+                    let addr: Address;
+                    let sats: u64;
+                    let (mut psbt, tx_details) = {
+                        let mut builder = wallet.build_tx();
+                        builder.add_recipient(addr.script_pubkey(), sats);
+                        builder.finish()?
+                    };
+                    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+                    if !finalized {
+                        return Err(Error::CouldNotSign());
+                    }
+                    let tx = psbt.clone().extract_tx();
+                    let mut stream: Vec<u8> = Vec::new();
+                    tx.consensus_encode(&mut stream)?;
+                    let raw = hex::encode(&stream);
 
 
-         //           let transaction = Transaction {
-         //               receiver: None,
-         //               sender: None,
-         //               txid: serde_json::to_string(&tx.txid())?, 
-         //               net: (tx_details.received as i64) - (tx_details.sent as i64),
-         //               fee: tx_details.fee,
-         //               timestamp: if let Some(confirmation_time) = tx_details.confirmation_time {
-         //                   Some(confirmation_time.timestamp)
-         //               } else {
-         //                   None
-         //               },
-         //               raw: Some(raw),
-         //           };
+                    let transaction = Transaction {
+                        receiver: None,
+                        sender: None,
+                        txid: serde_json::to_string(&tx.txid())?, 
+                        net: (tx_details.received as i64) - (tx_details.sent as i64),
+                        fee: tx_details.fee,
+                        timestamp: if let Some(confirmation_time) = tx_details.confirmation_time {
+                            Some(confirmation_time.timestamp)
+                        } else {
+                            None
+                        },
+                        raw: Some(raw),
+                    };
 
-         //           serde_json::to_string(&transaction)?
-         //       },
+                    serde_json::to_string(&transaction)?
+                },
                     
                 
          //        "broadcast_transaction" => {
