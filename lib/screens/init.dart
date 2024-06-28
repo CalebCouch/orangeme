@@ -48,33 +48,28 @@ class InitPageState extends State<InitPage> {
   }
 
   void historical_price() async {
-    var historical_prices;
-    historical_prices.value = (await invoke("get_historical_price", "")).data;
-    print(historical_prices.value);
+    var historical_prices = (await invoke("get_historical_price", "")).data;
+    print(historical_prices);
   }
 
   void get_balance() async {
-    var get_balance;
-    get_balance.value = (await invoke("get_balance", "")).data;
-    print(get_balance.value);
+    var get_balance = (await invoke("get_balance", "")).data;
+    print(get_balance);
   }
 
   void get_address() async {
-    var address;
-    address.value = (await invoke("get_address", "")).data;
-    print(address.value);
+    var address = (await invoke("get_address", "")).data;
+    print(address);
   }
 
   void get_new_address() async {
-    var new_address;
-    new_address.value = (await invoke("get_new_address", "")).data;
-    print(new_address.value);
+    var new_address = (await invoke("get_new_address", "")).data;
+    print(new_address);
   }
 
   void check_address() async {
-    var check_address;
-    check_address.value = (await invoke("check_address", "")).data;
-    print(check_address.value);
+    var check_address = (await invoke("check_address", (await invoke("get_new_address", "")).data )).data;
+    print(check_address);
   }
 
   void checkPlatform() {

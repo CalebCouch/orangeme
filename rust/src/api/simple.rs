@@ -21,6 +21,7 @@ use rand::RngCore;
 use chrono::{Utc, Date};
 use futures::future::ok;
 use serde_json::to_string;
+use std::env::args;
 
 
 
@@ -161,10 +162,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                         if let Ok(_) = address.require_network(Network::Bitcoin) {
                             "true".to_owned()
                         } else {
-                            "false1".to_owned()
+                            "false".to_owned()
                         }
                     } else {
-                        "false2".to_owned()
+                        "false".to_owned()
                     };
                     Ok(result)
                 }?,
