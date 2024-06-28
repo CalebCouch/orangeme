@@ -21,7 +21,9 @@ use rand::RngCore;
 use chrono::{Utc, Date};
 use futures::future::ok;
 use serde_json::to_string;
+use std::env;
 use std::env::args;
+
 
 
 
@@ -156,23 +158,24 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     wallet.get_address(AddressIndex::New)?.address.to_string()
                 },
 
-               "check_address" => {
-                let args: Vec<String> = env::args().collect();
-                if args.len() < 2 {
-                    return Err(Error::OutOfBounds());
-                }
-                let addr = &args[1];
-                let result = if let Ok(address) = Address::from_str(addr) {
-                    if let Ok(_) = address.require_network(Network::Bitcoin) {
-                        "true".to_owned()
+                "check_address" => {
+                    let args: Vec<String> = env::args().collect();
+                    if args.len() < 2 {
+                        return Err(Error::OutOfBounds());
+                    }
+                    let addr = &args[1];
+                    let result = if let Ok(address) = Address::from_str(addr) {
+                        if let Ok(_) = address.require_network(Network::Bitcoin) {
+                            "true".to_owned()
+                        } else {
+                            "false".to_owned()
+                        }
                     } else {
                         "false".to_owned()
-                    }
-                } else {
-                    "false".to_owned()
-                };
-                result
-            },
+                    };
+                    result
+                },
+
 
 
 
