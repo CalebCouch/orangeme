@@ -4,6 +4,7 @@ import 'package:orange/components/textfield.dart';
 import 'package:orange/widgets/contact_card.dart';
 import 'package:orange/screens/social/message.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class NewMessage extends StatefulWidget {
   const NewMessage({super.key});
@@ -64,12 +65,12 @@ class NewMessageState extends State<NewMessage> {
   Widget _buildRecipientList() {
     if (recipients.length == 1) {
       return Padding(
-        padding: const EdgeInsets.only(left: 18),
+        padding: const EdgeInsets.only(left: 24),
         child: Row(
           children: [
             ButtonSecondaryMD(
               label: recipients[0],
-              icon: "clear",
+              icon: AppIcons.close,
               onTap: () => removeRecipient(recipients[0]),
             ),
           ],
@@ -82,7 +83,7 @@ class NewMessageState extends State<NewMessage> {
         children: List<Widget>.generate(recipients.length, (index) {
           return ButtonSecondaryMD(
             label: recipients[index],
-            icon: "clear",
+            icon: AppIcons.close,
             onTap: () => removeRecipient(recipients[index]),
           );
         }),
@@ -94,32 +95,48 @@ class NewMessageState extends State<NewMessage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+      appBar: PreferredSize (
+        preferredSize: const Size.fromHeight(56.0),
+        child: Stack(
           children: [
-            const Spacer(),
-            const Text("New Message", style: AppTextStyles.heading4),
-            Spacer(flex: recipients.isNotEmpty ? 1 : 2),
-            if (recipients.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
+            Align (
+              alignment: Alignment.centerLeft,
+              child: Padding (
+                padding: const EdgeInsets.only(left: 16.0),
+                child: IconButton(
+                  icon: SvgPicture.asset(AppIcons.left, width: 32, height: 32),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }
+                ),
+              ),
+            ),
+            const Align (
+              alignment: Alignment.center,
+              child: Text(
+                "New message",
+                style: AppTextStyles.heading4
+              ),
+            ),
+            Align (
+              alignment: Alignment.centerRight,
+              child: recipients.isNotEmpty ? Padding(
+                padding: const EdgeInsets.only(right: 28),
                 child: GestureDetector(
                   onTap: () {
                     navigateToMessage();
                   },
                   child: const Text("Next", style: AppTextStyles.labelMD),
                 ),
-              ),
-          ],
-        ),
-        // centerTitle: true,
+              ) : const SizedBox(width:0)
+            ),
+          ]
+        )
       ),
       body: Column(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 24, right: 24, top: 18, bottom: 4),
+            padding: const EdgeInsets.only(left: 24, right: 24, top: 24),
             child: TextInputField(
               controller: recipientAddressController,
               hint: "Profile Name",
@@ -127,15 +144,18 @@ class NewMessageState extends State<NewMessage> {
           ),
           _buildRecipientList(),
           Expanded(
-            child: ListView.builder(
-              itemCount: contacts.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ContactCard(
-                  name: contacts[index]["name"]!,
-                  onTap: () => addRecipient(contacts[index]["name"]!),
-                  // imagePath: contacts[index]["imagePath"]!,
-                );
-              },
+            child: Padding (
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: ListView.builder(
+                itemCount: contacts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ContactCard(
+                    name: contacts[index]["name"]!,
+                    onTap: () => addRecipient(contacts[index]["name"]!),
+                    // imagePath: contacts[index]["imagePath"]!,
+                  );
+                },
+              ),
             ),
           ),
         ],

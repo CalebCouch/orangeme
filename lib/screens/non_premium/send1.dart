@@ -4,6 +4,7 @@ import 'package:orange/widgets/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/components/headings/stack.dart';
 
 class Send1 extends StatefulWidget {
   final int balance;
@@ -211,15 +212,18 @@ class Send1State extends State<Send1> {
   void onContinue() {
     int qty = int.parse(formatDollarsToBTC(amount, widget.price, true));
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Send2(
-                amount: qty,
-                balance: widget.balance,
-                price: widget.price!,
-                onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: sessionTimer,
-                address: widget.address)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send2(
+          amount: qty,
+          balance: widget.balance,
+          price: widget.price!,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: sessionTimer,
+          address: widget.address
+        )
+      )
+    );
   }
 
   @override
@@ -238,22 +242,16 @@ class Send1State extends State<Send1> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: const Text('Send Bitcoin'),
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                //dashboard timer callback function
-                widget.onDashboardPopBack();
-                Navigator.pop(context);
-              }),
+        appBar: PreferredSize (
+          preferredSize: const Size.fromHeight(64.0),
+          child: HeadingStack(label: "Send bitcoin", onDashboardPopBack: widget.onDashboardPopBack),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const SizedBox(height: 20),
               KeyboardValueDisplay(
                 key: _displayKey,
                 fiatAmount: amount == '' ? '0' : amount,

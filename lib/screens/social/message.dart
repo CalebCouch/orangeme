@@ -174,6 +174,7 @@ class MessageState extends State<Message> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextInputField(
+              rightIcon: AppIcons.send,
               controller: messageController,
               hint: "Message",
               showSubmit: true,

@@ -11,6 +11,7 @@ import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/session_timer.dart';
 import 'package:orange/screens/non_premium/send1.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Send2 extends StatefulWidget {
   final int amount;
@@ -247,11 +248,10 @@ class Send2State extends State<Send2> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          title: const Text('Bitcoin Address'),
+          title: const Text('Bitcoin address', style: AppTextStyles.heading4),
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: SvgPicture.asset(AppIcons.left),
               onPressed: () {
-                //dashboard timer callback function
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -272,15 +272,16 @@ class Send2State extends State<Send2> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextInputField(
-                  controller: recipientAddressController,
-                  hint: "Bitcoin address...",
-                  error: 'invalid address'),
+                controller: recipientAddressController,
+                hint: "Bitcoin address...",
+                error: 'invalid address',
+              ),
               const SizedBox(height: 10),
               //only show this section if the user's clipboard contains a valid BTC address
               if (clipboardData != '') ...[
                 ButtonSecondaryMD(
                   label: truncateAddress(clipboardData),
-                  icon: "clipboard",
+                  icon: AppIcons.paste,
                   onTap: () => pasteAddress(),
                 ),
                 const SizedBox(height: 5),
@@ -293,7 +294,7 @@ class Send2State extends State<Send2> {
               ],
               ButtonSecondaryMD(
                 label: "Scan QR Code",
-                icon: 'qrcode',
+                icon: AppIcons.qrcode,
                 onTap: _startQRScanner,
               ),
               const Spacer(),
