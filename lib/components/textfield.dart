@@ -8,7 +8,6 @@ class TextInputField extends StatefulWidget {
   final String? rightIcon;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
-  final bool showSubmit;
   final bool showNewLine;
   final bool submitEnabled;
   final String error;
@@ -20,7 +19,6 @@ class TextInputField extends StatefulWidget {
     this.rightIcon,
     this.onChanged,
     this.onEditingComplete,
-    this.showSubmit = false,
     this.showNewLine = false,
     this.submitEnabled = false,
     this.error = 'error',
@@ -137,7 +135,7 @@ class TextInputFieldState extends State<TextInputField> {
             child: Row(
               children: [
                 _buildTextField(),
-                widget.showSubmit == true
+                widget.rightIcon != null
                     ? _buildSubmitButton()
                     : const SizedBox(height: 0),
               ],

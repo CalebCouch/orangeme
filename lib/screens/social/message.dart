@@ -176,7 +176,7 @@ class MessageState extends State<Message> {
             child: TextInputField(
               controller: messageController,
               hint: "Message",
-              showSubmit: true,
+              rightIcon: AppIcons.send,
               onEditingComplete: submitMessage,
               showNewLine: true,
               submitEnabled: submitEnabled,
