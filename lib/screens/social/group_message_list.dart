@@ -15,7 +15,7 @@ class GroupMessageListState extends State<GroupMessageList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Group Message'),
+        title: const Text('Group Members'),
       ),
       body: Column(
         children: [
@@ -23,7 +23,7 @@ class GroupMessageListState extends State<GroupMessageList> {
             padding:
                 const EdgeInsets.only(left: 24, right: 24, top: 18, bottom: 24),
             child: Text('This group has ${widget.recipients.length} members',
-                style: AppTextStyles.textSM
+                style: AppTextStyles.textMD
                     .copyWith(color: AppColors.textSecondary)),
           ),
           Expanded(
