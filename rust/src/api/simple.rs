@@ -173,7 +173,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     } else {
                         "false".to_owned()
                     };
-                    result
+                    Ok(result)
                 },
 
 
