@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/screens/non_premium/dashboard.dart';
+import 'package:orange/V2/DashBoard.dart';
 import 'package:orange/screens/social/social.dart';
 
 class ModeNavigator extends StatefulWidget {

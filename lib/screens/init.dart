@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/V2/DashBoard.dart';
 //import 'non_premium/dashboard.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';

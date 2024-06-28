@@ -54,7 +54,7 @@ class Send3State extends State<Send3> {
   void initState() {
     print("initializing send3");
     super.initState();
-    createTransaction();
+  //  createTransaction();
     //send the user back to the dashboard if the session expires
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
@@ -80,7 +80,7 @@ class Send3State extends State<Send3> {
   }
 
   //create the transaction for display on the next page of the flow
-  void createTransaction() async {
+/**   void createTransaction() async {
     var desc = await STORAGE.read(key: "descriptors");
     String db = await getDBPath();
     if (desc != null) {
@@ -105,7 +105,7 @@ class Send3State extends State<Send3> {
     }
     print("building tx and sending user to confirmation screen");
   }
-
+*/
   //calcuate a standard fee as returned by create_transaction with no fee specified
   void calculateStandardFee(String transaction) {
     final transactionDecoded = Transaction.fromJson(jsonDecode(transaction));

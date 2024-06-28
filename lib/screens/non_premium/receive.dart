@@ -36,10 +36,10 @@ class ReceiveState extends State<Receive> {
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
     var descriptors = handleNull(descriptorsRes, context);
-    var addressRes = await invoke(
-        method: "get_new_address", args: [await getDBPath(), descriptors]);
-    if (!mounted) return;
-    address.value = handleError(addressRes, context);
+  //  var addressRes = await invoke(
+  //      method: "get_new_address", args: [await getDBPath(), descriptors]);
+  //  if (!mounted) return;
+  //  address.value = handleError(addressRes, context);
 
     setState(() {
       isLoading = false;

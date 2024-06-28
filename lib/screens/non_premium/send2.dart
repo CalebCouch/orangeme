@@ -42,7 +42,7 @@ class Send2State extends State<Send2> {
   String clipboardData = '';
   Timer? clipboardCheckTimer;
 
-  @override
+  /**@override
   void initState() {
     print("initializing send2");
     super.initState();
@@ -66,9 +66,9 @@ class Send2State extends State<Send2> {
       }
     });
   }
-
+*/
   //used to periodically parse the users clipboard for display within an onscreen button
-  Future<void> fetchAndValidateClipboard() async {
+ /** Future<void> fetchAndValidateClipboard() async {
     //will only fire if the widget lifecyle is still mounted (prevents async errors when navigating away)
     if (!mounted) return;
     print("Checking Clipboard Data");
@@ -90,9 +90,9 @@ class Send2State extends State<Send2> {
       }
     }
   }
-
+*/
   //starts the qr code scanner and builds the dialog box
-  void _startQRScanner() {
+ /** void _startQRScanner() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -121,9 +121,9 @@ class Send2State extends State<Send2> {
       },
     );
   }
-
+*/
   //handles the data intercepted by a good QR code scan
-  void _onQRViewCreated(QRViewController newController) {
+ /** void _onQRViewCreated(QRViewController newController) {
     controller = newController;
     controller!.scannedDataStream.listen((scanData) async {
       print('Scanned Data: ${scanData.code}');
@@ -139,7 +139,7 @@ class Send2State extends State<Send2> {
       closeDialog(); // Close the QR code scanner dialog
     });
   }
-
+*/
   //close the QR code dialog window & dispose the controller
   void closeDialog() {
     if (controller != null && mounted) {
@@ -166,16 +166,16 @@ class Send2State extends State<Send2> {
   }
 
   //check whether or not a string is a valid bitcoin address
-  Future<bool> checkAddress(String address) async {
+ /**  Future<bool> checkAddress(String address) async {
     print("address check:");
     var checkRes = await invoke(method: "check_address", args: [address]);
     if (!mounted) return false;
     var check = handleError(checkRes, context);
     return check == "true";
   }
-
+*/
   //watches for updates to the address text field and validates the address to enable/disable the continue button
-  void buttonListner() async {
+/** void buttonListner() async {
     if (await checkAddress(recipientAddressController.text) == true) {
       setState(() {
         isButtonEnabled = true;
@@ -186,6 +186,7 @@ class Send2State extends State<Send2> {
       });
     }
   }
+ */ 
 
   //navigate to the next page in the send flow
   void onContinue() {
@@ -291,11 +292,12 @@ class Send2State extends State<Send2> {
                 ),
                 const SizedBox(height: 5),
               ],
-              ButtonSecondaryMD(
+            /**  ButtonSecondaryMD(
                 label: "Scan QR Code",
                 icon: 'qrcode',
                 onTap: _startQRScanner,
               ),
+              */
               const Spacer(),
               ButtonOrangeLG(
                 label: "Continue",

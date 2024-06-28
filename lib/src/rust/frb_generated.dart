@@ -65,9 +65,15 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  get rust_arc_increment_strong_count_Error => null;
+
+  get rust_arc_decrement_strong_count_ErrorPtr => null;
+
   Future<String> crateApiSimpleRustStart(
       {required String path,
       required FutureOr<String> Function(String) dartCallback});
+
+  generateWallet({required hint}) {}
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -314,4 +320,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
   }
+  
+  @override
+  generateWallet({required hint}) {
+    // TODO: implement generateWallet
+    throw UnimplementedError();
+  }
+  
+  @override
+  // TODO: implement rust_arc_decrement_strong_count_ErrorPtr
+  get rust_arc_decrement_strong_count_ErrorPtr => throw UnimplementedError();
+  
+  @override
+  // TODO: implement rust_arc_increment_strong_count_Error
+  get rust_arc_increment_strong_count_Error => throw UnimplementedError();
 }

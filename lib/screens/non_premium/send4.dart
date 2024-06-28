@@ -59,7 +59,7 @@ class Send4State extends State<Send4> {
   }
 
   //broadcast the transaction confirmed by the user
-  void broadcastTransaction(String transaction) async {
+  /**void broadcastTransaction(String transaction) async {
     print("broadcasting transaction");
     if (!mounted) return;
     var descriptorsRes = await STORAGE.read(key: "descriptors");
@@ -81,11 +81,11 @@ class Send4State extends State<Send4> {
     print("broadcast response: $resHandled");
     await navigateNext(resHandled);
   }
-
+*/
   //dispose of the session timer and broadcast
-  void confirmSend() {
-    broadcastTransaction(widget.tx);
-  }
+  //void confirmSend() {
+  //  broadcastTransaction(widget.tx);
+  //}
 
   //navigate to the success screen
   Future<void> navigateNext(String transaction) async {
@@ -351,7 +351,7 @@ class Send4State extends State<Send4> {
           padding: const EdgeInsets.all(20.0),
           child: ButtonOrangeLG(
             label: "Confirm & Send",
-            onTap: confirmSend,
+           // onTap: confirmSend,
             isEnabled: true,
           ),
         ),

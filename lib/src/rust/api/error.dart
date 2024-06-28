@@ -23,7 +23,7 @@ class Error extends RustOpaque {
     rustArcIncrementStrongCount:
         RustLib.instance.api.rust_arc_increment_strong_count_Error,
     rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_Error,
+        RustLib.instance.api.rust_arc_increment_strong_count_Error,
     rustArcDecrementStrongCountPtr:
         RustLib.instance.api.rust_arc_decrement_strong_count_ErrorPtr,
   );

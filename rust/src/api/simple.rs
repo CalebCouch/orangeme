@@ -18,6 +18,11 @@ use bdk::bitcoin::consensus::{Encodable, Decodable};
 use std::str::FromStr;
 use bdk::FeeRate;
 use rand::RngCore;
+use chrono::{Utc, Date};
+use futures::future::ok;
+use serde_json::to_string;
+
+
 
 use std::{thread, time::Duration};
 use flutter_rust_bridge::DartFnFuture;
@@ -121,12 +126,106 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
         for command in commands {
             //let resp = handle(&command, &dartCallback, &wallet).await?;
             let data = match command.method.as_str() {
-                "get_price" => {
-                    reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.to_string()
+                "messages" => {
+                    let messages = vec![Message {
+                        text: "my message i sent to stupid".to_string()
+                    }];
+                    serde_json::to_string(&messages)?
                 },
-                "get_address" => {
-                    wallet.get_address(AddressIndex::New)?.address.to_string()
-                },
+              //  "get_price" => {
+              //      let amount = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount;
+              //      amount.to_string()
+              //  },
+              //  "get_historical_price" => {
+              //      let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
+              //      let date = chrono::Utc::today().format("%Y-%m-%d").to_string();
+              //      let url = format!("{}?date={}", base_url, date);
+              //      let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
+              //      spot_res.data.amount.to_string()
+              //  },
+              //  "get_balance" => {
+              //      wallet.get_address(AddressIndex::New).unwrap().address.to_string()
+              //  },
+         
+              //  "get_address" => {
+              //      wallet.get_address(AddressIndex::New)?.address.to_string()
+              //  },
+  
+              //  "get_new_address" => {
+              //      wallet.get_address(AddressIndex::New)?.address.to_string()
+              //  },
+
+              // "check_address" => {
+              //      let addr = args.first().ok_or(Error::OutOfBounds())?;
+              //      let result = if let Ok(address) = Address::from_str(addr) {
+              //          if let Ok(_) = address.require_network(Network::Bitcoin) {
+              //              "true".to_owned()
+              //          } else {
+              //              "false1".to_owned()
+              //          }
+              //      } else {
+              //          "false2".to_owned()
+              //      };
+              //      Ok(result)
+              //  }?,
+
+
+         
+
+          //      "create_transaction" => {
+          //          let addr: Address;
+          //          let sats: u64;
+          //          let (mut psbt, tx_details) = {
+          //              let mut builder = wallet.build_tx();
+          //              builder.add_recipient(addr.script_pubkey(), sats);
+          //              builder.finish()?
+          //          };
+          //          let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+          //          if !finalized {
+          //              return Err(Error::CouldNotSign());
+          //          }
+         //           let tx = psbt.clone().extract_tx();
+         //           let mut stream: Vec<u8> = Vec::new();
+         //           tx.consensus_encode(&mut stream)?;
+         //           let raw = hex::encode(&stream);
+
+
+         //           let transaction = Transaction {
+         //               receiver: None,
+         //               sender: None,
+         //               txid: serde_json::to_string(&tx.txid())?, 
+         //               net: (tx_details.received as i64) - (tx_details.sent as i64),
+         //               fee: tx_details.fee,
+         //               timestamp: if let Some(confirmation_time) = tx_details.confirmation_time {
+         //                   Some(confirmation_time.timestamp)
+         //               } else {
+         //                   None
+         //               },
+         //               raw: Some(raw),
+         //           };
+
+         //           serde_json::to_string(&transaction)?
+         //       },
+                    
+                
+         //        "broadcast_transaction" => {
+         //           let db_path: String = args.first().ok_or(Error::OutOfBounds())?.to_string();
+         //           let descs: DescriptorSet = serde_json::from_str(args.get(1).ok_or(Error::OutOfBounds())?)?;
+         //           let mut stream: Vec<u8> = hex::decode(args.get(2).ok_or(Error::OutOfBounds())?)?;
+         //           let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
+        //            let client = get_client()?;
+        //            serd_json::to_string(&client.transaction_broadcast(&tx)?)?
+         //        },
+
+           //      "estimate_fees" => {
+           //          let client = get_client()?;
+            //         let blockchain = ElectrumBlockchain::from(client)?
+
+              //       let priority_target: usize = 1;
+
+                //     serde_json::to_string(&blockchain.estimate_fee(priority_target)?)?
+             //    },
+
                 "drop_descs" => {
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, "")).await?;
                     "Ok".to_string()
@@ -140,6 +239,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
     }
     Err(Error::Exited("Unknown".to_string()))
 }
+
 
 pub async fn rustStart(path: String, dartCallback: impl Fn(String) -> DartFnFuture<String>) -> String {
     match start_rust(path, dartCallback).await {
@@ -159,6 +259,42 @@ struct Price {
     amount: String,
     currency: String
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Message {
+    text: String,
+}
+
+#[derive(Deserialize)]
+struct Spot {
+    amount: String,
+    currency: String,
+    base: String
+}
+
+#[derive(Deserialize)]
+struct SpotRes {
+    data: Spot
+}
+
+// #[derive(Seserialize)]
+struct Fees {
+    priority_fee: FeeRate,
+    standard_fee: FeeRate
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Transaction {
+    pub receiver: Option<String>,
+    pub sender: Option<String>,
+    pub txid: String,
+    pub net: i64,
+    pub fee: Option<u64>,
+    pub timestamp: Option<u64>, 
+    pub raw: Option<String>
+}
+
+
 
 //async fn handle(command: &RustCommand, dartCallback: impl Fn(String) -> DartFnFuture<String>, wallet: &Wallet<Tree>) -> Result<RustResponse, Error> {
 //    }
