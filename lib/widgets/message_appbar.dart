@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'dart:math' as math;
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MessageAppBar extends StatelessWidget {
   final String title;
@@ -33,7 +34,7 @@ class MessageAppBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                  icon: SvgPicture.asset(AppIcons.left, width: 32, height: 32),
                   onPressed: () => Navigator.pop(context),
                 ),
                 Expanded(
@@ -79,7 +80,8 @@ class MessageAppBar extends StatelessWidget {
                 ),
                 if (showRecipients != null)
                   IconButton(
-                    icon: const Icon(Icons.info, color: AppColors.white),
+                    icon:
+                        SvgPicture.asset(AppIcons.info, width: 32, height: 32),
                     onPressed: showRecipients,
                   ),
                 if (showRecipients == null) const SizedBox(width: 48),
