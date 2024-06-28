@@ -16,13 +16,41 @@ class NewMessageState extends State<NewMessage> {
       TextEditingController();
   List<String> recipients = [];
   List<Map<String, String>> contacts = [
-    {"name": "Pam Beesley", "imagePath": "assets/images/pam.png"},
-    {"name": "Dwight Schrute", "imagePath": "assets/images/dwight.png"},
-    {"name": "Michael Scott", "imagePath": "assets/images/michael.png"},
-    {"name": "Jim Halpert", "imagePath": "assets/images/jim.png"},
-    {"name": "Ryan Howard", "imagePath": "assets/images/ryan.png"},
-    {"name": "Andy Bernard", "imagePath": "assets/images/andy.png"},
-    {"name": "Stanley Hudson", "imagePath": "assets/images/stanley.png"},
+    {
+      "name": "Pam Beesley",
+      "imagePath": "assets/images/pam.png",
+      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+    },
+    {
+      "name": "Dwight Schrute",
+      "imagePath": "assets/images/dwight.png",
+      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+    },
+    {
+      "name": "Michael Scott",
+      "imagePath": "assets/images/michael.png",
+      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+    },
+    {
+      "name": "Jim Halpert",
+      "imagePath": "assets/images/jim.png",
+      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+    },
+    {
+      "name": "Ryan Howard",
+      "imagePath": "assets/images/ryan.png",
+      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+    },
+    {
+      "name": "Andy Bernard",
+      "imagePath": "assets/images/andy.png",
+      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+    },
+    {
+      "name": "Stanley Hudson",
+      "imagePath": "assets/images/stanley.png",
+      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+    },
   ];
 
   void addRecipient(String name) {
@@ -132,6 +160,7 @@ class NewMessageState extends State<NewMessage> {
               itemBuilder: (BuildContext context, int index) {
                 return ContactCard(
                   name: contacts[index]["name"]!,
+                  did: contacts[index]["did"]!,
                   onTap: () => addRecipient(contacts[index]["name"]!),
                   // imagePath: contacts[index]["imagePath"]!,
                 );

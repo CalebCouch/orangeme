@@ -31,7 +31,10 @@ class GroupMessageListState extends State<GroupMessageList> {
               itemCount: widget.recipients.length,
               itemBuilder: (BuildContext context, int index) {
                 return ContactCard(
-                    name: widget.recipients[index], onTap: () => ());
+                    name: widget.recipients[index],
+                    did:
+                        "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc",
+                    onTap: () => ());
                 // imagePath: contacts[index]["imagePath"]!,
               },
             ),
