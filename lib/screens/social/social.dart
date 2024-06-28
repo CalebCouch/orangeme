@@ -97,7 +97,7 @@ class SocialDashboardState extends State<SocialDashboard> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         elevation: 0,
-        title: const Text('Messages'),
+        title: const Text('Messages', style: AppTextStyles.heading3),
         leading: Image.asset(
           AppImages.defaultProfileMD,
           width: 10,
@@ -140,9 +140,9 @@ class SocialDashboardState extends State<SocialDashboard> {
                     ),
                   ),
           ),
+          const SizedBox(height: 24),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ButtonOrangeLG(
               label: "New Message",
               onTap: newMessage,
@@ -151,7 +151,7 @@ class SocialDashboardState extends State<SocialDashboard> {
         ],
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 15),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: ModeNavigator(
             navIndex: navIndex,
             onDashboardPopBack: widget.onDashboardPopBack,
