@@ -92,7 +92,7 @@ class NewMessageState extends State<NewMessage> {
   Widget _buildRecipientList() {
     if (recipients.length == 1) {
       return Padding(
-        padding: const EdgeInsets.only(left: 18),
+        padding: const EdgeInsets.only(left: 24),
         child: Row(
           children: [
             ButtonSecondaryMD(
@@ -146,8 +146,7 @@ class NewMessageState extends State<NewMessage> {
       body: Column(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 24, right: 24, top: 18, bottom: 4),
+            padding: const EdgeInsets.only(left: 24, right: 24, top: 24),
             child: TextInputField(
               controller: recipientAddressController,
               hint: "Profile Name",
@@ -155,16 +154,19 @@ class NewMessageState extends State<NewMessage> {
           ),
           _buildRecipientList(),
           Expanded(
-            child: ListView.builder(
-              itemCount: contacts.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ContactCard(
-                  name: contacts[index]["name"]!,
-                  did: contacts[index]["did"]!,
-                  onTap: () => addRecipient(contacts[index]["name"]!),
-                  // imagePath: contacts[index]["imagePath"]!,
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: ListView.builder(
+                itemCount: contacts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ContactCard(
+                    name: contacts[index]["name"]!,
+                    did: contacts[index]["did"]!,
+                    onTap: () => addRecipient(contacts[index]["name"]!),
+                    // imagePath: contacts[index]["imagePath"]!,
+                  );
+                },
+              ),
             ),
           ),
         ],
