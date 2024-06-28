@@ -155,19 +155,19 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     wallet.get_address(AddressIndex::New)?.address.to_string()
                 },
 
-              // "check_address" => {
-              //      let addr = args.first().ok_or(Error::OutOfBounds())?;
-              //      let result = if let Ok(address) = Address::from_str(addr) {
-              //          if let Ok(_) = address.require_network(Network::Bitcoin) {
-              //              "true".to_owned()
-              //          } else {
-              //              "false1".to_owned()
-              //          }
-              //      } else {
-              //          "false2".to_owned()
-              //      };
-              //      Ok(result)
-              //  }?,
+               "check_address" => {
+                    let addr = args.first().ok_or(Error::OutOfBounds())?;
+                    let result = if let Ok(address) = Address::from_str(addr) {
+                        if let Ok(_) = address.require_network(Network::Bitcoin) {
+                            "true".to_owned()
+                        } else {
+                            "false1".to_owned()
+                        }
+                    } else {
+                        "false2".to_owned()
+                    };
+                    Ok(result)
+                }?,
 
 
          
@@ -217,14 +217,14 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
         //            serd_json::to_string(&client.transaction_broadcast(&tx)?)?
          //        },
 
-           //      "estimate_fees" => {
-           //          let client = get_client()?;
-            //         let blockchain = ElectrumBlockchain::from(client)?
+                 //"estimate_fees" => {
+                 //    let client = get_client()?;
+                 //    let blockchain = ElectrumBlockchain::from(client)?
 
-              //       let priority_target: usize = 1;
+                 //    let priority_target: usize = 1;
 
-                //     serde_json::to_string(&blockchain.estimate_fee(priority_target)?)?
-             //    },
+                  //   serde_json::to_string(&blockchain.estimate_fee(priority_target)?)?
+                // },
 
                 "drop_descs" => {
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, "")).await?;

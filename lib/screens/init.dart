@@ -71,6 +71,12 @@ class InitPageState extends State<InitPage> {
     print(new_address.value);
   }
 
+  void check_address() async {
+    var check_address;
+    check_address.value = (await invoke("check_address", "")).data;
+    print(check_address.value);
+  }
+
   void checkPlatform() {
     if (Platform.isAndroid) {
       print("Android device detected");
@@ -167,6 +173,11 @@ class InitPageState extends State<InitPage> {
                   ElevatedButton(
                     onPressed: () => {get_new_address()},
                     child: const Text('New address'),
+                  ),
+                   const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {check_address()},
+                    child: const Text('Check address'),
                   ),
                 ],
               ),
