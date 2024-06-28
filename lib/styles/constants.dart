@@ -188,9 +188,13 @@ class AppIcons {
   static const String close = 'assets/icons/Icon=close.svg';
   static const String down = 'assets/icons/Icon=down.svg';
   static const String edit = 'assets/icons/Icon=edit.svg';
+  static const String error = 'assets/icons/Icon=error.svg';
+  static const String group = 'assets/icons/Icon=group.svg';
   static const String home = 'assets/icons/Icon=home.svg';
+  static const String info = 'assets/icons/Icon=info.svg';
   static const String left = 'assets/icons/Icon=left.svg';
   static const String paste = 'assets/icons/Icon=paste.svg';
+  static const String profile = 'assets/icons/Icon=profile.svg';
   static const String qrcode = 'assets/icons/Icon=qr-code.svg';
   static const String radioFilled = 'assets/icons/Icon=radio-filled.svg';
   static const String radio = 'assets/icons/Icon=radio.svg';
