@@ -159,12 +159,11 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 },
              
                 "check_address" => {
-                    let args = command.data;
-                
-                    let addr = args;
+                    let addr = &command.data;
+                    
                     let result = match Address::from_str(addr) {
                         Ok(address) => {
-                            if let Ok(_) = address.require_network(Network::Bitcoin) {
+                            if address.require_network(Network::Bitcoin).is_ok() {
                                 "true".to_owned()
                             } else {
                                 "false".to_owned()
@@ -172,8 +171,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                         },
                         Err(_) => "false".to_owned() 
                     };
+
                     Ok::<String, Error>(result)
                 }?,
+
             
 
 
