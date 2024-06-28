@@ -251,7 +251,6 @@ class Send2State extends State<Send2> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                //dashboard timer callback function
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

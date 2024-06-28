@@ -198,7 +198,6 @@ class Send4State extends State<Send4> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                //dashboard timer callback function
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
