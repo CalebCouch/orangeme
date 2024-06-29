@@ -117,8 +117,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
     let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, tree)?;
     let sync_options = SyncOptions::default();
-    let client = Client::new("ssl://electrum.blockstream.info:50002")?;
-    let blockchain = ElectrumBlockchain::from(client);
+    let client_uri = "ssl://electrum.blockstream.info:50002";
+    let client = Client::new(client_uri)?;
+    let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
+
     wallet.sync(&blockchain, sync_options)?;
 
 
