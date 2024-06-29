@@ -178,10 +178,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
 
-                    let (psbt, tx_details) = {
+                    let (mut psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
-                        builder.fee_rate(FeeRate::from_sat_per_vb(fee.unwrap_or_default())); // Using fee.unwrap_or_default() to handle the Option<f64>
-                        
+                        builder.fee_rate(FeeRate::from_sat_per_vb(fee.unwrap_or_default() as f32));
+
                         // Check if addr is Some(Address) before using it
                         if let Some(address) = addr {
                             builder.add_recipient(address.script_pubkey(), sats.unwrap_or(0));
@@ -192,8 +192,14 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                         builder.finish()?
                     };
 
-                    let mut psbt = wallet.sign(&mut psbt, SignOptions::default())?;
-                    let tx = psbt.clone().extract_tx();
+                    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+                    if !finalized {
+                        return Err(Error::CouldNotSign());
+                    }
+
+                    // Extract the transaction from PSBT
+                    let tx = psbt.extract_tx();
+
                     let mut stream: Vec<u8> = Vec::new();
                     tx.consensus_encode(&mut stream)?;
 
@@ -202,7 +208,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     let transaction = Transaction {
                         receiver: None,
                         sender: None,
-                        txid: serde_json::to_string(&tx.txid())?, 
+                        txid: serde_json::to_string(&tx.txid())?,
                         net: (tx_details.received as i64) - (tx_details.sent as i64),
                         fee: tx_details.fee,
                         timestamp: tx_details.confirmation_time.map(|time| time.timestamp),
@@ -211,6 +217,8 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
                     serde_json::to_string(&transaction)?
                 },
+
+
 
 
                     

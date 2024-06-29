@@ -37,6 +37,8 @@ pub enum Error {
     UnknownMethod(String),
     #[error("Dart Error: {0}")]
     DartError(String),
+    #[derive(Debug)]
+    InvalidInput(String),
 
 
 }
