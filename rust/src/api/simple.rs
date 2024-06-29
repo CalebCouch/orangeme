@@ -177,16 +177,11 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
                     let (mut psbt, tx_details) = {
-                        let mut builder = wallet.build_tx();
-
-                    let addr = Address::from_str(&addr_str)?;
-
+                    let mut builder = wallet.build_tx();
                     let address = addr.script_pubkey();
-
                     builder.add_recipient(address, sats.unwrap_or(0));
-
-                        builder.add_recipient(addr.script_pubkey()?);
-                        builder.finish()?
+                    builder.add_recipient(addr.script_pubkey()?);
+                    builder.finish()?
                     };
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                     if !finalized {
