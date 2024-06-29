@@ -24,6 +24,7 @@ use serde_json::to_string;
 use std::env;
 use std::env::args;
 use serde_json;
+use bdk::bitcoin::Address;
 
 
 
@@ -179,7 +180,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
                     let (mut psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
-                        builder.fee_rate(FeeRate::from_sat_per_vb(fee.unwrap_or_default())); // Use fee.unwrap_or_default() to handle Option<f64>
+
+                        let address = addr.unwrap().script_pubkey().unwrap();
+                        builder.add_recipient(address, sats.unwrap_or(0));
+
                         builder.add_recipient(addr.script_pubkey().ok_or_else(|| Error::InvalidInput("Invalid address provided".to_string()))?, sats.unwrap_or(0));
                         builder.finish()?
                     };
