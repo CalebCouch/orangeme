@@ -299,8 +299,8 @@ impl CreateTransactionInput {
     pub fn parse(&self) -> Result<(Address, u64, f64), Error> {
         Ok((
             Address::from_str(&self.address)?.require_network(Network::Bitcoin)?,
-            self.sats.parse::<u64>()?,
-            self.sats.parse::<f64>()?,
+            self.sats.parse::<u64>(),
+            self.sats.parse::<f64>(),
         ))
     }
 }
