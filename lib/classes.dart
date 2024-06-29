@@ -25,9 +25,13 @@ class Transaction {
   }
 
   Map<String, dynamic> toJson() => {
-        'address': this.address,
-        'sats': this.sats,
+        'receiver': this.receiver,
+        'sender': this.sender,
+        'txid': this.txid,
+        'net': this.net,
         'fee': this.fee,
+        'timestamp': this.timestamp,
+        'raw': this.raw
     };
 }
 

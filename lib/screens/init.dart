@@ -60,9 +60,10 @@ class InitPageState extends State<InitPage> {
     print(get_balance);
   }
 
-  void get_address() async {
+  String get_address() async {
     var address = (await invoke("get_address", "")).data;
     print(address);
+    address
   }
 
   void get_new_address() async {
@@ -78,7 +79,7 @@ class InitPageState extends State<InitPage> {
   }
 
   void create_transaction() async {
-    var input = new CreateTransactionInput("a valid address", "3747373", "fee");
+    var input = new CreateTransactionInput(new_address, "3747373", "fee");
     await invoke("create_transaction", jsonEncode(input));
   }
 
