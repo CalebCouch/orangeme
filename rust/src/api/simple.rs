@@ -179,15 +179,12 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     
                     let (mut psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
-                        let address = match addr {
-                            Some(address) => address.script_pubkey(),
-                            None => {
-                                return (eprintln("Address is none bitch"));
-                            }
-                        };
-
+                        
+                    if let Some(address) = addr {
+                        let address = address.script_pubkey();
                         builder.add_recipient(address, sats.unwrap_or(0));
-                        builder.finish()?
+                    }
+                    builder.finish()?
                     };
 
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
@@ -219,19 +216,17 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
 
 
-
-
-                    
-                
                  "broadcast_transaction" => {
                     let tx = serde_json::from_str::<bdk::bitcoin::Transaction>(&command.data)?;
                     serde_json::to_string(&client.transaction_broadcast(&tx)?)?
                 },
 
+
+
                   "estimate_fees" => {
                     let priority_target: usize = 1;
                     let result = blockchain.estimate_fee(priority_target)
-                        .unwrap_or_default();  // Use default value if error occurs
+                        .unwrap_or_default(); 
                     serde_json::to_string(&result)?
                 },
  
