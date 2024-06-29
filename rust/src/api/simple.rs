@@ -24,8 +24,7 @@ use serde_json::to_string;
 use std::env;
 use std::env::args;
 use serde_json;
-use bdk::bitcoin::Address;
-
+use bdk::bitcoin::{Network, Address};
 
 
 
@@ -176,36 +175,45 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
 
          
-                fn create_transaction(wallet: &Wallet<MemoryDatabase>, addr_str: &str, sats: Option<u64>) -> Result<String, Error> {
-                    let addr = Address::from_str(addr_str)?;
-                
-                    let mut builder = wallet.build_tx();
-                    builder.add_recipient(addr, sats.unwrap_or(0));
-                    let psbt = builder.finish()?;
-                
+               "create_transaction" => {
+                    let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
+                    let (mut psbt, tx_details) = {
+                        let mut builder = wallet.build_tx();
+
+                    let addr = Address::from_str(&addr_str)?;
+
+                    let address = addr.script_pubkey();
+
+                    builder.add_recipient(address, sats.unwrap_or(0));
+
+                        builder.add_recipient(addr.script_pubkey()?);
+                        builder.finish()?
+                    };
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                     if !finalized {
-                        return Err(Error::CouldNotSign);
+                        return Err(Error::CouldNotSign());
                     }
-                
-                    let tx = psbt.extract_tx();
-                    let mut stream = Vec::new();
+                    let tx = psbt.clone().extract_tx();
+                    let mut stream: Vec<u8> = Vec::new();
                     tx.consensus_encode(&mut stream)?;
-                
                     let raw = hex::encode(&stream);
-                
+
                     let transaction = Transaction {
                         receiver: None,
                         sender: None,
-                        txid: serde_json::to_string(&tx.txid())?,
-                        net: tx_details.received as i64 - tx_details.sent as i64,
+                        txid: serde_json::to_string(&tx.txid())?, 
+                        net: (tx_details.received as i64) - (tx_details.sent as i64),
                         fee: tx_details.fee,
-                        timestamp: tx_details.confirmation_time.map(|confirmation_time| confirmation_time.timestamp),
+                        timestamp: if let Some(confirmation_time) = tx_details.confirmation_time {
+                            Some(confirmation_time.timestamp)
+                        } else {
+                            None
+                        },
                         raw: Some(raw),
                     };
-                
-                    Ok(serde_json::to_string(&transaction)?)
-                }
+
+                    serde_json::to_string(&transaction)?
+                },
 
 
 
