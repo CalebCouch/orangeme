@@ -215,22 +215,13 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     
                 
                  "broadcast_transaction" => {
-                    let db_path: String = args.first().ok_or(Error::OutOfBounds())?.to_string();
-                    let descs: DescriptorSet = serde_json::from_str(args.get(1).ok_or(Error::OutOfBounds())?)?;
-                    let mut stream: Vec<u8> = hex::decode(args.get(2).ok_or(Error::OutOfBounds())?)?;
-                    let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
-                    let client = get_client()?;
                     serd_json::to_string(&client.transaction_broadcast(&tx)?)?
                  },
 
-          /**        "estimate_fees" => {
-  
-                     let blockchain = ElectrumBlockchain::from(client)?
-
+                  "estimate_fees" => {
                      let priority_target: usize = 1;
-
                      serde_json::to_string(&blockchain.estimate_fee(priority_target)?)?
-                 },  */
+                 },  
 
                 "drop_descs" => {
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, "")).await?;
