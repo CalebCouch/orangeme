@@ -177,19 +177,26 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
          
                 "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
-                    let (mut psbt, tx_details) = {
+
+                    let (psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
-                        builder.fee_rate(FeeRate::from_sat_per_vb(fee));
-                        builder.add_recipient(addr.script_pubkey(), sats);
+                        builder.fee_rate(FeeRate::from_sat_per_vb(fee.unwrap_or_default())); // Using fee.unwrap_or_default() to handle the Option<f64>
+                        
+                        // Check if addr is Some(Address) before using it
+                        if let Some(address) = addr {
+                            builder.add_recipient(address.script_pubkey(), sats.unwrap_or(0));
+                        } else {
+                            return Err(Error::InvalidInput("Invalid address provided".to_string()));
+                        }
+
                         builder.finish()?
                     };
-                    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-                    if !finalized {
-                        return Err(Error::CouldNotSign());
-                    }
+
+                    let mut psbt = wallet.sign(&mut psbt, SignOptions::default())?;
                     let tx = psbt.clone().extract_tx();
                     let mut stream: Vec<u8> = Vec::new();
                     tx.consensus_encode(&mut stream)?;
+
                     let raw = hex::encode(&stream);
 
                     let transaction = Transaction {
@@ -198,16 +205,13 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                         txid: serde_json::to_string(&tx.txid())?, 
                         net: (tx_details.received as i64) - (tx_details.sent as i64),
                         fee: tx_details.fee,
-                        timestamp: if let Some(confirmation_time) = tx_details.confirmation_time {
-                            Some(confirmation_time.timestamp)
-                        } else {
-                            None
-                        },
+                        timestamp: tx_details.confirmation_time.map(|time| time.timestamp),
                         raw: Some(raw),
                     };
 
                     serde_json::to_string(&transaction)?
                 },
+
 
                     
                 
