@@ -183,8 +183,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
          
 
                 "create_transaction" => {
-                    let addr: Address;
-                    let sats: u64;
+                    let (addr, sats) = serde_json::from_str::<CreateTransactionInput>(command.data)?.parse()?;
                     let (mut psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
                         builder.add_recipient(addr.script_pubkey(), sats);
@@ -302,6 +301,19 @@ pub struct Transaction {
     pub fee: Option<u64>,
     pub timestamp: Option<u64>, 
     pub raw: Option<String>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CreateTransactionInput {
+    pub address: String,
+    pub sats: String,
+}
+
+impl CreateTransactionInput {
+    pub fn parse(&self) -> Result<(Addres, u64), Error> {
+        Ok((Address::from_str(&self.address)?.require_network(Network::Bitcoin)?,
+        self.sats.parse::<u64>()?))
+    }
 }
 
 

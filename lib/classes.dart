@@ -79,3 +79,16 @@ class RustR {
   };
 
 }
+
+class CreateTransactionInput {
+  final String address;
+  final String sats;
+
+  CreateTransactionInput(this.address, this.sats);
+
+  Map<String, dynamic> toJson() => {
+    'address': this.address,
+    'sats': this.sats,
+  };
+
+}

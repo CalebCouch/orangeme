@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/V2/DashBoard.dart';
+import 'package:orange/classes.dart';
 //import 'non_premium/dashboard.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
@@ -71,6 +72,9 @@ class InitPageState extends State<InitPage> {
     var check_address = (await invoke("check_address", (await invoke("get_new_address", "")).data )).data;
     print(check_address);
   }
+
+    var input = new CreateTransactionInput("a valid address", "3747373");
+    await invoke("create_transaction", jsonEncode(input))
 
   void checkPlatform() {
     if (Platform.isAndroid) {
