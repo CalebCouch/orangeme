@@ -24,7 +24,6 @@ use serde_json::to_string;
 use std::env;
 use std::env::args;
 use serde_json;
-use bdk::bitcoin::{Network, Address};
 
 
 
