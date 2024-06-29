@@ -60,15 +60,13 @@ class InitPageState extends State<InitPage> {
     print(get_balance);
   }
 
-  String get_address() async {
-    var address = (await invoke("get_address", "")).data;
-    print(address);
-    address
-  }
 
-  void get_new_address() async {
-    var new_address = (await invoke("get_new_address", "")).data;
-    print(new_address);
+
+
+  Future<String> get_new_address() async {
+    var newAddress = (await invoke("get_new_address", "")).data;
+    print(newAddress);
+    return newAddress;
   }
 
   void check_address() async {
@@ -79,7 +77,7 @@ class InitPageState extends State<InitPage> {
   }
 
   void create_transaction() async {
-    var input = new CreateTransactionInput(new_address, "3747373", "fee");
+    var input = new CreateTransactionInput(get_new_address() as String, "3747373", "fee");
     await invoke("create_transaction", jsonEncode(input));
   }
 
@@ -169,11 +167,6 @@ class InitPageState extends State<InitPage> {
                   ElevatedButton(
                     onPressed: () => {get_balance()},
                     child: const Text('balance'),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => {get_address()},
-                    child: const Text('address'),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
