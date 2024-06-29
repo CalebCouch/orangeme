@@ -150,9 +150,13 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 },
                 "get_balance" => {
                 wallet.get_balance()?.get_total().to_string()
-            },
+                },
 
-  
+                "sync_wallet" => {
+                    wallet.sync(&blockchain, sync_options)?;
+                    Ok("Finished".to_string())
+                }
+
                 "get_new_address" => {
                     wallet.get_address(AddressIndex::New)?.address.to_string()
                 },
@@ -174,9 +178,9 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok::<String, Error>(result)
                 }?,
 
-
+            
          
-              "create_transaction" => {
+                "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
                     
                     let (mut psbt, tx_details) = {
