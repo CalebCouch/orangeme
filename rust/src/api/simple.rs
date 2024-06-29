@@ -148,8 +148,8 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     spot_res.data.amount.to_string()
                 },
                 "get_balance" => {
-                    wallet.get_balance()?.get_total().to_string()
-                },
+                wallet.get_balance()?.get_total().to_string()
+            },
 
   
                 "get_new_address" => {
