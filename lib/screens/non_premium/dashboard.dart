@@ -1,4 +1,4 @@
-/**import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
@@ -11,6 +11,10 @@ import 'dart:core';
 import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
 import 'package:orange/widgets/mode_navigator.dart';
+
+// import 'package:orange/screens/settings/import_cloud.dart';
+// import 'package:orange/screens/settings/duplicate_phone.dart';
+// import 'package:orange/screens/settings/backup.dart';
 
 class Dashboard extends StatefulWidget {
   final bool? loading;
@@ -92,13 +96,12 @@ class DashboardState extends State<Dashboard>
     }
   }
 
-  //stop the timer controlling the data refresh
   void _stopTimer() {
     print("stopping dashboard refresh timer...");
     refreshTimer?.cancel();
   }
 
-  //sync wallet and get transaction list, current price, and balance
+
   Future<void> handleRefresh() async {
     if (!mounted) return;
     if (refreshTimer == null || !refreshTimer!.isActive) {
@@ -154,7 +157,7 @@ class DashboardState extends State<Dashboard>
     print(transactions.value);
 
     print('Getting Price...');
-    //get the latest price
+
     if (!mounted) return;
     var priceRes = await invoke(method: "get_price", args: []);
     if (priceRes.status == 200) {
@@ -175,7 +178,7 @@ class DashboardState extends State<Dashboard>
     await handleRefresh();
   }
 
-  //format a number of satoshis into dollars at the current price
+
   String formatSatsToDollars(int sats, double price) {
     print("formatting...sats: $sats price: $price");
     double amount = (sats / 100000000) * price;
@@ -183,7 +186,7 @@ class DashboardState extends State<Dashboard>
     return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
   }
 
-  // Sort transactions in ascending order with null timestamps being shown at the top
+
   void sortTransactions(bool ascending) {
     transactions.value.sort((a, b) {
       if (a.timestamp == null && b.timestamp == null) return 0;
@@ -199,23 +202,6 @@ class DashboardState extends State<Dashboard>
     });
   }
 
-  //these are used to activate the app bar menu links, currently disabled
-
-  // void navigateBackUp() {
-  //   Navigator.push(
-  //       context, MaterialPageRoute(builder: (context) => const BackUp()));
-  // }
-
-  // void navigateDuplicate() {
-  //   Navigator.push(context,
-  //       MaterialPageRoute(builder: (context) => const DuplicatePhone()));
-  // }
-
-  // void navigateImportOptOut() {
-  //   Navigator.push(
-  //       context, MaterialPageRoute(builder: (context) => const ImportCloud()));
-  // }
-
   @override
   Widget build(BuildContext context) {
     print("Refresh Timer: $refreshTimer");
@@ -226,43 +212,8 @@ class DashboardState extends State<Dashboard>
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        // title: const TextMarkLG(),
-        title: const ,
+        title: const Text('Wallet'),
         automaticallyImplyLeading: false,
-        //app bar drop down settings/nav menu, currently disabled
-        // actions: [
-        //   PopupMenuButton<int>(
-        //     icon: const Icon(Icons.menu),
-        //     offset: Offset(0, AppBar().preferredSize.height),
-        //     onSelected: (int result) {
-        //       switch (result) {
-        //         case 0:
-        //           navigateBackUp();
-        //           break;
-        //         case 1:
-        //           navigateImportOptOut();
-        //           break;
-        //         case 2:
-        //           navigateDuplicate();
-        //           break;
-        //       }
-        //     },
-        //     itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-        //       const PopupMenuItem<int>(
-        //         value: 0,
-        //         child: Text('Back Up'),
-        //       ),
-        //       const PopupMenuItem<int>(
-        //         value: 1,
-        //         child: Text('Import'),
-        //       ),
-        //       const PopupMenuItem<int>(
-        //         value: 2,
-        //         child: Text('Duplicate'),
-        //       ),
-        //     ],
-        //   ),
-        // ],
       ),
       body: loading
           ? const Center(child: CircularProgressIndicator())
@@ -334,4 +285,3 @@ class DashboardState extends State<Dashboard>
     );
   }
 }
-*/
