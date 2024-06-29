@@ -23,6 +23,7 @@ use futures::future::ok;
 use serde_json::to_string;
 use std::env;
 use std::env::args;
+use serde_json;
 
 
 
@@ -147,8 +148,9 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     spot_res.data.amount.to_string()
                 },
                 "get_balance" => {
-                    Ok(wallet.get_balance()?.get_total().to_string())
+                    wallet.get_balance()?.get_total().to_string()
                 },
+
   
                 "get_new_address" => {
                     wallet.get_address(AddressIndex::New)?.address.to_string()
@@ -171,15 +173,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok::<String, Error>(result)
                 }?,
 
-            
-
-
-
 
          
-
                 "create_transaction" => {
-                    let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(command.data)?.parse()?;
+                    let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse()?;
                     let (mut psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
                         builder.fee_rate(FeeRate::from_sat_per_vb(fee));
@@ -194,7 +191,6 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     let mut stream: Vec<u8> = Vec::new();
                     tx.consensus_encode(&mut stream)?;
                     let raw = hex::encode(&stream);
-
 
                     let transaction = Transaction {
                         receiver: None,
@@ -212,11 +208,13 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
                     serde_json::to_string(&transaction)?
                 },
+
                     
                 
                  "broadcast_transaction" => {
-                    serd_json::to_string(&client.transaction_broadcast(&tx)?)?
-                 },
+                    let tx = serde_json::from_str::<bdk::bitcoin::Transaction>(&command.data)?;
+                    serde_json::to_string(&client.transaction_broadcast(&tx)?)?
+                },
 
                   "estimate_fees" => {
                      let priority_target: usize = 1;
@@ -298,11 +296,15 @@ pub struct CreateTransactionInput {
 }
 
 impl CreateTransactionInput {
-    pub fn parse(&self) -> Result<(Addres, u64), Error> {
-        Ok((Address::from_str(&self.address)?.require_network(Network::Bitcoin)?,
-        self.sats.parse::<u64>()?))
+    pub fn parse(&self) -> Result<(Address, u64, f64), Error> {
+        Ok((
+            Address::from_str(&self.address)?.require_network(Network::Bitcoin)?,
+            self.sats.parse::<u64>()?,
+            self.sats.parse::<f64>()?,
+        ))
     }
 }
+
 
 
 
