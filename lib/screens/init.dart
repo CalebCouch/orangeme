@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:orange/V2/DashBoard.dart';
 import 'package:orange/classes.dart';
@@ -69,12 +71,16 @@ class InitPageState extends State<InitPage> {
   }
 
   void check_address() async {
-    var check_address = (await invoke("check_address", (await invoke("get_new_address", "")).data )).data;
+    var check_address = (await invoke(
+            "check_address", (await invoke("get_new_address", "")).data))
+        .data;
     print(check_address);
   }
 
-    var input = new CreateTransactionInput("a valid address", "3747373");
-    await invoke("create_transaction", jsonEncode(input))
+  void create_transaction() async {
+    var input = new CreateTransactionInput("a valid address", "3747373", "fee");
+    await invoke("create_transaction", jsonEncode(input));
+  }
 
   void checkPlatform() {
     if (Platform.isAndroid) {
@@ -173,7 +179,7 @@ class InitPageState extends State<InitPage> {
                     onPressed: () => {get_new_address()},
                     child: const Text('New address'),
                   ),
-                   const SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => {check_address()},
                     child: const Text('Check address'),

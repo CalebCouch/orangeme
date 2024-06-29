@@ -20,8 +20,15 @@ class Transaction {
         json['net'] as int,
         json['fee'] as int?,
         time != null ? DateTime.fromMillisecondsSinceEpoch(time * 1000) : null,
-        json['raw'] as String?);
+        json['raw'] as String?
+      );
   }
+
+  Map<String, dynamic> toJson() => {
+        'address': this.address,
+        'sats': this.sats,
+        'fee': this.fee,
+    };
 }
 
 class DartCommand {
@@ -31,10 +38,7 @@ class DartCommand {
   DartCommand(this.method, this.data);
 
   factory DartCommand.fromJson(Map<String, dynamic> json) {
-    return DartCommand(
-        json['method'] as String,
-        json['data'] as String
-    );
+    return DartCommand(json['method'] as String, json['data'] as String);
   }
 }
 
@@ -46,18 +50,15 @@ class RustC {
   RustC(this.uid, this.method, this.data);
 
   factory RustC.fromJson(Map<String, dynamic> json) {
-    return RustC(
-        json['uid'] as String,
-        json['method'] as String,
-        json['data'] as String
-    );
+    return RustC(json['uid'] as String, json['method'] as String,
+        json['data'] as String);
   }
 
   Map<String, dynamic> toJson() => {
-    'uid': this.uid,
-    'method': this.method,
-    'data': this.data,
-  };
+        'uid': this.uid,
+        'method': this.method,
+        'data': this.data,
+      };
 }
 
 class RustR {
@@ -67,28 +68,25 @@ class RustR {
   RustR(this.uid, this.data);
 
   factory RustR.fromJson(Map<String, dynamic> json) {
-    return RustR(
-        json['uid'] as String,
-        json['data'] as String
-    );
+    return RustR(json['uid'] as String, json['data'] as String);
   }
 
   Map<String, dynamic> toJson() => {
-    'uid': this.uid,
-    'data': this.data,
-  };
-
+        'uid': this.uid,
+        'data': this.data,
+      };
 }
 
 class CreateTransactionInput {
   final String address;
   final String sats;
+  final String fee;
 
-  CreateTransactionInput(this.address, this.sats);
+  CreateTransactionInput(this.address, this.sats, this.fee);
 
   Map<String, dynamic> toJson() => {
-    'address': this.address,
-    'sats': this.sats,
-  };
-
+        'address': this.address,
+        'sats': this.sats,
+        'fee': this.fee,
+      };
 }
