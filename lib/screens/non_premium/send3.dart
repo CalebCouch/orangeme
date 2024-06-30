@@ -80,32 +80,23 @@ class Send3State extends State<Send3> {
   }
 
   //create the transaction for display on the next page of the flow
-/**   void createTransaction() async {
-    var desc = await STORAGE.read(key: "descriptors");
-    String db = await getDBPath();
-    if (desc != null) {
-      print("database: $db");
-      print("descriptor: $desc");
+   void createTransaction() async {
+
+   
       print("Address: ${widget.address}");
       print("Amount: ${widget.amount.toString()}");
-      var jsonRes = await invoke(method: "create_transaction", args: [
-        db.toString(),
-        desc.toString(),
-        widget.address.toString(),
-        widget.amount.toString()
-      ]);
+      var jsonRes = (await invoke("create_transaction", "")).data;
 
       if (!mounted) return;
-      var json = handleError(jsonRes, context);
+      var json = jsonRes;
       print("create tx response: $json");
       calculateStandardFee(json);
       setState(() {
         transaction = json;
       });
-    }
-    print("building tx and sending user to confirmation screen");
+
   }
-*/
+
   //calcuate a standard fee as returned by create_transaction with no fee specified
   void calculateStandardFee(String transaction) {
     final transactionDecoded = Transaction.fromJson(jsonDecode(transaction));

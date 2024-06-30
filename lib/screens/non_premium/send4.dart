@@ -59,33 +59,25 @@ class Send4State extends State<Send4> {
   }
 
   //broadcast the transaction confirmed by the user
-  /**void broadcastTransaction(String transaction) async {
+  void broadcastTransaction(String transaction) async {
     print("broadcasting transaction");
     if (!mounted) return;
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
-    var descriptors = handleNull(descriptorsRes, context);
-    print("Descriptors: ${descriptors.toString()}");
-    String path = await getDBPath();
-    print('Path: $path');
+
     final transactionDecoded = Transaction.fromJson(jsonDecode(widget.tx));
     print("transaction: ${transactionDecoded.toString()}");
     if (!mounted) return;
-    var res = await invoke(method: "broadcast_transaction", args: [
-      path.toString(),
-      descriptors.toString(),
-      transactionDecoded.raw.toString()
-    ]);
+    var res = (await invoke("broadcast_transaction", "")).data;
     if (!mounted) return;
-    var resHandled = handleError(res, context);
+    var resHandled = res;
     print("broadcast response: $resHandled");
     await navigateNext(resHandled);
   }
-*/
-  //dispose of the session timer and broadcast
-  //void confirmSend() {
-  //  broadcastTransaction(widget.tx);
-  //}
+
+  void confirmSend() {
+    broadcastTransaction(widget.tx);
+  }
 
   //navigate to the success screen
   Future<void> navigateNext(String transaction) async {

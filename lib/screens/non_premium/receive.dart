@@ -36,10 +36,9 @@ class ReceiveState extends State<Receive> {
 
     if (!mounted) return;
  
-    var addressRes = await invoke(
-         "get_new_address", "");
+    var addressRes = (await invoke("get_new_address", "")).data;
     if (!mounted) return;
-    address.value = handleError(addressRes, context);
+    address.value = addressRes;
 
     setState(() {
       isLoading = false;
