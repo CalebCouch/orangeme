@@ -168,10 +168,11 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                                 Ok("false".to_owned())
                             }
                         },
-                        Ok(serde_json::to_string(&Err("Invalid Bitcoin address".to_owned()))?)
+                        Err(err) => Err(Error::DartError(err.to_string())), 
                     };
-                    serde_json::to_string(&result)?
+                    Ok(serde_json::to_string(&result)?) 
                 },
+
                 "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
             
