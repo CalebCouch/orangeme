@@ -160,15 +160,16 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 },
                 "check_address" => {
                     let addr = &command.data;
-                    let result = match Address::from_str(addr) {
+                    Result<Address, Error>.map(Result<bool, Error>).unwrap_or((bool or false))
+                    let result = match Address::from_str(addr).map(|a| a.require_network(Network::Bitcoin).is_ok()).unwrap_or(false)
                         Ok(address) => {
                             if address.require_network(Network::Bitcoin).is_ok() {
                                 Ok("true".to_owned())
                             } else {
-                                Ok("false".to_owned())
+                                true
                             }
                         },
-                        Err(err) => Err(Error::DartError(err.to_string())), 
+                        Err(_) => false, 
                     };
                     Ok(serde_json::to_string(&result)?) 
                 },
