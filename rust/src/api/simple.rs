@@ -157,9 +157,9 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok(wallet.get_address(AddressIndex::New)?.address.to_string())
                 },
                 "check_address" => {
-                    let result = match Address::from_str(&command.data).map(|a| 
+                    let result = Address::from_str(&command.data).map(|a| 
                         a.require_network(Network::Bitcoin).is_ok()
-                    ).unwrap_or(false),
+                    ).unwrap_or(false);
                     Ok(serde_json::to_string(&result)?) 
                 },
                 "create_transaction" => {
