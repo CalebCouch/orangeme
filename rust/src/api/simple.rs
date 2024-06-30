@@ -157,11 +157,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok("Finished".to_string())
                 }
                 "get_new_address" => {
-                    wallet.get_address(AddressIndex::New)?.address.to_string()
+                    Ok(wallet.get_address(AddressIndex::New)?.address.to_string())
                 },
                 "check_address" => {
                     let addr = &command.data;
-                    
                     let result = match Address::from_str(addr) {
                         Ok(address) => {
                             if address.require_network(Network::Bitcoin).is_ok() {
@@ -170,11 +169,10 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                                 "false".to_owned()
                             }
                         },
-                        Err(_) => "false".to_owned() 
+                        Err(_) => "false".to_owned()
                     };
-
-                    Ok::<String, Error>(result)
-                }?,
+                    Err(serde_json::to_string(&result)?)
+                },
                 "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
                     
@@ -216,7 +214,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 },
                  "broadcast_transaction" => {
                     let tx = serde_json::from_str::<bdk::bitcoin::Transaction>(&command.data)?;
-                    serde_json::to_string(&client.transaction_broadcast(&tx)?)?
+                    Ok(serde_json::to_string(&client.transaction_broadcast(&tx)?)?)
                 },
                 "estimate_fees" => {
                     let priority_target: usize = 1;
