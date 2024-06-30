@@ -128,16 +128,12 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
         let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
         for command in commands {
             //let resp = handle(&command, &dartCallback, &wallet).await?;
-            let data = match command.method.as_str() {
+            let result: Result<String, Error> = match command.method.as_str() {
                 "messages" => {
                     let messages = vec![Message {
                         text: "my message i sent to stupid".to_string()
                     }];
                     Ok(serde_json::to_string(&messages)?)
-                },
-                "sync_wallet" => {
-                    wallet.sync(&blockchain, sync_options)?;
-                    Ok("Finished".to_string())
                 },
                 "get_price" => {
                     let amount = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount;
@@ -214,7 +210,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, ""));
                     Ok("Ok".to_string())
                 },
-                
+
                 "break" => {
                     return Err(Error::Exited("Break Requested".to_string()));
                 },
@@ -222,6 +218,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     return Err(Error::UnknownMethod(format!("{}", command.method)));
                 }
             };            
+            let data = result?;
             let resp = RustResponse{uid: command.uid.to_string(), data};
             invoke(&dartCallback, "post_response", &serde_json::to_string(&resp)?).await?;
         }
