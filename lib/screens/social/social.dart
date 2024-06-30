@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/V2/DashBoard.dart';
+import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/widgets/mode_navigator.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/buttons/orange_lg.dart';

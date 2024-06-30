@@ -135,32 +135,30 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     let messages = vec![Message {
                         text: "my message i sent to stupid".to_string()
                     }];
-                    serde_json::to_string(&messages)?
+                    Ok(serde_json::to_string(&messages)?)
                 },
                 "get_price" => {
                     let amount = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount;
-                    serde_json::to_string(&amount)?
+                    Ok(serde_json::to_string(&amount)?)
+
                 },
                 "get_historical_price" => {
                     let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
                     let date = chrono::Utc::today().format("%Y-%m-%d").to_string();
                     let url = format!("{}?date={}", base_url, date);
                     let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
-                    spot_res.data.amount.to_string()
+                    Ok(spot_res.data.amount.to_string())
                 },
                 "get_balance" => {
-                wallet.get_balance()?.get_total().to_string()
+                    Ok(wallet.get_balance()?.get_total().to_string())
                 },
-
                 "sync_wallet" => {
                     wallet.sync(&blockchain, sync_options)?;
                     Ok("Finished".to_string())
                 }
-
                 "get_new_address" => {
                     wallet.get_address(AddressIndex::New)?.address.to_string()
                 },
-             
                 "check_address" => {
                     let addr = &command.data;
                     
@@ -177,9 +175,6 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
                     Ok::<String, Error>(result)
                 }?,
-
-            
-         
                 "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
                     
@@ -217,26 +212,18 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                         raw: Some(raw),
                     };
 
-                    serde_json::to_string(&transaction)?
+                    Ok(serde_json::to_string(&transaction)?)
                 },
-
-
-
                  "broadcast_transaction" => {
                     let tx = serde_json::from_str::<bdk::bitcoin::Transaction>(&command.data)?;
                     serde_json::to_string(&client.transaction_broadcast(&tx)?)?
                 },
-
-
-
-                  "estimate_fees" => {
+                "estimate_fees" => {
                     let priority_target: usize = 1;
                     let result = blockchain.estimate_fee(priority_target)
                         .unwrap_or_default(); 
                     serde_json::to_string(&result)?
                 },
- 
-
                 "drop_descs" => {
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, "")).await?;
                     "Ok".to_string()
