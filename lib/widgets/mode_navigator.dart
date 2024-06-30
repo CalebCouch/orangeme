@@ -23,40 +23,26 @@ class ModeNavigatorState extends State<ModeNavigator> {
   void navigateWallet() {
     widget.onDashboardPopBack();
     Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const Dashboard(loading: true),
-          transitionDuration: const Duration(milliseconds: 800),
-          reverseTransitionDuration: const Duration(milliseconds: 800),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-        ));
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, __, ___) => const Dashboard(loading: true),
+        transitionDuration: const Duration(seconds: 0),
+      ),
+    );
   }
 
   void navigateSocial() {
     widget.stopTimer();
     Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              SocialDashboard(
-            onDashboardPopBack: widget.onDashboardPopBack,
-            stopTimer: widget.stopTimer,
-          ),
-          transitionDuration: const Duration(milliseconds: 500),
-          reverseTransitionDuration: const Duration(milliseconds: 500),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-        ));
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, __, ___) => SocialDashboard(
+          onDashboardPopBack: widget.onDashboardPopBack,
+          stopTimer: widget.stopTimer,
+        ),
+        transitionDuration: const Duration(seconds: 0),
+      ),
+    );
   }
 
   @override

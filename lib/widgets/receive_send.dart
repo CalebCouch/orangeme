@@ -27,7 +27,10 @@ class ReceiveSend extends StatelessWidget {
                 onPause();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => receiveRoute()),
+                  PageRouteBuilder(
+                    pageBuilder: (context, __, ___) => receiveRoute(),
+                    transitionDuration: const Duration(seconds: 0),
+                  ),
                 );
               },
             ),
@@ -40,7 +43,10 @@ class ReceiveSend extends StatelessWidget {
                 onPause();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => sendRoute()),
+                  PageRouteBuilder(
+                    pageBuilder: (context, __, ___) => sendRoute(),
+                    transitionDuration: const Duration(seconds: 0),
+                  ),
                 );
               },
             ),
