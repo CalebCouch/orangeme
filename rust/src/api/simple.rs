@@ -168,7 +168,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                                 Ok("false".to_owned())
                             }
                         },
-                        Err(_) => Err(Error::InvalidAddress(addr.to_string()))
+                        Ok(serde_json::to_string(&Err("Invalid Bitcoin address".to_owned()))?)
                     };
                     serde_json::to_string(&result)?
                 },
@@ -219,7 +219,8 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     let priority_target: usize = 1;
                     let result = blockchain.estimate_fee(priority_target)
                         .unwrap_or_default(); 
-                    Ok(serde_json::to_string(&result)?)
+                    Ok(serde_json::to_string(&result).map_err(Error::SerdeError)?)
+
                 },
                 "drop_descs" => {
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, ""))?;
