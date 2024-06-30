@@ -1,21 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/util.dart';
-import 'package:orange/classes.dart';
-import 'receive.dart';
-import 'send1.dart';
-import 'package:orange/widgets/transaction_list.dart';
+import 'package:orange/screens/non_premium/receive.dart';
+import 'package:orange/screens/non_premium/send1.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'dart:core';
+
+import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/util.dart';
+import 'package:orange/widgets/transaction_list.dart';
 import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
 import 'package:orange/widgets/mode_navigator.dart';
 
+class Transaction {
+  final String? receiver;
+  final String? sender;
+  final String txid;
+  final int net;
+  final int fee;
+  final DateTime? timestamp;
+  final String? raw;
+
+  Transaction({
+    this.receiver,
+    this.sender,
+    required this.txid,
+    required this.net,
+    required this.fee,
+    this.timestamp,
+    this.raw,
+  });
+
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      receiver: json['receiver'],
+      sender: json['sender'],
+      txid: json['txid'],
+      net: json['net'],
+      fee: json['fee'],
+      timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+      raw: json['raw'],
+    );
+  }
+}
+
 class Dashboard extends StatefulWidget {
   final bool? loading;
 
-  const Dashboard({super.key, this.loading});
+  const Dashboard({Key? key, this.loading}) : super(key: key);
 
   @override
   State<Dashboard> createState() => DashboardState();
@@ -23,7 +54,7 @@ class Dashboard extends StatefulWidget {
 
 class DashboardState extends State<Dashboard>
     with WidgetsBindingObserver, TickerProviderStateMixin {
-  Timer? refreshTimer;
+  late Timer refreshTimer;
   final transactions = ValueNotifier<List<Transaction>>([]);
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
@@ -32,94 +63,83 @@ class DashboardState extends State<Dashboard>
 
   @override
   void initState() {
-    print("INITIALIZING DASHBOARD");
     super.initState();
     loading = widget.loading ?? false;
     handleRefresh();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
   void dispose() {
-    print("DISPOSING DASHBOARD");
     _stopTimer();
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("widgets binding observer thrown");
     if (state == AppLifecycleState.resumed) {
-      print("starting refresh timer due to life cycle change");
       startTimer();
     } else if (state == AppLifecycleState.paused) {
-      print("stopping refresh timer due to life cycle change");
       _stopTimer();
     }
   }
 
   void startTimer() {
-    print("request to start dashboard refresh timer....");
     _stopTimer();
     refreshTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
-      print("dashboard refresh timer tick");
       if (mounted) {
         handleRefresh();
       } else {
-        print("unmounted parent, stopping dashboard refresh timer");
         _stopTimer();
       }
     });
   }
 
   void _stopTimer() {
-    print("stopping dashboard refresh timer...");
-    refreshTimer?.cancel();
-    refreshTimer = null;
+    refreshTimer.cancel();
   }
 
   Future<void> handleRefresh() async {
     if (!mounted) return;
     startTimer();
     print('Refresh Initiated...');
-    
+
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     print("descriptorRes: $descriptorsRes");
     var descriptors = handleNull(descriptorsRes, context);
-    
+
     print('Getting Balance...');
     var balanceRes = (await invoke("get_balance", "")).data;
-    print("Balanceres: $balanceRes");
+    balance.value = int.tryParse(balanceRes) ?? 0;
+    print("My Balance: $balanceRes");
 
     print('Getting Transactions...');
-    var jsonRes = (await invoke("get_transactions", "")).data;
-    sortTransactions(false);
-    print(transactions.value);
+    var transactionsRes = (await invoke("get_transactions", "")).data;
+    print("Transactions Response: $transactionsRes");
+
+    try {
+      final List<dynamic> transactionJson = jsonDecode(transactionsRes)['data'];
+      final List<Transaction> transactionList = transactionJson
+          .map((item) => Transaction.fromJson(item))
+          .toList();
+      transactions.value = transactionList;
+      sortTransactions(false);
+      print("Transactions: ${transactions.value}");
+    } catch (e) {
+      print("Error decoding transactions: $e");
+    }
 
     print('Getting Price...');
     var priceRes = (await invoke("get_price", "")).data;
-    // price.value = double.parse(priceRes.message);
+    price.value = double.tryParse(priceRes) ?? 0.0;
     print("Price: ${price.value}");
-    
+
     if (loading) {
       setState(() {
-        print("loading set to false");
         loading = false;
       });
     }
-  }
-
-  void dashboardPopBack() async {
-    await Future.delayed(const Duration(seconds: 2));
-    await handleRefresh();
-  }
-
-  String formatSatsToDollars(int sats, double price) {
-    print("formatting...sats: $sats price: $price");
-    double amount = (sats / 100000000) * price;
-    print("formatted balance: $amount");
-    return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
   }
 
   void sortTransactions(bool ascending) {
@@ -127,17 +147,18 @@ class DashboardState extends State<Dashboard>
       if (a.timestamp == null && b.timestamp == null) return 0;
       if (a.timestamp == null) return -1;
       if (b.timestamp == null) return 1;
-      return ascending ? a.timestamp!.compareTo(b.timestamp!) : b.timestamp!.compareTo(a.timestamp!);
+      return ascending
+          ? a.timestamp!.compareTo(b.timestamp!)
+          : b.timestamp!.compareTo(a.timestamp!);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Refresh Timer: $refreshTimer");
-    if (refreshTimer != null && !refreshTimer!.isActive) {
-      print("timer wasn't running, let me start that for you");
+    if (refreshTimer != null && !refreshTimer.isActive) {
       startTimer();
     }
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -177,9 +198,12 @@ class DashboardState extends State<Dashboard>
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                transactionsList(transactions, price),
+                                transactions.value.isEmpty
+                                    ? const Text('No transactions')
+                                    : transactionsList(transactions, price),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
                                   child: ReceiveSend(
                                     receiveRoute: () => Receive(
                                       onDashboardPopBack: dashboardPopBack,
@@ -211,5 +235,15 @@ class DashboardState extends State<Dashboard>
         ),
       ),
     );
+  }
+
+  String formatSatsToDollars(int sats, double price) {
+    double amount = (sats / 100000000) * price;
+    return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
+  }
+
+  void dashboardPopBack() async {
+    await Future.delayed(const Duration(seconds: 2));
+    await handleRefresh();
   }
 }
