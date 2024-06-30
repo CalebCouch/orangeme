@@ -37,6 +37,5 @@ pub enum Error {
     UnknownMethod(String),
     #[error("Dart Error: {0}")]
     DartError(String),
-    SerdeError(String),
 
 }

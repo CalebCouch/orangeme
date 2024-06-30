@@ -109,8 +109,6 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 //  options.set_create_if_missing(true);
 //  let db = DB::open_with_opts(Path::new(location), options)?
 
-
-
     let db = bdk::sled::open(path+"BDK/database.db")?;
     db.drop_tree("wallet")?;
     let tree = db.open_tree("wallet")?;
@@ -159,21 +157,11 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok(wallet.get_address(AddressIndex::New)?.address.to_string())
                 },
                 "check_address" => {
-                    let addr = &command.data;
-                    Result<Address, Error>.map(Result<bool, Error>).unwrap_or((bool or false))
-                    let result = match Address::from_str(addr).map(|a| a.require_network(Network::Bitcoin).is_ok()).unwrap_or(false)
-                        Ok(address) => {
-                            if address.require_network(Network::Bitcoin).is_ok() {
-                                Ok("true".to_owned())
-                            } else {
-                                true
-                            }
-                        },
-                        Err(_) => false, 
-                    };
+                    let result = match Address::from_str(&command.data).map(|a| 
+                        a.require_network(Network::Bitcoin).is_ok()
+                    ).unwrap_or(false),
                     Ok(serde_json::to_string(&result)?) 
                 },
-
                 "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
             
@@ -189,7 +177,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
             
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                     if !finalized {
-                        return Err(Error::CouldNotSign());
+                        return (_);
                     }
             
                     let tx = psbt.clone().extract_tx();
@@ -221,11 +209,11 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     let priority_target: usize = 1;
                     let result = blockchain.estimate_fee(priority_target)
                         .unwrap_or_default(); 
-                    Ok(serde_json::to_string(&result).map_err(Error::SerdeError)?)
+                    Ok(serde_json::to_string(&result)?)
 
                 },
                 "drop_descs" => {
-                    invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, ""))?;
+                    invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, ""));
                     Ok("Ok".to_string())
                 },
                 "break" => {
