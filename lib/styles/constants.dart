@@ -186,6 +186,7 @@ class AppIcons {
   static const String back = 'assets/icons/Icon=back.svg';
   static const String bitcoin = 'assets/icons/Icon=bitcoin.svg';
   static const String close = 'assets/icons/Icon=close.svg';
+  static const String chat = 'assets/icons/Icon=chat.svg';
   static const String down = 'assets/icons/Icon=down.svg';
   static const String edit = 'assets/icons/Icon=edit.svg';
   static const String error = 'assets/icons/Icon=error.svg';

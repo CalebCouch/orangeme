@@ -280,9 +280,10 @@ class DashboardState extends State<Dashboard>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        //content
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(24.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -300,25 +301,25 @@ class DashboardState extends State<Dashboard>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 24),
                                 transactionsList(transactions, price),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: ReceiveSend(
-                                    receiveRoute: () => Receive(
-                                      onDashboardPopBack: dashboardPopBack,
-                                    ),
-                                    sendRoute: () => Send1(
-                                      balance: balance.value,
-                                      price: price.value,
-                                      onDashboardPopBack: dashboardPopBack,
-                                    ),
-                                    onPause: _stopTimer,
-                                  ),
-                                ),
                               ],
                             ),
+                          ),
+                        ),
+                        //bumper
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: ReceiveSend(
+                            receiveRoute: () => Receive(
+                              onDashboardPopBack: dashboardPopBack,
+                            ),
+                            sendRoute: () => Send1(
+                              balance: balance.value,
+                              price: price.value,
+                              onDashboardPopBack: dashboardPopBack,
+                            ),
+                            onPause: _stopTimer,
                           ),
                         ),
                       ],
@@ -327,13 +328,10 @@ class DashboardState extends State<Dashboard>
                 ],
               ),
             ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 15),
-        child: ModeNavigator(
-          navIndex: navIndex,
-          onDashboardPopBack: dashboardPopBack,
-          stopTimer: _stopTimer,
-        ),
+      bottomNavigationBar: ModeNavigator(
+        navIndex: navIndex,
+        onDashboardPopBack: dashboardPopBack,
+        stopTimer: _stopTimer,
       ),
     );
   }

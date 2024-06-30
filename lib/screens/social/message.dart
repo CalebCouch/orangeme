@@ -128,10 +128,11 @@ class MessageState extends State<Message> {
   void showRecipients() {
     print("Showing message participants");
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                GroupMessageList(recipients: widget.recipients)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => GroupMessageList(recipients: widget.recipients),
+      ),
+    );
   }
 
   @override
@@ -149,16 +150,18 @@ class MessageState extends State<Message> {
               showRecipients:
                   widget.recipients.length > 1 ? showRecipients : null),
           Expanded(
-              child: messages.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No messages yet.',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.textMD
-                            .copyWith(color: AppColors.textSecondary),
-                      ),
-                    )
-                  : ListView.builder(
+            child: messages.isEmpty
+                ? Center(
+                    child: Text(
+                      'No messages yet.',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.textMD
+                          .copyWith(color: AppColors.textSecondary),
+                    ),
+                  )
+                : Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: ListView.builder(
                       controller: scrollController,
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -170,7 +173,9 @@ class MessageState extends State<Message> {
                                 ? messages[index]["sender"]!
                                 : widget.recipients.first);
                       },
-                    )),
+                    ),
+                  ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextInputField(

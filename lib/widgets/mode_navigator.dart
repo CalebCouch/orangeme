@@ -62,28 +62,22 @@ class ModeNavigatorState extends State<ModeNavigator> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 43,
-      padding: const EdgeInsets.symmetric(horizontal: 80),
+      padding: const EdgeInsets.only(top: 8, bottom: 24),
       color: AppColors.background,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            icon: widget.navIndex == 0
-                ? SvgPicture.asset(
-                    'assets/icons/Icon=wallet_filled.svg',
-                    colorFilter: const ColorFilter.mode(
-                        AppColors.primary, BlendMode.srcIn),
-                    width: 50,
-                    height: 50,
-                  )
-                : SvgPicture.asset(
-                    'assets/icons/Icon=wallet_filled.svg',
-                    colorFilter: const ColorFilter.mode(
-                        AppColors.textSecondary, BlendMode.srcIn),
-                    width: 50,
-                    height: 50,
-                  ),
+            icon: SvgPicture.asset(
+              AppIcons.wallet,
+              colorFilter: ColorFilter.mode(
+                  widget.navIndex == 0
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
+                  BlendMode.srcIn),
+              width: 32,
+              height: 32,
+            ),
             onPressed: () {
               if (widget.navIndex != 0) {
                 navigateWallet();
@@ -92,16 +86,17 @@ class ModeNavigatorState extends State<ModeNavigator> {
               }
             },
           ),
+          const SizedBox(width: 64),
           IconButton(
             icon: SvgPicture.asset(
-              'assets/icons/Icon=chat.svg',
+              AppIcons.chat,
               colorFilter: ColorFilter.mode(
                   widget.navIndex == 1
                       ? AppColors.primary
                       : AppColors.textSecondary,
                   BlendMode.srcIn),
-              width: 22,
-              height: 22,
+              width: 32,
+              height: 32,
             ),
             onPressed: () {
               if (widget.navIndex != 1) {
