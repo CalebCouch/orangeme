@@ -176,9 +176,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     };
             
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-                    if !finalized {
-                        return (_);
-                    }
+
             
                     let tx = psbt.clone().extract_tx();
                     let mut stream: Vec<u8> = Vec::new();
@@ -216,6 +214,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, ""));
                     Ok("Ok".to_string())
                 },
+                
                 "break" => {
                     return Err(Error::Exited("Break Requested".to_string()));
                 },
