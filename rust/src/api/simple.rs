@@ -158,6 +158,19 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     ).unwrap_or(false);
                     Ok(serde_json::to_string(&result)?) 
                 },
+                "get_transactions" => {
+                  let from_details =  Ok(Transaction{
+                        receiver: None,
+                        sender: None,
+                        txid: serde_json::to_string(&details.txid)?,
+                        net: (details.received as i64)-(details.sent as i64),
+                        fee: details.fee,
+                        timestamp: if details.confirmation_time.is_some() { Some(details.confirmation_time.unwrap().timestamp) } else { None },
+                        raw: None
+                    })
+                    let transactions: Vec<Transaction> = wallet.list_transactions(false)?.into_iter().map(from_details).collect::<Result<Vec<Transaction>, Error>>()?;
+                    Ok(serde_json::to_string(&transactions)?)
+                },
                 "create_transaction" => {
                     let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
             

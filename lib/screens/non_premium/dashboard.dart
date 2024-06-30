@@ -12,10 +12,6 @@ import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
 import 'package:orange/widgets/mode_navigator.dart';
 
-// import 'package:orange/screens/settings/import_cloud.dart';
-// import 'package:orange/screens/settings/duplicate_phone.dart';
-// import 'package:orange/screens/settings/backup.dart';
-
 class Dashboard extends StatefulWidget {
   final bool? loading;
 
@@ -31,7 +27,6 @@ class DashboardState extends State<Dashboard>
   final transactions = ValueNotifier<List<Transaction>>([]);
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
-  bool initialLoad = true;
   bool loading = false;
   int navIndex = 0;
 
@@ -39,33 +34,19 @@ class DashboardState extends State<Dashboard>
   void initState() {
     print("INITIALIZING DASHBOARD");
     super.initState();
-    if (widget.loading == true) {
-      setState(() {
-        loading = true;
-      });
-    } else if (widget.loading == false) {
-      setState(() {
-        loading = false;
-        ;
-      });
-    }
-    //sync and obtain data on page load
+    loading = widget.loading ?? false;
     handleRefresh();
-    //monitor for application reactivation and init
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     print("DISPOSING DASHBOARD");
-    //dispose of the dashboard refresh timer
     _stopTimer();
-    //monitor for application minimizing and dispose
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
-  //this is used to stop the refresh timer from running while the program is minimized
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print("widgets binding observer thrown");
@@ -78,96 +59,50 @@ class DashboardState extends State<Dashboard>
     }
   }
 
-  //start the timer to periodically get a data refresh
   void startTimer() {
     print("request to start dashboard refresh timer....");
-    if (refreshTimer == null || !refreshTimer!.isActive) {
-      refreshTimer = Timer(const Duration(seconds: 15), () {
-        print("dashboard refresh was not running... timer started");
-        if (mounted) {
-          handleRefresh();
-        } else {
-          print("unmounted parent, stopping dashboard refresh timer");
-          _stopTimer();
-        }
-      });
-    } else {
-      print("Timer is already active, no need to start another");
-    }
+    _stopTimer();
+    refreshTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
+      print("dashboard refresh timer tick");
+      if (mounted) {
+        handleRefresh();
+      } else {
+        print("unmounted parent, stopping dashboard refresh timer");
+        _stopTimer();
+      }
+    });
   }
 
-  //stop the timer controlling the data refresh
   void _stopTimer() {
     print("stopping dashboard refresh timer...");
     refreshTimer?.cancel();
+    refreshTimer = null;
   }
 
-  //sync wallet and get transaction list, current price, and balance
   Future<void> handleRefresh() async {
     if (!mounted) return;
-    if (refreshTimer == null || !refreshTimer!.isActive) {
-      startTimer();
-    }
-    print('Refresh Initiatied...');
-    if (!mounted) return;
+    startTimer();
+    print('Refresh Initiated...');
+    
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     print("descriptorRes: $descriptorsRes");
-    if (!mounted) return;
     var descriptors = handleNull(descriptorsRes, context);
-    if (!mounted) return;
-   
-    if (initialLoad == false) {
-      print('Sync Wallet...');
-      //sync wallet data
-      if (!mounted) return;
-        void messges() async {
-
-      var syncRes = (await invoke("sync_wallet", "")).data;
-      print("SyncRes: $syncRes");
-      if (!mounted) return;
     
-    } //else if (initialLoad == true) {
-    //  setState(() {
-    //    initialLoad = false;
-   //   });
-    }
-
     print('Getting Balance...');
-    if (!mounted) return;
     var balanceRes = (await invoke("get_balance", "")).data;
     print("Balanceres: $balanceRes");
 
-    if (!mounted) return;
-
-    //balance.value = int.parse(handleError(balanceRes, context));
-    print("Balance: ${balance.value}");
     print('Getting Transactions...');
-    //get the wallet transaction history
-    if (!mounted) return;
     var jsonRes = (await invoke("get_transactions", "")).data;
-    print("Transactionsres: $jsonRes");
-    if (!mounted) return;
-   // String json = handleError(jsonRes, context);
-   // print("json: $json");
-    if (!mounted) return;
-  //  final Iterable decodeJson = jsonDecode(json);
-    if (!mounted) return;
-   // transactions.value =
-     //   decodeJson.map((item) => Transaction.fromJson(item)).toList();
-    if (!mounted) return;
     sortTransactions(false);
     print(transactions.value);
 
     print('Getting Price...');
-    //get the latest price
-    if (!mounted) return;
     var priceRes = (await invoke("get_price", "")).data;
-    //if (priceRes.status == 200) {
-     // if (!mounted) return;
-    //  price.value = double.parse(priceRes.message);
-   // }
+    // price.value = double.parse(priceRes.message);
     print("Price: ${price.value}");
-    if (loading == true) {
+    
+    if (loading) {
       setState(() {
         print("loading set to false");
         loading = false;
@@ -180,7 +115,6 @@ class DashboardState extends State<Dashboard>
     await handleRefresh();
   }
 
-  //format a number of satoshis into dollars at the current price
   String formatSatsToDollars(int sats, double price) {
     print("formatting...sats: $sats price: $price");
     double amount = (sats / 100000000) * price;
@@ -188,34 +122,25 @@ class DashboardState extends State<Dashboard>
     return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
   }
 
-  // Sort transactions in ascending order with null timestamps being shown at the top
   void sortTransactions(bool ascending) {
     transactions.value.sort((a, b) {
       if (a.timestamp == null && b.timestamp == null) return 0;
       if (a.timestamp == null) return -1;
       if (b.timestamp == null) return 1;
-      if (ascending == true) {
-        //ascending order
-        return a.timestamp!.compareTo(b.timestamp!);
-      } else {
-        //descending order
-        return b.timestamp!.compareTo(a.timestamp!);
-      }
+      return ascending ? a.timestamp!.compareTo(b.timestamp!) : b.timestamp!.compareTo(a.timestamp!);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
     print("Refresh Timer: $refreshTimer");
-    if (refreshTimer != null && refreshTimer!.isActive == false) {
+    if (refreshTimer != null && !refreshTimer!.isActive) {
       print("timer wasn't running, let me start that for you");
       startTimer();
     }
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-
         title: const Text('Wallet'),
         automaticallyImplyLeading: false,
       ),
@@ -254,8 +179,7 @@ class DashboardState extends State<Dashboard>
                                 const SizedBox(height: 10),
                                 transactionsList(transactions, price),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20),
                                   child: ReceiveSend(
                                     receiveRoute: () => Receive(
                                       onDashboardPopBack: dashboardPopBack,
