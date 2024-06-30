@@ -1,47 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:orange/screens/non_premium/receive.dart';
-import 'package:orange/screens/non_premium/send1.dart';
-import 'dart:convert';
-import 'dart:async';
-
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
+import 'receive.dart';
+import 'send1.dart';
 import 'package:orange/widgets/transaction_list.dart';
+import 'dart:convert';
+import 'dart:async';
 import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
 import 'package:orange/widgets/mode_navigator.dart';
-
-class Transaction {
-  final String? receiver;
-  final String? sender;
-  final String txid;
-  final int net;
-  final int fee;
-  final DateTime? timestamp;
-  final String? raw;
-
-  Transaction({
-    this.receiver,
-    this.sender,
-    required this.txid,
-    required this.net,
-    required this.fee,
-    this.timestamp,
-    this.raw,
-  });
-
-  factory Transaction.fromJson(Map<String, dynamic> json) {
-    return Transaction(
-      receiver: json['receiver'],
-      sender: json['sender'],
-      txid: json['txid'],
-      net: json['net'],
-      fee: json['fee'],
-      timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
-      raw: json['raw'],
-    );
-  }
-}
 
 class Dashboard extends StatefulWidget {
   final bool? loading;
@@ -49,12 +17,12 @@ class Dashboard extends StatefulWidget {
   const Dashboard({Key? key, this.loading}) : super(key: key);
 
   @override
-  State<Dashboard> createState() => DashboardState();
+  State<Dashboard> createState() => _DashboardState();
 }
 
-class DashboardState extends State<Dashboard>
+class _DashboardState extends State<Dashboard>
     with WidgetsBindingObserver, TickerProviderStateMixin {
-  late Timer refreshTimer;
+  Timer? refreshTimer;
   final transactions = ValueNotifier<List<Transaction>>([]);
   final balance = ValueNotifier<int>(0);
   final price = ValueNotifier<double>(0);
@@ -88,58 +56,54 @@ class DashboardState extends State<Dashboard>
   void startTimer() {
     _stopTimer();
     refreshTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
-      if (mounted) {
-        handleRefresh();
-      } else {
-        _stopTimer();
-      }
+      handleRefresh();
     });
   }
 
   void _stopTimer() {
-    refreshTimer.cancel();
+    refreshTimer?.cancel();
+    refreshTimer = null;
   }
 
   Future<void> handleRefresh() async {
-    if (!mounted) return;
-    startTimer();
-    print('Refresh Initiated...');
-
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
-    print("descriptorRes: $descriptorsRes");
-    var descriptors = handleNull(descriptorsRes, context);
-
-    print('Getting Balance...');
-    var balanceRes = (await invoke("get_balance", "")).data;
-    balance.value = int.tryParse(balanceRes) ?? 0;
-    print("My Balance: $balanceRes");
-
-    print('Getting Transactions...');
-    var transactionsRes = (await invoke("get_transactions", "")).data;
-    print("Transactions Response: $transactionsRes");
-
     try {
-      final List<dynamic> transactionJson = jsonDecode(transactionsRes)['data'];
-      final List<Transaction> transactionList = transactionJson
-          .map((item) => Transaction.fromJson(item))
-          .toList();
-      transactions.value = transactionList;
-      sortTransactions(false);
+      var descriptorsRes = await STORAGE.read(key: "descriptors");
+      print("descriptorRes: $descriptorsRes");
+
+      var balanceRes = (await invoke("get_balance", "")).data;
+      balance.value = int.parse(balanceRes);
+      print("My Balance: $balanceRes");
+
+      var transactionsRes = await invoke("get_transactions", "");
+      var jsonRes = transactionsRes.data;
+      List<dynamic> transactionList = jsonDecode(jsonRes);
+      transactions.value =
+          transactionList.map((item) => Transaction.fromJson(item)).toList();
       print("Transactions: ${transactions.value}");
+
+      var priceRes = (await invoke("get_price", "")).data;
+      price.value = double.parse(priceRes);
+      print("Price: $priceRes");
+
+      if (loading) {
+        setState(() {
+          loading = false;
+        });
+      }
     } catch (e) {
-      print("Error decoding transactions: $e");
+      print("Error during refresh: $e");
+      // Handle error appropriately, e.g., show error message to the user
     }
+  }
 
-    print('Getting Price...');
-    var priceRes = (await invoke("get_price", "")).data;
-    price.value = double.tryParse(priceRes) ?? 0.0;
-    print("Price: ${price.value}");
+  void dashboardPopBack() async {
+    await Future.delayed(const Duration(seconds: 2));
+    await handleRefresh();
+  }
 
-    if (loading) {
-      setState(() {
-        loading = false;
-      });
-    }
+  String formatSatsToDollars(int sats, double price) {
+    double amount = (sats / 100000000) * price;
+    return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
   }
 
   void sortTransactions(bool ascending) {
@@ -155,7 +119,7 @@ class DashboardState extends State<Dashboard>
 
   @override
   Widget build(BuildContext context) {
-    if (refreshTimer != null && !refreshTimer.isActive) {
+    if (refreshTimer != null && !refreshTimer!.isActive) {
       startTimer();
     }
 
@@ -199,7 +163,7 @@ class DashboardState extends State<Dashboard>
                                 ),
                                 const SizedBox(height: 10),
                                 transactions.value.isEmpty
-                                    ? const Text('No transactions')
+                                    ? Center(child: Text('No transactions'))
                                     : transactionsList(transactions, price),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -235,15 +199,5 @@ class DashboardState extends State<Dashboard>
         ),
       ),
     );
-  }
-
-  String formatSatsToDollars(int sats, double price) {
-    double amount = (sats / 100000000) * price;
-    return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
-  }
-
-  void dashboardPopBack() async {
-    await Future.delayed(const Duration(seconds: 2));
-    await handleRefresh();
   }
 }
