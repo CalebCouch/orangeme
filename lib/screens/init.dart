@@ -4,8 +4,6 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
 
-import 'package:flutter_js/flutter_js.dart';
-
 class InitPage extends StatefulWidget {
   const InitPage({super.key});
 
@@ -21,7 +19,6 @@ class InitPageState extends State<InitPage> {
   void initState() {
     super.initState();
     // ignore: unused_local_variable
-    JavascriptRuntime flutterJs = getJavascriptRuntime();
     print('Welcome Page loaded');
     print('Checking for seed...');
     onPageLoad();
@@ -108,7 +105,7 @@ class InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Container(
         // Enables scrolling
         padding: const EdgeInsets.all(16.0),
         child: loading
