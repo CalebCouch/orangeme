@@ -7,9 +7,11 @@ class MessageBauble extends StatefulWidget {
   final String incoming;
   final String timestamp;
   final String name;
+  final bool? group;
 
   const MessageBauble(
       {super.key,
+      this.group,
       required this.message,
       required this.incoming,
       required this.name,
@@ -30,8 +32,10 @@ class MessageBaubleState extends State<MessageBauble> {
     DateTime time = DateTime.parse(timestamp);
     String namePrefix = "";
     //only show the name prefix if the message is receieved from another
-    if (widget.incoming == "true") {
-      namePrefix = "${widget.name} · ";
+    if (widget.group != null) {
+      if (widget.group! == true && widget.incoming == "true") {
+        namePrefix = "${widget.name} · ";
+      }
     }
     int dayDifference = now.difference(time).inDays.abs();
     bool isSameDay =
@@ -125,30 +129,22 @@ class MessageBaubleState extends State<MessageBauble> {
                 : AppColors.offBlack,
             borderRadius: BorderRadius.circular(8),
           ),
-          padding: const EdgeInsets.all(6.0),
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             child: Text(
               widget.message,
-              style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 16,
-                fontFamily: 'Outfit',
-                fontWeight: FontWeight.w400,
+              style: AppTextStyles.textMD.copyWith(
+                color: AppColors.heading,
               ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 4.0),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
           child: Text(
             formatTimestamp(widget.timestamp),
-            style: const TextStyle(
-              color: AppColors.grey,
-              fontSize: 14,
-              fontFamily: 'Outfit',
-              fontWeight: FontWeight.w400,
-              height: 0,
+            style: AppTextStyles.textSM.copyWith(
+              color: AppColors.textSecondary,
             ),
           ),
         ),

@@ -31,24 +31,23 @@ class MessageState extends State<Message> {
     messages = [
       {
         "message":
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+            "Quick question – do you know any good books to read? Need a new one.",
         "incoming": "true",
         "sender": sender,
-        "timestamp": "2024-06-10 11:59:53"
+        "timestamp": "2024-06-30 11:59:53"
+      },
+      {
+        "message": "Absolutely! What genre are you into lately?",
+        "incoming": "false",
+        "sender": "me",
+        "timestamp": "2024-06-30 13:32:09"
       },
       {
         "message":
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+            "Nothing particular. Thinking of redecorating my living room. Any ideas for a new color scheme?",
         "incoming": "false",
         "sender": "me",
-        "timestamp": "2024-06-11 13:32:09"
-      },
-      {
-        "message":
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
-        "incoming": "false",
-        "sender": "me",
-        "timestamp": "2024-06-12 12:29:09"
+        "timestamp": "2024-06-30 13:32:09"
       },
     ];
     messageController.addListener(() {
@@ -129,8 +128,10 @@ class MessageState extends State<Message> {
     print("Showing message participants");
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => GroupMessageList(recipients: widget.recipients),
+      PageRouteBuilder(
+        pageBuilder: (context, __, ___) =>
+            GroupMessageList(recipients: widget.recipients),
+        transitionDuration: const Duration(seconds: 0),
       ),
     );
   }

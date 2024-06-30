@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MessageHistoryCard extends StatelessWidget {
   final String name;
-  final String imagePath;
+  final String? imagePath;
   final VoidCallback onTap;
   final String lastMessage;
   final bool group;
@@ -14,7 +15,7 @@ class MessageHistoryCard extends StatelessWidget {
     required this.onTap,
     required this.lastMessage,
     required this.group,
-    this.imagePath = AppImages.defaultProfileLG,
+    this.imagePath,
   });
   @override
   Widget build(BuildContext context) {
@@ -24,15 +25,23 @@ class MessageHistoryCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundImage: group ? null : AssetImage(imagePath),
-              backgroundColor:
-                  group ? AppColors.backgroundSecondary : Colors.transparent,
-              child: group
-                  ? const Icon(Icons.group, color: AppColors.textSecondary)
-                  : null,
-            ),
+            group
+                ? CircleAvatar(
+                    radius: 24,
+                    backgroundColor: AppColors.backgroundSecondary,
+                    child: SvgPicture.asset(
+                      AppIcons.group,
+                      width: 36,
+                      colorFilter: const ColorFilter.mode(
+                          AppColors.textSecondary, BlendMode.srcIn),
+                    ),
+                  )
+                : CircleAvatar(
+                    radius: 24,
+                    backgroundImage: imagePath == null
+                        ? const AssetImage(AppImages.defaultProfileLG)
+                        : AssetImage(imagePath!),
+                  ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

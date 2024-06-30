@@ -7,8 +7,6 @@ import 'new_message.dart';
 import 'package:orange/widgets/message_history_card.dart';
 import 'message.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
-
 class SocialDashboard extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
   final VoidCallback stopTimer;
@@ -24,39 +22,41 @@ class SocialDashboardState extends State<SocialDashboard> {
   int navIndex = 1;
   List<Map<String, dynamic>> messages = [
     {
-      "name": ["Pam Beesley", "Michael Scott", "Andy Bernard"],
+      "name": ["Kasey Jarvis", "Ruthie", "C. Goodman"],
       "lastMessage":
-          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+          "Slowly but surely. Got stuck on one part, but I think I’ve figured it out."
     },
     {
-      "name": ["Pam Beesley"],
-      "lastMessage":
-          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+      "name": ["Maurie Walsh"],
+      "profilePath": AppImages.test4,
+      "lastMessage": "you: No worries, I’ll let the team know."
     },
     {
-      "name": ["Dwight Schrute"],
-      "lastMessage":
-          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+      "name": ["Andrew Bash"],
+      "profilePath": AppImages.test5,
+      "lastMessage": "Sure, I’m in. Sushi place?"
     },
     {
-      "name": ["Michael Scott"],
+      "name": ["Joanna Santiago"],
+      "profilePath": AppImages.test6,
       "lastMessage":
-          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+          "you: Interesting approach. Might need some tweaking though."
     },
     {
-      "name": ["Jim Halpert"],
-      "lastMessage":
-          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+      "name": ["V. Mcintyre"],
+      "profilePath": AppImages.test3,
+      "lastMessage": "Nice!",
     },
     {
-      "name": ["Ryan Howard"],
+      "name": ["Connie Saunders"],
+      "profilePath": AppImages.test7,
       "lastMessage":
-          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+          "How about something bold like navy blue with gold accents?"
     },
     {
-      "name": ["Andy Bernard"],
-      "lastMessage":
-          "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do elusmod tempor incid"
+      "name": ["Martin B."],
+      "profilePath": AppImages.test2,
+      "lastMessage": "you: Game night sounds fun! I’ll bring snacks.",
     },
   ];
 
@@ -97,10 +97,11 @@ class SocialDashboardState extends State<SocialDashboard> {
       List<String> recipientsList = messages['name'];
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => Message(
-                  recipients: recipientsList,
-                )),
+        PageRouteBuilder(
+          pageBuilder: (context, __, ___) =>
+              Message(recipients: recipientsList),
+          transitionDuration: const Duration(seconds: 0),
+        ),
       );
     }
   }
@@ -152,6 +153,7 @@ class SocialDashboardState extends State<SocialDashboard> {
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
                         print(messages.length);
+                        var profile = messages[index]["profilePath"];
                         var lastMessage =
                             messages[index]['lastMessage'] ?? 'No Last Message';
                         var title = messages[index]["name"][0] ?? "Unnamed";
@@ -165,6 +167,7 @@ class SocialDashboardState extends State<SocialDashboard> {
                           print("group message not found");
                         }
                         return MessageHistoryCard(
+                            imagePath: profile,
                             name: title,
                             lastMessage: lastMessage,
                             group: group,
@@ -181,7 +184,6 @@ class SocialDashboardState extends State<SocialDashboard> {
                     ),
                   ),
           ),
-          const SizedBox(height: 24),
           Padding(
             padding: const EdgeInsets.all(16),
             child: ButtonOrangeLG(

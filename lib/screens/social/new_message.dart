@@ -19,39 +19,41 @@ class NewMessageState extends State<NewMessage> {
   List<String> recipients = [];
   List<Map<String, String>> contacts = [
     {
-      "name": "Pam Beesley",
-      "imagePath": "assets/images/pam.png",
-      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+      "name": "Kasey Jarvis",
+      "imagePath": AppImages.test1,
+      "did": "fpRBLGDMsP92oqULfEvOkWDnD6sr6FtjCe9F2Q66C2pHHdWbJBeFCugTG0mtuY9U"
     },
     {
-      "name": "Dwight Schrute",
-      "imagePath": "assets/images/dwight.png",
-      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+      "name": "Stephano",
+      "imagePath": AppImages.test2,
+      "did": "M1gITBEnk01tqi4d89gX84ByXOqHZobBFCugTG0mtuY9UtjCe9F2Q66C2pH2391"
     },
     {
-      "name": "Michael Scott",
-      "imagePath": "assets/images/michael.png",
-      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+      "name": "Theo M.",
+      "imagePath": AppImages.test3,
+      "did": "bFAULsWPfHXbUmBNMqNNBL1xjMh7Z8KR"
     },
     {
-      "name": "Jim Halpert",
-      "imagePath": "assets/images/jim.png",
-      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+      "name": "Doug Cunningham",
+      "imagePath": AppImages.test4,
+      "did": "ejdH9pMtTESLgvPztC5JgUWiT00VKvdFFCugTG0mtuY9UtjCe9F2Q66C2pHHdWbJ"
     },
     {
-      "name": "Ryan Howard",
-      "imagePath": "assets/images/ryan.png",
-      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+      "name": "Scott Addams",
+      "imagePath": AppImages.test5,
+      "did": "FCugTG0mtuY9UtjCe9F2Q66C2pHHdWbJUtjCe9F2Q66C2pT00VKvdFF"
     },
     {
-      "name": "Andy Bernard",
-      "imagePath": "assets/images/andy.png",
-      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+      "name": "Brit",
+      "imagePath": AppImages.test6,
+      "did":
+          "1SBfJO1DIGAugcwj1SAKoyBDtdWgBtbDnHejdH9pMtTESLgvPztC5JgUWiT00VKvdFAow"
     },
     {
-      "name": "Stanley Hudson",
-      "imagePath": "assets/images/stanley.png",
-      "did": "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc"
+      "name": "Leo Doyle",
+      "imagePath": AppImages.test7,
+      "did":
+          "jXX86f9I2CFchKHy0VEeXf2NlluOgipWqkV37x8WrjX5OfnkrX4nq466reeRGPIJBhYFD3WClR"
     },
   ];
 
@@ -159,8 +161,8 @@ class NewMessageState extends State<NewMessage> {
           ),
         ]),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 24, right: 24, top: 24),
+      body: Container(
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
             TextInputField(
@@ -169,19 +171,17 @@ class NewMessageState extends State<NewMessage> {
             ),
             _buildRecipientList(),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: ListView.builder(
-                  itemCount: contacts.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ContactCard(
-                      name: contacts[index]["name"]!,
-                      did: contacts[index]["did"]!,
-                      onTap: () => addRecipient(contacts[index]["name"]!),
-                      // imagePath: contacts[index]["imagePath"]!,
-                    );
-                  },
-                ),
+              child: ListView.builder(
+                itemCount: contacts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ContactCard(
+                    imagePath: contacts[index]["imagePath"]!,
+                    name: contacts[index]["name"]!,
+                    did: contacts[index]["did"]!,
+                    onTap: () => addRecipient(contacts[index]["name"]!),
+                    // imagePath: contacts[index]["imagePath"]!,
+                  );
+                },
               ),
             ),
           ],
