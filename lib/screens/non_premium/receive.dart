@@ -56,7 +56,7 @@ class ReceiveState extends State<Receive> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56.0),
+        preferredSize: const Size.fromHeight(64.0),
         child: Stack(
           children: [
             Container(

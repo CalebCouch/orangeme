@@ -5,6 +5,8 @@ import 'package:orange/widgets/contact_card.dart';
 import 'package:orange/screens/social/message.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 class NewMessage extends StatefulWidget {
   const NewMessage({super.key});
   @override
@@ -73,38 +75,31 @@ class NewMessageState extends State<NewMessage> {
       recipientsList.add(recipients.first);
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => Message(
-                  recipients: recipientsList,
-                )),
+        PageRouteBuilder(
+          pageBuilder: (context, __, ___) => Message(
+            recipients: recipientsList,
+          ),
+          transitionDuration: const Duration(seconds: 0),
+        ),
       );
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => Message(
-                  recipients: recipients,
-                )),
+        PageRouteBuilder(
+          pageBuilder: (context, __, ___) => Message(
+            recipients: recipients,
+          ),
+          transitionDuration: const Duration(seconds: 0),
+        ),
       );
     }
   }
 
   Widget _buildRecipientList() {
-    if (recipients.length == 1) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 24),
-        child: Row(
-          children: [
-            ButtonSecondaryMD(
-              label: recipients[0],
-              icon: "clear",
-              onTap: () => removeRecipient(recipients[0]),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Wrap(
+    return Container(
+      padding: const EdgeInsets.only(bottom: 8),
+      alignment: Alignment.topLeft,
+      child: Wrap(
         spacing: 8,
         runSpacing: 8,
         children: List<Widget>.generate(recipients.length, (index) {
@@ -114,8 +109,8 @@ class NewMessageState extends State<NewMessage> {
             onTap: () => removeRecipient(recipients[index]),
           );
         }),
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -123,53 +118,74 @@ class NewMessageState extends State<NewMessage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Spacer(),
-            const Text("New Message", style: AppTextStyles.heading4),
-            Spacer(flex: recipients.isNotEmpty ? 1 : 2),
-            if (recipients.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: GestureDetector(
-                  onTap: () {
-                    navigateToMessage();
+        automaticallyImplyLeading: false,
+        flexibleSpace: Column(children: [
+          const SizedBox(height: 54),
+          Stack(
+            children: [
+              Container(
+                height: 48,
+                alignment: Alignment.center,
+                child: const Text('New Message', style: AppTextStyles.heading4),
+              ),
+              Container(
+                height: 48,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(left: 16),
+                child: IconButton(
+                  icon: SvgPicture.asset(
+                    AppIcons.left,
+                    width: 32,
+                    height: 32,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
                   },
-                  child: const Text("Next", style: AppTextStyles.labelMD),
                 ),
               ),
-          ],
-        ),
-        // centerTitle: true,
+              if (recipients.isNotEmpty)
+                Container(
+                  height: 48,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 16),
+                  child: GestureDetector(
+                    onTap: () {
+                      navigateToMessage();
+                    },
+                    child: const Text("Next", style: AppTextStyles.labelMD),
+                  ),
+                ),
+            ],
+          ),
+        ]),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24, right: 24, top: 24),
-            child: TextInputField(
+      body: Padding(
+        padding: const EdgeInsets.only(left: 24, right: 24, top: 24),
+        child: Column(
+          children: [
+            TextInputField(
               controller: recipientAddressController,
               hint: "Profile Name",
             ),
-          ),
-          _buildRecipientList(),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ListView.builder(
-                itemCount: contacts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ContactCard(
-                    name: contacts[index]["name"]!,
-                    did: contacts[index]["did"]!,
-                    onTap: () => addRecipient(contacts[index]["name"]!),
-                    // imagePath: contacts[index]["imagePath"]!,
-                  );
-                },
+            _buildRecipientList(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: ListView.builder(
+                  itemCount: contacts.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ContactCard(
+                      name: contacts[index]["name"]!,
+                      did: contacts[index]["did"]!,
+                      onTap: () => addRecipient(contacts[index]["name"]!),
+                      // imagePath: contacts[index]["imagePath"]!,
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

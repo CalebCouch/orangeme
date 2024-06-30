@@ -21,10 +21,7 @@ class MessageHistoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(
           children: [
             CircleAvatar(
@@ -44,8 +41,7 @@ class MessageHistoryCard extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: AppTextStyles.textMD
-                        .copyWith(fontWeight: FontWeight.bold),
+                    style: AppTextStyles.textMD,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),

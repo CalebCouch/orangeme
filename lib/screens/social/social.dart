@@ -7,6 +7,8 @@ import 'new_message.dart';
 import 'package:orange/widgets/message_history_card.dart';
 import 'message.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 class SocialDashboard extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
   final VoidCallback stopTimer;
@@ -60,12 +62,22 @@ class SocialDashboardState extends State<SocialDashboard> {
 
   void navigate() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const Dashboard()));
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, __, ___) => const Dashboard(),
+        transitionDuration: const Duration(seconds: 0),
+      ),
+    );
   }
 
   void newMessage() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const NewMessage()));
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, __, ___) => const NewMessage(),
+        transitionDuration: const Duration(seconds: 0),
+      ),
+    );
   }
 
   void navigateToMessage(messages) {
@@ -74,10 +86,12 @@ class SocialDashboardState extends State<SocialDashboard> {
       recipientsList.add(messages['name'][0]);
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => Message(
-                  recipients: recipientsList,
-                )),
+        PageRouteBuilder(
+          pageBuilder: (context, __, ___) => Message(
+            recipients: recipientsList,
+          ),
+          transitionDuration: const Duration(seconds: 0),
+        ),
       );
     } else {
       List<String> recipientsList = messages['name'];
@@ -96,44 +110,71 @@ class SocialDashboardState extends State<SocialDashboard> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        elevation: 0,
-        title: const Text('Messages', style: AppTextStyles.heading3),
-        leading: Image.asset(
-          AppImages.defaultProfileMD,
-          width: 10,
-          height: 10,
-        ),
+        flexibleSpace: Column(children: [
+          const SizedBox(height: 54),
+          Stack(
+            children: [
+              Container(
+                height: 48,
+                alignment: Alignment.center,
+                child: const Text('Messages', style: AppTextStyles.heading3),
+              ),
+              Container(
+                  height: 48,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      IconButton(
+                        icon: Image.asset(
+                          AppImages.defaultProfileMD,
+                          width: 32,
+                          height: 32,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
+                  )),
+            ],
+          ),
+        ]),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: messages.isNotEmpty
-                ? ListView.builder(
-                    itemCount: messages.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      print(messages.length);
-                      var lastMessage =
-                          messages[index]['lastMessage'] ?? 'No Last Message';
-                      var title = messages[index]["name"][0] ?? "Unnamed";
-                      var group = false;
-                      if (messages[index]["name"].length > 1) {
-                        print("group message found");
-                        lastMessage = messages[index]['name'].join(", ");
-                        title = "Group Message";
-                        group = true;
-                      } else {
-                        print("group message not found");
-                      }
-                      return MessageHistoryCard(
-                          name: title,
-                          lastMessage: lastMessage,
-                          group: group,
-                          onTap: () => navigateToMessage(messages[index]));
-                    },
+                ? Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    child: ListView.builder(
+                      itemCount: messages.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        print(messages.length);
+                        var lastMessage =
+                            messages[index]['lastMessage'] ?? 'No Last Message';
+                        var title = messages[index]["name"][0] ?? "Unnamed";
+                        var group = false;
+                        if (messages[index]["name"].length > 1) {
+                          print("group message found");
+                          lastMessage = messages[index]['name'].join(", ");
+                          title = "Group Message";
+                          group = true;
+                        } else {
+                          print("group message not found");
+                        }
+                        return MessageHistoryCard(
+                            name: title,
+                            lastMessage: lastMessage,
+                            group: group,
+                            onTap: () => navigateToMessage(messages[index]));
+                      },
+                    ),
                   )
                 : Center(
                     child: Text(
-                      'No chats yet.\nGet started by messaging a friend.',
+                      'No messages yet.\nGet started by messaging a friend.',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.textMD
                           .copyWith(color: AppColors.textSecondary),
@@ -142,7 +183,7 @@ class SocialDashboardState extends State<SocialDashboard> {
           ),
           const SizedBox(height: 24),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.all(16),
             child: ButtonOrangeLG(
               label: "New Message",
               onTap: newMessage,
@@ -150,13 +191,10 @@ class SocialDashboardState extends State<SocialDashboard> {
           ),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: ModeNavigator(
-            navIndex: navIndex,
-            onDashboardPopBack: widget.onDashboardPopBack,
-            stopTimer: widget.stopTimer),
-      ),
+      bottomNavigationBar: ModeNavigator(
+          navIndex: navIndex,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          stopTimer: widget.stopTimer),
     );
   }
 }
