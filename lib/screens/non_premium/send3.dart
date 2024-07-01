@@ -18,23 +18,24 @@ class Send3 extends StatefulWidget {
   final SessionTimerManager sessionTimer;
   final VoidCallback onDashboardPopBack;
 
-  Send3(
-      {Key? key,
-      required this.amount,
-      required this.address,
-      required this.balance,
-      required this.price,
-      required this.onDashboardPopBack,
-      required this.sessionTimer})
-      : super(key: key);
+  Send3({
+    super.key,
+    required this.amount,
+    required this.address,
+    required this.balance,
+    required this.price,
+    required this.onDashboardPopBack,
+    required this.sessionTimer,
+  });
 
   @override
   Send3State createState() => Send3State();
 }
 
+String transaction = '';
+int standardFee = 0;
+
 class Send3State extends State<Send3> {
-  String transaction = '';
-  int standardFee = 0;
   bool isPrioritySelected = false;
 
   void navigate() {
@@ -55,6 +56,7 @@ class Send3State extends State<Send3> {
 
   @override
   void initState() {
+    print("##################### initState #####################");
     super.initState();
     createTransaction();
     widget.sessionTimer.setOnSessionEnd(() {
@@ -67,8 +69,8 @@ class Send3State extends State<Send3> {
 
   @override
   void dispose() {
+    print("##################### dispose #####################");
     super.dispose();
-    print("disposing send3");
   }
 
   void onOptionSelected(bool isSelected) {
@@ -78,57 +80,63 @@ class Send3State extends State<Send3> {
     });
   }
 
-  Future<void> createTransaction() async {
-    print("##################### createTransaction #####################");
-    print("Address: ${widget.address}");
-    print("Amount: ${widget.amount}");
+Future<void> createTransaction() async {
+  print("##################### createTransaction #####################");
+  print("Address: ${widget.address}");
+  print("Amount: ${widget.amount.toString()}");
 
-    var input = CreateTransactionInput(
-      widget.address,
-      widget.amount.toString(),
-      standardFee.toString(),
-    );
+  var input = CreateTransactionInput(
+    widget.address.toString(),
+    widget.amount.toString(),
+    standardFee.toString(),
+  );
 
-    print("Request: ${jsonEncode(input)}");
+  print("Request: ${jsonEncode(input)}");
 
-    try {
-      var jsonRes = await invoke("create_transaction", jsonEncode(input));
-      print("JSON Response: $jsonRes");
+  try {
+    var jsonRes = await invoke("create_transaction", jsonEncode(input));
+    print("JSON Response: $jsonRes");
 
-      if (jsonRes != null && jsonRes.isNotEmpty) {
-        var jsonResponse = jsonDecode(jsonRes);
+    if (jsonRes != null && jsonRes.toString().trim() != '') {
+      try {
+        var jsonResponse = jsonDecode(jsonRes.toString());
         print("Decoded JSON: $jsonResponse");
 
         if (jsonResponse is Map<String, dynamic>) {
           var transactionData = Transaction.fromJson(jsonResponse);
-          calculateStandardFee(transactionData);
+          calculateStandardFee(transactionData.fee.toString());
           setState(() {
-            transaction = jsonRes; // Store full response if needed
+            transaction = jsonRes.toString();
           });
         } else {
           print("Error: Response format is not as expected");
         }
-      } else {
-        print("Error: Received empty or null JSON response");
+      } catch (e) {
+        print("Error decoding JSON: $e");
       }
-    } catch (e) {
-      print("Error: $e");
+    } else {
+      print("Error: Received empty or null JSON response");
     }
+  } catch (e) {
+    print("Error invoking API: $e");
   }
+}
 
-  void calculateStandardFee(Transaction transaction) {
+
+  void calculateStandardFee(String fee) {
     setState(() {
-      standardFee = transaction.fee ?? 0;
+      standardFee = int.parse(fee);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("##################### build #####################");
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (bool didPop) async {
         widget.sessionTimer.dispose();
-        return true;
       },
       child: Scaffold(
         appBar: AppBar(

@@ -75,6 +75,8 @@ class RustR {
     return RustR(json['uid'] as String, json['data'] as String);
   }
 
+
+
   Map<String, dynamic> toJson() => {
         'uid': this.uid,
         'data': this.data,
