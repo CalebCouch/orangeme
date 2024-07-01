@@ -22,24 +22,6 @@ class ButtonSecondaryMD extends StatefulWidget {
 class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
   bool _isHovering = false;
 
-  // IconData getIconFromString(String? iconName) {
-  //   if (iconName == null) {
-  //     return Icons.error;
-  //   }
-  //   switch (iconName.toLowerCase()) {
-  //     case 'clipboard':
-  //       return Icons.content_paste;
-  //     case 'qrcode':
-  //       return Icons.qr_code_sharp;
-  //     case 'edit':
-  //       return Icons.create_outlined;
-  //     case 'clear':
-  //       return Icons.clear;
-  //     default:
-  //       return Icons.error;
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -72,11 +54,6 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SvgPicture.asset(widget.icon!, width: 20, height: 20),
-                        // Icon(
-                        //   getIconFromString(widget.icon),
-                        //   color: AppColors.primary,
-                        //   size: 15,
-                        // ),
                         const SizedBox(width: 8),
                         Flexible(
                           child: RichText(
