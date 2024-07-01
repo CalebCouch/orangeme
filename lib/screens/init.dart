@@ -71,14 +71,14 @@ class InitPageState extends State<InitPage> {
         .data;
     print(check_address);
   }
-
+/** 
   void create_transaction() async {
     var input = new CreateTransactionInput(
         get_new_address() as String, "3747373", "fee");
     var jsonres = await invoke("create_transaction", jsonEncode(input));
     print(jsonres);
   }
-
+*/
   void checkPlatform() {
     if (Platform.isAndroid) {
       print("Android device detected");

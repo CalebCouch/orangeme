@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -11,6 +12,7 @@ import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/session_timer.dart';
 import 'package:orange/screens/non_premium/send1.dart';
+import 'package:orange/classes.dart';  // Make sure this import is correct
 
 class Send2 extends StatefulWidget {
   final int amount;
@@ -19,6 +21,7 @@ class Send2 extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
   final SessionTimerManager sessionTimer;
   final String? address;
+
   const Send2({
     Key? key,
     required this.amount,
@@ -36,12 +39,13 @@ class Send2 extends StatefulWidget {
 class Send2State extends State<Send2> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
-  final TextEditingController recipientAddressController =
-      TextEditingController();
+  final TextEditingController recipientAddressController = TextEditingController();
   bool isAddressValid = false;
   bool isButtonEnabled = false;
   String clipboardData = '';
   Timer? clipboardCheckTimer;
+  Transaction? priorityTransaction;
+  Transaction? standardTransaction;
 
   @override
   void initState() {
@@ -52,8 +56,7 @@ class Send2State extends State<Send2> {
     if (widget.address != null) {
       recipientAddressController.text = widget.address!;
     }
-    clipboardCheckTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => fetchAndValidateClipboard());
+    clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) => fetchAndValidateClipboard());
     widget.sessionTimer.setOnSessionEnd(() {
       widget.onDashboardPopBack();
       Navigator.pop(context);
@@ -86,14 +89,12 @@ class Send2State extends State<Send2> {
       String trimmedData = trimAddressPrefix(clipboardData!.text!);
       bool isValid = await checkAddress(trimmedData);
       if (isValid) {
-        // Ensure setState is called only when mounted
         if (mounted) {
           setState(() {
             this.clipboardData = clipboardData.text!;
           });
         }
       } else {
-        // Ensure setState is called only when mounted
         if (mounted) {
           setState(() {
             this.clipboardData = "";
@@ -182,6 +183,30 @@ class Send2State extends State<Send2> {
     recipientAddressController.text = clipboardData;
   }
 
+  Future<void> createTransactions() async {
+    try {
+      var priorityInput = CreateTransactionInput(
+        recipientAddressController.text,
+        widget.amount.toString(),
+        1,
+      );
+      var priorityJson = (await invoke("create_transaction", jsonEncode(priorityInput))).data;
+      priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson));
+
+      var standardInput = CreateTransactionInput(
+        recipientAddressController.text,
+        widget.amount.toString(),
+        3,
+      );
+      var standardJson = (await invoke("create_transaction", jsonEncode(standardInput))).data;
+      standardTransaction = Transaction.fromJson(jsonDecode(standardJson));
+
+      onContinue();
+    } catch (e) {
+      print("Error creating transactions: $e");
+    }
+  }
+
   void onContinue() {
     _stopTimer();
     Navigator.pushReplacement(
@@ -194,6 +219,8 @@ class Send2State extends State<Send2> {
           price: widget.price,
           onDashboardPopBack: widget.onDashboardPopBack,
           sessionTimer: widget.sessionTimer,
+          priority_tx: priorityTransaction!,
+          standard_tx: standardTransaction!,
         ),
       ),
     );
@@ -271,7 +298,7 @@ class Send2State extends State<Send2> {
               const Spacer(),
               ButtonOrangeLG(
                 label: "Continue",
-                onTap: () => onContinue(),
+                onTap: () => createTransactions(),
                 isEnabled: isButtonEnabled,
               ),
             ],
