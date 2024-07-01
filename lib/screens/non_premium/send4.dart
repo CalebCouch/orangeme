@@ -35,7 +35,6 @@ class Send4State extends State<Send4> {
   late String transactionFee;
   late String sendAmount;
   late String totalAmount;
-
   @override
   void initState() {
     super.initState();
@@ -54,12 +53,14 @@ class Send4State extends State<Send4> {
   }
 
   void broadcastTransaction(String transaction) async {
-    if (!mounted) return;
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
+    print("###################################################");
+    print(transactionFee);
     if (!mounted) return;
 
     final transactionDecoded = Transaction.fromJson(jsonDecode(widget.tx));
-    var res = (await invoke("broadcast_transaction", jsonEncode(transactionDecoded))).data;
+    var res =
+        (await invoke("broadcast_transaction", jsonEncode(transactionDecoded)))
+            .data;
     if (!mounted) return;
     var resHandled = res;
     await navigateNext(resHandled);
@@ -85,9 +86,13 @@ class Send4State extends State<Send4> {
   void updateValues() {
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
     setState(() {
-      transactionFee = (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
-      sendAmount = (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
-      totalAmount = ((widget.amount + transaction.fee!) / 100000000 * widget.price).toStringAsFixed(2);
+      transactionFee =
+          (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
+      sendAmount =
+          (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
+      totalAmount =
+          ((widget.amount + transaction.fee!) / 100000000 * widget.price)
+              .toStringAsFixed(2);
     });
   }
 
@@ -141,10 +146,10 @@ class Send4State extends State<Send4> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      "${transaction.receiver}",
-                      style: AppTextStyles.textSM,
-                    ),
+                    //Text(
+                    // "${transaction.receiver}",
+                    //   style: AppTextStyles.textSM,
+                    //   ),
                     const SizedBox(height: 10),
                     Text(
                       "Bitcoin sent to the wrong address can never be recovered.",

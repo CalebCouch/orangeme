@@ -163,7 +163,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok(serde_json::to_string(&transactions)?)
                 },
                 "create_transaction" => {
-                    let (addr, sats, block_target) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
+                    let (addr, sats, fee, block_target) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
                     let fee_rate = blockchain.estimate_fee(block_target)?;
             
                     let (mut psbt, tx_details) = {
