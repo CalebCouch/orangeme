@@ -59,9 +59,6 @@ class InitPageState extends State<InitPage> {
     print(get_balance);
   }
 
-
-
-
   Future<String> get_new_address() async {
     var newAddress = (await invoke("get_new_address", "")).data;
     print(newAddress);
@@ -76,8 +73,10 @@ class InitPageState extends State<InitPage> {
   }
 
   void create_transaction() async {
-    var input = new CreateTransactionInput(get_new_address() as String, "3747373", "fee");
-    await invoke("create_transaction", jsonEncode(input));
+    var input = new CreateTransactionInput(
+        get_new_address() as String, "3747373", "fee");
+    var jsonres = await invoke("create_transaction", jsonEncode(input));
+    print(jsonres);
   }
 
   void checkPlatform() {

@@ -19,14 +19,15 @@ class Send2 extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
   final SessionTimerManager sessionTimer;
   final String? address;
-  const Send2(
-      {super.key,
-      required this.amount,
-      required this.balance,
-      required this.price,
-      required this.onDashboardPopBack,
-      required this.sessionTimer,
-      this.address});
+  const Send2({
+    Key? key,
+    required this.amount,
+    required this.balance,
+    required this.price,
+    required this.onDashboardPopBack,
+    required this.sessionTimer,
+    this.address,
+  }) : super(key: key);
 
   @override
   Send2State createState() => Send2State();
@@ -34,7 +35,7 @@ class Send2 extends StatefulWidget {
 
 class Send2State extends State<Send2> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  late QRViewController? controller;
+  QRViewController? controller;
   final TextEditingController recipientAddressController =
       TextEditingController();
   bool isAddressValid = false;
@@ -44,54 +45,90 @@ class Send2State extends State<Send2> {
 
   @override
   void initState() {
-    print("initializing send2");
     super.initState();
+    print("initializing send2");
     fetchAndValidateClipboard();
-    recipientAddressController.addListener(buttonListner);
-    //this condition applies if user is returning from further in the flow
+    recipientAddressController.addListener(buttonListener);
     if (widget.address != null) {
       recipientAddressController.text = widget.address!;
     }
-    //check the users clipboard contents every 1 second
-    clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) {
-        fetchAndValidateClipboard();
-      }
-    });
-    //send user back to dashboard if session expires
+    clipboardCheckTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => fetchAndValidateClipboard());
     widget.sessionTimer.setOnSessionEnd(() {
-      if (mounted) {
-        widget.onDashboardPopBack();
-        Navigator.pop(context);
-      }
+      widget.onDashboardPopBack();
+      Navigator.pop(context);
     });
   }
 
-  //used to periodically parse the users clipboard for display within an onscreen button
+  @override
+  void dispose() {
+    print("disposing send2");
+    recipientAddressController.dispose();
+    _stopTimer();
+    _stopQRScanner();
+    super.dispose();
+  }
+
+  void _stopTimer() {
+    clipboardCheckTimer?.cancel();
+  }
+
+  void _stopQRScanner() {
+    controller?.dispose();
+  }
+
   Future<void> fetchAndValidateClipboard() async {
-    //will only fire if the widget lifecyle is still mounted (prevents async errors when navigating away)
     if (!mounted) return;
+
     print("Checking Clipboard Data");
-    ClipboardData? clipboardData =
-        await Clipboard.getData(Clipboard.kTextPlain);
+    ClipboardData? clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
     if (clipboardData?.text != null) {
-      //trim 'bitcoin:' address prefixes
-      String trimmedData = trimAddressPrefix(clipboardData!.text);
-      //the address will only populate the button if it first passes this valid btc address check
+      String trimmedData = trimAddressPrefix(clipboardData!.text!);
       bool isValid = await checkAddress(trimmedData);
       if (isValid) {
-        setState(() {
-          this.clipboardData = clipboardData.text!;
-        });
+        // Ensure setState is called only when mounted
+        if (mounted) {
+          setState(() {
+            this.clipboardData = clipboardData.text!;
+          });
+        }
       } else {
-        setState(() {
-          this.clipboardData = "";
-        });
+        // Ensure setState is called only when mounted
+        if (mounted) {
+          setState(() {
+            this.clipboardData = "";
+          });
+        }
       }
     }
   }
 
-  //starts the qr code scanner and builds the dialog box
+  void buttonListener() async {
+    bool isValid = await checkAddress(recipientAddressController.text);
+    if (mounted) {
+      setState(() {
+        isButtonEnabled = isValid;
+      });
+    }
+  }
+
+  String trimAddressPrefix(String? contents) {
+    if (contents!.startsWith('bitcoin:')) {
+      return contents.substring(8);
+    } else {
+      return contents;
+    }
+  }
+
+  Future<bool> checkAddress(String address) async {
+    print("address check:");
+    var checkRes = (await invoke("check_address", address)).data;
+    print(address);
+    print(checkRes);
+    if (!mounted) return false;
+    return checkRes == "true";
+  }
+
   void _startQRScanner() {
     showDialog(
       context: context,
@@ -110,6 +147,7 @@ class Send2State extends State<Send2> {
             TextButton(
               onPressed: () {
                 _stopQRScanner();
+                Navigator.pop(context);
               },
               child: const Text(
                 'Close',
@@ -122,25 +160,20 @@ class Send2State extends State<Send2> {
     );
   }
 
-  //handles the data intercepted by a good QR code scan
   void _onQRViewCreated(QRViewController newController) {
     controller = newController;
     controller!.scannedDataStream.listen((scanData) async {
       print('Scanned Data: ${scanData.code}');
-      //trim "bitcoin:" address prefix
       String trimmed = trimAddressPrefix(scanData.code);
-      //the address will only populate the text field if it first passes this valid btc address check
       var validAddress = await checkAddress(trimmed);
       if (validAddress) {
         recipientAddressController.text = trimmed;
       }
-      // Stop the camera
       await controller!.stopCamera();
-      closeDialog(); // Close the QR code scanner dialog
+      closeDialog();
     });
   }
 
-  //close the QR code dialog window & dispose the controller
   void closeDialog() {
     if (controller != null && mounted) {
       print("controller disposed");
@@ -149,89 +182,33 @@ class Send2State extends State<Send2> {
     Navigator.of(context).pop();
   }
 
-  //paste the contents of the users clipboard into the address text input field
   pasteAddress() {
     recipientAddressController.text = clipboardData;
   }
 
-  //used to check for and then trim the "bitcoin:" address prefix included on some addresses
-  String trimAddressPrefix(String? contents) {
-    if (contents!.startsWith('bitcoin:')) {
-      //remove the bitcoin: prefix if applicable
-      String updatedText = contents.substring(8);
-      return updatedText;
-    } else {
-      return contents;
-    }
-  }
-
-  //check whether or not a string is a valid bitcoin address
-   Future<bool> checkAddress(String address) async {
-    print("address check:");
-    var checkRes = (await invoke("check_address", "")).data;
-    if (!mounted) return false;
-    var check = checkRes;
-    return check == "true";
-  }
-
-  //watches for updates to the address text field and validates the address to enable/disable the continue button
- void buttonListner() async {
-    if (await checkAddress(recipientAddressController.text) == true) {
-      setState(() {
-        isButtonEnabled = true;
-      });
-    } else {
-      setState(() {
-        isButtonEnabled = false;
-      });
-    }
-  }
- 
-
-  //navigate to the next page in the send flow
   void onContinue() {
-    _stopTimer(); //prevents clipboard parse from running off screen
+    _stopTimer();
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Send3(
-                amount: widget.amount,
-                address: recipientAddressController.text,
-                balance: widget.balance,
-                price: widget.price,
-                onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: widget.sessionTimer)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send3(
+          amount: widget.amount,
+          address: recipientAddressController.text,
+          balance: widget.balance,
+          price: widget.price,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: widget.sessionTimer,
+        ),
+      ),
+    );
   }
 
-  //used to shorten a bitcoin address on the users clipboard for button display
-  String truncateAddress(address) {
+  String truncateAddress(String address) {
     if (address.length > 30) {
       final firstPart = address.substring(0, 15);
       return '$firstPart...';
     }
     return address;
-  }
-
-  //stops the QR code scanner
-  void _stopQRScanner() {
-    if (controller != null) {
-      Navigator.pop(context);
-      controller!.dispose();
-    }
-  }
-
-  //used to stop the clipbard parse timer
-  void _stopTimer() {
-    print("stop clipboard check timer...");
-    clipboardCheckTimer?.cancel();
-  }
-
-  @override
-  void dispose() {
-    print("disposing send2");
-    recipientAddressController.dispose();
-    _stopTimer();
-    super.dispose();
   }
 
   @override
@@ -240,7 +217,6 @@ class Send2State extends State<Send2> {
     print("Amount to send: ${widget.amount}");
     return PopScope(
       canPop: true,
-      //prevents clipboard refresh timer & session timer from continuing to run off screen
       onPopInvoked: (bool didPop) async {
         _stopTimer();
         widget.sessionTimer.dispose();
@@ -250,22 +226,22 @@ class Send2State extends State<Send2> {
           elevation: 0,
           title: const Text('Bitcoin Address'),
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                //dashboard timer callback function
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Send1(
-                              price: widget.price,
-                              balance: widget.balance,
-                              onDashboardPopBack: widget.onDashboardPopBack,
-                              sessionTimer: widget.sessionTimer,
-                              amount:
-                                  ((widget.amount / 100000000) * widget.price)
-                                      .toStringAsFixed(2),
-                            )));
-              }),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Send1(
+                    price: widget.price,
+                    balance: widget.balance,
+                    onDashboardPopBack: widget.onDashboardPopBack,
+                    sessionTimer: widget.sessionTimer,
+                    amount: ((widget.amount / 100000000) * widget.price).toStringAsFixed(2),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -273,11 +249,11 @@ class Send2State extends State<Send2> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextInputField(
-                  controller: recipientAddressController,
-                  hint: "Bitcoin address...",
-                  error: 'invalid address'),
+                controller: recipientAddressController,
+                hint: "Bitcoin address...",
+                error: 'invalid address',
+              ),
               const SizedBox(height: 10),
-              //only show this section if the user's clipboard contains a valid BTC address
               if (clipboardData != '') ...[
                 ButtonSecondaryMD(
                   label: truncateAddress(clipboardData),
@@ -287,8 +263,7 @@ class Send2State extends State<Send2> {
                 const SizedBox(height: 5),
                 Text(
                   "or",
-                  style: AppTextStyles.textSM
-                      .copyWith(color: AppColors.textSecondary),
+                  style: AppTextStyles.textSM.copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 5),
               ],
@@ -297,7 +272,6 @@ class Send2State extends State<Send2> {
                 icon: 'qrcode',
                 onTap: _startQRScanner,
               ),
-              
               const Spacer(),
               ButtonOrangeLG(
                 label: "Continue",

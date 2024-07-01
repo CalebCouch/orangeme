@@ -287,7 +287,7 @@ pub struct Transaction {
 impl Transaction {
     fn from_details(details: TransactionDetails) -> Result<Self, Error> {
         Ok(Transaction{
-            receiver: Some("some random address"),
+            receiver: Some("some random address".to_string()),
             sender: None,
             txid: serde_json::to_string(&details.txid)?,
             net: (details.received as i64)-(details.sent as i64),

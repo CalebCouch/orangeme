@@ -14,52 +14,50 @@ const STORAGE = FlutterSecureStorage();
 String ERROR = "";
 
 Future<void> checkError(context) async {
-    while (true) {
-        await Future.delayed(Duration(seconds: 1));
-        if (ERROR != "") {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(
-                    builder: (context) => ErrorPage(message: ERROR)
-                )
-            );
-        }
+  while (true) {
+    await Future.delayed(Duration(seconds: 1));
+    if (ERROR != "") {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)));
     }
+  }
 }
 
 Future<RustR> invoke(String method, String data) async {
-    var uid = uuid.v1();
-    var command = new RustC(uid, method, data);
-    RUSTCOMMANDS.add(command);
-    while (true) {
-        var index = RUSTRESPONSES.indexWhere((res) => res.uid == uid);
-        if (index != -1) {
-            return RUSTRESPONSES.removeAt(index);
-        }
-        await Future.delayed(Duration(seconds: 1));
+  var uid = uuid.v1();
+  var command = new RustC(uid, method, data);
+  print(jsonEncode(command));
+  RUSTCOMMANDS.add(command);
+  while (true) {
+    var index = RUSTRESPONSES.indexWhere((res) => res.uid == uid);
+    if (index != -1) {
+      return RUSTRESPONSES.removeAt(index);
     }
+    await Future.delayed(Duration(seconds: 1));
+  }
 }
 
 Future<String> dartCallback(String dartCommand) async {
-    var command = DartCommand.fromJson(jsonDecode(dartCommand));
-    print(dartCommand);
-    switch (command.method) {
-        case "secure_get":
-            return await STORAGE.read(key: command.data) ?? "";
-        case "secure_set":
-            var split = command.data.split("\u0000");
-            await STORAGE.write(key: split[0], value: split[1]);
-        case "print":
-            print(command.data);
-        case "get_commands":
-            var json = jsonEncode(RUSTCOMMANDS);
-            RUSTCOMMANDS = [];
-            return json;
-        case "post_response":
-            RUSTRESPONSES.add(RustR.fromJson(jsonDecode(command.data)));
-        case var unknown:
-            return "Error:UnknownMethod:"+unknown;
-    }
-    return "Ok";
+  var command = DartCommand.fromJson(jsonDecode(dartCommand));
+  print(dartCommand);
+  switch (command.method) {
+    case "secure_get":
+      return await STORAGE.read(key: command.data) ?? "";
+    case "secure_set":
+      var split = command.data.split("\u0000");
+      await STORAGE.write(key: split[0], value: split[1]);
+    case "print":
+      print(command.data);
+    case "get_commands":
+      var json = jsonEncode(RUSTCOMMANDS);
+      RUSTCOMMANDS = [];
+      return json;
+    case "post_response":
+      RUSTRESPONSES.add(RustR.fromJson(jsonDecode(command.data)));
+    case var unknown:
+      return "Error:UnknownMethod:" + unknown;
+  }
+  return "Ok";
 }
 
 String handleNull(nullable, context) {
@@ -75,7 +73,7 @@ String handleNull(nullable, context) {
 
 Future<String> getDocPath() async {
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
-  Directory mydir = await Directory('${appDocDirectory.path}/')
-      .create(recursive: true);
+  Directory mydir =
+      await Directory('${appDocDirectory.path}/').create(recursive: true);
   return mydir.path;
 }
