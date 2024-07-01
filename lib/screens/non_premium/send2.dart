@@ -47,6 +47,7 @@ class _Send2State extends State<Send2> {
   Timer? clipboardCheckTimer;
   Transaction? priorityTransaction;
   Transaction? standardTransaction;
+  bool isCreatingTransaction = false; // Flag to manage async operation state
 
   @override
   void initState() {
@@ -178,6 +179,11 @@ class _Send2State extends State<Send2> {
   }
 
   Future<void> createTransactions() async {
+    if (isCreatingTransaction) return; // Avoid multiple calls
+    setState(() {
+      isCreatingTransaction = true;
+    });
+    
     try {
       var priorityInput = CreateTransactionInput(
         recipientAddressController.text,
@@ -196,30 +202,46 @@ class _Send2State extends State<Send2> {
       var standardJson =
           (await invoke("create_transaction", jsonEncode(standardInput))).data;
       standardTransaction = Transaction.fromJson(jsonDecode(standardJson));
-      
-      print("Transactions created successfully");
+
+      // Navigate to Send3 if both transactions are created
+      if (priorityTransaction != null && standardTransaction != null) {
+        _navigateToSend3();
+      } else {
+        // Handle case where transactions are not created
+        print("Transactions are not yet created.");
+      }
     } catch (e) {
       print("Error creating transactions: $e");
+    } finally {
+      setState(() {
+        isCreatingTransaction = false;
+      });
     }
   }
 
 void _navigateToSend3() {
-  _stopTimer();
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => Send3(
-        amount: widget.amount,
-        address: recipientAddressController.text,
-        balance: widget.balance,
-        price: widget.price,
-        onDashboardPopBack: widget.onDashboardPopBack,
-        sessionTimer: widget.sessionTimer,
-        priority_tx: priorityTransaction!,
-        standard_tx: standardTransaction!,
-      ),
-    ),
-  );
+  _stopTimer(); // Stop any timers or background tasks if needed
+  if (mounted) {
+    try {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Send3(
+            amount: widget.amount,
+            address: recipientAddressController.text,
+            balance: widget.balance,
+            price: widget.price,
+            onDashboardPopBack: widget.onDashboardPopBack,
+            sessionTimer: widget.sessionTimer,
+            priority_tx: priorityTransaction!,
+            standard_tx: standardTransaction!,
+          ),
+        ),
+      );
+    } catch (e) {
+      print("Navigation error: $e");
+    }
+  }
 }
 
 
@@ -295,10 +317,7 @@ void _navigateToSend3() {
               const Spacer(),
               ButtonOrangeLG(
                 label: "Continue",
-                onTap: () {
-                  createTransactions(); // Start transaction creation
-                  _navigateToSend3();   // Navigate to Send3 immediately
-                },
+                onTap: isButtonEnabled ? () => createTransactions() : null,
                 isEnabled: isButtonEnabled,
               ),
             ],
