@@ -19,43 +19,44 @@ class Send3 extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
 
   Send3(
-      {super.key,
+      {Key? key,
       required this.amount,
       required this.address,
       required this.balance,
       required this.price,
       required this.onDashboardPopBack,
-      required this.sessionTimer});
+      required this.sessionTimer})
+      : super(key: key);
 
   @override
   Send3State createState() => Send3State();
 }
 
-String transaction = '';
-int standardFee = 0;
-
 class Send3State extends State<Send3> {
+  String transaction = '';
+  int standardFee = 0;
   bool isPrioritySelected = false;
 
   void navigate() {
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Send4(
-                tx: transaction,
-                balance: widget.balance,
-                amount: widget.amount,
-                price: widget.price,
-                onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: widget.sessionTimer)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send4(
+          tx: transaction,
+          balance: widget.balance,
+          amount: widget.amount,
+          price: widget.price,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: widget.sessionTimer,
+        ),
+      ),
+    );
   }
 
   @override
   void initState() {
-    print("initializing send3");
     super.initState();
-  //  createTransaction();
-    //send the user back to the dashboard if the session expires
+    createTransaction();
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
         widget.onDashboardPopBack();
@@ -66,12 +67,10 @@ class Send3State extends State<Send3> {
 
   @override
   void dispose() {
-    print("disposing send3");
     super.dispose();
+    print("disposing send3");
   }
 
-  //fired when user selects priority
-  //this currently does nothing other than change the visual indicator
   void onOptionSelected(bool isSelected) {
     setState(() {
       isPrioritySelected = isSelected;
@@ -79,72 +78,79 @@ class Send3State extends State<Send3> {
     });
   }
 
-void createTransaction() async {
-  print("Address: ${widget.address}");
-  print("Amount: ${widget.amount.toString()}");
+  Future<void> createTransaction() async {
+    print("##################### createTransaction #####################");
+    print("Address: ${widget.address}");
+    print("Amount: ${widget.amount}");
 
-  var input = CreateTransactionInput(widget.address.toString(), widget.amount.toString(), "80.00");
+    var input = CreateTransactionInput(
+      widget.address,
+      widget.amount.toString(),
+      standardFee.toString(),
+    );
 
-  try {
-    var jsonRes = await invoke("create_transaction", jsonEncode(input));
-    print("JSON Response: $jsonRes");
+    print("Request: ${jsonEncode(input)}");
 
-    if (!mounted) return;
+    try {
+      var jsonRes = await invoke("create_transaction", jsonEncode(input));
+      print("JSON Response: $jsonRes");
 
-    if (jsonRes != null && jsonRes.toString().trim() != '') {
-      var json = jsonDecode(jsonRes.toString());
-      print("create tx response: $json");
+      if (jsonRes != null && jsonRes.isNotEmpty) {
+        var jsonResponse = jsonDecode(jsonRes);
+        print("Decoded JSON: $jsonResponse");
 
-      calculateStandardFee(json.toString());
-
-      setState(() {
-        transaction = json.toString();
-      });
-    } else {
-      print("Error: Received empty or null JSON response");
+        if (jsonResponse is Map<String, dynamic>) {
+          var transactionData = Transaction.fromJson(jsonResponse);
+          calculateStandardFee(transactionData);
+          setState(() {
+            transaction = jsonRes; // Store full response if needed
+          });
+        } else {
+          print("Error: Response format is not as expected");
+        }
+      } else {
+        print("Error: Received empty or null JSON response");
+      }
+    } catch (e) {
+      print("Error: $e");
     }
-  } catch (e) {
-    print("Error decoding JSON: $e");
   }
-}
 
-
-
-  //calcuate a standard fee as returned by create_transaction with no fee specified
-  void calculateStandardFee(String transaction) {
-    final transactionDecoded = Transaction.fromJson(jsonDecode(transaction));
+  void calculateStandardFee(Transaction transaction) {
     setState(() {
-      standardFee = transactionDecoded.fee!;
+      standardFee = transaction.fee ?? 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
-    return PopScope(
-      canPop: true,
-      //prevents session timer from continuing to run off screen
-      onPopInvoked: (bool didPop) async {
+    return WillPopScope(
+      onWillPop: () async {
         widget.sessionTimer.dispose();
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Transaction Speed'),
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                //dashboard timer callback function
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Send2(
-                            amount: widget.amount,
-                            balance: widget.balance,
-                            price: widget.price,
-                            onDashboardPopBack: widget.onDashboardPopBack,
-                            sessionTimer: widget.sessionTimer,
-                            address: widget.address)));
-              }),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Send2(
+                    amount: widget.amount,
+                    balance: widget.balance,
+                    price: widget.price,
+                    onDashboardPopBack: widget.onDashboardPopBack,
+                    sessionTimer: widget.sessionTimer,
+                    address: widget.address,
+                  ),
+                ),
+              );
+            },
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -153,9 +159,10 @@ void createTransaction() async {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FeeSelector(
-                  onOptionSelected: onOptionSelected,
-                  price: widget.price,
-                  standardFee: standardFee),
+                onOptionSelected: onOptionSelected,
+                price: widget.price,
+                standardFee: standardFee,
+              ),
               const Spacer(),
             ],
           ),
