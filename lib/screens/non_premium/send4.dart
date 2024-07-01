@@ -7,9 +7,6 @@ import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/widgets/session_timer.dart';
-import 'send2.dart';
-import 'send3.dart';
-import 'send1.dart';
 import 'send5.dart';
 
 class Send4 extends StatefulWidget {
@@ -107,58 +104,6 @@ class Send4State extends State<Send4> {
     });
   }
 
-  void editAddress() {
-    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    final amount = (transaction.net.abs() - transaction.fee!).toInt();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Send2(
-          amount: amount,
-          balance: widget.balance,
-          price: widget.price,
-          onDashboardPopBack: widget.onDashboardPopBack,
-          sessionTimer: widget.sessionTimer,
-          address: transaction.receiver!,
-        ),
-      ),
-    );
-  }
-
-  void editAmount() {
-    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Send1(
-          price: widget.price,
-          balance: widget.balance,
-          onDashboardPopBack: widget.onDashboardPopBack,
-          sessionTimer: widget.sessionTimer,
-          address: transaction.receiver!,
-          amount: sendAmount,
-        ),
-      ),
-    );
-  }
-
-  void editSpeed() {
-    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Send3(
-          amount: widget.amount,
-          balance: widget.balance,
-          address: transaction.receiver!,
-          price: widget.price,
-          onDashboardPopBack: widget.onDashboardPopBack,
-          sessionTimer: widget.sessionTimer,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
@@ -233,7 +178,9 @@ class Send4State extends State<Send4> {
                     ButtonSecondaryMD(
                       label: "Address",
                       icon: "edit",
-                      onTap: editAddress,
+                      onTap: () {
+                        // Edit address logic here if needed
+                      },
                     ),
                   ],
                 ),
@@ -309,22 +256,6 @@ class Send4State extends State<Send4> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        ButtonSecondaryMD(
-                          label: "Amount",
-                          icon: "edit",
-                          onTap: editAmount,
-                        ),
-                        const SizedBox(width: 10),
-                        ButtonSecondaryMD(
-                          label: "Speed",
-                          icon: "edit",
-                          onTap: editSpeed,
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),

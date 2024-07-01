@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:orange/classes.dart';
 import 'package:orange/screens/non_premium/send4.dart';
-import 'package:orange/widgets/fee_selector.dart';
-import 'package:orange/components/buttons/orange_lg.dart';
-import 'package:orange/util.dart';
 import 'package:orange/widgets/session_timer.dart';
-import '../../classes.dart';
-import 'package:orange/screens/non_premium/send2.dart';
 
 class Send3 extends StatefulWidget {
   final int amount;
-  final String address;
   final int balance;
+  final String address;
   final double price;
-  final SessionTimerManager sessionTimer;
   final VoidCallback onDashboardPopBack;
+  final SessionTimerManager sessionTimer;
   final Transaction priority_tx;
   final Transaction standard_tx;
 
   const Send3({
     Key? key,
     required this.amount,
-    required this.address,
     required this.balance,
+    required this.address,
     required this.price,
     required this.onDashboardPopBack,
     required this.sessionTimer,
@@ -34,92 +30,61 @@ class Send3 extends StatefulWidget {
 }
 
 class Send3State extends State<Send3> {
-  bool isPrioritySelected = false;
-
-  void navigate() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Send4(
-          tx: isPrioritySelected ? widget.priority_tx : widget.standard_tx,
-          balance: widget.balance,
-          amount: widget.amount,
-          price: widget.price,
-          onDashboardPopBack: widget.onDashboardPopBack,
-          sessionTimer: widget.sessionTimer,
-        ),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.sessionTimer.setOnSessionEnd(() {
-      if (mounted) {
-        widget.onDashboardPopBack();
-        Navigator.pop(context);
-      }
-    });
-  }
-
-  void onOptionSelected(bool isSelected) {
-    setState(() {
-      isPrioritySelected = isSelected;
-    });
-  }
+  bool isPrioritySelected = true;
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (bool didPop) async {
-        widget.sessionTimer.dispose();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Transaction Speed'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Select Speed'),
+      ),
+      body: Column(
+        children: [
+          ListTile(
+            title: Text('Priority'),
+            leading: Radio<bool>(
+              value: true,
+              groupValue: isPrioritySelected,
+              onChanged: (bool? value) {
+                setState(() {
+                  isPrioritySelected = value!;
+                });
+              },
+            ),
+          ),
+          ListTile(
+            title: Text('Standard'),
+            leading: Radio<bool>(
+              value: false,
+              groupValue: isPrioritySelected,
+              onChanged: (bool? value) {
+                setState(() {
+                  isPrioritySelected = value!;
+                });
+              },
+            ),
+          ),
+          ElevatedButton(
             onPressed: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Send2(
-                    amount: widget.amount,
+                  builder: (context) => Send4(
+                    tx: isPrioritySelected
+                        ? widget.priority_tx.toJson().toString()
+                        : widget.standard_tx.toJson().toString(),
                     balance: widget.balance,
+                    amount: widget.amount,
                     price: widget.price,
                     onDashboardPopBack: widget.onDashboardPopBack,
                     sessionTimer: widget.sessionTimer,
-                    address: widget.address,
                   ),
                 ),
               );
             },
+            child: Text('Continue'),
           ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FeeSelector(
-                onOptionSelected: onOptionSelected,
-                price: widget.price,
-                standardFee: 0, // Provide actual fee values if needed
-              ),
-              const Spacer(),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: ButtonOrangeLG(
-            label: "Continue",
-            onTap: navigate,
-          ),
-        ),
+        ],
       ),
     );
   }
