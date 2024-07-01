@@ -56,6 +56,7 @@ class Send3State extends State<Send3> {
 
   @override
   void initState() {
+    print("##################### initState #####################");
     super.initState();
     createTransaction();
     widget.sessionTimer.setOnSessionEnd(() {
@@ -68,6 +69,7 @@ class Send3State extends State<Send3> {
 
   @override
   void dispose() {
+    print("##################### dispose #####################");
     super.dispose();
   }
 
@@ -79,6 +81,10 @@ class Send3State extends State<Send3> {
   }
 
   Future<void> createTransaction() async {
+    print("##################### createTransaction #####################");
+    print("Address: ${widget.address}");
+    print("Amount: ${widget.amount.toString()}");
+
     var input = CreateTransactionInput(
       widget.address.toString(),
       widget.amount.toString(),
@@ -90,6 +96,8 @@ class Send3State extends State<Send3> {
     try {
       var jsonRes = (await invoke("create_transaction", jsonEncode(input))).data;
       if (jsonRes != null && jsonRes.toString().trim() != '') {
+        print("####################################");
+        print(jsonRes);
         try {
           var jsonResponse = jsonDecode(jsonRes);
 
@@ -123,6 +131,7 @@ class Send3State extends State<Send3> {
 
   @override
   Widget build(BuildContext context) {
+    print("##################### build #####################");
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
     return PopScope(
       canPop: true,

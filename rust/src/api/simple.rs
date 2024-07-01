@@ -287,12 +287,16 @@ pub struct Transaction {
 impl Transaction {
     fn from_details(details: TransactionDetails) -> Result<Self, Error> {
         Ok(Transaction{
-            receiver: Some("some random address".to_string()),
+            receiver: details.address.map(|addr| addr.to_string()), 
             sender: None,
             txid: serde_json::to_string(&details.txid)?,
-            net: (details.received as i64)-(details.sent as i64),
+            net: (details.received as i64) - (details.sent as i64),
             fee: details.fee,
-            timestamp: if details.confirmation_time.is_some() { Some(details.confirmation_time.unwrap().timestamp) } else { None },
+            timestamp: if let Some(confirmation_time) = details.confirmation_time {
+                Some(confirmation_time.timestamp)
+            } else {
+                None
+            },
             raw: None
         })
     }
