@@ -194,8 +194,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 },
                 "estimate_fees" => {
                     let priority_target: usize = 1;
-                    let result = blockchain.estimate_fee(priority_target)
-                        .unwrap_or_default(); 
+                    let result = blockchain.estimate_fee(priority_target)?; 
                     Ok(serde_json::to_string(&result)?)
 
                 },

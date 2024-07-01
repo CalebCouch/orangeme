@@ -17,6 +17,10 @@ class Send3 extends StatefulWidget {
   final double price;
   final SessionTimerManager sessionTimer;
   final VoidCallback onDashboardPopBack;
+  final Transaction? transaction;
+
+  final int standardFee = 0;
+  final int priorityFee = 0;
 
   Send3({
     super.key,
@@ -32,9 +36,6 @@ class Send3 extends StatefulWidget {
   Send3State createState() => Send3State();
 }
 
-String transaction = '';
-int standardFee = 0;
-
 class Send3State extends State<Send3> {
   bool isPrioritySelected = false;
 
@@ -43,7 +44,7 @@ class Send3State extends State<Send3> {
       context,
       MaterialPageRoute(
         builder: (context) => Send4(
-          tx: transaction,
+          tx: widget.transaction,
           balance: widget.balance,
           amount: widget.amount,
           price: widget.price,
@@ -58,6 +59,7 @@ class Send3State extends State<Send3> {
   void initState() {
     print("##################### initState #####################");
     super.initState();
+    (await invoke("estimate_fee", ""))
     createTransaction();
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
@@ -81,45 +83,19 @@ class Send3State extends State<Send3> {
   }
 
   Future<void> createTransaction() async {
-    print("##################### createTransaction #####################");
-    print("Address: ${widget.address}");
-    print("Amount: ${widget.amount.toString()}");
-
-    var input = CreateTransactionInput(
-      widget.address.toString(),
-      widget.amount.toString(),
-      standardFee.toString(),
-    );
-
-    print(jsonEncode(input));
-
     try {
-      var jsonRes = (await invoke("create_transaction", jsonEncode(input))).data;
-      if (jsonRes != null && jsonRes.toString().trim() != '') {
-        print("####################################");
-        print(jsonRes);
-        try {
-          var jsonResponse = jsonDecode(jsonRes);
-
-          print("Decoded JSON: $jsonResponse");
-
-          if (jsonResponse is Map<String, dynamic>) {
-            var transactionData = Transaction.fromJson(jsonResponse);
-            calculateStandardFee(transactionData.fee.toString());
-            setState(() {
-              transaction = transactio);
-            });
-          } else {
-            print("Error: Response format is not as expected");
-          }
-        } catch (e) {
-          print("Error decoding JSON: $e");
-        }
-      } else {
-        print("Error: Received empty or null JSON response");
-      }
+      var input = CreateTransactionInput(
+        widget.address.toString(),
+        widget.amount.toString(),
+        widget.standardFee.toString(),
+      );
+      var jsonRes =
+          (await invoke("create_transaction", jsonEncode(input))).data;
+      var local_transaction = Transaction.fromJson(jsonDecode(jsonRes));
+      calculateStandardFee(local_transaction.fee.toString());
+      widget.transaction = local_transaction;
     } catch (e) {
-      print("Error invoking API: $e");
+      ERROR = e.toString();
     }
   }
 
