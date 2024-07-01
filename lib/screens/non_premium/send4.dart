@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
@@ -32,13 +32,12 @@ class Send4 extends StatefulWidget {
 }
 
 class Send4State extends State<Send4> {
-  String transactionFee = '0';
-  String sendAmount = '0';
-  String totalAmount = '0';
+  late String transactionFee;
+  late String sendAmount;
+  late String totalAmount;
 
   @override
   void initState() {
-    print("Initializing Send4");
     super.initState();
     updateValues();
     widget.sessionTimer.setOnSessionEnd(() {
@@ -51,24 +50,18 @@ class Send4State extends State<Send4> {
 
   @override
   void dispose() {
-    print("Disposing Send4");
     super.dispose();
   }
 
   void broadcastTransaction(String transaction) async {
-    print("Broadcasting transaction");
     if (!mounted) return;
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
 
     final transactionDecoded = Transaction.fromJson(jsonDecode(widget.tx));
-    print("######################################");
-    print("Transaction: ${transactionDecoded.toString()}");
-    if (!mounted) return;
-    var res = (await invoke("broadcast_transaction", "")).data;
+    var res = (await invoke("broadcast_transaction", jsonEncode(transactionDecoded))).data;
     if (!mounted) return;
     var resHandled = res;
-    print("Broadcast response: $resHandled");
     await navigateNext(resHandled);
   }
 
@@ -90,31 +83,16 @@ class Send4State extends State<Send4> {
   }
 
   void updateValues() {
-    print("Updating values");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
     setState(() {
-      transactionFee = (transaction.fee! / 100000000 * widget.price) == 0.0
-          ? '<0.01'
-          : (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
-      sendAmount =
-          (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
-      totalAmount =
-          ((widget.amount + transaction.fee!) / 100000000 * widget.price)
-              .toStringAsFixed(2);
+      transactionFee = (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
+      sendAmount = (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
+      totalAmount = ((widget.amount + transaction.fee!) / 100000000 * widget.price).toStringAsFixed(2);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
-    print("Price: ${widget.price}");
-    print("Send4 Transaction: ${widget.tx}");
-
-    final decodeJson = jsonDecode(widget.tx);
-    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    print("DecodeJSON: $decodeJson");
-    print("Transaction: $transaction");
-
     return WillPopScope(
       onWillPop: () async {
         widget.sessionTimer.dispose();
