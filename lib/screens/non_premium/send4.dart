@@ -60,16 +60,13 @@ class Send4State extends State<Send4> {
 
   //broadcast the transaction confirmed by the user
   void broadcastTransaction(String transaction) async {
-    print("broadcasting transaction");
-    if (!mounted) return;
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
-    if (!mounted) return;
 
+    if (!mounted) return;
     final transactionDecoded = Transaction.fromJson(jsonDecode(widget.tx));
     print("transaction: ${transactionDecoded.toString()}");
     if (!mounted) return;
-    var res = (await invoke("broadcast_transaction", "")).data;
-    if (!mounted) return;
+    var res = (await invoke("broadcast_transaction", transactionDecoded as String)).data;
+    print(res);
     var resHandled = res;
     print("broadcast response: $resHandled");
     await navigateNext(resHandled);
