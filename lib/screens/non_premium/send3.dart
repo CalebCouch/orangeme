@@ -107,7 +107,7 @@ class Send3State extends State<Send3> {
             var transactionData = Transaction.fromJson(jsonResponse);
             calculateStandardFee(transactionData.fee.toString());
             setState(() {
-              transaction = jsonRes.toString();
+              transaction = transactio);
             });
           } else {
             print("Error: Response format is not as expected");

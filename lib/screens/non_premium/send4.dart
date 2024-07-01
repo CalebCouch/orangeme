@@ -20,14 +20,15 @@ class Send4 extends StatefulWidget {
   final SessionTimerManager sessionTimer;
   final VoidCallback onDashboardPopBack;
 
-  const Send4(
-      {super.key,
-      required this.tx,
-      required this.balance,
-      required this.amount,
-      required this.price,
-      required this.onDashboardPopBack,
-      required this.sessionTimer});
+  const Send4({
+    Key? key,
+    required this.tx,
+    required this.balance,
+    required this.amount,
+    required this.price,
+    required this.onDashboardPopBack,
+    required this.sessionTimer,
+  }) : super(key: key);
 
   @override
   Send4State createState() => Send4State();
@@ -40,10 +41,9 @@ class Send4State extends State<Send4> {
 
   @override
   void initState() {
-    print("initializing send4");
+    print("Initializing Send4");
     super.initState();
     updateValues();
-    //send the user back to the dashboard if the session expires
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
         widget.onDashboardPopBack();
@@ -54,24 +54,24 @@ class Send4State extends State<Send4> {
 
   @override
   void dispose() {
-    print("disposing send4");
+    print("Disposing Send4");
     super.dispose();
   }
 
-  //broadcast the transaction confirmed by the user
   void broadcastTransaction(String transaction) async {
-    print("broadcasting transaction");
+    print("Broadcasting transaction");
     if (!mounted) return;
     var descriptorsRes = await STORAGE.read(key: "descriptors");
     if (!mounted) return;
 
     final transactionDecoded = Transaction.fromJson(jsonDecode(widget.tx));
-    print("transaction: ${transactionDecoded.toString()}");
+    print("######################################");
+    print("Transaction: ${transactionDecoded.toString()}");
     if (!mounted) return;
     var res = (await invoke("broadcast_transaction", "")).data;
     if (!mounted) return;
     var resHandled = res;
-    print("broadcast response: $resHandled");
+    print("Broadcast response: $resHandled");
     await navigateNext(resHandled);
   }
 
@@ -79,91 +79,84 @@ class Send4State extends State<Send4> {
     broadcastTransaction(widget.tx);
   }
 
-  //navigate to the success screen
   Future<void> navigateNext(String transaction) async {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => Send5(
-                amount: widget.amount,
-                price: widget.price,
-                onDashboardPopBack: widget.onDashboardPopBack,
-              )),
+        builder: (context) => Send5(
+          amount: widget.amount,
+          price: widget.price,
+          onDashboardPopBack: widget.onDashboardPopBack,
+        ),
+      ),
     );
   }
 
-  //update the values displayed onscreen based on the current price
   void updateValues() {
-    print("updating values");
+    print("Updating values");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    print("transaction net: ${transaction.net}");
-    print("transaction fee: ${transaction.fee}");
-    print("price: ${widget.price}");
     setState(() {
       transactionFee = (transaction.fee! / 100000000 * widget.price) == 0.0
           ? '<0.01'
           : (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
-      print("transaction fee: $transactionFee");
       sendAmount =
           (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
-      print("send amount: $sendAmount");
       totalAmount =
           ((widget.amount + transaction.fee!) / 100000000 * widget.price)
               .toStringAsFixed(2);
-      print("total amount: $totalAmount");
     });
   }
 
-  //navigate to the address input screen, user activates by clicking the "edit address" button
   void editAddress() {
-    print("edit address selected");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
     final amount = (transaction.net.abs() - transaction.fee!).toInt();
-    print("Sending to Address screen with Amount: $amount");
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Send2(
-                amount: amount,
-                balance: widget.balance,
-                price: widget.price,
-                onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: widget.sessionTimer,
-                address: transaction.receiver!)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send2(
+          amount: amount,
+          balance: widget.balance,
+          price: widget.price,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: widget.sessionTimer,
+          address: transaction.receiver!,
+        ),
+      ),
+    );
   }
 
-  //navigate to the amount input screen, user activates by clicking the "edit amount" button
   void editAmount() {
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    print("edit amount selected");
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Send1(
-                  price: widget.price,
-                  balance: widget.balance,
-                  onDashboardPopBack: widget.onDashboardPopBack,
-                  sessionTimer: widget.sessionTimer,
-                  address: transaction.receiver!,
-                  amount: sendAmount,
-                )));
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send1(
+          price: widget.price,
+          balance: widget.balance,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: widget.sessionTimer,
+          address: transaction.receiver!,
+          amount: sendAmount,
+        ),
+      ),
+    );
   }
 
-  //navigate to the fee selector screen, user activates by clicking the "edit speed" button
   void editSpeed() {
-    print("edit speed selected");
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    print("sending to edit screen with Amount: ${widget.amount}");
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Send3(
-                amount: widget.amount,
-                balance: widget.balance,
-                address: transaction.receiver!,
-                price: widget.price,
-                onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: widget.sessionTimer)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send3(
+          amount: widget.amount,
+          balance: widget.balance,
+          address: transaction.receiver!,
+          price: widget.price,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: widget.sessionTimer,
+        ),
+      ),
+    );
   }
 
   @override
@@ -171,37 +164,26 @@ class Send4State extends State<Send4> {
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
     print("Price: ${widget.price}");
     print("Send4 Transaction: ${widget.tx}");
+
     final decodeJson = jsonDecode(widget.tx);
     final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    print("DecodeJSON*************: $decodeJson");
-    print("Transaction:************ $transaction");
+    print("DecodeJSON: $decodeJson");
+    print("Transaction: $transaction");
 
-    return PopScope(
-      canPop: true,
-      //prevents session timer from continuing to run off screen
-      onPopInvoked: (bool didPop) async {
+    return WillPopScope(
+      onWillPop: () async {
         widget.sessionTimer.dispose();
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Confirm Send',
-          ),
+          title: const Text('Confirm Send'),
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                //dashboard timer callback function
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Send3(
-                            amount: widget.amount,
-                            balance: widget.balance,
-                            address: transaction.receiver!,
-                            price: widget.price,
-                            onDashboardPopBack: widget.onDashboardPopBack,
-                            sessionTimer: widget.sessionTimer)));
-              }),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -243,12 +225,16 @@ class Send4State extends State<Send4> {
                     const SizedBox(height: 10),
                     Text(
                       "Bitcoin sent to the wrong address can never be recovered.",
-                      style: AppTextStyles.textSM
-                          .copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.textSM.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     ButtonSecondaryMD(
-                        label: "Address", icon: "edit", onTap: editAddress),
+                      label: "Address",
+                      icon: "edit",
+                      onTap: editAddress,
+                    ),
                   ],
                 ),
               ),
@@ -327,10 +313,16 @@ class Send4State extends State<Send4> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         ButtonSecondaryMD(
-                            label: "Amount", icon: "edit", onTap: editAmount),
+                          label: "Amount",
+                          icon: "edit",
+                          onTap: editAmount,
+                        ),
                         const SizedBox(width: 10),
                         ButtonSecondaryMD(
-                            label: "Speed", icon: "edit", onTap: editSpeed),
+                          label: "Speed",
+                          icon: "edit",
+                          onTap: editSpeed,
+                        ),
                       ],
                     ),
                   ],
@@ -343,7 +335,7 @@ class Send4State extends State<Send4> {
           padding: const EdgeInsets.all(20.0),
           child: ButtonOrangeLG(
             label: "Confirm & Send",
-           // onTap: confirmSend,
+            onTap: confirmSend,
             isEnabled: true,
           ),
         ),
