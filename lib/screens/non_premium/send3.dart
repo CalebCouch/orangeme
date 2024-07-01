@@ -96,12 +96,12 @@ class Send3State extends State<Send3> {
     try {
       var jsonRes = await invoke("create_transaction", jsonEncode(input));
       print("JSON Response: $jsonRes");
-
       if (jsonRes != null && jsonRes.toString().trim() != '') {
         print("####################################");
-        print(jsonRes);
+        print(jsonRes.toString());
         try {
           var jsonResponse = jsonDecode(jsonRes.toString());
+          
           print("Decoded JSON: $jsonResponse");
 
           if (jsonResponse is Map<String, dynamic>) {
