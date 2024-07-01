@@ -163,13 +163,15 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok(serde_json::to_string(&transactions)?)
                 },
                 "create_transaction" => {
-                    let (addr, sats, block_target) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
-                    let fee_rate = blockchain.estimate_fee(block_target)?;
+                    let input = serde_json::from_str::<CreateTransactionInput>(&command.data)?;
+                    let sats = input.sats;
+                    let address = Address::from_str(&input.address)?.require_network(Network::Bitcoin)?;
+                    let fee_rate: bdk::FeeRate = FeeRate::from_btc_per_kvb(blockchain.estimate_fee(input.block_target as usize)? as f32);
                     
                     let (mut psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
                         builder.fee_rate(fee_rate);
-                        builder.add_recipient(address.script_pubkey(), sats.unwrap_or(0));
+                        builder.add_recipient(address.script_pubkey(), sats);
                         builder.finish()?
                     };
             
@@ -281,7 +283,7 @@ impl Transaction {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CreateTransactionInput {
     pub address: String,
-    pub sats: String,
+    pub sats: u64,
     pub block_target: u64
 }
 
