@@ -31,43 +31,24 @@ class MessageState extends State<Message> {
     messages = [
       {
         "message":
-            "Quick question – do you know any good books to read? Need a new one.",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
         "incoming": "true",
         "sender": sender,
-        "timestamp": "2024-06-30 11:59:53"
-      },
-      {
-        "message": "Absolutely! What genre are you into lately?",
-        "incoming": "false",
-        "sender": "me",
-        "timestamp": "2024-06-30 13:32:09"
+        "timestamp": "2024-06-10 11:59:53"
       },
       {
         "message":
-            "Thinking of redecorating my living room. Any ideas for a new color scheme?",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
         "incoming": "false",
         "sender": "me",
-        "timestamp": "2024-06-30 13:32:09"
+        "timestamp": "2024-06-11 13:32:09"
       },
       {
         "message":
-            "Redecorating your living room sounds exciting! How about considering a neutral palette with touches of gold or silver for elegance? Or maybe bold blues or greens for a statement look? Let me know your thoughts!",
-        "incoming": "true",
-        "sender": sender,
-        "timestamp": "2024-07-01 11:59:53"
-      },
-      {
-        "message":
-            "By the way, what are you currently reading or any books you're excited to dive into next? Always looking for recommendations!",
-        "incoming": "true",
-        "sender": sender,
-        "timestamp": "2024-07-01 13:32:09"
-      },
-      {
-        "message": "Absolutely! What genre are you into lately?",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
         "incoming": "false",
         "sender": "me",
-        "timestamp": "2024-07-01 13:32:09"
+        "timestamp": "2024-06-12 12:29:09"
       },
     ];
     messageController.addListener(() {
@@ -147,19 +128,10 @@ class MessageState extends State<Message> {
   void showRecipients() {
     print("Showing message participants");
     Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, __, ___) =>
-            GroupMessageList(recipients: widget.recipients),
-        transitionDuration: const Duration(seconds: 0),
-      ),
-    );
-  }
-
-  bool firstLoad = true;
-  void scrollDown() {
-    scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    firstLoad = false;
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                GroupMessageList(recipients: widget.recipients)));
   }
 
   @override
@@ -177,27 +149,19 @@ class MessageState extends State<Message> {
               showRecipients:
                   widget.recipients.length > 1 ? showRecipients : null),
           Expanded(
-            child: messages.isEmpty
-                ? Center(
-                    child: Text(
-                      'No messages yet.',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.textMD
-                          .copyWith(color: AppColors.textSecondary),
-                    ),
-                  )
-                : Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(0),
-                      shrinkWrap: true,
+              child: messages.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No messages yet.',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.textMD
+                            .copyWith(color: AppColors.textSecondary),
+                      ),
+                    )
+                  : ListView.builder(
                       controller: scrollController,
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
-                        if (scrollController.hasClients && firstLoad) {
-                          scrollToBottom();
-                        }
                         return MessageBauble(
                             message: messages[index]["message"]!,
                             incoming: messages[index]["incoming"]!,
@@ -206,9 +170,7 @@ class MessageState extends State<Message> {
                                 ? messages[index]["sender"]!
                                 : widget.recipients.first);
                       },
-                    ),
-                  ),
-          ),
+                    )),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextInputField(

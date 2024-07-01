@@ -43,12 +43,13 @@ Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
     valueListenable: transactions,
     builder: (BuildContext context, List<Transaction> value, Widget? child) {
       return Expanded(
-          child: ListView.builder(
-        itemCount: value.length,
-        itemBuilder: (context, index) {
-          return buildTransactionCard(context, value[index], price);
-        },
-      ));
+        child: ListView.builder(
+          itemCount: value.length,
+          itemBuilder: (context, index) {
+            return buildTransactionCard(context, value[index], price);
+          },
+        ),
+      );
     },
   );
 }
@@ -68,46 +69,49 @@ Widget buildTransactionCard(BuildContext context, Transaction transaction,
     },
     child: Card(
       color: AppColors.background,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin",
-                  style: AppTextStyles.textMD),
-              ValueListenableBuilder<double>(
-                valueListenable: price,
-                builder:
-                    (BuildContext innerContext, double value, Widget? child) {
-                  return Text(formatSatsToDollars(transaction.net, value),
-                      style: AppTextStyles.textMD);
-                },
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                        text: formatTimestamp(transaction.timestamp),
-                        style: AppTextStyles.textMD
-                            .copyWith(color: AppColors.textSecondary)),
-                  ],
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(transaction.net < 0 ? "Sent Bitcoin" : "Received Bitcoin",
+                    style: AppTextStyles.textMD),
+                ValueListenableBuilder<double>(
+                  valueListenable: price,
+                  builder:
+                      (BuildContext innerContext, double value, Widget? child) {
+                    return Text(formatSatsToDollars(transaction.net, value),
+                        style: AppTextStyles.textMD);
+                  },
                 ),
-              ),
-              Text("Details",
-                  style: AppTextStyles.textMD.copyWith(
-                      color: AppColors.textSecondary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.textSecondary)),
-            ],
-          ),
-        ],
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: formatTimestamp(transaction.timestamp),
+                          style: AppTextStyles.textMD
+                              .copyWith(color: AppColors.textSecondary)),
+                    ],
+                  ),
+                ),
+                Text("Details",
+                    style: AppTextStyles.textMD.copyWith(
+                        color: AppColors.textSecondary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.textSecondary)),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );

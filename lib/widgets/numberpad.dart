@@ -59,12 +59,12 @@ class NumberButton extends StatelessWidget {
         borderRadius: BorderRadius.zero,
         child: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           height: 48,
           child: svgIcon != null
               ? SizedBox(
-                  width: 24,
-                  height: 24,
+                  width: 30,
+                  height: 30,
                   child: SvgPicture.asset(
                     svgIcon!,
                     colorFilter: const ColorFilter.mode(
@@ -73,11 +73,11 @@ class NumberButton extends StatelessWidget {
                 )
               : Text(
                   number,
-                  style:
-                      AppTextStyles.labelLG.copyWith(color: AppColors.primary),
+                  style: AppTextStyles.textLG.copyWith(color: AppColors.white),
                 ),
         ),
       ),
     );
   }
 }
+

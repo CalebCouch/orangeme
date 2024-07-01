@@ -48,9 +48,9 @@ class ValueDisplay extends StatelessWidget {
       bigNumber = true;
     }
     return Container(
-      width: double.infinity,
-      height: 250,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 64),
+      width: 288,
+      height: 221,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -72,7 +72,7 @@ class ValueDisplay extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5),
           Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,

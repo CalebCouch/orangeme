@@ -7,11 +7,9 @@ class MessageBauble extends StatefulWidget {
   final String incoming;
   final String timestamp;
   final String name;
-  final bool? group;
 
   const MessageBauble(
       {super.key,
-      this.group,
       required this.message,
       required this.incoming,
       required this.name,
@@ -32,10 +30,8 @@ class MessageBaubleState extends State<MessageBauble> {
     DateTime time = DateTime.parse(timestamp);
     String namePrefix = "";
     //only show the name prefix if the message is receieved from another
-    if (widget.group != null) {
-      if (widget.group! == true && widget.incoming == "true") {
-        namePrefix = "${widget.name} · ";
-      }
+    if (widget.incoming == "true") {
+      namePrefix = "${widget.name} · ";
     }
     int dayDifference = now.difference(time).inDays.abs();
     bool isSameDay =
@@ -129,22 +125,30 @@ class MessageBaubleState extends State<MessageBauble> {
                 : AppColors.offBlack,
             borderRadius: BorderRadius.circular(8),
           ),
+          padding: const EdgeInsets.all(6.0),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            padding: const EdgeInsets.all(12.0),
             child: Text(
               widget.message,
-              style: AppTextStyles.textMD.copyWith(
-                color: AppColors.heading,
+              style: const TextStyle(
+                color: AppColors.white,
+                fontSize: 16,
+                fontFamily: 'Outfit',
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+          padding: const EdgeInsets.only(top: 4.0),
           child: Text(
             formatTimestamp(widget.timestamp),
-            style: AppTextStyles.textSM.copyWith(
-              color: AppColors.textSecondary,
+            style: const TextStyle(
+              color: AppColors.grey,
+              fontSize: 14,
+              fontFamily: 'Outfit',
+              fontWeight: FontWeight.w400,
+              height: 0,
             ),
           ),
         ),

@@ -23,47 +23,67 @@ class ModeNavigatorState extends State<ModeNavigator> {
   void navigateWallet() {
     widget.onDashboardPopBack();
     Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, __, ___) => const Dashboard(loading: true),
-        transitionDuration: const Duration(seconds: 0),
-      ),
-    );
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const Dashboard(loading: true),
+          transitionDuration: const Duration(milliseconds: 800),
+          reverseTransitionDuration: const Duration(milliseconds: 800),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ));
   }
 
   void navigateSocial() {
     widget.stopTimer();
     Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, __, ___) => SocialDashboard(
-          onDashboardPopBack: widget.onDashboardPopBack,
-          stopTimer: widget.stopTimer,
-        ),
-        transitionDuration: const Duration(seconds: 0),
-      ),
-    );
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              SocialDashboard(
+            onDashboardPopBack: widget.onDashboardPopBack,
+            stopTimer: widget.stopTimer,
+          ),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 8, bottom: 24),
+      height: 43,
+      padding: const EdgeInsets.symmetric(horizontal: 80),
       color: AppColors.background,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           IconButton(
-            icon: SvgPicture.asset(
-              AppIcons.wallet,
-              colorFilter: ColorFilter.mode(
-                  widget.navIndex == 0
-                      ? AppColors.primary
-                      : AppColors.textSecondary,
-                  BlendMode.srcIn),
-              width: 32,
-              height: 32,
-            ),
+            icon: widget.navIndex == 0
+                ? SvgPicture.asset(
+                    'assets/icons/Icon=wallet_filled.svg',
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.primary, BlendMode.srcIn),
+                    width: 50,
+                    height: 50,
+                  )
+                : SvgPicture.asset(
+                    'assets/icons/Icon=wallet_filled.svg',
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.textSecondary, BlendMode.srcIn),
+                    width: 50,
+                    height: 50,
+                  ),
             onPressed: () {
               if (widget.navIndex != 0) {
                 navigateWallet();
@@ -72,17 +92,16 @@ class ModeNavigatorState extends State<ModeNavigator> {
               }
             },
           ),
-          const SizedBox(width: 64),
           IconButton(
             icon: SvgPicture.asset(
-              AppIcons.chat,
+              'assets/icons/Icon=chat.svg',
               colorFilter: ColorFilter.mode(
                   widget.navIndex == 1
                       ? AppColors.primary
                       : AppColors.textSecondary,
                   BlendMode.srcIn),
-              width: 32,
-              height: 32,
+              width: 22,
+              height: 22,
             ),
             onPressed: () {
               if (widget.navIndex != 1) {

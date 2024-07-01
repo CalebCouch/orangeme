@@ -56,94 +56,63 @@ class ReceiveState extends State<Receive> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        flexibleSpace: Column(children: [
-          const SizedBox(height: 54),
-          Stack(
-            children: [
-              Container(
-                height: 48,
-                alignment: Alignment.center,
-                child: const Text('Receive bitcoin',
-                    style: AppTextStyles.heading4),
-              ),
-              Container(
-                  height: 48,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 16),
-                      IconButton(
-                        icon: SvgPicture.asset(
-                          AppIcons.left,
-                          width: 32,
-                          height: 32,
-                        ),
-                        onPressed: () {
-                          widget.onDashboardPopBack();
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  )),
-            ],
-          ),
-        ]),
+        title: const Text('Receive Bitcoin'),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              widget.onDashboardPopBack();
+              Navigator.pop(context);
+            }),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Center(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: ValueListenableBuilder<String>(
-                              valueListenable: address,
-                              builder:
-                                  (BuildContext context, String value, child) {
-                                return CustomPaint(
-                                  size: const Size(312, 312),
-                                  painter: QrPainter(
-                                    data: value,
-                                    options: const QrOptions(
-                                      shapes: QrShapes(
-                                        darkPixel: QrPixelShapeCircle(),
-                                      ),
-                                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: ValueListenableBuilder<String>(
+                          valueListenable: address,
+                          builder: (BuildContext context, String value, child) {
+                            return CustomPaint(
+                              size: const Size(312, 312),
+                              painter: QrPainter(
+                                data: value,
+                                options: const QrOptions(
+                                  shapes: QrShapes(
+
+                                    darkPixel: QrPixelShapeCircle(),
+                                    
+                                    
                                   ),
-                                );
-                              },
-                            ),
-                          ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        Positioned(
-                          child: SvgPicture.asset(
-                            AppIcons.brandmarkLG,
-                            width: 74,
-                            height: 74,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    Text('Scan to receive bitcoin.',
-                        style: AppTextStyles.textMD
-                            .copyWith(color: AppColors.textSecondary)),
-                  ]),
+                    Positioned(
+                      child: SvgPicture.asset(
+                        AppIcons.brandmarkSM,
+                        width: 63,
+                        height: 63,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-      bottomNavigationBar: Container(
-        padding:
-            const EdgeInsets.only(top: 16.0, left: 16, right: 16, bottom: 32),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: ButtonOrangeLG(
           label: "Share",
           onTap: () => onShare(),

@@ -186,7 +186,6 @@ class AppIcons {
   static const String back = 'assets/icons/Icon=back.svg';
   static const String bitcoin = 'assets/icons/Icon=bitcoin.svg';
   static const String close = 'assets/icons/Icon=close.svg';
-  static const String chat = 'assets/icons/Icon=chat.svg';
   static const String down = 'assets/icons/Icon=down.svg';
   static const String edit = 'assets/icons/Icon=edit.svg';
   static const String error = 'assets/icons/Icon=error.svg';
@@ -212,15 +211,6 @@ class AppImages {
   static const String defaultProfileLG = 'assets/images/default_profileLG.png';
   static const String defaultProfileMD = 'assets/images/default_profileMD.png';
   static const String defaultProfileSM = 'assets/images/default_profileSM.png';
-  static const String test1 = 'assets/images/test1.png';
-  static const String test2 = 'assets/images/test2.png';
-  static const String test3 = 'assets/images/test3.png';
-  static const String test4 = 'assets/images/test4.png';
-  static const String test5 = 'assets/images/test5.png';
-  static const String test6 = 'assets/images/test6.png';
-  static const String test7 = 'assets/images/test7.png';
-  static const String test8 = 'assets/images/test8.png';
-  static const String test9 = 'assets/images/test9.png';
 }
 
 //Text Mark Base

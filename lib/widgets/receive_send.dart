@@ -16,39 +16,40 @@ class ReceiveSend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: 393,
+      height: 60,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: ButtonOrangeLG(
-              label: "Receive",
-              onTap: () {
-                onPause();
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, __, ___) => receiveRoute(),
-                    transitionDuration: const Duration(seconds: 0),
-                  ),
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: ButtonOrangeLG(
+                label: "Receive",
+                onTap: () {
+                  onPause();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => receiveRoute()),
+                  );
+                },
+              ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
-            child: ButtonOrangeLG(
-              label: "Send",
-              onTap: () {
-                onPause();
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, __, ___) => sendRoute(),
-                    transitionDuration: const Duration(seconds: 0),
-                  ),
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: ButtonOrangeLG(
+                label: "Send",
+                onTap: () {
+                  onPause();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => sendRoute()),
+                  );
+                },
+              ),
             ),
           ),
         ],
