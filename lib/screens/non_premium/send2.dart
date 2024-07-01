@@ -279,7 +279,7 @@ class Send2State extends State<Send2> {
               if (clipboardData != '') ...[
                 ButtonSecondaryMD(
                   label: truncateAddress(clipboardData),
-                  icon: "clipboard",
+                  icon: AppIcons.paste,
                   onTap: () => pasteAddress(),
                 ),
                 const SizedBox(height: 5),
@@ -292,7 +292,7 @@ class Send2State extends State<Send2> {
               ],
               ButtonSecondaryMD(
                 label: "Scan QR Code",
-                icon: 'qrcode',
+                icon: AppIcons.qrcode,
                 onTap: _startQRScanner,
               ),
               const Spacer(),

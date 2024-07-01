@@ -97,7 +97,7 @@ class NewMessageState extends State<NewMessage> {
           children: [
             ButtonSecondaryMD(
               label: recipients[0],
-              icon: "clear",
+              icon: AppIcons.close,
               onTap: () => removeRecipient(recipients[0]),
             ),
           ],
@@ -110,7 +110,7 @@ class NewMessageState extends State<NewMessage> {
         children: List<Widget>.generate(recipients.length, (index) {
           return ButtonSecondaryMD(
             label: recipients[index],
-            icon: "clear",
+            icon: AppIcons.close,
             onTap: () => removeRecipient(recipients[index]),
           );
         }),
