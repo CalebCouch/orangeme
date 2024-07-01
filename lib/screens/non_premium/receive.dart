@@ -55,32 +55,40 @@ class ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(64.0),
-        child: Stack(
-          children: [
-            Container(
-              alignment: Alignment.center,
-              child:
-                  const Text('Receive Bitcoin', style: AppTextStyles.heading4),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: SvgPicture.asset(
-                  AppIcons.left,
-                  width: 32,
-                  height: 32,
-                ),
-                onPressed: () {
-                  widget.onDashboardPopBack();
-                  Navigator.pop(context);
-                },
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        flexibleSpace: Column(children: [
+          const SizedBox(height: 54),
+          Stack(
+            children: [
+              Container(
+                height: 48,
+                alignment: Alignment.center,
+                child: const Text('Receive bitcoin',
+                    style: AppTextStyles.heading4),
               ),
-            ),
-          ],
-        ),
+              Container(
+                  height: 48,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      IconButton(
+                        icon: SvgPicture.asset(
+                          AppIcons.left,
+                          width: 32,
+                          height: 32,
+                        ),
+                        onPressed: () {
+                          widget.onDashboardPopBack();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  )),
+            ],
+          ),
+        ]),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

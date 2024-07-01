@@ -44,10 +44,30 @@ class MessageState extends State<Message> {
       },
       {
         "message":
-            "Nothing particular. Thinking of redecorating my living room. Any ideas for a new color scheme?",
+            "Thinking of redecorating my living room. Any ideas for a new color scheme?",
         "incoming": "false",
         "sender": "me",
         "timestamp": "2024-06-30 13:32:09"
+      },
+      {
+        "message":
+            "Redecorating your living room sounds exciting! How about considering a neutral palette with touches of gold or silver for elegance? Or maybe bold blues or greens for a statement look? Let me know your thoughts!",
+        "incoming": "true",
+        "sender": sender,
+        "timestamp": "2024-07-01 11:59:53"
+      },
+      {
+        "message":
+            "By the way, what are you currently reading or any books you're excited to dive into next? Always looking for recommendations!",
+        "incoming": "true",
+        "sender": sender,
+        "timestamp": "2024-07-01 13:32:09"
+      },
+      {
+        "message": "Absolutely! What genre are you into lately?",
+        "incoming": "false",
+        "sender": "me",
+        "timestamp": "2024-07-01 13:32:09"
       },
     ];
     messageController.addListener(() {
@@ -136,6 +156,12 @@ class MessageState extends State<Message> {
     );
   }
 
+  bool firstLoad = true;
+  void scrollDown() {
+    scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    firstLoad = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,11 +187,17 @@ class MessageState extends State<Message> {
                     ),
                   )
                 : Container(
+                    alignment: Alignment.bottomCenter,
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: ListView.builder(
+                      padding: const EdgeInsets.all(0),
+                      shrinkWrap: true,
                       controller: scrollController,
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
+                        if (scrollController.hasClients && firstLoad) {
+                          scrollToBottom();
+                        }
                         return MessageBauble(
                             message: messages[index]["message"]!,
                             incoming: messages[index]["incoming"]!,

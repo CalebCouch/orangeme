@@ -4,6 +4,8 @@ import 'package:orange/widgets/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/styles/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Send1 extends StatefulWidget {
   final int balance;
@@ -239,22 +241,47 @@ class Send1State extends State<Send1> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Send Bitcoin'),
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                //dashboard timer callback function
-                widget.onDashboardPopBack();
-                Navigator.pop(context);
-              }),
+          automaticallyImplyLeading: false,
+          flexibleSpace: Column(children: [
+            const SizedBox(height: 54),
+            Stack(
+              children: [
+                Container(
+                  height: 48,
+                  alignment: Alignment.center,
+                  child:
+                      const Text('Send bitcoin', style: AppTextStyles.heading4),
+                ),
+                Container(
+                  height: 48,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      IconButton(
+                        icon: SvgPicture.asset(
+                          AppIcons.left,
+                          width: 32,
+                          height: 32,
+                        ),
+                        onPressed: () {
+                          widget.onDashboardPopBack();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ]),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              KeyboardValueDisplay(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              child: KeyboardValueDisplay(
                 key: _displayKey,
                 fiatAmount: amount == '' ? '0' : amount,
                 quantity: amount == ''
@@ -265,17 +292,20 @@ class Send1State extends State<Send1> {
                 maxBalance: ((widget.balance / 100000000) * widget.price!)
                     .toStringAsFixed(2),
               ),
-              const Spacer(),
-              NumberPad(
-                onNumberPressed: _updateAmount,
-              ),
-              const SizedBox(height: 10),
-              ButtonOrangeLG(
-                label: "Send",
-                onTap: () => onContinue(),
-                isEnabled: isButtonEnabled,
-              ),
-            ],
+            ),
+            const Spacer(),
+            NumberPad(
+              onNumberPressed: _updateAmount,
+            ),
+          ],
+        ),
+        bottomNavigationBar: Container(
+          padding:
+              const EdgeInsets.only(top: 16.0, left: 16, right: 16, bottom: 32),
+          child: ButtonOrangeLG(
+            label: "Send",
+            onTap: () => onContinue(),
+            isEnabled: isButtonEnabled,
           ),
         ),
       ),
