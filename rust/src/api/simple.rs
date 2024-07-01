@@ -163,15 +163,13 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok(serde_json::to_string(&transactions)?)
                 },
                 "create_transaction" => {
-                    let (addr, sats, fee) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
+                    let (addr, sats, block_target) = serde_json::from_str::<CreateTransactionInput>(&command.data)?.parse();
+                    let fee_rate = blockchain.estimate_fee(block_target)?;
             
                     let (mut psbt, tx_details) = {
                         let mut builder = wallet.build_tx();
-            
-                        if let Some(address) = addr {
-                            let address = address.script_pubkey();
-                            builder.add_recipient(address, sats.unwrap_or(0));
-                        }
+                        builder.add_feerate(fee_rate);
+                        builder.add_recipient(address.script_pubkey(), sats.unwrap_or(0));
                         builder.finish()?
                     };
             
@@ -191,12 +189,6 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 "broadcast_transaction" => {
                     let tx = serde_json::from_str::<bdk::bitcoin::Transaction>(&command.data)?;
                     Ok(serde_json::to_string(&client.transaction_broadcast(&tx)?)?)
-                },
-                "estimate_fees" => {
-                    let priority_target: usize = 1;
-                    let result = blockchain.estimate_fee(priority_target)?; 
-                    Ok(serde_json::to_string(&result)?)
-
                 },
                 "drop_descs" => {
                     invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, ""));
@@ -290,20 +282,8 @@ impl Transaction {
 pub struct CreateTransactionInput {
     pub address: String,
     pub sats: String,
+    pub block_target: u64
 }
-
-impl CreateTransactionInput {
-    pub fn parse(&self) -> (Option<Address>, Option<u64>, Option<f64>) {
-        let address = Address::from_str(&self.address)
-            .ok()
-            .and_then(|addr| addr.require_network(Network::Bitcoin).ok());
-        let sats = self.sats.parse::<u64>().ok();
-        let fee = self.sats.parse::<f64>().ok();
-        (address, sats, fee)
-    }
-}
-
-
 
 
 

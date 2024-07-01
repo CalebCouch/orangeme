@@ -17,7 +17,9 @@ class Send3 extends StatefulWidget {
   final double price;
   final SessionTimerManager sessionTimer;
   final VoidCallback onDashboardPopBack;
-  final Transaction? transaction;
+  final Transaction priority_tx;
+  final Transaction standard_tx;
+
 
   final int standardFee = 0;
   final int priorityFee = 0;
@@ -84,16 +86,21 @@ class Send3State extends State<Send3> {
 
   Future<void> createTransaction() async {
     try {
-      var input = CreateTransactionInput(
+      var priority_input = CreateTransactionInput(
         widget.address.toString(),
         widget.amount.toString(),
-        widget.standardFee.toString(),
+        1,
       );
-      var jsonRes =
-          (await invoke("create_transaction", jsonEncode(input))).data;
-      var local_transaction = Transaction.fromJson(jsonDecode(jsonRes));
-      calculateStandardFee(local_transaction.fee.toString());
-      widget.transaction = local_transaction;
+      var json = (await invoke("create_transaction", jsonEncode(priority_input))).data;
+      widget.priority_tx = Transaction.fromJson(jsonDecode(json));
+      var standard_input = CreateTransactionInput(
+        widget.address.toString(),
+        widget.amount.toString(),
+        3,
+      );
+      var json = (await invoke("create_transaction", jsonEncode(standard_input))).data;
+      widget.standerd_tx = Transaction.fromJson(jsonDecode(json));
+      
     } catch (e) {
       ERROR = e.toString();
     }

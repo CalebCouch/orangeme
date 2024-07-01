@@ -121,11 +121,7 @@ class Send2State extends State<Send2> {
   }
 
   Future<bool> checkAddress(String address) async {
-    print("address check:");
     var checkRes = (await invoke("check_address", address)).data;
-    print(address);
-    print(checkRes);
-    if (!mounted) return false;
     return checkRes == "true";
   }
 
