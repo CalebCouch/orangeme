@@ -183,19 +183,8 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     tx.consensus_encode(&mut stream)?;
                     let raw = hex::encode(&stream);
             
-                    let transaction = Transaction {
-                        receiver: None,
-                        sender: None,
-                        txid: serde_json::to_string(&tx.txid())?, 
-                        net: (tx_details.received as i64) - (tx_details.sent as i64),
-                        fee: tx_details.fee,
-                        timestamp: if let Some(confirmation_time) = tx_details.confirmation_time {
-                            Some(confirmation_time.timestamp)
-                        } else {
-                            None
-                        },
-                        raw: Some(raw),
-                    };
+                    let mut transaction: Transaction = Transaction::from_details(tx_details)?;
+                    transaction.raw = Some(raw);
             
                     Ok(serde_json::to_string(&transaction)?)
                 },
@@ -287,16 +276,12 @@ pub struct Transaction {
 impl Transaction {
     fn from_details(details: TransactionDetails) -> Result<Self, Error> {
         Ok(Transaction{
-            receiver: details.address.map(|addr| addr.to_string()), 
+            receiver: Some("some random address".to_string()),
             sender: None,
             txid: serde_json::to_string(&details.txid)?,
-            net: (details.received as i64) - (details.sent as i64),
+            net: (details.received as i64)-(details.sent as i64),
             fee: details.fee,
-            timestamp: if let Some(confirmation_time) = details.confirmation_time {
-                Some(confirmation_time.timestamp)
-            } else {
-                None
-            },
+            timestamp: if details.confirmation_time.is_some() { Some(details.confirmation_time.unwrap().timestamp) } else { None },
             raw: None
         })
     }
