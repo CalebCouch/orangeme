@@ -225,7 +225,24 @@ class _Send2State extends State<Send2> {
       ),
     );
   }
-
+  void _navigateToSend3() {
+  _stopTimer();  // Stop any timers or background tasks if needed
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => Send3(
+        amount: widget.amount,
+        address: recipientAddressController.text,
+        balance: widget.balance,
+        price: widget.price,
+        onDashboardPopBack: widget.onDashboardPopBack,
+        sessionTimer: widget.sessionTimer,
+        priority_tx: priorityTransaction,
+        standard_tx: standardTransaction,
+      ),
+    ),
+  );
+}
   String truncateAddress(String address) {
     if (address.length > 30) {
       final firstPart = address.substring(0, 15);
@@ -298,7 +315,10 @@ class _Send2State extends State<Send2> {
               const Spacer(),
               ButtonOrangeLG(
                 label: "Continue",
-                onTap: isButtonEnabled ? createTransactions();
+                onTap: () {
+                  createTransactions();
+                  _navigateToSend3();   
+                },
                 isEnabled: isButtonEnabled,
               ),
             ],
