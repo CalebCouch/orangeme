@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'send3.dart';
 import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/screens/non_premium/send1.dart';
+import 'package:orange/screens/non_premium/send3.dart';
+import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:orange/components/textfield.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/widgets/session_timer.dart';
-import 'package:orange/screens/non_premium/send1.dart';
-import 'package:orange/classes.dart';  // Make sure this import is correct
 
 class Send2 extends StatefulWidget {
   final int amount;
@@ -33,13 +33,14 @@ class Send2 extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  Send2State createState() => Send2State();
+  _Send2State createState() => _Send2State();
 }
 
-class Send2State extends State<Send2> {
+class _Send2State extends State<Send2> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
-  final TextEditingController recipientAddressController = TextEditingController();
+  final TextEditingController recipientAddressController =
+      TextEditingController();
   bool isAddressValid = false;
   bool isButtonEnabled = false;
   String clipboardData = '';
@@ -50,13 +51,13 @@ class Send2State extends State<Send2> {
   @override
   void initState() {
     super.initState();
-    print("initializing send2");
     fetchAndValidateClipboard();
     recipientAddressController.addListener(buttonListener);
     if (widget.address != null) {
       recipientAddressController.text = widget.address!;
     }
-    clipboardCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) => fetchAndValidateClipboard());
+    clipboardCheckTimer = Timer.periodic(
+        const Duration(seconds: 1), (_) => fetchAndValidateClipboard());
     widget.sessionTimer.setOnSessionEnd(() {
       widget.onDashboardPopBack();
       Navigator.pop(context);
@@ -65,7 +66,6 @@ class Send2State extends State<Send2> {
 
   @override
   void dispose() {
-    print("disposing send2");
     recipientAddressController.dispose();
     _stopTimer();
     _stopQRScanner();
@@ -83,23 +83,19 @@ class Send2State extends State<Send2> {
   Future<void> fetchAndValidateClipboard() async {
     if (!mounted) return;
 
-    print("Checking Clipboard Data");
-    ClipboardData? clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+    ClipboardData? clipboardData =
+        await Clipboard.getData(Clipboard.kTextPlain);
     if (clipboardData?.text != null) {
       String trimmedData = trimAddressPrefix(clipboardData!.text!);
       bool isValid = await checkAddress(trimmedData);
-      if (isValid) {
-        if (mounted) {
-          setState(() {
-            this.clipboardData = clipboardData.text!;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            this.clipboardData = "";
-          });
-        }
+      if (isValid && mounted) {
+        setState(() {
+          this.clipboardData = clipboardData.text!;
+        });
+      } else if (mounted) {
+        setState(() {
+          this.clipboardData = "";
+        });
       }
     }
   }
@@ -160,7 +156,6 @@ class Send2State extends State<Send2> {
   void _onQRViewCreated(QRViewController newController) {
     controller = newController;
     controller!.scannedDataStream.listen((scanData) async {
-      print('Scanned Data: ${scanData.code}');
       String trimmed = trimAddressPrefix(scanData.code);
       var validAddress = await checkAddress(trimmed);
       if (validAddress) {
@@ -173,7 +168,6 @@ class Send2State extends State<Send2> {
 
   void closeDialog() {
     if (controller != null && mounted) {
-      print("controller disposed");
       controller!.dispose();
     }
     Navigator.of(context).pop();
@@ -190,18 +184,24 @@ class Send2State extends State<Send2> {
         widget.amount.toString(),
         1,
       );
-      var priorityJson = (await invoke("create_transaction", jsonEncode(priorityInput))).data;
+      var priorityJson =
+          (await invoke("create_transaction", jsonEncode(priorityInput))).data;
       priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson));
-
+      print("#################### priorityJson ####################");
+      print(priorityJson);
       var standardInput = CreateTransactionInput(
         recipientAddressController.text,
         widget.amount.toString(),
         3,
       );
-      var standardJson = (await invoke("create_transaction", jsonEncode(standardInput))).data;
+      var standardJson =
+          (await invoke("create_transaction", jsonEncode(standardInput))).data;
       standardTransaction = Transaction.fromJson(jsonDecode(standardJson));
-
-      onContinue();
+      print("################# STANDERD ####################");
+      print(standardJson);
+      if (priorityTransaction != null && standardTransaction != null) {
+        onContinue();
+      }
     } catch (e) {
       print("Error creating transactions: $e");
     }
@@ -236,8 +236,6 @@ class Send2State extends State<Send2> {
 
   @override
   Widget build(BuildContext context) {
-    print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
-    print("Amount to send: ${widget.amount}");
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) async {
@@ -259,7 +257,8 @@ class Send2State extends State<Send2> {
                     balance: widget.balance,
                     onDashboardPopBack: widget.onDashboardPopBack,
                     sessionTimer: widget.sessionTimer,
-                    amount: ((widget.amount / 100000000) * widget.price).toStringAsFixed(2),
+                    amount: ((widget.amount / 100000000) * widget.price)
+                        .toStringAsFixed(2),
                   ),
                 ),
               );
@@ -286,7 +285,8 @@ class Send2State extends State<Send2> {
                 const SizedBox(height: 5),
                 Text(
                   "or",
-                  style: AppTextStyles.textSM.copyWith(color: AppColors.textSecondary),
+                  style: AppTextStyles.textSM
+                      .copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 5),
               ],
@@ -298,7 +298,7 @@ class Send2State extends State<Send2> {
               const Spacer(),
               ButtonOrangeLG(
                 label: "Continue",
-                onTap: () => createTransactions(),
+                onTap: isButtonEnabled ? createTransactions();
                 isEnabled: isButtonEnabled,
               ),
             ],
