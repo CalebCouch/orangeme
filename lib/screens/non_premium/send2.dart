@@ -187,8 +187,7 @@ class _Send2State extends State<Send2> {
       var priorityJson =
           (await invoke("create_transaction", jsonEncode(priorityInput))).data;
       priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson));
-      print("#################### priorityJson ####################");
-      print(priorityJson);
+      
       var standardInput = CreateTransactionInput(
         recipientAddressController.text,
         widget.amount.toString(),
@@ -197,36 +196,15 @@ class _Send2State extends State<Send2> {
       var standardJson =
           (await invoke("create_transaction", jsonEncode(standardInput))).data;
       standardTransaction = Transaction.fromJson(jsonDecode(standardJson));
-      print("################# STANDERD ####################");
-      print(standardJson);
-      if (priorityTransaction != null && standardTransaction != null) {
-        onContinue();
-      }
+      
+      print("Transactions created successfully");
     } catch (e) {
       print("Error creating transactions: $e");
     }
   }
 
-  void onContinue() {
-    _stopTimer();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Send3(
-          amount: widget.amount,
-          address: recipientAddressController.text,
-          balance: widget.balance,
-          price: widget.price,
-          onDashboardPopBack: widget.onDashboardPopBack,
-          sessionTimer: widget.sessionTimer,
-          priority_tx: priorityTransaction!,
-          standard_tx: standardTransaction!,
-        ),
-      ),
-    );
-  }
-  void _navigateToSend3() {
-  _stopTimer();  // Stop any timers or background tasks if needed
+void _navigateToSend3() {
+  _stopTimer();
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
@@ -237,12 +215,14 @@ class _Send2State extends State<Send2> {
         price: widget.price,
         onDashboardPopBack: widget.onDashboardPopBack,
         sessionTimer: widget.sessionTimer,
-        priority_tx: priorityTransaction,
-        standard_tx: standardTransaction,
+        priority_tx: priorityTransaction!,
+        standard_tx: standardTransaction!,
       ),
     ),
   );
 }
+
+
   String truncateAddress(String address) {
     if (address.length > 30) {
       final firstPart = address.substring(0, 15);
@@ -316,8 +296,8 @@ class _Send2State extends State<Send2> {
               ButtonOrangeLG(
                 label: "Continue",
                 onTap: () {
-                  createTransactions();
-                  _navigateToSend3();   
+                  createTransactions(); // Start transaction creation
+                  _navigateToSend3();   // Navigate to Send3 immediately
                 },
                 isEnabled: isButtonEnabled,
               ),
