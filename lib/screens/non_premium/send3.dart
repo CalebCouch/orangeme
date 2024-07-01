@@ -80,48 +80,49 @@ class Send3State extends State<Send3> {
     });
   }
 
-Future<void> createTransaction() async {
-  print("##################### createTransaction #####################");
-  print("Address: ${widget.address}");
-  print("Amount: ${widget.amount.toString()}");
+  Future<void> createTransaction() async {
+    print("##################### createTransaction #####################");
+    print("Address: ${widget.address}");
+    print("Amount: ${widget.amount.toString()}");
 
-  var input = CreateTransactionInput(
-    widget.address.toString(),
-    widget.amount.toString(),
-    standardFee.toString(),
-  );
+    var input = CreateTransactionInput(
+      widget.address.toString(),
+      widget.amount.toString(),
+      standardFee.toString(),
+    );
 
-  print("Request: ${jsonEncode(input)}");
+    print(jsonEncode(input));
 
-  try {
-    var jsonRes = await invoke("create_transaction", jsonEncode(input));
-    print("JSON Response: $jsonRes");
+    try {
+      var jsonRes = await invoke("create_transaction", jsonEncode(input));
+      print("JSON Response: $jsonRes");
 
-    if (jsonRes != null && jsonRes.toString().trim() != '') {
-      try {
-        var jsonResponse = jsonDecode(jsonRes.toString());
-        print("Decoded JSON: $jsonResponse");
+      if (jsonRes != null && jsonRes.toString().trim() != '') {
+        print("####################################");
+        print(jsonRes);
+        try {
+          var jsonResponse = jsonDecode(jsonRes.toString());
+          print("Decoded JSON: $jsonResponse");
 
-        if (jsonResponse is Map<String, dynamic>) {
-          var transactionData = Transaction.fromJson(jsonResponse);
-          calculateStandardFee(transactionData.fee.toString());
-          setState(() {
-            transaction = jsonRes.toString();
-          });
-        } else {
-          print("Error: Response format is not as expected");
+          if (jsonResponse is Map<String, dynamic>) {
+            var transactionData = Transaction.fromJson(jsonResponse);
+            calculateStandardFee(transactionData.fee.toString());
+            setState(() {
+              transaction = jsonRes.toString();
+            });
+          } else {
+            print("Error: Response format is not as expected");
+          }
+        } catch (e) {
+          print("Error decoding JSON: $e");
         }
-      } catch (e) {
-        print("Error decoding JSON: $e");
+      } else {
+        print("Error: Received empty or null JSON response");
       }
-    } else {
-      print("Error: Received empty or null JSON response");
+    } catch (e) {
+      print("Error invoking API: $e");
     }
-  } catch (e) {
-    print("Error invoking API: $e");
   }
-}
-
 
   void calculateStandardFee(String fee) {
     setState(() {
