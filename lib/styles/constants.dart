@@ -213,6 +213,11 @@ class AppImages {
   static const String defaultProfileLG = 'assets/images/default_profileLG.png';
   static const String defaultProfileMD = 'assets/images/default_profileMD.png';
   static const String defaultProfileSM = 'assets/images/default_profileSM.png';
+  static const String groupProfileXXL = 'assets/images/group_profileXXL.png';
+  static const String groupProfileXL = 'assets/images/group_profileXL.png';
+  static const String groupProfileLG = 'assets/images/group_profileLG.png';
+  static const String groupProfileMD = 'assets/images/group_profileMD.png';
+  static const String groupProfileSM = 'assets/images/group_profileSM.png';
 }
 
 //Text Mark Base
