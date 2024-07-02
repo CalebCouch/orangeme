@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../opt out/why_not.dart';
 
 class Premium extends StatefulWidget {
   const Premium({super.key});
@@ -9,10 +8,10 @@ class Premium extends StatefulWidget {
 }
 
 class PremiumState extends State<Premium> {
-  void optOut() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const WhyNot()));
-  }
+  // void optOut() {
+  //   Navigator.pushReplacement(
+  //       context, MaterialPageRoute(builder: (context) => const WhyNot()));
+  // }
 
   @override
   Widget build(BuildContext context) {
