@@ -13,9 +13,11 @@ import 'dart:math';
 import 'dart:io';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
+  WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
   runApp(const MyApp());
+  SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
 class MyApp extends StatefulWidget {
@@ -26,7 +28,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late String error;
+  String error = "";
 
   @override
   void initState() {
@@ -35,14 +37,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> setupApp() async {
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     var path = await getDocPath();
     print(path);
+    var _error = await rustStart(path: path, dartCallback: dartCallback)
     setState(() {
-      error = rustStart(path: path, dartCallback: dartCallback) as String;
+      error = _error;
     });
-    print(error);
   }
 
   @override
