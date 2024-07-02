@@ -227,111 +227,113 @@ class DashboardState extends State<Dashboard>
       print("timer wasn't running, let me start that for you");
       startTimer();
     }
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        // title: const TextMarkLG(),
-        title: const Text('Wallet'),
-        automaticallyImplyLeading: false,
-        //app bar drop down settings/nav menu, currently disabled
-        // actions: [
-        //   PopupMenuButton<int>(
-        //     icon: const Icon(Icons.menu),
-        //     offset: Offset(0, AppBar().preferredSize.height),
-        //     onSelected: (int result) {
-        //       switch (result) {
-        //         case 0:
-        //           navigateBackUp();
-        //           break;
-        //         case 1:
-        //           navigateImportOptOut();
-        //           break;
-        //         case 2:
-        //           navigateDuplicate();
-        //           break;
-        //       }
-        //     },
-        //     itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-        //       const PopupMenuItem<int>(
-        //         value: 0,
-        //         child: Text('Back Up'),
-        //       ),
-        //       const PopupMenuItem<int>(
-        //         value: 1,
-        //         child: Text('Import'),
-        //       ),
-        //       const PopupMenuItem<int>(
-        //         value: 2,
-        //         child: Text('Duplicate'),
-        //       ),
-        //     ],
-        //   ),
-        // ],
-      ),
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: handleRefresh,
-              child: CustomScrollView(
-                slivers: [
-                  SliverFillRemaining(
-                    hasScrollBody: true,
-                    fillOverscroll: true,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        //content
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                ValueListenableBuilder<int>(
-                                  valueListenable: balance,
-                                  builder: (context, balanceValue, child) =>
-                                      ValueListenableBuilder<double>(
-                                    valueListenable: price,
-                                    builder: (context, priceValue, child) =>
-                                        ValueDisplay(
-                                      fiatAmount: formatSatsToDollars(
-                                          balanceValue, priceValue),
-                                      quantity: (balanceValue / 100000000.0)
-                                          .toStringAsFixed(8),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          // title: const TextMarkLG(),
+          title: const Text('Wallet'),
+          automaticallyImplyLeading: false,
+          //app bar drop down settings/nav menu, currently disabled
+          // actions: [
+          //   PopupMenuButton<int>(
+          //     icon: const Icon(Icons.menu),
+          //     offset: Offset(0, AppBar().preferredSize.height),
+          //     onSelected: (int result) {
+          //       switch (result) {
+          //         case 0:
+          //           navigateBackUp();
+          //           break;
+          //         case 1:
+          //           navigateImportOptOut();
+          //           break;
+          //         case 2:
+          //           navigateDuplicate();
+          //           break;
+          //       }
+          //     },
+          //     itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+          //       const PopupMenuItem<int>(
+          //         value: 0,
+          //         child: Text('Back Up'),
+          //       ),
+          //       const PopupMenuItem<int>(
+          //         value: 1,
+          //         child: Text('Import'),
+          //       ),
+          //       const PopupMenuItem<int>(
+          //         value: 2,
+          //         child: Text('Duplicate'),
+          //       ),
+          //     ],
+          //   ),
+          // ],
+        ),
+        body: loading
+            ? const Center(child: CircularProgressIndicator())
+            : RefreshIndicator(
+                onRefresh: handleRefresh,
+                child: CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: true,
+                      fillOverscroll: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          //content
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ValueListenableBuilder<int>(
+                                    valueListenable: balance,
+                                    builder: (context, balanceValue, child) =>
+                                        ValueListenableBuilder<double>(
+                                      valueListenable: price,
+                                      builder: (context, priceValue, child) =>
+                                          ValueDisplay(
+                                        fiatAmount: formatSatsToDollars(
+                                            balanceValue, priceValue),
+                                        quantity: (balanceValue / 100000000.0)
+                                            .toStringAsFixed(8),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 24),
-                                transactionsList(transactions, price),
-                              ],
+                                  const SizedBox(height: 24),
+                                  transactionsList(transactions, price),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        //bumper
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: ReceiveSend(
-                            receiveRoute: () => Receive(
-                              onDashboardPopBack: dashboardPopBack,
+                          //bumper
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: ReceiveSend(
+                              receiveRoute: () => Receive(
+                                onDashboardPopBack: dashboardPopBack,
+                              ),
+                              sendRoute: () => Send1(
+                                balance: balance.value,
+                                price: price.value,
+                                onDashboardPopBack: dashboardPopBack,
+                              ),
+                              onPause: _stopTimer,
                             ),
-                            sendRoute: () => Send1(
-                              balance: balance.value,
-                              price: price.value,
-                              onDashboardPopBack: dashboardPopBack,
-                            ),
-                            onPause: _stopTimer,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-      bottomNavigationBar: ModeNavigator(
-        navIndex: navIndex,
-        onDashboardPopBack: dashboardPopBack,
-        stopTimer: _stopTimer,
+        bottomNavigationBar: ModeNavigator(
+          navIndex: navIndex,
+          onDashboardPopBack: dashboardPopBack,
+          stopTimer: _stopTimer,
+        ),
       ),
     );
   }

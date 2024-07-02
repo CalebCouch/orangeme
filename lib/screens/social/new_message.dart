@@ -19,7 +19,7 @@ class NewMessageState extends State<NewMessage> {
   List<String> recipients = [];
   List<Map<String, String>> contacts = [
     {
-      "name": "Kasey Jarvis",
+      "name": "Damian Jarvis",
       "imagePath": AppImages.test1,
       "did": "fpRBLGDMsP92oqULfEvOkWDnD6sr6FtjCe9F2Q66C2pHHdWbJBeFCugTG0mtuY9U"
     },
@@ -121,9 +121,9 @@ class NewMessageState extends State<NewMessage> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        flexibleSpace: Column(children: [
-          const SizedBox(height: 54),
-          Stack(
+        flexibleSpace: Container(
+          padding: const EdgeInsets.only(top: 16),
+          child: Stack(
             children: [
               Container(
                 height: 48,
@@ -159,10 +159,10 @@ class NewMessageState extends State<NewMessage> {
                 ),
             ],
           ),
-        ]),
+        ),
       ),
       body: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
             TextInputField(

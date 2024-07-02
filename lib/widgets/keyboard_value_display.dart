@@ -146,9 +146,8 @@ class KeyboardValueDisplayState extends State<KeyboardValueDisplay>
           child: child,
         );
       },
-      child: Container(
+      child: SizedBox(
         width: containerWidth,
-        padding: const EdgeInsets.symmetric(vertical: 45),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,

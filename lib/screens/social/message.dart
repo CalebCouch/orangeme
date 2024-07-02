@@ -156,12 +156,6 @@ class MessageState extends State<Message> {
     );
   }
 
-  bool firstLoad = true;
-  void scrollDown() {
-    scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    firstLoad = false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,9 +189,6 @@ class MessageState extends State<Message> {
                       controller: scrollController,
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
-                        if (scrollController.hasClients && firstLoad) {
-                          scrollToBottom();
-                        }
                         return MessageBauble(
                             message: messages[index]["message"]!,
                             incoming: messages[index]["incoming"]!,

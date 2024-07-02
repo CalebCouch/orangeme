@@ -111,34 +111,26 @@ class SocialDashboardState extends State<SocialDashboard> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        flexibleSpace: Column(children: [
-          const SizedBox(height: 54),
-          Stack(
+        flexibleSpace: SafeArea(
+          child: Stack(
             children: [
-              Container(
-                height: 48,
-                alignment: Alignment.center,
-                child: const Text('Messages', style: AppTextStyles.heading3),
+              const Center(
+                child: Text('Messages', style: AppTextStyles.heading3),
               ),
               Container(
-                  height: 48,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 16),
-                      IconButton(
-                        icon: Image.asset(
-                          AppImages.defaultProfileMD,
-                          width: 32,
-                          height: 32,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  )),
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: Image.asset(
+                    AppImages.defaultProfileMD,
+                    width: 32,
+                    height: 32,
+                  ),
+                  onPressed: () {},
+                ),
+              ),
             ],
           ),
-        ]),
+        ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

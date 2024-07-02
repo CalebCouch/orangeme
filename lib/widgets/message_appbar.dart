@@ -60,8 +60,12 @@ class MessageAppBar extends StatelessWidget {
                                   (index) => Positioned(
                                     left: index * (2 * radius - overlap),
                                     child: CircleAvatar(
-                                      backgroundImage: AssetImage(imagePath),
+                                      backgroundColor: Colors.black,
                                       radius: radius,
+                                      child: CircleAvatar(
+                                        backgroundImage: AssetImage(imagePath),
+                                        radius: radius - 2,
+                                      ),
                                     ),
                                   ),
                                 ),

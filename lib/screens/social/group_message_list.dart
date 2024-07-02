@@ -27,16 +27,21 @@ class GroupMessageListState extends State<GroupMessageList> {
                     .copyWith(color: AppColors.textSecondary)),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: widget.recipients.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ContactCard(
-                    name: widget.recipients[index],
-                    did:
-                        "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc",
-                    onTap: () => ());
-                // imagePath: contacts[index]["imagePath"]!,
-              },
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+              ),
+              child: ListView.builder(
+                itemCount: widget.recipients.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ContactCard(
+                      name: widget.recipients[index],
+                      did:
+                          "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc",
+                      onTap: () => ());
+                  // imagePath: contacts[index]["imagePath"]!,
+                },
+              ),
             ),
           ),
         ],

@@ -242,9 +242,8 @@ class Send1State extends State<Send1> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          flexibleSpace: Column(children: [
-            const SizedBox(height: 54),
-            Stack(
+          flexibleSpace: SafeArea(
+            child: Stack(
               children: [
                 Container(
                   height: 48,
@@ -253,47 +252,46 @@ class Send1State extends State<Send1> {
                       const Text('Send bitcoin', style: AppTextStyles.heading4),
                 ),
                 Container(
-                  height: 48,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 16),
-                      IconButton(
-                        icon: SvgPicture.asset(
-                          AppIcons.left,
-                          width: 32,
-                          height: 32,
+                    height: 48,
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        IconButton(
+                          icon: SvgPicture.asset(
+                            AppIcons.left,
+                            width: 32,
+                            height: 32,
+                          ),
+                          onPressed: () {
+                            widget.onDashboardPopBack();
+                            Navigator.pop(context);
+                          },
                         ),
-                        onPressed: () {
-                          widget.onDashboardPopBack();
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                )
+                      ],
+                    )),
               ],
             ),
-          ]),
+          ),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              child: KeyboardValueDisplay(
-                key: _displayKey,
-                fiatAmount: amount == '' ? '0' : amount,
-                quantity: amount == ''
-                    ? formatDollarsToBTC('0', widget.price, false)
-                    : formatDollarsToBTC(amount, widget.price, false),
-                onShake: () {},
-                exceedMaxBalance: exceedMaxBalance == true ? true : false,
-                maxBalance: ((widget.balance / 100000000) * widget.price!)
-                    .toStringAsFixed(2),
+            Expanded(
+              child: Center(
+                child: KeyboardValueDisplay(
+                  key: _displayKey,
+                  fiatAmount: amount == '' ? '0' : amount,
+                  quantity: amount == ''
+                      ? formatDollarsToBTC('0', widget.price, false)
+                      : formatDollarsToBTC(amount, widget.price, false),
+                  onShake: () {},
+                  exceedMaxBalance: exceedMaxBalance == true ? true : false,
+                  maxBalance: ((widget.balance / 100000000) * widget.price!)
+                      .toStringAsFixed(2),
+                ),
               ),
             ),
-            const Spacer(),
             NumberPad(
               onNumberPressed: _updateAmount,
             ),

@@ -61,8 +61,8 @@ class ModeNavigatorState extends State<ModeNavigator> {
                       ? AppColors.primary
                       : AppColors.textSecondary,
                   BlendMode.srcIn),
-              width: 32,
-              height: 32,
+              width: 24,
+              height: 24,
             ),
             onPressed: () {
               if (widget.navIndex != 0) {
@@ -81,8 +81,8 @@ class ModeNavigatorState extends State<ModeNavigator> {
                       ? AppColors.primary
                       : AppColors.textSecondary,
                   BlendMode.srcIn),
-              width: 32,
-              height: 32,
+              width: 24,
+              height: 24,
             ),
             onPressed: () {
               if (widget.navIndex != 1) {
