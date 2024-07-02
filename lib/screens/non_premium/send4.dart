@@ -11,7 +11,7 @@ import 'send5.dart';
 import 'send2.dart';
 
 class Send4 extends StatefulWidget {
-  final Transaction? tx;
+  final Transaction tx;
   final int balance;
   final int amount;
   final double price;
@@ -63,7 +63,7 @@ class Send4State extends State<Send4> {
 
     if (widget.tx != null) {
       print("Transaction: ${widget.tx}");
-      broadcastTransaction(widget.tx!);
+      broadcastTransaction(widget.tx.raw);
     } else {
       print("Transaction is null");
       print(widget.tx);

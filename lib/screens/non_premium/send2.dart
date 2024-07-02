@@ -228,8 +228,8 @@ class _Send2State extends State<Send2> {
                 price: widget.price,
                 onDashboardPopBack: widget.onDashboardPopBack,
                 sessionTimer: widget.sessionTimer,
-                priority_tx: priorityTransaction!,
-                standard_tx: standardTransaction!,
+                priorityTransaction: priorityTransaction!,
+                standardTransaction: standardTransaction!,
               ),
             ),
           );

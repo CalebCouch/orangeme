@@ -17,8 +17,8 @@ class Send3 extends StatefulWidget {
   final double price;
   final SessionTimerManager sessionTimer;
   final VoidCallback onDashboardPopBack;
-  Transaction? priorityTransaction;
-  Transaction? standardTransaction;
+  Transaction priorityTransaction;
+  Transaction standardTransaction;
 
   Send3(
       {super.key,
@@ -28,10 +28,9 @@ class Send3 extends StatefulWidget {
       required this.price,
       required this.onDashboardPopBack,
       required this.sessionTimer,
-      this.priorityTransaction,
-      this.standardTransaction,
-      required Transaction priority_tx,
-      required Transaction standard_tx});
+      required this.priorityTransaction,
+      required this.standardTransaction,
+      });
 
   @override
   Send3State createState() => Send3State();
@@ -42,7 +41,7 @@ int standardFee = 0;
 
 class Send3State extends State<Send3> {
   bool isPrioritySelected = false;
-  Transaction? selectedTransaction;
+  Transaction selectedTransaction = ;
   void navigate() {
     Navigator.pushReplacement(
         context,
