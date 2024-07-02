@@ -47,7 +47,7 @@ class _Send2State extends State<Send2> {
   Timer? clipboardCheckTimer;
   Transaction? priorityTransaction;
   Transaction? standardTransaction;
-  bool isCreatingTransaction = false; // Flag to manage async operation state
+  bool isCreatingTransaction = false;
 
   @override
   void initState() {
@@ -183,7 +183,7 @@ class _Send2State extends State<Send2> {
     setState(() {
       isCreatingTransaction = true;
     });
-    
+
     try {
       var priorityInput = CreateTransactionInput(
         recipientAddressController.text,
@@ -193,7 +193,7 @@ class _Send2State extends State<Send2> {
       var priorityJson =
           (await invoke("create_transaction", jsonEncode(priorityInput))).data;
       priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson));
-      
+
       var standardInput = CreateTransactionInput(
         recipientAddressController.text,
         widget.amount.toString(),
@@ -219,31 +219,30 @@ class _Send2State extends State<Send2> {
     }
   }
 
-void _navigateToSend3() {
-  _stopTimer(); // Stop any timers or background tasks if needed
-  if (mounted) {
-    try {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Send3(
-            amount: widget.amount,
-            address: recipientAddressController.text,
-            balance: widget.balance,
-            price: widget.price,
-            onDashboardPopBack: widget.onDashboardPopBack,
-            sessionTimer: widget.sessionTimer,
-            priority_tx: priorityTransaction!,
-            standard_tx: standardTransaction!,
+  void _navigateToSend3() {
+    _stopTimer();
+    if (mounted) {
+      try {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Send3(
+              amount: widget.amount,
+              address: recipientAddressController.text,
+              balance: widget.balance,
+              price: widget.price,
+              onDashboardPopBack: widget.onDashboardPopBack,
+              sessionTimer: widget.sessionTimer,
+              priority_tx: priorityTransaction!,
+              standard_tx: standardTransaction!,
+            ),
           ),
-        ),
-      );
-    } catch (e) {
-      print("Navigation error: $e");
+        );
+      } catch (e) {
+        print("Navigation error: $e");
+      }
     }
   }
-}
-
 
   String truncateAddress(String address) {
     if (address.length > 30) {
