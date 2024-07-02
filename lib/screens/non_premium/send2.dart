@@ -188,62 +188,29 @@ Future<void> createTransactions() async {
     isCreatingTransaction = true;
   });
 
-  try {
+
     var priorityInput = CreateTransactionInput(
       recipientAddressController.text,
       widget.amount.toString(),
       1,
     );
-
-    var priorityJson = await retry(() => invoke("create_transaction", jsonEncode(priorityInput)));
-
+    var priorityJson = await invoke("create_transaction", jsonEncode(priorityInput));
     priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson.data));
-  } catch (e) {
-    print("Error creating priority transaction: $e");
-    setState(() {
-      isCreatingTransaction = false;
-    });
-    return;
-  }
 
-  try {
+  setState(() {
+    isCreatingTransaction = false;
+  });
+
     var standardInput = CreateTransactionInput(
       recipientAddressController.text,
       widget.amount.toString(),
       3,
     );
-
-    var standardJson = await retry(() => invoke("create_transaction", jsonEncode(standardInput)));
-
+    var standardJson = await invoke("create_transaction", jsonEncode(standardInput));
     standardTransaction = Transaction.fromJson(jsonDecode(standardJson.data));
-  } catch (e) {
-    print("Error creating standard transaction: $e");
-    setState(() {
-      isCreatingTransaction = false;
-    });
-    return;
-  }
+
 
   _navigateToSend3();
-}
-
-Future<Response> retry(Future<Response> Function() request) async {
-  const maxRetries = 3;
-  const retryDelay = Duration(seconds: 1);
-  for (var attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      var response = await request();
-      return response;
-    } catch (e) {
-      print("Attempt $attempt failed: $e");
-      if (attempt < maxRetries) {
-        await Future.delayed(retryDelay);
-      } else {
-        rethrow; // If all retries fail, propagate the error
-      }
-    }
-  }
-  throw StateError("Retry mechanism failed."); // Should never reach here
 }
 
 
