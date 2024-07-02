@@ -45,31 +45,17 @@ class Send4State extends State<Send4> {
   }
 
   void broadcastTransaction(Transaction tx) async {
-    print("###############");
-    print(tx);
-    if (!mounted) return;
-    print("Broadcasting transaction: $tx");
-    var res = (await invoke("broadcast_transaction", jsonEncode(tx))).data;
-    print("Broadcast result: $res");
-
-    if (!mounted) return;
-
-    var resHandled = res;
-    await navigateNext(resHandled);
-  }
-
-  void confirmSend() {
-    print("Confirm Send called");
-
     if (widget.tx != null) {
-      print("Transaction: ${widget.tx}");
+       var res = (await invoke("broadcast_transaction", widget.tx.raw)).data;
+       print("Broadcast result: $res");
+      print("Transaction: ${widget.tx.raw}");
       broadcastTransaction(widget.tx.raw);
+      await navigateNext(resHandled);
     } else {
       print("Transaction is null");
       print(widget.tx);
     }
-  }
-
+}
   Future<void> navigateNext(String transaction) async {
     Navigator.pushReplacement(
       context,
@@ -222,7 +208,7 @@ class Send4State extends State<Send4> {
           padding: const EdgeInsets.all(20.0),
           child: ButtonOrangeLG(
             label: "Confirm & Send",
-            onTap: () => confirmSend(),
+            onTap: () => broadcastTransaction(widget.tx.raw),
             isEnabled: true,
           ),
         ),
