@@ -10,7 +10,7 @@ import 'package:orange/widgets/session_timer.dart';
 import 'send5.dart';
 
 class Send4 extends StatefulWidget {
-  final String tx;
+  final Transaction? tx;
   final int balance;
   final int amount;
   final double price;
@@ -35,10 +35,11 @@ class Send4State extends State<Send4> {
   late String transactionFee;
   late String sendAmount;
   late String totalAmount;
+
   @override
   void initState() {
     super.initState();
-    updateValues();
+    //  updateValues();
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
         widget.onDashboardPopBack();
@@ -52,22 +53,20 @@ class Send4State extends State<Send4> {
     super.dispose();
   }
 
-  void broadcastTransaction(String transaction) async {
-    print("###################################################");
-    print(transactionFee);
+  void broadcastTransaction(tx) async {
     if (!mounted) return;
-
-    final transactionDecoded = Transaction.fromJson(jsonDecode(widget.tx));
-    var res =
-        (await invoke("broadcast_transaction", jsonEncode(transactionDecoded)))
-            .data;
+    print(tx);
+    var res = (await invoke("broadcast_transaction", jsonEncode(tx))).data;
+    print(res);
     if (!mounted) return;
     var resHandled = res;
     await navigateNext(resHandled);
   }
 
   void confirmSend() {
-    broadcastTransaction(widget.tx);
+    if (widget.tx != null) {
+      broadcastTransaction(widget.tx!);
+    }
   }
 
   Future<void> navigateNext(String transaction) async {
@@ -83,19 +82,18 @@ class Send4State extends State<Send4> {
     );
   }
 
+/** 
   void updateValues() {
-    final transaction = Transaction.fromJson(jsonDecode(widget.tx));
-    setState(() {
-      transactionFee =
-          (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
-      sendAmount =
-          (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
-      totalAmount =
-          ((widget.amount + transaction.fee!) / 100000000 * widget.price)
-              .toStringAsFixed(2);
-    });
+    if (widget.tx != null) {
+      final transaction = widget.tx!;
+      setState(() {
+        transactionFee = (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
+        sendAmount = (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
+        totalAmount = ((widget.amount + transaction.fee!) / 100000000 * widget.price).toStringAsFixed(2);
+      });
+    }
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     currentCtx = context;
@@ -150,7 +148,7 @@ class Send4State extends State<Send4> {
                     //Text(
                     // "${transaction.receiver}",
                     //   style: AppTextStyles.textSM,
-                    //   ),
+                    //),
                     const SizedBox(height: 10),
                     Text(
                       "Bitcoin sent to the wrong address can never be recovered.",
@@ -205,10 +203,10 @@ class Send4State extends State<Send4> {
                           'Send Amount',
                           style: AppTextStyles.textSM,
                         ),
-                        Text(
-                          '\$$sendAmount',
-                          style: AppTextStyles.textSM,
-                        ),
+                        // Text(
+                        //   '\$$sendAmount',
+                        //   style: AppTextStyles.textSM,
+                        // ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -219,24 +217,24 @@ class Send4State extends State<Send4> {
                           'Fee Amount',
                           style: AppTextStyles.textSM,
                         ),
-                        Text(
-                          '\$$transactionFee',
-                          style: AppTextStyles.textSM,
-                        ),
+                        // Text(
+                        //   '\$$transactionFee',
+                        //   style: AppTextStyles.textSM,
+                        // ),
                       ],
                     ),
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        const Text(
-                          'Total Amount',
-                          style: AppTextStyles.textSM,
-                        ),
-                        Text(
-                          '\$$totalAmount',
-                          style: AppTextStyles.textSM,
-                        ),
+                        //  const Text(
+                        //    'Total Amount',
+                        //    style: AppTextStyles.textSM,
+                        //  ),
+                        //  Text(
+                        //    '\$$totalAmount',
+                        //    style: AppTextStyles.textSM,
+                        //  ),
                       ],
                     ),
                     const SizedBox(height: 20),

@@ -19,6 +19,7 @@ class Send3 extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
   Transaction? priorityTransaction;
   Transaction? standardTransaction;
+
   Send3(
       {super.key,
       required this.amount,
@@ -26,7 +27,9 @@ class Send3 extends StatefulWidget {
       required this.balance,
       required this.price,
       required this.onDashboardPopBack,
-      required this.sessionTimer, required Transaction standard_tx});
+      required this.sessionTimer,
+      this.priorityTransaction,
+      this.standardTransaction, required Transaction priority_tx, required Transaction standard_tx});
       
   @override
   Send3State createState() => Send3State();
@@ -37,13 +40,14 @@ int standardFee = 0;
 
 class Send3State extends State<Send3> {
   bool isPrioritySelected = false;
+  Transaction? selectedTransaction;
 
   void navigate() {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => Send4(
-                tx: transaction,
+                tx: selectedTransaction,
                 balance: widget.balance,
                 amount: widget.amount,
                 price: widget.price,
@@ -55,7 +59,6 @@ class Send3State extends State<Send3> {
   void initState() {
     print("initializing send3");
     super.initState();
-  //  createTransaction();
     //send the user back to the dashboard if the session expires
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
@@ -72,14 +75,13 @@ class Send3State extends State<Send3> {
   }
 
   //fired when user selects priority
-  //this currently does nothing other than change the visual indicator
   void onOptionSelected(bool isSelected) {
     setState(() {
       isPrioritySelected = isSelected;
-      print("priority selected");
+      selectedTransaction = isSelected ? widget.priorityTransaction : widget.standardTransaction;
+      print("priority selected: $isSelected");
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
