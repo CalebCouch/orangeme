@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:orange/classes.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
-import 'package:orange/classes.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
 import 'package:orange/widgets/session_timer.dart';
 import 'send5.dart';
+import 'send2.dart';
 
 class Send4 extends StatefulWidget {
   final Transaction? tx;
@@ -32,14 +33,9 @@ class Send4 extends StatefulWidget {
 }
 
 class Send4State extends State<Send4> {
-  late String transactionFee;
-  late String sendAmount;
-  late String totalAmount;
-
   @override
   void initState() {
     super.initState();
-    //  updateValues();
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
         widget.onDashboardPopBack();
@@ -48,24 +44,28 @@ class Send4State extends State<Send4> {
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void broadcastTransaction(tx) async {
-    if (!mounted) return;
+  void broadcastTransaction(Transaction tx) async {
+    print("###############");
     print(tx);
-    var res = (await invoke("broadcast_transaction", jsonEncode(tx))).data;
-    print(res);
     if (!mounted) return;
+    print("Broadcasting transaction: $tx");
+    var res = (await invoke("broadcast_transaction", jsonEncode(tx))).data;
+    print("Broadcast result: $res");
+
+    if (!mounted) return;
+
     var resHandled = res;
     await navigateNext(resHandled);
   }
 
   void confirmSend() {
+    print("Confirm Send called");
+
     if (widget.tx != null) {
       broadcastTransaction(widget.tx!);
+    } else {
+      print("Transaction is null");
+      // Handle null transaction case if needed
     }
   }
 
@@ -82,21 +82,23 @@ class Send4State extends State<Send4> {
     );
   }
 
-/** 
-  void updateValues() {
-    if (widget.tx != null) {
-      final transaction = widget.tx!;
-      setState(() {
-        transactionFee = (transaction.fee! / 100000000 * widget.price).toStringAsFixed(2);
-        sendAmount = (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
-        totalAmount = ((widget.amount + transaction.fee!) / 100000000 * widget.price).toStringAsFixed(2);
-      });
-    }
+  void navigateToSend2() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send2(
+          balance: widget.balance,
+          amount: widget.amount,
+          price: widget.price,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: widget.sessionTimer,
+        ),
+      ),
+    );
   }
-*/
+
   @override
   Widget build(BuildContext context) {
-    currentCtx = context;
     return WillPopScope(
       onWillPop: () async {
         widget.sessionTimer.dispose();
@@ -145,11 +147,6 @@ class Send4State extends State<Send4> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    //Text(
-                    // "${transaction.receiver}",
-                    //   style: AppTextStyles.textSM,
-                    //),
-                    const SizedBox(height: 10),
                     Text(
                       "Bitcoin sent to the wrong address can never be recovered.",
                       style: AppTextStyles.textSM.copyWith(
@@ -160,9 +157,7 @@ class Send4State extends State<Send4> {
                     ButtonSecondaryMD(
                       label: "Address",
                       icon: "edit",
-                      onTap: () {
-                        // Edit address logic here if needed
-                      },
+                      onTap: navigateToSend2,
                     ),
                   ],
                 ),
@@ -203,10 +198,7 @@ class Send4State extends State<Send4> {
                           'Send Amount',
                           style: AppTextStyles.textSM,
                         ),
-                        // Text(
-                        //   '\$$sendAmount',
-                        //   style: AppTextStyles.textSM,
-                        // ),
+                        // You can add the corresponding values here if needed
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -217,27 +209,11 @@ class Send4State extends State<Send4> {
                           'Fee Amount',
                           style: AppTextStyles.textSM,
                         ),
-                        // Text(
-                        //   '\$$transactionFee',
-                        //   style: AppTextStyles.textSM,
-                        // ),
+                        // You can add the corresponding values here if needed
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        //  const Text(
-                        //    'Total Amount',
-                        //    style: AppTextStyles.textSM,
-                        //  ),
-                        //  Text(
-                        //    '\$$totalAmount',
-                        //    style: AppTextStyles.textSM,
-                        //  ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
+                    // Additional rows as needed
                   ],
                 ),
               ),
@@ -248,7 +224,7 @@ class Send4State extends State<Send4> {
           padding: const EdgeInsets.all(20.0),
           child: ButtonOrangeLG(
             label: "Confirm & Send",
-            onTap: confirmSend,
+            onTap: () => broadcastTransaction(widget.tx!),
             isEnabled: true,
           ),
         ),
