@@ -17,7 +17,7 @@ void main() async {
   await RustLib.init();
   runApp(const MyApp());
   SystemChrome.setPreferredOrientations(
-    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
 class MyApp extends StatefulWidget {
@@ -28,7 +28,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String error = "";
+  ValueNotifier<String> errorNotifier = ValueNotifier<String>("");
 
   @override
   void initState() {
@@ -39,10 +39,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> setupApp() async {
     var path = await getDocPath();
     print(path);
-    var _error = await rustStart(path: path, dartCallback: dartCallback)
-    setState(() {
-      error = _error;
-    });
+    var _error = await rustStart(path: path, dartCallback: dartCallback);
+    errorNotifier.value = _error;
   }
 
   @override
@@ -51,7 +49,16 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Orange',
       theme: theme(),
-      home: const InitPage(),
+      home: ValueListenableBuilder<String>(
+        valueListenable: errorNotifier,
+        builder: (context, error, _) {
+          return Scaffold(
+            body: Center(
+              child: Text(error ?? ""),
+            ),
+          );
+        },
+      ),
     );
   }
 }
