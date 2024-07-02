@@ -90,23 +90,10 @@ class NewMessageState extends State<NewMessage> {
   }
 
   Widget _buildRecipientList() {
-    if (recipients.length == 1) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 24),
-        child: Row(
-          children: [
-            Button(
-              label: recipients[0],
-              variant: 'secondary',
-              size: 'MD',
-              icon: AppIcons.close,
-              onTap: () => removeRecipient(recipients[0]),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Wrap(
+    return Container(
+      padding: const EdgeInsets.only(bottom: 8),
+      alignment: Alignment.topLeft,
+      child: Wrap(
         spacing: 8,
         runSpacing: 8,
         children: List<Widget>.generate(recipients.length, (index) {
@@ -118,8 +105,8 @@ class NewMessageState extends State<NewMessage> {
             onTap: () => removeRecipient(recipients[index]),
           );
         }),
-      );
-    }
+      ),
+    );
   }
 
   @override
