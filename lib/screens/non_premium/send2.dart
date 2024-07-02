@@ -294,7 +294,7 @@ class Send2State extends State<Send2> {
               ],
               Button(
                 label: "Scan QR Code",
-                variant: 'orange',
+                variant: 'secondary',
                 size: 'MD',
                 icon: AppIcons.qrcode,
                 onTap: _startQRScanner,
