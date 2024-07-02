@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:orange/util.dart';
 import 'package:orange/widgets/contact_card.dart';
 
 class GroupMessageList extends StatefulWidget {
@@ -13,6 +14,7 @@ class GroupMessageList extends StatefulWidget {
 class GroupMessageListState extends State<GroupMessageList> {
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Group Message'),

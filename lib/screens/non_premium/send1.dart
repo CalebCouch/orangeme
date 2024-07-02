@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/util.dart';
 import 'package:orange/widgets/numberpad.dart';
 import 'package:orange/widgets/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
@@ -224,6 +225,7 @@ class Send1State extends State<Send1> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     print("Time left ${sessionTimer.getTimeLeftFormatted()}");
     print("Price: ${widget.price}");
     print("Exceed max balance: $exceedMaxBalance");

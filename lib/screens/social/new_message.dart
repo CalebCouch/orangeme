@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/textfield.dart';
+import 'package:orange/util.dart';
 import 'package:orange/widgets/contact_card.dart';
 import 'package:orange/screens/social/message.dart';
 import 'package:orange/components/buttons/secondary_md.dart';
@@ -92,6 +93,7 @@ class NewMessageState extends State<NewMessage> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(

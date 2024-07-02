@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/util.dart';
 import '../opt out/why_not.dart';
 
 class Premium extends StatefulWidget {
@@ -16,6 +17,7 @@ class PremiumState extends State<Premium> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return Scaffold(
         appBar: AppBar(),
         body: Center(

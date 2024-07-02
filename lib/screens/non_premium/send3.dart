@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/screens/non_premium/send4.dart';
+import 'package:orange/util.dart';
 import 'package:orange/widgets/session_timer.dart';
 
 class Send3 extends StatefulWidget {
@@ -34,6 +35,7 @@ class Send3State extends State<Send3> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Speed'),

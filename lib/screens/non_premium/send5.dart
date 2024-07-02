@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/components/buttons/secondary_lg.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:orange/util.dart';
 
 class Send5 extends StatefulWidget {
   final int amount;
@@ -27,6 +28,7 @@ class Send5State extends State<Send5> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     String sentTotal =
         (widget.amount / 100000000 * widget.price).toStringAsFixed(2);
     return Scaffold(

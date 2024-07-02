@@ -98,6 +98,7 @@ class Send4State extends State<Send4> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return WillPopScope(
       onWillPop: () async {
         widget.sessionTimer.dispose();

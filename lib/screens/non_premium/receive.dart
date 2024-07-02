@@ -53,6 +53,7 @@ class ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Receive Bitcoin'),

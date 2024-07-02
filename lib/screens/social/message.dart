@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:orange/styles/constants.dart';
+import 'package:orange/util.dart';
 import 'package:orange/widgets/message_appbar.dart';
 import 'package:orange/components/textfield.dart';
 import 'package:orange/widgets/text_bauble.dart';
@@ -136,6 +137,7 @@ class MessageState extends State<Message> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Column(

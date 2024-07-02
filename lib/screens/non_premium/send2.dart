@@ -251,6 +251,7 @@ Future<void> createTransactions() async {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) async {

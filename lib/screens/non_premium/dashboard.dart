@@ -116,6 +116,7 @@ class _DashboardState extends State<Dashboard>
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     if (refreshTimer != null && !refreshTimer!.isActive) {
       startTimer();
     }

@@ -12,8 +12,9 @@ List<RustC> RUSTCOMMANDS = [];
 List<RustR> RUSTRESPONSES = [];
 const STORAGE = FlutterSecureStorage();
 String ERROR = "";
+BuildContext? currentCtx;
 
-Future<void> checkError(BuildContext context) async {
+Future<void> checkError() async {
   while (true) {
     await Future.delayed(Duration(milliseconds: 10));
     if (ERROR.isNotEmpty) {
@@ -21,14 +22,13 @@ Future<void> checkError(BuildContext context) async {
       print(ERROR);
 
       Navigator.pushReplacement(
-        context,
+        currentCtx!,
         MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)),
       );
       break;
     }
   }
 }
-
 
 Future<RustR> invoke(String method, String data) async {
   var uid = uuid.v1();
