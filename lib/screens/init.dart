@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/screens/error.dart';
 import 'non_premium/dashboard.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
@@ -17,7 +18,7 @@ class InitPage extends StatefulWidget {
 class InitPageState extends State<InitPage> {
   final text = ValueNotifier<String>("de");
   bool loading = true;
-
+  final error = ValueNotifier<String?>(null);
   @override
   void initState() {
     super.initState();
@@ -52,6 +53,15 @@ class InitPageState extends State<InitPage> {
   void historical_price() async {
     var historical_prices = (await invoke("get_historical_price", "")).data;
     print(historical_prices);
+  }
+
+   void handleError(dynamic error) {
+    print('Error: $error');
+    this.error.value = error.toString(); 
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => ErrorPage(message: error)),
+    );
   }
 
   void get_balance() async {
