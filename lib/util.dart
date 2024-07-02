@@ -20,10 +20,10 @@ Future<void> checkError(BuildContext context) async {
       print("WE GOT AN ERROR");
       print(ERROR);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)),
-      );
+     // Navigator.pushReplacement(
+       // context,
+       // MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)),
+     // );
       break;
     }
   }
