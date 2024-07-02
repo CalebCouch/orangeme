@@ -168,10 +168,10 @@ class _Send2State extends State<Send2> {
   }
 
   void closeDialog() {
-    if (controller != null && mounted) {
-      controller!.dispose();
+    controller?.dispose();
+    if (mounted) {
+      Navigator.of(context).pop();
     }
-    Navigator.of(context).pop();
   }
 
   pasteAddress() {
@@ -190,26 +190,18 @@ class _Send2State extends State<Send2> {
         widget.amount.toString(),
         1,
       );
-      var priorityJson =
-          (await invoke("create_transaction", jsonEncode(priorityInput))).data;
+      var priorityJson = (await invoke("create_transaction", jsonEncode(priorityInput))).data;
       priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson));
-
+      
       var standardInput = CreateTransactionInput(
         recipientAddressController.text,
         widget.amount.toString(),
         3,
       );
-      var standardJson =
-          (await invoke("create_transaction", jsonEncode(standardInput))).data;
+      var standardJson = (await invoke("create_transaction", jsonEncode(standardInput))).data;
       standardTransaction = Transaction.fromJson(jsonDecode(standardJson));
 
-      // Navigate to Send3 if both transactions are created
-      if (priorityTransaction != null && standardTransaction != null) {
-        _navigateToSend3();
-      } else {
-        // Handle case where transactions are not created
-        print("Transactions are not yet created.");
-      }
+      _navigateToSend3();
     } catch (e) {
       print("Error creating transactions: $e");
     } finally {
@@ -294,7 +286,7 @@ class _Send2State extends State<Send2> {
                 error: 'invalid address',
               ),
               const SizedBox(height: 10),
-              if (clipboardData != '') ...[
+              if (clipboardData.isNotEmpty) ...[
                 ButtonSecondaryMD(
                   label: truncateAddress(clipboardData),
                   icon: "clipboard",
