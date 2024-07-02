@@ -1,23 +1,22 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:orange/screens/error.dart';
+import 'package:orange/classes.dart';
 import 'non_premium/dashboard.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
 
 class InitPage extends StatefulWidget {
-  const InitPage({Key? key}) : super(key: key);
+  const InitPage({super.key});
 
   @override
-  _InitPageState createState() => _InitPageState();
+  InitPageState createState() => InitPageState();
 }
 
-class _InitPageState extends State<InitPage> {
+class InitPageState extends State<InitPage> {
   final text = ValueNotifier<String>("de");
   bool loading = true;
-  final error = ValueNotifier<String>("");
 
   @override
   void initState() {
@@ -28,68 +27,58 @@ class _InitPageState extends State<InitPage> {
   }
 
   void onPageLoad() async {
-    try {
-      checkPlatform();
-      await performInitialization();
-      setState(() {
-        loading = false;
-      });
-    } catch (e) {
-      handleError(e);
-    }
-  }
-
-  Future<void> performInitialization() async {
-    await Future.wait([
-      messages(),
-      dropSeed(),
-      historicalPrice(),
-      getBalance(),
-      getNewAddress(),
-      checkAddress(),
-    ]);
-  }
-
-  Future<void> messages() async {
-    var message = await invoke("messages", "");
-    print(message);
-  }
-
-  Future<void> dropSeed() async {
-    await invoke("drop_descs", "");
-    print("dropped");
-  }
-
-  Future<void> historicalPrice() async {
-    var historicalPrices = await invoke("get_historical_price", "");
-    print(historicalPrices.data);
-  }
-
-  Future<void> getBalance() async {
-    var balance = await invoke("get_balance", "");
-    print(balance.data);
-  }
-
-  Future<String> getNewAddress() async {
-    var newAddress = await invoke("get_new_address", "");
-    print(newAddress.data);
-    return newAddress.data;
-  }
-
-  Future<void> checkAddress() async {
-    var newAddress = await getNewAddress();
-    var checkAddress = await invoke("check_address", newAddress);
-    print(checkAddress.data);
-  }
-
-  void handleError(dynamic error) {
-    print('Error: $error');
-    this.error.value = error.toString();
+    checkPlatform();
     setState(() {
       loading = false;
     });
   }
 
+  void messges() async {
+    var message;
+    message.value = (await invoke("messages", "")).data;
+    print(message);
+  }
+
+  void dropseed() async {
+    await invoke("drop_descs", "");
+    print("dropped");
+  }
+
+  void estimateFees() async {
+    text.value = (await invoke("estimateFees", "")).data;
+    print(text.value);
+  }
+
+  void historical_price() async {
+    var historical_prices = (await invoke("get_historical_price", "")).data;
+    print(historical_prices);
+  }
+
+  void get_balance() async {
+    var get_balance = (await invoke("get_balance", "")).data;
+    print(get_balance);
+  }
+
+  Future<String> get_new_address() async {
+    var newAddress = (await invoke("get_new_address", "")).data;
+    print(newAddress);
+    return newAddress;
+  }
+
+  void check_address() async {
+    var check_address = (await invoke(
+            "check_address", (await invoke("get_new_address", "")).data))
+        .data;
+    print(check_address);
+  }
+/** 
+  void create_transaction() async {
+    var input = new CreateTransactionInput(
+        get_new_address() as String, "3747373", "fee");
+    var jsonres = await invoke("create_transaction", jsonEncode(input));
+    print(jsonres);
+  }
+*/
   void checkPlatform() {
     if (Platform.isAndroid) {
       print("Android device detected");
@@ -108,89 +97,87 @@ class _InitPageState extends State<InitPage> {
 
   void navigate() {
     Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const Dashboard(loading: true),
-      ),
-    );
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Dashboard(loading: true)));
   }
 
   @override
   Widget build(BuildContext context) {
+    checkError(context);
     return Scaffold(
-      body: ValueListenableBuilder<String>(
-        valueListenable: error,
-        builder: (context, errorMessage, _) {
-          print("Check error");
-          if (errorMessage != "") {
-            return ErrorPage(message: errorMessage);
-          } else {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: loading
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text(
-                          'Welcome to Orange. This screen will not normally be seen and is used for initialization',
-                          textAlign: TextAlign.center,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: loading
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: const Center(child: CircularProgressIndicator()))
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    'Welcome to Orange. This screen will not normally be seen and is used for initialization',
+                    style: Theme.of(context).textTheme.displayLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ValueListenableBuilder<String>(
+                    valueListenable: text,
+                    builder: (BuildContext context, String value, child) {
+                      return Text(
+                        "$value Sats",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 24,
                         ),
-                        const SizedBox(height: 20),
-                        ValueListenableBuilder<String>(
-                          valueListenable: text,
-                          builder: (BuildContext context, String value, child) {
-                            return Text(
-                              "$value Sats",
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 24,
-                              ),
-                              textAlign: TextAlign.center,
-                            );
-                          },
-                        ),
-                        ElevatedButton(
-                          onPressed: navigate,
-                          child: const Text('Proceed'),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: dropSeed,
-                          child: const Text('Drop'),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: messages,
-                          child: const Text('Messages'),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: historicalPrice,
-                          child: const Text('Historical Price'),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: getBalance,
-                          child: const Text('Balance'),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: getNewAddress,
-                          child: const Text('New Address'),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: checkAddress,
-                          child: const Text('Check Address'),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-            );
-          }
-        },
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {navigate()},
+                    child: const Text('Proceed'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {dropseed()},
+                    child: const Text('drop'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {estimateFees()},
+                    child: const Text('estimate fee'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {messges()},
+                    child: const Text('messages'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {historical_price()},
+                    child: const Text('Historical price'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {get_balance()},
+                    child: const Text('balance'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {get_new_address()},
+                    child: const Text('New address'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {check_address()},
+                    child: const Text('Check address'),
+                  ),
+                ],
+              ),
       ),
     );
   }

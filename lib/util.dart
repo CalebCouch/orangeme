@@ -18,8 +18,10 @@ Future<void> checkError(context) async {
     print("ERRORR CHECHH");
     await Future.delayed(Duration(milliseconds: 10));
     if (ERROR != "") {
+      print("WE GOT AN ERROR");
+      print(ERROR);
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)));
+      MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)));
     }
   }
 }
