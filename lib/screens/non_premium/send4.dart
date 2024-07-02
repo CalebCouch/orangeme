@@ -62,10 +62,11 @@ class Send4State extends State<Send4> {
     print("Confirm Send called");
 
     if (widget.tx != null) {
+      print("Transaction: ${widget.tx}");
       broadcastTransaction(widget.tx!);
     } else {
       print("Transaction is null");
-      // Handle null transaction case if needed
+      print(widget.tx);
     }
   }
 
@@ -198,7 +199,6 @@ class Send4State extends State<Send4> {
                           'Send Amount',
                           style: AppTextStyles.textSM,
                         ),
-                        // You can add the corresponding values here if needed
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -209,11 +209,9 @@ class Send4State extends State<Send4> {
                           'Fee Amount',
                           style: AppTextStyles.textSM,
                         ),
-                        // You can add the corresponding values here if needed
                       ],
                     ),
                     const SizedBox(height: 10),
-                    // Additional rows as needed
                   ],
                 ),
               ),
@@ -224,7 +222,7 @@ class Send4State extends State<Send4> {
           padding: const EdgeInsets.all(20.0),
           child: ButtonOrangeLG(
             label: "Confirm & Send",
-            onTap: () => broadcastTransaction(widget.tx!),
+            onTap: () => confirmSend(),
             isEnabled: true,
           ),
         ),

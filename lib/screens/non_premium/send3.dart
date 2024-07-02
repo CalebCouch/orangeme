@@ -29,8 +29,10 @@ class Send3 extends StatefulWidget {
       required this.onDashboardPopBack,
       required this.sessionTimer,
       this.priorityTransaction,
-      this.standardTransaction, required Transaction priority_tx, required Transaction standard_tx});
-      
+      this.standardTransaction,
+      required Transaction priority_tx,
+      required Transaction standard_tx});
+
   @override
   Send3State createState() => Send3State();
 }
@@ -41,7 +43,6 @@ int standardFee = 0;
 class Send3State extends State<Send3> {
   bool isPrioritySelected = false;
   Transaction? selectedTransaction;
-
   void navigate() {
     Navigator.pushReplacement(
         context,
@@ -78,7 +79,8 @@ class Send3State extends State<Send3> {
   void onOptionSelected(bool isSelected) {
     setState(() {
       isPrioritySelected = isSelected;
-      selectedTransaction = isSelected ? widget.priorityTransaction : widget.standardTransaction;
+      selectedTransaction =
+          isSelected ? widget.priorityTransaction : widget.standardTransaction;
       print("priority selected: $isSelected");
     });
   }
@@ -89,7 +91,6 @@ class Send3State extends State<Send3> {
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
     return PopScope(
       canPop: true,
-      //prevents session timer from continuing to run off screen
       onPopInvoked: (bool didPop) async {
         widget.sessionTimer.dispose();
       },
@@ -99,7 +100,6 @@ class Send3State extends State<Send3> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                //dashboard timer callback function
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
