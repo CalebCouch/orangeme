@@ -207,6 +207,8 @@ class AppIcons {
 
 class AppImages {
   //images
+  static const String defaultProfileXXL =
+      'assets/images/default_profileXXL.png';
   static const String defaultProfileXL = 'assets/images/default_profileXL.png';
   static const String defaultProfileLG = 'assets/images/default_profileLG.png';
   static const String defaultProfileMD = 'assets/images/default_profileMD.png';
