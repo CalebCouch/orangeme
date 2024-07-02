@@ -12,19 +12,38 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:io';
 
-Future<void> main() async {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); 
   await RustLib.init();
   runApp(const MyApp());
-  SystemChrome.setPreferredOrientations(
-    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
-  var path = await getDocPath();
-  print(path);
-  ERROR = await rustStart(path: path, dartCallback: dartCallback);
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late String error;
+
+  @override
+  void initState() {
+    super.initState();
+    setupApp();
+  }
+
+  Future<void> setupApp() async {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    var path = await getDocPath();
+    print(path);
+    setState(() {
+      error = rustStart(path: path, dartCallback: dartCallback) as String;
+    });
+    print(error);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +51,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Orange',
       theme: theme(),
-      home: const InitPage()
+      home: const InitPage(),
     );
   }
 }

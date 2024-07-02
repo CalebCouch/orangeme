@@ -15,6 +15,7 @@ String ERROR = "";
 
 Future<void> checkError(context) async {
   while (true) {
+    print("ERRORR CHECHH");
     await Future.delayed(Duration(milliseconds: 10));
     if (ERROR != "") {
       Navigator.pushReplacement(context,
@@ -52,7 +53,7 @@ Future<String> dartCallback(String dartCommand) async {
       RUSTCOMMANDS = [];
       return json;
     case "post_response":
-        print(dartCommand);
+      print(dartCommand);
       RUSTRESPONSES.add(RustR.fromJson(jsonDecode(command.data)));
     case var unknown:
       return "Error:UnknownMethod:" + unknown;

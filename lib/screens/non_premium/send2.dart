@@ -179,11 +179,6 @@ class _Send2State extends State<Send2> {
   }
 
   Future<void> createTransactions() async {
-    if (isCreatingTransaction) return; 
-    setState(() {
-      isCreatingTransaction = true;
-    });
-
     try {
       var priorityInput = CreateTransactionInput(
         recipientAddressController.text,
