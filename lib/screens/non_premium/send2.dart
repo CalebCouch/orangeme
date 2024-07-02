@@ -7,7 +7,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'package:orange/components/textfield.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
-import 'package:orange/components/buttons/secondary_md.dart';
+import 'package:orange/components/button.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/session_timer.dart';
 import 'package:orange/screens/non_premium/send1.dart';
@@ -277,8 +277,10 @@ class Send2State extends State<Send2> {
               const SizedBox(height: 10),
               //only show this section if the user's clipboard contains a valid BTC address
               if (clipboardData != '') ...[
-                ButtonSecondaryMD(
+                Button(
                   label: truncateAddress(clipboardData),
+                  variant: 'secondary',
+                  size: 'MD',
                   icon: AppIcons.paste,
                   onTap: () => pasteAddress(),
                 ),
@@ -290,8 +292,10 @@ class Send2State extends State<Send2> {
                 ),
                 const SizedBox(height: 5),
               ],
-              ButtonSecondaryMD(
+              Button(
                 label: "Scan QR Code",
+                variant: 'orange',
+                size: 'MD',
                 icon: AppIcons.qrcode,
                 onTap: _startQRScanner,
               ),

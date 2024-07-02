@@ -5,7 +5,7 @@ import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/components/buttons/secondary_md.dart';
+import 'package:orange/components/button.dart';
 import 'package:orange/widgets/session_timer.dart';
 import 'send2.dart';
 import 'send3.dart';
@@ -254,8 +254,10 @@ class Send4State extends State<Send4> {
                           .copyWith(color: AppColors.textSecondary),
                     ),
                     const SizedBox(height: 20),
-                    ButtonSecondaryMD(
+                    Button(
                         label: "Address",
+                        variant: 'secondary',
+                        size: 'MD',
                         icon: AppIcons.edit,
                         onTap: editAddress),
                   ],
@@ -335,13 +337,17 @@ class Send4State extends State<Send4> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        ButtonSecondaryMD(
+                        Button(
                             label: "Amount",
+                            variant: 'secondary',
+                            size: "MD",
                             icon: AppIcons.edit,
                             onTap: editAmount),
                         const SizedBox(width: 10),
-                        ButtonSecondaryMD(
+                        Button(
                             label: "Speed",
+                            variant: 'secondary',
+                            size: 'MD',
                             icon: AppIcons.edit,
                             onTap: editSpeed),
                       ],

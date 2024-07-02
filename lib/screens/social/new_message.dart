@@ -3,7 +3,7 @@ import 'package:orange/styles/constants.dart';
 import 'package:orange/components/textfield.dart';
 import 'package:orange/widgets/contact_card.dart';
 import 'package:orange/screens/social/message.dart';
-import 'package:orange/components/buttons/secondary_md.dart';
+import 'package:orange/components/button.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -105,8 +105,10 @@ class NewMessageState extends State<NewMessage> {
         spacing: 8,
         runSpacing: 8,
         children: List<Widget>.generate(recipients.length, (index) {
-          return ButtonSecondaryMD(
+          return Button(
             label: recipients[index],
+            variant: 'secondary',
+            size: 'MD',
             icon: AppIcons.close,
             onTap: () => removeRecipient(recipients[index]),
           );

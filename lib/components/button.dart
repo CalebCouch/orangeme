@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ButtonSecondaryMD extends StatefulWidget {
+class Button extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
   final bool isEnabled;
   final String? icon;
+  final String variant;
+  final String size;
 
-  const ButtonSecondaryMD(
+  const Button(
       {super.key,
       required this.label,
+      required this.variant,
+      required this.size,
       this.onTap,
       this.isEnabled = true,
       this.icon});
@@ -19,7 +23,47 @@ class ButtonSecondaryMD extends StatefulWidget {
   StatefulCustomButtonState createState() => StatefulCustomButtonState();
 }
 
-class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
+TextStyle labelSize(String size) {
+  if (size == 'MD') {
+    return AppTextStyles.labelMD;
+  } else if (size == 'LG') {
+    return AppTextStyles.labelLG;
+  } else {
+    return AppTextStyles.labelMD;
+  }
+}
+
+Color buttonVariant(String variant, bool isEnabled, bool isHovering) {
+  if ((variant == "secondary" || variant == 'ghost') &&
+      isEnabled &&
+      isHovering) {
+    return AppColors.darkGrey;
+  } else if ((variant == "secondary" || variant == 'ghost') && !isEnabled) {
+    return AppColors.black;
+  } else if (variant == "secondary" || variant == 'ghost') {
+    return AppColors.black;
+  } else if (variant == 'primary' && isEnabled) {
+    return AppColors.white;
+  } else if (variant == 'primary') {
+    return AppColors.grey;
+  } else if (variant == 'bitcoin' && isEnabled) {
+    return AppColors.orange;
+  } else if (variant == 'bitcoin') {
+    return AppColors.grey;
+  } else {
+    return Colors.transparent;
+  }
+}
+
+Color borderVariant(String variant) {
+  if (variant == "secondary") {
+    return AppColors.darkGrey;
+  } else {
+    return Colors.transparent;
+  }
+}
+
+class StatefulCustomButtonState extends State<Button> {
   bool _isHovering = false;
 
   @override
@@ -36,11 +80,9 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
           constraints: const BoxConstraints(minWidth: 64, minHeight: 32),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: ShapeDecoration(
-            color: _isHovering
-                ? AppColors.white.withOpacity(0.15)
-                : Colors.transparent,
+            color: buttonVariant(widget.variant, widget.isEnabled, _isHovering),
             shape: RoundedRectangleBorder(
-              side: const BorderSide(width: 1, color: AppColors.darkGrey),
+              side: BorderSide(width: 1, color: borderVariant(widget.variant)),
               borderRadius: BorderRadius.circular(24),
             ),
           ),
@@ -60,7 +102,7 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
                             overflow: TextOverflow.ellipsis,
                             text: TextSpan(
                                 text: widget.label,
-                                style: AppTextStyles.labelMD),
+                                style: labelSize(widget.size)),
                           ),
                         ),
                       ],
@@ -68,7 +110,7 @@ class StatefulCustomButtonState extends State<ButtonSecondaryMD> {
                   : Text(
                       widget.label,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.labelMD,
+                      style: labelSize(widget.size),
                     ),
             ],
           ),
