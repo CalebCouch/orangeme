@@ -88,10 +88,7 @@ class ReceiveState extends State<Receive> {
                                 data: value,
                                 options: const QrOptions(
                                   shapes: QrShapes(
-
                                     darkPixel: QrPixelShapeCircle(),
-                                    
-                                    
                                   ),
                                 ),
                               ),
