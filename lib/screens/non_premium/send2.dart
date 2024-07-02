@@ -179,7 +179,7 @@ class _Send2State extends State<Send2> {
   }
 
   Future<void> createTransactions() async {
-    if (isCreatingTransaction) return; // Avoid multiple calls
+    if (isCreatingTransaction) return; 
     setState(() {
       isCreatingTransaction = true;
     });
@@ -192,7 +192,7 @@ class _Send2State extends State<Send2> {
       );
       var priorityJson = (await invoke("create_transaction", jsonEncode(priorityInput))).data;
       priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson));
-      
+
       var standardInput = CreateTransactionInput(
         recipientAddressController.text,
         widget.amount.toString(),
@@ -200,11 +200,10 @@ class _Send2State extends State<Send2> {
       );
       var standardJson = (await invoke("create_transaction", jsonEncode(standardInput))).data;
       standardTransaction = Transaction.fromJson(jsonDecode(standardJson));
-
+      
       _navigateToSend3();
     } catch (e) {
       print("Error creating transactions: $e");
-    } finally {
       setState(() {
         isCreatingTransaction = false;
       });
@@ -212,26 +211,28 @@ class _Send2State extends State<Send2> {
   }
 
   void _navigateToSend3() {
-    _stopTimer();
-    if (mounted) {
-      try {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Send3(
-              amount: widget.amount,
-              address: recipientAddressController.text,
-              balance: widget.balance,
-              price: widget.price,
-              onDashboardPopBack: widget.onDashboardPopBack,
-              sessionTimer: widget.sessionTimer,
-              priority_tx: priorityTransaction!,
-              standard_tx: standardTransaction!,
+    if (priorityTransaction != null && standardTransaction != null) {
+      _stopTimer();
+      if (mounted) {
+        try {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Send3(
+                amount: widget.amount,
+                address: recipientAddressController.text,
+                balance: widget.balance,
+                price: widget.price,
+                onDashboardPopBack: widget.onDashboardPopBack,
+                sessionTimer: widget.sessionTimer,
+                priority_tx: priorityTransaction!,
+                standard_tx: standardTransaction!,
+              ),
             ),
-          ),
-        );
-      } catch (e) {
-        print("Navigation error: $e");
+          );
+        } catch (e) {
+          print("Navigation error: $e");
+        }
       }
     }
   }
