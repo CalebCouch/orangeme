@@ -203,23 +203,6 @@ class DashboardState extends State<Dashboard>
     });
   }
 
-  //these are used to activate the app bar menu links, currently disabled
-
-  // void navigateBackUp() {
-  //   Navigator.push(
-  //       context, MaterialPageRoute(builder: (context) => const BackUp()));
-  // }
-
-  // void navigateDuplicate() {
-  //   Navigator.push(context,
-  //       MaterialPageRoute(builder: (context) => const DuplicatePhone()));
-  // }
-
-  // void navigateImportOptOut() {
-  //   Navigator.push(
-  //       context, MaterialPageRoute(builder: (context) => const ImportCloud()));
-  // }
-
   @override
   Widget build(BuildContext context) {
     print("Refresh Timer: $refreshTimer");
@@ -231,43 +214,8 @@ class DashboardState extends State<Dashboard>
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          // title: const TextMarkLG(),
           title: const Text('Wallet'),
           automaticallyImplyLeading: false,
-          //app bar drop down settings/nav menu, currently disabled
-          // actions: [
-          //   PopupMenuButton<int>(
-          //     icon: const Icon(Icons.menu),
-          //     offset: Offset(0, AppBar().preferredSize.height),
-          //     onSelected: (int result) {
-          //       switch (result) {
-          //         case 0:
-          //           navigateBackUp();
-          //           break;
-          //         case 1:
-          //           navigateImportOptOut();
-          //           break;
-          //         case 2:
-          //           navigateDuplicate();
-          //           break;
-          //       }
-          //     },
-          //     itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-          //       const PopupMenuItem<int>(
-          //         value: 0,
-          //         child: Text('Back Up'),
-          //       ),
-          //       const PopupMenuItem<int>(
-          //         value: 1,
-          //         child: Text('Import'),
-          //       ),
-          //       const PopupMenuItem<int>(
-          //         value: 2,
-          //         child: Text('Duplicate'),
-          //       ),
-          //     ],
-          //   ),
-          // ],
         ),
         body: loading
             ? const Center(child: CircularProgressIndicator())

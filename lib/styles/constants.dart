@@ -208,6 +208,8 @@ class AppIcons {
 
 class AppImages {
   //images
+  static const String defaultProfileXXL =
+      'assets/images/default_profileXXL.png';
   static const String defaultProfileXL = 'assets/images/default_profileXL.png';
   static const String defaultProfileLG = 'assets/images/default_profileLG.png';
   static const String defaultProfileMD = 'assets/images/default_profileMD.png';
@@ -221,6 +223,11 @@ class AppImages {
   static const String test7 = 'assets/images/test7.png';
   static const String test8 = 'assets/images/test8.png';
   static const String test9 = 'assets/images/test9.png';
+  static const String groupProfileXXL = 'assets/images/group_profileXXL.png';
+  static const String groupProfileXL = 'assets/images/group_profileXL.png';
+  static const String groupProfileLG = 'assets/images/group_profileLG.png';
+  static const String groupProfileMD = 'assets/images/group_profileMD.png';
+  static const String groupProfileSM = 'assets/images/group_profileSM.png';
 }
 
 //Text Mark Base
