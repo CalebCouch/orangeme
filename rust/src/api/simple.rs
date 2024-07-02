@@ -163,7 +163,9 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                     Ok(serde_json::to_string(&transactions)?)
                 },
                 "create_transaction" => {
+                    return Err(Error::Exited("EXITED".to_string()));
                     let input = serde_json::from_str::<CreateTransactionInput>(&command.data)?;
+                    invoke(&dartCallback, "print", "Json good").await?;
                     let sats = input.sats;
                     let address = Address::from_str(&input.address)?.require_network(Network::Bitcoin)?;
                     let fee_rate: bdk::FeeRate = FeeRate::from_btc_per_kvb(blockchain.estimate_fee(input.block_target as usize)? as f32);
