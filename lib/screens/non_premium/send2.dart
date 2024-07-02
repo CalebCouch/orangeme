@@ -183,36 +183,35 @@ class _Send2State extends State<Send2> {
     recipientAddressController.text = clipboardData;
   }
 
-Future<void> createTransactions() async {
-  setState(() {
-    isCreatingTransaction = true;
-  });
-
+  Future<void> createTransactions() async {
+    setState(() {
+      isCreatingTransaction = true;
+    });
 
     var priorityInput = CreateTransactionInput(
       recipientAddressController.text,
       widget.amount,
       1,
     );
-    var priorityJson = await invoke("create_transaction", jsonEncode(priorityInput));
+    var priorityJson =
+        await invoke("create_transaction", jsonEncode(priorityInput));
     priorityTransaction = Transaction.fromJson(jsonDecode(priorityJson.data));
-
-  setState(() {
-    isCreatingTransaction = false;
-  });
+    print(priorityTransaction);
+    setState(() {
+      isCreatingTransaction = false;
+    });
 
     var standardInput = CreateTransactionInput(
       recipientAddressController.text,
       widget.amount,
       3,
     );
-    var standardJson = await invoke("create_transaction", jsonEncode(standardInput));
+    var standardJson =
+        await invoke("create_transaction", jsonEncode(standardInput));
     standardTransaction = Transaction.fromJson(jsonDecode(standardJson.data));
-
-
-  _navigateToSend3();
-}
-
+    print(standardTransaction);
+    _navigateToSend3();
+  }
 
   void _navigateToSend3() {
     if (priorityTransaction != null && standardTransaction != null) {

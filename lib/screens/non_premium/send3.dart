@@ -82,6 +82,7 @@ class Send3State extends State<Send3> {
       selectedTransaction =
           isSelected ? widget.priorityTransaction : widget.standardTransaction;
       print("priority selected: $isSelected");
+      print(selectedTransaction);
     });
   }
 
