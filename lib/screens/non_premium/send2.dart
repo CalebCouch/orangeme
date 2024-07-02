@@ -191,7 +191,7 @@ Future<void> createTransactions() async {
 
     var priorityInput = CreateTransactionInput(
       recipientAddressController.text,
-      widget.amount.toString(),
+      widget.amount,
       1,
     );
     var priorityJson = await invoke("create_transaction", jsonEncode(priorityInput));
@@ -203,7 +203,7 @@ Future<void> createTransactions() async {
 
     var standardInput = CreateTransactionInput(
       recipientAddressController.text,
-      widget.amount.toString(),
+      widget.amount,
       3,
     );
     var standardJson = await invoke("create_transaction", jsonEncode(standardInput));

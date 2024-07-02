@@ -85,7 +85,7 @@ class RustR {
 
 class CreateTransactionInput {
   final String address;
-  final String sats;
+  final int sats;
   final int block_target;
 
   CreateTransactionInput(this.address, this.sats, this.block_target);
