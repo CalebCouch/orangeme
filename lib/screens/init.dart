@@ -104,7 +104,6 @@ class InitPageState extends State<InitPage> {
 
   @override
   Widget build(BuildContext context) {
-    checkError(context);
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

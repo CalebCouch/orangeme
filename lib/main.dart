@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange/screens/error.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/screens/init.dart';
@@ -41,6 +42,7 @@ class _MyAppState extends State<MyApp> {
     print(path);
     var _error = await rustStart(path: path, dartCallback: dartCallback);
     errorNotifier.value = _error;
+    print(errorNotifier.value);
   }
 
   @override
@@ -52,11 +54,10 @@ class _MyAppState extends State<MyApp> {
       home: ValueListenableBuilder<String>(
         valueListenable: errorNotifier,
         builder: (context, error, _) {
-          return Scaffold(
-            body: Center(
-              child: Text(error ?? ""),
-            ),
-          );
+          if (error == "") {
+            return InitPage();
+          }
+          return ErrorPage(message: error);
         },
       ),
     );
