@@ -121,6 +121,7 @@ class _InitPageState extends State<InitPage> {
       body: ValueListenableBuilder<String>(
         valueListenable: error,
         builder: (context, errorMessage, _) {
+          print("Check error");
           if (errorMessage != "") {
             return ErrorPage(message: errorMessage);
           } else {
@@ -150,7 +151,7 @@ class _InitPageState extends State<InitPage> {
                             );
                           },
                         ),
-                         ElevatedButton(
+                        ElevatedButton(
                           onPressed: navigate,
                           child: const Text('Proceed'),
                         ),
@@ -185,7 +186,6 @@ class _InitPageState extends State<InitPage> {
                           child: const Text('Check Address'),
                         ),
                         const SizedBox(height: 20),
-                       
                       ],
                     ),
             );
@@ -195,4 +195,3 @@ class _InitPageState extends State<InitPage> {
     );
   }
 }
-
