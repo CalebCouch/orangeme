@@ -67,9 +67,6 @@ class _DashboardState extends State<Dashboard>
 
   Future<void> handleRefresh() async {
     try {
-      var descriptorsRes = await STORAGE.read(key: "descriptors");
-      print("descriptorRes: $descriptorsRes");
-
       var balanceRes = (await invoke("get_balance", "")).data;
       balance.value = int.parse(balanceRes);
       print("My Balance: $balanceRes");

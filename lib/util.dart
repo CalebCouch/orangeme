@@ -15,7 +15,7 @@ String ERROR = "";
 
 Future<void> checkError(context) async {
   while (true) {
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(milliseconds: 10));
     if (ERROR != "") {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)));
@@ -39,7 +39,6 @@ Future<RustR> invoke(String method, String data) async {
 
 Future<String> dartCallback(String dartCommand) async {
   var command = DartCommand.fromJson(jsonDecode(dartCommand));
-  print(dartCommand);
   switch (command.method) {
     case "secure_get":
       return await STORAGE.read(key: command.data) ?? "";
@@ -53,6 +52,7 @@ Future<String> dartCallback(String dartCommand) async {
       RUSTCOMMANDS = [];
       return json;
     case "post_response":
+        print(dartCommand);
       RUSTRESPONSES.add(RustR.fromJson(jsonDecode(command.data)));
     case var unknown:
       return "Error:UnknownMethod:" + unknown;

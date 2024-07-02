@@ -123,7 +123,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 
 
     loop {
-        thread::sleep(Duration::from_secs(1));
+        //thread::sleep(Duration::from_secs(1));
         let res = invoke(&dartCallback, "get_commands", "").await?;
         let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
         for command in commands {
