@@ -6,6 +6,7 @@ import 'package:orange/components/buttons/orange_lg.dart';
 import 'new_message.dart';
 import 'package:orange/widgets/message_history_card.dart';
 import 'message.dart';
+import 'package:orange/screens/social/my_profile.dart';
 
 class SocialDashboard extends StatefulWidget {
   final VoidCallback onDashboardPopBack;
@@ -91,17 +92,29 @@ class SocialDashboardState extends State<SocialDashboard> {
     }
   }
 
+  void navigateToProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MyProfile()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        elevation: 0,
         title: const Text('Messages', style: AppTextStyles.heading3),
-        leading: Image.asset(
-          AppImages.defaultProfileMD,
-          width: 10,
-          height: 10,
+        leading: GestureDetector(
+          onTap: () {
+            navigateToProfile();
+          },
+          child: Container(
+            width: 32,
+            height: 32,
+            padding: const EdgeInsets.all(10),
+            child: Image.asset(AppImages.defaultProfileMD, fit: BoxFit.cover),
+          ),
         ),
       ),
       body: Column(

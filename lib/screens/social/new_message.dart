@@ -141,7 +141,6 @@ class NewMessageState extends State<NewMessage> {
               ),
           ],
         ),
-        // centerTitle: true,
       ),
       body: Column(
         children: [
