@@ -38,6 +38,26 @@ class AppColors {
   static const Color bitcoin = Color(0xFFF3474D);
 }
 
+enum TextSize {
+  Heading1(48),
+  Heading2(32),
+  Label1(20),
+}
+enum TextWeight{
+  Heading1(FontWeight.w700)
+}
+enum TextColor{
+  Heading(white),
+  Brand(white),
+  Text(gray),
+}
+
+Widget CustomText(text: String, size: TextSize, weight: TextWeight, color: TextColor) {
+
+
+}
+
+
 class AppTextStyles {
   //Headings
   static const TextStyle heading1 = TextStyle(
@@ -287,3 +307,5 @@ class TextMarkSM extends _TextMarkBase {
 class TextMarkXS extends _TextMarkBase {
   const TextMarkXS({super.key}) : super(fontSize: 12);
 }
+
+const ScreenPadding = 24;

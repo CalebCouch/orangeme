@@ -1,0 +1,44 @@
+//// HEADERS ////
+
+
+class Header extends State<Header> {
+  late Widget left;
+  late Widget center;
+  late Widget right;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack (
+        children: [
+          Container (
+            alignment: Alignment.centerLeft,
+            child: left,
+          ),
+          Container(
+            alignment: Alignment.center
+            child: center,
+          ),
+          Container (
+            alignment: Alignment.centerRight
+            child: right,
+          ),
+        ]
+    );
+  }
+}
+
+class PrimaryHeader extends State<PrimaryHeader> {
+  late String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Header(
+      center: CustomText(
+        textType: "heading";
+        text: text;
+        textSize: h3;
+        textColor: ThemeColor.heading;
+      )
+    );
+  }
+}
