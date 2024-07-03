@@ -194,7 +194,7 @@ TransactionDetails(transaction: Transaction, currentPrice: Price){
 			Column centered(
 				children:[
 					ValueDisplay(transaction.net, currentPrice),
-					TabularGroup(Vec<tabularItem(transaction)>)
+					TabularGroup(Vec<tabularItem(transaction, currentPrice)>)
 				]
 			),
 		),
