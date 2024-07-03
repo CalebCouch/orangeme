@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/screens/init.dart';
-import 'package:orange/styles/theme.dart';
-
 import 'package:http/http.dart' as http;
 
 Future<void> fetch() async {
@@ -26,11 +24,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Orange',
-      theme: theme(),
-      home: const InitPage(),
+      theme: null,
+      home: InitPage(),
     );
   }
 }
