@@ -45,7 +45,9 @@ class Send4State extends State<Send4> {
   }
 
   void broadcastTransaction(Transaction tx) async {
-    var res = (await invoke("broadcast_transaction", tx.raw)).data;
+    print("#################################");
+    print(tx.raw);
+    var res = (await invoke("broadcast_transaction", tx.raw!)).data;
     print("Broadcast result: $res");
     print("Transaction: ${tx.raw}");
     await navigateNext();
@@ -81,6 +83,7 @@ class Send4State extends State<Send4> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return WillPopScope(
       onWillPop: () async {
         widget.sessionTimer.dispose();

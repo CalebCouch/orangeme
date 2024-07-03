@@ -92,6 +92,7 @@ class Send3State extends State<Send3> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
     return PopScope(
       canPop: true,
