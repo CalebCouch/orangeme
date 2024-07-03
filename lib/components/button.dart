@@ -77,7 +77,7 @@ class StatefulCustomButtonState extends State<Button> {
         },
         borderRadius: BorderRadius.circular(24),
         child: Container(
-          constraints: const BoxConstraints(minWidth: 64, minHeight: 32),
+          // constraints: const BoxConstraints(minWidth: 64, minHeight: 32),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: ShapeDecoration(
             color: buttonVariant(widget.variant, widget.isEnabled, _isHovering),

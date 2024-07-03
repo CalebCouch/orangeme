@@ -90,16 +90,9 @@ Widget buildTransactionCard(BuildContext context, Transaction transaction,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                        text: formatTimestamp(transaction.timestamp),
-                        style: AppTextStyles.textMD
-                            .copyWith(color: AppColors.textSecondary)),
-                  ],
-                ),
-              ),
+              Text(formatTimestamp(transaction.timestamp),
+                  style: AppTextStyles.textMD
+                      .copyWith(color: AppColors.textSecondary)),
               Text("Details",
                   style: AppTextStyles.textMD.copyWith(
                       color: AppColors.textSecondary,
