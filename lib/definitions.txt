@@ -113,6 +113,7 @@ Right(string: text, icon: icon){
 
 //BTC VALUE
 //exists: widgets/value_display.dart
+
 //unique case: widgets/keyboard_value_display.dart could be refactored to work with standard BTC VALUE display, however I had difficulties with this before
 
 //LIST IIEM
@@ -161,6 +162,7 @@ MessageItem(string: Icon, string: Title, string: Subtitle){
 
 //MESSAGE ITEM GROUP
 //is this supposed to be a message item group?
+//exists: widgets/message_history_card.dart
 
 MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: group){
 	child: MessageItem(
@@ -297,6 +299,8 @@ messageStackSent(time-date, textContent){
 
 //BUTTON
 //exists: components/button.dart refactor to include size variants
+
+//unique case: widgets/receive_send.dart
 
 
 //ICON BUTTON
