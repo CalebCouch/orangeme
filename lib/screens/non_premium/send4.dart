@@ -49,7 +49,7 @@ class Send4State extends State<Send4> {
        var res = (await invoke("broadcast_transaction", widget.tx.raw)).data;
        print("Broadcast result: $res");
       print("Transaction: ${widget.tx.raw}");
-      broadcastTransaction(widget.tx.raw);
+      broadcastTransaction(widget.tx.raw as Transaction);
       await navigateNext(resHandled);
     } else {
       print("Transaction is null");
