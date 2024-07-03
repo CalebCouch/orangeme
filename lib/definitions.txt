@@ -108,16 +108,16 @@ Right(string: text, icon: icon){
 	}
 }
 
-//Unique case exists: widgets/message_appbar.dart
+//Unique case exists: components/message_appbar.dart
 
 
 //BTC VALUE
-//exists: widgets/value_display.dart
+//exists: components/value_display.dart
 
-//unique case: widgets/keyboard_value_display.dart could be refactored to work with standard BTC VALUE display, however I had difficulties with this before
+//unique case: components/keyboard_value_display.dart could be refactored to work with standard BTC VALUE display, however I had difficulties with this before
 
 //LIST IIEM
-//Exists: widgets/list_item_group.dart -> listItem()
+//Exists: components/list_item_group.dart -> listItem()
 
 ListItem(string: LeftTop, string: RightTop, string: LeftBottom, string: RightBottom){
 	Row SpaceBetween(
@@ -127,7 +127,7 @@ ListItem(string: LeftTop, string: RightTop, string: LeftBottom, string: RightBot
 }
 
 //LIST ITEM GROUP
-//Exists: widgets/list_item_group.dart
+//Exists: components/list_item_group.dart
 
 TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
 	if IsReceived, TransactionType will be received btc or else sent btc
@@ -144,7 +144,7 @@ TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
 
 
 //MESSAGE ITEM
-//exists: widgets/message_item.dart
+//exists: components/message_item.dart
 
 MessageItem(string: Icon, string: Title, string: Subtitle){
 	Container (
@@ -162,7 +162,7 @@ MessageItem(string: Icon, string: Title, string: Subtitle){
 
 //MESSAGE ITEM GROUP
 //is this supposed to be a message item group?
-//exists: widgets/message_item_group.dart
+//exists: components/message_item_group.dart
 
 MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: group){
 	child: MessageItem(
@@ -177,7 +177,7 @@ MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostR
 }
 
 //TABULAR
-//exists: widgets/tabular_group.dart -> Tabular
+//exists: components/tabular_group.dart -> Tabular
 
 Tabular (text: Left, text: Right){
 	Row SpaceBetween {
@@ -187,7 +187,7 @@ Tabular (text: Left, text: Right){
 }
 
 //TABULAR GROUP
-//exists: widgets/tabular_group.dart
+//exists: components/tabular_group.dart
 
 TabularGroup(array-text: dataType, array-text: content){
 	listGroup {
@@ -240,7 +240,7 @@ profilePicture(optional<pfp>, size, isGroup){
 }
 
 //MESSAGE BUBBLES
-//exists: widgets/message_bubbles.dart
+//exists: components/message_bubbles.dart
 
 messageBubble(text, isIncoming){
 	if(isIncoming == null) isIncoming = false,
@@ -300,7 +300,7 @@ messageStackSent(time-date, textContent){
 //BUTTON
 //exists: components/button.dart refactor to include size variants
 
-//unique case: widgets/receive_send.dart
+//unique case: components/receive_send.dart
 
 
 //ICON BUTTON
@@ -311,10 +311,10 @@ messageStackSent(time-date, textContent){
 //exists: components/text_input.dart 
 
 //LIST SELECTOR
-//exists: widgets/list_selector.dart
+//exists: components/list_selector.dart
 
 //NUMERIC KEYPAD
-//exists: widgets/numeric_keypad.dart
+//exists: components/numeric_keypad.dart
 
 //CONTACT GROUP
 //exists: social/new_message.dart -> buildRecipientsList refactor into a widget
@@ -325,5 +325,5 @@ messageStackSent(time-date, textContent){
 //PROFILE HEADING
 
 //TAB NAVIGATOR
-//exists: widgets/tab_navigator.dart
+//exists: components/tab_navigator.dart
 
