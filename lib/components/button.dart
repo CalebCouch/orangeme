@@ -34,25 +34,23 @@ TextStyle labelSize(String size) {
 }
 
 Color buttonVariant(String variant, bool isEnabled, bool isHovering) {
-  if ((variant == "secondary" || variant == 'ghost') &&
-      isEnabled &&
-      isHovering) {
-    return AppColors.darkGrey;
-  } else if ((variant == "secondary" || variant == 'ghost') && !isEnabled) {
-    return AppColors.black;
-  } else if (variant == "secondary" || variant == 'ghost') {
-    return AppColors.black;
-  } else if (variant == 'primary' && isEnabled) {
-    return AppColors.white;
-  } else if (variant == 'primary') {
-    return AppColors.grey;
-  } else if (variant == 'bitcoin' && isEnabled) {
-    return AppColors.orange;
-  } else if (variant == 'bitcoin') {
-    return AppColors.grey;
-  } else {
-    return Colors.transparent;
-  }
+    if variant == 'secondary' || 'ghost':
+        if (isHovering) {
+            return AppColors.darkGray;
+        } else {
+            return AppColors.black;
+        }
+    } else {
+        if isEnabled {
+            if variant == 'primary' {
+                return AppColors.white;
+            } else {//bitcoin
+                return AppColors.orange;
+            }
+        } else {
+            return AppColors.gray;
+        }
+    }
 }
 
 Color borderVariant(String variant) {
