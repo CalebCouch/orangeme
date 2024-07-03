@@ -1,0 +1,224 @@
+
+//TEXT
+TextSize{
+	Name(int)
+}
+
+TextWeight{
+	Name(int)
+}
+
+Alignment{
+	Left,
+	Center,
+	Right
+}
+
+CText(text: String, size: TextSize, color: Color = White, alignment: Alignment = Alignment::Center, Underline = false) {
+	Text(text, size, color, alignment, underline);
+}
+
+//SPACING
+
+Spacing(h: int, w: int) {
+	SizedBox::new(h, w ?? h)
+}
+
+//PADDING CONSTS
+
+const content_padding = 24;
+const bumper_padding = 16;
+const list_item_padding = 16;
+const message_bubble_padding = [16, 12];
+const message_stack_padding = 8;
+
+// BASIC INTERFACE
+Interface(header: Header, content: Content, bumper: Bumper, nav: Option<ModeNav>) {
+    return Container(
+		padding: content_padding,
+		child: Column(
+			children: [
+				header(),
+				Spacing(content_padding),
+				content(),
+				Spacing(content_padding),
+				bumper(),
+				Spacing(content_padding),
+				navBar
+			]
+		)
+	)
+}
+
+Content(widgetlist, padding) {
+	column (
+		children[
+
+		]
+	)
+    child: widget,
+}
+
+
+
+Bumper(content: Vec<Widget>) {
+	return Container(
+	    padding: bumper_padding,
+	    child: Row(
+		childern
+	    )
+	)
+}
+
+Header(left, center, right)
+
+//LIST IIEM
+
+ListItem(string: LeftTop, string: RightTop, string: LeftBottom, string: RightBottom){
+	Row SpaceBetween(
+		Column(LeftTop, LeftBottom),
+		Column(RightTop, RightBottom),
+	)
+}
+
+
+TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
+	if IsReceived, TransactionType will be received btc or else sent btc
+	Container (
+		padding: vertical: list_item_padding,
+		child: ListItem(
+			text: TransactionType, 
+			text: Amount, 
+			text: Time/Date, 
+			text: "Details"
+		)
+	)
+}
+
+MessageItem(string: Icon, string: Title, string: Subtitle){
+	Container (
+		padding: vertical: list_item_padding,
+		Row(
+			image: Icon,
+			list_item_padding,
+			Column(
+				text: Title,
+				text: Subtitle,
+			),
+		)
+	)
+}
+
+MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: group){
+	child: MessageItem(
+		profilePicture(
+			profilePicture: optional<ProfilePicture>, 
+			isGroup: group,
+			size: "LG",
+		),
+		Name, 
+		MostRecentMessage,
+	)
+}
+
+//TABULAR GROUPS
+
+Tabular (text: Left, text: Right){
+	Row SpaceBetween {
+		text: left,
+		text: right
+	}
+}
+
+TabularGroup(array-text: dataType, array-text: content){
+	listGroup {
+		Tabular(dataType[var], content[var])
+	}
+}
+
+//TRANSACTION RESULT
+
+TransactionResult (transactionType, amount){
+	Container Expand (
+		alignment: Alignment.center,
+		Column (
+			children: [
+				image: btc_image,
+				text: Text("You ${transactionType} ${amount})
+			]
+		)
+	)
+}
+
+//PROFILE PICTURE
+
+pfpSizes(string: size){
+	xxl: 96,
+	xl: 64,
+	lg: 48,
+	md: 32,
+	sm: 24,
+}
+
+profilePicture(optional<pfp>, size, isGroup){
+	if(pfp == null && isGroup) pfp == defaultGroupProfile
+	if(pfp == null && isGroup == false) pfp == defaultSingleProfile
+	image: Image(
+		if(pfp == null && isGroup) pfp == defaultGroupProfile
+		if(pfp == null && isGroup == false) pfp == defaultSingleProfile
+		pfp,
+		width: pfpSizes(size),
+		height: pfpSizes(size),
+	)
+}
+
+//MESSAGE BUBBLES
+
+messageBubble(text, isIncoming){
+	if(isIncoming == null) isIncoming = false,
+	Container(
+		padding: (vertical: message_bubble_padding[0], horizontal: message_bubble_padding[1]),
+		color: isIncoming ? bg-secondary : bitcoin
+		child: text,
+	)
+}
+
+messageStackGroupIncoming(senderInfo, time-date, textContent){
+	Row(
+		senderInfo.profilePicture,
+		message_stack_padding,
+		Column (
+			messageBubble(
+				text: textContent, 
+				isIncoming: true
+			),
+			message_stack_padding,
+			Row (
+				senderInfo.name, 
+				text: time-date,
+			),
+		)
+	)
+}
+
+messageStackSingleIncoming(time-date, textContent){
+	Column (
+		messageBubble(
+			text: textContent, 
+			isIncoming: true
+		),
+		message_stack_padding,
+		text: time-date,
+	)
+}
+
+messageStackSent(time-date, textContent){
+	Column (
+		messageBubble(
+			text: textContent
+		),
+		message_stack_padding,
+		text: time-date,
+	)
+}
+
