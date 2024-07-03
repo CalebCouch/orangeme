@@ -20,17 +20,17 @@ class Send3 extends StatefulWidget {
   Transaction priorityTransaction;
   Transaction standardTransaction;
 
-  Send3(
-      {super.key,
-      required this.amount,
-      required this.address,
-      required this.balance,
-      required this.price,
-      required this.onDashboardPopBack,
-      required this.sessionTimer,
-      required this.priorityTransaction,
-      required this.standardTransaction,
-      });
+  Send3({
+    super.key,
+    required this.amount,
+    required this.address,
+    required this.balance,
+    required this.price,
+    required this.onDashboardPopBack,
+    required this.sessionTimer,
+    required this.priorityTransaction,
+    required this.standardTransaction,
+  });
 
   @override
   Send3State createState() => Send3State();
@@ -41,25 +41,15 @@ int standardFee = 0;
 
 class Send3State extends State<Send3> {
   bool isPrioritySelected = false;
-  Transaction selectedTransaction = ;
-  void navigate() {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Send4(
-                tx: selectedTransaction,
-                balance: widget.balance,
-                amount: widget.amount,
-                price: widget.price,
-                onDashboardPopBack: widget.onDashboardPopBack,
-                sessionTimer: widget.sessionTimer)));
-  }
+  late Transaction selectedTransaction;
 
   @override
   void initState() {
     print("initializing send3");
     super.initState();
-    //send the user back to the dashboard if the session expires
+    selectedTransaction = widget.standardTransaction;
+
+    // Send the user back to the dashboard if the session expires
     widget.sessionTimer.setOnSessionEnd(() {
       if (mounted) {
         widget.onDashboardPopBack();
@@ -68,18 +58,33 @@ class Send3State extends State<Send3> {
     });
   }
 
+  void navigate() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Send4(
+          tx: selectedTransaction,
+          balance: widget.balance,
+          amount: widget.amount,
+          price: widget.price,
+          onDashboardPopBack: widget.onDashboardPopBack,
+          sessionTimer: widget.sessionTimer,
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     print("disposing send3");
     super.dispose();
   }
 
-  //fired when user selects priority
+  
   void onOptionSelected(bool isSelected) {
     setState(() {
       isPrioritySelected = isSelected;
-      selectedTransaction =
-          isSelected ? widget.priorityTransaction : widget.standardTransaction;
+      selectedTransaction = isSelected ? widget.priorityTransaction : widget.standardTransaction;
       print("priority selected: $isSelected");
       print(selectedTransaction);
     });
@@ -87,7 +92,6 @@ class Send3State extends State<Send3> {
 
   @override
   Widget build(BuildContext context) {
-    currentCtx = context;
     print("Time left ${widget.sessionTimer.getTimeLeftFormatted()}");
     return PopScope(
       canPop: true,
@@ -98,19 +102,23 @@ class Send3State extends State<Send3> {
         appBar: AppBar(
           title: const Text('Transaction Speed'),
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Send2(
-                            amount: widget.amount,
-                            balance: widget.balance,
-                            price: widget.price,
-                            onDashboardPopBack: widget.onDashboardPopBack,
-                            sessionTimer: widget.sessionTimer,
-                            address: widget.address)));
-              }),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Send2(
+                    amount: widget.amount,
+                    balance: widget.balance,
+                    price: widget.price,
+                    onDashboardPopBack: widget.onDashboardPopBack,
+                    sessionTimer: widget.sessionTimer,
+                    address: widget.address,
+                  ),
+                ),
+              );
+            },
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -119,9 +127,10 @@ class Send3State extends State<Send3> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FeeSelector(
-                  onOptionSelected: onOptionSelected,
-                  price: widget.price,
-                  standardFee: standardFee),
+                onOptionSelected: onOptionSelected,
+                price: widget.price,
+                standardFee: standardFee,
+              ),
               const Spacer(),
             ],
           ),

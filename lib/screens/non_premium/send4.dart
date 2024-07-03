@@ -45,18 +45,13 @@ class Send4State extends State<Send4> {
   }
 
   void broadcastTransaction(Transaction tx) async {
-    if (widget.tx != null) {
-       var res = (await invoke("broadcast_transaction", widget.tx.raw)).data;
-       print("Broadcast result: $res");
-      print("Transaction: ${widget.tx.raw}");
-      broadcastTransaction(widget.tx.raw as Transaction);
-      await navigateNext(resHandled);
-    } else {
-      print("Transaction is null");
-      print(widget.tx);
-    }
-}
-  Future<void> navigateNext(String transaction) async {
+    var res = (await invoke("broadcast_transaction", tx.raw)).data;
+    print("Broadcast result: $res");
+    print("Transaction: ${tx.raw}");
+    await navigateNext();
+  }
+
+  Future<void> navigateNext() async {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -173,31 +168,31 @@ class Send4State extends State<Send4> {
                 ],
               ),
               const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(left: 42),
+              const Padding(
+                padding: EdgeInsets.only(left: 42),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        const Text(
+                        Text(
                           'Send Amount',
                           style: AppTextStyles.textSM,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        const Text(
+                        Text(
                           'Fee Amount',
                           style: AppTextStyles.textSM,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -208,7 +203,7 @@ class Send4State extends State<Send4> {
           padding: const EdgeInsets.all(20.0),
           child: ButtonOrangeLG(
             label: "Confirm & Send",
-            onTap: () => broadcastTransaction(widget.tx.raw),
+            onTap: () => broadcastTransaction(widget.tx),
             isEnabled: true,
           ),
         ),
