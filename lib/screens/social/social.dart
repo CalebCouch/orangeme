@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:orange/widgets/tab_navigator.dart';
+import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'new_message.dart';
-import 'package:orange/widgets/message_item_group.dart';
+import 'package:orange/components/message_item_group.dart';
 import 'message.dart';
 import 'package:orange/screens/social/my_profile.dart';
 

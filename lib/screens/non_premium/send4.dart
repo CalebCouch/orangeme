@@ -6,7 +6,7 @@ import 'package:orange/classes.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/button.dart';
-import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/components/session_timer.dart';
 import 'send2.dart';
 import 'send3.dart';
 import 'send1.dart';

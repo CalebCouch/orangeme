@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/widgets/message_appbar.dart';
+import 'package:orange/components/message_appbar.dart';
 import 'package:orange/components/text_input.dart';
-import 'package:orange/widgets/message_bubbles.dart';
+import 'package:orange/components/message_bubbles.dart';
 import 'package:orange/screens/social/group_message_list.dart';
 
 class Message extends StatefulWidget {

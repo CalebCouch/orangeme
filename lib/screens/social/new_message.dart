@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/components/text_input.dart';
-import 'package:orange/widgets/message_item.dart';
+import 'package:orange/components/message_item.dart';
 import 'package:orange/screens/social/message.dart';
 import 'package:orange/components/button.dart';
 

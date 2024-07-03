@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orange/widgets/numeric_keypad.dart';
-import 'package:orange/widgets/keyboard_value_display.dart';
+import 'package:orange/components/numeric_keypad.dart';
+import 'package:orange/components/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
-import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/components/session_timer.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

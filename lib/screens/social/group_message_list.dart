@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/widgets/message_item.dart';
+import 'package:orange/components/message_item.dart';
 
 class GroupMessageList extends StatefulWidget {
   final List<String> recipients;

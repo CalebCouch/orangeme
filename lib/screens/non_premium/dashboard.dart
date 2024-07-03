@@ -4,13 +4,13 @@ import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'receive.dart';
 import 'send1.dart';
-import 'package:orange/widgets/list_item_group.dart';
+import 'package:orange/components/list_item_group.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
-import 'package:orange/widgets/value_display.dart';
-import 'package:orange/widgets/receive_send.dart';
-import 'package:orange/widgets/tab_navigator.dart';
+import 'package:orange/components/value_display.dart';
+import 'package:orange/components/receive_send.dart';
+import 'package:orange/components/tab_navigator.dart';
 
 class Dashboard extends StatefulWidget {
   final bool? loading;

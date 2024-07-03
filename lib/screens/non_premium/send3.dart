@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:orange/screens/non_premium/send4.dart';
-import 'package:orange/widgets/list_selector.dart';
+import 'package:orange/components/list_selector.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
-import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/components/session_timer.dart';
 import '../../classes.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 

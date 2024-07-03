@@ -9,7 +9,7 @@ import 'package:orange/components/text_input.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/components/button.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/widgets/session_timer.dart';
+import 'package:orange/components/session_timer.dart';
 import 'package:orange/screens/non_premium/send1.dart';
 
 class Send2 extends StatefulWidget {

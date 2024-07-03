@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/widgets/value_display.dart';
+import 'package:orange/components/value_display.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';

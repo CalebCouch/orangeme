@@ -28,7 +28,7 @@ Text
 
 
 
-Text(text: String, type: TextType, size: TextSize, color: Option<Color>, alignment: Alignment = Alignment::Center, underline: bool, truncate: bool){
+CText(text: String, type: TextType, size: TextSize, color: Option<Color>, alignment: Alignment = Alignment::Center, underline: bool, truncate: bool){
   let color = type == TextType::Text ? Color::gray : Color::White;
   let overflow = overflow.Ellipses;
 	//textType should set defaults that can then be overriden
@@ -54,9 +54,27 @@ Size{
   LG(48)
 }
 
-TextSize:
+//A SINGLE ENUM IS NOT COMPATIBLE BETWEEN HEADING AND LABEL/BRAND/TEXT (Heading has 6 variants, the others have 5, different naming conventions)
+TextSize{
+	XL(24),
+	LG(20),
+	MD(16),
+	SM(14),
+	XS(12)
+}
 
-Button()
+Button(label: String, buttonVariant: String, size: String, enabled: bool, hover: bool, onPressed: Func){
+	textColor = if ((buttonVariant == secondary || ghost || bitcoin) && enabled){color: AppColors.white} else if (buttonVariant == primary || (bitcoin && !enabled)){color: AppColors.black} else if((buttonVariant == secondary || ghost) && (!enabled)){color: AppColors.darkgrey}
+	buttonColor = if(buttonVariant == primary && enabled){color: AppColors.white}else if(buttonVariant == secondary || ghost && !hover){color: AppColors.black} else if(buttonVariant == secondary || ghost){color: AppColors.darkgrey} else if(buttonVariant == bitcoin && enabled){color: AppColors.orange} else if(buttonVariant == bitcoin || primary && !enabled){color: AppColors.grey}
+	borderColor = if(buttonVariant == secondary){color: AppColors.white} else{color: Colors.transparent}
+	const borderRadius = BorderRadius.circular(24);
+	Clickable Container -> onPressed()(
+		border: borderColor,
+		borderRadius: borderRadius,
+		backgroundColor = buttonColor,
+		CText(label, textColor)
+	)
+}
 
 IconButton(icon: String, color: Color, enabled: bool size: Size = Size::LG, onPressed: Option<Func>) {
   let icon_color = enabled ? color : Color::Gray;
@@ -107,16 +125,19 @@ Header(left: IconButton, center: Text/PFPStackWithText, right: IconButton/Button
 
 PrimaryHeader(text: String) = Header(None, Text(text, "Header", TextSize::3), None);
 
-Dashboard(myBalance, transactionsList){
+Dashboard(myBalance, currentPrice, transactionsList){
   Interface(
     header: PrimaryHeader("wallet"),
     content: Column centered(
-      AmountDisplay(
+	//display amount in fiat & BTC
+      ValueDisplay(
         amount: myBalance,
+		currentPrice: currentPrice
       ),
       Spacing(content_padding),
-      TransactionHistory(
-        transactionsList: transactionsList,
+	//transaction history
+      ListItemGroup(
+        Vec<ListItem(transaction, currentPrice)>
       ),
     )
     bumper: DoubleButtonBumper(
@@ -126,16 +147,80 @@ Dashboard(myBalance, transactionsList){
       secondButtonOnPressed: enterSendFlow(),
     ),
     nav: ModeNav(
-      onWallet: true,
+      currentIndex
     )
   )
 }
 
 
+//LIST IIEM
+//Exists: components/list_item_group.dart -> listItem()
 
+ListItem(transaction: Transaction, currentPrice: Price){
+	Clickable Container  takes to -> TransactionDetails(transaction: transaction, price: currentPrice)(
+		Row SpaceBetween(
+			children:[
+				Column(
+					children: [
+						(text: String, type: TextType, size: TextSize, color: Option<Color>, alignment: Alignment = Alignment::Center, underline: bool, truncate: bool){
+						CText(transaction.received(or something similar) ?? 'Received Bitcoin' : 'Sent Bitcoin',  'MD', Appcolors.text, None, None, None),
+						CText(evaluateTimestamp(), 'MD', AppColors.textSecondary, None, None, None),
+					]
+				),
+				Column(
+					children:[
+						CText(formatNetValue(transaction.net-transaction.fee, currentPrice), 'MD', AppColors.text, None, None, None),
+						CText('Details', 'MD', AppColors.textSecondary, None, true, None),
+					]
+				)
+			]	
+		)
+	)
+}
 
+//LIST ITEM GROUP
+//Exists: components/list_item_group.dart
 
+ListItemGroup(listItems: Vec<ListItem(transaction, currentPrice)>){
+	ScrollableContainer(
+		listItems
+	)
+}
 
+TransactionDetails(transaction: Transaction, currentPrice: Price){
+	Interface(
+		header: PrimaryHeader(transaction.received ?? 'Received Bitcoin' : 'Sent Bitcoin')
+		content(
+			Column centered(
+				children:[
+					ValueDisplay(transaction.net, currentPrice),
+					TabularGroup(Vec<tabularItem(transaction)>)
+				]
+			),
+		),
+		bumper(
+			Button('Done', )
+			),
+	)
+}
+
+DoubleButtonBumper(text: firstButtonText, text: secondButtonText, firstButtonOnPressed: Func(), secondButtonOnPressed: Func()){
+	Row(
+		children:[
+			Button(firstButtonText, bitcoin, MD, true, false, firstButtonOnPressed),
+			Button(secondButtonText, bitcoin, MD, true, false, secondButtonOnPressed)
+		]
+	)
+}
+
+//CURRENT ICON BUTTON DESIGN IS MAYBE NOT A GREAT FIT BECAUSE BEHAVIOR IS DIFFERENT HERE, WHITE ICON IS ENABLED, GREY ICON IS ENABLED
+
+ModeNav(currentIndex: int){
+	Row spacebetween(
+		IconButton(if currentIndex == 0 -> color white && disabled else color grey && enabled),
+		IconButton(if currentIndex == 1 -> color white && disabled else color grey && enabled),
+	)
+}
 
 
 
@@ -356,36 +441,6 @@ Right(string: text, icon: icon){
 //exists: components/value_display.dart
 
 //unique case: components/keyboard_value_display.dart could be refactored to work with standard BTC VALUE display, however I had difficulties with this before
-
-//LIST IIEM
-//Exists: components/list_item_group.dart -> listItem()
-
-ListItem(left, right){
-	Row SpaceBetween(
-		left,
-		right,
-	)
-}
-
-//LIST ITEM GROUP
-//Exists: components/list_item_group.dart
-
-TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
-	if IsReceived, TransactionType will be received btc or else sent btc
-	Container (
-		padding: vertical: list_item_padding,
-		child: ListItem(
-			left: Column (
-				text: TransactionType, 
-				text: Time/Date, 
-			)
-			right: Column (
-				text: Amount, 
-				text: "Details"
-			)
-		)
-	)
-}
 
 
 
