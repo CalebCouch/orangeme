@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/widgets/numberpad.dart';
+import 'package:orange/widgets/numeric_keypad.dart';
 import 'package:orange/widgets/keyboard_value_display.dart';
 import 'package:orange/screens/non_premium/send2.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
@@ -292,7 +292,7 @@ class Send1State extends State<Send1> {
                 ),
               ),
             ),
-            NumberPad(
+            NumericKeypad(
               onNumberPressed: _updateAmount,
             ),
           ],

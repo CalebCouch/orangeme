@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:orange/screens/non_premium/send4.dart';
-import 'package:orange/widgets/fee_selector.dart';
+import 'package:orange/widgets/list_selector.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
@@ -147,7 +147,7 @@ class Send3State extends State<Send3> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              FeeSelector(
+              ListSelector(
                   onOptionSelected: onOptionSelected,
                   price: widget.price,
                   standardFee: standardFee),

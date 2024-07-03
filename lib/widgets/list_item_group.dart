@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/widgets/transaction_details.dart';
+import 'package:orange/widgets/tabular_group.dart';
 
 //formats a unix timestamp into a human readable date
 String formatTimestamp(DateTime? time) {
@@ -37,7 +37,7 @@ String formatSatsToDollars(int sats, double price) {
 }
 
 //lists all of the transaction cards
-Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
+Widget listItemGroup(ValueNotifier<List<Transaction>> transactions,
     ValueNotifier<double> price) {
   return ValueListenableBuilder<List<Transaction>>(
     valueListenable: transactions,
@@ -46,7 +46,7 @@ Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
           child: ListView.builder(
         itemCount: value.length,
         itemBuilder: (context, index) {
-          return buildTransactionCard(context, value[index], price);
+          return listItem(context, value[index], price);
         },
       ));
     },
@@ -54,7 +54,7 @@ Widget transactionsList(ValueNotifier<List<Transaction>> transactions,
 }
 
 //each transaction card represents a single transaction
-Widget buildTransactionCard(BuildContext context, Transaction transaction,
+Widget listItem(BuildContext context, Transaction transaction,
     ValueNotifier<double> price) {
   return InkWell(
     onTap: () {

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
 
-class MessageBauble extends StatefulWidget {
+class MessageBubble extends StatefulWidget {
   final String message;
   final String incoming;
   final String timestamp;
   final String name;
   final bool? group;
 
-  const MessageBauble(
+  const MessageBubble(
       {super.key,
       this.group,
       required this.message,
@@ -18,10 +18,10 @@ class MessageBauble extends StatefulWidget {
       required this.timestamp});
 
   @override
-  MessageBaubleState createState() => MessageBaubleState();
+  MessageBubbleState createState() => MessageBubbleState();
 }
 
-class MessageBaubleState extends State<MessageBauble> {
+class MessageBubbleState extends State<MessageBubble> {
   @override
   void initState() {
     super.initState();

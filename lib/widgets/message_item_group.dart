@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class MessageHistoryCard extends StatelessWidget {
+class MessageItemGroup extends StatelessWidget {
   final String name;
   final String? imagePath;
   final VoidCallback onTap;
   final String lastMessage;
   final bool group;
 
-  const MessageHistoryCard({
+  const MessageItemGroup({
     super.key,
     required this.name,
     required this.onTap,

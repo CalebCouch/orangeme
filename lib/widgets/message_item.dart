@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 
-class ContactCard extends StatelessWidget {
+class MessageItem extends StatelessWidget {
   final String name;
   final String imagePath;
   final String did;
   final VoidCallback onTap;
-  const ContactCard({
+  const MessageItem({
     super.key,
     required this.name,
     required this.onTap,

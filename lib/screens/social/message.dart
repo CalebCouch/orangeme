@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:orange/widgets/message_appbar.dart';
-import 'package:orange/components/textfield.dart';
-import 'package:orange/widgets/text_bauble.dart';
+import 'package:orange/components/text_input.dart';
+import 'package:orange/widgets/message_bubbles.dart';
 import 'package:orange/screens/social/group_message_list.dart';
 
 class Message extends StatefulWidget {
@@ -189,7 +189,7 @@ class MessageState extends State<Message> {
                       controller: scrollController,
                       itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return MessageBauble(
+                        return MessageBubble(
                             message: messages[index]["message"]!,
                             incoming: messages[index]["incoming"]!,
                             timestamp: messages[index]["timestamp"]!,

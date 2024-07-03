@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 
-class FeeSelector extends StatefulWidget {
+class ListSelector extends StatefulWidget {
   final Function(bool) onOptionSelected;
   final double price;
   final int standardFee;
 
-  const FeeSelector(
+  const ListSelector(
       {super.key,
       required this.onOptionSelected,
       required this.price,
       required this.standardFee});
 
   @override
-  FeeSelectorState createState() => FeeSelectorState();
+  ListSelectorState createState() => ListSelectorState();
 }
 
-class FeeSelectorState extends State<FeeSelector> {
+class ListSelectorState extends State<ListSelector> {
   bool _isPrioritySelected = false;
 
   @override

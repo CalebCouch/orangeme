@@ -4,17 +4,13 @@ import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'receive.dart';
 import 'send1.dart';
-import 'package:orange/widgets/transaction_list.dart';
+import 'package:orange/widgets/list_item_group.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:core';
 import 'package:orange/widgets/value_display.dart';
 import 'package:orange/widgets/receive_send.dart';
-import 'package:orange/widgets/mode_navigator.dart';
-
-// import 'package:orange/screens/settings/import_cloud.dart';
-// import 'package:orange/screens/settings/duplicate_phone.dart';
-// import 'package:orange/screens/settings/backup.dart';
+import 'package:orange/widgets/tab_navigator.dart';
 
 class Dashboard extends StatefulWidget {
   final bool? loading;
@@ -251,7 +247,7 @@ class DashboardState extends State<Dashboard>
                                     ),
                                   ),
                                   const SizedBox(height: 24),
-                                  transactionsList(transactions, price),
+                                  listItemGroup(transactions, price),
                                 ],
                               ),
                             ),
@@ -277,7 +273,7 @@ class DashboardState extends State<Dashboard>
                   ],
                 ),
               ),
-        bottomNavigationBar: ModeNavigator(
+        bottomNavigationBar: TabNavigator(
           navIndex: navIndex,
           onDashboardPopBack: dashboardPopBack,
           stopTimer: _stopTimer,
