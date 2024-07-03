@@ -18,6 +18,17 @@ CText(text: String, size: TextSize, color: Color = White, alignment: Alignment =
 	Text(text, size, color, alignment, underline);
 }
 
+RText(text: String, size: TextSize, color: Color = white, Alignment= ALignment::Center, Underline false, overflow = overflow.Ellipses){
+	Flexible(
+            child: RichText(
+        		overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                    text: text,
+                    style: (size, color, alignment, underline)),
+            ),
+    ),
+}
+
 //SPACING
 
 Spacing(h: int, w: int) {
@@ -72,7 +83,35 @@ Bumper(content: Vec<Widget>) {
 
 Header(left, center, right)
 
+Left(icon: icon,) {
+	icon,
+	onPressed
+}
+
+Center(string: Text, icon: icon){
+	if(icon == null){
+		text
+	}else{
+		Column(
+			text,
+			icon
+		)
+	}
+}
+
+Right(string: text, icon: icon){
+	if(text){
+		text
+	}else if(icon){
+		icon,
+		onPressed
+	}
+}
+
+//Unique case exists: widgets/message_appbar.dart
+
 //LIST IIEM
+//Exists: widgets/transaction_list.dart -> buildTransactionCard
 
 ListItem(string: LeftTop, string: RightTop, string: LeftBottom, string: RightBottom){
 	Row SpaceBetween(
@@ -81,6 +120,8 @@ ListItem(string: LeftTop, string: RightTop, string: LeftBottom, string: RightBot
 	)
 }
 
+//LIST ITEM GROUP
+//Exists: widgets/transaction_list.dart
 
 TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
 	if IsReceived, TransactionType will be received btc or else sent btc
@@ -94,6 +135,10 @@ TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
 		)
 	)
 }
+
+
+//MESSAGE ITEM
+//exists: widgets/contact_card.dart
 
 MessageItem(string: Icon, string: Title, string: Subtitle){
 	Container (
@@ -109,6 +154,9 @@ MessageItem(string: Icon, string: Title, string: Subtitle){
 	)
 }
 
+//MESSAGE ITEM GROUP
+//is this supposed to be a message item group?
+
 MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: group){
 	child: MessageItem(
 		profilePicture(
@@ -121,7 +169,8 @@ MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostR
 	)
 }
 
-//TABULAR GROUPS
+//TABULAR
+//exists: widgets/transaction_details.dart -> DetailRow
 
 Tabular (text: Left, text: Right){
 	Row SpaceBetween {
@@ -130,13 +179,24 @@ Tabular (text: Left, text: Right){
 	}
 }
 
+//TABULAR GROUP
+//exists: widgets/transaction_details.dart
+
 TabularGroup(array-text: dataType, array-text: content){
 	listGroup {
 		Tabular(dataType[var], content[var])
 	}
 }
 
+//QR CODE
+//receive.dart
+
+//DATA ITEM
+//send4.dart, refactor into widget
+
+
 //TRANSACTION RESULT
+//send5.dart, refactor into widget
 
 TransactionResult (transactionType, amount){
 	Container Expand (
@@ -173,6 +233,7 @@ profilePicture(optional<pfp>, size, isGroup){
 }
 
 //MESSAGE BUBBLES
+//exists: widgets/text_bauble.dart
 
 messageBubble(text, isIncoming){
 	if(isIncoming == null) isIncoming = false,
@@ -182,6 +243,8 @@ messageBubble(text, isIncoming){
 		child: text,
 	)
 }
+
+//are these concatenated messages from the same minute?
 
 messageStackGroupIncoming(senderInfo, time-date, textContent){
 	Row(
@@ -201,6 +264,8 @@ messageStackGroupIncoming(senderInfo, time-date, textContent){
 	)
 }
 
+//assuming this is non-concatenated?
+
 messageStackSingleIncoming(time-date, textContent){
 	Column (
 		messageBubble(
@@ -212,6 +277,8 @@ messageStackSingleIncoming(time-date, textContent){
 	)
 }
 
+//assuming these are concatenated messages from the same minute?
+
 messageStackSent(time-date, textContent){
 	Column (
 		messageBubble(
@@ -221,4 +288,33 @@ messageStackSent(time-date, textContent){
 		text: time-date,
 	)
 }
+
+
+//BUTTON
+//exists: components/button.dart refactor to include size variants
+
+
+//ICON BUTTON
+//style, size, hover, disabled
+
+
+//TEXT INPUT
+//exists: components/textfield.dart 
+
+//LIST SELECTOR
+//exists: widgets/fee_selector.dart
+
+//NUMERIC KEYPAD
+//exists: widgets/numberpad.dart
+
+//CONTACT GROUP
+//exists: social/new_message.dart -> buildRecipientsList refactor into a widget
+
+//QR CODE SCANNER
+//exists: send2.dart -> startQRScanner() -> showDialog() refactor into a widget (not styled properly)
+
+//PROFILE HEADING
+
+
+
 
