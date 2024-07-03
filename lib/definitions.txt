@@ -8,13 +8,29 @@ TextWeight{
 	Name(int)
 }
 
+TextType{
+  Header,
+  Label
+}
+
 Alignment{
 	Left,
 	Center,
 	Right
 }
 
-CustomText(string: textType, string: text, int: textSize, string: color, alignment: alignment, bool: underline){
+
+
+TextInput
+IconButton,
+Button,
+Text
+
+
+
+Text(text: String, type: TextType, size: TextSize, color: Option<Color>, alignment: Alignment = Alignment::Center, underline: bool, truncate: bool){
+  let color = type == TextType::Text ? Color::gray : Color::White;
+  let overflow = overflow.Ellipses;
 	//textType should set defaults that can then be overriden
 	return Text(
 		text,
@@ -25,20 +41,130 @@ CustomText(string: textType, string: text, int: textSize, string: color, alignme
 	)
 }
 
-<<<<<<< HEAD
-
-=======
-RText(text: String, size: TextSize, color: Color = white, Alignment= ALignment::Center, Underline false, overflow = overflow.Ellipses){
-	Flexible(
-            child: RichText(
-        		overflow: TextOverflow.ellipsis,
-                    text: TextSpan(
-                    text: text,
-                    style: (size, color, alignment, underline)),
-            ),
-    ),
+Color{
+  Bitcoin,
+  White,
+  Gray,
+  Blue,
 }
->>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
+
+Size{
+  XXL(96),
+  XL(64),
+  LG(48)
+}
+
+TextSize:
+
+Button()
+
+IconButton(icon: String, color: Color, enabled: bool size: Size = Size::LG, onPressed: Option<Func>) {
+  let icon_color = enabled ? color : Color::Gray;
+  fn icon_on_pressed() {
+    if enabled && on_pressed.is_some() {
+      onPressed()
+     } else {
+      () => {}
+    }
+  }
+}
+
+TextInput(placeholder: String, icon: Option<Icon>, onChanged: Func, expandable: bool, error: Option<String>) {
+  is_focused = FocusNode //etc
+  placeholder_color = Color::Gray
+  textcolor = error ? Color::Error : Color::White
+  border_color = error ? Color::Error : (is_focused ? Color::White : Color::Gray)
+}
+
+
+
+
+Interface(header: Header, content: Content, bumper: Bumper, nav: Option<ModeNav>) {
+    return Container(
+		child: Column(
+			children: [
+				header,
+				content,
+				bumper,
+				navBar
+			]
+		)
+	)
+}
+
+Content(content: Vec<Widget>) {
+  let witdth = expand;
+  let height = expand;
+
+  return Column(children: content);
+}
+
+Header(left: IconButton, center: Text/PFPStackWithText, right: IconButton/Button) {
+  let width = expand;
+  let height = 48
+  let padding = 16
+}
+
+PrimaryHeader(text: String) = Header(None, Text(text, "Header", TextSize::3), None);
+
+Dashboard(myBalance, transactionsList){
+  Interface(
+    header: PrimaryHeader("wallet"),
+    content: Column centered(
+      AmountDisplay(
+        amount: myBalance,
+      ),
+      Spacing(content_padding),
+      TransactionHistory(
+        transactionsList: transactionsList,
+      ),
+    )
+    bumper: DoubleButtonBumper(
+      firstButtonText: "Receive", 
+      secondButtonText: "Send", 
+      firstButtonOnPressed: enterReceiveFlow(), 
+      secondButtonOnPressed: enterSendFlow(),
+    ),
+    nav: ModeNav(
+      onWallet: true,
+    )
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//Widget
+MessageTextInput(on_press: Func, on_changed: Func) {
+  let text: String = "";
+  fn validMessage(text: String) -> bool;
+
+  let icon_color = validMessage(text) 
+
+  return {
+    TextInput(
+      "Message",
+      Icon(
+        "send",
+        Color::White,
+        validMessage(text),
+        on_press
+      ),
+      on_changed,
+      true,
+      None
+    )
+  }
+}
+
 
 //SPACING
 
@@ -71,40 +197,9 @@ const headingPrimaryTextSize = 3;
 const headingMessageTextSize = 5;
 
 // BASIC INTERFACE
-Interface(header: Header, content: Content, bumper: Bumper, nav: Option<ModeNav>) {
-    return Container(
-		child: Column(
-			children: [
-				header(),
-				content(),
-				bumper(),
-				navBar
-			]
-		)
-	)
-}
 
-//HEADER
-Header(left, center, right){
-	return Container(
-		padding: const EdgeInsets.all(header_padding),
-		child: Stack (
-			Container alignLeft (left),
-			Center(center),
-			Container alignRight (right),
-		)
-	)
-}
 
-PrimaryHeader(string: text){
-	Header(
-		center: CustomText(
-			textType: heading,
-			textSize: headingPrimaryTextSize, 
-			text: text
-		)
-	)
-}
+
 
 MessagesHeader(string: pfp, string: text){
 	Header(
@@ -203,7 +298,6 @@ Avatar(profilePhoto){
 }
 
 //PROFILES
-
 Profile (){
 	name: (),
 	picture: (),
@@ -227,8 +321,7 @@ Bumper(contentWidget) {
 	)
 }
 
-<<<<<<< HEAD
-=======
+
 Header(left, center, right)
 
 Left(icon: icon,) {
@@ -264,7 +357,6 @@ Right(string: text, icon: icon){
 
 //unique case: components/keyboard_value_display.dart could be refactored to work with standard BTC VALUE display, however I had difficulties with this before
 
->>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 //LIST IIEM
 //Exists: components/list_item_group.dart -> listItem()
 
@@ -295,11 +387,7 @@ TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
 	)
 }
 
-<<<<<<< HEAD
-MessageItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: _isGroup){
-	return child: ListItem(
-		left:	profilePicture (
-=======
+
 
 //MESSAGE ITEM
 //exists: components/message_item.dart
@@ -325,7 +413,6 @@ MessageItem(string: Icon, string: Title, string: Subtitle){
 MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: group){
 	child: MessageItem(
 		profilePicture(
->>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 			profilePicture: optional<ProfilePicture>, 
 			isGroup: _isGroup,
 			size: "LG",
@@ -336,13 +423,9 @@ MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostR
 		)
 	)
 }
-<<<<<<< HEAD
-//TABULAR GROUPS
-=======
 
 //TABULAR
 //exists: components/tabular_group.dart -> Tabular
->>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 
 Tabular (text: Left, text: Right){
 	Row SpaceBetween {
@@ -383,7 +466,6 @@ TransactionResult (transactionType, amount){
 }
 
 //PROFILE PICTURE
-
 profilePicture(string: optional<pfp>, int: size, bool: isGroup){
 	if(pfp == null && isGroup) pfp == defaultGroupProfile
 	if(pfp == null && isGroup == false) pfp == defaultSingleProfile
@@ -407,15 +489,9 @@ messageBubble(text, isIncoming){
 	)
 }
 
-<<<<<<< HEAD
-
---used for incoming messages in a group message
-messageStackGroup(senderInfo, time-date, textContent){
-=======
 //are these concatenated messages from the same minute?
 
 messageStackGroupIncoming(senderInfo, time-date, textContent){
->>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 	Row(
 		senderInfo.profilePicture,
 		message_stack_padding,
@@ -433,14 +509,8 @@ messageStackGroupIncoming(senderInfo, time-date, textContent){
 	)
 }
 
-<<<<<<< HEAD
---used for incoming messages in a direct message and any message that user sends
-messageStack(string: time-date, string: textContent, bool: _isIncoming){
-=======
 //assuming this is non-concatenated?
-
 messageStackSingleIncoming(time-date, textContent){
->>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 	Column (
 		messageBubble(
 			text: CustomText(textContent), 
@@ -451,301 +521,7 @@ messageStackSingleIncoming(time-date, textContent){
 	)
 }
 
-<<<<<<< HEAD
-//BORDERS
 
-border(string: borderType){
-	borderType == "secondaryBorder" {
-		Border(
-			color: 
-			thickness:
-		)
-	}
-}
-
-
-
-//BUTTON
-
-button(string: optional<icon>, int: optional<size>, bool: optional<_expand>, string: buttonType, onPressed{}){
-	_expand default true
-	size default lg
-	Row (
-		alignment: center,
-		icon ? SVG(icon),
-		icon ? Spacing(button_padding_sep),
-		Container(
-			--rounded edges,
-			padding: EdgeInsets.all(button_padding),
-			height: size,
-			width: _expand ? double.infinity : shrinkwraptochild,
-			color: buttonType ? bitcoin : backgroundColor : primary,
-			border: buttonType == "Secondary" ? border("secondaryBorder") : nothing
-		)
-	)
-  onPressed{onPressed}
-}
-
-iconButton(string: icon, bool: _isBitcoin, bool: optional<size>, onPressed){
-	size default lg
-	_isBitcoin default false
-	SVG(
-		image: icon,
-		color: _isBitcoin ? bitcoin : White
-		width: size,
-		height: size,
-	)
-	onPressed{}
-}
-
-backButton(onPressed) {
-	iconButton(
-		icon: leftArrow, 
-		onPressed: onPressed
-	)
-}
-
-groupInfo(onPressed) {
-	iconButton(
-		icon: info, 
-		onPressed: onPressed
-	)
-}
-
-
-// SCREENS
-
-
-
-
---WALLET
-
-WalletHome(myBalance, transactionsList){
-  Interface(
-    header: PrimaryHeader(
-      text: "Wallet"
-    ),
-    content: Column centered(
-      AmountDisplay(
-        amount: myBalance,
-      ),
-      Spacing(content_padding),
-      TransactionHistory(
-        transactionsList: transactionsList,
-      ),
-    )
-    bumper: DoubleButtonBumper(
-      firstButtonText: "Receive", 
-      secondButtonText: "Send", 
-      firstButtonOnPressed: enterReceiveFlow(), 
-      secondButtonOnPressed: enterSendFlow(),
-    ),
-    nav: ModeNav(
-      onWallet: true,
-    )
-  )
-}
-
-Receive(){
-  Interface(
-    header: StackHeader(
-      text: "Receive bitcoin",
-      onBack: exitReceiveFlow(),
-    ),
-    content: Column centered(
-      QRCode(),
-      Spacing(content_padding),
-      CustomText(
-        textType: "Text",
-        textSize: md,
-        text: "Scan to receive bitcoin."
-        color: "text-secondary",
-      ),
-    )
-    bumper: Button(
-      text: "Share", 
-      onPressed: share(),
-    ),
-  )
-}
-
-BitcoinAddress(){
-  Interface(
-    header: StackHeader(
-      text: "Bitcoin address",
-      onBack: exitSendFlow(),
-    ),
-    content: Column centered(
-      AddressInput(),
-      Spacing(content_padding),
-      PasteAddress(recipientAddress),
-      Spacing(content_padding),
-      CustomText(
-        textType: "Text",
-        textSize: sm,
-        text: "Scan to receive bitcoin."
-        color: "text-secondary",
-      ),
-      Spacing(content_padding),
-      ScanQRCode(),
-    )
-    bumper: Button(
-      text: "Continue", 
-      enableWhen: AddressInputFilled(), //will return true or false
-      onPressed: continueSendAmount(),
-    ),
-  )
-}
-
-SelectAmount(){
-  Interface(
-    header: StackHeader(
-      text: "Send bitcoin",
-      onBack: returnAddressInput(),
-    ),
-    content: Column centered(
-      AmountDisplay(
-        amount: SelectedAmount(),
-      ),
-      Spacer(),
-      KeyPad()
-    )
-    bumper: Button(
-      text: "Continue", 
-      enableWhen: AmountDisplayHasAmount(), //will return true or false
-      onPressed: continueTransactionSpeed(),
-    ),
-  )
-}
-
-TransactionSpeed(){
-  Interface(
-    header: StackHeader(
-      text: "Transcation speed",
-      onBack: returnSelectAmount(),
-    ),
-    content: Column centered(
-      SelectSpeed ( //default selects option one always
-        optionOne: PrioritySpeedSelector(),
-        optionTwo: StandardSpeedSelector(),
-      )
-    )
-    bumper: Button(
-      text: "Continue",
-      onPressed: continueConfirmSend(),
-    ),
-  )
-}
-
-ConfirmSend(receipientAddress, sendAmount){
-  Interface(
-    header: StackHeader(
-      text: "Confirm send",
-      onBack: returnTransactionSpeed(),
-    ),
-    content: Column centered(
-      ConfirmAddress(
-        address: receipientAddress,
-      ),
-      ConfirmAmount(
-        address: receipientAddress,
-        amount: sendAmount,
-      )
-    )
-    bumper: Button(
-      text: "Confirm & Send",
-      onPressed: sendTransaction(),
-    ),
-  )
-}
-
-SendConfirmed(sendAmount){
-  Interface(
-    header: StackHeader(
-      text: "Confirm send",
-      buttonType: "exit",
-    ),
-    content: Column centered(
-      TransactionResult (
-        transactionType: "sent", 
-        amount: sendAmount,
-      )
-    )
-    bumper: Button(
-      text: "Done",
-      onPressed: goDashboard(),
-    ),
-  )
-}
-
-
-
-
-
-----MESSAGES
-
-
-
-MessagesHome(){
-  Interface(
-    header: MessagesHeader(
-      text: "Messages",
-      pfp: myProfile.picture,
-    ),
-    content: Column centered(
-      _messages ? NoMessages() : MessagesHistory(
-        list: messagesList,
-      ),
-    )
-    bumper: Button(
-      text: "New Message",
-      onPressed: startNewMessageFlow(),
-    ),
-    nav: ModeNav(
-      onMessages: true,
-    )
-  )
-}
-
-newMessage(){
-  Interface(
-    header: StackButton(
-      onBack: myProfile.picture,
-      text: "New message",
-      onNext: startMessage()
-    ),
-    content: Column centered(
-      UsernameInput(),
-      Spacing(content_padding),
-      SelectedUsernames(),
-      Spacing(content_padding),
-      PossibleRecipientsList(),
-    )
-    bumper: Button(
-      text: "New Message",
-      onPressed: createNewMessage(),
-    ),
-  )
-}
-
-directMessage(){
-  Interface(
-    header: StackMessageHeader(
-      profiles: recipientProfiles,
-      onBack: leaveMessage(),
-    ),
-    content: Column centered(
-      UsernameInput(),
-      Spacing(content_padding),
-      SelectedUsernames(),
-      Spacing(content_padding),
-      PossibleRecipientsList(),
-    )
-    bumper: WriteMessageInput(),
-  )
-}
-
-=======
 //assuming these are concatenated messages from the same minute?
 
 messageStackSent(time-date, textContent){
@@ -788,5 +564,4 @@ messageStackSent(time-date, textContent){
 
 //TAB NAVIGATOR
 //exists: components/tab_navigator.dart
->>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 
