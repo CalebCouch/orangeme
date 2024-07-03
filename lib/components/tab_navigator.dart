@@ -4,22 +4,22 @@ import 'package:orange/styles/constants.dart';
 import 'package:orange/screens/non_premium/dashboard.dart';
 import 'package:orange/screens/social/social.dart';
 
-class ModeNavigator extends StatefulWidget {
+class TabNavigator extends StatefulWidget {
   final int navIndex;
   final VoidCallback onDashboardPopBack;
   final VoidCallback stopTimer;
 
-  const ModeNavigator(
+  const TabNavigator(
       {super.key,
       required this.navIndex,
       required this.onDashboardPopBack,
       required this.stopTimer});
 
   @override
-  ModeNavigatorState createState() => ModeNavigatorState();
+  TabNavigatorState createState() => TabNavigatorState();
 }
 
-class ModeNavigatorState extends State<ModeNavigator> {
+class TabNavigatorState extends State<TabNavigator> {
   void navigateWallet() {
     widget.onDashboardPopBack();
     Navigator.pushReplacement(

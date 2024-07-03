@@ -5,7 +5,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'send3.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
-import 'package:orange/components/textfield.dart';
+import 'package:orange/components/text_input.dart';
 import 'package:orange/components/buttons/orange_lg.dart';
 import 'package:orange/components/button.dart';
 import 'package:orange/styles/constants.dart';

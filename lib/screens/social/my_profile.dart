@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/components/textfield.dart';
+import 'package:orange/components/text_input.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});

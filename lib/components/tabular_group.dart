@@ -159,18 +159,18 @@ class TransactionDetailsState extends State<TransactionDetails> {
           Expanded(
             child: ListView(
               children: [
-                DetailRow(label: "Date", value: date),
-                DetailRow(label: "Time", value: time),
-                DetailRow(label: sendReceiveTitle, value: address),
-                DetailRow(
+                Tabular(label: "Date", value: date),
+                Tabular(label: "Time", value: time),
+                Tabular(label: sendReceiveTitle, value: address),
+                Tabular(
                     label: amountSendReceiveTitle,
                     value: "$amountSentReceived BTC"),
-                DetailRow(
+                Tabular(
                     label: "Bitcoin Price",
                     value: widget.transaction.timestamp != null
                         ? "\$$historicalPrice"
                         : "\$$displayPrice"),
-                DetailRow(
+                Tabular(
                     label: valueTitle,
                     value: widget.transaction.timestamp != null && send == true
                         ? "-\$${formatSatsToDollars((widget.transaction.net + widget.transaction.fee!), historicalPrice, true)}"
@@ -180,10 +180,9 @@ class TransactionDetailsState extends State<TransactionDetails> {
                                 ? "-\$${formatSatsToDollars((widget.transaction.net + widget.transaction.fee!), displayPrice, true)}"
                                 : "\$${formatSatsToDollars(widget.transaction.net, displayPrice, false)}"),
                 if (send) const SizedBox(height: 15),
+                if (send) Tabular(label: "Fee Amount", value: "-\$$feeAmount"),
                 if (send)
-                  DetailRow(label: "Fee Amount", value: "-\$$feeAmount"),
-                if (send)
-                  DetailRow(
+                  Tabular(
                     label: "Total Amount",
                     value: send == true ? "-\$$totalAmount" : "\$$totalAmount",
                   ),
@@ -203,11 +202,11 @@ class TransactionDetailsState extends State<TransactionDetails> {
   }
 }
 
-class DetailRow extends StatelessWidget {
+class Tabular extends StatelessWidget {
   final String label;
   final String value;
 
-  const DetailRow({super.key, required this.label, required this.value});
+  const Tabular({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {

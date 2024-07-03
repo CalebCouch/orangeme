@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/components/textfield.dart';
-import 'package:orange/widgets/contact_card.dart';
+import 'package:orange/components/text_input.dart';
+import 'package:orange/widgets/message_item.dart';
 import 'package:orange/screens/social/message.dart';
 import 'package:orange/components/button.dart';
 
@@ -176,7 +176,7 @@ class NewMessageState extends State<NewMessage> {
               child: ListView.builder(
                 itemCount: contacts.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ContactCard(
+                  return MessageItem(
                     imagePath: contacts[index]["imagePath"]!,
                     name: contacts[index]["name"]!,
                     did: contacts[index]["did"]!,

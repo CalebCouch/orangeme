@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
-import 'package:orange/widgets/contact_card.dart';
+import 'package:orange/widgets/message_item.dart';
 
 class GroupMessageList extends StatefulWidget {
   final List<String> recipients;
@@ -34,7 +34,7 @@ class GroupMessageListState extends State<GroupMessageList> {
               child: ListView.builder(
                 itemCount: widget.recipients.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ContactCard(
+                  return MessageItem(
                       name: widget.recipients[index],
                       did:
                           "VfsXfhUthJitNlfGtinjKKlpoNklUyGfdesWWszxcvbFgytnWikjhg32h58uthnc",

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/styles/constants.dart';
 
-class NumberPad extends StatelessWidget {
+class NumericKeypad extends StatelessWidget {
   final void Function(String) onNumberPressed;
 
-  const NumberPad({super.key, required this.onNumberPressed});
+  const NumericKeypad({super.key, required this.onNumberPressed});
 
   @override
   Widget build(BuildContext context) {

@@ -25,7 +25,20 @@ CustomText(string: textType, string: text, int: textSize, string: color, alignme
 	)
 }
 
+<<<<<<< HEAD
 
+=======
+RText(text: String, size: TextSize, color: Color = white, Alignment= ALignment::Center, Underline false, overflow = overflow.Ellipses){
+	Flexible(
+            child: RichText(
+        		overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                    text: text,
+                    style: (size, color, alignment, underline)),
+            ),
+    ),
+}
+>>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 
 //SPACING
 
@@ -214,7 +227,46 @@ Bumper(contentWidget) {
 	)
 }
 
+<<<<<<< HEAD
+=======
+Header(left, center, right)
+
+Left(icon: icon,) {
+	icon,
+	onPressed
+}
+
+Center(string: Text, icon: icon){
+	if(icon == null){
+		text
+	}else{
+		Column(
+			text,
+			icon
+		)
+	}
+}
+
+Right(string: text, icon: icon){
+	if(text){
+		text
+	}else if(icon){
+		icon,
+		onPressed
+	}
+}
+
+//Unique case exists: components/message_appbar.dart
+
+
+//BTC VALUE
+//exists: components/value_display.dart
+
+//unique case: components/keyboard_value_display.dart could be refactored to work with standard BTC VALUE display, however I had difficulties with this before
+
+>>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 //LIST IIEM
+//Exists: components/list_item_group.dart -> listItem()
 
 ListItem(left, right){
 	Row SpaceBetween(
@@ -223,6 +275,8 @@ ListItem(left, right){
 	)
 }
 
+//LIST ITEM GROUP
+//Exists: components/list_item_group.dart
 
 TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
 	if IsReceived, TransactionType will be received btc or else sent btc
@@ -241,9 +295,37 @@ TransactionHistoryItem(bool: IsReceived, int: Amount, string: Time/Date){
 	)
 }
 
+<<<<<<< HEAD
 MessageItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: _isGroup){
 	return child: ListItem(
 		left:	profilePicture (
+=======
+
+//MESSAGE ITEM
+//exists: components/message_item.dart
+
+MessageItem(string: Icon, string: Title, string: Subtitle){
+	Container (
+		padding: vertical: list_item_padding,
+		Row(
+			image: Icon,
+			list_item_padding,
+			Column(
+				text: Title,
+				text: Subtitle,
+			),
+		)
+	)
+}
+
+//MESSAGE ITEM GROUP
+//is this supposed to be a message item group?
+//exists: components/message_item_group.dart
+
+MessageHistoryItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMessage, bool: group){
+	child: MessageItem(
+		profilePicture(
+>>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 			profilePicture: optional<ProfilePicture>, 
 			isGroup: _isGroup,
 			size: "LG",
@@ -254,7 +336,13 @@ MessageItem(string: optional<ProfilePicture>, string: Name, string: MostRecentMe
 		)
 	)
 }
+<<<<<<< HEAD
 //TABULAR GROUPS
+=======
+
+//TABULAR
+//exists: components/tabular_group.dart -> Tabular
+>>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 
 Tabular (text: Left, text: Right){
 	Row SpaceBetween {
@@ -263,13 +351,24 @@ Tabular (text: Left, text: Right){
 	}
 }
 
+//TABULAR GROUP
+//exists: components/tabular_group.dart
+
 TabularGroup(array-text: dataType, array-text: content){
 	listGroup {
 		Tabular(dataType[var], content[var])
 	}
 }
 
+//QR CODE
+//receive.dart
+
+//DATA ITEM
+//send4.dart, refactor into widget
+
+
 //TRANSACTION RESULT
+//send5.dart, refactor into widget
 
 TransactionResult (transactionType, amount){
 	Container Expand (
@@ -298,6 +397,7 @@ profilePicture(string: optional<pfp>, int: size, bool: isGroup){
 }
 
 //MESSAGE BUBBLES
+//exists: components/message_bubbles.dart
 
 messageBubble(text, isIncoming){
 	Container(
@@ -307,9 +407,15 @@ messageBubble(text, isIncoming){
 	)
 }
 
+<<<<<<< HEAD
 
 --used for incoming messages in a group message
 messageStackGroup(senderInfo, time-date, textContent){
+=======
+//are these concatenated messages from the same minute?
+
+messageStackGroupIncoming(senderInfo, time-date, textContent){
+>>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 	Row(
 		senderInfo.profilePicture,
 		message_stack_padding,
@@ -327,8 +433,14 @@ messageStackGroup(senderInfo, time-date, textContent){
 	)
 }
 
+<<<<<<< HEAD
 --used for incoming messages in a direct message and any message that user sends
 messageStack(string: time-date, string: textContent, bool: _isIncoming){
+=======
+//assuming this is non-concatenated?
+
+messageStackSingleIncoming(time-date, textContent){
+>>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 	Column (
 		messageBubble(
 			text: CustomText(textContent), 
@@ -339,6 +451,7 @@ messageStack(string: time-date, string: textContent, bool: _isIncoming){
 	)
 }
 
+<<<<<<< HEAD
 //BORDERS
 
 border(string: borderType){
@@ -632,4 +745,48 @@ directMessage(){
   )
 }
 
+=======
+//assuming these are concatenated messages from the same minute?
+
+messageStackSent(time-date, textContent){
+	Column (
+		messageBubble(
+			text: textContent
+		),
+		message_stack_padding,
+		text: time-date,
+	)
+}
+
+
+//BUTTON
+//exists: components/button.dart refactor to include size variants
+
+//unique case: components/receive_send.dart
+
+
+//ICON BUTTON
+//style, size, hover, disabled
+
+
+//TEXT INPUT
+//exists: components/text_input.dart 
+
+//LIST SELECTOR
+//exists: components/list_selector.dart
+
+//NUMERIC KEYPAD
+//exists: components/numeric_keypad.dart
+
+//CONTACT GROUP
+//exists: social/new_message.dart -> buildRecipientsList refactor into a widget
+
+//QR CODE SCANNER
+//exists: send2.dart -> startQRScanner() -> showDialog() refactor into a widget (not styled properly)
+
+//PROFILE HEADING
+
+//TAB NAVIGATOR
+//exists: components/tab_navigator.dart
+>>>>>>> 6bd56b2bd6b61960685c7ffdbb1cc269ef1189d9
 
