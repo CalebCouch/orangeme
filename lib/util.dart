@@ -16,7 +16,7 @@ BuildContext? currentCtx;
 
 Future<void> checkError() async {
   while (true) {
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future.delayed(const Duration(milliseconds: 10));
     if (ERROR.isNotEmpty) {
       print("WE GOT AN ERROR");
       print(ERROR);
@@ -40,7 +40,7 @@ Future<RustR> invoke(String method, String data) async {
     if (index != -1) {
       return RUSTRESPONSES.removeAt(index);
     }
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 10));
   }
 }
 

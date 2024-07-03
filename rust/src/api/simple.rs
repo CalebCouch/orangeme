@@ -191,11 +191,9 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
                 },
                 "broadcast_transaction" => {
                     //let tx = serde_json::from_str::<bdk::bitcoin::Transaction>(&command.data)?;
-                    invoke(&dartCallback, "print", command.data).await?;
-                    invoke(&dartCallback, "print", "first part Start").await?;
+                    invoke(&dartCallback, "print", &format!("commandData: {}", &command.data)).await?;
                     let mut bytes = command.data.as_bytes();
-                    let tx = bdk::bitcoin::Transaction::consensus_decode(&mut bytes)?;
-                    invoke(&dartCallback, "print", "first part worked###########").await?;
+                    let tx = bdk::bitcoin::Transaction::consensus_decode_from_finite_reader(&mut bytes)?;
                     Ok(serde_json::to_string(&client.transaction_broadcast(&tx)?)?)
                 },
                 "drop_descs" => {
@@ -222,7 +220,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 pub async fn rustStart(path: String, dartCallback: impl Fn(String) -> DartFnFuture<String>) -> String {
     match start_rust(path, dartCallback).await {
         Ok(()) => "Ok".to_string(),
-        Err(e) => format!("Err: {}", e)
+        Err(e) => format!("Err: {:?}", e)
     }
 }
 
