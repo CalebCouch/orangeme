@@ -194,6 +194,8 @@ Avatar(profilePhoto){
 Profile (){
 	name: (),
 	picture: (),
+  aboutMe: (),
+  didID: (),
 }
 
 
@@ -580,7 +582,7 @@ MessagesHome(){
       pfp: myProfile.picture,
     ),
     content: Column centered(
-      _messages ? NoMessages() : MessagesHistory(
+      _conversations ? NoConversations() : MessagesHistory(
         list: messagesList,
       ),
     )
@@ -621,15 +623,59 @@ directMessage(){
       profiles: recipientProfiles,
       onBack: leaveMessage(),
     ),
-    content: Column centered(
-      UsernameInput(),
-      Spacing(content_padding),
-      SelectedUsernames(),
-      Spacing(content_padding),
-      PossibleRecipientsList(),
-    )
+    content: _messages ? NoMessages() : DisplayMessages(),
     bumper: WriteMessageInput(),
   )
 }
 
+groupMessage(){
+  Interface(
+    header: StackMessageHeader(
+      profiles: recipientProfiles,
+      onBack: leaveMessage(),
+      displayGroup: displayGroupList(),
+    ),
+    content: _messages ? NoMessages() : DisplayMessages(),
+    bumper: WriteMessageInput(),
+  )
+}
 
+groupMembers(profiles[]: groupMembersList){
+  Interface(
+    header: StackHeader(
+      text: "Group members",
+      onBack: leaveGroupList(),
+    ),
+    content: Column (
+      CustomText(
+        textType: "Text",
+        textSize: md,
+        text: "This group has ${profiles.length} members",
+        color: "text-secondary",
+      ),
+      Spacing(content_padding),
+      Members(
+        list: profiles,
+      ),
+    )
+  )
+}
+
+viewProfile(profile: profile){
+  Interface(
+    header: StackHeader(
+      text: profile.name,
+      onBack: exitProfile(),
+    ),
+    content: Column (
+      DisplayProfilePhoto(profile: profile),
+      Spacing(content_padding),
+      ProfileDataItemAM(profile: profile),
+      Spacing(content_padding),
+      ProfileDataItemDID(profile: profile),
+    )
+  )
+}
+
+myProfile(){
+}
