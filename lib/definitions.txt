@@ -110,6 +110,11 @@ Right(string: text, icon: icon){
 
 //Unique case exists: widgets/message_appbar.dart
 
+
+//BTC VALUE
+//exists: widgets/value_display.dart
+//unique case: widgets/keyboard_value_display.dart could be refactored to work with standard BTC VALUE display, however I had difficulties with this before
+
 //LIST IIEM
 //Exists: widgets/transaction_list.dart -> buildTransactionCard
 
