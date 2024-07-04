@@ -21,15 +21,19 @@ class Interface extends StatefulWidget {
 class StatefulCustomInterfaceState extends State<Interface> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        widget.header,
-        widget.content,
-        widget.bumper,
-        widget.navBar!,
-      ],
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            widget.header,
+            widget.content,
+            widget.bumper,
+            if (widget.navBar != null) widget.navBar!,
+          ],
+        ),
+      ),
     );
   }
 }

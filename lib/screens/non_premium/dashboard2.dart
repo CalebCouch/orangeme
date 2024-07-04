@@ -1,0 +1,322 @@
+import 'package:flutter/material.dart';
+import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/styles/constants.dart';
+import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
+import 'receive.dart';
+import 'send1.dart';
+import 'package:orange/components/list_item_group.dart';
+import 'package:orange/components/content.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'dart:core';
+import 'package:orange/components/value_display.dart';
+import 'package:orange/components/receive_send.dart';
+import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/components/interface.dart';
+import 'package:orange/components/header.dart';
+
+class Dashboard2 extends StatefulWidget {
+  final bool? loading;
+
+  const Dashboard2({super.key, this.loading});
+
+  @override
+  State<Dashboard2> createState() => Dashboard2State();
+}
+
+class Dashboard2State extends State<Dashboard2>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
+  Timer? refreshTimer;
+  final transactions = ValueNotifier<List<Transaction>>([]);
+  final balance = ValueNotifier<int>(0);
+  final price = ValueNotifier<double>(0);
+  bool initialLoad = true;
+  bool loading = false;
+  int navIndex = 0;
+
+  @override
+  void initState() {
+    print("INITIALIZING DASHBOARD");
+    super.initState();
+    if (widget.loading == true) {
+      setState(() {
+        loading = true;
+      });
+    } else if (widget.loading == false) {
+      setState(() {
+        loading = false;
+        ;
+      });
+    }
+    //sync and obtain data on page load
+    handleRefresh();
+    //monitor for application reactivation and init
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    print("DISPOSING DASHBOARD");
+    //dispose of the dashboard refresh timer
+    _stopTimer();
+    //monitor for application minimizing and dispose
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  //this is used to stop the refresh timer from running while the program is minimized
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("widgets binding observer thrown");
+    if (state == AppLifecycleState.resumed) {
+      print("starting refresh timer due to life cycle change");
+      startTimer();
+    } else if (state == AppLifecycleState.paused) {
+      print("stopping refresh timer due to life cycle change");
+      _stopTimer();
+    }
+  }
+
+  //start the timer to periodically get a data refresh
+  void startTimer() {
+    print("request to start dashboard refresh timer....");
+    if (refreshTimer == null || !refreshTimer!.isActive) {
+      refreshTimer = Timer(const Duration(seconds: 15), () {
+        print("dashboard refresh was not running... timer started");
+        if (mounted) {
+          handleRefresh();
+        } else {
+          print("unmounted parent, stopping dashboard refresh timer");
+          _stopTimer();
+        }
+      });
+    } else {
+      print("Timer is already active, no need to start another");
+    }
+  }
+
+  //stop the timer controlling the data refresh
+  void _stopTimer() {
+    print("stopping dashboard refresh timer...");
+    refreshTimer?.cancel();
+  }
+
+  //sync wallet and get transaction list, current price, and balance
+  Future<void> handleRefresh() async {
+    if (!mounted) return;
+    if (refreshTimer == null || !refreshTimer!.isActive) {
+      startTimer();
+    }
+    print('Refresh Initiatied...');
+    if (!mounted) return;
+    var descriptorsRes = await STORAGE.read(key: "descriptors");
+    print("descriptorRes: $descriptorsRes");
+    if (!mounted) return;
+    var descriptors = handleNull(descriptorsRes, context);
+    if (!mounted) return;
+    String path = await getDBPath();
+    if (initialLoad == false) {
+      print('Sync Wallet...');
+      //sync wallet data
+      if (!mounted) return;
+      var syncRes =
+          await invoke(method: "sync_wallet", args: [path, descriptors]);
+      print("SyncRes: $syncRes");
+      if (!mounted) return;
+      handleError(syncRes, context);
+    } else if (initialLoad == true) {
+      setState(() {
+        initialLoad = false;
+      });
+    }
+    print('Getting Balance...');
+    //get the wallet balance
+    if (!mounted) return;
+    var balanceRes =
+        await invoke(method: "get_balance", args: [path, descriptors]);
+    print("Balanceres: $balanceRes");
+    if (!mounted) return;
+    balance.value = int.parse(handleError(balanceRes, context));
+    print("Balance: ${balance.value}");
+    print('Getting Transactions...');
+    //get the wallet transaction history
+    if (!mounted) return;
+    var jsonRes =
+        await invoke(method: "get_transactions", args: [path, descriptors]);
+    print("Transactionsres: $jsonRes");
+    if (!mounted) return;
+    String json = handleError(jsonRes, context);
+    print("json: $json");
+    if (!mounted) return;
+    final Iterable decodeJson = jsonDecode(json);
+    if (!mounted) return;
+    transactions.value =
+        decodeJson.map((item) => Transaction.fromJson(item)).toList();
+    if (!mounted) return;
+    sortTransactions(false);
+    print(transactions.value);
+
+    print('Getting Price...');
+    //get the latest price
+    if (!mounted) return;
+    var priceRes = await invoke(method: "get_price", args: []);
+    if (priceRes.status == 200) {
+      if (!mounted) return;
+      price.value = double.parse(priceRes.message);
+    }
+    print("Price: ${price.value}");
+    if (loading == true) {
+      setState(() {
+        print("loading set to false");
+        loading = false;
+      });
+    }
+  }
+
+  void dashboardPopBack() async {
+    await Future.delayed(const Duration(seconds: 2));
+    await handleRefresh();
+  }
+
+  //format a number of satoshis into dollars at the current price
+  String formatSatsToDollars(int sats, double price) {
+    print("formatting...sats: $sats price: $price");
+    double amount = (sats / 100000000) * price;
+    print("formatted balance: $amount");
+    return "${amount >= 0 ? '' : '- '}${amount.abs().toStringAsFixed(2)}";
+  }
+
+  // Sort transactions in ascending order with null timestamps being shown at the top
+  void sortTransactions(bool ascending) {
+    transactions.value.sort((a, b) {
+      if (a.timestamp == null && b.timestamp == null) return 0;
+      if (a.timestamp == null) return -1;
+      if (b.timestamp == null) return 1;
+      if (ascending == true) {
+        //ascending order
+        return a.timestamp!.compareTo(b.timestamp!);
+      } else {
+        //descending order
+        return b.timestamp!.compareTo(a.timestamp!);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> contentParams = [
+      ValueDisplay(
+        fiatAmount: formatSatsToDollars(balance.value, price.value),
+        quantity: (balance.value / 100000000.0).toStringAsFixed(8),
+      ),
+      listItemGroup(transactions, price),
+    ];
+
+    return Interface(
+        header: const Header(
+          center: Text("Wallet", style: AppTextStyles.heading3),
+        ),
+        content: Content(content: contentParams),
+        bumper: ReceiveSend(
+          receiveRoute: () => Receive(
+            onDashboardPopBack: dashboardPopBack,
+          ),
+          sendRoute: () => Send1(
+            balance: balance.value,
+            price: price.value,
+            onDashboardPopBack: dashboardPopBack,
+          ),
+          onPause: _stopTimer,
+        ),
+        navBar: TabNavigator(
+          navIndex: navIndex,
+          onDashboardPopBack: dashboardPopBack,
+          stopTimer: _stopTimer,
+        ));
+  }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     print("Refresh Timer: $refreshTimer");
+//     if (refreshTimer != null && refreshTimer!.isActive == false) {
+//       print("timer wasn't running, let me start that for you");
+//       startTimer();
+//     }
+//     return SafeArea(
+//       child: Scaffold(
+//         resizeToAvoidBottomInset: true,
+//         appBar: AppBar(
+//           title: const Text('Wallet'),
+//           automaticallyImplyLeading: false,
+//         ),
+//         body: loading
+//             ? const Center(child: CircularProgressIndicator())
+//             : RefreshIndicator(
+//                 onRefresh: handleRefresh,
+//                 child: CustomScrollView(
+//                   slivers: [
+//                     SliverFillRemaining(
+//                       hasScrollBody: true,
+//                       fillOverscroll: true,
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.stretch,
+//                         children: [
+//                           //content
+//                           Expanded(
+//                             child: Padding(
+//                               padding: const EdgeInsets.all(24.0),
+//                               child: Column(
+//                                 crossAxisAlignment: CrossAxisAlignment.center,
+//                                 children: [
+//                                   ValueListenableBuilder<int>(
+//                                     valueListenable: balance,
+//                                     builder: (context, balanceValue, child) =>
+//                                         ValueListenableBuilder<double>(
+//                                       valueListenable: price,
+//                                       builder: (context, priceValue, child) =>
+//                                           ValueDisplay(
+//                                         fiatAmount: formatSatsToDollars(
+//                                             balanceValue, priceValue),
+//                                         quantity: (balanceValue / 100000000.0)
+//                                             .toStringAsFixed(8),
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   const SizedBox(height: 24),
+//                                   listItemGroup(transactions, price),
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                           //bumper
+//                           Padding(
+//                             padding: const EdgeInsets.all(16),
+//                             child: ReceiveSend(
+//                               receiveRoute: () => Receive(
+//                                 onDashboardPopBack: dashboardPopBack,
+//                               ),
+//                               sendRoute: () => Send1(
+//                                 balance: balance.value,
+//                                 price: price.value,
+//                                 onDashboardPopBack: dashboardPopBack,
+//                               ),
+//                               onPause: _stopTimer,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//         bottomNavigationBar: TabNavigator(
+//           navIndex: navIndex,
+//           onDashboardPopBack: dashboardPopBack,
+//           stopTimer: _stopTimer,
+//         ),
+//       ),
+//     );
+//   }
+// }
+}

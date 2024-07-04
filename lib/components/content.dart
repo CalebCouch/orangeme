@@ -15,10 +15,12 @@ class Content extends StatefulWidget {
 class StatefulCustomContentState extends State<Content> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: widget.content,
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: widget.content,
+      ),
     );
   }
 }

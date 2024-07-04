@@ -10,7 +10,7 @@ class Header extends StatefulWidget {
     super.key,
     this.left,
     required this.center,
-    required this.right,
+    this.right,
   });
 
   @override
