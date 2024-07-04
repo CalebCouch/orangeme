@@ -63,7 +63,7 @@ TextSize{
 	XS(12)
 }
 
-Button(label: String, buttonVariant: String, size: String, enabled: bool, hover: bool, onPressed: Func){
+Button(label: String, buttonVariant: String, size: String, enabled: bool, onPressed: Func){
 	textColor = if ((buttonVariant == secondary || ghost || bitcoin) && enabled){color: AppColors.white} else if (buttonVariant == primary || (bitcoin && !enabled)){color: AppColors.black} else if((buttonVariant == secondary || ghost) && (!enabled)){color: AppColors.darkgrey}
 	buttonColor = if(buttonVariant == primary && enabled){color: AppColors.white}else if(buttonVariant == secondary || ghost && !hover){color: AppColors.black} else if(buttonVariant == secondary || ghost){color: AppColors.darkgrey} else if(buttonVariant == bitcoin && enabled){color: AppColors.orange} else if(buttonVariant == bitcoin || primary && !enabled){color: AppColors.grey}
 	borderColor = if(buttonVariant == secondary){color: AppColors.white} else{color: Colors.transparent}
@@ -207,8 +207,8 @@ TransactionDetails(transaction: Transaction, currentPrice: Price){
 DoubleButtonBumper(text: firstButtonText, text: secondButtonText, firstButtonOnPressed: Func(), secondButtonOnPressed: Func()){
 	Row(
 		children:[
-			Button(firstButtonText, bitcoin, MD, true, false, firstButtonOnPressed),
-			Button(secondButtonText, bitcoin, MD, true, false, secondButtonOnPressed)
+			Button(firstButtonText, bitcoin, MD, true, firstButtonOnPressed),
+			Button(secondButtonText, bitcoin, MD, true, secondButtonOnPressed)
 		]
 	)
 }

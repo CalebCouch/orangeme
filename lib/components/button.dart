@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class Button extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
-  final bool isEnabled;
+  final bool enabled;
   final String? icon;
   final String variant;
   final String size;
@@ -16,33 +16,62 @@ class Button extends StatefulWidget {
       required this.variant,
       required this.size,
       this.onTap,
-      this.isEnabled = true,
+      this.enabled = true,
       this.icon});
 
   @override
   StatefulCustomButtonState createState() => StatefulCustomButtonState();
 }
 
-TextStyle labelSize(String size) {
-  if (size == 'MD') {
-    return AppTextStyles.labelMD;
-  } else if (size == 'LG') {
-    return AppTextStyles.labelLG;
-  } else {
-    return AppTextStyles.labelMD;
+TextStyle labelStyle(String size, String variant, bool enabled) {
+  var variantLower = variant.toLowerCase();
+  var sizeLower = size.toLowerCase();
+  if (variantLower == 'primary') {
+    if (sizeLower == 'md') {
+      return AppTextStyles.labelMD;
+    } else if (sizeLower == 'lg') {
+      return AppTextStyles.labelLG;
+    }
   }
+  if (variantLower == 'secondary' || variantLower == 'ghost') {
+    if (sizeLower == 'md' && enabled) {
+      return AppTextStyles.labelMD;
+    } else if (sizeLower == 'md' && !enabled) {
+      return AppTextStyles.labelLG.copyWith(color: AppColors.grey);
+    }
+    if (sizeLower == 'lg' && enabled) {
+      return AppTextStyles.labelLG;
+    } else if (sizeLower == 'lg' && !enabled) {
+      return AppTextStyles.labelLG.copyWith(color: AppColors.grey);
+    }
+  }
+  if (variantLower == 'bitcoin') {
+    if (sizeLower == 'md' && enabled) {
+      return AppTextStyles.labelMD;
+    } else if (sizeLower == 'md' && !enabled) {
+      return AppTextStyles.labelMD.copyWith(color: AppColors.black);
+    }
+    if (sizeLower == 'lg' && enabled) {
+      return AppTextStyles.labelLG;
+    } else if (sizeLower == 'lg' && !enabled) {
+      return AppTextStyles.labelLG.copyWith(color: AppColors.black);
+    }
+  }
+  //default case
+  return AppTextStyles.labelMD;
 }
 
-Color buttonVariant(String variant, bool isEnabled, bool isHovering) {
-  if (variant == 'secondary' || variant == 'ghost') {
+Color buttonStyle(String variant, bool enabled, bool isHovering) {
+  var variantLower = variant.toLowerCase();
+  if (variantLower == 'secondary' || variantLower == 'ghost') {
     if (isHovering) {
       return AppColors.darkGrey;
     } else {
       return AppColors.black;
     }
   } else {
-    if (isEnabled) {
-      if (variant == 'primary') {
+    if (enabled) {
+      if (variantLower == 'primary') {
         return AppColors.white;
       } else {
         return AppColors.orange;
@@ -54,7 +83,8 @@ Color buttonVariant(String variant, bool isEnabled, bool isHovering) {
 }
 
 Color borderVariant(String variant) {
-  if (variant == "secondary") {
+  var variantLower = variant.toLowerCase();
+  if (variantLower == "secondary") {
     return AppColors.darkGrey;
   } else {
     return Colors.transparent;
@@ -69,19 +99,18 @@ class StatefulCustomButtonState extends State<Button> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: widget.isEnabled ? widget.onTap : null,
+        onTap: widget.enabled ? widget.onTap : null,
         onHover: (hovering) {
           setState(() => _isHovering = hovering);
         },
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: AppBorders.buttonBorderRadius,
         child: Container(
-          // constraints: const BoxConstraints(minWidth: 64, minHeight: 32),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: AppPadding.buttonInsetPadding,
           decoration: ShapeDecoration(
-            color: buttonVariant(widget.variant, widget.isEnabled, _isHovering),
+            color: buttonStyle(widget.variant, widget.enabled, _isHovering),
             shape: RoundedRectangleBorder(
               side: BorderSide(width: 1, color: borderVariant(widget.variant)),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: AppBorders.buttonBorderRadius,
             ),
           ),
           child: Row(
@@ -100,7 +129,8 @@ class StatefulCustomButtonState extends State<Button> {
                             overflow: TextOverflow.ellipsis,
                             text: TextSpan(
                                 text: widget.label,
-                                style: labelSize(widget.size)),
+                                style: labelStyle(widget.size, widget.variant,
+                                    widget.enabled)),
                           ),
                         ),
                       ],
@@ -108,7 +138,8 @@ class StatefulCustomButtonState extends State<Button> {
                   : Text(
                       widget.label,
                       textAlign: TextAlign.center,
-                      style: labelSize(widget.size),
+                      style: labelStyle(
+                          widget.size, widget.variant, widget.enabled),
                     ),
             ],
           ),

@@ -7,6 +7,10 @@ class Size {
   static const Size LG = Size._(48);
 }
 
+//text variant
+
+//text size
+
 class HeadingSize {
   final int value;
   const HeadingSize._(this.value);

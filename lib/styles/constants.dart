@@ -287,3 +287,12 @@ class TextMarkSM extends _TextMarkBase {
 class TextMarkXS extends _TextMarkBase {
   const TextMarkXS({super.key}) : super(fontSize: 12);
 }
+
+class AppBorders {
+  static final BorderRadius buttonBorderRadius = BorderRadius.circular(24);
+}
+
+class AppPadding {
+  static const EdgeInsets buttonInsetPadding =
+      EdgeInsets.symmetric(horizontal: 16);
+}

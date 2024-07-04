@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/styles/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/components/tabular_group.dart';
+import 'package:orange/components/transaction_details.dart';
 
 //formats a unix timestamp into a human readable date
 String formatTimestamp(DateTime? time) {
