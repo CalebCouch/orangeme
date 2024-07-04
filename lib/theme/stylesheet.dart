@@ -95,8 +95,8 @@ class ThemeIcon {
 }
 
 class IconSize {
-  static const double lg = 48;
-  static const double md = 32;
+  static const double lg = 34;
+  static const double md = 24;
 }
 
 //// BUTTONS ////
@@ -113,6 +113,7 @@ class AppPadding {
   static const double content = 24;
   static const double bumper = 16;
   static const double valueDisplay = 8;
+  static const double navBar = 64;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];
@@ -144,3 +145,12 @@ class Spacing extends StatelessWidget {
 class ThemeBorders {
   static final BorderRadius button = BorderRadius.circular(24);
 }
+
+//// HEIGHTS ////
+
+class AppHeights {
+  static const double listItem = 74;
+}
+
+
+//// WIDTHS ////

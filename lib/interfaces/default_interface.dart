@@ -31,14 +31,12 @@ class DefaultInterface extends StatelessWidget {
             padding: const EdgeInsets.all(AppPadding.content),
             child: content,
           ),
+          const Spacer(),
           Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppPadding.bumper),
             child: bumper,
           ),
           // ignore: sized_box_for_whitespace
           Container(
-            alignment: Alignment.bottomCenter,
             width: double.infinity,
             child: navBar,
           ),

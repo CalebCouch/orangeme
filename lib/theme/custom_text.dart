@@ -6,6 +6,8 @@ class CustomText extends StatefulWidget {
   final String text;
   final double textSize;
   final Color color;
+  final bool underline;
+  final TextAlign alignment;
 
   const CustomText({
     super.key,
@@ -13,6 +15,8 @@ class CustomText extends StatefulWidget {
     required this.text,
     this.textSize = TextSize.lg,
     this.color = ThemeColor.danger,
+    this.underline = false,
+    this.alignment = TextAlign.center,
   });
 
   @override
@@ -50,12 +54,16 @@ class _CustomTextState extends State<CustomText> {
   Widget build(BuildContext context) {
     return Text(
       widget.text,
+      textAlign: widget.alignment,
       style: TextStyle(
         fontFamily: "Outfit",
         fontSize: widget.textSize,
         color: _getTextColor(widget.color, widget.textType),
         fontWeight: _getFontWeight(widget.textType),
-        decoration: TextDecoration.none,
+        decoration:
+            widget.underline ? TextDecoration.underline : TextDecoration.none,
+        decorationColor: ThemeColor.textSecondary,
+        decorationThickness: 1,
       ),
     );
   }

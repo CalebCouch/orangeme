@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/list_item/transaction_list_item.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/interfaces/default_interface.dart';
 import 'package:orange/components/headers/primary_header.dart';
 import 'package:orange/components/btc_value/btc_value.dart';
 import 'package:orange/components/bumpers/double_button_bumper.dart';
+import 'package:orange/components/tab_navigator/tab_navigator.dart';
 
 class WalletHome extends StatelessWidget {
   const WalletHome({super.key});
@@ -17,6 +19,7 @@ class WalletHome extends StatelessWidget {
     return Material(
       child: Scaffold(
         body: Container(
+          height: MediaQuery.sizeOf(context).height,
           child: SafeArea(
             child: DefaultInterface(
               header: const PrimaryHeader(
@@ -27,6 +30,12 @@ class WalletHome extends StatelessWidget {
                   value: 0,
                 ),
                 Spacing(height: AppPadding.content),
+                TransactionListItem(
+                  topLeft: "Sent Bitcoin",
+                  topRight: "\$48.61",
+                  bottomLeft: "4:52 PM",
+                  bottomRight: "Details",
+                )
               ]),
               bumper: DoubleButton(
                 firstText: "Receive",
@@ -34,6 +43,7 @@ class WalletHome extends StatelessWidget {
                 firstOnTap: _enterReceiveFlow(),
                 secondOnTap: _enterSendFlow(),
               ),
+              navBar: const TabNav(),
             ),
           ),
         ),
