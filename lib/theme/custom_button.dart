@@ -12,36 +12,35 @@ class ButtonVariant {
 }
 
 class ButtonStatus {
-  static const String _default = "default";
-  static const String _hover = "hover";
-  static const String _disabled = "disabled";
+  static const int _default = 0;
+  static const int _hover = 1;
+  static const int _disabled = 2;
 }
 
-//0 = default; 1 = hover; 2 = disabled;
 //0 = fill; 1 = text;
 
-class ButtonColors {
-  static const _primary = [
-    [ThemeColor.primary, ThemeColor.handle],
-    [ThemeColor.primary, ThemeColor.handle],
-    [ThemeColor.textSecondary, ThemeColor.handle],
-  ];
-  static const _secondary = [
-    [ThemeColor.bg, ThemeColor.primary],
-    [ThemeColor.bgSecondary, ThemeColor.primary],
-    [ThemeColor.bg, ThemeColor.textSecondary],
-  ];
-  static const _ghost = [
-    [ThemeColor.bg, ThemeColor.primary],
-    [ThemeColor.bgSecondary, ThemeColor.primary],
-    [ThemeColor.bg, ThemeColor.textSecondary],
-  ];
-  static const _bitcoin = [
-    [ThemeColor.bitcoin, ThemeColor.primary],
-    [ThemeColor.bitcoin, ThemeColor.primary],
-    [ThemeColor.textSecondary, ThemeColor.handle],
-  ];
-}
+Map buttonColors = {
+  ButtonVariant.primary: {
+    ButtonStatus._default: (ThemeColor.primary, ThemeColor.handle),
+    ButtonStatus._hover: (ThemeColor.primary, ThemeColor.handle),
+    ButtonStatus._disabled: (ThemeColor.textSecondary, ThemeColor.handle),
+  },
+  ButtonVariant.secondary: {
+    ButtonStatus._default: (ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._hover: (ThemeColor.bgSecondary, ThemeColor.primary),
+    ButtonStatus._disabled: (ThemeColor.bg, ThemeColor.textSecondary),
+  },
+  ButtonVariant.ghost: {
+    ButtonStatus._default: (ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._hover: (ThemeColor.bgSecondary, ThemeColor.primary),
+    ButtonStatus._disabled: (ThemeColor.bg, ThemeColor.textSecondary),
+  },
+  ButtonVariant.bitcoin: {
+    ButtonStatus._default: (ThemeColor.bitcoin, ThemeColor.primary),
+    ButtonStatus._hover: (ThemeColor.bitcoin, ThemeColor.primary),
+    ButtonStatus._disabled: (ThemeColor.textSecondary, ThemeColor.handle),
+  }
+};
 
 class CustomButton extends StatefulWidget {
   final String variant;
@@ -69,27 +68,6 @@ class CustomButton extends StatefulWidget {
 
 class _ButtonState extends State<CustomButton> {
   int buttonStatus = 0;
-
-  _getReceivedStatus(String status) {
-    if (widget.status == ButtonStatus._default) return 0;
-    if (widget.status == ButtonStatus._hover) return 1;
-    if (widget.status == ButtonStatus._disabled) return 2;
-  }
-
-  _getColors(int buttonStatus) {
-    if (widget.variant == ButtonVariant.primary) {
-      return ButtonColors._primary[buttonStatus];
-    }
-    if (widget.variant == ButtonVariant.secondary) {
-      return ButtonColors._secondary[buttonStatus];
-    }
-    if (widget.variant == ButtonVariant.ghost) {
-      return ButtonColors._ghost[buttonStatus];
-    }
-    if (widget.variant == ButtonVariant.bitcoin) {
-      return ButtonColors._bitcoin[buttonStatus];
-    }
-  }
 
   _getTextColor(colorsArr) {
     return colorsArr[1];
@@ -135,14 +113,14 @@ class _ButtonState extends State<CustomButton> {
 
   @override
   Widget build(BuildContext context) {
-    buttonStatus = _getReceivedStatus(widget.status);
+    //buttonStatus = _getReceivedStatus(widget.status);
     //var currentColors = _getColors(buttonStatus);
     return Expanded(
       child: InkWell(
         child: Container(
           decoration: ShapeDecoration(
-            color: _getFillColor(_getColors(buttonStatus)),
-            shape: 
+            color: _getFillColor(buttonColors[widget.variant][widget.status]),
+            shape: ShapeDecorations.button,
           ),
           height: widget.buttonSize,
           // padding: EdgeInsets.symmetric(
@@ -150,7 +128,7 @@ class _ButtonState extends State<CustomButton> {
           child: CustomText(
             textType: "label",
             text: widget.text,
-            color: _getTextColor(_getColors(buttonStatus)),
+            color: _getTextColor(buttonColors[widget.variant][widget.status]),
           ),
         ),
       ),

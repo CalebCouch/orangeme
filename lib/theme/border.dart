@@ -5,7 +5,7 @@ class ShapeDecorations {
   static RoundedRectangleBorder button = RoundedRectangleBorder(
     side: const BorderSide(
       width: 1,
-      color: ,
+      color: ThemeColor.outline,
     ),
     borderRadius: ThemeBorders.button,
   );
