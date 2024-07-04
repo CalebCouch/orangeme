@@ -17,34 +17,49 @@ class ButtonStatus {
   static const int _disabled = 2;
 }
 
-//0 = fill; 1 = text;
+class ButtonColor {
+  final Color fill;
+  final Color text;
+
+  const ButtonColor(this.fill, this.text);
+}
 
 Map buttonColors = {
   ButtonVariant.primary: {
-    ButtonStatus._default: (ThemeColor.primary, ThemeColor.handle),
-    ButtonStatus._hover: (ThemeColor.primary, ThemeColor.handle),
-    ButtonStatus._disabled: (ThemeColor.textSecondary, ThemeColor.handle),
+    ButtonStatus._default:
+        const ButtonColor(ThemeColor.primary, ThemeColor.handle),
+    ButtonStatus._hover:
+        const ButtonColor(ThemeColor.primary, ThemeColor.handle),
+    ButtonStatus._disabled:
+        const ButtonColor(ThemeColor.textSecondary, ThemeColor.handle),
   },
   ButtonVariant.secondary: {
-    ButtonStatus._default: (ThemeColor.bg, ThemeColor.primary),
-    ButtonStatus._hover: (ThemeColor.bgSecondary, ThemeColor.primary),
-    ButtonStatus._disabled: (ThemeColor.bg, ThemeColor.textSecondary),
+    ButtonStatus._default: const ButtonColor(ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._hover:
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.primary),
+    ButtonStatus._disabled:
+        const ButtonColor(ThemeColor.bg, ThemeColor.textSecondary),
   },
   ButtonVariant.ghost: {
-    ButtonStatus._default: (ThemeColor.bg, ThemeColor.primary),
-    ButtonStatus._hover: (ThemeColor.bgSecondary, ThemeColor.primary),
-    ButtonStatus._disabled: (ThemeColor.bg, ThemeColor.textSecondary),
+    ButtonStatus._default: const ButtonColor(ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._hover:
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.primary),
+    ButtonStatus._disabled:
+        const ButtonColor(ThemeColor.bg, ThemeColor.textSecondary),
   },
   ButtonVariant.bitcoin: {
-    ButtonStatus._default: (ThemeColor.bitcoin, ThemeColor.primary),
-    ButtonStatus._hover: (ThemeColor.bitcoin, ThemeColor.primary),
-    ButtonStatus._disabled: (ThemeColor.textSecondary, ThemeColor.handle),
+    ButtonStatus._default:
+        const ButtonColor(ThemeColor.bitcoin, ThemeColor.primary),
+    ButtonStatus._hover:
+        const ButtonColor(ThemeColor.bitcoin, ThemeColor.primary),
+    ButtonStatus._disabled:
+        const ButtonColor(ThemeColor.textSecondary, ThemeColor.handle),
   }
 };
 
 class CustomButton extends StatefulWidget {
   final String variant;
-  final String status;
+  final int status;
   final double buttonSize;
   final String text;
 
@@ -52,44 +67,35 @@ class CustomButton extends StatefulWidget {
   final VoidCallback? onTap;
   final bool? expand;
 
-  const CustomButton(
-      {super.key,
-      required this.text,
-      this.variant = "bitcoin",
-      this.buttonSize = ButtonSize.lg,
-      this.leftIcon,
-      this.onTap,
-      this.expand = true,
-      this.status = "default"});
+  const CustomButton({
+    super.key,
+    required this.text,
+    this.variant = ButtonVariant.bitcoin,
+    this.buttonSize = ButtonSize.lg,
+    this.expand = true,
+    this.status = ButtonStatus._default,
+    this.leftIcon,
+    this.onTap,
+  });
 
   @override
   State<CustomButton> createState() => _ButtonState();
 }
 
 class _ButtonState extends State<CustomButton> {
-  int buttonStatus = 0;
-
-  _getTextColor(colorsArr) {
-    return colorsArr[1];
-  }
-
-  _getFillColor(colorsArr) {
-    return colorsArr[0];
-  }
-
-  _getButtonPadding(double buttonSize) {
+  _getButtonPadding(buttonSize) {
     if (buttonSize == ButtonSize.lg) {
-      return AppPadding.button[0];
+      return AppPadding.button[0].toDouble();
     } else if (buttonSize == ButtonSize.md) {
-      return AppPadding.button[1];
+      return AppPadding.button[1].toDouble();
     }
   }
 
-  _getButtonSpacing(double buttonSize) {
+  _getButtonSpacing(buttonSize) {
     if (buttonSize == ButtonSize.lg) {
-      return AppPadding.buttonSpacing[0];
+      return AppPadding.buttonSpacing[0].toDouble();
     } else if (buttonSize == ButtonSize.md) {
-      return AppPadding.buttonSpacing[1];
+      return AppPadding.buttonSpacing[1].toDouble();
     }
   }
 
@@ -116,22 +122,24 @@ class _ButtonState extends State<CustomButton> {
     //buttonStatus = _getReceivedStatus(widget.status);
     //var currentColors = _getColors(buttonStatus);
     return Expanded(
-      child: InkWell(
-        child: Container(
-          decoration: ShapeDecoration(
-            color: _getFillColor(buttonColors[widget.variant][widget.status]),
-            shape: ShapeDecorations.button,
-          ),
-          height: widget.buttonSize,
-          // padding: EdgeInsets.symmetric(
-          //horizontal: _getButtonPadding(widget.buttonSize)),
-          child: CustomText(
-            textType: "label",
-            text: widget.text,
-            color: _getTextColor(buttonColors[widget.variant][widget.status]),
-          ),
+        child: InkWell(
+      child: Container(
+        alignment: Alignment.center,
+        decoration: ShapeDecoration(
+          color: buttonColors[widget.variant][widget.status].fill,
+          shape: widget.variant == ButtonVariant.secondary
+              ? BoxDecorations.buttonOutlined
+              : BoxDecorations.button,
+        ),
+        height: widget.buttonSize,
+        padding: EdgeInsets.symmetric(
+            horizontal: _getButtonPadding(widget.buttonSize)),
+        child: CustomText(
+          textType: "label",
+          text: widget.text,
+          color: buttonColors[widget.variant][widget.status].text,
         ),
       ),
-    );
+    ));
   }
 }

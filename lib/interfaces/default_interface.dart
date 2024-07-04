@@ -17,27 +17,33 @@ class DefaultInterface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppPadding.header),
-        child: header,
+    return Container(
+      height: double.infinity,
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppPadding.header),
+            child: header,
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppPadding.content),
+            child: content,
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppPadding.bumper),
+            child: bumper,
+          ),
+          // ignore: sized_box_for_whitespace
+          Container(
+            alignment: Alignment.bottomCenter,
+            width: double.infinity,
+            child: navBar,
+          ),
+        ],
       ),
-      Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppPadding.content),
-        child: content,
-      ),
-      Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppPadding.bumper),
-        child: bumper,
-      ),
-      // ignore: sized_box_for_whitespace
-      Container(
-        width: double.infinity,
-        child: navBar,
-      ),
-    ]);
+    );
   }
 }
