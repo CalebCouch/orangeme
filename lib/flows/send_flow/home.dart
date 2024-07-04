@@ -13,30 +13,32 @@ class WalletHome extends StatelessWidget {
   _enterSendFlow() {}
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: DefaultInterface(
-        header: const PrimaryHeader(
-          text: "Wallet",
-        ),
-        content: const Column(children: [
-          AmountDisplay(
-            value: 0, //needs to be users balance,
+    return Material(
+      child: SafeArea(
+        child: DefaultInterface(
+          header: const PrimaryHeader(
+            text: "Wallet",
           ),
-          Spacing(height: AppPadding.content),
-          /*TransactionHistory(
+          content: const Column(children: [
+            AmountDisplay(
+              value: 0, //needs to be users balance,
+            ),
+            Spacing(height: AppPadding.content),
+            /*TransactionHistory(
               transactionsList: transactionsList,
             ),*/
-        ]),
-        bumper: DoubleButton(
-          firstText: "Receive",
-          secondText: "Send",
-          firstOnTap: _enterReceiveFlow(),
-          secondOnTap: _enterSendFlow(),
-        ),
-        /*
+          ]),
+          bumper: DoubleButton(
+            firstText: "Receive",
+            secondText: "Send",
+            firstOnTap: _enterReceiveFlow(),
+            secondOnTap: _enterSendFlow(),
+          ),
+          /*
         navBar: ModeNav(
           onWallet: true,
         ),*/
+        ),
       ),
     );
   }

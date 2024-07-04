@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/custom_text.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/theme/custom_icon.dart';
+import 'package:orange/theme/border.dart';
 
 class ButtonVariant {
   static const String bitcoin = "bitcoin";
@@ -136,27 +137,20 @@ class _ButtonState extends State<CustomButton> {
   Widget build(BuildContext context) {
     buttonStatus = _getReceivedStatus(widget.status);
     //var currentColors = _getColors(buttonStatus);
-    return Material(
+    return Expanded(
       child: InkWell(
-        /*onTap: widget.enabled ? widget.onTap : null,
-      onHover: (hovering) {
-        setState(() => buttonStatus = 1);
-      },*/
         child: Container(
+          decoration: ShapeDecoration(
+            color: _getFillColor(_getColors(buttonStatus)),
+            shape: 
+          ),
           height: widget.buttonSize,
           // padding: EdgeInsets.symmetric(
           //horizontal: _getButtonPadding(widget.buttonSize)),
-          color: _getFillColor(_getColors(buttonStatus)),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              //_displayIcon(),
-              CustomText(
-                textType: "label",
-                text: widget.text,
-                color: _getTextColor(_getColors(buttonStatus)),
-              ),
-            ],
+          child: CustomText(
+            textType: "label",
+            text: widget.text,
+            color: _getTextColor(_getColors(buttonStatus)),
           ),
         ),
       ),

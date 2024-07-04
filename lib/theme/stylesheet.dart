@@ -138,3 +138,9 @@ class Spacing extends StatelessWidget {
     );
   }
 }
+
+//// BORDERS ////
+
+class ThemeBorders {
+  static final BorderRadius button = BorderRadius.circular(24);
+}
