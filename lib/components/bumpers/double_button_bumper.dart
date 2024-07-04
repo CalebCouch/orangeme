@@ -25,12 +25,12 @@ class DoubleButton extends StatelessWidget {
         children: [
           CustomButton(
             text: firstText,
-            //onTap: firstOnTap,
+            onTap: firstOnTap,
           ),
           const Spacing(width: AppPadding.bumper),
           CustomButton(
             text: secondText,
-            //onTap: secondOnTap,
+            onTap: secondOnTap,
           ),
         ],
       ),

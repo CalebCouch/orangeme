@@ -4,17 +4,15 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/list_item/default_list_item.dart';
 
 class TransactionListItem extends StatelessWidget {
-  final String topLeft;
-  final String bottomLeft;
-  final String topRight;
-  final String bottomRight;
+  final bool isReceived;
+  final String time;
+  final int amount;
 
   const TransactionListItem({
     super.key,
-    required this.topLeft,
-    required this.bottomLeft,
-    required this.topRight,
-    required this.bottomRight,
+    required this.isReceived,
+    required this.time,
+    required this.amount,
   });
 
   @override
@@ -24,27 +22,27 @@ class TransactionListItem extends StatelessWidget {
         alignment: TextAlign.left,
         textType: "text",
         textSize: TextSize.md,
-        text: topLeft,
+        text: isReceived ? "Received bitcoin" : "Sent bitcoin",
       ),
       bottomLeft: CustomText(
         alignment: TextAlign.left,
         textType: "text",
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
-        text: bottomLeft,
+        text: time,
       ),
       topRight: CustomText(
         alignment: TextAlign.right,
         textType: "text",
         textSize: TextSize.md,
-        text: topRight,
+        text: "\$ ${amount}",
       ),
-      bottomRight: CustomText(
+      bottomRight: const CustomText(
         alignment: TextAlign.right,
         textType: "text",
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
-        text: bottomRight,
+        text: "Details",
         underline: true,
       ),
     );
