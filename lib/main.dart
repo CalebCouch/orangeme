@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:orange/theme/stylesheet.dart';
+
 import 'package:flutter/services.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/screens/init.dart';
@@ -24,11 +26,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Orange',
-      theme: null,
-      home: InitPage(),
+      theme: theme(),
+      home: const InitPage(),
     );
   }
 }
