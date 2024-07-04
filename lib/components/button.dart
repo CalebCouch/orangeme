@@ -119,6 +119,7 @@ class StatefulCustomButtonState extends State<Button> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               widget.icon != null
+                  //left icon variant
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -135,6 +136,7 @@ class StatefulCustomButtonState extends State<Button> {
                         ),
                       ],
                     )
+                  //no left icon variant
                   : Text(
                       widget.label,
                       textAlign: TextAlign.center,
