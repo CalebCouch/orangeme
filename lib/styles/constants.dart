@@ -295,4 +295,8 @@ class AppBorders {
 class AppPadding {
   static const EdgeInsets buttonInsetPadding =
       EdgeInsets.symmetric(horizontal: 16);
+  static const EdgeInsets headerInsetPadding =
+      EdgeInsets.symmetric(horizontal: 16);
+  static const EdgeInsets bumperInsetPadding =
+      EdgeInsets.symmetric(horizontal: 16);
 }

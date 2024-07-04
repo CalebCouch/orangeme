@@ -26,21 +26,6 @@ IconButton,
 Button,
 Text
 
-
-
-CText(text: String, type: TextType, size: TextSize, color: Option<Color>, alignment: Alignment = Alignment::Center, underline: bool, truncate: bool){
-  let color = type == TextType::Text ? Color::gray : Color::White;
-  let overflow = overflow.Ellipses;
-	//textType should set defaults that can then be overriden
-	return Text(
-		text,
-		fontSize: textSize,
-		color: color,
-		alignment: alignment
-		underline ? apply underline,
-	)
-}
-
 Color{
   Bitcoin,
   White,
@@ -72,7 +57,7 @@ Button(label: String, buttonVariant: String, size: String, enabled: bool, onPres
 		border: borderColor,
 		borderRadius: borderRadius,
 		backgroundColor = buttonColor,
-		CText(label, textColor)
+		Text(label, textColor)
 	)
 }
 
@@ -163,14 +148,14 @@ ListItem(transaction: Transaction, currentPrice: Price){
 				Column(
 					children: [
 						(text: String, type: TextType, size: TextSize, color: Option<Color>, alignment: Alignment = Alignment::Center, underline: bool, truncate: bool){
-						CText(transaction.received(or something similar) ?? 'Received Bitcoin' : 'Sent Bitcoin',  'MD', Appcolors.text, None, None, None),
-						CText(evaluateTimestamp(), 'MD', AppColors.textSecondary, None, None, None),
+						Text(transaction.received(or something similar) ?? 'Received Bitcoin' : 'Sent Bitcoin',  'MD', Appcolors.text, None, None, None),
+						Text(evaluateTimestamp(), 'MD', AppColors.textSecondary, None, None, None),
 					]
 				),
 				Column(
 					children:[
-						CText(formatNetValue(transaction.net-transaction.fee, currentPrice), 'MD', AppColors.text, None, None, None),
-						CText('Details', 'MD', AppColors.textSecondary, None, true, None),
+						Text(formatNetValue(transaction.net-transaction.fee, currentPrice), 'MD', AppColors.text, None, None, None),
+						Text('Details', 'MD', AppColors.textSecondary, None, true, None),
 					]
 				)
 			]	
