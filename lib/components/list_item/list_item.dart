@@ -36,6 +36,7 @@ class DefaultListItem extends StatelessWidget {
               ),
             ),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 if (topRight != null) topRight!,
                 if (bottomRight != null) bottomRight!,
