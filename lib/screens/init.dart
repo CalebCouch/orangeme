@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
+import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
@@ -98,8 +98,8 @@ class InitPageState extends State<InitPage> {
   }
 
   void navigate() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const Receive()));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => const Send()));
   }
 
   @override

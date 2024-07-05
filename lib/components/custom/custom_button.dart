@@ -63,9 +63,10 @@ class CustomButton extends StatefulWidget {
   final double buttonSize;
   final String text;
 
-  final String? leftIcon;
+  final String? icon;
   final VoidCallback? onTap;
-  final bool? expand;
+  final bool expand;
+  final Alignment buttonAlignment;
 
   const CustomButton({
     super.key,
@@ -74,8 +75,9 @@ class CustomButton extends StatefulWidget {
     this.buttonSize = ButtonSize.lg,
     this.expand = true,
     this.status = ButtonStatus._default,
-    this.leftIcon,
+    this.icon,
     this.onTap,
+    this.buttonAlignment = Alignment.center,
   });
 
   @override
@@ -100,11 +102,11 @@ class _ButtonState extends State<CustomButton> {
   }
 
   _displayIcon() {
-    if (widget.leftIcon != null) {
+    if (widget.icon != null) {
       return Row(
         children: [
           CustomIcon(
-            icon: widget.leftIcon!,
+            icon: widget.icon!,
             iconSize: widget.buttonSize,
           ),
           Spacing(
@@ -119,24 +121,30 @@ class _ButtonState extends State<CustomButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        child: Container(
-          alignment: Alignment.center,
-          decoration: ShapeDecoration(
-            color: buttonColors[widget.variant][widget.status].fill,
-            shape: widget.variant == ButtonVariant.secondary
-                ? BoxDecorations.buttonOutlined
-                : BoxDecorations.button,
-          ),
-          height: widget.buttonSize,
-          padding: EdgeInsets.symmetric(
-              horizontal: _getButtonPadding(widget.buttonSize)),
-          child: CustomText(
-            textType: "label",
-            text: widget.text,
-            color: buttonColors[widget.variant][widget.status].text,
-          ),
+    return InkWell(
+      onTap: widget.onTap ?? widget.onTap,
+      child: Container(
+        width: widget.expand ? double.infinity : null,
+        decoration: ShapeDecoration(
+          color: buttonColors[widget.variant][widget.status].fill,
+          shape: widget.variant == ButtonVariant.secondary
+              ? BoxDecorations.buttonOutlined
+              : BoxDecorations.button,
+        ),
+        height: widget.buttonSize,
+        padding: EdgeInsets.symmetric(
+            horizontal: _getButtonPadding(widget.buttonSize)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _displayIcon(),
+            CustomText(
+              textSize: widget.buttonSize == 48 ? TextSize.lg : TextSize.md,
+              textType: "label",
+              text: widget.text,
+              color: buttonColors[widget.variant][widget.status].text,
+            ),
+          ],
         ),
       ),
     );

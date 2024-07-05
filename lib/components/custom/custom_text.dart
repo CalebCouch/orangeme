@@ -11,7 +11,7 @@ class CustomText extends StatefulWidget {
 
   const CustomText({
     super.key,
-    required this.textType,
+    this.textType = "text",
     required this.text,
     this.textSize = TextSize.lg,
     this.color = ThemeColor.danger,

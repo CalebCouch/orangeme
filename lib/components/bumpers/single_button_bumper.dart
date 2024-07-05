@@ -17,9 +17,13 @@ class SingleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultBumper(
-      content: CustomButton(
-        text: text,
-        onTap: onTap,
+      content: Row(
+        children: [
+          CustomButton(
+            text: text,
+            onTap: onTap,
+          ),
+        ],
       ),
     );
   }

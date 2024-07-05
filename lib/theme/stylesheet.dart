@@ -139,6 +139,7 @@ class AppPadding {
   static const double valueDisplay = 64;
   static const double navBar = 64;
   static const double listItem = 16;
+  static const double textInput = 12;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];
@@ -168,5 +169,6 @@ class Spacing extends StatelessWidget {
 //// BORDERS ////
 
 class ThemeBorders {
+  static final BorderRadius textInput = BorderRadius.circular(8);
   static final BorderRadius button = BorderRadius.circular(24);
 }
