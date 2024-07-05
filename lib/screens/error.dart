@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ErrorPage extends StatefulWidget {
-  final int status;
   final String message;
 
-  const ErrorPage({super.key, required this.status, required this.message});
+  const ErrorPage({super.key, required this.message});
 
   @override
   ErrorPageState createState() => ErrorPageState();
@@ -27,7 +26,7 @@ class ErrorPageState extends State<ErrorPage> {
               child: IntrinsicHeight(
                 child: Center(
                   child: Text(
-                    "error message(${widget.status}): ${widget.message}",
+                    "error message: ${widget.message}",
                     style: Theme.of(context).textTheme.displayMedium,
                     textAlign: TextAlign.center,
                   ),

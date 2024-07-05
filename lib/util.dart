@@ -1,17 +1,70 @@
-import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:orange/screens/error.dart';
+import 'package:flutter/material.dart';
+import 'package:orange/classes.dart';
+import 'package:uuid/uuid.dart';
+import 'dart:convert';
+import 'dart:io';
 
-// ignore: constant_identifier_names
+Uuid uuid = Uuid();
+List<RustC> RUSTCOMMANDS = [];
+List<RustR> RUSTRESPONSES = [];
 const STORAGE = FlutterSecureStorage();
+String ERROR = "";
+BuildContext? currentCtx;
 
-Future<String> getDBPath() async {
-  Directory appDocDirectory = await getApplicationDocumentsDirectory();
-  Directory mydir = await Directory('${appDocDirectory.path}/sqlitedata35.db')
-      .create(recursive: true);
-  return mydir.path;
+Future<void> checkError() async {
+  while (true) {
+    await Future.delayed(const Duration(milliseconds: 10));
+    if (ERROR.isNotEmpty) {
+      print("WE GOT AN ERROR");
+      print(ERROR);
+
+      Navigator.pushReplacement(
+        currentCtx!,
+        MaterialPageRoute(builder: (context) => ErrorPage(message: ERROR)),
+      );
+      break;
+    }
+  }
+}
+
+Future<RustR> invoke(String method, String data) async {
+  var uid = uuid.v1();
+  var command = new RustC(uid, method, data);
+  print(jsonEncode(command));
+  RUSTCOMMANDS.add(command);
+  while (true) {
+    var index = RUSTRESPONSES.indexWhere((res) => res.uid == uid);
+    if (index != -1) {
+      return RUSTRESPONSES.removeAt(index);
+    }
+    await Future.delayed(const Duration(milliseconds: 10));
+  }
+}
+
+Future<String> dartCallback(String dartCommand) async {
+  var command = DartCommand.fromJson(jsonDecode(dartCommand));
+  switch (command.method) {
+    case "secure_get":
+      return await STORAGE.read(key: command.data) ?? "";
+    case "secure_set":
+      var split = command.data.split("\u0000");
+      await STORAGE.write(key: split[0], value: split[1]);
+    case "print":
+      print(command.data);
+    case "get_commands":
+      var json = jsonEncode(RUSTCOMMANDS);
+      RUSTCOMMANDS = [];
+      return json;
+    case "post_response":
+      print(dartCommand);
+      RUSTRESPONSES.add(RustR.fromJson(jsonDecode(command.data)));
+    case var unknown:
+      return "Error:UnknownMethod:" + unknown;
+  }
+  return "Ok";
 }
 
 String handleNull(nullable, context) {
@@ -20,19 +73,14 @@ String handleNull(nullable, context) {
         context,
         MaterialPageRoute(
             builder: (context) => const ErrorPage(
-                status: 404,
                 message: "Value from storage was unexpectedly null")));
   }
   return nullable ?? "NEVER";
 }
 
-String handleError(response, context) {
-  if (response.status != 200) {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                ErrorPage(status: response.status, message: response.message)));
-  }
-  return response.message;
+Future<String> getDocPath() async {
+  Directory appDocDirectory = await getApplicationDocumentsDirectory();
+  Directory mydir =
+      await Directory('${appDocDirectory.path}/').create(recursive: true);
+  return mydir.path;
 }

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:orange/flows/wallet_flow/send_flow/send.dart';
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
-
 import 'package:orange/flows/wallet_flow/home.dart';
+import 'package:orange/components/custom/custom_text.dart';
 
 class InitPage extends StatefulWidget {
   const InitPage({super.key});
@@ -21,7 +18,6 @@ class InitPageState extends State<InitPage> {
   @override
   void initState() {
     super.initState();
-    // ignore: unused_local_variable
     print('Welcome Page loaded');
     print('Checking for seed...');
     onPageLoad();
@@ -29,35 +25,58 @@ class InitPageState extends State<InitPage> {
 
   void onPageLoad() async {
     checkPlatform();
-    var descriptors = await STORAGE.read(key: "descriptors");
-    print("read from DB");
-    if (descriptors == null) {
-      var descriptorsRes =
-          await invoke(method: "get_new_singlesig_descriptor", args: []);
-      if (!mounted) return;
-      descriptors = handleError(descriptorsRes, context);
-      await STORAGE.write(key: "descriptors", value: descriptors);
-    }
-    print("desc: $descriptors");
-    String path = await getDBPath();
-    print('Syncing Wallet...');
-    var syncRes =
-        await invoke(method: "sync_wallet", args: [path, descriptors]);
-    if (!mounted) return;
-    handleError(syncRes, context);
     setState(() {
       loading = false;
     });
   }
 
-  void genSeed() async {
-    var descriptorsRes =
-        await invoke(method: "get_new_singlesig_descriptor", args: []);
-    if (!mounted) return;
-    var descriptors = handleError(descriptorsRes, context);
-    await STORAGE.write(key: "descriptors", value: descriptors);
-    print("desc: $descriptors");
+  void messges() async {
+    var message;
+    message.value = (await invoke("messages", "")).data;
+    print(message);
   }
+
+  void dropseed() async {
+    await invoke("drop_descs", "");
+    print("dropped");
+  }
+
+  void estimateFees() async {
+    text.value = (await invoke("estimateFees", "")).data;
+    print(text.value);
+  }
+
+  void historical_price() async {
+    var historical_prices = (await invoke("get_historical_price", "")).data;
+    print(historical_prices);
+  }
+
+  void get_balance() async {
+    var get_balance = (await invoke("get_balance", "")).data;
+    print(get_balance);
+  }
+
+  Future<String> get_new_address() async {
+    var newAddress = (await invoke("get_new_address", "")).data;
+    print(newAddress);
+    return newAddress;
+  }
+
+  void check_address() async {
+    var check_address = (await invoke(
+            "check_address", (await invoke("get_new_address", "")).data))
+        .data;
+    print(check_address);
+  }
+
+/** 
+  void create_transaction() async {
+    var input = new CreateTransactionInput(
+        get_new_address() as String, "3747373", "fee");
+    var jsonres = await invoke("create_transaction", jsonEncode(input));
+    print(jsonres);
+  }
+*/
 
   void checkPlatform() {
     if (Platform.isAndroid) {
@@ -75,39 +94,16 @@ class InitPageState extends State<InitPage> {
     }
   }
 
-  void dropDB() async {
-    print("dropdb");
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
-    if (!mounted) return;
-    handleNull(descriptorsRes, context);
-    //await dropdb(path: path, descriptors: descriptors);
-    print("dropeddb");
-  }
-
-  void estimateFees() async {
-    print("estimating fees");
-    var feesRes = await invoke(method: "estimate_fees", args: []);
-    if (!mounted) return;
-    var fees = handleError(feesRes, context);
-    print("Fees: $fees");
-  }
-
-  void throwError() async {
-    var errorRes = await invoke(method: "throw_error", args: []);
-    if (!mounted) return;
-    handleError(errorRes, context);
-  }
-
   void navigate() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const WalletHome()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const WalletHome()));
   }
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return Scaffold(
       body: Container(
-        // Enables scrolling
         padding: const EdgeInsets.all(16.0),
         child: loading
             ? SizedBox(
@@ -118,11 +114,9 @@ class InitPageState extends State<InitPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Text(
-                    'Welcome to Orange. This screen will not normally be seen and is used for initialization',
-                    style: TextStyle(
-                        fontSize: TextSize.lg, color: ThemeColor.bitcoin),
-                    textAlign: TextAlign.center,
+                  const CustomText(
+                    text:
+                        'Welcome to Orange. This screen will not normally be seen and is used for initialization',
                   ),
                   const SizedBox(height: 20),
                   ValueListenableBuilder<String>(
@@ -145,25 +139,38 @@ class InitPageState extends State<InitPage> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => {},
-                    child: const Text(
-                      'Gendesc(disabled)',
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => {throwError()},
-                    child: const Text('Error'),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => {dropDB()},
+                    onPressed: () => {dropseed()},
                     child: const Text('drop'),
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => {estimateFees()},
                     child: const Text('estimate fee'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {messges()},
+                    child: const Text('messages'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {historical_price()},
+                    child: const Text('Historical price'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {get_balance()},
+                    child: const Text('balance'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {get_new_address()},
+                    child: const Text('New address'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => {check_address()},
+                    child: const Text('Check address'),
                   ),
                 ],
               ),

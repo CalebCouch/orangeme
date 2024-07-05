@@ -31,4 +31,11 @@ pub enum Error {
     OutOfBounds(),
     #[error("Could not sign Transaction")]
     CouldNotSign(),
+    #[error("Exited, Reason: {0}")]
+    Exited(String),
+    #[error("Unknown Method: {0}")]
+    UnknownMethod(String),
+    #[error("Dart Error: {0}")]
+    DartError(String),
+
 }
