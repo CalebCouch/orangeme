@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/flows/wallet_flow/send_flow/send.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/util.dart';
 import 'dart:io';
@@ -98,8 +99,8 @@ class InitPageState extends State<InitPage> {
   }
 
   void navigate() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const WalletHome()));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => const Send()));
   }
 
   @override
@@ -119,7 +120,8 @@ class InitPageState extends State<InitPage> {
                 children: <Widget>[
                   Text(
                     'Welcome to Orange. This screen will not normally be seen and is used for initialization',
-                    style: Theme.of(context).textTheme.displayLarge,
+                    style: TextStyle(
+                        fontSize: TextSize.lg, color: ThemeColor.bitcoin),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),

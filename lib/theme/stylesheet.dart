@@ -140,6 +140,7 @@ class AppPadding {
   static const double navBar = 64;
   static const double listItem = 16;
   static const double textInput = 12;
+  static const double tips = 8;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];

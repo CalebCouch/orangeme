@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/custom/custom_button.dart';
+import 'package:orange/components/buttons/icon_text_button.dart';
 
 import 'package:orange/interfaces/default_interface.dart';
 import 'package:orange/components/content/content.dart';
@@ -36,23 +36,19 @@ class SendState extends State<Send> {
               controller: recipientAddressController,
               hint: 'Bitcoin address...',
             ),
-            const CustomButton(
-              buttonSize: ButtonSize.md,
-              expand: false,
-              variant: ButtonVariant.secondary,
+            const IconTextButton(
               text: "pn1ThS2aa02Cr...",
               icon: ThemeIcon.paste,
               onTap: null,
             ),
+            const Spacing(height: AppPadding.tips),
             const CustomText(
               text: "or",
               textSize: TextSize.sm,
               color: ThemeColor.textSecondary,
             ),
-            const CustomButton(
-              buttonSize: ButtonSize.md,
-              expand: false,
-              variant: ButtonVariant.secondary,
+            const Spacing(height: AppPadding.tips),
+            const IconTextButton(
               text: "Scan QR Code",
               icon: ThemeIcon.qrcode,
               onTap: null,

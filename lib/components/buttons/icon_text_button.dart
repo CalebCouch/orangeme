@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_button.dart';
 
-class DefaultBumper extends StatelessWidget {
+class IconTextButton extends StatelessWidget {
   final String text;
   final String icon;
+  final VoidCallback? onTap;
 
-  const DefaultBumper({
+  const IconTextButton({
     super.key,
-    required this.content,
+    required this.text,
+    required this.icon,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return const CustomButton(
+    return CustomButton(
       buttonSize: ButtonSize.md,
       expand: false,
       variant: ButtonVariant.secondary,
