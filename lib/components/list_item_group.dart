@@ -43,12 +43,13 @@ Widget listItemGroup(ValueNotifier<List<Transaction>> transactions,
     valueListenable: transactions,
     builder: (BuildContext context, List<Transaction> value, Widget? child) {
       return Expanded(
-          child: ListView.builder(
-        itemCount: value.length,
-        itemBuilder: (context, index) {
-          return listItem(context, value[index], price);
-        },
-      ));
+        child: ListView.builder(
+          itemCount: value.length,
+          itemBuilder: (context, index) {
+            return listItem(context, value[index], price);
+          },
+        ),
+      );
     },
   );
 }

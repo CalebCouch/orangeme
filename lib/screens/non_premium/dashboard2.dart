@@ -223,7 +223,7 @@ class Dashboard2State extends State<Dashboard2>
         header: const Header(
           center: Text("Wallet", style: AppTextStyles.heading3),
         ),
-        content: Content(content: contentParams, onRefresh: handleRefresh),
+        content: Content(content: contentParams),
         bumper: ReceiveSend(
           receiveRoute: () => Receive(
             onDashboardPopBack: dashboardPopBack,
