@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
 
 class DefaultInterface extends StatelessWidget {
   final Widget header;
@@ -17,30 +16,20 @@ class DefaultInterface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppPadding.header),
-            child: header,
+    return Scaffold(
+      body: SizedBox(
+        height: MediaQuery.sizeOf(context).height,
+        child: SafeArea(
+          child: Column(
+            children: [
+              header,
+              content,
+              const Spacer(),
+              if (bumper != null) bumper!,
+              if (navBar != null) navBar!,
+            ],
           ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppPadding.content),
-            child: content,
-          ),
-          const Spacer(),
-          Container(
-            child: bumper,
-          ),
-          // ignore: sized_box_for_whitespace
-          Container(
-            width: double.infinity,
-            child: navBar,
-          ),
-        ],
+        ),
       ),
     );
   }

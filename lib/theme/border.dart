@@ -14,3 +14,7 @@ class BoxDecorations {
     borderRadius: ThemeBorders.button,
   );
 }
+
+class CornerRadius {
+  static BorderRadius qrCode = BorderRadius.circular(12);
+}

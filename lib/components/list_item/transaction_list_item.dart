@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/custom_text.dart';
+import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/list_item/default_list_item.dart';
+import 'package:orange/components/list_item/list_item.dart';
 
 class TransactionListItem extends StatelessWidget {
   final bool isReceived;
-  final String time;
-  final int amount;
+  final String timestamp;
+  final double amount;
 
   const TransactionListItem({
     super.key,
     required this.isReceived,
-    required this.time,
+    required this.timestamp,
     required this.amount,
   });
 
@@ -29,7 +29,7 @@ class TransactionListItem extends StatelessWidget {
         textType: "text",
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
-        text: time,
+        text: timestamp,
       ),
       topRight: CustomText(
         alignment: TextAlign.right,

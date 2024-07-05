@@ -24,8 +24,8 @@ class TextSize {
   static const double h1 = 48;
   static const double h2 = 32;
   static const double h3 = 24;
-  static const double h4 = 14;
-  static const double h5 = 12;
+  static const double h4 = 20;
+  static const double h5 = 14;
   static const double h6 = 12;
 }
 
@@ -33,6 +33,29 @@ class TextType {
   static const String header = "header";
   static const String label = "label";
   static const String text = "text";
+}
+
+//// BRAND ////
+
+class BrandSize {
+  static const double xl = 24;
+  static const double lg = 20;
+  static const double md = 16;
+  static const double sm = 14;
+  static const double xs = 12;
+}
+
+class LogoSize {
+  static const double xxl = 74;
+  static const double xl = 64;
+  static const double lg = 48;
+  static const double md = 32;
+  static const double sm = 24;
+  static const double xs = 16;
+}
+
+class BrandLogo {
+  static const String icon = 'assets/icons/logo_mark.svg';
 }
 
 ////COLORS////
@@ -72,31 +95,31 @@ class ThemeColor {
 ////ICONS////
 
 class ThemeIcon {
-  static const String close = 'assets/icons/Icon=close.svg';
-  static const String left = 'assets/icons/Icon=left.svg';
-  static const String right = 'assets/icons/Icon=right.svg';
-  static const String up = 'assets/icons/Icon=up.svg';
-  static const String down = 'assets/icons/Icon=down.svg';
-  static const String paste = 'assets/icons/Icon=paste.svg';
-  static const String scan = 'assets/icons/Icon=scan.svg';
-  static const String qrcode = 'assets/icons/Icon=qr-code.svg';
-  static const String radio = 'assets/icons/Icon=radio.svg';
-  static const String radioFilled = 'assets/icons/Icon=radio-filled.svg';
-  static const String edit = 'assets/icons/Icon=edit.svg';
-  static const String home = 'assets/icons/Icon=home.svg';
-  static const String bitcoin = 'assets/icons/Icon=bitcoin.svg';
-  static const String wallet = 'assets/icons/Icon=wallet.svg';
-  static const String error = 'assets/icons/Icon=error.svg';
-  static const String chat = 'assets/icons/Icon=chat.svg';
-  static const String group = 'assets/icons/Icon=group.svg';
-  static const String profile = 'assets/icons/Icon=profile.svg';
-  static const String info = 'assets/icons/Icon=info.svg';
-  static const String send = 'assets/icons/Icon=send.svg';
+  static const String close = 'assets/icons/close.svg';
+  static const String left = 'assets/icons/left.svg';
+  static const String right = 'assets/icons/right.svg';
+  static const String up = 'assets/icons/up.svg';
+  static const String down = 'assets/icons/down.svg';
+  static const String paste = 'assets/icons/paste.svg';
+  static const String scan = 'assets/icons/scan.svg';
+  static const String qrcode = 'assets/icons/qr-code.svg';
+  static const String radio = 'assets/icons/radio.svg';
+  static const String radioFilled = 'assets/icons/radio-filled.svg';
+  static const String edit = 'assets/icons/edit.svg';
+  static const String home = 'assets/icons/home.svg';
+  static const String bitcoin = 'assets/icons/bitcoin.svg';
+  static const String wallet = 'assets/icons/wallet.svg';
+  static const String error = 'assets/icons/error.svg';
+  static const String chat = 'assets/icons/chat.svg';
+  static const String group = 'assets/icons/group.svg';
+  static const String profile = 'assets/icons/profile.svg';
+  static const String info = 'assets/icons/info.svg';
+  static const String send = 'assets/icons/send.svg';
 }
 
 class IconSize {
-  static const double lg = 34;
-  static const double md = 24;
+  static const double lg = 48;
+  static const double md = 32;
 }
 
 //// BUTTONS ////
@@ -112,8 +135,10 @@ class AppPadding {
   static const double header = 16;
   static const double content = 24;
   static const double bumper = 16;
-  static const double valueDisplay = 8;
+  static const double valueDisplaySep = 8;
+  static const double valueDisplay = 64;
   static const double navBar = 64;
+  static const double listItem = 16;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];
@@ -145,12 +170,3 @@ class Spacing extends StatelessWidget {
 class ThemeBorders {
   static final BorderRadius button = BorderRadius.circular(24);
 }
-
-//// HEIGHTS ////
-
-class AppHeights {
-  static const double listItem = 74;
-}
-
-
-//// WIDTHS ////

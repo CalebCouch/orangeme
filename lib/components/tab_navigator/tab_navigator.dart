@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/theme/custom_icon.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 
 class TabNav extends StatelessWidget {
   const TabNav({
@@ -21,7 +21,7 @@ class TabNav extends StatelessWidget {
           Spacing(width: AppPadding.navBar),
           AppIconButton(
             icon: ThemeIcon.chat,
-            enabled: false,
+            isEnabled: false,
           ),
         ],
       ),

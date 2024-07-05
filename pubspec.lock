@@ -656,7 +656,7 @@ packages:
     source: hosted
     version: "2.2.1"
   zxing_lib:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: zxing_lib
       sha256: f48841552941ea3889d4b4b8fd5386680b7b20c451bef46d35bb1b602523d159

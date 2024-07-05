@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/theme/custom_button.dart';
-import 'package:orange/components/bumpers/default_bumper.dart';
+import 'package:orange/components/custom/custom_button.dart';
+import 'package:orange/components/bumpers/bumper.dart';
 
 class DoubleButton extends StatelessWidget {
   final String firstText;
