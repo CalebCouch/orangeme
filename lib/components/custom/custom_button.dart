@@ -124,6 +124,7 @@ class _ButtonState extends State<CustomButton> {
     return InkWell(
       onTap: widget.onTap ?? widget.onTap,
       child: Container(
+        alignment: Alignment.center,
         width: widget.expand ? double.infinity : null,
         decoration: ShapeDecoration(
           color: buttonColors[widget.variant][widget.status].fill,
@@ -135,7 +136,7 @@ class _ButtonState extends State<CustomButton> {
         padding: EdgeInsets.symmetric(
             horizontal: _getButtonPadding(widget.buttonSize)),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _displayIcon(),
             CustomText(

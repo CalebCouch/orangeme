@@ -98,8 +98,8 @@ class InitPageState extends State<InitPage> {
   }
 
   void navigate() {
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => const Send()));
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const WalletHome()));
   }
 
   @override

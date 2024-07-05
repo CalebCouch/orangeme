@@ -23,14 +23,18 @@ class DoubleButton extends StatelessWidget {
     return DefaultBumper(
       content: Row(
         children: [
-          CustomButton(
-            text: firstText,
-            onTap: firstOnTap,
+          Flexible(
+            child: CustomButton(
+              text: firstText,
+              onTap: firstOnTap,
+            ),
           ),
           const Spacing(width: AppPadding.bumper),
-          CustomButton(
-            text: secondText,
-            onTap: secondOnTap,
+          Flexible(
+            child: CustomButton(
+              text: secondText,
+              onTap: secondOnTap,
+            ),
           ),
         ],
       ),
