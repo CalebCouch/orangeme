@@ -213,11 +213,17 @@ class Dashboard2State extends State<Dashboard2>
       listItemGroup(transactions, price),
     ];
 
+    if (refreshTimer != null && refreshTimer!.isActive == false) {
+      print("timer wasn't running, let me start that for you");
+      startTimer();
+    }
+
     return Interface(
+        loading: loading,
         header: const Header(
           center: Text("Wallet", style: AppTextStyles.heading3),
         ),
-        content: Content(content: contentParams),
+        content: Content(content: contentParams, onRefresh: handleRefresh),
         bumper: ReceiveSend(
           receiveRoute: () => Receive(
             onDashboardPopBack: dashboardPopBack,
@@ -235,88 +241,4 @@ class Dashboard2State extends State<Dashboard2>
           stopTimer: _stopTimer,
         ));
   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     print("Refresh Timer: $refreshTimer");
-//     if (refreshTimer != null && refreshTimer!.isActive == false) {
-//       print("timer wasn't running, let me start that for you");
-//       startTimer();
-//     }
-//     return SafeArea(
-//       child: Scaffold(
-//         resizeToAvoidBottomInset: true,
-//         appBar: AppBar(
-//           title: const Text('Wallet'),
-//           automaticallyImplyLeading: false,
-//         ),
-//         body: loading
-//             ? const Center(child: CircularProgressIndicator())
-//             : RefreshIndicator(
-//                 onRefresh: handleRefresh,
-//                 child: CustomScrollView(
-//                   slivers: [
-//                     SliverFillRemaining(
-//                       hasScrollBody: true,
-//                       fillOverscroll: true,
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.stretch,
-//                         children: [
-//                           //content
-//                           Expanded(
-//                             child: Padding(
-//                               padding: const EdgeInsets.all(24.0),
-//                               child: Column(
-//                                 crossAxisAlignment: CrossAxisAlignment.center,
-//                                 children: [
-//                                   ValueListenableBuilder<int>(
-//                                     valueListenable: balance,
-//                                     builder: (context, balanceValue, child) =>
-//                                         ValueListenableBuilder<double>(
-//                                       valueListenable: price,
-//                                       builder: (context, priceValue, child) =>
-//                                           ValueDisplay(
-//                                         fiatAmount: formatSatsToDollars(
-//                                             balanceValue, priceValue),
-//                                         quantity: (balanceValue / 100000000.0)
-//                                             .toStringAsFixed(8),
-//                                       ),
-//                                     ),
-//                                   ),
-//                                   const SizedBox(height: 24),
-//                                   listItemGroup(transactions, price),
-//                                 ],
-//                               ),
-//                             ),
-//                           ),
-//                           //bumper
-//                           Padding(
-//                             padding: const EdgeInsets.all(16),
-//                             child: ReceiveSend(
-//                               receiveRoute: () => Receive(
-//                                 onDashboardPopBack: dashboardPopBack,
-//                               ),
-//                               sendRoute: () => Send1(
-//                                 balance: balance.value,
-//                                 price: price.value,
-//                                 onDashboardPopBack: dashboardPopBack,
-//                               ),
-//                               onPause: _stopTimer,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//         bottomNavigationBar: TabNavigator(
-//           navIndex: navIndex,
-//           onDashboardPopBack: dashboardPopBack,
-//           stopTimer: _stopTimer,
-//         ),
-//       ),
-//     );
-//   }
-// }
 }
