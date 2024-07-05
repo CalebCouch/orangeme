@@ -6,6 +6,7 @@ class DefaultListItem extends StatelessWidget {
   final Widget? bottomLeft;
   final Widget? topRight;
   final Widget? bottomRight;
+  final VoidCallback? onTap;
 
   const DefaultListItem({
     super.key,
@@ -13,11 +14,13 @@ class DefaultListItem extends StatelessWidget {
     this.bottomLeft,
     this.topRight,
     this.bottomRight,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: onTap ?? onTap!,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
         child: Row(

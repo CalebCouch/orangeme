@@ -7,17 +7,20 @@ class TransactionListItem extends StatelessWidget {
   final bool isReceived;
   final String timestamp;
   final double amount;
+  final VoidCallback? onTap;
 
   const TransactionListItem({
     super.key,
     required this.isReceived,
     required this.timestamp,
     required this.amount,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return DefaultListItem(
+      onTap: onTap ?? onTap!,
       topLeft: CustomText(
         alignment: TextAlign.left,
         textType: "text",
