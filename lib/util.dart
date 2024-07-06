@@ -84,3 +84,14 @@ Future<String> getDocPath() async {
       await Directory('${appDocDirectory.path}/').create(recursive: true);
   return mydir.path;
 }
+
+navigateTo(BuildContext context, Widget widget) {
+  Navigator.push(
+    context,
+    PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => widget,
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    ),
+  );
+}

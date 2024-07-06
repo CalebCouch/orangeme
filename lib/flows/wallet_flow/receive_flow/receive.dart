@@ -10,7 +10,6 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/interfaces/default_interface.dart';
 import 'package:share/share.dart';
 
-import 'dart:convert';
 import 'package:orange/util.dart';
 
 class Receive extends StatefulWidget {

@@ -13,30 +13,10 @@ import 'package:orange/components/tab_navigator/tab_navigator.dart';
 import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
 
+import 'package:orange/util.dart';
+
 class WalletHome extends StatelessWidget {
   const WalletHome({super.key});
-
-  void _enterReceiveFlow(context) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => const Receive(),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
-  }
-
-  _enterSendFlow(context) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => const Send(),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +43,10 @@ class WalletHome extends StatelessWidget {
         firstText: "Receive",
         secondText: "Send",
         firstOnTap: () {
-          _enterReceiveFlow(context);
+          navigateTo(context, const Receive());
         },
         secondOnTap: () {
-          _enterSendFlow(context);
+          navigateTo(context, const Send());
         },
       ),
       navBar: const TabNav(),

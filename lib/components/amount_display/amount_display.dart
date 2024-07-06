@@ -3,7 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 class AmountDisplay extends StatefulWidget {
-  final int value;
+  final double value;
 
   const AmountDisplay({
     super.key,
@@ -17,7 +17,7 @@ class AmountDisplay extends StatefulWidget {
 class _AmountDisplayState extends State<AmountDisplay> {
   String accountBalance = "";
 
-  _getValueDisplaySize(int value) {
+  _getValueDisplaySize(double value) {
     accountBalance = widget.value.toString();
     if (accountBalance.length <= 4) {
       //1-4
@@ -31,7 +31,7 @@ class _AmountDisplayState extends State<AmountDisplay> {
     }
   }
 
-  _getValueConverted(int value) {
+  _getValueConverted(double value) {
     return "0.46713414"; //needs to return value converted to btc
   }
 
