@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/custom/icon_button.dart';
+import 'package:orange/components/buttons/icon_button.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 class CustomTextInput extends StatefulWidget {
