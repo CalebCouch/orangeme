@@ -12,9 +12,6 @@ import 'package:orange/theme/stylesheet.dart';
 class Send extends StatefulWidget {
   const Send({super.key});
 
-  _enterReceiveFlow() {}
-  _enterSendFlow() {}
-
   @override
   SendState createState() => SendState();
 }
@@ -36,10 +33,10 @@ class SendState extends State<Send> {
               controller: recipientAddressController,
               hint: 'Bitcoin address...',
             ),
-            const IconTextButton(
+            IconTextButton(
               text: "pn1ThS2aa02Cr...",
               icon: ThemeIcon.paste,
-              onTap: null,
+              onTap: () {},
             ),
             const Spacing(height: AppPadding.tips),
             const CustomText(
@@ -48,10 +45,10 @@ class SendState extends State<Send> {
               color: ThemeColor.textSecondary,
             ),
             const Spacing(height: AppPadding.tips),
-            const IconTextButton(
+            IconTextButton(
               text: "Scan QR Code",
               icon: ThemeIcon.qrcode,
-              onTap: null,
+              onTap: () {},
             ),
           ],
         ),

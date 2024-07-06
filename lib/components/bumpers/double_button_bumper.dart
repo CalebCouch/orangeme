@@ -8,8 +8,8 @@ class DoubleButton extends StatelessWidget {
   final String firstText;
   final String secondText;
 
-  final void Function()? firstOnTap;
-  final void Function()? secondOnTap;
+  final VoidCallback firstOnTap;
+  final VoidCallback secondOnTap;
 
   const DoubleButton(
       {super.key,
@@ -26,14 +26,14 @@ class DoubleButton extends StatelessWidget {
           Flexible(
             child: CustomButton(
               text: firstText,
-              onTap: () => firstOnTap,
+              onTap: firstOnTap,
             ),
           ),
           const Spacing(width: AppPadding.bumper),
           Flexible(
             child: CustomButton(
               text: secondText,
-              onTap: () => secondOnTap,
+              onTap: secondOnTap,
             ),
           ),
         ],

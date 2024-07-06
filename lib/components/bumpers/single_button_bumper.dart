@@ -11,19 +11,15 @@ class SingleButton extends StatelessWidget {
   const SingleButton({
     super.key,
     required this.text,
-    this.onTap,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return DefaultBumper(
-      content: Row(
-        children: [
-          CustomButton(
-            text: text,
-            onTap: onTap,
-          ),
-        ],
+      content: CustomButton(
+        text: text,
+        onTap: onTap,
       ),
     );
   }

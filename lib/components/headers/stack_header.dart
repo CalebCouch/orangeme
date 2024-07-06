@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/custom/icon_button.dart';
+import 'package:orange/components/buttons/icon_button.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
@@ -18,7 +18,7 @@ class StackHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultHeader(
-      left: const CustomBackButton(onTap: null),
+      left: CustomBackButton(),
       center: CustomText(
         textType: "heading",
         text: text,

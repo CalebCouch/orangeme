@@ -16,12 +16,19 @@ import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
 class WalletHome extends StatelessWidget {
   const WalletHome({super.key});
 
-  _enterReceiveFlow(BuildContext context) {
-    return print("object");
+  void _enterReceiveFlow(context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => const Receive(),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
   }
 
-  _enterSendFlow(BuildContext context) {
-    Navigator.pushReplacement(
+  _enterSendFlow(context) {
+    Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation1, animation2) => const Send(),
@@ -55,8 +62,12 @@ class WalletHome extends StatelessWidget {
       bumper: DoubleButton(
         firstText: "Receive",
         secondText: "Send",
-        firstOnTap: () => _enterReceiveFlow(context),
-        secondOnTap: () => _enterSendFlow(context),
+        firstOnTap: () {
+          _enterReceiveFlow(context);
+        },
+        secondOnTap: () {
+          _enterSendFlow(context);
+        },
       ),
       navBar: const TabNav(),
     );

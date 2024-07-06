@@ -21,8 +21,8 @@ class CustomIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: null,
+    return GestureDetector(
+      onTap: onTap ?? () {},
       child: CustomIcon(
         icon: icon,
         iconSize: iconSize,
@@ -33,17 +33,16 @@ class CustomIconButton extends StatelessWidget {
 }
 
 class CustomBackButton extends StatelessWidget {
-  final VoidCallback? onTap;
-
   const CustomBackButton({
     super.key,
-    this.onTap,
   });
   @override
   Widget build(BuildContext context) {
-    return const CustomIconButton(
+    return CustomIconButton(
       icon: ThemeIcon.left,
-      onTap: null,
+      onTap: () {
+        Navigator.pop(context);
+      },
     );
   }
 }
@@ -61,7 +60,9 @@ class CustomSendButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomIconButton(
       icon: ThemeIcon.send,
-      onTap: null,
+      onTap: () {
+        print("send");
+      },
       iconColor: isEnabled ? ThemeColor.primary : ThemeColor.textSecondary,
     );
   }

@@ -20,8 +20,7 @@ class Transaction {
         json['net'] as int,
         json['fee'] as int?,
         time != null ? DateTime.fromMillisecondsSinceEpoch(time * 1000) : null,
-        json['raw'] as String?
-      );
+        json['raw'] as String?);
   }
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +31,7 @@ class Transaction {
         'fee': this.fee,
         'timestamp': this.timestamp,
         'raw': this.raw
-    };
+      };
 }
 
 class DartCommand {
@@ -74,8 +73,6 @@ class RustR {
   factory RustR.fromJson(Map<String, dynamic> json) {
     return RustR(json['uid'] as String, json['data'] as String);
   }
-
-
 
   Map<String, dynamic> toJson() => {
         'uid': this.uid,

@@ -11,7 +11,7 @@ class IconTextButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.icon,
-    this.onTap,
+    required this.onTap,
   });
 
   @override

@@ -8,10 +8,10 @@ import 'package:orange/components/bumpers/single_button_bumper.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 import 'package:orange/interfaces/default_interface.dart';
-
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/util.dart';
 import 'package:share/share.dart';
+
+import 'dart:convert';
+import 'package:orange/util.dart';
 
 class Receive extends StatefulWidget {
   const Receive({
@@ -39,7 +39,7 @@ class ReceiveState extends State<Receive> {
 
   //generate a fresh Bitcoin address
   Future<void> getNewAddress() async {
-    address.value = "my new fancy address of about this length";
+    address.value = (await invoke("get_new_address", "")).data;
   }
 
   //used to bring up the OS native share window
