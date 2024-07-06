@@ -20,7 +20,7 @@ class DefaultListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap ?? onTap!,
+      onTap: onTap ?? () {},
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
         child: Row(

@@ -20,7 +20,7 @@ class TransactionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultListItem(
-      onTap: onTap ?? onTap!,
+      onTap: onTap ?? () {},
       topLeft: CustomText(
         alignment: TextAlign.left,
         textType: "text",

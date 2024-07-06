@@ -119,15 +119,32 @@ class _ButtonState extends State<CustomButton> {
     }
   }
 
+  _checkHover(bool isHovering) {
+    if (isHovering) {
+      return 1;
+    } else {
+      return widget.status;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool _isHovering = false;
+    int currentStatus = widget.status;
+    currentStatus = _checkHover(_isHovering);
     return InkWell(
-      onTap: widget.onTap ?? widget.onTap,
+      onHover: (hovering) {
+        setState(() => _isHovering = hovering);
+      },
+      onTap: widget.onTap ?? () {},
+      customBorder: RoundedRectangleBorder(
+        borderRadius: ThemeBorders.button,
+      ),
       child: Container(
         alignment: widget.expand ? widget.buttonAlignment : null,
         width: widget.expand ? double.infinity : null,
         decoration: ShapeDecoration(
-          color: buttonColors[widget.variant][widget.status].fill,
+          color: buttonColors[widget.variant][currentStatus].fill,
           shape: widget.variant == ButtonVariant.secondary
               ? BoxDecorations.buttonOutlined
               : BoxDecorations.button,
@@ -144,7 +161,7 @@ class _ButtonState extends State<CustomButton> {
               textSize: widget.buttonSize == 48 ? TextSize.lg : TextSize.md,
               textType: "label",
               text: widget.text,
-              color: buttonColors[widget.variant][widget.status].text,
+              color: buttonColors[widget.variant][currentStatus].text,
             ),
           ],
         ),

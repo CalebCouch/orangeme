@@ -39,17 +39,7 @@ class ReceiveState extends State<Receive> {
 
   //generate a fresh Bitcoin address
   Future<void> getNewAddress() async {
-    var descriptorsRes = await STORAGE.read(key: "descriptors");
-    if (!mounted) return;
-    var descriptors = handleNull(descriptorsRes, context);
-    var addressRes = await invoke(
-        method: "get_new_address", args: [await getDBPath(), descriptors]);
-    if (!mounted) return;
-    address.value = handleError(addressRes, context);
-
-    setState(() {
-      isLoading = false;
-    });
+    address.value = "my new fancy address of about this length";
   }
 
   //used to bring up the OS native share window
