@@ -119,20 +119,6 @@ class InitPageState extends State<InitPage> {
                         'Welcome to Orange. This screen will not normally be seen and is used for initialization',
                   ),
                   const SizedBox(height: 20),
-                  ValueListenableBuilder<String>(
-                    valueListenable: text,
-                    builder: (BuildContext context, String value, child) {
-                      return Text(
-                        "$value Sats",
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 24,
-                        ),
-                        textAlign: TextAlign.center,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => {navigate()},
                     child: const Text('Proceed'),
