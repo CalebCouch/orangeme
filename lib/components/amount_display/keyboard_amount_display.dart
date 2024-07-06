@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:intl/intl.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:orange/components/custom/custom_rich_text.dart';
 
 import 'package:orange/theme/stylesheet.dart';
+
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
@@ -17,13 +17,14 @@ class KeyboardAmountDisplay extends StatefulWidget {
   final bool exceedMaxBalance;
   final String maxBalance;
 
-  const KeyboardAmountDisplay(
-      {super.key,
-      required this.fiatAmount,
-      required this.quantity,
-      required this.onShake,
-      required this.exceedMaxBalance,
-      required this.maxBalance});
+  const KeyboardAmountDisplay({
+    super.key,
+    required this.fiatAmount,
+    required this.quantity,
+    required this.onShake,
+    required this.exceedMaxBalance,
+    required this.maxBalance,
+  });
 
   @override
   KeyboardValueDisplayState createState() => KeyboardValueDisplayState();
@@ -174,13 +175,13 @@ class KeyboardValueDisplayState extends State<KeyboardAmountDisplay>
                   child: Row(
                     children: [
                       CustomText(
-                        text: "\$ ${formatFiatAmount(widget.fiatAmount)}",
+                        text: "\$${formatFiatAmount(widget.fiatAmount)}",
                         textType: 'heading',
                         textSize: fontSize,
                       ),
                       if (showCents)
                         CustomText(
-                          text: "\$",
+                          text: decimalExtension,
                           textType: 'heading',
                           textSize: fontSize,
                           color: ThemeColor.textSecondary,
@@ -210,11 +211,9 @@ class KeyboardValueDisplayState extends State<KeyboardAmountDisplay>
                         iconColor: ThemeColor.danger,
                       ),
                       const SizedBox(width: 8),
-                      Flexible(
-                        child: CustomRichText(
-                          text: "\$${widget.maxBalance} maximum",
-                          color: ThemeColor.danger,
-                        ),
+                      CustomText(
+                        text: "\$${widget.maxBalance} maximum",
+                        color: ThemeColor.danger,
                       ),
                     ],
                   ),

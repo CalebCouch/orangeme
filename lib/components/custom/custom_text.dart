@@ -5,7 +5,7 @@ class CustomText extends StatefulWidget {
   final String textType;
   final String text;
   final double textSize;
-  final Color color;
+  final Color? color;
   final bool underline;
   final TextAlign alignment;
 
@@ -14,7 +14,7 @@ class CustomText extends StatefulWidget {
     this.textType = "text",
     required this.text,
     this.textSize = TextSize.lg,
-    this.color = ThemeColor.danger,
+    this.color,
     this.underline = false,
     this.alignment = TextAlign.center,
   });
@@ -24,19 +24,15 @@ class CustomText extends StatefulWidget {
 }
 
 class _CustomTextState extends State<CustomText> {
-  _getTextColor(Color color, String type) {
-    if (color == ThemeColor.danger) {
-      return _getColor(type);
+  _getTextColor(String type) {
+    if (widget.color == null) {
+      if (type == "text") {
+        return ThemeColor.text;
+      } else {
+        return ThemeColor.heading;
+      }
     } else {
-      return color;
-    }
-  }
-
-  _getColor(String type) {
-    if (type == "text") {
-      return ThemeColor.text;
-    } else {
-      return ThemeColor.heading;
+      return widget.color;
     }
   }
 
@@ -52,13 +48,14 @@ class _CustomTextState extends State<CustomText> {
 
   @override
   Widget build(BuildContext context) {
+    Color color = _getTextColor(widget.textType);
     return Text(
       widget.text,
       textAlign: widget.alignment,
       style: TextStyle(
         fontFamily: "Outfit",
         fontSize: widget.textSize,
-        color: _getTextColor(widget.color, widget.textType),
+        color: color,
         fontWeight: _getFontWeight(widget.textType),
         decoration:
             widget.underline ? TextDecoration.underline : TextDecoration.none,

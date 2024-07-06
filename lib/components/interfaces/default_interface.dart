@@ -23,8 +23,7 @@ class DefaultInterface extends StatelessWidget {
           child: Column(
             children: [
               header,
-              content,
-              const Spacer(),
+              Expanded(child: content),
               if (bumper != null) bumper!,
               if (navBar != null) navBar!,
             ],
