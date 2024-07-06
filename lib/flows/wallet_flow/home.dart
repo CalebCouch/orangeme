@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/components/tabular/transaction_tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/interfaces/default_interface.dart';
+import 'package:orange/components/interfaces/default_interface.dart';
 
 import 'package:orange/components/list_item/transaction_list_item.dart';
 import 'package:orange/components/content/content.dart';
@@ -55,7 +55,8 @@ class WalletHome extends StatelessWidget {
         content: Column(
           children: [
             const AmountDisplay(
-              value: 0,
+              value: 56.32,
+              converted: 0.00037293,
             ),
             const Spacing(height: AppPadding.content),
             SingleChildScrollView(

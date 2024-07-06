@@ -4,31 +4,41 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_header.dart';
 import 'package:orange/components/bumpers/single_button_bumper.dart';
-import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/amount_display/amount_display.dart';
 
-import 'package:orange/interfaces/default_interface.dart';
+import 'package:orange/components/interfaces/default_interface.dart';
 
-class ReceiveDetails extends StatefulWidget {
+class TransactionDetailsWidget extends StatefulWidget {
   final TransactionDetails transactionDetails;
-  const ReceiveDetails({super.key, required this.transactionDetails});
+  const TransactionDetailsWidget({super.key, required this.transactionDetails});
 
   @override
-  ReceiveDetailsState createState() => ReceiveDetailsState();
+  TransactionDetailsWidgetState createState() =>
+      TransactionDetailsWidgetState();
 }
 
-class ReceiveDetailsState extends State<ReceiveDetails> {
+class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
   @override
   Widget build(BuildContext context) {
+    String direction;
+    if (widget.transactionDetails.isReceived) {
+      direction = "Received";
+    } else {
+      direction = "Sent";
+    }
     return DefaultInterface(
-      header: const StackHeader(text: "Received bitcoin"),
+      header: StackHeader(text: "$direction bitcoin"),
       content: Content(
         content: Column(
           children: [
-            AmountDisplay(value: widget.transactionDetails.value),
+            AmountDisplay(
+              value: widget.transactionDetails.value,
+              converted: widget.transactionDetails.btcValueSent,
+            ),
             const Spacing(height: AppPadding.content),
             TransactionTabular(
+              direction: direction,
               transactionDetails: widget.transactionDetails,
             ),
           ],

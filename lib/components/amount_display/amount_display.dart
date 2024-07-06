@@ -4,10 +4,12 @@ import 'package:orange/components/custom/custom_text.dart';
 
 class AmountDisplay extends StatefulWidget {
   final double value;
+  final double converted;
 
   const AmountDisplay({
     super.key,
     required this.value,
+    required this.converted,
   });
 
   @override
@@ -31,10 +33,6 @@ class _AmountDisplayState extends State<AmountDisplay> {
     }
   }
 
-  _getValueConverted(double value) {
-    return "0.46713414"; //needs to return value converted to btc
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,7 +48,7 @@ class _AmountDisplayState extends State<AmountDisplay> {
           const Spacing(height: AppPadding.valueDisplaySep),
           CustomText(
             textType: "text",
-            text: "${_getValueConverted(widget.value)} BTC",
+            text: "${widget.converted} BTC",
             textSize: TextSize.lg,
             color: ThemeColor.textSecondary,
           ),

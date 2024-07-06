@@ -4,7 +4,7 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item/list_item.dart';
-import 'package:orange/flows/wallet_flow/transaction_details/receive_details.dart';
+import 'package:orange/flows/wallet_flow/transaction_details/transaction_details.dart';
 
 import 'package:orange/util.dart';
 
@@ -21,12 +21,16 @@ class TransactionListItem extends StatelessWidget {
     return DefaultListItem(
       onTap: transactionDetails.isReceived
           ? () {
-              navigateTo(context,
-                  ReceiveDetails(transactionDetails: transactionDetails));
+              navigateTo(
+                  context,
+                  TransactionDetailsWidget(
+                      transactionDetails: transactionDetails));
             }
           : () {
-              navigateTo(context,
-                  ReceiveDetails(transactionDetails: transactionDetails));
+              navigateTo(
+                  context,
+                  TransactionDetailsWidget(
+                      transactionDetails: transactionDetails));
             },
       topLeft: CustomText(
         alignment: TextAlign.left,
@@ -37,20 +41,17 @@ class TransactionListItem extends StatelessWidget {
       ),
       bottomLeft: CustomText(
         alignment: TextAlign.left,
-        textType: "text",
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
         text: transactionDetails.date,
       ),
       topRight: CustomText(
         alignment: TextAlign.right,
-        textType: "text",
         textSize: TextSize.md,
-        text: "\$ ${transactionDetails.value}",
+        text: "\$${transactionDetails.value}",
       ),
       bottomRight: const CustomText(
         alignment: TextAlign.right,
-        textType: "text",
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
         text: "Details",

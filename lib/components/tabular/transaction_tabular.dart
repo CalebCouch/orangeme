@@ -27,19 +27,15 @@ class TransactionDetails {
 
 class TransactionTabular extends StatelessWidget {
   final TransactionDetails transactionDetails;
+  final String direction;
 
   const TransactionTabular({
     super.key,
     required this.transactionDetails,
+    required this.direction,
   });
   @override
   Widget build(BuildContext context) {
-    String direction;
-    if (transactionDetails.isReceived) {
-      direction = "Sent";
-    } else {
-      direction = "Received";
-    }
     return Column(
       children: [
         SingleTab(title: "Date", subtitle: transactionDetails.date),

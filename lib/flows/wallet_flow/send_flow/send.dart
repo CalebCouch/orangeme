@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/buttons/icon_text_button.dart';
+import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/interfaces/default_interface.dart';
+import 'package:orange/components/interfaces/default_interface.dart';
+
+import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
+
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_header.dart';
 import 'package:orange/components/text_input/text_input.dart';
 import 'package:orange/components/custom/custom_text.dart';
-
-import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/components/bumpers/single_button_bumper.dart';
+import 'package:orange/components/buttons/icon_text_button.dart';
+import 'package:orange/util.dart';
 
 class Send extends StatefulWidget {
   const Send({super.key});
@@ -34,7 +38,7 @@ class SendState extends State<Send> {
               hint: 'Bitcoin address...',
             ),
             IconTextButton(
-              text: "pn1ThS2aa02Cr...",
+              text: "pn1ThS2aa02Cr...", //bitcoin address in clipboard
               icon: ThemeIcon.paste,
               onTap: () {},
             ),
@@ -52,6 +56,18 @@ class SendState extends State<Send> {
             ),
           ],
         ),
+      ),
+      bumper: SingleButton(
+        text: "Continue",
+        onTap: () {
+          navigateTo(
+            context,
+            const SendAmount(
+              balance: 34,
+              price: 63.029,
+            ),
+          );
+        },
       ),
     );
   }

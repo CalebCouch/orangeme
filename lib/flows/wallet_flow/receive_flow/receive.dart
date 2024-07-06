@@ -7,7 +7,7 @@ import 'package:orange/components/headers/stack_header.dart';
 import 'package:orange/components/bumpers/single_button_bumper.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
-import 'package:orange/interfaces/default_interface.dart';
+import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:share/share.dart';
 
 import 'package:orange/util.dart';
