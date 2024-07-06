@@ -15,6 +15,7 @@ class SingleTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.tab),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/tabular/transaction_tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/interfaces/default_interface.dart';
@@ -18,23 +19,59 @@ import 'package:orange/util.dart';
 class WalletHome extends StatelessWidget {
   const WalletHome({super.key});
 
+  _getTransactions() {
+    return <TransactionDetails>[
+      const TransactionDetails(
+        true,
+        "12/1/24",
+        "6:08 PM",
+        "12FWmGPUC...qEL",
+        0.00076664,
+        62831.17,
+        48.61,
+        null,
+      ),
+      const TransactionDetails(
+        false,
+        "12/1/24",
+        "6:08 PM",
+        "12FWmGPUC...qEL",
+        0.00076664,
+        62831.17,
+        48.61,
+        3.45,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<TransactionDetails> tList = _getTransactions();
     return DefaultInterface(
       header: const PrimaryHeader(
         text: "Wallet",
       ),
-      content: const Content(
+      content: Content(
         content: Column(
           children: [
-            AmountDisplay(
+            const AmountDisplay(
               value: 0,
             ),
-            Spacing(height: AppPadding.content),
-            TransactionListItem(
-              amount: 48.41,
-              timestamp: "4:52 PM",
-              isReceived: true,
+            const Spacing(height: AppPadding.content),
+            SingleChildScrollView(
+              child: Container(
+                height: 220,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount: tList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return TransactionListItem(
+                      transactionDetails: tList[index],
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),

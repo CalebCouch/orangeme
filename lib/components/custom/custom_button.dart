@@ -121,7 +121,7 @@ class _ButtonState extends State<CustomButton> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: widget.onTap,
       child: Container(
         alignment: widget.expand ? widget.buttonAlignment : null,

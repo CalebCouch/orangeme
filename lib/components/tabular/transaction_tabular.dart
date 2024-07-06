@@ -1,38 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/tabular/single_tab.dart';
 
-class TransactionTab extends StatelessWidget {
-  final List<dynamic> transactionDetails;
+class TransactionDetails {
+  final bool isReceived;
+  final String date;
+  final String time;
+  final String address;
+  final double btcValueSent;
+  final double bitcoinPrice;
+  final double value;
+  final double? fee;
 
-  const TransactionTab({
+  const TransactionDetails(
+    this.isReceived,
+    this.date,
+    this.time,
+    this.address,
+    this.btcValueSent,
+    this.bitcoinPrice,
+    this.value,
+    this.fee,
+  );
+}
+
+class TransactionTabular extends StatelessWidget {
+  final TransactionDetails transactionDetails;
+
+  const TransactionTabular({
     super.key,
     required this.transactionDetails,
   });
-
-  /*List<dynamic> received = [
-    date: "1/13/24",
-    time: "6:08pm",
-    address: "12FWmGPUC...qEL",
-    valueBTC: 0.00076664,
-    btcPrice: 62,831.17,
-    value: 48.61, 
-  ];*/
-
-  /*List<dynamic> sent = [
-    date: "1/13/24",
-    time: "6:08pm",
-    address: "12FWmGPUC...qEL",
-    valueBTC: 0.00076664,
-    btcPrice: 62,831.17,
-    value: 48.61, 
-  ];*/
-
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    String direction;
+    if (transactionDetails.isReceived) {
+      direction = "Sent";
+    } else {
+      direction = "Received";
+    }
+    return Column(
       children: [
-        SingleTab(title: "Date", subtitle: transactionDetails[0]),
+        SingleTab(title: "Date", subtitle: transactionDetails.date),
+        SingleTab(title: "Time", subtitle: transactionDetails.time),
+        SingleTab(
+            title: "Sent to Address", subtitle: transactionDetails.address),
+        SingleTab(
+          title: "Amount $direction",
+          subtitle: "${transactionDetails.btcValueSent} BTC",
+        ),
+        SingleTab(
+            title: "Bitcoin Price",
+            subtitle: "\$${transactionDetails.bitcoinPrice}"),
+        SingleTab(
+            title: "USD Value $direction",
+            subtitle: '\$${transactionDetails.value}'),
+        if (!transactionDetails.isReceived)
+          const Spacing(height: AppPadding.content),
+        if (!transactionDetails.isReceived)
+          SingleTab(
+            title: "Fee",
+            subtitle: "\$${transactionDetails.fee}",
+          ),
+        if (!transactionDetails.isReceived)
+          SingleTab(
+            title: "Total Amount",
+            subtitle: "\$${transactionDetails.value + transactionDetails.fee!}",
+          ),
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/tabular/transaction_tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_header.dart';
@@ -10,7 +11,7 @@ import 'package:orange/components/amount_display/amount_display.dart';
 import 'package:orange/interfaces/default_interface.dart';
 
 class ReceiveDetails extends StatefulWidget {
-  final List<dynamic> transactionDetails;
+  final TransactionDetails transactionDetails;
   const ReceiveDetails({super.key, required this.transactionDetails});
 
   @override
@@ -25,14 +26,20 @@ class ReceiveDetailsState extends State<ReceiveDetails> {
       content: Content(
         content: Column(
           children: [
-            AmountDisplay(value: widget.transactionDetails[0]),
+            AmountDisplay(value: widget.transactionDetails.value),
+            const Spacing(height: AppPadding.content),
+            TransactionTabular(
+              transactionDetails: widget.transactionDetails,
+            ),
           ],
         ),
       ),
       bumper: SingleButton(
         variant: ButtonVariant.secondary,
         text: "Done",
-        onTap: () {},
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/tabular/transaction_tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
@@ -8,30 +9,17 @@ import 'package:orange/flows/wallet_flow/transaction_details/receive_details.dar
 import 'package:orange/util.dart';
 
 class TransactionListItem extends StatelessWidget {
-  final bool isReceived;
-  final String timestamp;
-  final double amount;
+  final TransactionDetails transactionDetails;
 
   const TransactionListItem({
     super.key,
-    required this.isReceived,
-    required this.timestamp,
-    required this.amount,
+    required this.transactionDetails,
   });
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> transactionDetails = [
-      "1/13/24",
-      "6:08pm",
-      "12FWmGPUC...qEL",
-      0.00076664,
-      62,
-      831.17,
-      48.61,
-    ];
     return DefaultListItem(
-      onTap: isReceived
+      onTap: transactionDetails.isReceived
           ? () {
               navigateTo(context,
                   ReceiveDetails(transactionDetails: transactionDetails));
@@ -44,20 +32,21 @@ class TransactionListItem extends StatelessWidget {
         alignment: TextAlign.left,
         textType: "text",
         textSize: TextSize.md,
-        text: isReceived ? "Received bitcoin" : "Sent bitcoin",
+        text:
+            transactionDetails.isReceived ? "Received bitcoin" : "Sent bitcoin",
       ),
       bottomLeft: CustomText(
         alignment: TextAlign.left,
         textType: "text",
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
-        text: timestamp,
+        text: transactionDetails.date,
       ),
       topRight: CustomText(
         alignment: TextAlign.right,
         textType: "text",
         textSize: TextSize.md,
-        text: "\$ ${amount}",
+        text: "\$ ${transactionDetails.value}",
       ),
       bottomRight: const CustomText(
         alignment: TextAlign.right,
