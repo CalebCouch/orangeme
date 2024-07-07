@@ -170,6 +170,11 @@ class SendAmountState extends State<SendAmount> {
         ),
       ),
       bumper: KeypadBumper(
+        isEnabled: amount != '' && amount != '0'
+            ? exceedMaxBalance == true
+                ? false
+                : true
+            : false,
         updateAmount: _updateAmount,
       ),
     );

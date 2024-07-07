@@ -107,7 +107,7 @@ class _ButtonState extends State<CustomButton> {
         children: [
           CustomIcon(
             icon: widget.icon!,
-            iconSize: widget.buttonSize,
+            iconSize: widget.buttonSize == 48 ? 48 : 20,
           ),
           Spacing(
             width: _getButtonSpacing(widget.buttonSize),
@@ -138,6 +138,7 @@ class _ButtonState extends State<CustomButton> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _displayIcon(),
             CustomText(
