@@ -4,7 +4,7 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item/list_item.dart';
-import 'package:orange/flows/wallet_flow/transaction_details/transaction_details.dart';
+import 'package:orange/flows/wallet_flow/send_flow/transaction_details.dart';
 
 import 'package:orange/util.dart';
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_icon.dart';
+import 'package:orange/util.dart';
 
 class CustomIconButton extends StatelessWidget {
   final String icon;
@@ -42,6 +43,23 @@ class CustomBackButton extends StatelessWidget {
       icon: ThemeIcon.left,
       onTap: () {
         Navigator.pop(context);
+      },
+    );
+  }
+}
+
+class CustomExitButton extends StatelessWidget {
+  final Widget home;
+  const CustomExitButton({
+    super.key,
+    required this.home,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return CustomIconButton(
+      icon: ThemeIcon.close,
+      onTap: () {
+        navigateTo(context, home);
       },
     );
   }

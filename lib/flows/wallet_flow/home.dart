@@ -30,6 +30,7 @@ class WalletHome extends StatelessWidget {
         62831.17,
         48.61,
         null,
+        null,
       ),
       const TransactionDetails(
         false,
@@ -40,6 +41,7 @@ class WalletHome extends StatelessWidget {
         62831.17,
         48.61,
         3.45,
+        null,
       ),
     ];
   }
@@ -60,18 +62,15 @@ class WalletHome extends StatelessWidget {
             ),
             const Spacing(height: AppPadding.content),
             SingleChildScrollView(
-              child: Container(
-                height: 220,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: tList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return TransactionListItem(
-                      transactionDetails: tList[index],
-                    );
-                  },
-                ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                itemCount: tList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return TransactionListItem(
+                    transactionDetails: tList[index],
+                  );
+                },
               ),
             ),
           ],

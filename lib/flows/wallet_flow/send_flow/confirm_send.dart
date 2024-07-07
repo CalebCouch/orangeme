@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
 import 'package:orange/components/interfaces/default_interface.dart';
-
+import 'package:orange/flows/wallet_flow/send_flow/confirmation.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_header.dart';
 import 'package:orange/components/bumpers/single_button_bumper.dart';
 import 'package:orange/components/data_item/confirm_address_item.dart';
-import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/data_item/confirm_amount_item.dart';
 import 'package:orange/util.dart';
-
-import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 
 class ConfirmSend extends StatefulWidget {
   const ConfirmSend({super.key});
@@ -33,12 +30,14 @@ class ConfirmState extends State<ConfirmSend> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ConfirmAddressItem(),
+            Spacing(height: AppPadding.bumper),
+            ConfirmAmountItem(),
           ],
         ),
       ),
       bumper: SingleButton(
         text: "Confirm & Send",
-        onTap: () {},
+        onTap: () => navigateTo(context, const Confirmation(amount: 45.32)),
       ),
     );
   }

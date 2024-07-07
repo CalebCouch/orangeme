@@ -116,11 +116,20 @@ class ThemeIcon {
   static const String profile = 'assets/icons/profile.svg';
   static const String info = 'assets/icons/info.svg';
   static const String send = 'assets/icons/send.svg';
+
+  static const String success = 'assets/icons/bitcoinsuccess.svg';
 }
 
 class IconSize {
   static const double lg = 48;
   static const double md = 32;
+}
+
+//// PROFILE ////
+
+class ProfilePlaceholder {
+  static const String single = 'assets/icons/photo.svg';
+  static const String group = 'assets/icons/group_photo.svg';
 }
 
 //// BUTTONS ////

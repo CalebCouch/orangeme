@@ -7,18 +7,18 @@ import 'package:orange/components/headers/header.dart';
 
 class StackHeader extends StatelessWidget {
   final String text;
-  final CustomIconButton? buttonIcon;
+  final Widget? iconButton;
 
   const StackHeader({
     super.key,
     required this.text,
-    this.buttonIcon,
+    this.iconButton,
   });
 
   @override
   Widget build(BuildContext context) {
     return DefaultHeader(
-      left: CustomBackButton(),
+      left: iconButton == null ? const CustomBackButton() : iconButton!,
       center: CustomText(
         textType: "heading",
         text: text,

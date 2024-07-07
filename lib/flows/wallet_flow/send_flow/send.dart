@@ -62,10 +62,7 @@ class SendState extends State<Send> {
         onTap: () {
           navigateTo(
             context,
-            const SendAmount(
-              balance: 34,
-              price: 63.029,
-            ),
+            const SendAmount(),
           );
         },
       ),

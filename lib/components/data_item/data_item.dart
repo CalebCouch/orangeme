@@ -60,14 +60,19 @@ class DataItem extends StatelessWidget {
                   Row(
                     children: [
                       for (int i = 0; i < buttons; i++)
-                        CustomButton(
-                          icon: ThemeIcon.edit,
-                          text: buttonNames[i],
-                          buttonSize: ButtonSize.md,
-                          variant: ButtonVariant.secondary,
-                          expand: false,
-                          onTap: buttonActions[i],
-                        ),
+                        Row(
+                          children: [
+                            CustomButton(
+                              icon: ThemeIcon.edit,
+                              text: buttonNames[i],
+                              buttonSize: ButtonSize.md,
+                              variant: ButtonVariant.secondary,
+                              expand: false,
+                              onTap: buttonActions[i],
+                            ),
+                            const Spacing(width: 10),
+                          ],
+                        )
                     ],
                   ),
                 ],

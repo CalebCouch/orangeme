@@ -8,17 +8,8 @@ import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/bumpers/keypad_bumper.dart';
 
 class SendAmount extends StatefulWidget {
-  final int balance;
-  final double? price;
-  final String? address;
-  final String? amount;
-
   const SendAmount({
     super.key,
-    required this.balance,
-    required this.price,
-    this.address,
-    this.amount,
   });
 
   @override
@@ -27,6 +18,8 @@ class SendAmount extends StatefulWidget {
 
 class SendAmountState extends State<SendAmount> {
   String amount = "0";
+  int balance = 0;
+  double price = 63239.23;
   final GlobalKey<KeyboardValueDisplayState> _displayKey =
       GlobalKey<KeyboardValueDisplayState>();
   bool isButtonEnabled = false;
@@ -35,7 +28,7 @@ class SendAmountState extends State<SendAmount> {
   //algorithim used to control the logic of the virtual keyboard
   void _updateAmount(String input) {
     print("character is $input");
-    double maxDollarAmount = (widget.balance / 100000000) * widget.price!;
+    double maxDollarAmount = (balance / 100000000) * price;
     String tempAmount = amount;
     if (input == "backspace") {
       print("found backspace");
@@ -160,12 +153,11 @@ class SendAmountState extends State<SendAmount> {
             key: _displayKey,
             fiatAmount: amount == '' ? '0' : amount,
             quantity: amount == ''
-                ? formatDollarsToBTC('0', widget.price, false)
-                : formatDollarsToBTC(amount, widget.price, false),
+                ? formatDollarsToBTC('0', price, false)
+                : formatDollarsToBTC(amount, price, false),
             onShake: () {},
             exceedMaxBalance: exceedMaxBalance == true ? true : false,
-            maxBalance: ((widget.balance / 100000000) * widget.price!)
-                .toStringAsFixed(2),
+            maxBalance: ((balance / 100000000) * price!).toStringAsFixed(2),
           ),
         ),
       ),

@@ -33,7 +33,7 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
         content: Column(
           children: [
             AmountDisplay(
-              value: widget.transactionDetails.value,
+              value: widget.transactionDetails.value!,
               converted: widget.transactionDetails.btcValueSent,
             ),
             const Spacing(height: AppPadding.content),
