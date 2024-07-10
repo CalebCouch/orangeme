@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/tabular/transaction_tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/data_item/data_item.dart';
 import 'package:orange/util.dart';
 import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';

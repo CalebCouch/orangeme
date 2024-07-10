@@ -24,6 +24,7 @@ class SendState extends State<Send> {
   final TextEditingController recipientAddressController =
       TextEditingController();
 
+  @override
   Widget build(BuildContext context) {
     return DefaultInterface(
       header: const StackHeader(

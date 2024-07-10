@@ -6,17 +6,21 @@ import 'package:orange/util.dart';
 import 'package:orange/flows/wallet_flow/home.dart';
 import 'package:orange/flows/messages_flow/home.dart';
 
-class TabNav extends StatelessWidget {
-  int index = 0;
-  bool messagesEnabled = true;
+class TabNav extends StatefulWidget {
   const TabNav({
     super.key,
-    this.index,
-    this.messagesEnable,
   });
+  @override
+  State<TabNav> createState() => TabNavState();
+}
+
+class TabNavState extends State<TabNav> {
+  bool messagesEnabled = false;
+  int index = 0;
+  List<String> currentIcon = [ThemeIcon.radioFilled, ThemeIcon.radio];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {s
     void openWallet(int index) {
       //index 0
       print("index: $index");

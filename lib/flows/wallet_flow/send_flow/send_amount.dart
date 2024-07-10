@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 //import 'package:orange/theme/stylesheet.dart';
 
@@ -142,6 +144,7 @@ class SendAmountState extends State<SendAmount> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return DefaultInterface(
       header: const StackHeader(
@@ -157,7 +160,7 @@ class SendAmountState extends State<SendAmount> {
                 : formatDollarsToBTC(amount, price, false),
             onShake: () {},
             exceedMaxBalance: exceedMaxBalance == true ? true : false,
-            maxBalance: ((balance / 100000000) * price!).toStringAsFixed(2),
+            maxBalance: ((balance / 100000000) * price).toStringAsFixed(2),
           ),
         ),
       ),

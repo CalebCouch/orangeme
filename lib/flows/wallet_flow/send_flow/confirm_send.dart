@@ -20,6 +20,7 @@ class ConfirmState extends State<ConfirmSend> {
   final TextEditingController recipientAddressController =
       TextEditingController();
 
+  @override
   Widget build(BuildContext context) {
     return DefaultInterface(
       header: const StackHeader(

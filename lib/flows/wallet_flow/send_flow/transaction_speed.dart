@@ -20,10 +20,8 @@ class TransactionSpeed extends StatefulWidget {
 class TransactionSpeedState extends State<TransactionSpeed> {
   final TextEditingController recipientAddressController =
       TextEditingController();
-
+  @override
   Widget build(BuildContext context) {
-    var standardFee = 3.16;
-    var priorityFee = 6.18;
     return DefaultInterface(
       header: const StackHeader(
         text: "Transaction speed",

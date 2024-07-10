@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/tabular/single_tab.dart';
 

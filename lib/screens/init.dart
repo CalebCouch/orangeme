@@ -47,13 +47,13 @@ class InitPageState extends State<InitPage> {
   }
 
   void historical_price() async {
-    var historical_prices = (await invoke("get_historical_price", "")).data;
-    print(historical_prices);
+    var historicalPrices = (await invoke("get_historical_price", "")).data;
+    print(historicalPrices);
   }
 
   void get_balance() async {
-    var get_balance = (await invoke("get_balance", "")).data;
-    print(get_balance);
+    var getBalance = (await invoke("get_balance", "")).data;
+    print(getBalance);
   }
 
   Future<String> get_new_address() async {
@@ -63,10 +63,10 @@ class InitPageState extends State<InitPage> {
   }
 
   void check_address() async {
-    var check_address = (await invoke(
+    var checkAddress = (await invoke(
             "check_address", (await invoke("get_new_address", "")).data))
         .data;
-    print(check_address);
+    print(checkAddress);
   }
 
 /** 

@@ -24,13 +24,13 @@ class Transaction {
   }
 
   Map<String, dynamic> toJson() => {
-        'receiver': this.receiver,
-        'sender': this.sender,
-        'txid': this.txid,
-        'net': this.net,
-        'fee': this.fee,
-        'timestamp': this.timestamp,
-        'raw': this.raw
+        'receiver': receiver,
+        'sender': sender,
+        'txid': txid,
+        'net': net,
+        'fee': fee,
+        'timestamp': timestamp,
+        'raw': raw
       };
 }
 
@@ -58,9 +58,9 @@ class RustC {
   }
 
   Map<String, dynamic> toJson() => {
-        'uid': this.uid,
-        'method': this.method,
-        'data': this.data,
+        'uid': uid,
+        'method': method,
+        'data': data,
       };
 }
 
@@ -75,8 +75,8 @@ class RustR {
   }
 
   Map<String, dynamic> toJson() => {
-        'uid': this.uid,
-        'data': this.data,
+        'uid': uid,
+        'data': data,
       };
 }
 
@@ -88,8 +88,8 @@ class CreateTransactionInput {
   CreateTransactionInput(this.address, this.sats, this.block_target);
 
   Map<String, dynamic> toJson() => {
-        'address': this.address,
-        'sats': this.sats,
-        'block_target': this.block_target,
+        'address': address,
+        'sats': sats,
+        'block_target': block_target,
       };
 }

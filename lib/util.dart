@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:io';
 
-Uuid uuid = Uuid();
+Uuid uuid = const Uuid();
 List<RustC> RUSTCOMMANDS = [];
 List<RustR> RUSTRESPONSES = [];
 const STORAGE = FlutterSecureStorage();
@@ -32,7 +32,7 @@ Future<void> checkError() async {
 
 Future<RustR> invoke(String method, String data) async {
   var uid = uuid.v1();
-  var command = new RustC(uid, method, data);
+  var command = RustC(uid, method, data);
   print(jsonEncode(command));
   RUSTCOMMANDS.add(command);
   while (true) {
@@ -62,7 +62,7 @@ Future<String> dartCallback(String dartCommand) async {
       print(dartCommand);
       RUSTRESPONSES.add(RustR.fromJson(jsonDecode(command.data)));
     case var unknown:
-      return "Error:UnknownMethod:" + unknown;
+      return "Error:UnknownMethod:$unknown";
   }
   return "Ok";
 }

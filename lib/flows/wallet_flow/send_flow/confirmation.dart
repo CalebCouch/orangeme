@@ -22,6 +22,7 @@ class ConfirmationState extends State<Confirmation> {
   final TextEditingController recipientAddressController =
       TextEditingController();
 
+  @override
   Widget build(BuildContext context) {
     return DefaultInterface(
       header: const StackHeader(
