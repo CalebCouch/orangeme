@@ -54,12 +54,7 @@ class MessageListItem extends StatelessWidget {
                             textSize: TextSize.sm,
                             color: ThemeColor.textSecondary,
                           )
-                        : CustomText(
-                            alignment: TextAlign.left,
-                            text: 'you: ${String.fromCharCodes([0x0020])}',
-                            textSize: TextSize.sm,
-                            color: ThemeColor.textSecondary,
-                          ),
+                        : Container(),
                     CustomText(
                       alignment: TextAlign.left,
                       text: recentMessage,

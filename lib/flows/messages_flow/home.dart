@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:orange/theme/stylesheet.dart';
+
 import 'package:orange/components/bumpers/single_button_bumper.dart';
-
 import 'package:orange/components/interfaces/default_interface.dart';
-
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/messages_header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item/message_list_item.dart';
+import 'package:orange/components/tab_navigator/tab_navigator.dart';
 
 import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
-
-import 'package:orange/components/tab_navigator/tab_navigator.dart';
-import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/util.dart';
 

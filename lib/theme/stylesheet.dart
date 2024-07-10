@@ -96,7 +96,7 @@ class ThemeColor {
 
 class ThemeIcon {
   static const String back = 'assets/icons/back.svg';
-  static const String close = 'assets/icons/close.svg';
+  static const String close = 'assets/icons/exit.svg';
   static const String left = 'assets/icons/left.svg';
   static const String right = 'assets/icons/right.svg';
   static const String up = 'assets/icons/up.svg';
