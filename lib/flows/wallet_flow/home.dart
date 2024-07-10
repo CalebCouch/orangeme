@@ -86,7 +86,7 @@ class WalletHome extends StatelessWidget {
           navigateTo(context, const Send());
         },
       ),
-      navBar: TabNav(),
+      navBar: const TabNav(index: 0),
     );
   }
 }

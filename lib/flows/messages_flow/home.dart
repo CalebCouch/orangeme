@@ -9,6 +9,9 @@ import 'package:orange/components/bumpers/double_button_bumper.dart';
 import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
 
+import 'package:orange/components/tab_navigator/tab_navigator.dart';
+import 'package:orange/theme/stylesheet.dart';
+
 import 'package:orange/util.dart';
 
 class MessagesHome extends StatelessWidget {
@@ -18,7 +21,7 @@ class MessagesHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultInterface(
       header: const MessagesHeader(
-        profilePhoto: '',
+        profilePhoto: ThemeIcon.bitcoin,
       ),
       content: const Content(
         content: Column(
@@ -35,7 +38,7 @@ class MessagesHome extends StatelessWidget {
           navigateTo(context, const Send());
         },
       ),
-      navBar: const TabNav(),
+      navBar: const TabNav(index: 1),
     );
   }
 }
