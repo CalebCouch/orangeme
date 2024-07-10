@@ -183,4 +183,5 @@ class Spacing extends StatelessWidget {
 class ThemeBorders {
   static final BorderRadius textInput = BorderRadius.circular(8);
   static final BorderRadius button = BorderRadius.circular(24);
+  static final BorderRadius messageBubble = BorderRadius.circular(8);
 }

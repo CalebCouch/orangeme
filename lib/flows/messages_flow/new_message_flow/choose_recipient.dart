@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/bumpers/single_button_bumper.dart';
+import 'package:orange/components/contact_info/contact_info.dart';
 import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_button_header.dart';
@@ -10,16 +10,9 @@ import 'package:orange/components/buttons/icon_text_button.dart';
 import 'package:orange/components/text_input/text_input.dart';
 
 import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
+import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
 import 'package:orange/util.dart';
-
-class Contact {
-  final String name;
-  final String photo;
-  final String did;
-
-  const Contact(this.name, this.photo, this.did);
-}
 
 class ChooseRecipient extends StatefulWidget {
   const ChooseRecipient({
@@ -44,7 +37,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       'VZDrYz39XxuPq...r5zKQGjTA',
     ),
     const Contact(
-      'Cam Vankette',
+      'Cam',
       ThemeIcon.profile,
       'VZDrYz39XxuPq...r5zKQGjTA',
     ),
@@ -73,6 +66,9 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       header: StackButtonHeader(
         text: 'New message',
         rightEnabled: recipients.isNotEmpty ? true : false,
+        rightOnTap: () {
+          navigateTo(context, const NewConversation());
+        },
       ),
       content: Content(
         content: Column(

@@ -85,3 +85,22 @@ class CustomSendButton extends StatelessWidget {
     );
   }
 }
+
+class CustomInfoButton extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const CustomInfoButton({
+    super.key,
+    this.onTap,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return CustomIconButton(
+      icon: ThemeIcon.info,
+      onTap: () {
+        print("info");
+      },
+      iconColor: ThemeColor.primary,
+    );
+  }
+}
