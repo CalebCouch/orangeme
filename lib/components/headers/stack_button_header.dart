@@ -11,6 +11,7 @@ class StackButtonHeader extends StatelessWidget {
   final Widget? iconButton;
   final bool rightEnabled;
   final String rightText;
+  final VoidCallback? rightOnTap;
 
   const StackButtonHeader({
     super.key,
@@ -18,6 +19,7 @@ class StackButtonHeader extends StatelessWidget {
     this.iconButton,
     this.rightEnabled = false,
     this.rightText = 'Next',
+    this.rightOnTap,
   });
 
   @override
@@ -32,6 +34,8 @@ class StackButtonHeader extends StatelessWidget {
       ),
       right: rightEnabled
           ? CustomButton(
+              onTap: rightOnTap ?? () {},
+              expand: false,
               text: rightText,
               variant: ButtonVariant.ghost,
               buttonSize: ButtonSize.md,
