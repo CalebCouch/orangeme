@@ -30,23 +30,6 @@ class ChooseRecipient extends StatefulWidget {
   ChooseRecipientState createState() => ChooseRecipientState();
 }
 
-void addRecipient(String name, List<String> recipients) {
-  print("what");
-  if (recipients.contains(name)) {
-    removeRecipient(name);
-    return;
-  }
-  setState(() {
-    recipients.add(name);
-  });
-}
-
-void removeRecipient(String name) {
-  setState(() {
-    recipients.remove(name);
-  });
-}
-
 class ChooseRecipientState extends State<ChooseRecipient> {
   List<String> recipients = [];
   List<Contact> testContacts = [
@@ -67,6 +50,22 @@ class ChooseRecipientState extends State<ChooseRecipient> {
     ),
   ];
 
+  void addRecipient(String name) {
+    if (recipients.contains(name)) {
+      removeRecipient(name);
+      return;
+    }
+    setState(() {
+      recipients.add(name);
+    });
+  }
+
+  void removeRecipient(String name) {
+    setState(() {
+      recipients.remove(name);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController contactController = TextEditingController();
@@ -79,7 +78,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
               controller: contactController,
               hint: 'Profile name...',
             ),
-            ContactGroup(recipients),
+            //ContactGroup(recipients),
             Container(
               height: 300,
               child: testContacts.isNotEmpty
@@ -101,22 +100,4 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       ),
     );
   }
-}
-
-Widget ContactGroup(recipients) {
-  return Container(
-    padding: const EdgeInsets.only(bottom: 8),
-    alignment: Alignment.topLeft,
-    child: Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: List<Widget>.generate(recipients.length, (index) {
-        return IconTextButton(
-          text: recipients[index],
-          icon: ThemeIcon.close,
-          onTap: () => removeRecipient(recipients[index].name),
-        );
-      }),
-    ),
-  );
 }
