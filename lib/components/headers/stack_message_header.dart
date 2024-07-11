@@ -2,40 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:orange/components/buttons/icon_button.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/buttons/icon_button.dart';
 import 'package:orange/components/profile_photo/profile_photo.dart';
+import 'package:orange/components/profile_photo/profile_photo_stack.dart';
+import 'package:orange/components/contact_info/contact_info.dart';
 
 import 'package:orange/components/headers/header.dart';
 
 class StackMessageHeader extends StatelessWidget {
-  final String name;
-  final Widget? iconButton;
+  final List<Contact> contacts;
   final VoidCallback? rightOnTap;
-  final String profilePhoto;
-  final bool isGroup;
 
   const StackMessageHeader({
     super.key,
-    required this.name,
-    this.profilePhoto = ThemeIcon.profile,
-    this.iconButton,
+    required this.contacts,
     this.rightOnTap,
-    this.isGroup = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    bool isGroup = false;
+    if (contacts.length > 1) isGroup = true;
     return DefaultHeader(
-      left: iconButton == null ? const CustomBackButton() : iconButton!,
+      left: const CustomBackButton(),
       center: Column(
         children: [
-          ProfilePhoto(
-            profilePhoto: profilePhoto,
-          ),
+          isGroup
+              ? ProfilePhoto(
+                  profilePhoto: contacts[0].photo,
+                )
+              : ProfilePhotoStack(contacts: contacts),
           const Spacing(height: 8),
           CustomText(
             textType: "heading",
-            text: isGroup ? 'Group message' : name,
+            text: isGroup ? 'Group message' : contacts[0].name,
             textSize: TextSize.h5,
             color: ThemeColor.heading,
           ),

@@ -152,6 +152,7 @@ class AppPadding {
   static const double textInput = 12;
   static const double tips = 8;
   static const double tab = 4;
+  static const double message = 8;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];

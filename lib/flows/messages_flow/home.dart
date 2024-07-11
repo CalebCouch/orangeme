@@ -8,21 +8,12 @@ import 'package:orange/components/headers/messages_header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item/message_list_item.dart';
 import 'package:orange/components/tab_navigator/tab_navigator.dart';
-
+import 'package:orange/components/message_info/message_info.dart';
+import 'package:orange/components/contact_info/contact_info.dart';
 import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
+import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
 import 'package:orange/util.dart';
-
-class Message {
-  final bool isReceived;
-  final String name;
-  final String time;
-  final String message;
-  final String photo;
-
-  const Message(
-      this.isReceived, this.time, this.name, this.message, this.photo);
-}
 
 class MessagesHome extends StatefulWidget {
   const MessagesHome({
@@ -36,18 +27,32 @@ class MessagesHome extends StatefulWidget {
 class MessagesHomeState extends State<MessagesHome> {
   List<Message> testMessages = [
     const Message(
+      'totally. that makes sense',
       true,
       '12:21 PM',
-      'Ann Davidson',
-      'totally. that makes sense',
-      ThemeIcon.profile,
+      [Contact('Ann Davidson', ThemeIcon.profile, 'ta3Th1Omn...')],
     ),
     const Message(
+      'Only so much though',
       false,
-      '1:34 PM',
-      'James',
-      'Probably not, but ok',
-      ThemeIcon.profile,
+      '12:21 PM',
+      [Contact('James', ThemeIcon.profile, 'ta3Th1Omn...')],
+    ),
+    const Message(
+      'tuesday?',
+      true,
+      '12:21 PM',
+      [
+        Contact('Stacy', ThemeIcon.profile, 'ta3Th1Omn...'),
+        Contact('Cam', ThemeIcon.profile, 'ta3Th1Omn...'),
+        Contact('Rita Jones', ThemeIcon.profile, 'ta3Th1Omn...')
+      ],
+    ),
+    const Message(
+      'tuesday?',
+      true,
+      '12:21 PM',
+      [Contact('Stacy', ThemeIcon.profile, 'ta3Th1Omn...')],
     ),
   ];
   @override
@@ -62,10 +67,11 @@ class MessagesHomeState extends State<MessagesHome> {
                 itemCount: testMessages.length,
                 itemBuilder: (BuildContext context, int index) {
                   return MessageListItem(
-                    isReceived: testMessages[index].isReceived,
-                    profilePhoto: testMessages[index].photo,
-                    name: testMessages[index].name,
-                    recentMessage: testMessages[index].message,
+                    message: testMessages[index],
+                    onTap: () {
+                      navigateTo(context,
+                          Conversation(contacts: testMessages[index].contacts));
+                    },
                   );
                 },
               )

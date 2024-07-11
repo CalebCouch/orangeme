@@ -4,7 +4,7 @@ class Message {
   final String text;
   final bool isReceived;
   final String time;
-  final Contact contact;
+  final List<Contact> contacts;
 
-  const Message(this.text, this.isReceived, this.time, this.contact);
+  const Message(this.text, this.isReceived, this.time, this.contacts);
 }

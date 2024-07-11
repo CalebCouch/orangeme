@@ -5,11 +5,9 @@ import 'package:orange/components/contact_info/contact_info.dart';
 import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_button_header.dart';
-import 'package:orange/components/list_item/message_list_item.dart';
+import 'package:orange/components/list_item/contact_list_item.dart';
 import 'package:orange/components/buttons/icon_text_button.dart';
 import 'package:orange/components/text_input/text_input.dart';
-
-import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
 import 'package:orange/util.dart';
@@ -62,12 +60,18 @@ class ChooseRecipientState extends State<ChooseRecipient> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController contactController = TextEditingController();
+    List<Contact> testContacts = [
+      const Contact('Ann Davidson', ThemeIcon.profile, 'ta3Th1Omn...'),
+      const Contact('James', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Stacy', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Cam', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+    ];
     return DefaultInterface(
       header: StackButtonHeader(
         text: 'New message',
         rightEnabled: recipients.isNotEmpty ? true : false,
         rightOnTap: () {
-          navigateTo(context, const NewConversation());
+          navigateTo(context, const Conversation());
         },
       ),
       content: Content(
@@ -98,10 +102,10 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                   ? ListView.builder(
                       itemCount: testContacts.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return MessageListItem(
+                        return ContactListItem(
+                          contactName: testContacts[index].name,
                           profilePhoto: testContacts[index].photo,
-                          name: testContacts[index].name,
-                          recentMessage: testContacts[index].did,
+                          digitalID: testContacts[index].did,
                           onTap: () => addRecipient(testContacts[index].name),
                         );
                       },

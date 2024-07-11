@@ -15,24 +15,21 @@ class MessageStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isGroup = false;
+    var isGroup = false;
     if (contacts.length > 1) isGroup = true;
     return SizedBox(
-      height: double.infinity,
-      child: messages.isNotEmpty
-          ? ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return MessageBubble(
-                  isGroup: isGroup,
-                  isReceived: messages[index].isReceived,
-                  name: messages[index].contact.name,
-                  text: messages[index].text,
-                  time: messages[index].time,
-                );
-              },
-            )
-          : null,
-    );
+        height: double.infinity,
+        child: ListView.builder(
+          itemCount: messages.length,
+          itemBuilder: (BuildContext context, int index) {
+            return MessageBubble(
+              previousMessage: index >= 1 ? messages[index - 1] : null,
+              nextMessage:
+                  index < (messages.length - 1) ? messages[index + 1] : null,
+              isGroup: isGroup,
+              message: messages[index],
+            );
+          },
+        ));
   }
 }

@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/profile_photo/profile_photo.dart';
+import 'package:orange/components/message_info/message_info.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 class MessageListItem extends StatelessWidget {
-  final String profilePhoto;
-  final String name;
-  final String recentMessage;
+  final Message message;
   final VoidCallback? onTap;
-  final bool isReceived;
 
   const MessageListItem({
     super.key,
-    this.profilePhoto = ThemeIcon.profile,
-    this.name = 'Alice B',
-    this.recentMessage = 'No.',
     this.onTap,
-    this.isReceived = false,
+    required this.message,
   });
 
   @override
   Widget build(BuildContext context) {
+    bool isGroup = false;
+    if (message.contacts.length > 1) isGroup = true;
     return InkWell(
       onTap: onTap ?? () {},
       child: Container(
@@ -29,35 +26,38 @@ class MessageListItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              alignment: Alignment.centerLeft,
-              child: ProfilePhoto(
-                height: 48,
-                width: 48,
-                profilePhoto: profilePhoto,
-              ),
-            ),
+                alignment: Alignment.centerLeft,
+                child: ProfilePhoto(
+                  height: 48,
+                  width: 48,
+                  profilePhoto:
+                      isGroup ? ThemeIcon.group : message.contacts[0].photo,
+                )),
             const Spacing(width: AppPadding.bumper),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CustomText(
-                  text: name,
+                  text: isGroup ? 'Group message' : message.contacts[0].name,
                   textSize: TextSize.md,
                 ),
                 Row(
                   children: [
-                    isReceived
+                    message.isReceived
                         ? CustomText(
                             alignment: TextAlign.left,
-                            text: '$name: ${String.fromCharCodes([0x0020])}',
+                            text:
+                                '${message.contacts[0].name}: ${String.fromCharCodes([
+                                  0x0020
+                                ])}',
                             textSize: TextSize.sm,
                             color: ThemeColor.textSecondary,
                           )
                         : Container(),
                     CustomText(
                       alignment: TextAlign.left,
-                      text: recentMessage,
+                      text: message.text,
                       textSize: TextSize.sm,
                       color: ThemeColor.textSecondary,
                     ),
