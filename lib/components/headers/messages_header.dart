@@ -17,6 +17,7 @@ class MessagesHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultHeader(
       left: ProfilePhoto(
+        size: ProfileSize.md,
         profilePhoto: profilePhoto,
       ),
       center: const CustomText(

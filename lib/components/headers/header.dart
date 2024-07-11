@@ -16,12 +16,14 @@ class DefaultHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppPadding.header),
+    return SizedBox(
+      height: 48,
       width: MediaQuery.sizeOf(context).width,
       child: Stack(
+        alignment: Alignment.center,
         children: [
           Container(
+            padding: const EdgeInsets.only(left: 16),
             alignment: Alignment.centerLeft,
             child: left,
           ),
@@ -30,6 +32,7 @@ class DefaultHeader extends StatelessWidget {
             child: center,
           ),
           Container(
+            padding: const EdgeInsets.only(right: 16),
             alignment: Alignment.centerRight,
             child: right,
           ),

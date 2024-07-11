@@ -27,7 +27,7 @@ class ConversationState extends State<Conversation> {
   List<SingleMessage> messages = [];
   _getMessages() {
     messages.add(
-        SingleMessage('what\'s up?', true, '11:23 PM', widget.contacts[0]));
+        SingleMessage('what\'s up?', true, '11:19 PM', widget.contacts[0]));
     messages.add(
         SingleMessage('Nothing much, how are you?', false, '11:23 PM', myInfo));
     messages.add(SingleMessage(
