@@ -132,6 +132,22 @@ class ProfilePlaceholder {
   static const String group = 'assets/icons/group_photo.svg';
 }
 
+class ProfileSize {
+  static const double xxl = 96;
+  static const double xl = 64;
+  static const double lg = 48;
+  static const double md = 32;
+  static const double sm = 24;
+}
+
+class IconSizeProfile {
+  static const double xxl = 74;
+  static const double xl = 48;
+  static const double lg = 36;
+  static const double md = 24;
+  static const double sm = 18;
+}
+
 //// BUTTONS ////
 
 class ButtonSize {

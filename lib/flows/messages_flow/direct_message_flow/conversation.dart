@@ -12,9 +12,7 @@ import 'package:orange/components/message_bubble/message_stack.dart';
 class Conversation extends StatefulWidget {
   final List<Contact> contacts;
   const Conversation({
-    this.contacts = const [
-      Contact('Stacy', ThemeIcon.profile, 'a938ixOh2R...')
-    ],
+    this.contacts = const [Contact('JOHN', ThemeIcon.profile, 'a938ixOh2R...')],
     super.key,
   });
 
@@ -23,20 +21,19 @@ class Conversation extends StatefulWidget {
 }
 
 class ConversationState extends State<Conversation> {
-  Contact myInfo =
-      const Contact('Ella Couch', ThemeIcon.profile, 'gs3xToh8r...');
+  Contact myInfo = const Contact('Ella', ThemeIcon.profile, 'gs3xToh8r...');
   List<Message> messages = [];
   _getMessages() {
     messages.add(Message('what\'s up?', true, '11:23 PM', widget.contacts));
-    messages.add(Message(
-        'Nothing much, how are you?', false, '11:23 PM', widget.contacts));
+    messages.add(
+        Message('Nothing much, how are you?', false, '11:23 PM', [myInfo]));
     messages.add(Message(
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras a mauris elementum, mollis erat sed',
         true,
         '11:23 PM',
         widget.contacts));
-    messages.add(Message(
-        'cool. We should catch up soon', false, '11:23 PM', widget.contacts));
+    messages.add(
+        Message('cool. We should catch up soon', false, '11:23 PM', [myInfo]));
     messages.add(
         Message('yes, that would be fun', true, '11:23 PM', widget.contacts));
     messages.add(Message('tuesday?', true, '11:23 PM', widget.contacts));

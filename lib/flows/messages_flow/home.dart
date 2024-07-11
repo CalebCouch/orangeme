@@ -43,7 +43,7 @@ class MessagesHomeState extends State<MessagesHome> {
       true,
       '12:21 PM',
       [
-        Contact('Stacy', ThemeIcon.profile, 'ta3Th1Omn...'),
+        Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...'),
         Contact('Cam', ThemeIcon.profile, 'ta3Th1Omn...'),
         Contact('Rita Jones', ThemeIcon.profile, 'ta3Th1Omn...')
       ],
@@ -52,7 +52,7 @@ class MessagesHomeState extends State<MessagesHome> {
       'tuesday?',
       true,
       '12:21 PM',
-      [Contact('Stacy', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...')],
     ),
   ];
   @override

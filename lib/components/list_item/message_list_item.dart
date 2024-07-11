@@ -26,13 +26,13 @@ class MessageListItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-                alignment: Alignment.centerLeft,
-                child: ProfilePhoto(
-                  height: 48,
-                  width: 48,
-                  profilePhoto:
-                      isGroup ? ThemeIcon.group : message.contacts[0].photo,
-                )),
+              alignment: Alignment.centerLeft,
+              child: ProfilePhoto(
+                size: ProfileSize.lg,
+                profilePhoto:
+                    isGroup ? ThemeIcon.group : message.contacts[0].photo,
+              ),
+            ),
             const Spacing(width: AppPadding.bumper),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

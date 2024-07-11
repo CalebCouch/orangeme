@@ -29,8 +29,7 @@ class ContactListItem extends StatelessWidget {
             Container(
               alignment: Alignment.centerLeft,
               child: ProfilePhoto(
-                height: 48,
-                width: 48,
+                size: ProfileSize.lg,
                 profilePhoto: profilePhoto,
               ),
             ),

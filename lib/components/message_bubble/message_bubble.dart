@@ -27,9 +27,9 @@ class MessageBubble extends StatelessWidget {
         bubble(message),
         Row(
           children: [
-            message.isReceived
-                ? displayName(message, previousMessage, nextMessage, isGroup)
-                : Container(),
+            //message.isReceived
+            displayName(message, nextMessage, isGroup),
+            displayDivider(),
             displayTime(message, nextMessage),
           ],
         ),
@@ -63,36 +63,43 @@ Widget displayTime(Message message, nextMessage) {
   }
 }
 
-Widget displayName(
-    Message message, previousMessage, nextMessage, bool isGroup) {
-  if (previousMessage == null || nextMessage == null) {
-    return CustomText(
-      text: message.contacts[0].name,
-      color: ThemeColor.textSecondary,
-      textSize: TextSize.sm,
-    );
-  }
+Widget displayName(Message message, nextMessage, isGroup) {
+  bool shouldDisplay = nextMessage != null &&
+      nextMessage!.contacts[0].name != message.contacts[0].name;
+  bool shouldDisplayTime =
+      nextMessage != null && nextMessage!.time != message.time;
 
-  bool namesMatch =
-      message.contacts[0].name == previousMessage!.contacts[0].name &&
-          previousMessage!.isReceived == message.isReceived;
-  bool shouldDisplayName = isGroup && message.isReceived;
-
-  if (!namesMatch && shouldDisplayName) {
-    return CustomText(
-      text: message.contacts[0].name,
-      color: ThemeColor.textSecondary,
-      textSize: TextSize.sm,
-    );
+  if (isGroup) {
+    if (nextMessage == null || message.isReceived && shouldDisplay) {
+      return Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            alignment: message.isReceived
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
+            child: CustomText(
+              text: message.contacts[0].name,
+              color: ThemeColor.textSecondary,
+              textSize: TextSize.sm,
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Container();
+    }
   } else {
     return Container();
   }
 }
 
-Widget displayDivider(isDisplayTime, isDisplayName) {
-  if (isDisplayTime && isDisplayName) {
+Widget displayDivider(isDisplayingName, isDisplayingTime) {
+  if (isDisplayingName && isDisplayingTime) {
     return CustomText(
-      text: '· ${String.fromCharCodes([0x0020])}',
+      text: '${String.fromCharCodes([0x0020])}· ${String.fromCharCodes([
+            0x0020
+          ])}',
       color: ThemeColor.textSecondary,
       textSize: TextSize.sm,
     );
