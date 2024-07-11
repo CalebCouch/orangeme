@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/message_info/message_info.dart';
+import 'package:orange/classes/message_info.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -19,12 +19,6 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool shouldDisplayName = isGroup &&
-        message.isReceived &&
-        previousMessage!.isReceived == message.isReceived;
-    bool shouldDisplayTime =
-        previousMessage != null && previousMessage!.time == message.time;
-    bool shouldDisplayDivider = shouldDisplayTime && shouldDisplayName;
     return Column(
       crossAxisAlignment: message.isReceived
           ? CrossAxisAlignment.start
@@ -33,9 +27,10 @@ class MessageBubble extends StatelessWidget {
         bubble(message),
         Row(
           children: [
-            shouldDisplayName ? displayName(message) : Container(),
-            shouldDisplayDivider ? displayDivider() : Container(),
-            shouldDisplayTime ? displayTime(message) : Container(),
+            message.isReceived
+                ? displayName(message, previousMessage, nextMessage, isGroup)
+                : Container(),
+            displayTime(message, nextMessage),
           ],
         ),
         Spacing(
@@ -49,33 +44,61 @@ class MessageBubble extends StatelessWidget {
   }
 }
 
-Widget displayTime(Message message) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    alignment:
-        message.isReceived ? Alignment.centerLeft : Alignment.centerRight,
-    child: CustomText(
-      text: message.time,
+Widget displayTime(Message message, nextMessage) {
+  bool shouldDisplayTime =
+      nextMessage != null && nextMessage!.time != message.time;
+  if (nextMessage == null || shouldDisplayTime) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      alignment:
+          message.isReceived ? Alignment.centerLeft : Alignment.centerRight,
+      child: CustomText(
+        text: message.time,
+        color: ThemeColor.textSecondary,
+        textSize: TextSize.sm,
+      ),
+    );
+  } else {
+    return Container();
+  }
+}
+
+Widget displayName(
+    Message message, previousMessage, nextMessage, bool isGroup) {
+  if (previousMessage == null || nextMessage == null) {
+    return CustomText(
+      text: message.contacts[0].name,
       color: ThemeColor.textSecondary,
       textSize: TextSize.sm,
-    ),
-  );
+    );
+  }
+
+  bool namesMatch =
+      message.contacts[0].name == previousMessage!.contacts[0].name &&
+          previousMessage!.isReceived == message.isReceived;
+  bool shouldDisplayName = isGroup && message.isReceived;
+
+  if (!namesMatch && shouldDisplayName) {
+    return CustomText(
+      text: message.contacts[0].name,
+      color: ThemeColor.textSecondary,
+      textSize: TextSize.sm,
+    );
+  } else {
+    return Container();
+  }
 }
 
-Widget displayName(Message message) {
-  return CustomText(
-    text: message.contacts[0].name,
-    color: ThemeColor.textSecondary,
-    textSize: TextSize.sm,
-  );
-}
-
-Widget displayDivider() {
-  return CustomText(
-    text: '· ${String.fromCharCodes([0x0020])}',
-    color: ThemeColor.textSecondary,
-    textSize: TextSize.sm,
-  );
+Widget displayDivider(isDisplayTime, isDisplayName) {
+  if (isDisplayTime && isDisplayName) {
+    return CustomText(
+      text: '· ${String.fromCharCodes([0x0020])}',
+      color: ThemeColor.textSecondary,
+      textSize: TextSize.sm,
+    );
+  } else {
+    return Container();
+  }
 }
 
 Widget bubble(Message message) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/profile_photo/profile_photo.dart';
-import 'package:orange/components/message_info/message_info.dart';
+import 'package:orange/classes/message_info.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 class MessageListItem extends StatelessWidget {

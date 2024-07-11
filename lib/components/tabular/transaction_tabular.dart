@@ -2,20 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/tabular/single_tab.dart';
 
-class TransactionDetails {
-  final bool isReceived;
-  final String date;
-  final String time;
-  final String address;
-  final double btcValueSent;
-  final double? bitcoinPrice;
-  final double? value;
-  final double? fee;
-  final String? speed;
-
-  const TransactionDetails(this.isReceived, this.date, this.time, this.address,
-      this.btcValueSent, this.bitcoinPrice, this.value, this.fee, this.speed);
-}
+import 'package:orange/classes/transaction.dart';
 
 class TransactionTabular extends StatelessWidget {
   final TransactionDetails transactionDetails;

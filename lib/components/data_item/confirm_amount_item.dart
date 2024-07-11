@@ -6,6 +6,8 @@ import 'package:orange/util.dart';
 import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
 import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
 
+import 'package:orange/classes/transaction.dart';
+
 class ConfirmAmountItem extends StatelessWidget {
   const ConfirmAmountItem({
     super.key,

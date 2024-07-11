@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/tabular/transaction_tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
+
+import 'package:orange/classes/transaction.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item/list_item.dart';
+
 import 'package:orange/flows/wallet_flow/transaction_details.dart';
 
 import 'package:orange/util.dart';

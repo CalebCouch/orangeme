@@ -5,8 +5,8 @@ import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_message_header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/bumpers/message_bumper.dart';
-import 'package:orange/components/contact_info/contact_info.dart';
-import 'package:orange/components/message_info/message_info.dart';
+import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/message_info.dart';
 import 'package:orange/components/message_bubble/message_stack.dart';
 
 class Conversation extends StatefulWidget {

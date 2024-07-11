@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/message_bubble/message_bubble.dart';
-import 'package:orange/components/contact_info/contact_info.dart';
-import 'package:orange/components/message_info/message_info.dart';
+import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/message_info.dart';
 
 class MessageStack extends StatelessWidget {
   final List<Contact> contacts;

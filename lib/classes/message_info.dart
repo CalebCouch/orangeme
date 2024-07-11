@@ -1,4 +1,4 @@
-import 'package:orange/components/contact_info/contact_info.dart';
+import 'package:orange/classes/contact_info.dart';
 
 class Message {
   final String text;
