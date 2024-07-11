@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/profile_photo/profile_photo.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/classes/contact_info.dart';
 
 class ContactListItem extends StatelessWidget {
-  final String contactName;
-  final String digitalID;
-  final String profilePhoto;
+  final Contact contact;
   final VoidCallback? onTap;
 
   const ContactListItem({
     super.key,
     this.onTap,
-    required this.contactName,
-    required this.digitalID,
-    this.profilePhoto = ThemeIcon.profile,
+    required this.contact,
   });
 
   @override
@@ -30,7 +27,7 @@ class ContactListItem extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: ProfilePhoto(
                 size: ProfileSize.lg,
-                profilePhoto: profilePhoto,
+                profilePhoto: contact.photo,
               ),
             ),
             const Spacing(width: AppPadding.bumper),
@@ -39,11 +36,11 @@ class ContactListItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CustomText(
-                  text: contactName,
+                  text: contact.name,
                   textSize: TextSize.md,
                 ),
                 CustomText(
-                  text: digitalID,
+                  text: contact.did,
                   textSize: TextSize.sm,
                   color: ThemeColor.textSecondary,
                 ),

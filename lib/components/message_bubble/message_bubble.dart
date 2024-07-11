@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/classes/message_info.dart';
+import 'package:orange/classes/single_message.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 class MessageBubble extends StatelessWidget {
-  final Message message;
+  final SingleMessage message;
   final bool isGroup;
-  final Message? previousMessage;
-  final Message? nextMessage;
+  final SingleMessage? previousMessage;
+  final SingleMessage? nextMessage;
 
   const MessageBubble({
     super.key,
@@ -29,7 +29,6 @@ class MessageBubble extends StatelessWidget {
           children: [
             //message.isReceived
             displayName(message, nextMessage, isGroup),
-            displayDivider(),
             displayTime(message, nextMessage),
           ],
         ),
@@ -44,7 +43,7 @@ class MessageBubble extends StatelessWidget {
   }
 }
 
-Widget displayTime(Message message, nextMessage) {
+Widget displayTime(SingleMessage message, nextMessage) {
   bool shouldDisplayTime =
       nextMessage != null && nextMessage!.time != message.time;
   if (nextMessage == null || shouldDisplayTime) {
@@ -63,9 +62,9 @@ Widget displayTime(Message message, nextMessage) {
   }
 }
 
-Widget displayName(Message message, nextMessage, isGroup) {
-  bool shouldDisplay = nextMessage != null &&
-      nextMessage!.contacts[0].name != message.contacts[0].name;
+Widget displayName(SingleMessage message, nextMessage, isGroup) {
+  bool shouldDisplay =
+      nextMessage != null && nextMessage!.contact.name != message.contact.name;
   bool shouldDisplayTime =
       nextMessage != null && nextMessage!.time != message.time;
 
@@ -79,11 +78,14 @@ Widget displayName(Message message, nextMessage, isGroup) {
                 ? Alignment.centerLeft
                 : Alignment.centerRight,
             child: CustomText(
-              text: message.contacts[0].name,
+              text: message.contact.name,
               color: ThemeColor.textSecondary,
               textSize: TextSize.sm,
             ),
           ),
+          nextMessage == null || shouldDisplayTime && shouldDisplay
+              ? displayDivider()
+              : Container(),
         ],
       );
     } else {
@@ -94,21 +96,16 @@ Widget displayName(Message message, nextMessage, isGroup) {
   }
 }
 
-Widget displayDivider(isDisplayingName, isDisplayingTime) {
-  if (isDisplayingName && isDisplayingTime) {
-    return CustomText(
-      text: '${String.fromCharCodes([0x0020])}· ${String.fromCharCodes([
-            0x0020
-          ])}',
-      color: ThemeColor.textSecondary,
-      textSize: TextSize.sm,
-    );
-  } else {
-    return Container();
-  }
+Widget displayDivider() {
+  return CustomText(
+    text:
+        '${String.fromCharCodes([0x0020])}· ${String.fromCharCodes([0x0020])}',
+    color: ThemeColor.textSecondary,
+    textSize: TextSize.sm,
+  );
 }
 
-Widget bubble(Message message) {
+Widget bubble(SingleMessage message) {
   return Container(
     decoration: ShapeDecoration(
       color: message.isReceived ? ThemeColor.bgSecondary : ThemeColor.bitcoin,

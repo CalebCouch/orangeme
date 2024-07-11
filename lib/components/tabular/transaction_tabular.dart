@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/tabular/single_tab.dart';
 
-import 'package:orange/classes/transaction.dart';
+import 'package:orange/classes/transaction_details.dart';
 
 class TransactionTabular extends StatelessWidget {
   final TransactionDetails transactionDetails;

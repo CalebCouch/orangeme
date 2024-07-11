@@ -12,13 +12,20 @@ class ProfilePhotoStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Stack(
-        children: [
-          ProfilePhoto(
-            profilePhoto: contacts[0].photo,
-          ),
-        ],
+    return Container(
+      width: 128,
+      height: 32,
+      alignment: Alignment.center,
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: (contacts.length),
+        itemBuilder: (BuildContext context, int index) {
+          return Align(
+            widthFactor: 0.8,
+            child: ProfilePhoto(outline: true, profilePhoto: contacts[0].photo),
+          );
+        },
       ),
     );
   }

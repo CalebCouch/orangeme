@@ -7,7 +7,7 @@ import 'package:orange/components/bumpers/single_button_bumper.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/amount_display/amount_display.dart';
 import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/classes/transaction.dart';
+import 'package:orange/classes/transaction_details.dart';
 
 class TransactionDetailsWidget extends StatefulWidget {
   final TransactionDetails transactionDetails;

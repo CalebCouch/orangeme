@@ -5,11 +5,13 @@ import 'package:orange/theme/stylesheet.dart';
 class ProfilePhoto extends StatelessWidget {
   final String profilePhoto;
   final double size;
+  final bool outline;
 
   const ProfilePhoto({
     super.key,
     required this.profilePhoto,
     this.size = ProfileSize.md,
+    this.outline = false,
   });
 
   _getIconSize(double profileSize) {
@@ -33,7 +35,8 @@ class ProfilePhoto extends StatelessWidget {
       alignment: Alignment.center,
       height: size,
       width: size,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
+        border: outline ? Border.all(color: ThemeColor.bg) : null,
         color: ThemeColor.bgSecondary,
         shape: BoxShape.circle,
       ),

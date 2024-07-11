@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/message_bubble/message_bubble.dart';
 import 'package:orange/classes/contact_info.dart';
-import 'package:orange/classes/message_info.dart';
+import 'package:orange/classes/single_message.dart';
 
 class MessageStack extends StatelessWidget {
   final List<Contact> contacts;
-  final List<Message> messages;
+  final List<SingleMessage> messages;
 
   const MessageStack({
     super.key,

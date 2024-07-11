@@ -6,6 +6,10 @@ ThemeData theme() {
   return ThemeData(
     scaffoldBackgroundColor: ThemeColor.bg,
     fontFamily: "Outfit",
+    highlightColor: Colors.transparent,
+    hoverColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    splashFactory: NoSplash.splashFactory,
   );
 }
 
