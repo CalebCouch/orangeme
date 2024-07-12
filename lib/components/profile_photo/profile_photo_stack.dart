@@ -19,10 +19,10 @@ class ProfilePhotoStack extends StatelessWidget {
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
-        itemCount: (contacts.length),
+        itemCount: contacts.length < 5 ? contacts.length : 5,
         itemBuilder: (BuildContext context, int index) {
           return Align(
-            widthFactor: 0.8,
+            widthFactor: 0.75,
             child: ProfilePhoto(outline: true, profilePhoto: contacts[0].photo),
           );
         },

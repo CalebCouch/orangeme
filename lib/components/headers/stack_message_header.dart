@@ -26,6 +26,7 @@ class StackMessageHeader extends StatelessWidget {
     bool isGroup = false;
     if (contacts.length > 1) isGroup = true;
     return DefaultHeader(
+      height: 76,
       left: const CustomBackButton(),
       center: Column(
         children: [
