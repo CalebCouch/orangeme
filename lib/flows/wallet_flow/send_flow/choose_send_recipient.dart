@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+import 'package:orange/theme/stylesheet.dart';
+
+import 'package:orange/classes/contact_info.dart';
+
+import 'package:orange/components/interfaces/default_interface.dart';
+import 'package:orange/components/content/content.dart';
+import 'package:orange/components/headers/stack_button_header.dart';
+import 'package:orange/components/list_item/contact_list_item.dart';
+import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/text_input/text_input.dart';
+
+import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
+
+import 'package:orange/util.dart';
+
+class ChooseSendRecipient extends StatefulWidget {
+  const ChooseSendRecipient({
+    super.key,
+  });
+
+  @override
+  ChooseRecipientState createState() => ChooseRecipientState();
+}
+
+class ChooseRecipientState extends State<ChooseSendRecipient> {
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController contactController = TextEditingController();
+    List<Contact> testContacts = [
+      const Contact('Ann', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('James', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Stacy', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Cam', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('J. Marks', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Anthony', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('R. R. B.', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+    ];
+    print('CONTROLLER TEXT ${contactController.text}');
+    return DefaultInterface(
+      header: StackButtonHeader(
+        text: 'Select Recipient',
+        rightEnabled: true,
+        rightOnTap: () {
+          navigateTo(context, const SendAmount());
+        },
+      ),
+      content: Content(
+        content: Column(
+          children: [
+            CustomTextInput(
+              controller: contactController,
+              hint: 'Profile name...',
+            ),
+            Expanded(
+              child: contactController.text == ''
+                  ? const Center(
+                      child: CustomText(
+                          text: 'Search by profile name.',
+                          textSize: TextSize.md,
+                          color: ThemeColor.textSecondary),
+                    )
+                  : SingleChildScrollView(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: testContacts.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ContactListItem(
+                            contact: testContacts[index],
+                          );
+                        },
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

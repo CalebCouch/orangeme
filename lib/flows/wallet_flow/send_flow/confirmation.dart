@@ -12,7 +12,8 @@ import 'package:orange/util.dart';
 
 class Confirmation extends StatefulWidget {
   final double amount;
-  const Confirmation({super.key, required this.amount});
+  final String? recipient;
+  const Confirmation({super.key, required this.amount, this.recipient});
 
   @override
   ConfirmationState createState() => ConfirmationState();
@@ -39,9 +40,15 @@ class ConfirmationState extends State<Confirmation> {
               iconSize: 128,
             ),
             const Spacing(height: AppPadding.bumper),
-            CustomText(
-              text: "You sent \$${widget.amount}",
-            ),
+            widget.recipient != null
+                ? CustomText(
+                    text: "You sent \$${widget.amount} to\n${widget.recipient}",
+                    textType: 'heading',
+                  )
+                : CustomText(
+                    text: "You sent \$${widget.amount}",
+                    textType: 'heading',
+                  ),
           ],
         ),
       ),

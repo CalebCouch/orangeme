@@ -6,7 +6,7 @@ import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_button_header.dart';
 import 'package:orange/components/list_item/contact_list_item.dart';
-import 'package:orange/components/buttons/icon_text_button.dart';
+import 'package:orange/components/buttons/tip_buttons.dart';
 import 'package:orange/components/text_input/text_input.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
@@ -109,11 +109,13 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 spacing: 8,
                 runSpacing: 8,
                 children: List<Widget>.generate(recipients.length, (index) {
-                  return IconTextButton(
-                    text: recipients[index],
-                    icon: ThemeIcon.close,
-                    onTap: () => removeRecipient(recipients[index]),
-                  );
+                  return TipButtonStack(buttons: [
+                    ButtonTip(
+                      recipients[index],
+                      ThemeIcon.close,
+                      () => removeRecipient(recipients[index]),
+                    ),
+                  ]);
                 }),
               ),
             ),
