@@ -8,8 +8,10 @@ import 'package:orange/components/headers/messages_header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item/message_list_item.dart';
 import 'package:orange/components/tab_navigator/tab_navigator.dart';
+
 import 'package:orange/classes/message_info.dart';
 import 'package:orange/classes/contact_info.dart';
+
 import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
@@ -43,7 +45,7 @@ class MessagesHomeState extends State<MessagesHome> {
       true,
       '12:21 PM',
       [
-        Contact('Stacy', ThemeIcon.profile, 'ta3Th1Omn...'),
+        Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...'),
         Contact('Cam', ThemeIcon.profile, 'ta3Th1Omn...'),
         Contact('Rita Jones', ThemeIcon.profile, 'ta3Th1Omn...')
       ],
@@ -52,7 +54,7 @@ class MessagesHomeState extends State<MessagesHome> {
       'tuesday?',
       true,
       '12:21 PM',
-      [Contact('Stacy', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...')],
     ),
   ];
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/classes/transaction.dart';
+import 'package:orange/classes/transaction_details.dart';
 
 import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/list_item/transaction_list_item.dart';
@@ -21,6 +21,39 @@ class WalletHome extends StatelessWidget {
 
   _getTransactions() {
     return <TransactionDetails>[
+      const TransactionDetails(
+        true,
+        "12/1/24",
+        "6:08 PM",
+        "12FWmGPUC...qEL",
+        0.00076664,
+        62831.17,
+        48.61,
+        null,
+        null,
+      ),
+      const TransactionDetails(
+        true,
+        "12/1/24",
+        "6:08 PM",
+        "12FWmGPUC...qEL",
+        0.00076664,
+        62831.17,
+        48.61,
+        null,
+        null,
+      ),
+      const TransactionDetails(
+        true,
+        "12/1/24",
+        "6:08 PM",
+        "12FWmGPUC...qEL",
+        0.00076664,
+        62831.17,
+        48.61,
+        null,
+        null,
+      ),
       const TransactionDetails(
         true,
         "12/1/24",
@@ -61,16 +94,18 @@ class WalletHome extends StatelessWidget {
               converted: 0.00037293,
             ),
             const Spacing(height: AppPadding.content),
-            SingleChildScrollView(
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: const ScrollPhysics(),
-                itemCount: tList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return TransactionListItem(
-                    transactionDetails: tList[index],
-                  );
-                },
+            Expanded(
+              child: SingleChildScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount: tList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return TransactionListItem(
+                      transactionDetails: tList[index],
+                    );
+                  },
+                ),
               ),
             ),
           ],

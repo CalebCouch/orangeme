@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/buttons/icon_button.dart';
 import 'package:orange/theme/stylesheet.dart';
+
+import 'package:orange/classes/contact_info.dart';
+
+import 'package:orange/components/buttons/icon_button.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo/profile_photo.dart';
 import 'package:orange/components/profile_photo/profile_photo_stack.dart';
-import 'package:orange/classes/contact_info.dart';
-
 import 'package:orange/components/headers/header.dart';
+
+import 'package:orange/flows/messages_flow/direct_message_flow/group_message_info.dart';
+
+import 'package:orange/util.dart';
 
 class StackMessageHeader extends StatelessWidget {
   final List<Contact> contacts;
-  final VoidCallback? rightOnTap;
 
   const StackMessageHeader({
     super.key,
     required this.contacts,
-    this.rightOnTap,
   });
 
   @override
@@ -23,10 +26,11 @@ class StackMessageHeader extends StatelessWidget {
     bool isGroup = false;
     if (contacts.length > 1) isGroup = true;
     return DefaultHeader(
+      height: 76,
       left: const CustomBackButton(),
       center: Column(
         children: [
-          isGroup
+          !isGroup
               ? ProfilePhoto(
                   profilePhoto: contacts[0].photo,
                 )
@@ -42,7 +46,9 @@ class StackMessageHeader extends StatelessWidget {
       ),
       right: isGroup
           ? CustomInfoButton(
-              onTap: rightOnTap ?? () {},
+              onTap: () {
+                navigateTo(context, GroupMessageInfo(contacts: contacts));
+              },
             )
           : null,
     );

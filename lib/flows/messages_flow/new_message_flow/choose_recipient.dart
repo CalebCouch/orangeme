@@ -6,7 +6,7 @@ import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_button_header.dart';
 import 'package:orange/components/list_item/contact_list_item.dart';
-import 'package:orange/components/buttons/icon_text_button.dart';
+import 'package:orange/components/buttons/tip_buttons.dart';
 import 'package:orange/components/text_input/text_input.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
@@ -57,21 +57,42 @@ class ChooseRecipientState extends State<ChooseRecipient> {
     });
   }
 
+  _getContactsfromRecipientNames(
+      List<Contact> testContacts, List<String> recipients) {
+    List<Contact> returnContacts = [];
+    for (var i = 0; i < recipients.length; i++) {
+      for (var x = 0; x < testContacts.length; x++) {
+        if (recipients[i] == testContacts[x].name) {
+          print("Adding ${testContacts[x]}");
+          returnContacts.add(testContacts[x]);
+        }
+      }
+    }
+    return returnContacts;
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController contactController = TextEditingController();
     List<Contact> testContacts = [
-      const Contact('Ann Davidson', ThemeIcon.profile, 'ta3Th1Omn...'),
+      const Contact('Ann', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('James', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('Stacy', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('Cam', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('J. Marks', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Anthony', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('R. R. B.', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
     ];
     return DefaultInterface(
       header: StackButtonHeader(
         text: 'New message',
         rightEnabled: recipients.isNotEmpty ? true : false,
         rightOnTap: () {
-          navigateTo(context, const Conversation());
+          navigateTo(
+              context,
+              Conversation(
+                  contacts: _getContactsfromRecipientNames(
+                      testContacts, recipients)));
         },
       ),
       content: Content(
@@ -88,29 +109,30 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 spacing: 8,
                 runSpacing: 8,
                 children: List<Widget>.generate(recipients.length, (index) {
-                  return IconTextButton(
-                    text: recipients[index],
-                    icon: ThemeIcon.close,
-                    onTap: () => removeRecipient(recipients[index]),
-                  );
+                  return TipButtonStack(buttons: [
+                    ButtonTip(
+                      recipients[index],
+                      ThemeIcon.close,
+                      () => removeRecipient(recipients[index]),
+                    ),
+                  ]);
                 }),
               ),
             ),
-            Container(
-              height: 250,
-              child: testContacts.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: testContacts.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ContactListItem(
-                          contactName: testContacts[index].name,
-                          profilePhoto: testContacts[index].photo,
-                          digitalID: testContacts[index].did,
-                          onTap: () => addRecipient(testContacts[index].name),
-                        );
-                      },
-                    )
-                  : null,
+            Expanded(
+              child: SingleChildScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount: testContacts.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ContactListItem(
+                      contact: testContacts[index],
+                      onTap: () => addRecipient(testContacts[index].name),
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),

@@ -97,9 +97,7 @@ class CustomInfoButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomIconButton(
       icon: ThemeIcon.info,
-      onTap: () {
-        print("info");
-      },
+      onTap: onTap,
       iconColor: ThemeColor.primary,
     );
   }

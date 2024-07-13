@@ -3,6 +3,8 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 
+import 'package:orange/components/buttons/tip_buttons.dart';
+
 class DataItem extends StatelessWidget {
   final String title;
   final int listNum;
@@ -57,24 +59,26 @@ class DataItem extends StatelessWidget {
                     textType: 'heading',
                   ),
                   content,
-                  Row(
-                    children: [
-                      for (int i = 0; i < buttons; i++)
-                        Row(
-                          children: [
-                            CustomButton(
-                              icon: ThemeIcon.edit,
-                              text: buttonNames[i],
-                              buttonSize: ButtonSize.md,
-                              variant: ButtonVariant.secondary,
-                              expand: false,
-                              onTap: buttonActions[i],
-                            ),
-                            const Spacing(width: 10),
-                          ],
-                        )
-                    ],
-                  ),
+                  buttonNames.length == 1
+                      ? editButtons([
+                          ButtonTip(
+                            buttonNames[0],
+                            ThemeIcon.edit,
+                            buttonActions[0],
+                          ),
+                        ])
+                      : editButtons([
+                          ButtonTip(
+                            buttonNames[0],
+                            ThemeIcon.edit,
+                            buttonActions[0],
+                          ),
+                          ButtonTip(
+                            buttonNames[1],
+                            ThemeIcon.edit,
+                            buttonActions[1],
+                          ),
+                        ]),
                 ],
               ),
             ),
@@ -83,4 +87,24 @@ class DataItem extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget editButtons(List<ButtonTip> tipButtons) {
+  if (tipButtons.length == 1) return one(tipButtons);
+  if (tipButtons.length == 2) return two(tipButtons);
+  return Container();
+}
+
+Widget one(List<ButtonTip> tipButtons) {
+  return TipButtonStack(buttons: tipButtons);
+}
+
+Widget two(List<ButtonTip> tipButtons) {
+  return Row(
+    children: [
+      TipButtonStack(buttons: [tipButtons[0]]),
+      const Spacing(width: AppPadding.tips),
+      TipButtonStack(buttons: [tipButtons[1]]),
+    ],
+  );
 }

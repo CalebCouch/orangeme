@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/classes/message_info.dart';
+import 'package:orange/classes/single_message.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 class MessageBubble extends StatelessWidget {
-  final Message message;
+  final SingleMessage message;
   final bool isGroup;
-  final Message? previousMessage;
-  final Message? nextMessage;
+  final SingleMessage? previousMessage;
+  final SingleMessage? nextMessage;
 
   const MessageBubble({
     super.key,
@@ -27,9 +27,8 @@ class MessageBubble extends StatelessWidget {
         bubble(message),
         Row(
           children: [
-            message.isReceived
-                ? displayName(message, previousMessage, nextMessage, isGroup)
-                : Container(),
+            //message.isReceived
+            displayName(message, nextMessage, isGroup),
             displayTime(message, nextMessage),
           ],
         ),
@@ -44,7 +43,7 @@ class MessageBubble extends StatelessWidget {
   }
 }
 
-Widget displayTime(Message message, nextMessage) {
+Widget displayTime(SingleMessage message, nextMessage) {
   bool shouldDisplayTime =
       nextMessage != null && nextMessage!.time != message.time;
   if (nextMessage == null || shouldDisplayTime) {
@@ -63,45 +62,50 @@ Widget displayTime(Message message, nextMessage) {
   }
 }
 
-Widget displayName(
-    Message message, previousMessage, nextMessage, bool isGroup) {
-  if (previousMessage == null || nextMessage == null) {
-    return CustomText(
-      text: message.contacts[0].name,
-      color: ThemeColor.textSecondary,
-      textSize: TextSize.sm,
-    );
-  }
+Widget displayName(SingleMessage message, nextMessage, isGroup) {
+  bool shouldDisplay =
+      nextMessage != null && nextMessage!.contact.name != message.contact.name;
+  bool shouldDisplayTime =
+      nextMessage != null && nextMessage!.time != message.time;
 
-  bool namesMatch =
-      message.contacts[0].name == previousMessage!.contacts[0].name &&
-          previousMessage!.isReceived == message.isReceived;
-  bool shouldDisplayName = isGroup && message.isReceived;
-
-  if (!namesMatch && shouldDisplayName) {
-    return CustomText(
-      text: message.contacts[0].name,
-      color: ThemeColor.textSecondary,
-      textSize: TextSize.sm,
-    );
+  if (isGroup) {
+    if (nextMessage == null || message.isReceived && shouldDisplay) {
+      return Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            alignment: message.isReceived
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
+            child: CustomText(
+              text: message.contact.name,
+              color: ThemeColor.textSecondary,
+              textSize: TextSize.sm,
+            ),
+          ),
+          nextMessage == null || shouldDisplayTime && shouldDisplay
+              ? displayDivider()
+              : Container(),
+        ],
+      );
+    } else {
+      return Container();
+    }
   } else {
     return Container();
   }
 }
 
-Widget displayDivider(isDisplayTime, isDisplayName) {
-  if (isDisplayTime && isDisplayName) {
-    return CustomText(
-      text: '· ${String.fromCharCodes([0x0020])}',
-      color: ThemeColor.textSecondary,
-      textSize: TextSize.sm,
-    );
-  } else {
-    return Container();
-  }
+Widget displayDivider() {
+  return CustomText(
+    text:
+        '${String.fromCharCodes([0x0020])}· ${String.fromCharCodes([0x0020])}',
+    color: ThemeColor.textSecondary,
+    textSize: TextSize.sm,
+  );
 }
 
-Widget bubble(Message message) {
+Widget bubble(SingleMessage message) {
   return Container(
     decoration: ShapeDecoration(
       color: message.isReceived ? ThemeColor.bgSecondary : ThemeColor.bitcoin,
