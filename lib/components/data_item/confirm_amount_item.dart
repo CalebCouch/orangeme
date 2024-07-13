@@ -33,6 +33,7 @@ class ConfirmAmountItem extends StatelessWidget {
                   null,
                   null,
                   'Priority',
+                  null,
                 ),
                 direction: 'Send'),
             Spacing(height: AppPadding.bumper),

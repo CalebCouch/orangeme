@@ -41,8 +41,11 @@ class SendState extends State<Send> {
             ),
             TipButtonStack(buttons: [
               ButtonTip("pn1Th...a02Cr", ThemeIcon.paste, () {}),
-              ButtonTip("Scan QR Code", ThemeIcon.qrcode,
-                  () => navigateTo(context, const ScanQR())),
+              ButtonTip(
+                "Scan QR Code",
+                ThemeIcon.qrcode,
+                () => navigateTo(context, const ScanQR()),
+              ),
               ButtonTip(
                 "Select Contact",
                 ThemeIcon.profile,

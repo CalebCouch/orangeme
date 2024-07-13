@@ -47,12 +47,13 @@ class ConfirmState extends State<ConfirmSend> {
       ),
       bumper: SingleButton(
         text: "Confirm & Send",
-        onTap: () => navigateTo(
-            context,
-            const Confirmation(
-              amount: 45.32,
-              recipient: 'Chris Slaughter',
-            )),
+        onTap: navigateTo(
+          context,
+          const Confirmation(
+            amount: 45.32,
+            recipient: 'Chris Slaughter',
+          ),
+        ),
       ),
     );
   }

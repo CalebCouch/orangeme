@@ -39,12 +39,9 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
     print('CONTROLLER TEXT ${contactController.text}');
     return DefaultInterface(
       header: StackButtonHeader(
-        text: 'Select Recipient',
-        rightEnabled: true,
-        rightOnTap: () {
-          navigateTo(context, const SendAmount());
-        },
-      ),
+          text: 'Select Recipient',
+          rightEnabled: true,
+          rightOnTap: navigateTo(context, const SendAmount())),
       content: Content(
         content: Column(
           children: [

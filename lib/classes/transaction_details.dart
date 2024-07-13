@@ -8,7 +8,17 @@ class TransactionDetails {
   final double? value;
   final double? fee;
   final String? speed;
+  final String? recipient;
 
-  const TransactionDetails(this.isReceived, this.date, this.time, this.address,
-      this.btcValueSent, this.bitcoinPrice, this.value, this.fee, this.speed);
+  const TransactionDetails(
+      this.isReceived,
+      this.date,
+      this.time,
+      this.address,
+      this.btcValueSent,
+      this.bitcoinPrice,
+      this.value,
+      this.fee,
+      this.speed,
+      this.recipient);
 }

@@ -22,6 +22,18 @@ class WalletHome extends StatelessWidget {
   _getTransactions() {
     return <TransactionDetails>[
       const TransactionDetails(
+        false,
+        "12/1/24",
+        "6:08 PM",
+        "12FWmGPUC...qEL",
+        0.00076664,
+        62831.17,
+        48.61,
+        3.45,
+        null,
+        'Chris Slaughter',
+      ),
+      const TransactionDetails(
         true,
         "12/1/24",
         "6:08 PM",
@@ -29,6 +41,7 @@ class WalletHome extends StatelessWidget {
         0.00076664,
         62831.17,
         48.61,
+        null,
         null,
         null,
       ),
@@ -42,6 +55,7 @@ class WalletHome extends StatelessWidget {
         48.61,
         null,
         null,
+        null,
       ),
       const TransactionDetails(
         true,
@@ -53,6 +67,7 @@ class WalletHome extends StatelessWidget {
         48.61,
         null,
         null,
+        null,
       ),
       const TransactionDetails(
         true,
@@ -62,6 +77,7 @@ class WalletHome extends StatelessWidget {
         0.00076664,
         62831.17,
         48.61,
+        null,
         null,
         null,
       ),
@@ -74,6 +90,7 @@ class WalletHome extends StatelessWidget {
         62831.17,
         48.61,
         3.45,
+        null,
         null,
       ),
     ];

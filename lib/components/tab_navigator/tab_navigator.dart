@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/buttons/icon_button.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
 
 import 'package:orange/flows/wallet_flow/home.dart';
@@ -36,29 +37,44 @@ class TabNavState extends State<TabNav> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            child: CustomIconButton(
+          Expanded(
+            child: GestureDetector(
               onTap: () {
                 print(widget.index);
                 openWallet();
               },
-              icon: ThemeIcon.wallet,
-              iconColor: (widget.index == 0)
-                  ? ThemeColor.primary
-                  : ThemeColor.textSecondary,
+              child: Container(
+                color: ThemeColor.bg,
+                padding: const EdgeInsets.only(right: AppPadding.navBar / 2),
+                alignment: Alignment.centerRight,
+                child: CustomIcon(
+                  icon: ThemeIcon.wallet,
+                  iconSize: IconSize.md,
+                  iconColor: (widget.index == 0)
+                      ? ThemeColor.primary
+                      : ThemeColor.textSecondary,
+                ),
+              ),
             ),
           ),
-          const Spacing(width: AppPadding.navBar),
-          Container(
-            child: CustomIconButton(
+          Expanded(
+            child: GestureDetector(
               onTap: () {
                 print(widget.index);
                 openMessages();
               },
-              icon: ThemeIcon.chat,
-              iconColor: (widget.index == 1)
-                  ? ThemeColor.primary
-                  : ThemeColor.textSecondary,
+              child: Container(
+                color: ThemeColor.bg,
+                padding: const EdgeInsets.only(left: AppPadding.navBar / 2),
+                alignment: Alignment.centerLeft,
+                child: CustomIcon(
+                  icon: ThemeIcon.chat,
+                  iconSize: IconSize.md,
+                  iconColor: (widget.index == 1)
+                      ? ThemeColor.primary
+                      : ThemeColor.textSecondary,
+                ),
+              ),
             ),
           ),
         ],
