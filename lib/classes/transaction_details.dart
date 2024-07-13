@@ -22,3 +22,52 @@ class TransactionDetails {
       this.speed,
       this.recipient);
 }
+/*
+class ReceiveTD {
+  final String? recipientContact;
+  final String? date;
+  final String? time;
+  final String sentToAddress;
+  final double amountSentBTC;
+  final double amountSentUSD;
+  final double bitcoinPrice;
+  final double fee;
+  final double totalAmountSent;
+
+  const ReceiveTD(
+    this.recipientContact,
+    this.date,
+    this.time,
+    this.sentToAddress,
+    this.amountSentBTC,
+    this.amountSentUSD,
+    this.bitcoinPrice,
+    this.fee,
+    this.totalAmountSent,
+  );
+}
+
+class SendTD {
+  final String? recipientContact;
+  final String? date;
+  final String? time;
+  final String sentToAddress;
+  final double amountSentBTC;
+  final double amountSentUSD;
+  final double bitcoinPrice;
+  final double fee;
+  final double totalAmountSent;
+
+  const SendTD(
+    this.recipientContact,
+    this.date,
+    this.time,
+    this.sentToAddress,
+    this.amountSentBTC,
+    this.amountSentUSD,
+    this.bitcoinPrice,
+    this.fee,
+    this.totalAmountSent,
+  );
+}
+*/

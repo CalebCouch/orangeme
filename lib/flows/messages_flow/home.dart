@@ -33,29 +33,29 @@ class MessagesHomeState extends State<MessagesHome> {
       'totally. that makes sense',
       true,
       '12:21 PM',
-      [Contact('Ann Davidson', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('Ann Davidson', null, 'ta3Th1Omn...')],
     ),
     const Message(
       'Only so much though',
       false,
       '12:21 PM',
-      [Contact('James', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('James', null, 'ta3Th1Omn...')],
     ),
     const Message(
       'tuesday?',
       true,
       '12:21 PM',
       [
-        Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...'),
-        Contact('Cam', ThemeIcon.profile, 'ta3Th1Omn...'),
-        Contact('Rita Jones', ThemeIcon.profile, 'ta3Th1Omn...')
+        Contact('Barbara B', null, 'ta3Th1Omn...'),
+        Contact('Cam', null, 'ta3Th1Omn...'),
+        Contact('Rita Jones', null, 'ta3Th1Omn...')
       ],
     ),
     const Message(
       'tuesday?',
       true,
       '12:21 PM',
-      [Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('Barbara B', null, 'ta3Th1Omn...')],
     ),
   ];
   @override
@@ -68,7 +68,7 @@ class MessagesHomeState extends State<MessagesHome> {
             const MyProfile(),
           );
         },
-        profilePhoto: ThemeIcon.profile,
+        profilePhoto: null,
       ),
       content: Content(
         content: testMessages.isNotEmpty

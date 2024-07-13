@@ -12,7 +12,7 @@ import 'package:orange/classes/contact_info.dart';
 class GroupMessageInfo extends StatefulWidget {
   final List<Contact> contacts;
   const GroupMessageInfo({
-    this.contacts = const [Contact('JOHN', ThemeIcon.profile, 'con.r.null...')],
+    this.contacts = const [Contact('JOHN', null, 'con.r.null...')],
     super.key,
   });
 

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/theme/stylesheet.dart';
+import 'dart:io';
 
 class ProfilePhoto extends StatelessWidget {
-  final String profilePhoto;
+  final File? profilePhoto;
   final double size;
   final bool outline;
+  final bool isGroup;
 
   const ProfilePhoto({
     super.key,
-    required this.profilePhoto,
+    this.profilePhoto,
     this.size = ProfileSize.md,
     this.outline = false,
+    this.isGroup = false,
   });
 
   _getIconSize(double profileSize) {
@@ -39,14 +42,22 @@ class ProfilePhoto extends StatelessWidget {
         border: outline ? Border.all(color: ThemeColor.bg) : null,
         color: ThemeColor.bgSecondary,
         shape: BoxShape.circle,
+        image: profilePhoto != null
+            ? DecorationImage(
+                image: FileImage(profilePhoto!),
+                fit: BoxFit.cover,
+              )
+            : null,
       ),
-      child: SvgPicture.asset(
-        height: _getIconSize(size),
-        width: _getIconSize(size),
-        profilePhoto,
-        colorFilter:
-            const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
-      ),
+      child: profilePhoto == null
+          ? SvgPicture.asset(
+              height: _getIconSize(size),
+              width: _getIconSize(size),
+              isGroup ? ThemeIcon.group : ThemeIcon.profile,
+              colorFilter: const ColorFilter.mode(
+                  ThemeColor.textSecondary, BlendMode.srcIn),
+            )
+          : Container(),
     );
   }
 }
