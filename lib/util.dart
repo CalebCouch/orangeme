@@ -106,3 +106,14 @@ switchPageTo(BuildContext context, Widget widget) {
     ),
   );
 }
+
+resetNavTo(BuildContext context, Widget widget) {
+  Navigator.pushAndRemoveUntil(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => widget,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+      (route) => false);
+}

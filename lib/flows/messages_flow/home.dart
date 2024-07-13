@@ -14,7 +14,7 @@ import 'package:orange/classes/contact_info.dart';
 
 import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
-import 'package:orange/flows/messages_flow/profile_flows/my_profile_flow/my_profile.dart';
+import 'package:orange/flows/messages_flow/profile_flows/my_profile.dart';
 
 import 'package:orange/util.dart';
 

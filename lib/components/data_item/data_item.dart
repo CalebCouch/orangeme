@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
-
+import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/buttons/tip_buttons.dart';
 
 class DataItem extends StatelessWidget {
   final String title;
-  final int listNum;
+  final int? listNum;
   final Widget content;
-  final List<String> buttonNames;
-  final List<VoidCallback> buttonActions;
+  final List<String>? buttonNames;
+  final List<VoidCallback>? buttonActions;
+  final List<String>? buttonIcons;
 
   const DataItem({
     super.key,
     required this.title,
-    required this.listNum,
+    this.listNum,
     required this.content,
-    required this.buttonNames,
-    required this.buttonActions,
+    this.buttonNames,
+    this.buttonActions,
+    this.buttonIcons,
   });
 
   @override
@@ -28,21 +30,27 @@ class DataItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            alignment: Alignment.center,
-            height: 32,
-            width: 32,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: ThemeColor.bgSecondary,
-            ),
-            child: CustomText(
-              textType: 'heading',
-              textSize: TextSize.h6,
-              text: listNum.toString(),
-            ),
-          ),
-          const Spacing(width: AppPadding.bumper),
+          listNum != null
+              ? Row(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      height: 32,
+                      width: 32,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: ThemeColor.bgSecondary,
+                      ),
+                      child: CustomText(
+                        textType: 'heading',
+                        textSize: TextSize.h6,
+                        text: listNum.toString(),
+                      ),
+                    ),
+                    const Spacing(width: AppPadding.bumper),
+                  ],
+                )
+              : Container(),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 6),
@@ -57,26 +65,38 @@ class DataItem extends StatelessWidget {
                     textType: 'heading',
                   ),
                   content,
-                  buttonNames.length == 1
+                  buttonNames != null &&
+                          buttonActions != null &&
+                          buttonNames!.length == 1
                       ? editButtons([
                           ButtonTip(
-                            buttonNames[0],
-                            ThemeIcon.edit,
-                            buttonActions[0],
+                            buttonNames![0],
+                            buttonIcons == null
+                                ? ThemeIcon.edit
+                                : buttonIcons![0],
+                            buttonActions![0],
                           ),
                         ])
-                      : editButtons([
-                          ButtonTip(
-                            buttonNames[0],
-                            ThemeIcon.edit,
-                            buttonActions[0],
-                          ),
-                          ButtonTip(
-                            buttonNames[1],
-                            ThemeIcon.edit,
-                            buttonActions[1],
-                          ),
-                        ]),
+                      : buttonNames != null &&
+                              buttonActions != null &&
+                              buttonNames!.length == 2
+                          ? editButtons([
+                              ButtonTip(
+                                buttonNames![0],
+                                buttonIcons == null
+                                    ? ThemeIcon.edit
+                                    : buttonIcons![0],
+                                buttonActions![0],
+                              ),
+                              ButtonTip(
+                                buttonNames![1],
+                                buttonIcons == null
+                                    ? ThemeIcon.edit
+                                    : buttonIcons![1],
+                                buttonActions![1],
+                              ),
+                            ])
+                          : Container(),
                 ],
               ),
             ),

@@ -29,8 +29,8 @@ class TextSize {
   static const double h2 = 32;
   static const double h3 = 24;
   static const double h4 = 20;
-  static const double h5 = 14;
-  static const double h6 = 12;
+  static const double h5 = 16;
+  static const double h6 = 14;
 }
 
 class TextType {
@@ -99,6 +99,7 @@ class ThemeColor {
 ////ICONS////
 
 class ThemeIcon {
+  static const String copy = 'assets/icons/copy.svg';
   static const String back = 'assets/icons/back.svg';
   static const String close = 'assets/icons/exit.svg';
   static const String left = 'assets/icons/left.svg';
@@ -174,6 +175,7 @@ class AppPadding {
   static const double tab = 4;
   static const double message = 8;
   static const double profile = 32;
+  static const double dataItem = 16;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];

@@ -6,6 +6,7 @@ import 'package:orange/components/bumpers/bumper.dart';
 class SingleButton extends StatelessWidget {
   final String text;
   final String variant;
+  final bool disabled;
 
   final VoidCallback? onTap;
 
@@ -14,6 +15,7 @@ class SingleButton extends StatelessWidget {
     required this.text,
     required this.onTap,
     this.variant = ButtonVariant.bitcoin,
+    this.disabled = false,
   });
 
   @override
@@ -23,6 +25,7 @@ class SingleButton extends StatelessWidget {
         variant: variant,
         text: text,
         onTap: onTap,
+        status: disabled ? 2 : 0,
       ),
     );
   }
