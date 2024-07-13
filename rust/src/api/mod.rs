@@ -3,5 +3,9 @@
 //
 
 pub mod error;
+use error::Error;
+
+/// flutter_rust_bridge:ignore
+pub mod protocols;
 
 pub mod simple;

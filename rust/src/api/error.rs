@@ -26,16 +26,44 @@ pub enum Error {
     BDKBitcoinAddress(#[from] bdk::bitcoin::address::Error),
     #[error(transparent)]
     NumParseInt(#[from] std::num::ParseIntError),
+    #[error(transparent)]
+    Web5(#[from] web5_rust::Error),
 
-    #[error("Index of vector out of bounds")]
-    OutOfBounds(),
-    #[error("Could not sign Transaction")]
-    CouldNotSign(),
+    #[error(transparent)]
+    ParseFloat(#[from] std::num::ParseFloatError),
+
     #[error("Exited, Reason: {0}")]
     Exited(String),
-    #[error("Unknown Method: {0}")]
-    UnknownMethod(String),
     #[error("Dart Error: {0}")]
     DartError(String),
 
+    #[error("Could not parse type ({0}) from: {1}")]
+    Parse(String, String),
+    #[error("Bad Request: {0}: {1}")]
+    BadRequest(String, String), //400
+    #[error("Auth failed {0}: {1}")]
+    AuthFailed(String, String), //401
+    #[error("Not Found {0}: {1}")]
+    NotFound(String, String), //404
+    #[error("Conflict {0}: {1}")]
+    Conflict(String, String), //409
+    #[error("Error {0}: {1}")]
+    Error(String, String), //500
+}
+
+impl Error {
+    pub fn bad_request(ctx: &str, err: &str) -> Self {
+        Error::BadRequest(ctx.to_string(), err.to_string())
+    }
+    pub fn auth_failed(ctx: &str, err: &str) -> Self {
+        Error::AuthFailed(ctx.to_string(), err.to_string())
+    }
+    pub fn not_found(ctx: &str, err: &str) -> Self {
+        Error::NotFound(ctx.to_string(), err.to_string())
+    }
+    pub fn conflict(ctx: &str, err: &str) -> Self {
+        Error::Conflict(ctx.to_string(), err.to_string())
+    }
+    pub fn parse(r#type: &str, data: &str) -> Self {Error::Parse(r#type.to_string(), data.to_string())}
+    pub fn error(ctx: &str, err: &str) -> Self {Error::Error(ctx.to_string(), err.to_string())}
 }
