@@ -21,12 +21,12 @@ class TabNavState extends State<TabNav> {
   Widget build(BuildContext context) {
     void openMessages() {
       print("switching to messages");
-      navigateTo(context, const MessagesHome());
+      switchPageTo(context, const MessagesHome());
     }
 
     void openWallet() {
       print("switching to wallet");
-      navigateTo(context, const WalletHome());
+      switchPageTo(context, const WalletHome());
     }
 
     return Container(
@@ -38,8 +38,7 @@ class TabNavState extends State<TabNav> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                print(widget.index);
-                openWallet();
+                if (widget.index == 1) openWallet();
               },
               child: Container(
                 color: ThemeColor.bg,
@@ -58,8 +57,7 @@ class TabNavState extends State<TabNav> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                print(widget.index);
-                openMessages();
+                if (widget.index == 0) openMessages();
               },
               child: Container(
                 color: ThemeColor.bg,

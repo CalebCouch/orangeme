@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-//import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/headers/stack_header.dart';
 //import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo/profile_photo_edit.dart';
+import 'package:orange/components/text_input/text_input.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'dart:io';
@@ -20,6 +21,7 @@ class MyProfile extends StatefulWidget {
 class MyProfileState extends State<MyProfile> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
+  final TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     print("image file = $_image");
@@ -29,7 +31,7 @@ class MyProfileState extends State<MyProfile> {
       ),
       content: Content(
         content: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ProfilePhotoEdit(
@@ -42,6 +44,12 @@ class MyProfileState extends State<MyProfile> {
                   setState(() => _image = File(image.path));
                 }
               },
+            ),
+            const Spacing(height: AppPadding.profile),
+            CustomTextInput(
+              controller: controller,
+              title: 'Profile Name',
+              hint: 'Profile name...',
             ),
           ],
         ),

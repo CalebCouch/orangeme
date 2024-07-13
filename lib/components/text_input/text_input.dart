@@ -6,6 +6,7 @@ import 'package:orange/components/custom/custom_text.dart';
 class CustomTextInput extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
+  final String? title;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
   final bool showNewLine;
@@ -15,6 +16,7 @@ class CustomTextInput extends StatefulWidget {
   const CustomTextInput({
     super.key,
     required this.controller,
+    this.title,
     this.hint = 'Enter the text here',
     this.onChanged,
     this.onEditingComplete,
@@ -99,6 +101,7 @@ class CustomTextInputState extends State<CustomTextInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        widget.title != null ? titleText(widget.title!) : Container(),
         Container(
           width: double.infinity,
           decoration: ShapeDecoration(
@@ -136,4 +139,15 @@ class CustomTextInputState extends State<CustomTextInput> {
       ],
     );
   }
+}
+
+Widget titleText(String text) {
+  return Container(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: CustomText(
+      text: text,
+      textType: 'heading',
+      textSize: TextSize.h5,
+    ),
+  );
 }
