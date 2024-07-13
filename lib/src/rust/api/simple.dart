@@ -8,16 +8,21 @@ import 'error.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // The type `Balance` is not used by any `pub` functions, thus it is ignored.
+// The type `CreateTxInput` is not used by any `pub` functions, thus it is ignored.
 // The type `DartCommand` is not used by any `pub` functions, thus it is ignored.
+// The type `DartDateTime` is not used by any `pub` functions, thus it is ignored.
 // The type `Data` is not used by any `pub` functions, thus it is ignored.
 // The type `DescriptorSet` is not used by any `pub` functions, thus it is ignored.
+// The type `DetailsTx` is not used by any `pub` functions, thus it is ignored.
+// The type `FeeResult` is not used by any `pub` functions, thus it is ignored.
+// The type `HomeTx` is not used by any `pub` functions, thus it is ignored.
 // The type `Price` is not used by any `pub` functions, thus it is ignored.
 // The type `PriceRes` is not used by any `pub` functions, thus it is ignored.
 // The type `RustCommand` is not used by any `pub` functions, thus it is ignored.
 // The type `RustResponse` is not used by any `pub` functions, thus it is ignored.
 // The type `Spot` is not used by any `pub` functions, thus it is ignored.
 // The type `SpotRes` is not used by any `pub` functions, thus it is ignored.
-// The functions `handle_error`, `invoke`, `start_rust`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt` are not `pub`, thus are ignored.
+// The functions `handle_error`, `invoke`, `start_rust`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt` are not `pub`, thus are ignored.
 
 Future<String> rustStart(
         {required String path,

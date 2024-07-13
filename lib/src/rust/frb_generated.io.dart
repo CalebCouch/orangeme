@@ -80,7 +80,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
-  double dco_decode_f_32(dynamic raw);
+  double dco_decode_f_64(dynamic raw);
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
@@ -148,7 +148,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
-  double sse_decode_f_32(SseDeserializer deserializer);
+  double sse_decode_f_64(SseDeserializer deserializer);
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
@@ -227,7 +227,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
-  void sse_encode_f_32(double self, SseSerializer serializer);
+  void sse_encode_f_64(double self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_prim_u_8_strict(

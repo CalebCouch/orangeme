@@ -75,8 +75,7 @@ pub struct RustResponse {
 #[derive(Debug)]
 pub struct Prices {
     store: SqliteStore,
-    cache: Cache,
-    current_price: f32
+    cache: Cache
 }
 
 const PRICE_KEY: &str = "CURRENT_PRICE";
@@ -85,30 +84,29 @@ impl Prices {
     pub fn new(location: &str) -> Result<Self, Error> {
         Ok(Prices{
             store: SqliteStore::new(&format!("{}/store", location))?,
-            cache: Cache::new_cache::<SqliteStore>(&format!("{}/cache", location), None)?,
-            current_price: 0.0,
+            cache: Cache::new_cache::<SqliteStore>(&format!("{}/cache", location), Some(600000))?
         })
     }
-    pub async fn get_current_price(&mut self) -> Result<f32, Error> {
+    pub async fn get_current_price(&mut self) -> Result<f64, Error> {
         Ok(match self.cache.get(&PRICE_KEY.as_bytes())? {
-            Some(price) => f32::from_le_bytes(price.try_into().or(Err(Error::error("Prices.get_price", "price found but not le bytes of f32")))?),
+            Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("Prices.get_price", "price found but not le bytes of f64")))?),
             None => {
-                let price = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f32>()?;
+                let price = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?;
                 self.store.set(&PRICE_KEY.as_bytes(), &price.to_le_bytes())?;
                 price
             }
         })
     }
-    pub async fn get_price(&mut self, timestamp: u64) -> Result<f32, Error> {
+    pub async fn get_price(&mut self, timestamp: u64) -> Result<f64, Error> {
         Ok(match self.store.get(&timestamp.to_le_bytes())? {
-            Some(price) => f32::from_le_bytes(price.try_into().or(Err(Error::error("Prices.get_price", "price found but not le bytes of f32")))?),
+            Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("Prices.get_price", "price found but not le bytes of f64")))?),
             None => {
                 let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
                 let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
                 let date = DateTime::from_timestamp_millis(timestamp as i64).ok_or(error)?.format("%Y-%m-%d").to_string();
                 let url = format!("{}?date={}", base_url, date);
                 let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
-                let price = spot_res.data.amount.parse::<f32>()?;
+                let price = spot_res.data.amount.parse::<f64>()?;
                 self.store.set(&timestamp.to_le_bytes(), &price.to_le_bytes())?;
                 price
             }
@@ -134,13 +132,52 @@ struct SpotRes {data: Spot}
 //PRICE FETCH
 
 //TRANSFER CLASSES
+#[derive(Serialize, Deserialize, Debug)]
 struct Balance {
-    usd: f32,
-    btc: f32
+    usd: f64,
+    btc: f64
 }
-//  struct TransactionDetails {
 
-//  }
+#[derive(Serialize, Deserialize, Debug)]
+struct HomeTx {
+    txid: String,
+    is_receive: bool,
+    date: Option<String>,
+    amount: i64
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct DartDateTime {
+    date: String,
+    time: String
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct DetailsTx {
+    txid: String,
+    usd_amount: f64,
+    btc_amount: f64,
+
+    is_receive: bool,
+    date: Option<DartDateTime>,
+    address: String,
+    price: f64,
+    fee: Option<f64>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct CreateTxInput {
+    address: String,
+    amount: f64
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct FeeResult {
+    std_txid: String,
+    pri_txid: String,
+    std_fee: f64,
+    pri_fee: f64
+}
 //TRANSFER CLASSES
 
 #[derive(Serialize, Deserialize)]
@@ -213,6 +250,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
     let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
 
     wallet.sync(&blockchain, sync_options)?;
+    invoke(&dartCallback, "synced", "").await?;
 
     loop {
         let res = invoke(&dartCallback, "get_commands", "").await?;
@@ -220,6 +258,22 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
         for command in commands {
             //let resp = handle(&command, &dartCallback, &wallet).await?;
             let result: Result<String, Error> = match command.method.as_str() {
+                "get_balance" => {
+                    let btc: f64 = wallet.get_balance()?.get_total() as f64 / 100_000_000.0;
+                    let usd: f64 = ((prices.get_current_price().await? * btc) * 100.0).round() / 100.0;
+                    Ok(serde_json::to_string(&Balance{btc, usd})?)
+                },
+                "get_home_transactions" => {
+                    Ok(serde_json::to_string(&wallet.list_transactions(false)?.into_iter().map(|txd| {
+                        let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
+                        Ok(HomeTx {
+                            txid: txd.txid.to_string(),
+                            is_receive: txd.sent == 0,
+                            date: txd.confirmation_time.map(|dt| Ok::<String, Error>(DateTime::from_timestamp_millis(dt.timestamp as i64).ok_or(error)?.format("%Y-%m-%d").to_string())).transpose()?,
+                            amount: txd.received as i64 - txd.sent as i64
+                        })
+                    }).collect::<Result<Vec<HomeTx>, Error>>()?)?)
+                }
 //              "messages" => {
 //                  let messages = vec![Message {
 //                      text: "my message i sent to stupid".to_string()
@@ -237,12 +291,9 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 //                  let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
 //                  Ok(spot_res.data.amount)
 //              },
-//              "get_balance" => {
-//                  Ok(wallet.get_balance()?.get_total().to_string())
-//              },
-//              "get_new_address" => {
-//                  Ok(wallet.get_address(AddressIndex::New)?.address.to_string())
-//              },
+                "get_new_address" => {
+                    Ok(wallet.get_address(AddressIndex::New)?.address.to_string())
+                },
 //              "check_address" => {
 //                  let result = Address::from_str(&command.data).map(|a| 
 //                      a.require_network(Network::Bitcoin).is_ok()
@@ -250,9 +301,31 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 //                  Ok(serde_json::to_string(&result)?) 
 //              },
 //              "get_transactions" => {
-//                  let transactions: Vec<Transaction> = wallet.list_transactions(false)?.into_iter().map(Transaction::from_details).collect::<Result<Vec<Transaction>, Error>>()?;
+//                  let transactions = wallet.list_transactions(false)?.into_iter().map(|txd| {
+//                  TransactionDetails{
+//                      isReceived: txd.sent > 0,
+//                      date: String,
+//                      time: String,
+//                      address: String,
+//                      btcValueSent: f32,
+//                      bitcoinPrice: Option<f32>,
+//                      value: Option<f32>,
+//                      fee: Option<f32>,
+//                      prority: Option<bool>
+//                  }
+//                  //          receiver: None,
+//          sender: None,
+//          txid: serde_json::to_string(&details.txid)?,
+//          net: (details.received as i64)-(details.sent as i64),
+//          fee: details.fee,
+//          timestamp: if details.confirmation_time.is_some() { Some(details.confirmation_time.unwrap().timestamp) } else { None },
+//          raw: None
+
+                       
+
+//                  }).collect::<Result<Vec<TransactionDetails>, Error>>()?;
 //                  Ok(serde_json::to_string(&transactions)?)
-//              },
+//                },
 //              "create_transaction" => {
 //                  let input = serde_json::from_str::<CreateTransactionInput>(&command.data)?;
 //                  invoke(&dartCallback, "print", "Json good").await?;

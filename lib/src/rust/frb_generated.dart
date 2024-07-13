@@ -83,7 +83,7 @@ abstract class RustLibApi extends BaseApi {
       {required String ctx, required String err});
 
   Future<Error> crateApiErrorErrorParse(
-      {required String type, required String data});
+      {required String rtype, required String data});
 
   Future<ProtocolDefinition> crateApiProtocolsProfileProtocolGet();
 
@@ -269,11 +269,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<Error> crateApiErrorErrorParse(
-      {required String type, required String data}) {
+      {required String rtype, required String data}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(type, serializer);
+        sse_encode_String(rtype, serializer);
         sse_encode_String(data, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 6, port: port_);
@@ -284,14 +284,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiErrorErrorParseConstMeta,
-      argValues: [type, data],
+      argValues: [rtype, data],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiErrorErrorParseConstMeta => const TaskConstMeta(
         debugName: "Error_parse",
-        argNames: ["type", "data"],
+        argNames: ["rtype", "data"],
       );
 
   @override
@@ -357,7 +357,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             funcId: 9, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_f_32,
+        decodeSuccessData: sse_decode_f_64,
         decodeErrorData:
             sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
       ),
@@ -386,7 +386,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             funcId: 10, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_f_32,
+        decodeSuccessData: sse_decode_f_64,
         decodeErrorData:
             sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
       ),
@@ -594,7 +594,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double dco_decode_f_32(dynamic raw) {
+  double dco_decode_f_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
   }
@@ -732,9 +732,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double sse_decode_f_32(SseDeserializer deserializer) {
+  double sse_decode_f_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat32();
+    return deserializer.buffer.getFloat64();
   }
 
   @protected
@@ -880,9 +880,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_f_32(double self, SseSerializer serializer) {
+  void sse_encode_f_64(double self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat32(self);
+    serializer.buffer.putFloat64(self);
   }
 
   @protected

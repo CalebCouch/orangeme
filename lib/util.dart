@@ -12,6 +12,7 @@ List<RustC> RUSTCOMMANDS = [];
 List<RustR> RUSTRESPONSES = [];
 const STORAGE = FlutterSecureStorage();
 String ERROR = "";
+bool SYNCED = false;
 BuildContext? currentCtx;
 
 Future<void> checkError() async {
@@ -61,6 +62,8 @@ Future<String> dartCallback(String dartCommand) async {
     case "post_response":
       print(dartCommand);
       RUSTRESPONSES.add(RustR.fromJson(jsonDecode(command.data)));
+    case "synced":
+        SYNCED = true;
     case var unknown:
       return "Error:UnknownMethod:$unknown";
   }

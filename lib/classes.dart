@@ -1,39 +1,4 @@
-class Transaction {
-  final String? receiver;
-  final String? sender;
-  final String txid;
-  final int net;
-  final int? fee;
-  final DateTime? timestamp;
-  final String? raw;
-
-  Transaction(this.receiver, this.sender, this.txid, this.net, this.fee,
-      this.timestamp, this.raw);
-
-  factory Transaction.fromJson(Map<String, dynamic> json) {
-    var time = json['timestamp'] as int?;
-    print("Timestamp: $time");
-    return Transaction(
-        json['receiver'] as String?,
-        json['sender'] as String?,
-        json['txid'] as String,
-        json['net'] as int,
-        json['fee'] as int?,
-        time != null ? DateTime.fromMillisecondsSinceEpoch(time * 1000) : null,
-        json['raw'] as String?);
-  }
-
-  Map<String, dynamic> toJson() => {
-        'receiver': receiver,
-        'sender': sender,
-        'txid': txid,
-        'net': net,
-        'fee': fee,
-        'timestamp': timestamp,
-        'raw': raw
-      };
-}
-
+//Internal
 class DartCommand {
   final String method;
   final String data;
@@ -79,6 +44,76 @@ class RustR {
         'data': data,
       };
 }
+//Internal
+
+//Transfer
+class Balance {
+  final double usd;
+  final double btc;
+
+  Balance(this.usd, this.btc);
+
+  factory Balance.fromJson(Map<String, dynamic> json) {
+    return Balance(
+        json['usd'] as double,
+        json['btc'] as double
+    );
+  }
+}
+
+class HomeTx {
+  final String txid;
+  final bool is_receive;
+  final String? date;
+  final int amount;
+
+  HomeTx(this.txid, this.is_receive, this.date, this.amount);
+
+  factory HomeTx.fromJson(Map<String, dynamic> json) {
+    return HomeTx(
+        json['txid'] as String,
+        json['is_receive'] as bool,
+        json['date'] as String?,
+        json['amount'] as int
+    );
+  }
+}
+
+class Transaction {
+  final String? receiver;
+  final String? sender;
+  final String txid;
+  final int net;
+  final int? fee;
+  final DateTime? timestamp;
+  final String? raw;
+
+  Transaction(this.receiver, this.sender, this.txid, this.net, this.fee,
+      this.timestamp, this.raw);
+
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    var time = json['timestamp'] as int?;
+    print("Timestamp: $time");
+    return Transaction(
+        json['receiver'] as String?,
+        json['sender'] as String?,
+        json['txid'] as String,
+        json['net'] as int,
+        json['fee'] as int?,
+        time != null ? DateTime.fromMillisecondsSinceEpoch(time * 1000) : null,
+        json['raw'] as String?);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'receiver': receiver,
+        'sender': sender,
+        'txid': txid,
+        'net': net,
+        'fee': fee,
+        'timestamp': timestamp,
+        'raw': raw
+      };
+}
 
 class CreateTransactionInput {
   final String address;
@@ -93,3 +128,4 @@ class CreateTransactionInput {
         'block_target': block_target,
       };
 }
+//Transfer

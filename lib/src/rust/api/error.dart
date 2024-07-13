@@ -43,6 +43,6 @@ class Error extends RustOpaque {
   static Future<Error> notFound({required String ctx, required String err}) =>
       RustLib.instance.api.crateApiErrorErrorNotFound(ctx: ctx, err: err);
 
-  static Future<Error> parse({required String type, required String data}) =>
-      RustLib.instance.api.crateApiErrorErrorParse(type: type, data: data);
+  static Future<Error> parse({required String rtype, required String data}) =>
+      RustLib.instance.api.crateApiErrorErrorParse(rtype: rtype, data: data);
 }

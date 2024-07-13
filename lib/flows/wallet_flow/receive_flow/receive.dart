@@ -21,22 +21,15 @@ class Receive extends StatefulWidget {
   ReceiveState createState() => ReceiveState();
 }
 
-final address = ValueNotifier<String>("...");
-bool isLoading = true;
-
 class ReceiveState extends State<Receive> {
+  ValueNotifier<String> address = ValueNotifier("...");
+
   @override
   void initState() {
-    onPageLoad();
+    getNewAddress();
     super.initState();
   }
 
-  //page initialization
-  void onPageLoad() async {
-    await getNewAddress();
-  }
-
-  //generate a fresh Bitcoin address
   Future<void> getNewAddress() async {
     address.value = (await invoke("get_new_address", "")).data;
   }
@@ -49,6 +42,7 @@ class ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
+    currentCtx = context;
     return DefaultInterface(
       header: const StackHeader(text: "Receive bitcoin"),
       content: Content(
