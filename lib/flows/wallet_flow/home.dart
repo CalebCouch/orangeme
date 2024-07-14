@@ -23,37 +23,32 @@ import 'dart:async';
 
 
 class WalletHome extends StatefulWidget {
-  const WalletHome({super.key});
+  final GlobalState globalState;
+  const WalletHome({
+    required this.globalState,
+    super.key
+  });
 
   @override
   State<WalletHome> createState() => _WalletHomeState();
 }
 
 class _WalletHomeState extends State<WalletHome> {
-
-  ValueNotifier<Balance> _balance = ValueNotifier(Balance(0, 0));
-  ValueNotifier<Iterable<HomeTx>> _txs = ValueNotifier([]);
-  Timer? _timer = null;
-
-  refresh() async {
-    var balance = Balance.fromJson(jsonDecode((await invoke("get_balance", "")).data));
-    var txs = jsonDecode((await invoke("get_home_transactions", "")).data).map((tx) => {
-      HomeTx.fromJson(tx)
-    });
-    setState(() {
-      _balance.value = balance;
-    });
-  }
-
-  @override
-  initState() {
-    refresh();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {await refresh();});
-  }
-
-  _getTransactions() {
+    _getTransactions() {
     return <TransactionDetails>[
       const TransactionDetails(
+        false,
+        "12/1/24",
+        "6:08 PM",
+        "12FWmGPUC...qEL",
+        0.00076664,
+        62831.17,
+        48.61,
+        3.45,
+        null,
+        'Chris Slaughter',
+      ),
+      const TransactionDetails(
         true,
         "12/1/24",
         "6:08 PM",
@@ -61,6 +56,7 @@ class _WalletHomeState extends State<WalletHome> {
         0.00076664,
         62831.17,
         48.61,
+        null,
         null,
         null,
       ),
@@ -74,6 +70,7 @@ class _WalletHomeState extends State<WalletHome> {
         48.61,
         null,
         null,
+        null,
       ),
       const TransactionDetails(
         true,
@@ -85,6 +82,7 @@ class _WalletHomeState extends State<WalletHome> {
         48.61,
         null,
         null,
+        null,
       ),
       const TransactionDetails(
         true,
@@ -94,6 +92,7 @@ class _WalletHomeState extends State<WalletHome> {
         0.00076664,
         62831.17,
         48.61,
+        null,
         null,
         null,
       ),
@@ -107,14 +106,13 @@ class _WalletHomeState extends State<WalletHome> {
         48.61,
         3.45,
         null,
+        null,
       ),
     ];
   }
 
-  @override
-  Widget build(BuildContext context) {
-    currentCtx = context;
-    List<TransactionDetails> tList = _getTransactions();
+  Widget build_screen(BuildContext context, DartState state) {
+    var tList = _getTransactions();
     return DefaultInterface(
       header: const PrimaryHeader(
         text: "Wallet",
@@ -122,14 +120,9 @@ class _WalletHomeState extends State<WalletHome> {
       content: Content(
         content: Column(
           children: [
-            ValueListenableBuilder(
-              valueListenable: _balance,
-              builder: (BuildContext context, Balance value, Widget? child){
-                return AmountDisplay(
-                  value: value.usd,
-                  converted: value.btc,
-                );
-              }
+            AmountDisplay(
+              value: state.usdBalance,
+              converted: state.btcBalance,
             ),
             const Spacing(height: AppPadding.content),
             Expanded(
@@ -159,7 +152,18 @@ class _WalletHomeState extends State<WalletHome> {
           navigateTo(context, const Send());
         },
       ),
-      navBar: const TabNav(index: 0),
+      navBar: TabNav(globalState: widget.globalState, index: 0),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<TransactionDetails> tList = _getTransactions();
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child){
+        return build_screen(context, state);
+      }
     );
   }
 }

@@ -14,11 +14,15 @@ import 'package:orange/classes/contact_info.dart';
 
 import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
+import 'package:orange/flows/messages_flow/profile_flows/my_profile_flow/my_profile.dart';
 
+import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
 class MessagesHome extends StatefulWidget {
+  final GlobalState globalState;
   const MessagesHome({
+    required this.globalState,
     super.key,
   });
 
@@ -32,36 +36,42 @@ class MessagesHomeState extends State<MessagesHome> {
       'totally. that makes sense',
       true,
       '12:21 PM',
-      [Contact('Ann Davidson', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('Ann Davidson', null, 'ta3Th1Omn...')],
     ),
     const Message(
       'Only so much though',
       false,
       '12:21 PM',
-      [Contact('James', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('James', null, 'ta3Th1Omn...')],
     ),
     const Message(
       'tuesday?',
       true,
       '12:21 PM',
       [
-        Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...'),
-        Contact('Cam', ThemeIcon.profile, 'ta3Th1Omn...'),
-        Contact('Rita Jones', ThemeIcon.profile, 'ta3Th1Omn...')
+        Contact('Barbara B', null, 'ta3Th1Omn...'),
+        Contact('Cam', null, 'ta3Th1Omn...'),
+        Contact('Rita Jones', null, 'ta3Th1Omn...')
       ],
     ),
     const Message(
       'tuesday?',
       true,
       '12:21 PM',
-      [Contact('Barbara B', ThemeIcon.profile, 'ta3Th1Omn...')],
+      [Contact('Barbara B', null, 'ta3Th1Omn...')],
     ),
   ];
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
-      header: const MessagesHeader(
-        profilePhoto: ThemeIcon.profile,
+      header: MessagesHeader(
+        onTap: () {
+          navigateTo(
+            context,
+            const MyProfile(),
+          );
+        },
+        profilePhoto: null,
       ),
       content: Content(
         content: testMessages.isNotEmpty
@@ -90,7 +100,7 @@ class MessagesHomeState extends State<MessagesHome> {
           onTap: () {
             navigateTo(context, const ChooseRecipient());
           }),
-      navBar: const TabNav(index: 1),
+      navBar: TabNav(globalState: widget.globalState, index: 1),
     );
   }
 }

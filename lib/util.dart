@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:io';
 
+
 Uuid uuid = const Uuid();
 List<RustC> RUSTCOMMANDS = [];
 List<RustR> RUSTRESPONSES = [];
@@ -70,17 +71,6 @@ Future<String> dartCallback(String dartCommand) async {
   return "Ok";
 }
 
-String handleNull(nullable, context) {
-  if (nullable == null) {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const ErrorPage(
-                message: "Value from storage was unexpectedly null")));
-  }
-  return nullable ?? "NEVER";
-}
-
 Future<String> getDocPath() async {
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
   Directory mydir =
@@ -90,6 +80,17 @@ Future<String> getDocPath() async {
 
 navigateTo(BuildContext context, Widget widget) {
   Navigator.push(
+    context,
+    PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => widget,
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    ),
+  );
+}
+
+switchPageTo(BuildContext context, Widget widget) {
+  Navigator.pushReplacement(
     context,
     PageRouteBuilder(
       pageBuilder: (context, animation1, animation2) => widget,

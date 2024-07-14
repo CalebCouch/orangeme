@@ -28,6 +28,9 @@ pub enum Error {
     NumParseInt(#[from] std::num::ParseIntError),
     #[error(transparent)]
     Web5(#[from] web5_rust::Error),
+    #[error(transparent)]
+    Utf8Str(#[from] std::str::Utf8Error),
+
 
     #[error(transparent)]
     ParseFloat(#[from] std::num::ParseFloatError),

@@ -29,8 +29,8 @@ class MessageListItem extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: ProfilePhoto(
                 size: ProfileSize.lg,
-                profilePhoto:
-                    isGroup ? ThemeIcon.group : message.contacts[0].photo,
+                isGroup: isGroup,
+                profilePhoto: message.contacts[0].photo,
               ),
             ),
             const Spacing(width: AppPadding.bumper),

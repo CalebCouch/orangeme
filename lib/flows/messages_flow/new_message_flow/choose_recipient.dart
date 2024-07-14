@@ -26,17 +26,17 @@ class ChooseRecipientState extends State<ChooseRecipient> {
   List<Contact> testContacts = [
     const Contact(
       'Chris Slaughter',
-      ThemeIcon.profile,
+      null,
       'VZDrYz39XxuPq...r5zKQGjTA',
     ),
     const Contact(
       'Brian Winchester',
-      ThemeIcon.profile,
+      null,
       'VZDrYz39XxuPq...r5zKQGjTA',
     ),
     const Contact(
       'Cam',
-      ThemeIcon.profile,
+      null,
       'VZDrYz39XxuPq...r5zKQGjTA',
     ),
   ];
@@ -75,13 +75,13 @@ class ChooseRecipientState extends State<ChooseRecipient> {
   Widget build(BuildContext context) {
     final TextEditingController contactController = TextEditingController();
     List<Contact> testContacts = [
-      const Contact('Ann', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('James', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Stacy', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Cam', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('J. Marks', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Anthony', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('R. R. B.', ThemeIcon.profile, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Ann', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('James', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Stacy', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Cam', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('J. Marks', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Anthony', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('R. R. B.', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
     ];
     return DefaultInterface(
       header: StackButtonHeader(

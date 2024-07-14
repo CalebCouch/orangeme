@@ -6,8 +6,10 @@ use flutter_rust_bridge::DartFnFuture;
 use flutter_rust_bridge::frb;
 
 use std::convert::TryInto;
+use std::{thread, time};
 use std::str::FromStr;
 use std::path::Path;
+use std::sync::{Arc, Mutex};
 
 use web5_rust::dwn::interfaces::{ProtocolsConfigureOptions, RecordsWriteOptions};
 use web5_rust::dwn::structs::DataInfo;
@@ -72,32 +74,104 @@ pub struct RustResponse {
     pub data: String
 }
 
-#[derive(Debug)]
-pub struct Prices {
-    store: SqliteStore,
-    cache: Cache
+//PRICE FETCH
+#[derive(Deserialize)]
+struct PriceRes {data: Price}
+#[derive(Deserialize)]
+struct Price {amount: String, currency: String}
+#[derive(Deserialize)]
+struct Spot {amount: String, currency: String, base: String}
+#[derive(Deserialize)]
+struct SpotRes {data: Spot}
+//PRICE FETCH
+
+async fn invoke(dartCallback: impl Fn(String) -> DartFnFuture<String>, method: &str, data: &str) -> Result<String, Error> {
+    let res = dartCallback(serde_json::to_string(&DartCommand{method: method.to_string(), data: data.to_string()})?).await;
+    if res.contains("Error") {
+        return Err(Error::DartError(res.to_string()))
+    }
+    Ok(res)
 }
 
-const PRICE_KEY: &str = "CURRENT_PRICE";
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct DartState {
+    currentPrice: f64,
+    usdBalance: f64,
+    btcBalance: f64
+}
 
-impl Prices {
-    pub fn new(location: &str) -> Result<Self, Error> {
-        Ok(Prices{
-            store: SqliteStore::new(&format!("{}/store", location))?,
-            cache: Cache::new_cache::<SqliteStore>(&format!("{}/cache", location), Some(600000))?
+async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
+    let descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+    let descriptors = if descriptors.is_empty() {
+        let mut seed: [u8; 64] = [0; 64];
+        rand::thread_rng().fill_bytes(&mut seed);
+        invoke(&callback, "secure_set", &format!("{}{}{}", "seed", STORAGE_SPLIT, &serde_json::to_string(&seed.to_vec())?)).await?;
+        let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
+        let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
+        let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
+        let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
+        let internal = in_desc.0.to_string_with_secret(&in_desc.1);
+        let set = DescriptorSet{external, internal};
+
+        invoke(&callback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
+        set
+    } else {serde_json::from_str::<DescriptorSet>(&descriptors)?};
+    Ok(descriptors)
+}
+
+trait SendSync: Send + Sync {}
+
+#[frb(ignore)]
+pub struct State {
+    store: SqliteStore,
+    cache: Cache,
+    client_uri: String,
+    wallet: Arc<Mutex<Wallet<SqliteDatabase>>>
+}
+
+impl SendSync for State {}
+
+impl State {
+    fn merr() -> Error {Error::error("State::refresh_dart", "Poisoned mutex")}
+    pub async fn new(path: &str, callback: impl Fn(String) -> DartFnFuture<String>) -> Result<Self, Error> {
+        let store = SqliteStore::new(&format!("{}/STATE/store", path))?;
+        if let Some(old_state) = store.get(b"state")? {
+            invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
+        }
+        let descriptors = get_descriptors(&callback).await?;
+        invoke(&callback, "print", &serde_json::to_string(&descriptors)?).await?;
+
+        let db = SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path)));
+        let uri = "ssl://electrum.blockstream.info:50002".to_string();
+        let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, db)?;
+        let client = Client::new(&uri)?;
+
+        Ok(State{
+            cache: Cache::new_cache::<SqliteStore>(&format!("{}/STATE/cache", path), Some(600000))?,
+            store,
+            client_uri: uri,
+            wallet: Arc::new(Mutex::new(wallet)),
         })
     }
-    pub async fn get_current_price(&mut self) -> Result<f64, Error> {
-        Ok(match self.cache.get(&PRICE_KEY.as_bytes())? {
-            Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("Prices.get_price", "price found but not le bytes of f64")))?),
+
+    fn sync(&mut self) -> Result<(), Error> {
+        let blockchain = ElectrumBlockchain::from(Client::new(&self.client_uri)?);
+        self.wallet.lock().or(Err(Self::merr()))?.sync(&blockchain, SyncOptions::default())?;
+        Ok(())
+    }
+
+    async fn current_price(&mut self) -> Result<f64, Error> {
+        Ok(match self.cache.get(b"price")? {
+            Some(pb) => f64::from_le_bytes(pb.try_into().or(Err(Error::error("Prices.get_price", "price found but not le bytes of f64")))?),
             None => {
                 let price = reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?;
-                self.store.set(&PRICE_KEY.as_bytes(), &price.to_le_bytes())?;
+                self.store.set(b"price", &price.to_le_bytes())?;
                 price
             }
         })
     }
-    pub async fn get_price(&mut self, timestamp: u64) -> Result<f64, Error> {
+
+    async fn get_price(&mut self, timestamp: u64) -> Result<f64, Error> {
         Ok(match self.store.get(&timestamp.to_le_bytes())? {
             Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("Prices.get_price", "price found but not le bytes of f64")))?),
             None => {
@@ -112,168 +186,92 @@ impl Prices {
             }
         })
     }
+
+    async fn refresh_dart(&mut self, callback: impl Fn(String) -> DartFnFuture<String>) -> Result<(), Error> {
+        let current_price = self.current_price().await?;
+        let btc = self.wallet.lock().or(Err(Self::merr()))?.get_balance()?.get_total() as f64 / 100_000_000.0;
+        let state = DartState{
+            currentPrice: current_price,
+            btcBalance: btc,
+            usdBalance: ((current_price * btc) * 100.0).round() / 100.0,
+        };
+        self.store.set(b"state", &serde_json::to_vec(&state)?)?;
+        invoke(&callback, "set_state", &serde_json::to_string(&state)?).await?;
+        self.sync()?;
+        Ok(())
+    }
 }
-//INTERNAL
-
-//PRICE FETCH
-#[frb(ignore)]
-#[derive(Deserialize)]
-struct PriceRes {data: Price}
-#[frb(ignore)]
-#[derive(Deserialize)]
-struct Price {amount: String, currency: String}
-#[frb(ignore)]
-#[derive(Deserialize)]
-struct Spot {amount: String, currency: String, base: String}
-#[frb(ignore)]
-#[derive(Deserialize)]
-struct SpotRes {data: Spot}
-#[frb(ignore)]
-//PRICE FETCH
-
-//TRANSFER CLASSES
-#[derive(Serialize, Deserialize, Debug)]
-struct Balance {
-    usd: f64,
-    btc: f64
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct HomeTx {
-    txid: String,
-    is_receive: bool,
-    date: Option<String>,
-    amount: i64
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct DartDateTime {
-    date: String,
-    time: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct DetailsTx {
-    txid: String,
-    usd_amount: f64,
-    btc_amount: f64,
-
-    is_receive: bool,
-    date: Option<DartDateTime>,
-    address: String,
-    price: f64,
-    fee: Option<f64>
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct CreateTxInput {
-    address: String,
-    amount: f64
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct FeeResult {
-    std_txid: String,
-    pri_txid: String,
-    std_fee: f64,
-    pri_fee: f64
-}
-//TRANSFER CLASSES
 
 #[derive(Serialize, Deserialize)]
 struct Data {
     markdown: String
 }
 
-fn handle_error(res: &str) -> Result<(), Error> {
-    if res.contains("Error") {
-        return Err(Error::DartError(res.to_string()))
-    }
-    Ok(())
-}
 
-#[frb(ignore)]
-async fn invoke(dartCallback: impl Fn(String) -> DartFnFuture<String>, method: &str, data: &str) -> Result<String, Error> {
-    let res = dartCallback(serde_json::to_string(&DartCommand{method: method.to_string(), data: data.to_string()})?).await;
-    handle_error(&res)?;
-    Ok(res)
-}
-
-async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<String>) -> Result<(), Error> {
+async fn start_rust(path: String, callback: impl Fn(String) -> DartFnFuture<String>) -> Result<(), Error> {
     let mut path = path;
     path.pop();
-    //invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, "")).await?;
-    let descriptors = invoke(&dartCallback, "secure_get", "descriptors").await?;
-    let descriptors = if descriptors.is_empty() {
-        let mut seed: [u8; 64] = [0; 64];
-        rand::thread_rng().fill_bytes(&mut seed);
-        invoke(&dartCallback, "secure_set", &format!("{}{}{}", "seed", STORAGE_SPLIT, &serde_json::to_string(&seed.to_vec())?)).await?;
-        let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
-        let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
-        let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
-        let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
-        let internal = in_desc.0.to_string_with_secret(&in_desc.1);
-        let set = DescriptorSet{external, internal};
 
-        invoke(&dartCallback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
-        set
-    } else {serde_json::from_str::<DescriptorSet>(&descriptors)?};
-    invoke(&dartCallback, "print", &serde_json::to_string(&descriptors)?).await?;
-
-    let mut prices = Prices::new(&format!("{}/PRICE", path))?;
-
-    let mut agent = Agent::new::<SqliteStore>(Some(&format!("{}/AGENT", path)), vec![Url::from_str("http://localhost:3000")?]).await?;
-    let res = agent.protocols_configure(true, ProtocolsConfigureOptions::new(None, SocialProtocol::get()?, None)).await?;
-    let res = agent.protocols_configure(true, ProtocolsConfigureOptions::new(None, ProfileProtocol::get()?, None)).await?;
-
-    let markdown = "# YOUR TITLE HERE\n\n\n- You can use markdown\n- Add a hero image to your story\n- Have fun!\n".to_string();
-    let data = Data{markdown};
-    let data = serde_json::to_string(&data).unwrap().as_bytes().to_vec();
-    let data_info = DataInfo::from_data(&data, &DataFormat::AppJson)?;
-    let protocol = Protocol::new(
-        ProtocolUri::from_str("https://areweweb5yet.com/protocols/social")?,
-        ProtocolPath::from_str("story")?,
-        None
-    );
-
-    let mut options = RecordsWriteOptions::default(protocol, data_info);
-    options.schema = Some(ProtocolUri::from_str("https://areweweb5yet.com/protocols/social/schemas/story").unwrap());
-    let res = agent.records_write(&data, true, options).await?;
-
-
-    let db = SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path)));
-
-    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, db)?;
-    let sync_options = SyncOptions::default();
-    let client_uri = "ssl://electrum.blockstream.info:50002";
-    let client = Client::new(client_uri)?;
-    let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
-
-    wallet.sync(&blockchain, sync_options)?;
-    invoke(&dartCallback, "synced", "").await?;
-
+    let mut state = State::new(&path, &callback).await?;
     loop {
-        let res = invoke(&dartCallback, "get_commands", "").await?;
-        let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
-        for command in commands {
-            //let resp = handle(&command, &dartCallback, &wallet).await?;
-            let result: Result<String, Error> = match command.method.as_str() {
-                "get_balance" => {
-                    let btc: f64 = wallet.get_balance()?.get_total() as f64 / 100_000_000.0;
-                    let usd: f64 = ((prices.get_current_price().await? * btc) * 100.0).round() / 100.0;
-                    Ok(serde_json::to_string(&Balance{btc, usd})?)
-                },
-                "get_home_transactions" => {
-                    Ok(serde_json::to_string(&wallet.list_transactions(false)?.into_iter().map(|txd| {
-                        let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
-                        Ok(HomeTx {
-                            txid: txd.txid.to_string(),
-                            is_receive: txd.sent == 0,
-                            date: txd.confirmation_time.map(|dt| Ok::<String, Error>(DateTime::from_timestamp_millis(dt.timestamp as i64).ok_or(error)?.format("%Y-%m-%d").to_string())).transpose()?,
-                            amount: txd.received as i64 - txd.sent as i64
-                        })
-                    }).collect::<Result<Vec<HomeTx>, Error>>()?)?)
-                }
+        state.refresh_dart(&callback).await?;
+
+        thread::sleep(time::Duration::from_millis(1000));
+    }
+
+    //let mut prices = Prices::new(&format!("{}/PRICE", path))?;
+
+//  let mut agent = Agent::new::<SqliteStore>(Some(&format!("{}/AGENT", path)), vec![Url::from_str("http://localhost:3000")?]).await?;
+//  let res = agent.protocols_configure(true, ProtocolsConfigureOptions::new(None, SocialProtocol::get()?, None)).await?;
+//  let res = agent.protocols_configure(true, ProtocolsConfigureOptions::new(None, ProfileProtocol::get()?, None)).await?;
+
+//  let markdown = "# YOUR TITLE HERE\n\n\n- You can use markdown\n- Add a hero image to your story\n- Have fun!\n".to_string();
+//  let data = Data{markdown};
+//  let data = serde_json::to_string(&data).unwrap().as_bytes().to_vec();
+//  let data_info = DataInfo::from_data(&data, &DataFormat::AppJson)?;
+//  let protocol = Protocol::new(
+//      ProtocolUri::from_str("https://areweweb5yet.com/protocols/social")?,
+//      ProtocolPath::from_str("story")?,
+//      None
+//  );
+
+//  let mut options = RecordsWriteOptions::default(protocol, data_info);
+//  options.schema = Some(ProtocolUri::from_str("https://areweweb5yet.com/protocols/social/schemas/story").unwrap());
+//  let res = agent.records_write(&data, true, options).await?;
+
+
+//  let db = SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path)));
+//  let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, db)?;
+//  let sync_options = SyncOptions::default();
+//  let client_uri = "ssl://electrum.blockstream.info:50002";
+//  let client = Client::new(client_uri)?;
+//  let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
+//  wallet.sync(&blockchain, sync_options)?;
+//  invoke(&dartCallback, "synced", "").await?;
+//  loop {
+
+//      let res = invoke(&dartCallback, "get_commands", "").await?;
+//      let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
+//      for command in commands {
+//          //let resp = handle(&command, &dartCallback, &wallet).await?;
+//          let result: Result<String, Error> = match command.method.as_str() {
+//              "get_balance" => {
+//                  let btc: f64 = wallet.get_balance()?.get_total() as f64 / 100_000_000.0;
+//                  //let usd: f64 = ((prices.get_current_price().await? * btc) * 100.0).round() / 100.0;
+//                  let usd = 9.3;
+//                  Ok(serde_json::to_string(&Balance{btc, usd})?)
+//              },
+//              "get_home_transactions" => {
+//                  Ok(serde_json::to_string(&wallet.list_transactions(false)?.into_iter().map(|txd| {
+//                      let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
+//                      Ok(HomeTx {
+//                          txid: txd.txid.to_string(),
+//                          is_receive: txd.sent == 0,
+//                          date: txd.confirmation_time.map(|dt| Ok::<String, Error>(DateTime::from_timestamp_millis(dt.timestamp as i64).ok_or(error)?.format("%Y-%m-%d").to_string())).transpose()?,
+//                          amount: txd.received as i64 - txd.sent as i64
+//                      })
+//                  }).collect::<Result<Vec<HomeTx>, Error>>()?)?)
+//              }
 //              "messages" => {
 //                  let messages = vec![Message {
 //                      text: "my message i sent to stupid".to_string()
@@ -291,9 +289,9 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 //                  let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
 //                  Ok(spot_res.data.amount)
 //              },
-                "get_new_address" => {
-                    Ok(wallet.get_address(AddressIndex::New)?.address.to_string())
-                },
+//              "get_new_address" => {
+//                  Ok(wallet.get_address(AddressIndex::New)?.address.to_string())
+//              },
 //              "check_address" => {
 //                  let result = Address::from_str(&command.data).map(|a| 
 //                      a.require_network(Network::Bitcoin).is_ok()
@@ -321,7 +319,7 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 //          timestamp: if details.confirmation_time.is_some() { Some(details.confirmation_time.unwrap().timestamp) } else { None },
 //          raw: None
 
-                       
+//                     
 
 //                  }).collect::<Result<Vec<TransactionDetails>, Error>>()?;
 //                  Ok(serde_json::to_string(&transactions)?)
@@ -366,24 +364,24 @@ async fn start_rust(path: String, dartCallback: impl Fn(String) -> DartFnFuture<
 //                  Ok("Ok".to_string())
 //              },
 
-                "break" => {
-                    return Err(Error::Exited("Break Requested".to_string()));
-                },
-                _ => {
-                    return Err(Error::bad_request("rust_start", &format!("Unknown method: {}", command.method)));
-                }
-            };
-            let data = result?;
-            let resp = RustResponse{uid: command.uid.to_string(), data};
-            invoke(&dartCallback, "post_response", &serde_json::to_string(&resp)?).await?;
-        }
-    }
-    Err(Error::Exited("Unknown".to_string()))
+//              "break" => {
+//                  return Err(Error::Exited("Break Requested".to_string()));
+//              },
+//              _ => {
+//                  return Err(Error::bad_request("rust_start", &format!("Unknown method: {}", command.method)));
+//              }
+//          };
+//          let data = result?;
+//          let resp = RustResponse{uid: command.uid.to_string(), data};
+//          invoke(&dartCallback, "post_response", &serde_json::to_string(&resp)?).await?;
+//      }
+//  }
+//  Err(Error::Exited("Unknown".to_string()))
 }
 
 
-pub async fn rustStart(path: String, dartCallback: impl Fn(String) -> DartFnFuture<String>) -> String {
-    match start_rust(path, dartCallback).await {
+pub async fn rustStart(path: String, callback: impl Fn(String) -> DartFnFuture<String> + 'static) -> String {
+    match start_rust(path, callback).await {
         Ok(()) => "Ok".to_string(),
         Err(e) => format!("Err: {:?}", e)
     }

@@ -56,7 +56,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.0.0-dev.37';
 
   @override
-  int get rustContentHash => -1453668250;
+  int get rustContentHash => 670592495;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -89,28 +89,19 @@ abstract class RustLibApi extends BaseApi {
 
   Future<ProtocolDefinition> crateApiProtocolsSocialProtocolGet();
 
-  Future<double> crateApiSimplePricesGetCurrentPrice({required Prices that});
-
-  Future<double> crateApiSimplePricesGetPrice(
-      {required Prices that, required BigInt timestamp});
-
-  Future<Prices> crateApiSimplePricesNew({required String location});
+  Future<State> crateApiSimpleStateNew(
+      {required String path,
+      required FutureOr<String> Function(String) callback});
 
   Future<String> crateApiSimpleRustStart(
       {required String path,
-      required FutureOr<String> Function(String) dartCallback});
+      required FutureOr<String> Function(String) callback});
 
   RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error;
 
   RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Error;
 
   CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr;
-
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Prices;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Prices;
-
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_PricesPtr;
 
   RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_ProtocolDefinition;
@@ -120,6 +111,12 @@ abstract class RustLibApi extends BaseApi {
 
   CrossPlatformFinalizerArg
       get rust_arc_decrement_strong_count_ProtocolDefinitionPtr;
+
+  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_State;
+
+  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_State;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StatePtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -347,113 +344,61 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<double> crateApiSimplePricesGetCurrentPrice({required Prices that}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-            that, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_f_64,
-        decodeErrorData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-      ),
-      constMeta: kCrateApiSimplePricesGetCurrentPriceConstMeta,
-      argValues: [that],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimplePricesGetCurrentPriceConstMeta =>
-      const TaskConstMeta(
-        debugName: "Prices_get_current_price",
-        argNames: ["that"],
-      );
-
-  @override
-  Future<double> crateApiSimplePricesGetPrice(
-      {required Prices that, required BigInt timestamp}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-            that, serializer);
-        sse_encode_u_64(timestamp, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_f_64,
-        decodeErrorData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-      ),
-      constMeta: kCrateApiSimplePricesGetPriceConstMeta,
-      argValues: [that, timestamp],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimplePricesGetPriceConstMeta =>
-      const TaskConstMeta(
-        debugName: "Prices_get_price",
-        argNames: ["that", "timestamp"],
-      );
-
-  @override
-  Future<Prices> crateApiSimplePricesNew({required String location}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(location, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices,
-        decodeErrorData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-      ),
-      constMeta: kCrateApiSimplePricesNewConstMeta,
-      argValues: [location],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimplePricesNewConstMeta => const TaskConstMeta(
-        debugName: "Prices_new",
-        argNames: ["location"],
-      );
-
-  @override
-  Future<String> crateApiSimpleRustStart(
+  Future<State> crateApiSimpleStateNew(
       {required String path,
-      required FutureOr<String> Function(String) dartCallback}) {
+      required FutureOr<String> Function(String) callback}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
-            dartCallback, serializer);
+            callback, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 12, port: port_);
+            funcId: 9, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState,
+        decodeErrorData:
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
+      ),
+      constMeta: kCrateApiSimpleStateNewConstMeta,
+      argValues: [path, callback],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleStateNewConstMeta => const TaskConstMeta(
+        debugName: "State_new",
+        argNames: ["path", "callback"],
+      );
+
+  @override
+  Future<String> crateApiSimpleRustStart(
+      {required String path,
+      required FutureOr<String> Function(String) callback}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(path, serializer);
+        sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
+            callback, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 10, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
         decodeErrorData: null,
       ),
       constMeta: kCrateApiSimpleRustStartConstMeta,
-      argValues: [path, dartCallback],
+      argValues: [path, callback],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiSimpleRustStartConstMeta => const TaskConstMeta(
         debugName: "rustStart",
-        argNames: ["path", "dartCallback"],
+        argNames: ["path", "callback"],
       );
 
   Future<void> Function(int, dynamic)
@@ -496,20 +441,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
 
   RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_Prices => wire
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices;
-
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_Prices => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices;
-
-  RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_ProtocolDefinition => wire
           .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition;
 
   RustArcDecrementStrongCountFnType
       get rust_arc_decrement_strong_count_ProtocolDefinition => wire
           .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition;
+
+  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_State =>
+      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState;
+
+  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_State =>
+      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
@@ -526,14 +469,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Prices
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return Prices.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
   ProtocolDefinition
       dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
           dynamic raw) {
@@ -542,11 +477,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Prices
-      dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
+  State
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return Prices.frbInternalDcoDecode(raw as List<dynamic>);
+    return State.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -572,14 +507,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Prices
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return Prices.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
   ProtocolDefinition
       dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
           dynamic raw) {
@@ -588,15 +515,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  String dco_decode_String(dynamic raw) {
+  State
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState(
+          dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as String;
+    return State.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
-  double dco_decode_f_64(dynamic raw) {
+  String dco_decode_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
+    return raw as String;
   }
 
   @protected
@@ -621,12 +550,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 0)
       throw Exception('unexpected arr length: expect 0 but see ${arr.length}');
     return SocialProtocol();
-  }
-
-  @protected
-  BigInt dco_decode_u_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeU64(raw);
   }
 
   @protected
@@ -664,15 +587,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Prices
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return Prices.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
   ProtocolDefinition
       sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
           SseDeserializer deserializer) {
@@ -682,11 +596,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Prices
-      sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
+  State
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState(
           SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return Prices.frbInternalSseDecode(
+    return State.frbInternalSseDecode(
         sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
@@ -707,15 +621,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Prices
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return Prices.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
   ProtocolDefinition
       sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
           SseDeserializer deserializer) {
@@ -725,16 +630,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  State
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return State.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
   String sse_decode_String(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_prim_u_8_strict(deserializer);
     return utf8.decoder.convert(inner);
-  }
-
-  @protected
-  double sse_decode_f_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat64();
   }
 
   @protected
@@ -754,12 +662,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   SocialProtocol sse_decode_social_protocol(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return SocialProtocol();
-  }
-
-  @protected
-  BigInt sse_decode_u_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getBigUint64();
   }
 
   @protected
@@ -808,14 +710,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-          Prices self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(self.frbInternalSseEncode(move: true), serializer);
-  }
-
-  @protected
-  void
       sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
           ProtocolDefinition self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -824,10 +718,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-      sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-          Prices self, SseSerializer serializer) {
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState(
+          State self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(self.frbInternalSseEncode(move: false), serializer);
+    sse_encode_usize(self.frbInternalSseEncode(move: true), serializer);
   }
 
   @protected
@@ -859,16 +753,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPrices(
-          Prices self, SseSerializer serializer) {
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
+          ProtocolDefinition self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(self.frbInternalSseEncode(move: null), serializer);
   }
 
   @protected
   void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          ProtocolDefinition self, SseSerializer serializer) {
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerState(
+          State self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(self.frbInternalSseEncode(move: null), serializer);
   }
@@ -877,12 +771,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_String(String self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
-  }
-
-  @protected
-  void sse_encode_f_64(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat64(self);
   }
 
   @protected
@@ -903,12 +791,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_social_protocol(
       SocialProtocol self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  void sse_encode_u_64(BigInt self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putBigUint64(self);
   }
 
   @protected

@@ -14,7 +14,7 @@ import 'package:orange/components/message_bubble/message_stack.dart';
 class Conversation extends StatefulWidget {
   final List<Contact> contacts;
   const Conversation({
-    this.contacts = const [Contact('JOHN', ThemeIcon.profile, 'a938ixOh2R...')],
+    this.contacts = const [Contact('JOHN', null, 'a938ixOh2R...')],
     super.key,
   });
 
@@ -23,7 +23,7 @@ class Conversation extends StatefulWidget {
 }
 
 class ConversationState extends State<Conversation> {
-  Contact myInfo = const Contact('Ella', ThemeIcon.profile, 'gs3xToh8r...');
+  Contact myInfo = const Contact('Ella', null, 'gs3xToh8r...');
   List<SingleMessage> messages = [];
   _getMessages() {
     messages.add(

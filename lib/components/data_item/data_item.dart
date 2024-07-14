@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/custom/custom_button.dart';
 
 import 'package:orange/components/buttons/tip_buttons.dart';
 
@@ -23,7 +22,6 @@ class DataItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int buttons = buttonNames.length;
     return SizedBox(
       width: MediaQuery.sizeOf(context).width - 48,
       child: Row(

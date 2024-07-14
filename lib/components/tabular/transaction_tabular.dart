@@ -17,6 +17,11 @@ class TransactionTabular extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if (transactionDetails.recipient != null)
+          SingleTab(
+            title: "Contact",
+            subtitle: "${transactionDetails.recipient}",
+          ),
         SingleTab(title: "Date", subtitle: transactionDetails.date),
         SingleTab(title: "Time", subtitle: transactionDetails.time),
         SingleTab(

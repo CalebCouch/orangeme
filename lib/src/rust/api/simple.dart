@@ -7,58 +7,48 @@ import '../frb_generated.dart';
 import 'error.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// The type `Balance` is not used by any `pub` functions, thus it is ignored.
-// The type `CreateTxInput` is not used by any `pub` functions, thus it is ignored.
 // The type `DartCommand` is not used by any `pub` functions, thus it is ignored.
-// The type `DartDateTime` is not used by any `pub` functions, thus it is ignored.
+// The type `DartState` is not used by any `pub` functions, thus it is ignored.
 // The type `Data` is not used by any `pub` functions, thus it is ignored.
 // The type `DescriptorSet` is not used by any `pub` functions, thus it is ignored.
-// The type `DetailsTx` is not used by any `pub` functions, thus it is ignored.
-// The type `FeeResult` is not used by any `pub` functions, thus it is ignored.
-// The type `HomeTx` is not used by any `pub` functions, thus it is ignored.
 // The type `Price` is not used by any `pub` functions, thus it is ignored.
 // The type `PriceRes` is not used by any `pub` functions, thus it is ignored.
 // The type `RustCommand` is not used by any `pub` functions, thus it is ignored.
 // The type `RustResponse` is not used by any `pub` functions, thus it is ignored.
 // The type `Spot` is not used by any `pub` functions, thus it is ignored.
 // The type `SpotRes` is not used by any `pub` functions, thus it is ignored.
-// The functions `handle_error`, `invoke`, `start_rust`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt` are not `pub`, thus are ignored.
+// The functions `invoke`, `get_descriptors`, `start_rust`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `default`, `merr`, `sync`, `current_price`, `get_price`, `refresh_dart` are not `pub`, thus are ignored.
 
 Future<String> rustStart(
         {required String path,
-        required FutureOr<String> Function(String) dartCallback}) =>
+        required FutureOr<String> Function(String) callback}) =>
     RustLib.instance.api
-        .crateApiSimpleRustStart(path: path, dartCallback: dartCallback);
+        .crateApiSimpleRustStart(path: path, callback: callback);
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Prices>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<State>>
 @sealed
-class Prices extends RustOpaque {
+class State extends RustOpaque {
   // Not to be used by end users
-  Prices.frbInternalDcoDecode(List<dynamic> wire)
+  State.frbInternalDcoDecode(List<dynamic> wire)
       : super.frbInternalDcoDecode(wire, _kStaticData);
 
   // Not to be used by end users
-  Prices.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+  State.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
       : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
 
   static final _kStaticData = RustArcStaticData(
     rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_Prices,
+        RustLib.instance.api.rust_arc_increment_strong_count_State,
     rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_Prices,
+        RustLib.instance.api.rust_arc_decrement_strong_count_State,
     rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_PricesPtr,
+        RustLib.instance.api.rust_arc_decrement_strong_count_StatePtr,
   );
 
-  Future<double> getCurrentPrice() =>
-      RustLib.instance.api.crateApiSimplePricesGetCurrentPrice(
-        that: this,
-      );
-
-  Future<double> getPrice({required BigInt timestamp}) => RustLib.instance.api
-      .crateApiSimplePricesGetPrice(that: this, timestamp: timestamp);
-
   // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
-  static Future<Prices> newInstance({required String location}) =>
-      RustLib.instance.api.crateApiSimplePricesNew(location: location);
+  static Future<State> newInstance(
+          {required String path,
+          required FutureOr<String> Function(String) callback}) =>
+      RustLib.instance.api
+          .crateApiSimpleStateNew(path: path, callback: callback);
 }

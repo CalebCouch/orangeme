@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/buttons/icon_button.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 import 'package:orange/flows/wallet_flow/home.dart';
 import 'package:orange/flows/messages_flow/home.dart';
 
 class TabNav extends StatefulWidget {
   final int index;
+  final GlobalState globalState;
   const TabNav({
-    super.key,
+    required this.globalState,
     required this.index,
+    super.key
   });
   @override
   State<TabNav> createState() => TabNavState();
@@ -22,12 +24,12 @@ class TabNavState extends State<TabNav> {
   Widget build(BuildContext context) {
     void openMessages() {
       print("switching to messages");
-      navigateTo(context, const MessagesHome());
+      switchPageTo(context, MessagesHome(globalState: widget.globalState));
     }
 
     void openWallet() {
       print("switching to wallet");
-      navigateTo(context, const WalletHome());
+      switchPageTo(context, WalletHome(globalState: widget.globalState));
     }
 
     return Container(
@@ -36,29 +38,42 @@ class TabNavState extends State<TabNav> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            child: CustomIconButton(
+          Expanded(
+            child: GestureDetector(
               onTap: () {
-                print(widget.index);
-                openWallet();
+                if (widget.index == 1) openWallet();
               },
-              icon: ThemeIcon.wallet,
-              iconColor: (widget.index == 0)
-                  ? ThemeColor.primary
-                  : ThemeColor.textSecondary,
+              child: Container(
+                color: ThemeColor.bg,
+                padding: const EdgeInsets.only(right: AppPadding.navBar / 2),
+                alignment: Alignment.centerRight,
+                child: CustomIcon(
+                  icon: ThemeIcon.wallet,
+                  iconSize: IconSize.md,
+                  iconColor: (widget.index == 0)
+                      ? ThemeColor.primary
+                      : ThemeColor.textSecondary,
+                ),
+              ),
             ),
           ),
-          const Spacing(width: AppPadding.navBar),
-          Container(
-            child: CustomIconButton(
+          Expanded(
+            child: GestureDetector(
               onTap: () {
-                print(widget.index);
-                openMessages();
+                if (widget.index == 0) openMessages();
               },
-              icon: ThemeIcon.chat,
-              iconColor: (widget.index == 1)
-                  ? ThemeColor.primary
-                  : ThemeColor.textSecondary,
+              child: Container(
+                color: ThemeColor.bg,
+                padding: const EdgeInsets.only(left: AppPadding.navBar / 2),
+                alignment: Alignment.centerLeft,
+                child: CustomIcon(
+                  icon: ThemeIcon.chat,
+                  iconSize: IconSize.md,
+                  iconColor: (widget.index == 1)
+                      ? ThemeColor.primary
+                      : ThemeColor.textSecondary,
+                ),
+              ),
             ),
           ),
         ],
