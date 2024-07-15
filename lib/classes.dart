@@ -1,25 +1,53 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:orange/src/rust/frb_generated.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/screens/error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:orange/screens/error.dart';
-
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/src/rust/frb_generated.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
+import 'dart:io';
+
+class Transaction {
+    bool isReceive;
+    String? sentAddress;
+    String txid;
+    double usd;
+    double btc;
+    double price;
+    double? fee;
+    String? date;
+    String? time;
+
+    Transaction(this.isReceive, this.sentAddress, this.txid, this.usd, this.btc, this.price, this.fee, this.date, this.time);
+
+    factory Transaction.fromJson(Map<String, dynamic> json) {
+        return Transaction(
+            json['isReceive'] as bool,
+            json['sentAddress'] as String?,
+            json['txid'] as String,
+            json['usd'] as double,
+            json['btc'] as double,
+            json['price'] as double,
+            json['fee'] as double?,
+            json['date'] as String?,
+            json['time'] as String?,
+        );
+    }
+}
 
 class DartState {
     double currentPrice;
     double usdBalance;
     double btcBalance;
+    List<Transaction> transactions;
+    int v = 0;
 
-    DartState(this.currentPrice, this.usdBalance, this.btcBalance);
+    DartState(this.currentPrice, this.usdBalance, this.btcBalance, this.transactions);
 
     factory DartState.init() {
-        return DartState(0.0, 0.0, 0.0);
+        return DartState(0.0, 0.0, 0.0, []);
     }
 
     factory DartState.fromJson(Map<String, dynamic> json) {
@@ -27,6 +55,7 @@ class DartState {
             json['currentPrice'] as double,
             json['usdBalance'] as double,
             json['btcBalance'] as double,
+            List<Transaction>.from(json['transactions'].map((tx) => Transaction.fromJson(tx))),
         );
     }
 }
@@ -38,6 +67,7 @@ class GlobalState {
     List<RustC> rustCommands = [];
     Uuid uuid = const Uuid();
     bool synced;
+    Map<String, dynamic> store = {};
 
     ValueNotifier<DartState> state = ValueNotifier(DartState.init());
 
@@ -52,11 +82,23 @@ class GlobalState {
     Future<void> startRust() async {
         Directory appDocDirectory = await getApplicationDocumentsDirectory();
         Directory mydir = await Directory('${appDocDirectory.path}/').create(recursive: true);
-        this.error(await rustStart(path: mydir.path, callback: this.dartCallback));
+        this.error(await rustStart(path: mydir.path, callback: this.dartCallback, callback1: this.dartCallback));
     }
 
     BuildContext? getContext() {
         return this.navkey.currentContext;
+    }
+
+    Future<void> setStore(String key, dynamic value, bool refresh) async {
+        this.store[key] = value;
+        print(key);
+        if (refresh) {
+            print("TEST");
+            this.state.value.v += 1;
+        }
+    }
+    dynamic? getStore(String key) {
+        return this.store[key];
     }
 
     void error(String err) {
@@ -84,7 +126,6 @@ class GlobalState {
         var command = DartCommand.fromJson(jsonDecode(dartCommand));
         switch (command.method) {
             case "set_state":
-                print("set_state");
                 this.state.value = DartState.fromJson(jsonDecode(command.data));
             case "secure_get":
                 return await this.storage.read(key: command.data) ?? "";
@@ -109,7 +150,6 @@ class GlobalState {
     }
 }
 
-//Internal
 class DartCommand {
   final String method;
   final String data;
@@ -155,43 +195,6 @@ class RustR {
         'data': data,
       };
 }
-//Internal
-
-class Transaction {
-  final String? receiver;
-  final String? sender;
-  final String txid;
-  final int net;
-  final int? fee;
-  final DateTime? timestamp;
-  final String? raw;
-
-  Transaction(this.receiver, this.sender, this.txid, this.net, this.fee,
-      this.timestamp, this.raw);
-
-  factory Transaction.fromJson(Map<String, dynamic> json) {
-    var time = json['timestamp'] as int?;
-    print("Timestamp: $time");
-    return Transaction(
-        json['receiver'] as String?,
-        json['sender'] as String?,
-        json['txid'] as String,
-        json['net'] as int,
-        json['fee'] as int?,
-        time != null ? DateTime.fromMillisecondsSinceEpoch(time * 1000) : null,
-        json['raw'] as String?);
-  }
-
-  Map<String, dynamic> toJson() => {
-        'receiver': receiver,
-        'sender': sender,
-        'txid': txid,
-        'net': net,
-        'fee': fee,
-        'timestamp': timestamp,
-        'raw': raw
-      };
-}
 
 class CreateTransactionInput {
   final String address;
@@ -206,4 +209,3 @@ class CreateTransactionInput {
         'block_target': block_target,
       };
 }
-//Transfer

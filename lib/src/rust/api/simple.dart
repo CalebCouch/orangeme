@@ -4,7 +4,6 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
-import 'error.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // The type `DartCommand` is not used by any `pub` functions, thus it is ignored.
@@ -17,38 +16,12 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // The type `RustResponse` is not used by any `pub` functions, thus it is ignored.
 // The type `Spot` is not used by any `pub` functions, thus it is ignored.
 // The type `SpotRes` is not used by any `pub` functions, thus it is ignored.
-// The functions `invoke`, `get_descriptors`, `start_rust`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `default`, `merr`, `sync`, `current_price`, `get_price`, `refresh_dart` are not `pub`, thus are ignored.
+// The type `Transaction` is not used by any `pub` functions, thus it is ignored.
+// The functions `invoke`, `get_descriptors`, `get_price`, `fmt`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `from_details`, `fmt`, `default` are not `pub`, thus are ignored.
 
 Future<String> rustStart(
         {required String path,
+        required FutureOr<String> Function(String) callback1,
         required FutureOr<String> Function(String) callback}) =>
-    RustLib.instance.api
-        .crateApiSimpleRustStart(path: path, callback: callback);
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<State>>
-@sealed
-class State extends RustOpaque {
-  // Not to be used by end users
-  State.frbInternalDcoDecode(List<dynamic> wire)
-      : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  State.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_State,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_State,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_StatePtr,
-  );
-
-  // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
-  static Future<State> newInstance(
-          {required String path,
-          required FutureOr<String> Function(String) callback}) =>
-      RustLib.instance.api
-          .crateApiSimpleStateNew(path: path, callback: callback);
-}
+    RustLib.instance.api.crateApiSimpleRustStart(
+        path: path, callback1: callback1, callback: callback);

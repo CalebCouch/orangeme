@@ -55,7 +55,7 @@ class ConfirmationState extends State<Confirmation> {
       bumper: SingleButton(
         variant: ButtonVariant.secondary,
         text: "Done",
-        onTap: () => {Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName))},
+        onTap: () => {}//TODO: resetNavTo(context, const WalletHome()),
       ),
     );
   }

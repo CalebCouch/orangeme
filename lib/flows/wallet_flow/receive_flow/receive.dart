@@ -10,46 +10,42 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:share/share.dart';
 
+import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
 class Receive extends StatefulWidget {
-  const Receive({
-    super.key,
-  });
+  final GlobalState globalState;
+  final String address;
+  const Receive(
+    this.globalState,
+    this.address,
+    {super.key}
+  );
 
   @override
   ReceiveState createState() => ReceiveState();
 }
 
 class ReceiveState extends State<Receive> {
-  ValueNotifier<String> address = ValueNotifier("...");
-
-  @override
-  void initState() {
-    getNewAddress();
-    super.initState();
-  }
-
-  Future<void> getNewAddress() async {
-    address.value = (await invoke("get_new_address", "")).data;
-  }
-
-  //used to bring up the OS native share window
-  void onShare() {
-    final String textToShare = address.value;
-    Share.share(textToShare);
-  }
-
   @override
   Widget build(BuildContext context) {
-    currentCtx = context;
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child){
+        print("rebuild");
+        return build_screen(context, state);
+      }
+    );
+  }
+
+  Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: const StackHeader(text: "Receive bitcoin"),
       content: Content(
         content: Center(
           child: Column(
             children: [
-              qrCode(address),
+              qrCode(widget.address),
               const Spacing(height: AppPadding.content),
               const CustomText(
                 text: 'Scan to receive bitcoin.',
@@ -63,7 +59,7 @@ class ReceiveState extends State<Receive> {
       ),
       bumper: SingleButton(
         text: "Share",
-        onTap: () => onShare(),
+        onTap: () => {Share.share(widget.address)}
       ),
     );
   }

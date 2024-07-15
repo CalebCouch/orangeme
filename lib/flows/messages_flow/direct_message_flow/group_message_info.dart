@@ -6,8 +6,10 @@ import 'package:orange/components/list_item/contact_list_item.dart';
 import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/components/content/content.dart';
 import 'package:orange/components/custom/custom_text.dart';
-
+import 'package:orange/flows/messages_flow/profile_flows/user_profile.dart';
 import 'package:orange/classes/contact_info.dart';
+
+import 'package:orange/util.dart';
 
 class GroupMessageInfo extends StatefulWidget {
   final List<Contact> contacts;
@@ -42,6 +44,9 @@ class GroupMessageInfoState extends State<GroupMessageInfo> {
                   itemCount: widget.contacts.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ContactListItem(
+                      onTap: () {
+                        navigateTo(context, const UserProfile());
+                      },
                       contact: widget.contacts[index],
                     );
                   },

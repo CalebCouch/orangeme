@@ -22,3 +22,4 @@ web5-rust = { path="../../web5-rust" }
 
 futures = "0.3.30"
 chrono = "0.4.38"
+tokio = "1.38.0"

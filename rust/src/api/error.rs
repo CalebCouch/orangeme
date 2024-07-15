@@ -30,6 +30,11 @@ pub enum Error {
     Web5(#[from] web5_rust::Error),
     #[error(transparent)]
     Utf8Str(#[from] std::str::Utf8Error),
+    #[error(transparent)]
+    Utf8String(#[from] std::string::FromUtf8Error),
+    #[error(transparent)]
+    TokioJoin(#[from] tokio::task::JoinError),
+
 
 
     #[error(transparent)]

@@ -12,6 +12,13 @@ import 'package:orange/components/amount_display/amount_display.dart';
 import 'package:orange/components/bumpers/double_button_bumper.dart';
 import 'package:orange/components/tab_navigator/tab_navigator.dart';
 
+import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/classes/transaction_details.dart';
+import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/list_item/list_item.dart';
+import 'package:orange/flows/wallet_flow/transaction_details.dart';
+
+
 import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
 
@@ -19,8 +26,6 @@ import 'package:orange/util.dart';
 
 import 'dart:convert';
 import 'dart:async';
-
-
 
 class WalletHome extends StatefulWidget {
   final GlobalState globalState;
@@ -34,85 +39,50 @@ class WalletHome extends StatefulWidget {
 }
 
 class _WalletHomeState extends State<WalletHome> {
-    _getTransactions() {
-    return <TransactionDetails>[
-      const TransactionDetails(
-        false,
-        "12/1/24",
-        "6:08 PM",
-        "12FWmGPUC...qEL",
-        0.00076664,
-        62831.17,
-        48.61,
-        3.45,
-        null,
-        'Chris Slaughter',
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child){
+        return build_screen(context, state);
+      }
+    );
+  }
+
+  Widget transactionListItem(BuildContext context, Transaction transaction) {
+    return DefaultListItem(
+      onTap: () {
+        widget.globalState.setStore("transaction", transaction, false);
+        navigateTo(context, TransactionDetailsWidget(widget.globalState));
+      },
+      topLeft: CustomText(
+        alignment: TextAlign.left,
+        textType: "text",
+        textSize: TextSize.md,
+        text: transaction.isReceive ? "Received bitcoin" : "Sent bitcoin",
       ),
-      const TransactionDetails(
-        true,
-        "12/1/24",
-        "6:08 PM",
-        "12FWmGPUC...qEL",
-        0.00076664,
-        62831.17,
-        48.61,
-        null,
-        null,
-        null,
+      bottomLeft: CustomText(
+        alignment: TextAlign.left,
+        textSize: TextSize.sm,
+        color: ThemeColor.textSecondary,
+        text: transaction.date ?? "Pending",
       ),
-      const TransactionDetails(
-        true,
-        "12/1/24",
-        "6:08 PM",
-        "12FWmGPUC...qEL",
-        0.00076664,
-        62831.17,
-        48.61,
-        null,
-        null,
-        null,
+      topRight: CustomText(
+        alignment: TextAlign.right,
+        textSize: TextSize.md,
+        text: "\$${transaction.usd}",
       ),
-      const TransactionDetails(
-        true,
-        "12/1/24",
-        "6:08 PM",
-        "12FWmGPUC...qEL",
-        0.00076664,
-        62831.17,
-        48.61,
-        null,
-        null,
-        null,
+      bottomRight: const CustomText(
+        alignment: TextAlign.right,
+        textSize: TextSize.sm,
+        color: ThemeColor.textSecondary,
+        text: "Details",
+        underline: true,
       ),
-      const TransactionDetails(
-        true,
-        "12/1/24",
-        "6:08 PM",
-        "12FWmGPUC...qEL",
-        0.00076664,
-        62831.17,
-        48.61,
-        null,
-        null,
-        null,
-      ),
-      const TransactionDetails(
-        false,
-        "12/1/24",
-        "6:08 PM",
-        "12FWmGPUC...qEL",
-        0.00076664,
-        62831.17,
-        48.61,
-        3.45,
-        null,
-        null,
-      ),
-    ];
+    );
   }
 
   Widget build_screen(BuildContext context, DartState state) {
-    var tList = _getTransactions();
     return DefaultInterface(
       header: const PrimaryHeader(
         text: "Wallet",
@@ -130,11 +100,9 @@ class _WalletHomeState extends State<WalletHome> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
-                  itemCount: tList.length,
+                  itemCount: state.transactions.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return TransactionListItem(
-                      transactionDetails: tList[index],
-                    );
+                    return transactionListItem(context, state.transactions[index]);
                   },
                 ),
               ),
@@ -145,25 +113,15 @@ class _WalletHomeState extends State<WalletHome> {
       bumper: DoubleButton(
         firstText: "Receive",
         secondText: "Send",
-        firstOnTap: () {
-          navigateTo(context, const Receive());
+        firstOnTap: () async {
+          var address = (await widget.globalState.invoke("get_new_address", "")).data;
+          navigateTo(context, Receive(widget.globalState, address));
         },
         secondOnTap: () {
           navigateTo(context, const Send());
         },
       ),
       navBar: TabNav(globalState: widget.globalState, index: 0),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<TransactionDetails> tList = _getTransactions();
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child){
-        return build_screen(context, state);
-      }
     );
   }
 }

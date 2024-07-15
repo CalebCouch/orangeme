@@ -8,10 +8,11 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/amount_display/amount_display.dart';
 import 'package:orange/components/interfaces/default_interface.dart';
 import 'package:orange/classes/transaction_details.dart';
+import 'package:orange/classes.dart';
 
 class TransactionDetailsWidget extends StatefulWidget {
-  final TransactionDetails transactionDetails;
-  const TransactionDetailsWidget({super.key, required this.transactionDetails});
+  final GlobalState globalState;
+  const TransactionDetailsWidget(this.globalState, {super.key});
 
   @override
   TransactionDetailsWidgetState createState() =>
@@ -21,26 +22,20 @@ class TransactionDetailsWidget extends StatefulWidget {
 class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
   @override
   Widget build(BuildContext context) {
-    String direction;
-    if (widget.transactionDetails.isReceived) {
-      direction = "Received";
-    } else {
-      direction = "Sent";
-    }
+    Transaction tx = widget.globalState.getStore("transaction")!;
+    String direction = tx.isReceive ? "Received" : "Sent";
+
     return DefaultInterface(
       header: StackHeader(text: "$direction bitcoin"),
       content: Content(
         content: Column(
           children: [
             AmountDisplay(
-              value: widget.transactionDetails.value!,
-              converted: widget.transactionDetails.btcValueSent,
+              value: tx.usd,
+              converted: tx.btc
             ),
             const Spacing(height: AppPadding.content),
-            TransactionTabular(
-              direction: direction,
-              transactionDetails: widget.transactionDetails,
-            ),
+            transactionTabular(context, tx),
           ],
         ),
       ),

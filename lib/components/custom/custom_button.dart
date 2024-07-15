@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/theme/stylesheet.dart';
+
+import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
+
 import 'package:orange/theme/border.dart';
 
 class ButtonVariant {
@@ -59,7 +61,7 @@ Map buttonColors = {
 
 class CustomButton extends StatefulWidget {
   final String variant;
-  late int status;
+  final int status;
   final double buttonSize;
   final String text;
 
@@ -68,7 +70,7 @@ class CustomButton extends StatefulWidget {
   final bool expand;
   final Alignment buttonAlignment;
 
-  CustomButton({
+  const CustomButton({
     super.key,
     required this.text,
     this.variant = ButtonVariant.bitcoin,
