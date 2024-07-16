@@ -139,10 +139,10 @@ impl Transaction {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct DartState {
-    currentPrice: f64,
-    usdBalance: f64,
-    btcBalance: f64,
-    transactions: Vec<Transaction>
+    pub currentPrice: f64,
+    pub usdBalance: f64,
+    pub btcBalance: f64,
+    pub transactions: Vec<Transaction>
 }
 
 async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
