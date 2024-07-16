@@ -8,7 +8,7 @@ use flutter_rust_bridge::frb;
 use std::convert::TryInto;
 use std::{thread, time};
 use std::str::FromStr;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::sync::mpsc::channel;
 
@@ -564,7 +564,7 @@ pub async fn rustStart (
         //INIT
         let descriptors = get_descriptors(&callback).await?;
         let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path))))?;
-        let mut store = SqliteStore::new(&format!("{}/STATE/store", path))?;
+        let mut store = SqliteStore::new(PathBuf::from(&format!("{}/STATE/store", path)))?;
         if let Some(old_state) = store.get(b"state")? {
             invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
         }
@@ -587,7 +587,7 @@ pub async fn rustStart (
 
         let path2 = path.clone();
         tokio::spawn(async move {
-            let mut db = SqliteStore::new(&format!("{}/STATE/price", path2))?;
+            let mut db = SqliteStore::new(PathBuf::from(&format!("{}/STATE/price", path2)))?;
             loop {
                 db.set(b"price", &reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?.to_le_bytes())?;
                 thread::sleep(time::Duration::from_millis(600_000));
@@ -597,8 +597,8 @@ pub async fn rustStart (
         let path3 = path.clone();
         let descriptors3 = descriptors.clone();
         tokio::spawn(async move {
-            let mut store = SqliteStore::new(&format!("{}/STATE/store", path3))?;
-            let mut price = SqliteStore::new(&format!("{}/STATE/price", path3))?;
+            let mut store = SqliteStore::new(PathBuf::from(&format!("{}/STATE/store", path3)))?;
+            let mut price = SqliteStore::new(PathBuf::from(&format!("{}/STATE/price", path3)))?;
             let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path3))))?;
             loop {
                 let wallet_transactions = wallet.list_transactions(true)?;
