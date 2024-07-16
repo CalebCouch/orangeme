@@ -553,8 +553,9 @@ async fn get_price(prices: &mut SqliteStore, timestamp: u64) -> Result<f64, Erro
 
 pub async fn rustStart (
     path: String,
-    callback1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-    callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
+    callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
+    callback3: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
+    callback1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
 ) -> String {
     let err_catch = tokio::spawn(async move {
         let mut path = path;
@@ -575,7 +576,12 @@ pub async fn rustStart (
         tokio::spawn(async move {
             let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path1))))?;
             let blockchain = ElectrumBlockchain::from(Client::new("ssl://electrum.blockstream.info:50002")?);
-            loop {wallet.sync(&blockchain, SyncOptions::default())?;}
+            let mut init_sync = true;
+            loop {
+                wallet.sync(&blockchain, SyncOptions::default())?;
+                if init_sync {invoke(&callback1, "synced", "").await?; init_sync = false;}
+                thread::sleep(time::Duration::from_millis(250));
+            }
             Err::<(), Error>(Error::Exited("Wallet Sync Exited".to_string()))
         });
 
@@ -598,7 +604,7 @@ pub async fn rustStart (
                 let wallet_transactions = wallet.list_transactions(true)?;
                 let balance = wallet.get_balance()?;
                 let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
-                let btc = balance.get_total() as f64 / 100_000_000.0;
+                let btc = balance.get_total() as f64 / 1000_000_000.0;
                 let mut transactions: Vec<Transaction> = Vec::new();
                 for tx in wallet_transactions {
                     let price = match tx.confirmation_time.as_ref() {
@@ -614,7 +620,7 @@ pub async fn rustStart (
                     transactions
                 };
                 store.set(b"state", &serde_json::to_vec(&state)?)?;
-                invoke(&callback1, "set_state", &serde_json::to_string(&state)?).await?;
+                invoke(&callback3, "set_state", &serde_json::to_string(&state)?).await?;
                 thread::sleep(time::Duration::from_millis(1000));
             }
             Err::<(), Error>(Error::Exited("Refresh Dart State Exited".to_string()))

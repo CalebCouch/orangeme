@@ -67,7 +67,6 @@ class GlobalState {
     List<RustC> rustCommands = [];
     Uuid uuid = const Uuid();
     bool synced;
-    Map<String, dynamic> store = {};
 
     ValueNotifier<DartState> state = ValueNotifier(DartState.init());
 
@@ -82,23 +81,11 @@ class GlobalState {
     Future<void> startRust() async {
         Directory appDocDirectory = await getApplicationDocumentsDirectory();
         Directory mydir = await Directory('${appDocDirectory.path}/').create(recursive: true);
-        this.error(await rustStart(path: mydir.path, callback: this.dartCallback, callback1: this.dartCallback));
+        this.error(await rustStart(path: mydir.path, callback: this.dartCallback, callback1: this.dartCallback, callback3: this.dartCallback));
     }
 
     BuildContext? getContext() {
         return this.navkey.currentContext;
-    }
-
-    Future<void> setStore(String key, dynamic value, bool refresh) async {
-        this.store[key] = value;
-        print(key);
-        if (refresh) {
-            print("TEST");
-            this.state.value.v += 1;
-        }
-    }
-    dynamic? getStore(String key) {
-        return this.store[key];
     }
 
     void error(String err) {

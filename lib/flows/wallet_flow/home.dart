@@ -29,10 +29,10 @@ import 'dart:async';
 
 class WalletHome extends StatefulWidget {
   final GlobalState globalState;
-  const WalletHome({
-    required this.globalState,
-    super.key
-  });
+  const WalletHome(
+    this.globalState,
+    {super.key}
+  );
 
   @override
   State<WalletHome> createState() => _WalletHomeState();
@@ -52,8 +52,7 @@ class _WalletHomeState extends State<WalletHome> {
   Widget transactionListItem(BuildContext context, Transaction transaction) {
     return DefaultListItem(
       onTap: () {
-        widget.globalState.setStore("transaction", transaction, false);
-        navigateTo(context, TransactionDetailsWidget(widget.globalState));
+        navigateTo(context, TransactionDetailsWidget(widget.globalState, transaction));
       },
       topLeft: CustomText(
         alignment: TextAlign.left,

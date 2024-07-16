@@ -28,6 +28,6 @@ class MyApp extends StatelessWidget {
         navigatorKey: globalState.navkey,
         title: 'Orange',
         theme: theme(),
-        home: WalletHome(globalState: globalState));
+        home: WalletHome(globalState));
   }
 }

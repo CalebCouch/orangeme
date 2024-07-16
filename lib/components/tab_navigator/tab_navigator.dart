@@ -7,6 +7,13 @@ import 'package:orange/classes.dart';
 import 'package:orange/flows/wallet_flow/home.dart';
 import 'package:orange/flows/messages_flow/home.dart';
 
+//NOTES:
+//1. Should be a function
+//2. Accept List of IconButton why does this not exist???
+//3. Use a list builder so its easy to add more IconButtons later
+//4. When declaring the TabNav pass in the Icon button for the current page but just have it disabled and custom color set to highlight. IE:
+//tabNav(context, [IconButton("wallet", disabled: true, color: highlight), IconButton("messaging", onTap(nav to messaging))])
+
 class TabNav extends StatefulWidget {
   final int index;
   final GlobalState globalState;
@@ -29,7 +36,7 @@ class TabNavState extends State<TabNav> {
 
     void openWallet() {
       print("switching to wallet");
-      switchPageTo(context, WalletHome(globalState: widget.globalState));
+      switchPageTo(context, WalletHome(widget.globalState));
     }
 
     return Container(

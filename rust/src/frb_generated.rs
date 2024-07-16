@@ -322,10 +322,13 @@ fn wire__crate__api__simple__rustStart_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_path = <String>::sse_decode(&mut deserializer);
-            let api_callback1 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
+            let api_callback = decode_DartFn_Inputs_String_Output_String_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
-            let api_callback = decode_DartFn_Inputs_String_Output_String_AnyhowException(
+            let api_callback3 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
+                <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+            );
+            let api_callback1 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
             deserializer.end();
@@ -333,8 +336,13 @@ fn wire__crate__api__simple__rustStart_impl(
                 transform_result_sse(
                     (move || async move {
                         Result::<_, ()>::Ok(
-                            crate::api::simple::rustStart(api_path, api_callback1, api_callback)
-                                .await,
+                            crate::api::simple::rustStart(
+                                api_path,
+                                api_callback,
+                                api_callback3,
+                                api_callback1,
+                            )
+                            .await,
                         )
                     })()
                     .await,

@@ -21,7 +21,11 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<String> rustStart(
         {required String path,
-        required FutureOr<String> Function(String) callback1,
-        required FutureOr<String> Function(String) callback}) =>
+        required FutureOr<String> Function(String) callback,
+        required FutureOr<String> Function(String) callback3,
+        required FutureOr<String> Function(String) callback1}) =>
     RustLib.instance.api.crateApiSimpleRustStart(
-        path: path, callback1: callback1, callback: callback);
+        path: path,
+        callback: callback,
+        callback3: callback3,
+        callback1: callback1);

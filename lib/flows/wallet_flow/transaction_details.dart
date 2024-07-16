@@ -12,7 +12,8 @@ import 'package:orange/classes.dart';
 
 class TransactionDetailsWidget extends StatefulWidget {
   final GlobalState globalState;
-  const TransactionDetailsWidget(this.globalState, {super.key});
+  final Transaction transaction;
+  const TransactionDetailsWidget(this.globalState, this.transaction, {super.key});
 
   @override
   TransactionDetailsWidgetState createState() =>
@@ -22,8 +23,7 @@ class TransactionDetailsWidget extends StatefulWidget {
 class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
   @override
   Widget build(BuildContext context) {
-    Transaction tx = widget.globalState.getStore("transaction")!;
-    String direction = tx.isReceive ? "Received" : "Sent";
+    String direction = widget.transaction.isReceive ? "Received" : "Sent";
 
     return DefaultInterface(
       header: StackHeader(text: "$direction bitcoin"),
@@ -31,11 +31,11 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
         content: Column(
           children: [
             AmountDisplay(
-              value: tx.usd,
-              converted: tx.btc
+              value: widget.transaction.usd,
+              converted: widget.transaction.btc
             ),
             const Spacing(height: AppPadding.content),
-            transactionTabular(context, tx),
+            transactionTabular(context, widget.transaction),
           ],
         ),
       ),
