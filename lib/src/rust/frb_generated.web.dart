@@ -7,7 +7,6 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/error.dart';
-import 'api/protocols.dart';
 import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -25,21 +24,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
 
-  CrossPlatformFinalizerArg
-      get rust_arc_decrement_strong_count_ProtocolDefinitionPtr => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition;
-
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
   @protected
   Error
       dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw);
-
-  @protected
-  ProtocolDefinition
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
           dynamic raw);
 
   @protected
@@ -56,21 +46,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           dynamic raw);
 
   @protected
-  ProtocolDefinition
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          dynamic raw);
-
-  @protected
   String dco_decode_String(dynamic raw);
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
-
-  @protected
-  ProfileProtocol dco_decode_profile_protocol(dynamic raw);
-
-  @protected
-  SocialProtocol dco_decode_social_protocol(dynamic raw);
 
   @protected
   int dco_decode_u_8(dynamic raw);
@@ -90,11 +69,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
-  ProtocolDefinition
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          SseDeserializer deserializer);
-
-  @protected
   Object sse_decode_DartOpaque(SseDeserializer deserializer);
 
   @protected
@@ -103,21 +77,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
-  ProtocolDefinition
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          SseDeserializer deserializer);
-
-  @protected
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
-
-  @protected
-  ProfileProtocol sse_decode_profile_protocol(SseDeserializer deserializer);
-
-  @protected
-  SocialProtocol sse_decode_social_protocol(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -144,11 +107,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           Error self, SseSerializer serializer);
 
   @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          ProtocolDefinition self, SseSerializer serializer);
-
-  @protected
   void sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
       FutureOr<String> Function(String) self, SseSerializer serializer);
 
@@ -161,24 +119,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           Error self, SseSerializer serializer);
 
   @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          ProtocolDefinition self, SseSerializer serializer);
-
-  @protected
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_profile_protocol(
-      ProfileProtocol self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_social_protocol(
-      SocialProtocol self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
@@ -212,18 +157,6 @@ class RustLibWire implements BaseWire {
       wasmModule
           .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
               ptr);
-
-  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          dynamic ptr) =>
-      wasmModule
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-              ptr);
-
-  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          dynamic ptr) =>
-      wasmModule
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-              ptr);
 }
 
 @JS('wasm_bindgen')
@@ -244,13 +177,5 @@ class RustLibWasmModule implements WasmModule {
 
   external void
       rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic ptr);
-
-  external void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
-          dynamic ptr);
-
-  external void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerProtocolDefinition(
           dynamic ptr);
 }

@@ -1,6 +1,6 @@
 use super::Error;
 
-use super::protocols::{SocialProtocol, ProfileProtocol};
+//use super::protocols::{SocialProtocol, ProfileProtocol};
 
 use flutter_rust_bridge::DartFnFuture;
 use flutter_rust_bridge::frb;
@@ -12,18 +12,18 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::sync::mpsc::channel;
 
-use web5_rust::dwn::interfaces::{ProtocolsConfigureOptions, RecordsWriteOptions};
-use web5_rust::dwn::structs::DataInfo;
-use web5_rust::common::traits::KeyValueStore;
-use web5_rust::common::structs::{Url, DataFormat};
-use web5_rust::common::{SqliteStore, Cache};
-use web5_rust::agent::Agent;
+//  use web5_rust::dwn::interfaces::{ProtocolsConfigureOptions, RecordsWriteOptions};
+//  use web5_rust::dwn::structs::DataInfo;
+//  use web5_rust::common::traits::KeyValueStore;
+//  use web5_rust::common::structs::{Url, DataFormat};
+//  use web5_rust::common::{SqliteStore, Cache};
+//  use web5_rust::agent::Agent;
 
-pub use web5_rust::dwn::protocol::{
-    ProtocolPath,
-    ProtocolUri,
-    Protocol,
-};
+//  pub use web5_rust::dwn::protocol::{
+//      ProtocolPath,
+//      ProtocolUri,
+//      Protocol,
+//  };
 
 use bdk::{TransactionDetails, Wallet, KeychainKind, SyncOptions, SignOptions};
 use bdk::bitcoin::consensus::{Encodable, Decodable};
@@ -547,9 +547,6 @@ async fn get_price(prices: &mut SqliteStore, timestamp: u64) -> Result<f64, Erro
         }
     })
 }
-
-
-
 
 pub async fn rustStart (
     path: String,
