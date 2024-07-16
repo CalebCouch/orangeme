@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/bumpers/single_button_bumper.dart';
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/messages_header.dart';
+import 'package:orange/components/bumper.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/list_item/message_list_item.dart';
-import 'package:orange/components/tab_navigator/tab_navigator.dart';
+import 'package:orange/components/list_item.dart';
+import 'package:orange/components/tab_navigator.dart';
 
 import 'package:orange/classes/message_info.dart';
 import 'package:orange/classes/contact_info.dart';
@@ -18,25 +18,6 @@ import 'package:orange/flows/messages_flow/profile_flows/my_profile.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
-
-//  class GenericWidget extends StatefulWidget {
-//    final GlobalState globalState;
-//    const GenericWidget({
-//      required this.globalState,
-//      super.key,
-//    });
-
-//    @override
-//    GenericWidgetState createState() => GenericWidgetState();
-//  }
-
-//  class GenericWidgetState extends State<GenericWidget> {
-//    GenericWidgetState()
-//    @override
-//    Widget build(BuildContext context) {
-//      return ;
-//    }
-//  }
 
 class MessagesHome extends StatefulWidget {
   final GlobalState globalState;
@@ -83,23 +64,25 @@ class MessagesHomeState extends State<MessagesHome> {
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
-      header: MessagesHeader(
-        onTap: () {
+      header: messagesHeader(
+        context,
+        () {
           navigateTo(
             context,
             const MyProfile(),
           );
         },
-        profilePhoto: null,
+        null,
       ),
       content: Content(
         content: testMessages.isNotEmpty
             ? ListView.builder(
                 itemCount: testMessages.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return MessageListItem(
-                    message: testMessages[index],
-                    onTap: () {
+                  return messageListItem(
+                    context,
+                    testMessages[index],
+                    () {
                       navigateTo(context,
                           Conversation(contacts: testMessages[index].contacts));
                     },
@@ -114,11 +97,16 @@ class MessagesHomeState extends State<MessagesHome> {
                 ),
               ),
       ),
-      bumper: SingleButton(
-          text: "New Message",
-          onTap: () {
-            navigateTo(context, const ChooseRecipient());
-          }),
+      bumper: singleButtonBumper(
+        context,
+        "New Message",
+        () {
+          navigateTo(
+            context,
+            const ChooseRecipient(),
+          );
+        },
+      ),
       navBar: TabNav(globalState: widget.globalState, index: 1),
     );
   }

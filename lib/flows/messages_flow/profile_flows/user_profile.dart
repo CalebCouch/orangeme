@@ -4,14 +4,12 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes/profile_info.dart';
 import 'package:orange/classes/contact_info.dart';
 
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_header.dart';
-import 'package:orange/components/bumpers/double_button_bumper.dart';
-import 'package:orange/components/profile_photo/profile_photo.dart';
-import 'package:orange/components/data_item/did_item.dart';
-import 'package:orange/components/data_item/address_item.dart';
-import 'package:orange/components/data_item/about_me_item.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/bumper.dart';
+import 'package:orange/components/profile_photo.dart';
+import 'package:orange/components/data_item.dart';
 
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
@@ -40,8 +38,9 @@ class UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
-      header: StackHeader(
-        text: widget.userInfo.name,
+      header: stackHeader(
+        context,
+        widget.userInfo.name,
       ),
       content: Content(
         content: SingleChildScrollView(
@@ -51,19 +50,20 @@ class UserProfileState extends State<UserProfile> {
             children: [
               const ProfilePhoto(size: ProfileSize.xxl),
               const Spacing(height: AppPadding.profile),
-              AboutMeItem(aboutMe: widget.userInfo.aboutMe),
+              aboutMeItem(context, widget.userInfo.aboutMe),
               const Spacing(height: AppPadding.profile),
-              DidItem(did: widget.userInfo.did),
+              didItem(context, widget.userInfo.did),
               const Spacing(height: AppPadding.profile),
-              AddressItem(address: widget.address),
+              addressItem(context, widget.address),
             ],
           ),
         ),
       ),
-      bumper: DoubleButton(
-        firstText: 'Send Bitcoin',
-        secondText: 'Message',
-        firstOnTap: () => navigateTo(
+      bumper: doubleButtonBumper(
+        context,
+        'Send Bitcoin',
+        'Message',
+        () => navigateTo(
           context,
           Conversation(
             contacts: [
@@ -71,7 +71,7 @@ class UserProfileState extends State<UserProfile> {
             ],
           ),
         ),
-        secondOnTap: () => navigateTo(context, const Conversation()),
+        () => navigateTo(context, const Conversation()),
       ),
     );
   }

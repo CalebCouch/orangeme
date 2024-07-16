@@ -3,12 +3,12 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/classes/contact_info.dart';
 
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_button_header.dart';
-import 'package:orange/components/list_item/contact_list_item.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/list_item.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/text_input/text_input.dart';
+import 'package:orange/components/text_input.dart';
 
 import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
 
@@ -38,10 +38,13 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
     ];
     print('CONTROLLER TEXT ${contactController.text}');
     return DefaultInterface(
-      header: StackButtonHeader(
-          text: 'Select Recipient',
-          rightEnabled: true,
-          rightOnTap: navigateTo(context, const SendAmount())),
+      header: stackButtonHeader(
+        context,
+        'Select Recipient',
+        true,
+        'Next',
+        navigateTo(context, const SendAmount()),
+      ),
       content: Content(
         content: Column(
           children: [
@@ -63,8 +66,10 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
                         physics: const ScrollPhysics(),
                         itemCount: testContacts.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return ContactListItem(
-                            contact: testContacts[index],
+                          return contactListItem(
+                            context,
+                            testContacts[index],
+                            () {},
                           );
                         },
                       ),

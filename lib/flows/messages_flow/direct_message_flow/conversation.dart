@@ -4,12 +4,12 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes/contact_info.dart';
 import 'package:orange/classes/single_message.dart';
 
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_message_header.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/bumpers/message_bumper.dart';
-import 'package:orange/components/message_bubble/message_stack.dart';
+import 'package:orange/components/text_input.dart';
+import 'package:orange/components/message_bubble.dart';
 
 class Conversation extends StatefulWidget {
   final List<Contact> contacts;
@@ -47,9 +47,7 @@ class ConversationState extends State<Conversation> {
   Widget build(BuildContext context) {
     _getMessages();
     return DefaultInterface(
-      header: StackMessageHeader(
-        contacts: widget.contacts,
-      ),
+      header: stackMessageHeader(context, widget.contacts),
       content: Content(
         content: messages.isEmpty
             ? const Center(
@@ -59,9 +57,9 @@ class ConversationState extends State<Conversation> {
                   color: ThemeColor.textSecondary,
                 ),
               )
-            : MessageStack(contacts: widget.contacts, messages: messages),
+            : messageStack(context, widget.contacts, messages),
       ),
-      bumper: const MessageBumper(),
+      bumper: messageInput(),
     );
   }
 }

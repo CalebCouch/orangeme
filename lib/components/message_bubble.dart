@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/classes/single_message.dart';
 import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/classes/contact_info.dart';
 
 class MessageBubble extends StatelessWidget {
   final SingleMessage message;
@@ -119,6 +120,27 @@ Widget bubble(SingleMessage message) {
       text: message.text,
       textSize: TextSize.md,
       alignment: message.isReceived ? TextAlign.left : TextAlign.right,
+    ),
+  );
+}
+
+Widget messageStack(BuildContext context, List<Contact> contacts,
+    List<SingleMessage> messages) {
+  var isGroup = false;
+  if (contacts.length > 1) isGroup = true;
+  return SizedBox(
+    height: double.infinity,
+    child: ListView.builder(
+      itemCount: messages.length,
+      itemBuilder: (BuildContext context, int index) {
+        return MessageBubble(
+          previousMessage: index >= 1 ? messages[index - 1] : null,
+          nextMessage:
+              index < (messages.length - 1) ? messages[index + 1] : null,
+          isGroup: isGroup,
+          message: messages[index],
+        );
+      },
     ),
   );
 }

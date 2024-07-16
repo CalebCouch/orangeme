@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/bumpers/single_button_bumper.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_header.dart';
-import 'package:orange/components/profile_photo/profile_photo_edit.dart';
-import 'package:orange/components/data_item/did_item.dart';
-import 'package:orange/components/data_item/address_item.dart';
-import 'package:orange/components/text_input/text_input.dart';
+
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/profile_photo.dart';
+import 'package:orange/components/data_item.dart';
+import 'package:orange/components/text_input.dart';
+import 'package:orange/components/bumper.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 import 'dart:io';
@@ -29,18 +30,16 @@ class MyProfileState extends State<MyProfile> {
   Widget build(BuildContext context) {
     print("image file = $_image");
     return DefaultInterface(
-      header: const StackHeader(
-        text: "My profile",
-      ),
+      header: stackHeader(context, "My profile"),
       content: Content(
         content: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ProfilePhotoEdit(
-                profilePhoto: _image,
-                onTap: () async {
+              editPhoto(
+                context,
+                () async {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
@@ -48,6 +47,7 @@ class MyProfileState extends State<MyProfile> {
                     setState(() => _image = File(image.path));
                   }
                 },
+                _image,
               ),
               const Spacing(height: AppPadding.profile),
               CustomTextInput(
@@ -62,15 +62,14 @@ class MyProfileState extends State<MyProfile> {
                 hint: 'A little bit about me...',
               ),
               const Spacing(height: AppPadding.profile),
-              const DidItem(did: 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
+              didItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
               const Spacing(height: AppPadding.profile),
-              const AddressItem(
-                  address: 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
+              didItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
             ],
           ),
         ),
       ),
-      bumper: SingleButton(disabled: true, text: 'Save', onTap: () {}),
+      bumper: singleButtonBumper(context, 'Save', () {}, false),
     );
   }
 }

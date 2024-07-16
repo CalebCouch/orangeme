@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/buttons/delete_button.dart';
-import 'package:orange/components/buttons/number_button.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 
 class NumericKeypad extends StatelessWidget {
   final void Function(String) onNumberPressed;
@@ -52,8 +50,8 @@ class _getButton extends StatelessWidget {
         alignment: Alignment.center,
         height: 48,
         child: number == 'backspace'
-            ? const DeleteButton()
-            : NumberButton(number: number),
+            ? deleteButton(context)
+            : numberButton(context, number),
       ),
     );
   }

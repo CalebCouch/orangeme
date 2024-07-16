@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/flows/wallet_flow/home.dart';
-import 'package:orange/components/interfaces/default_interface.dart';
+import 'package:orange/components/default_interface.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_header.dart';
-import 'package:orange/components/bumpers/single_button_bumper.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/util.dart';
 
 class Confirmation extends StatefulWidget {
   final double amount;
@@ -26,8 +24,9 @@ class ConfirmationState extends State<Confirmation> {
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
-      header: const StackHeader(
-        text: "Confirm send",
+      header: stackHeader(
+        context,
+        "Confirm send",
       ),
       content: Content(
         content: Column(
@@ -52,10 +51,12 @@ class ConfirmationState extends State<Confirmation> {
           ],
         ),
       ),
-      bumper: SingleButton(
-        variant: ButtonVariant.secondary,
-        text: "Done",
-        onTap: () => {}//TODO: resetNavTo(context, const WalletHome()),
+      bumper: singleButtonBumper(
+        context,
+        "Done",
+        () => {}, //resetNavTo(context, const WalletHome()),
+        true,
+        ButtonVariant.secondary,
       ),
     );
   }

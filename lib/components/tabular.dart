@@ -1,17 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/tabular/single_tab.dart';
-
-import 'package:orange/classes/transaction_details.dart';
+import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/classes.dart';
 
-Widget transactionTabular(BuildContext context, Transaction tx) {
-    return Column(
+class SingleTab extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const SingleTab({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.tab),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-            SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
-            SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
-        ]
+          CustomText(
+            text: title,
+            textSize: TextSize.sm,
+            color: ThemeColor.textSecondary,
+          ),
+          CustomText(
+            text: subtitle,
+            textSize: TextSize.sm,
+            color: ThemeColor.textSecondary,
+          )
+        ],
+      ),
     );
+  }
+}
+
+Widget transactionTabular(BuildContext context, Transaction tx) {
+  return Column(children: [
+    SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
+    SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
+  ]);
 //    children: [
 //      if (tx.recipient != null)
 //        SingleTab(
@@ -56,4 +85,13 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
 //        ),
 //    ],
 //  );
+}
+
+Widget contactTabular(BuildContext context, String name, String did) {
+  return Column(
+    children: [
+      SingleTab(title: "Profile name", subtitle: name),
+      SingleTab(title: "Digital ID", subtitle: did),
+    ],
+  );
 }

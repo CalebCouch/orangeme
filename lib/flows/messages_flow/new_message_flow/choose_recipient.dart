@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/classes/contact_info.dart';
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_button_header.dart';
-import 'package:orange/components/list_item/contact_list_item.dart';
-import 'package:orange/components/buttons/tip_buttons.dart';
-import 'package:orange/components/text_input/text_input.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/list_item.dart';
+import 'package:orange/components/tip_buttons.dart';
+import 'package:orange/components/text_input.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
 import 'package:orange/util.dart';
@@ -84,15 +84,19 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       const Contact('R. R. B.', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
     ];
     return DefaultInterface(
-      header: StackButtonHeader(
-        text: 'New message',
-        rightEnabled: recipients.isNotEmpty ? true : false,
-        rightOnTap: () {
+      header: stackButtonHeader(
+        context,
+        'New message',
+        recipients.isNotEmpty ? true : false,
+        'Next',
+        () {
           navigateTo(
-              context,
-              Conversation(
-                  contacts: _getContactsfromRecipientNames(
-                      testContacts, recipients)));
+            context,
+            Conversation(
+              contacts:
+                  _getContactsfromRecipientNames(testContacts, recipients),
+            ),
+          );
         },
       ),
       content: Content(
@@ -109,13 +113,13 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 spacing: 8,
                 runSpacing: 8,
                 children: List<Widget>.generate(recipients.length, (index) {
-                  return TipButtonStack(buttons: [
+                  return oneTip(
                     ButtonTip(
                       recipients[index],
                       ThemeIcon.close,
                       () => removeRecipient(recipients[index]),
                     ),
-                  ]);
+                  );
                 }),
               ),
             ),
@@ -126,9 +130,10 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                   physics: const ScrollPhysics(),
                   itemCount: testContacts.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return ContactListItem(
-                      contact: testContacts[index],
-                      onTap: () => addRecipient(testContacts[index].name),
+                    return contactListItem(
+                      context,
+                      testContacts[index],
+                      () => addRecipient(testContacts[index].name),
                     );
                   },
                 ),

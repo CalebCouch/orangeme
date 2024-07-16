@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/interfaces/default_interface.dart';
+import 'package:orange/components/default_interface.dart';
 
 import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
 import 'package:orange/flows/wallet_flow/send_flow/choose_send_recipient.dart';
 import 'package:orange/flows/wallet_flow/send_flow/scan_qr.dart';
 
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_header.dart';
-import 'package:orange/components/text_input/text_input.dart';
-import 'package:orange/components/bumpers/single_button_bumper.dart';
-import 'package:orange/components/buttons/tip_buttons.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/text_input.dart';
+import 'package:orange/components/bumper.dart';
+import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/util.dart';
 
 class Send extends StatefulWidget {
@@ -28,8 +28,9 @@ class SendState extends State<Send> {
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
-      header: const StackHeader(
-        text: "Bitcoin address",
+      header: stackHeader(
+        context,
+        "Bitcoin address",
       ),
       content: Content(
         content: Column(
@@ -39,7 +40,7 @@ class SendState extends State<Send> {
               controller: recipientAddressController,
               hint: 'Bitcoin address...',
             ),
-            TipButtonStack(buttons: [
+            threeTips([
               ButtonTip("pn1Th...a02Cr", ThemeIcon.paste, () {}),
               ButtonTip(
                 "Scan QR Code",
@@ -55,9 +56,10 @@ class SendState extends State<Send> {
           ],
         ),
       ),
-      bumper: SingleButton(
-        text: "Continue",
-        onTap: () {
+      bumper: singleButtonBumper(
+        context,
+        "Continue",
+        () {
           navigateTo(
             context,
             const SendAmount(),

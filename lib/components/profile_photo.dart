@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/classes/contact_info.dart';
+import 'package:orange/components/tip_buttons.dart';
 import 'dart:io';
 
 class ProfilePhoto extends StatelessWidget {
@@ -60,4 +62,33 @@ class ProfilePhoto extends StatelessWidget {
           : Container(),
     );
   }
+}
+
+Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
+  return Container(
+    width: 128,
+    height: 32,
+    alignment: Alignment.center,
+    child: ListView.builder(
+      shrinkWrap: true,
+      scrollDirection: Axis.horizontal,
+      itemCount: contacts.length < 5 ? contacts.length : 5,
+      itemBuilder: (BuildContext context, int index) {
+        return Align(
+          widthFactor: 0.75,
+          child: ProfilePhoto(outline: true, profilePhoto: contacts[0].photo),
+        );
+      },
+    ),
+  );
+}
+
+Widget editPhoto(BuildContext context, onTap, [profilePhoto]) {
+  return Column(
+    children: [
+      ProfilePhoto(profilePhoto: profilePhoto, size: ProfileSize.xxl),
+      const Spacing(height: AppPadding.header),
+      tipButton(ButtonTip('Photo', ThemeIcon.edit, onTap))
+    ],
+  );
 }

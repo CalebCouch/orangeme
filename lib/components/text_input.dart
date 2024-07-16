@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/buttons/icon_button.dart';
+import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/bumper.dart';
 
 class CustomTextInput extends StatefulWidget {
   final TextEditingController controller;
@@ -119,10 +120,7 @@ class CustomTextInputState extends State<CustomTextInput> {
             child: Row(
               children: [
                 _buildTextField(),
-                widget.isMessage
-                    ? CustomSendButton(
-                        onTap: widget.onEditingComplete, isEnabled: true)
-                    : Container(),
+                widget.isMessage ? sendButton(context, true) : Container(),
               ],
             ),
           ),
@@ -148,6 +146,17 @@ Widget titleText(String text) {
       text: text,
       textType: 'heading',
       textSize: TextSize.h5,
+    ),
+  );
+}
+
+Widget messageInput() {
+  final TextEditingController messageController = TextEditingController();
+  return DefaultBumper(
+    content: CustomTextInput(
+      controller: messageController,
+      hint: 'Message',
+      isMessage: true,
     ),
   );
 }

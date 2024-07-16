@@ -4,7 +4,11 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
+import 'package:orange/flows/messages_flow/direct_message_flow/group_message_info.dart';
+
 import 'package:orange/theme/border.dart';
+
+import 'package:orange/util.dart';
 
 class ButtonVariant {
   static const String bitcoin = "bitcoin";
@@ -154,4 +158,52 @@ class _ButtonState extends State<CustomButton> {
       ),
     );
   }
+}
+
+Widget iconButton(BuildContext context, onTap, CustomIcon icon) {
+  return GestureDetector(
+    onTap: onTap ?? () {},
+    child: icon,
+  );
+}
+
+Widget sendButton(BuildContext context, bool isEnabled) {
+  return iconButton(
+    context,
+    () {
+      print("send");
+    },
+    CustomIcon(
+      icon: ThemeIcon.send,
+      iconColor: isEnabled ? ThemeColor.primary : ThemeColor.textSecondary,
+    ),
+  );
+}
+
+Widget backButton(BuildContext context) {
+  return iconButton(
+    context,
+    () {
+      Navigator.pop(context);
+    },
+    const CustomIcon(icon: ThemeIcon.left),
+  );
+}
+
+Widget exitButton(BuildContext context, Widget home) {
+  return iconButton(
+    context,
+    () {
+      resetNavTo(context, home);
+    },
+    const CustomIcon(icon: ThemeIcon.close),
+  );
+}
+
+Widget infoButton(BuildContext context, contacts) {
+  return iconButton(
+    context,
+    navigateTo(context, GroupMessageInfo(contacts: contacts)),
+    const CustomIcon(icon: ThemeIcon.info),
+  );
 }

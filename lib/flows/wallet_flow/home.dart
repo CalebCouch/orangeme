@@ -1,38 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/classes/transaction_details.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/list_item/transaction_list_item.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/primary_header.dart';
-import 'package:orange/components/amount_display/amount_display.dart';
-import 'package:orange/components/bumpers/double_button_bumper.dart';
-import 'package:orange/components/tab_navigator/tab_navigator.dart';
-
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/classes/transaction_details.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/list_item.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/amount_display.dart';
+import 'package:orange/components/bumper.dart';
+import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/list_item/list_item.dart';
 import 'package:orange/flows/wallet_flow/transaction_details.dart';
-
 
 import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
 
 import 'package:orange/util.dart';
 
-import 'dart:convert';
-import 'dart:async';
-
 class WalletHome extends StatefulWidget {
   final GlobalState globalState;
-  const WalletHome(
-    this.globalState,
-    {super.key}
-  );
+  const WalletHome(this.globalState, {super.key});
 
   @override
   State<WalletHome> createState() => _WalletHomeState();
@@ -42,17 +29,17 @@ class _WalletHomeState extends State<WalletHome> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child){
-        return build_screen(context, state);
-      }
-    );
+        valueListenable: widget.globalState.state,
+        builder: (BuildContext context, DartState state, Widget? child) {
+          return build_screen(context, state);
+        });
   }
 
   Widget transactionListItem(BuildContext context, Transaction transaction) {
     return DefaultListItem(
       onTap: () {
-        navigateTo(context, TransactionDetailsWidget(widget.globalState, transaction));
+        navigateTo(
+            context, TransactionDetailsWidget(widget.globalState, transaction));
       },
       topLeft: CustomText(
         alignment: TextAlign.left,
@@ -83,8 +70,9 @@ class _WalletHomeState extends State<WalletHome> {
 
   Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
-      header: const PrimaryHeader(
-        text: "Wallet",
+      header: primaryHeader(
+        context,
+        "Wallet",
       ),
       content: Content(
         content: Column(
@@ -101,7 +89,8 @@ class _WalletHomeState extends State<WalletHome> {
                   physics: const ScrollPhysics(),
                   itemCount: state.transactions.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return transactionListItem(context, state.transactions[index]);
+                    return transactionListItem(
+                        context, state.transactions[index]);
                   },
                 ),
               ),
@@ -109,14 +98,16 @@ class _WalletHomeState extends State<WalletHome> {
           ],
         ),
       ),
-      bumper: DoubleButton(
-        firstText: "Receive",
-        secondText: "Send",
-        firstOnTap: () async {
-          var address = (await widget.globalState.invoke("get_new_address", "")).data;
+      bumper: doubleButtonBumper(
+        context,
+        "Receive",
+        "Send",
+        () async {
+          var address =
+              (await widget.globalState.invoke("get_new_address", "")).data;
           navigateTo(context, Receive(widget.globalState, address));
         },
-        secondOnTap: () {
+        () {
           navigateTo(context, const Send());
         },
       ),

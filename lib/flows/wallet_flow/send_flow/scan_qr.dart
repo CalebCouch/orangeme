@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/interfaces/default_interface.dart';
-
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/headers/stack_header.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 class ScanQR extends StatefulWidget {
@@ -18,8 +17,9 @@ class ScanQRState extends State<ScanQR> {
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
-      header: const StackHeader(
-        text: "Scan QR code",
+      header: stackHeader(
+        context,
+        "Scan QR code",
       ),
       content: Content(
         content: Column(

@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
+
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/components/buttons/tip_buttons.dart';
+import 'package:orange/components/tip_buttons.dart';
+import 'package:orange/components/tabular.dart';
+
+import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
+import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
+import 'package:orange/flows/wallet_flow/send_flow/send.dart';
+
+import 'package:orange/util.dart';
 
 class DataItem extends StatelessWidget {
   final String title;
@@ -114,15 +122,157 @@ Widget editButtons(List<ButtonTip> tipButtons) {
 }
 
 Widget one(List<ButtonTip> tipButtons) {
-  return TipButtonStack(buttons: tipButtons);
+  return oneTip(tipButtons[0]);
 }
 
 Widget two(List<ButtonTip> tipButtons) {
   return Row(
     children: [
-      TipButtonStack(buttons: [tipButtons[0]]),
+      twoTips([tipButtons[0]]),
       const Spacing(width: AppPadding.tips),
-      TipButtonStack(buttons: [tipButtons[1]]),
+      twoTips([tipButtons[1]]),
+    ],
+  );
+}
+
+Widget aboutMeItem(BuildContext context, String aboutMe) {
+  return DataItem(
+    title: 'About Me',
+    content: Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.dataItem),
+      child: CustomText(
+        alignment: TextAlign.left,
+        text: aboutMe,
+        textSize: TextSize.h5,
+      ),
+    ),
+  );
+}
+
+Widget addressItem(BuildContext context, String address) {
+  return DataItem(
+    title: 'Bitcoin address',
+    content: Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.dataItem),
+      child: CustomText(
+        alignment: TextAlign.left,
+        text: address,
+        textSize: TextSize.h5,
+      ),
+    ),
+    buttonNames: const ['Copy'],
+    buttonIcons: const [ThemeIcon.copy],
+    buttonActions: [
+      () async {
+        await Clipboard.setData(ClipboardData(text: address));
+      },
+    ],
+  );
+}
+
+Widget didItem(BuildContext context, String did) {
+  return DataItem(
+    title: 'Digital ID',
+    content: Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.dataItem),
+      child: CustomText(
+        alignment: TextAlign.left,
+        text: did,
+        textSize: TextSize.h5,
+      ),
+    ),
+    buttonNames: const ['Copy'],
+    buttonIcons: const [ThemeIcon.copy],
+    buttonActions: [
+      () async {
+        await Clipboard.setData(ClipboardData(text: did));
+      },
+    ],
+  );
+}
+
+Widget confirmAddressItem(BuildContext context, String address) {
+  return DataItem(
+    title: "Confirm Address",
+    listNum: 1,
+    content: Column(
+      children: [
+        const Spacing(height: AppPadding.bumper),
+        CustomText(
+          textSize: TextSize.md,
+          alignment: TextAlign.left,
+          text: address,
+        ),
+        const Spacing(height: AppPadding.bumper),
+        const CustomText(
+          textSize: TextSize.sm,
+          color: ThemeColor.textSecondary,
+          alignment: TextAlign.left,
+          text: "Bitcoin sent to the wrong address can never be recovered.",
+        ),
+        const Spacing(height: AppPadding.bumper),
+      ],
+    ),
+    buttonNames: const ["Address"],
+    buttonActions: [
+      () {
+        resetNavTo(context, const Send());
+      }
+    ],
+  );
+}
+
+Widget confirmAmountItem(BuildContext context) {
+  return DataItem(
+    title: "Confirm Amount",
+    listNum: 2,
+    content: const Column(
+      children: [
+        Spacing(height: AppPadding.bumper),
+        //transactionTabular()
+        Spacing(height: AppPadding.bumper),
+      ],
+    ),
+    buttonNames: const ["Amount", "Speed"],
+    buttonActions: [
+      () {
+        resetNavTo(context, const SendAmount());
+      },
+      () {
+        resetNavTo(context, const TransactionSpeed());
+      }
+    ],
+  );
+}
+
+Widget confirmRecipientItem(
+    BuildContext context, String recipient, String did) {
+  return DataItem(
+    title: "Confirm contact",
+    listNum: 1,
+    content: Column(
+      children: [
+        const Spacing(height: AppPadding.bumper),
+        contactTabular(
+          context,
+          recipient,
+          did,
+        ),
+        const Spacing(height: AppPadding.bumper),
+        const CustomText(
+          textSize: TextSize.sm,
+          color: ThemeColor.textSecondary,
+          alignment: TextAlign.left,
+          text: "Bitcoin sent to the wrong address can never be recovered.",
+        ),
+        const Spacing(height: AppPadding.bumper),
+      ],
+    ),
+    buttonNames: const ["Recipient"],
+    buttonActions: [
+      () {
+        navigateTo(context, const Send());
+      }
     ],
   );
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/headers/stack_header.dart';
-import 'package:orange/components/list_item/contact_list_item.dart';
-import 'package:orange/components/interfaces/default_interface.dart';
-import 'package:orange/components/content/content.dart';
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/messages_flow/profile_flows/user_profile.dart';
 import 'package:orange/classes/contact_info.dart';
+
+import 'package:orange/components/header.dart';
+import 'package:orange/components/list_item.dart';
+import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/content.dart';
+import 'package:orange/components/custom/custom_text.dart';
+
+import 'package:orange/flows/messages_flow/profile_flows/user_profile.dart';
 
 import 'package:orange/util.dart';
 
@@ -26,7 +28,7 @@ class GroupMessageInfoState extends State<GroupMessageInfo> {
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
-      header: const StackHeader(text: 'Group members'),
+      header: stackHeader(context, 'Group members'),
       content: Content(
         content: Column(
           children: [
@@ -43,11 +45,10 @@ class GroupMessageInfoState extends State<GroupMessageInfo> {
                   physics: const ScrollPhysics(),
                   itemCount: widget.contacts.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return ContactListItem(
-                      onTap: () {
-                        navigateTo(context, const UserProfile());
-                      },
-                      contact: widget.contacts[index],
+                    return contactListItem(
+                      context,
+                      widget.contacts[index],
+                      navigateTo(context, const UserProfile()),
                     );
                   },
                 ),
