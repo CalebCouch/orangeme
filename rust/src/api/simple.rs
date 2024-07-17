@@ -555,23 +555,26 @@ pub async fn rustStart (
     callback1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
 ) -> String {
     let err_catch = tokio::spawn(async move {
-        let mut path = path;
-        path.pop();
+        let mut path = PathBuf::from(&path);
 
         //INIT
         let descriptors = get_descriptors(&callback).await?;
-        let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path))))?;
-        let mut store = SqliteStore::new(PathBuf::from(&format!("{}/STATE/store", path)))?;
+        let wallet_path = path.join("BDK_DATA/database.db");
+        let store_path = path.join("STATE/store");
+        let price_path = path.join("STATE/price");
+        std::fs::create_dir_all(wallet_path.clone())?;
+        let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.clone()))?;
+        let mut store = SqliteStore::new(path.join("STATE").join("store"))?;
         if let Some(old_state) = store.get(b"state")? {
             invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
         }
         store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
         invoke(&callback, "print", "se").await?;
 
-        let path1 = path.clone();
+        let wallet_path1 = wallet_path.clone();
         let descriptors1 = descriptors.clone();
         tokio::spawn(async move {
-            let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path1))))?;
+            let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1))?;
             let blockchain = ElectrumBlockchain::from(Client::new("ssl://electrum.blockstream.info:50002")?);
             let mut init_sync = true;
             loop {
@@ -584,7 +587,7 @@ pub async fn rustStart (
 
         let path2 = path.clone();
         tokio::spawn(async move {
-            let mut db = SqliteStore::new(PathBuf::from(&format!("{}/STATE/price", path2)))?;
+            let mut db = SqliteStore::new(path2.join("STATE").join("price"))?;
             loop {
                 db.set(b"price", &reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?.to_le_bytes())?;
                 thread::sleep(time::Duration::from_millis(600_000));
@@ -592,11 +595,12 @@ pub async fn rustStart (
             Err::<(), Error>(Error::Exited("Current Price Fetch Exited".to_string()))
         });
         let path3 = path.clone();
+        let wallet_path3 = wallet_path.clone();
         let descriptors3 = descriptors.clone();
         tokio::spawn(async move {
-            let mut store = SqliteStore::new(PathBuf::from(&format!("{}/STATE/store", path3)))?;
-            let mut price = SqliteStore::new(PathBuf::from(&format!("{}/STATE/price", path3)))?;
-            let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(Path::new(&format!("{}/BDK/database", path3))))?;
+            let mut store = SqliteStore::new(path3.join("STATE").join("store"))?;
+            let mut price = SqliteStore::new(path3.join("STATE").join("price"))?;
+            let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3))?;
             loop {
                 let wallet_transactions = wallet.list_transactions(true)?;
                 let balance = wallet.get_balance()?;
@@ -655,8 +659,14 @@ pub async fn rustStart (
     });
     match err_catch.await {
         Ok(Ok(())) => "Ok".to_string(),
-        Ok(Err(e)) => format!("Err: {:?}", e),
-        Err(e) => format!("Err: {:?}", e)
+        Ok(Err(e)) => format!("Err: {:#?}", e),
+        Err(e) => match e.try_into_panic() {
+            Ok(panic) => match panic.downcast_ref::<String>() {
+                Some(p) => format!("Err: Panic: {:#?}", p),
+                None => format!("Err: {:#?}", "Cannot convert panic to string")
+            },
+            Err(e) => format!("Err: {:#?}", e)
+        }
     }
 }
 
