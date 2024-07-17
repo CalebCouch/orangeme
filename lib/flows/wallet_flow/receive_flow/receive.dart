@@ -25,14 +25,15 @@ class ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: widget.globalState.state,
-        builder: (BuildContext context, DartState state, Widget? child) {
-          print("rebuild");
-          return build_screen(context, state);
-        });
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        print("rebuild");
+        return buildScreen(context, state);
+      },
+    );
   }
 
-  Widget build_screen(BuildContext context, DartState state) {
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(context, "Receive bitcoin"),
       content: Content(

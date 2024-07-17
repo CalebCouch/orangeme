@@ -9,12 +9,14 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class TransactionSpeed extends StatefulWidget {
+  final GlobalState globalState;
   final double priorityFee;
   final double standardFee;
 
-  const TransactionSpeed(
+  const TransactionSpeed(this.globalState,
       {super.key, this.priorityFee = 3.14, this.standardFee = 5.45});
 
   @override
@@ -28,6 +30,15 @@ class TransactionSpeedState extends State<TransactionSpeed> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -61,7 +72,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
         context,
         "Continue",
         () {
-          navigateTo(context, const ConfirmSend());
+          navigateTo(context, ConfirmSend(widget.globalState));
         },
       ),
     );

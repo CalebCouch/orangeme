@@ -23,6 +23,15 @@ class TransactionDetailsWidget extends StatefulWidget {
 class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     String direction = widget.transaction.isReceive ? "Received" : "Sent";
 
     return DefaultInterface(

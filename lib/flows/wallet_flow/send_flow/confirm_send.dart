@@ -7,10 +7,13 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class ConfirmSend extends StatefulWidget {
   final String recipient;
-  const ConfirmSend({
+  final GlobalState globalState;
+  const ConfirmSend(
+    this.globalState, {
     super.key,
     this.recipient = 'Chris Slaughter',
   });
@@ -25,6 +28,15 @@ class ConfirmState extends State<ConfirmSend> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -49,7 +61,8 @@ class ConfirmState extends State<ConfirmSend> {
         () {
           navigateTo(
             context,
-            const Confirmation(
+            Confirmation(
+              widget.globalState,
               amount: 45.32,
               recipient: 'Chris Slaughter',
             ),

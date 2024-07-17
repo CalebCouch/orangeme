@@ -102,8 +102,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       content: Content(
         content: Column(
           children: [
-            CustomTextInput(
-              controller: contactController,
+            const CustomTextInput(
               hint: 'Profile name...',
             ),
             Container(

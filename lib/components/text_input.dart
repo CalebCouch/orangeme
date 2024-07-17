@@ -5,25 +5,21 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/bumper.dart';
 
 class CustomTextInput extends StatefulWidget {
-  final TextEditingController controller;
   final String hint;
   final String? title;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
-  final bool showNewLine;
+  final bool showIcon;
   final String error;
-  final bool isMessage;
 
   const CustomTextInput({
     super.key,
-    required this.controller,
     this.title,
     this.hint = 'Enter the text here',
     this.onChanged,
     this.onEditingComplete,
-    this.showNewLine = false,
-    this.error = 'error',
-    this.isMessage = false,
+    this.showIcon = false,
+    this.error = '',
   });
 
   @override
@@ -31,25 +27,11 @@ class CustomTextInput extends StatefulWidget {
 }
 
 class CustomTextInputState extends State<CustomTextInput> {
-  late Color borderColor;
-  late Color textColor;
-  late Color errorMessageColor;
-  late String errorMessage;
-  late bool isFocused;
-
-  late FocusNode focusNode;
-
-  @override
-  void initState() {
-    super.initState();
-    borderColor = ThemeColor.outline;
-    textColor = ThemeColor.primary;
-    errorMessageColor = Colors.transparent;
-    errorMessage = '';
-    isFocused = false;
-    focusNode = FocusNode();
-    focusNode.addListener(_onFocusChange);
-  }
+  final TextEditingController controller = TextEditingController();
+  var borderColor = ThemeColor.outline;
+  var textColor = ThemeColor.primary;
+  var isFocused = false;
+  var focusNode = FocusNode();
 
   @override
   void dispose() {
@@ -63,10 +45,7 @@ class CustomTextInputState extends State<CustomTextInput> {
         isFocused = focusNode.hasFocus;
         borderColor = isFocused ? ThemeColor.primary : ThemeColor.outline;
         textColor = ThemeColor.primary;
-        errorMessageColor = Colors.transparent;
-        errorMessage = '';
-
-        if (!isFocused && widget.controller.text.isEmpty) {
+        if (!isFocused && controller.text.isEmpty) {
           borderColor = ThemeColor.outline;
         }
       },
@@ -74,18 +53,18 @@ class CustomTextInputState extends State<CustomTextInput> {
   }
 
   Widget _buildTextField() {
+    focusNode.addListener(_onFocusChange);
+
     return Expanded(
       child: TextField(
+        controller: controller,
         maxLines: null,
-        controller: widget.controller,
         focusNode: focusNode,
         cursorWidth: 2.0,
         cursorColor: ThemeColor.textSecondary,
         style: TextStyle(color: textColor),
         onChanged: widget.onChanged,
-        textInputAction: widget.showNewLine == true
-            ? TextInputAction.newline
-            : TextInputAction.done,
+        textInputAction: TextInputAction.done,
         decoration: InputDecoration(
           hintText: isFocused ? '' : widget.hint,
           hintStyle: const TextStyle(color: ThemeColor.outline),
@@ -102,7 +81,16 @@ class CustomTextInputState extends State<CustomTextInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        widget.title != null ? titleText(widget.title!) : Container(),
+        widget.title != null
+            ? Container(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: CustomText(
+                  text: widget.title!,
+                  textType: 'heading',
+                  textSize: TextSize.h5,
+                ),
+              )
+            : Container(),
         Container(
           width: double.infinity,
           decoration: ShapeDecoration(
@@ -120,43 +108,32 @@ class CustomTextInputState extends State<CustomTextInput> {
             child: Row(
               children: [
                 _buildTextField(),
-                widget.isMessage ? sendButton(context, true) : Container(),
+                widget.showIcon ? sendButton(context, true) : Container(),
               ],
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0),
-          child: CustomText(
-            text: errorMessage,
-            textType: "text",
-            textSize: TextSize.sm,
-            color: ThemeColor.danger,
-          ),
-        ),
+        widget.error != ''
+            ? Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: CustomText(
+                  text: widget.error,
+                  textType: "text",
+                  textSize: TextSize.sm,
+                  color: ThemeColor.danger,
+                ),
+              )
+            : Container(),
       ],
     );
   }
 }
 
-Widget titleText(String text) {
-  return Container(
-    padding: const EdgeInsets.only(bottom: 16),
-    child: CustomText(
-      text: text,
-      textType: 'heading',
-      textSize: TextSize.h5,
-    ),
-  );
-}
-
 Widget messageInput() {
-  final TextEditingController messageController = TextEditingController();
-  return DefaultBumper(
+  return const DefaultBumper(
     content: CustomTextInput(
-      controller: messageController,
       hint: 'Message',
-      isMessage: true,
+      showIcon: true,
     ),
   );
 }

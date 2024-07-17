@@ -53,3 +53,7 @@ String middleCut(String text, int length) {
   var rightPart = text.substring(rightSizeLength);
   return '$leftPart$dotsString$rightPart';
 }
+
+bool isValidAddress() {
+  return true;
+}

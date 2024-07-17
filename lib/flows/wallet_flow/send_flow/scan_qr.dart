@@ -5,9 +5,11 @@ import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/classes.dart';
 
 class ScanQR extends StatefulWidget {
-  const ScanQR({super.key});
+  final GlobalState globalState;
+  const ScanQR(this.globalState, {super.key});
 
   @override
   ScanQRState createState() => ScanQRState();
@@ -16,6 +18,15 @@ class ScanQR extends StatefulWidget {
 class ScanQRState extends State<ScanQR> {
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,

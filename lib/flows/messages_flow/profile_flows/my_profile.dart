@@ -24,8 +24,6 @@ class MyProfile extends StatefulWidget {
 class MyProfileState extends State<MyProfile> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController aboutController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     print("image file = $_image");
@@ -50,14 +48,12 @@ class MyProfileState extends State<MyProfile> {
                 _image,
               ),
               const Spacing(height: AppPadding.profile),
-              CustomTextInput(
-                controller: nameController,
+              const CustomTextInput(
                 title: 'Profile Name',
                 hint: 'Profile name...',
               ),
               const Spacing(height: AppPadding.profile),
-              CustomTextInput(
-                controller: aboutController,
+              const CustomTextInput(
                 title: 'About Me',
                 hint: 'A little bit about me...',
               ),

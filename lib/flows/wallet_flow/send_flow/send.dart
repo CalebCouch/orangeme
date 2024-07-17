@@ -4,7 +4,6 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/default_interface.dart';
 
 import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
-import 'package:orange/flows/wallet_flow/send_flow/choose_send_recipient.dart';
 import 'package:orange/flows/wallet_flow/send_flow/scan_qr.dart';
 
 import 'package:orange/components/content.dart';
@@ -12,21 +11,30 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tip_buttons.dart';
+import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class Send extends StatefulWidget {
-  const Send({super.key});
+  final GlobalState globalState;
+  const Send(this.globalState, {super.key});
 
   @override
   SendState createState() => SendState();
 }
 
 class SendState extends State<Send> {
-  final TextEditingController recipientAddressController =
-      TextEditingController();
-
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -37,22 +45,24 @@ class SendState extends State<Send> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomTextInput(
-              controller: recipientAddressController,
+              error: isValidAddress() ? "" : "Not a valid address",
               hint: 'Bitcoin address...',
             ),
-            threeTips([
-              ButtonTip("pn1Th...a02Cr", ThemeIcon.paste, () {}),
-              ButtonTip(
-                "Scan QR Code",
-                ThemeIcon.qrcode,
-                () => navigateTo(context, const ScanQR()),
-              ),
-              ButtonTip(
-                "Select Contact",
-                ThemeIcon.profile,
-                () => navigateTo(context, const ChooseSendRecipient()),
-              ),
-            ]),
+            const Spacing(height: AppPadding.content),
+            ButtonTip("pn1Th...a02Cr", ThemeIcon.paste, () {}),
+            const Spacing(height: AppPadding.tips),
+            const CustomText(
+              text: 'or',
+              textSize: TextSize.sm,
+              color: ThemeColor.textSecondary,
+            ),
+            const Spacing(height: AppPadding.tips),
+            ButtonTip(
+              "Scan QR Code",
+              ThemeIcon.qrcode,
+              () => navigateTo(context, ScanQR(widget.globalState)),
+            ),
+            const Spacing(height: AppPadding.tips),
           ],
         ),
       ),
@@ -62,7 +72,7 @@ class SendState extends State<Send> {
         () {
           navigateTo(
             context,
-            const SendAmount(),
+            SendAmount(widget.globalState),
           );
         },
       ),
