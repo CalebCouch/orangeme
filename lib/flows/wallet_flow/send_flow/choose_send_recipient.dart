@@ -43,7 +43,7 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
         'Select Recipient',
         true,
         'Next',
-        navigateTo(context, const SendAmount()),
+        () => {navigateTo(context, const SendAmount())},
       ),
       content: Content(
         content: Column(
@@ -53,27 +53,28 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
               hint: 'Profile name...',
             ),
             Expanded(
-              child: contactController.text == ''
+              child: /*contactController.text == ''
                   ? const Center(
                       child: CustomText(
                           text: 'Search by profile name.',
                           textSize: TextSize.md,
                           color: ThemeColor.textSecondary),
                     )
-                  : SingleChildScrollView(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: testContacts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return contactListItem(
-                            context,
-                            testContacts[index],
-                            () {},
-                          );
-                        },
-                      ),
-                    ),
+                  :*/
+                  SingleChildScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount: testContacts.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return contactListItem(
+                      context,
+                      testContacts[index],
+                      () {},
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),

@@ -39,9 +39,7 @@ class ConfirmState extends State<ConfirmSend> {
                 : confirmRecipientItem(context, widget.recipient,
                     'axkcarl8k9oExROL10HTbo01Brsalt'),
             const Spacing(height: AppPadding.bumper),
-            confirmAmountItem(
-              context,
-            ),
+            confirmAmountItem(context, true),
           ],
         ),
       ),

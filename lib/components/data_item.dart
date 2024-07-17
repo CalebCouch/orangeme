@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 
+import 'package:orange/classes.dart';
+
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/tabular.dart';
@@ -126,11 +128,12 @@ Widget one(List<ButtonTip> tipButtons) {
 }
 
 Widget two(List<ButtonTip> tipButtons) {
+  print(tipButtons.length);
   return Row(
     children: [
-      twoTips([tipButtons[0]]),
+      oneTip(tipButtons[0]),
       const Spacing(width: AppPadding.tips),
-      twoTips([tipButtons[1]]),
+      oneTip(tipButtons[1]),
     ],
   );
 }
@@ -222,15 +225,29 @@ Widget confirmAddressItem(BuildContext context, String address) {
   );
 }
 
-Widget confirmAmountItem(BuildContext context) {
+_getTransactionData() {
+  return Transaction(
+    false,
+    '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL',
+    '',
+    5.00,
+    0.0000017,
+    63402.92,
+    2.15,
+    '1/2/23',
+    '2:23PM',
+  );
+}
+
+Widget confirmAmountItem(BuildContext context, speed) {
   return DataItem(
     title: "Confirm Amount",
     listNum: 2,
-    content: const Column(
+    content: Column(
       children: [
-        Spacing(height: AppPadding.bumper),
-        //transactionTabular()
-        Spacing(height: AppPadding.bumper),
+        const Spacing(height: AppPadding.bumper),
+        confirmationTabular(context, _getTransactionData(), speed),
+        const Spacing(height: AppPadding.bumper),
       ],
     ),
     buttonNames: const ["Amount", "Speed"],

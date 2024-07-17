@@ -44,6 +44,7 @@ Widget threeTips(List<ButtonTip> buttonTips) {
 }
 
 Widget twoTips(List<ButtonTip> buttonTips) {
+  print('button tips ${buttonTips.length}');
   return Column(
     children: [
       const Spacing(height: AppPadding.tips),

@@ -80,14 +80,13 @@ class ImageListItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: (left != null) ? left! : Container(),
-              ),
+            Container(
+              alignment: Alignment.centerLeft,
+              child: (left != null) ? left! : Container(),
             ),
+            const Spacing(width: AppPadding.listItem),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (topRight != null) topRight!,
                 if (bottomRight != null) bottomRight!,

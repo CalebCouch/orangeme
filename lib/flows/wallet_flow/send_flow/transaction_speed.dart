@@ -11,7 +11,11 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/util.dart';
 
 class TransactionSpeed extends StatefulWidget {
-  const TransactionSpeed({super.key});
+  final double priorityFee;
+  final double standardFee;
+
+  const TransactionSpeed(
+      {super.key, this.priorityFee = 3.14, this.standardFee = 5.45});
 
   @override
   TransactionSpeedState createState() => TransactionSpeedState();
@@ -20,6 +24,8 @@ class TransactionSpeed extends StatefulWidget {
 class TransactionSpeedState extends State<TransactionSpeed> {
   final TextEditingController recipientAddressController =
       TextEditingController();
+  int index = 0;
+
   @override
   Widget build(BuildContext context) {
     return DefaultInterface(
@@ -27,8 +33,29 @@ class TransactionSpeedState extends State<TransactionSpeed> {
         context,
         "Transaction speed",
       ),
-      content: const Content(
-        content: TransactionSpeedSelector(),
+      content: Content(
+        content: Column(children: <Widget>[
+          radioButton(
+            "Priority",
+            "Arrives in ~30 minutes\n\$${widget.priorityFee} bitcoin network fee",
+            index == 0 ? true : false,
+            () {
+              setState(() {
+                index = 0;
+              });
+            },
+          ),
+          radioButton(
+            "Standard",
+            "Arrives in ~2 hours\n\$${widget.standardFee} bitcoin network fee",
+            index == 1 ? true : false,
+            () {
+              setState(() {
+                index = 1;
+              });
+            },
+          )
+        ]),
       ),
       bumper: singleButtonBumper(
         context,

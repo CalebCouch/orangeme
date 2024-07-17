@@ -7,6 +7,8 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/flows/wallet_flow/home.dart';
+import 'package:orange/util.dart';
 
 class Confirmation extends StatefulWidget {
   final double amount;
@@ -54,7 +56,7 @@ class ConfirmationState extends State<Confirmation> {
       bumper: singleButtonBumper(
         context,
         "Done",
-        () => {}, //resetNavTo(context, const WalletHome()),
+        () {}, //resetNavTo(context, const WalletHome()),
         true,
         ButtonVariant.secondary,
       ),
