@@ -103,7 +103,7 @@ pub struct Transaction {
     pub usd: f64,
     pub btc: f64,
     pub price: f64,
-    pub fee: Option<f64>,
+    pub fee: f64,
     pub date: Option<String>,
     pub time: Option<String>
 }
@@ -128,7 +128,7 @@ impl Transaction {
             txid: serde_json::to_string(&details.txid)?,
             btc: net,
             usd: price * net,
-            fee: details.fee.map(|fee| price * (fee as f64 / 10_000_000.0)),
+            fee: price * (details.fee.ok_or(error())? as f64 / 10_000_000.0),
             price,
             date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
             time: datetime.map(|dt| dt.format("%l:%M %P").to_string()),

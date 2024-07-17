@@ -1929,6 +1929,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "jsonrpc_client"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a0c1ec33c537dc1d5a8b597313db6d213fee54320f81ea0d19b0c3869b282e1a"
+dependencies = [
+ "async-trait",
+ "jsonrpc_client_macro",
+ "reqwest 0.11.27",
+ "serde",
+ "serde_json",
+ "url",
+]
+
+[[package]]
+name = "jsonrpc_client_macro"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97c11e429f0eaa41fe659013680b459d2368d8f0a3e69dccfb7a35800b0dc27b"
+dependencies = [
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "jwtk"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3863,6 +3887,7 @@ dependencies = [
  "ed25519-dalek",
  "hex",
  "jsonrpc-v2",
+ "jsonrpc_client",
  "jwtk",
  "k256",
  "libipld",
@@ -3871,7 +3896,7 @@ dependencies = [
  "p256",
  "rand",
  "regex",
- "reqwest 0.12.5",
+ "reqwest 0.11.27",
  "rusqlite",
  "serde",
  "serde_bencode",

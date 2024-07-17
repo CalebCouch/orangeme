@@ -419,12 +419,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double dco_decode_box_autoadd_f_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
-  }
-
-  @protected
   DartState dco_decode_dart_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -463,12 +457,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double? dco_decode_opt_box_autoadd_f_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_f_64(raw);
-  }
-
-  @protected
   Transaction dco_decode_transaction(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -481,7 +469,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       usd: dco_decode_f_64(arr[3]),
       btc: dco_decode_f_64(arr[4]),
       price: dco_decode_f_64(arr[5]),
-      fee: dco_decode_opt_box_autoadd_f_64(arr[6]),
+      fee: dco_decode_f_64(arr[6]),
       date: dco_decode_opt_String(arr[7]),
       time: dco_decode_opt_String(arr[8]),
     );
@@ -551,12 +539,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double sse_decode_box_autoadd_f_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_f_64(deserializer));
-  }
-
-  @protected
   DartState sse_decode_dart_state(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_currentPrice = sse_decode_f_64(deserializer);
@@ -607,17 +589,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double? sse_decode_opt_box_autoadd_f_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_f_64(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
   Transaction sse_decode_transaction(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_isReceive = sse_decode_bool(deserializer);
@@ -626,7 +597,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_usd = sse_decode_f_64(deserializer);
     var var_btc = sse_decode_f_64(deserializer);
     var var_price = sse_decode_f_64(deserializer);
-    var var_fee = sse_decode_opt_box_autoadd_f_64(deserializer);
+    var var_fee = sse_decode_f_64(deserializer);
     var var_date = sse_decode_opt_String(deserializer);
     var var_time = sse_decode_opt_String(deserializer);
     return Transaction(
@@ -721,12 +692,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_box_autoadd_f_64(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_64(self, serializer);
-  }
-
-  @protected
   void sse_encode_dart_state(DartState self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_f_64(self.currentPrice, serializer);
@@ -770,16 +735,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_box_autoadd_f_64(double? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_f_64(self, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_transaction(Transaction self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_bool(self.isReceive, serializer);
@@ -788,7 +743,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_f_64(self.usd, serializer);
     sse_encode_f_64(self.btc, serializer);
     sse_encode_f_64(self.price, serializer);
-    sse_encode_opt_box_autoadd_f_64(self.fee, serializer);
+    sse_encode_f_64(self.fee, serializer);
     sse_encode_opt_String(self.date, serializer);
     sse_encode_opt_String(self.time, serializer);
   }

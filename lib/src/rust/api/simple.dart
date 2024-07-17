@@ -62,7 +62,7 @@ class Transaction {
   final double usd;
   final double btc;
   final double price;
-  final double? fee;
+  final double fee;
   final String? date;
   final String? time;
 
@@ -73,7 +73,7 @@ class Transaction {
     required this.usd,
     required this.btc,
     required this.price,
-    this.fee,
+    required this.fee,
     this.date,
     this.time,
   });

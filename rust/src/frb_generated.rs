@@ -494,17 +494,6 @@ impl SseDecode for Option<String> {
     }
 }
 
-impl SseDecode for Option<f64> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<f64>::sse_decode(deserializer));
-        } else {
-            return None;
-        }
-    }
-}
-
 impl SseDecode for crate::api::simple::Transaction {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -514,7 +503,7 @@ impl SseDecode for crate::api::simple::Transaction {
         let mut var_usd = <f64>::sse_decode(deserializer);
         let mut var_btc = <f64>::sse_decode(deserializer);
         let mut var_price = <f64>::sse_decode(deserializer);
-        let mut var_fee = <Option<f64>>::sse_decode(deserializer);
+        let mut var_fee = <f64>::sse_decode(deserializer);
         let mut var_date = <Option<String>>::sse_decode(deserializer);
         let mut var_time = <Option<String>>::sse_decode(deserializer);
         return crate::api::simple::Transaction {
@@ -750,16 +739,6 @@ impl SseEncode for Option<String> {
     }
 }
 
-impl SseEncode for Option<f64> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <f64>::sse_encode(value, serializer);
-        }
-    }
-}
-
 impl SseEncode for crate::api::simple::Transaction {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -769,7 +748,7 @@ impl SseEncode for crate::api::simple::Transaction {
         <f64>::sse_encode(self.usd, serializer);
         <f64>::sse_encode(self.btc, serializer);
         <f64>::sse_encode(self.price, serializer);
-        <Option<f64>>::sse_encode(self.fee, serializer);
+        <f64>::sse_encode(self.fee, serializer);
         <Option<String>>::sse_encode(self.date, serializer);
         <Option<String>>::sse_encode(self.time, serializer);
     }

@@ -16,7 +16,7 @@ class Transaction {
   double usd;
   double btc;
   double price;
-  double? fee;
+  double fee;
   String? date;
   String? time;
 
@@ -31,7 +31,7 @@ class Transaction {
       json['usd'] as double,
       json['btc'] as double,
       json['price'] as double,
-      json['fee'] as double?,
+      json['fee'] as double,
       json['date'] as String?,
       json['time'] as String?,
     );
@@ -188,19 +188,5 @@ class RustR {
   Map<String, dynamic> toJson() => {
         'uid': uid,
         'data': data,
-      };
-}
-
-class CreateTransactionInput {
-  final String address;
-  final int sats;
-  final int block_target;
-
-  CreateTransactionInput(this.address, this.sats, this.block_target);
-
-  Map<String, dynamic> toJson() => {
-        'address': address,
-        'sats': sats,
-        'block_target': block_target,
       };
 }
