@@ -194,7 +194,8 @@ Widget didItem(BuildContext context, String did) {
   );
 }
 
-Widget confirmAddressItem(BuildContext context, String address) {
+Widget confirmAddressItem(
+    GlobalState globalState, BuildContext context, String address) {
   return DataItem(
     title: "Confirm Address",
     listNum: 1,
@@ -219,7 +220,7 @@ Widget confirmAddressItem(BuildContext context, String address) {
     buttonNames: const ["Address"],
     buttonActions: [
       () {
-        resetNavTo(context, const Send());
+        resetNavTo(context, Send(globalState));
       }
     ],
   );
@@ -239,7 +240,11 @@ _getTransactionData() {
   );
 }
 
-Widget confirmAmountItem(BuildContext context, speed) {
+Widget confirmAmountItem(
+  GlobalState globalState,
+  BuildContext context,
+  speed,
+) {
   return DataItem(
     title: "Confirm Amount",
     listNum: 2,
@@ -253,17 +258,17 @@ Widget confirmAmountItem(BuildContext context, speed) {
     buttonNames: const ["Amount", "Speed"],
     buttonActions: [
       () {
-        resetNavTo(context, const SendAmount());
+        resetNavTo(context, SendAmount(globalState));
       },
       () {
-        resetNavTo(context, const TransactionSpeed());
+        resetNavTo(context, TransactionSpeed(globalState));
       }
     ],
   );
 }
 
-Widget confirmRecipientItem(
-    BuildContext context, String recipient, String did) {
+Widget confirmRecipientItem(GlobalState globalState, BuildContext context,
+    String recipient, String did) {
   return DataItem(
     title: "Confirm contact",
     listNum: 1,
@@ -288,7 +293,7 @@ Widget confirmRecipientItem(
     buttonNames: const ["Recipient"],
     buttonActions: [
       () {
-        navigateTo(context, const Send());
+        navigateTo(context, Send(globalState));
       }
     ],
   );

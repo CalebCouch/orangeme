@@ -47,11 +47,12 @@ class ConfirmState extends State<ConfirmSend> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             widget.recipient == null
-                ? confirmAddressItem(context, 'at39Oh1dKOrTSla18eaBlaKBR94krl')
-                : confirmRecipientItem(context, widget.recipient,
-                    'axkcarl8k9oExROL10HTbo01Brsalt'),
+                ? confirmAddressItem(widget.globalState, context,
+                    'at39Oh1dKOrTSla18eaBlaKBR94krl')
+                : confirmRecipientItem(widget.globalState, context,
+                    widget.recipient, 'axkcarl8k9oExROL10HTbo01Brsalt'),
             const Spacing(height: AppPadding.bumper),
-            confirmAmountItem(context, true),
+            confirmAmountItem(widget.globalState, context, true),
           ],
         ),
       ),

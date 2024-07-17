@@ -68,10 +68,12 @@ class ConfirmationState extends State<Confirmation> {
       bumper: singleButtonBumper(
         context,
         "Done",
-        resetNavTo(
-          context,
-          WalletHome(widget.globalState),
-        ),
+        () => {
+          resetNavTo(
+            context,
+            WalletHome(widget.globalState),
+          ),
+        },
         true,
         ButtonVariant.secondary,
       ),

@@ -401,13 +401,13 @@ class SendAmountState extends State<SendAmount> {
             ),
             const Spacing(height: AppPadding.content),
             CustomButton(
-              status: (amount != '' && amount != '0'
+              /*status: (amount != '' && amount != '0'
                       ? exceedMaxBalance == true
                           ? false
                           : true
                       : false)
                   ? 1
-                  : 2,
+                  : 2,*/
               variant: ButtonVariant.bitcoin,
               text: "Send",
               onTap: () {
