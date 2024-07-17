@@ -25,14 +25,23 @@ class Send extends StatefulWidget {
 }
 
 class SendState extends State<Send> {
-  Future<void> checkAddress(String setAddress) async {
-    addressValid =
-        (await widget.globalState.invoke("check_address", setAddress)).data ==
-            "true";
+  String addressStr = '';
+  bool addressValid = false;
+
+  Future<void> setAddress(String address) async {
+    var valid = (await widget.globalState.invoke("check_address", address)).data == "true";
+    setState(() {
+        addressStr = address;
+        addressValid = valid;
+    });
   }
 
-  String setAddress = '';
-  bool addressValid = false;
+  @override
+  initState() {
+    setAddress(widget.address ?? "");
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +54,6 @@ class SendState extends State<Send> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    if (widget.address != null) setAddress = widget.address!;
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -56,9 +64,9 @@ class SendState extends State<Send> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomTextInput(
-              address: setAddress,
-              onChanged: (String address) => {checkAddress(address)},
-              error: addressValid || setAddress.isEmpty
+              address: addressStr,
+              onChanged: (String address) => {setAddress(address)},
+              error: addressValid || addressStr.isEmpty
                   ? ""
                   : "Not a valid address",
               hint: 'Bitcoin address...',
@@ -66,7 +74,7 @@ class SendState extends State<Send> {
             const Spacing(height: AppPadding.content),
             ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
               var data = (await getClipBoardData()).toString();
-              setState(() => setAddress = data);
+              setAddress(data);
             }),
             const Spacing(height: AppPadding.tips),
             const CustomText(
