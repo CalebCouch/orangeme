@@ -174,6 +174,7 @@ Widget sendButton(BuildContext context, bool isEnabled) {
       print("send");
     },
     CustomIcon(
+      iconSize: IconSize.md,
       icon: ThemeIcon.send,
       iconColor: isEnabled ? ThemeColor.primary : ThemeColor.textSecondary,
     ),
@@ -186,7 +187,7 @@ Widget backButton(BuildContext context) {
     () {
       Navigator.pop(context);
     },
-    const CustomIcon(icon: ThemeIcon.left),
+    const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
   );
 }
 
@@ -196,7 +197,7 @@ Widget exitButton(BuildContext context, Widget home) {
     () {
       resetNavTo(context, home);
     },
-    const CustomIcon(icon: ThemeIcon.close),
+    const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.close),
   );
 }
 
@@ -204,6 +205,6 @@ Widget infoButton(BuildContext context, contacts) {
   return iconButton(
     context,
     navigateTo(context, GroupMessageInfo(contacts: contacts)),
-    const CustomIcon(icon: ThemeIcon.info),
+    const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
   );
 }

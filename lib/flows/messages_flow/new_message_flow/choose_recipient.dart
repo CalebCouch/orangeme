@@ -73,7 +73,6 @@ class ChooseRecipientState extends State<ChooseRecipient> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController contactController = TextEditingController();
     List<Contact> testContacts = [
       const Contact('Ann', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('James', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
@@ -102,8 +101,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       content: Content(
         content: Column(
           children: [
-            CustomTextInput(
-              controller: contactController,
+            const CustomTextInput(
               hint: 'Profile name...',
             ),
             Container(

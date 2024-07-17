@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 class SingleTab extends StatelessWidget {
   final String title;
@@ -37,61 +38,89 @@ class SingleTab extends StatelessWidget {
 }
 
 Widget transactionTabular(BuildContext context, Transaction tx) {
-  return Column(children: [
-    SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
-    SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
-  ]);
-//    children: [
-//      if (tx.recipient != null)
-//        SingleTab(
-//          title: "Contact",
-//          subtitle: "${transactionDetails.recipient}",
-//        ),
-//      SingleTab(title: "Date", subtitle: transactionDetails.date),
-//      SingleTab(title: "Time", subtitle: transactionDetails.time),
-//      SingleTab(
-//          title: "Sent to Address", subtitle: transactionDetails.address),
-//      SingleTab(
-//        title: "Amount $direction",
-//        subtitle: "${transactionDetails.btcValueSent} BTC",
-//      ),
-//      if (transactionDetails.bitcoinPrice != null)
-//        SingleTab(
-//            title: "Bitcoin Price",
-//            subtitle: "\$${transactionDetails.bitcoinPrice}"),
-//      if (transactionDetails.value != null)
-//        SingleTab(
-//            title: "USD Value $direction",
-//            subtitle: '\$${transactionDetails.value}'),
-//      if (transactionDetails.speed == null && !transactionDetails.isReceived)
-//        const Spacing(height: AppPadding.content),
-//      if (transactionDetails.fee != null && !transactionDetails.isReceived)
-//        SingleTab(
-//          title: "Fee",
-//          subtitle: "\$${transactionDetails.fee}",
-//        ),
-//      if (transactionDetails.value != null &&
-//          transactionDetails.fee != null &&
-//          !transactionDetails.isReceived)
-//        SingleTab(
-//          title: "Total Amount",
-//          subtitle:
-//              "\$${transactionDetails.value! + transactionDetails.fee!}",
-//        ),
-//      if (transactionDetails.speed != null)
-//        SingleTab(
-//          title: "Speed",
-//          subtitle: "${transactionDetails.speed}",
-//        ),
-//    ],
-//  );
+  return Column(
+    children: [
+      /*if (tx.recipient != null)
+      SingleTab(
+        title: "Contact",
+        subtitle: "${tx.recipient}",
+      ),*/
+      SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
+      SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
+      if (tx.sentAddress != null)
+        SingleTab(title: "Sent to Address", subtitle: tx.sentAddress!),
+      if (tx.sentAddress == null)
+        SingleTab(title: "Received from Address", subtitle: tx.txid),
+      if (tx.sentAddress == null)
+        SingleTab(
+          title: "Amount Received",
+          subtitle: "${tx.btc} BTC",
+        ),
+      if (tx.sentAddress != null)
+        SingleTab(
+          title: "Amount Sent",
+          subtitle: "${tx.btc} BTC",
+        ),
+      if (tx.sentAddress != null)
+        SingleTab(title: "Bitcoin Price", subtitle: "\$${tx.price}"),
+      if (tx.sentAddress == null)
+        SingleTab(
+          title: "USD Value Received",
+          subtitle: "${tx.usd} USD",
+        ),
+      if (tx.sentAddress != null)
+        SingleTab(
+          title: "USD Value Sent",
+          subtitle: "${tx.usd} USD",
+        ),
+      if (tx.fee != null && tx.sentAddress != null)
+        const Spacing(height: AppPadding.content),
+      if (tx.fee != null && tx.sentAddress != null)
+        SingleTab(
+          title: "Fee",
+          subtitle: "\$${tx.fee}",
+        ),
+      if (tx.fee != null && tx.sentAddress != null)
+        SingleTab(
+          title: "Total Amount",
+          subtitle: "\$${tx.usd + tx.fee!}",
+        ),
+    ],
+  );
 }
 
 Widget contactTabular(BuildContext context, String name, String did) {
   return Column(
     children: [
       SingleTab(title: "Profile name", subtitle: name),
-      SingleTab(title: "Digital ID", subtitle: did),
+      SingleTab(title: "Digital ID", subtitle: middleCut(did, 20)),
     ],
   );
+}
+
+Widget confirmationTabular(BuildContext context, Transaction tx,
+    [bool speedPriority = true, recipient]) {
+  return Column(children: [
+    if (recipient != null)
+      SingleTab(
+        title: "Contact",
+        subtitle: "${recipient.name}",
+      ),
+    SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
+    SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
+    if (tx.sentAddress != null)
+      SingleTab(
+          title: "Sent to Address",
+          subtitle: transactionCut(tx.sentAddress!, 15)),
+    if (tx.sentAddress != null)
+      SingleTab(
+        title: "Amount Sent",
+        subtitle: "${tx.btc} BTC",
+      ),
+    if (speedPriority == true && tx.sentAddress != null)
+      const SingleTab(
+        title: "Speed",
+        subtitle: "Priority",
+      ),
+  ]);
 }

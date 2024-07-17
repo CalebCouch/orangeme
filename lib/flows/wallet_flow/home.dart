@@ -29,10 +29,11 @@ class _WalletHomeState extends State<WalletHome> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: widget.globalState.state,
-        builder: (BuildContext context, DartState state, Widget? child) {
-          return build_screen(context, state);
-        });
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return build_screen(context, state);
+      },
+    );
   }
 
   Widget transactionListItem(BuildContext context, Transaction transaction) {
@@ -108,7 +109,7 @@ class _WalletHomeState extends State<WalletHome> {
           navigateTo(context, Receive(widget.globalState, address));
         },
         () {
-          navigateTo(context, const Send());
+          navigateTo(context, Send(widget.globalState));
         },
       ),
       navBar: TabNav(globalState: widget.globalState, index: 0),

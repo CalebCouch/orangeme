@@ -6,9 +6,16 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
+import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
+import 'package:orange/components/custom/custom_button.dart';
+
+import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
+
+import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class KeyboardAmountDisplay extends StatefulWidget {
   final String fiatAmount;
@@ -34,7 +41,6 @@ class KeyboardValueDisplayState extends State<KeyboardAmountDisplay>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _shakeAnimation;
-
   @override
   void initState() {
     super.initState();
@@ -220,7 +226,9 @@ class KeyboardValueDisplayState extends State<KeyboardAmountDisplay>
 }
 
 class SendAmount extends StatefulWidget {
-  const SendAmount({
+  final GlobalState globalState;
+  const SendAmount(
+    this.globalState, {
     super.key,
   });
 
@@ -355,7 +363,17 @@ class SendAmountState extends State<SendAmount> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -375,14 +393,29 @@ class SendAmountState extends State<SendAmount> {
           ),
         ),
       ),
-      bumper: keypadBumper(
-        context,
-        _updateAmount,
-        amount != '' && amount != '0'
-            ? exceedMaxBalance == true
-                ? false
-                : true
-            : false,
+      bumper: DefaultBumper(
+        content: Column(
+          children: [
+            NumericKeypad(
+              onNumberPressed: _updateAmount,
+            ),
+            const Spacing(height: AppPadding.content),
+            CustomButton(
+              /*status: (amount != '' && amount != '0'
+                      ? exceedMaxBalance == true
+                          ? false
+                          : true
+                      : false)
+                  ? 1
+                  : 2,*/
+              variant: ButtonVariant.bitcoin,
+              text: "Send",
+              onTap: () {
+                navigateTo(context, TransactionSpeed(widget.globalState));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

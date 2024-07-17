@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 
+import 'package:orange/classes.dart';
+
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/tabular.dart';
@@ -126,11 +128,12 @@ Widget one(List<ButtonTip> tipButtons) {
 }
 
 Widget two(List<ButtonTip> tipButtons) {
+  print(tipButtons.length);
   return Row(
     children: [
-      twoTips([tipButtons[0]]),
+      oneTip(tipButtons[0]),
       const Spacing(width: AppPadding.tips),
-      twoTips([tipButtons[1]]),
+      oneTip(tipButtons[1]),
     ],
   );
 }
@@ -191,7 +194,8 @@ Widget didItem(BuildContext context, String did) {
   );
 }
 
-Widget confirmAddressItem(BuildContext context, String address) {
+Widget confirmAddressItem(
+    GlobalState globalState, BuildContext context, String address) {
   return DataItem(
     title: "Confirm Address",
     listNum: 1,
@@ -216,37 +220,55 @@ Widget confirmAddressItem(BuildContext context, String address) {
     buttonNames: const ["Address"],
     buttonActions: [
       () {
-        resetNavTo(context, const Send());
+        resetNavTo(context, Send(globalState));
       }
     ],
   );
 }
 
-Widget confirmAmountItem(BuildContext context) {
+_getTransactionData() {
+  return Transaction(
+    false,
+    '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL',
+    '',
+    5.00,
+    0.0000017,
+    63402.92,
+    2.15,
+    '1/2/23',
+    '2:23PM',
+  );
+}
+
+Widget confirmAmountItem(
+  GlobalState globalState,
+  BuildContext context,
+  speed,
+) {
   return DataItem(
     title: "Confirm Amount",
     listNum: 2,
-    content: const Column(
+    content: Column(
       children: [
-        Spacing(height: AppPadding.bumper),
-        //transactionTabular()
-        Spacing(height: AppPadding.bumper),
+        const Spacing(height: AppPadding.bumper),
+        confirmationTabular(context, _getTransactionData(), speed),
+        const Spacing(height: AppPadding.bumper),
       ],
     ),
     buttonNames: const ["Amount", "Speed"],
     buttonActions: [
       () {
-        resetNavTo(context, const SendAmount());
+        resetNavTo(context, SendAmount(globalState));
       },
       () {
-        resetNavTo(context, const TransactionSpeed());
+        resetNavTo(context, TransactionSpeed(globalState));
       }
     ],
   );
 }
 
-Widget confirmRecipientItem(
-    BuildContext context, String recipient, String did) {
+Widget confirmRecipientItem(GlobalState globalState, BuildContext context,
+    String recipient, String did) {
   return DataItem(
     title: "Confirm contact",
     listNum: 1,
@@ -271,7 +293,7 @@ Widget confirmRecipientItem(
     buttonNames: const ["Recipient"],
     buttonActions: [
       () {
-        navigateTo(context, const Send());
+        navigateTo(context, Send(globalState));
       }
     ],
   );

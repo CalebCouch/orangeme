@@ -7,11 +7,16 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/flows/wallet_flow/home.dart';
+import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 class Confirmation extends StatefulWidget {
   final double amount;
   final String? recipient;
-  const Confirmation({super.key, required this.amount, this.recipient});
+  final GlobalState globalState;
+  const Confirmation(this.globalState,
+      {super.key, required this.amount, this.recipient});
 
   @override
   ConfirmationState createState() => ConfirmationState();
@@ -23,6 +28,15 @@ class ConfirmationState extends State<Confirmation> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -54,7 +68,12 @@ class ConfirmationState extends State<Confirmation> {
       bumper: singleButtonBumper(
         context,
         "Done",
-        () => {}, //resetNavTo(context, const WalletHome()),
+        () => {
+          resetNavTo(
+            context,
+            WalletHome(widget.globalState),
+          ),
+        },
         true,
         ButtonVariant.secondary,
       ),
