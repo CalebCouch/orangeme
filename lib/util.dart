@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 navigateTo(BuildContext context, Widget widget) {
   Navigator.push(
@@ -54,6 +55,12 @@ String middleCut(String text, int length) {
   return '$leftPart$dotsString$rightPart';
 }
 
-bool isValidAddress() {
+bool isValidAddress(String string) {
   return true;
+}
+
+Future<String?> getClipBoardData() async {
+  ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+  if (data != null) return data.text;
+  return 'null';
 }

@@ -11,6 +11,7 @@ class CustomTextInput extends StatefulWidget {
   final VoidCallback? onEditingComplete;
   final bool showIcon;
   final String error;
+  final String? address;
 
   const CustomTextInput({
     super.key,
@@ -20,6 +21,7 @@ class CustomTextInput extends StatefulWidget {
     this.onEditingComplete,
     this.showIcon = false,
     this.error = '',
+    this.address,
   });
 
   @override
@@ -54,7 +56,9 @@ class CustomTextInputState extends State<CustomTextInput> {
 
   Widget _buildTextField() {
     focusNode.addListener(_onFocusChange);
-
+    if (widget.address != null && widget.address != '') {
+      controller.text = widget.address!;
+    }
     return Expanded(
       child: TextField(
         controller: controller,

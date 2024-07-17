@@ -6,7 +6,9 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 
 class ScanQR extends StatefulWidget {
   final GlobalState globalState;
@@ -56,7 +58,8 @@ class ScanQRState extends State<ScanQR> {
               ),
               child: QRView(
                 key: qrKey,
-                onQRViewCreated: _onQRViewCreated,
+                onQRViewCreated: (QRViewController controller) =>
+                    {_onQRViewCreated(widget.globalState, controller)},
               ),
             ),
             const SizedBox(height: AppPadding.content),
@@ -71,12 +74,10 @@ class ScanQRState extends State<ScanQR> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  _onQRViewCreated(GlobalState globalState, QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        print(scanData.code);
-      });
+      switchPageTo(context, Send(globalState, address: scanData.code));
     });
   }
 }

@@ -17,13 +17,16 @@ import 'package:orange/classes.dart';
 
 class Send extends StatefulWidget {
   final GlobalState globalState;
-  const Send(this.globalState, {super.key});
+  final String? address;
+  const Send(this.globalState, {super.key, this.address});
 
   @override
   SendState createState() => SendState();
 }
 
 class SendState extends State<Send> {
+  String setAddress = '';
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -35,6 +38,7 @@ class SendState extends State<Send> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
+    if (widget.address != null) setAddress = widget.address!;
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -45,11 +49,15 @@ class SendState extends State<Send> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomTextInput(
-              error: isValidAddress() ? "" : "Not a valid address",
+              address: setAddress,
+              error: isValidAddress(setAddress) ? "" : "Not a valid address",
               hint: 'Bitcoin address...',
             ),
             const Spacing(height: AppPadding.content),
-            ButtonTip("pn1Th...a02Cr", ThemeIcon.paste, () {}),
+            ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
+              var data = (await getClipBoardData()).toString();
+              setState(() => setAddress = data);
+            }),
             const Spacing(height: AppPadding.tips),
             const CustomText(
               text: 'or',
@@ -60,7 +68,7 @@ class SendState extends State<Send> {
             ButtonTip(
               "Scan QR Code",
               ThemeIcon.qrcode,
-              () => navigateTo(context, ScanQR(widget.globalState)),
+              () => switchPageTo(context, ScanQR(widget.globalState)),
             ),
             const Spacing(height: AppPadding.tips),
           ],
