@@ -62,7 +62,6 @@ class CustomTextInputState extends State<CustomTextInput> {
     return Expanded(
       child: TextField(
         controller: controller,
-        maxLines: null,
         focusNode: focusNode,
         cursorWidth: 2.0,
         cursorColor: ThemeColor.textSecondary,

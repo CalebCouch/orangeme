@@ -222,7 +222,10 @@ Widget confirmAddressItem(
     buttonNames: const ["Address"],
     buttonActions: [
       () {
-        resetNavTo(context, Send(globalState));
+        resetNavTo(
+          context,
+          Send(globalState),
+        );
       }
     ],
   );
@@ -260,7 +263,7 @@ Widget confirmAmountItem(
     buttonNames: const ["Amount", "Speed"],
     buttonActions: [
       () {
-        resetNavTo(context, SendAmount(globalState));
+        resetNavTo(context, SendAmount(globalState, ''));
       },
       () {
         resetNavTo(context, TransactionSpeed(globalState));

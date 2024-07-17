@@ -29,10 +29,12 @@ class SendState extends State<Send> {
   bool addressValid = false;
 
   Future<void> setAddress(String address) async {
-    var valid = (await widget.globalState.invoke("check_address", address)).data == "true";
+    var valid =
+        (await widget.globalState.invoke("check_address", address)).data ==
+            "true";
     setState(() {
-        addressStr = address;
-        addressValid = valid;
+      addressStr = address;
+      addressValid = valid;
     });
   }
 
@@ -41,7 +43,6 @@ class SendState extends State<Send> {
     setAddress(widget.address ?? "");
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +99,10 @@ class SendState extends State<Send> {
         () {
           navigateTo(
             context,
-            SendAmount(widget.globalState),
+            SendAmount(widget.globalState, addressStr),
           );
         },
+        true, //addressValid ? true : false,
       ),
     );
   }

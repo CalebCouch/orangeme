@@ -128,7 +128,7 @@ class _ButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: widget.status == ButtonStatus._default ? widget.onTap : () {},
       child: Container(
         alignment: widget.expand ? widget.buttonAlignment : null,
         width: widget.expand ? double.infinity : null,

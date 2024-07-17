@@ -64,3 +64,7 @@ Future<String?> getClipBoardData() async {
   if (data != null) return data.text;
   return 'null';
 }
+
+getCurrentBitcoinPrice() {
+  return 63492.13;
+}
