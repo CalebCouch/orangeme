@@ -548,23 +548,30 @@ async fn get_price(prices: &mut SqliteStore, timestamp: u64) -> Result<f64, Erro
     })
 }
 
+use std::process::Command;
+
 pub async fn rustStart (
     path: String,
     callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
     callback3: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
     callback1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
 ) -> String {
+//  invoke(&callback, "print", &Command::new("find")
+//  .arg(".")
+//  .current_dir(PathBuf::from(&path).to_string())
+//  .output()
+//  .expect("failed to execute process").to_string())
     let err_catch = tokio::spawn(async move {
         let mut path = PathBuf::from(&path);
 
         //INIT
         let descriptors = get_descriptors(&callback).await?;
-        let wallet_path = path.join("BDK_DATA/database.db");
+        let wallet_path = path.join("BDK_DATA/wallet");
         let store_path = path.join("STATE/store");
         let price_path = path.join("STATE/price");
         std::fs::create_dir_all(wallet_path.clone())?;
-        let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.clone()))?;
-        let mut store = SqliteStore::new(path.join("STATE").join("store"))?;
+        let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+        let mut store = SqliteStore::new(store_path.clone())?;
         if let Some(old_state) = store.get(b"state")? {
             invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
         }
@@ -574,7 +581,7 @@ pub async fn rustStart (
         let wallet_path1 = wallet_path.clone();
         let descriptors1 = descriptors.clone();
         tokio::spawn(async move {
-            let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1))?;
+            let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1.join("bdk.db")))?;
             let blockchain = ElectrumBlockchain::from(Client::new("ssl://electrum.blockstream.info:50002")?);
             let mut init_sync = true;
             loop {
@@ -586,8 +593,9 @@ pub async fn rustStart (
         });
 
         let path2 = path.clone();
+        let price_path2 = price_path.clone();
         tokio::spawn(async move {
-            let mut db = SqliteStore::new(path2.join("STATE").join("price"))?;
+            let mut db = SqliteStore::new(price_path2)?;
             loop {
                 db.set(b"price", &reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?.to_le_bytes())?;
                 thread::sleep(time::Duration::from_millis(600_000));
@@ -596,10 +604,12 @@ pub async fn rustStart (
         });
         let path3 = path.clone();
         let wallet_path3 = wallet_path.clone();
+        let store_path3 = store_path.clone();
+        let price_path3 = price_path.clone();
         let descriptors3 = descriptors.clone();
         tokio::spawn(async move {
-            let mut store = SqliteStore::new(path3.join("STATE").join("store"))?;
-            let mut price = SqliteStore::new(path3.join("STATE").join("price"))?;
+            let mut store = SqliteStore::new(store_path3)?;
+            let mut price = SqliteStore::new(price_path3)?;
             let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3))?;
             loop {
                 let wallet_transactions = wallet.list_transactions(true)?;
