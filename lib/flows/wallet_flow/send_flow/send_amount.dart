@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'dart:convert';
 import "package:intl/intl.dart";
 import 'package:orange/theme/stylesheet.dart';
 
@@ -34,9 +34,6 @@ class SendAmountState extends State<SendAmount> {
   String amount = "0";
   String error = "";
 
-  final GlobalKey<KeyboardValueDisplayState> _displayKey =
-      GlobalKey<KeyboardValueDisplayState>();
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -48,42 +45,57 @@ class SendAmountState extends State<SendAmount> {
   }
 
   Future<void> next() async {
-    var json = jsonDecode((await invoke("create_transactions", "${amount}|${widget.address}")).data);
-    var transactions = List<Transaction>.from(json.map((tx) => Transaction.fromJson(tx)))
+    var json = jsonDecode((await widget.globalState
+            .invoke("create_transactions", "$amount|${widget.address}"))
+        .data);
+    var transactions =
+        List<Transaction>.from(json.map((tx) => Transaction.fromJson(tx)));
     var min = transactions[2].fee + 1;
     var max = transactions[2].fee - widget.globalState.state.value.usdBalance;
-    if (amount <= min) {
-        setState(() => error = "\$${min} minimum.")
-    } else if (amount >= max) {
-        setState(() => error = "\$${max} maximum.")
+    if (double.parse(amount) <= min) {
+      setState(() => error = "\$$min minimum.");
+    } else if (double.parse(amount) >= max) {
+      setState(() => error = "\$$max maximum.");
     } else {
-        navigateTo(context, TransactionSpeed(transactions, widget.globalState));
+      navigateTo(
+          context,
+          TransactionSpeed(
+            widget.globalState, /*transactions*/
+          ));
     }
   }
 
   void updateAmount(String input) {
-    var updatedAmount = if (input == "backspace") {
-        if (amount.isNotEmpty()) {
-            amount.substring(0, amount.length-1)
-        } else {amount}
-    } else if (input == "." && ) {
-        if (!amount.contains(".")) {
-            amount + "."
-        } else {amount}
+    var updatedAmount;
+    if (input == "backspace") {
+      if (amount.isNotEmpty) {
+        updatedAmount = amount.substring(0, amount.length - 1);
+      } else {
+        updatedAmount = amount;
+      }
+    } else if (input == ".") {
+      if (!amount.contains(".")) {
+        updatedAmount = amount += ".";
+      } else {
+        updatedAmount = amount;
+      }
     } else {
-        if (amount.contains(".") {
-            if (amount.length < 11 && amount.split(".")[1].length < 2) {
-                amount + input
-            } else {amount}
+      if (amount.contains(".")) {
+        if (amount.length < 11 && amount.split(".")[1].length < 2) {
+          updatedAmount = amount + input;
         } else {
-            if (amount.length < 10) {
-                amount + input
-            } else {amount}
+          updatedAmount = amount;
         }
-    };
+      } else {
+        if (amount.length < 10) {
+          updatedAmount = amount + input;
+        } else {
+          updatedAmount = amount;
+        }
+      }
+    }
     setState(() => amount = updatedAmount);
   }
-
 
   Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
@@ -93,7 +105,8 @@ class SendAmountState extends State<SendAmount> {
       ),
       content: Content(
         content: Center(
-          child: keyboardAmountDisplay(amount, error),
+          child:
+              keyboardAmountDisplay(widget.globalState, context, amount, error),
         ),
       ),
       bumper: DefaultBumper(
@@ -104,11 +117,10 @@ class SendAmountState extends State<SendAmount> {
             ),
             const Spacing(height: AppPadding.content),
             CustomButton(
-              status: validAmount ? 0 : 2,
+              status: true ? 0 : 2,
               variant: ButtonVariant.bitcoin,
               text: "Send",
-              onTap: () {
-              },
+              onTap: () {},
             ),
           ],
         ),
@@ -117,87 +129,55 @@ class SendAmountState extends State<SendAmount> {
   }
 }
 
-Widget keyboardAmountDisplay(BuildContext context, String amount, String error) {
-  var btc = widget.globalState.state.value.price / double.parse(amount);
-  var decimals = amount.contains(".") ? amount.split(".")[1].length : 0;
-  var amount = if amount.contains(".") {
-      NumberFormat("#,###", "en_US").format(double.parse(amount))
+Widget keyboardAmountDisplay(
+    GlobalState globalState, BuildContext context, String amt, String error) {
+  var btc = globalState.state.value.currentPrice / double.parse(amt);
+  var decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
+  var amount;
+  if (amt.contains(".")) {
+    amount = NumberFormat("#,###", "en_US").format(double.parse(amount));
   } else {
-      NumberFormat("#,###.##", "en_US").format(double.parse(amount))
-  };
-
-
-  double fontSize = TextSize.title;
-  if (widget.fiatAmount.length > 6) {
-    fontSize = TextSize.h1;
-  }
-  if (widget.fiatAmount.length > 10) {
-    fontSize = TextSize.h2;
+    amount = NumberFormat("#,###.##", "en_US").format(double.parse(amount));
   }
 
-  return AnimatedBuilder(
-    animation: _shakeAnimation,
-    builder: (context, child) {
-      return Transform.translate(
-        offset: Offset(_shakeAnimation.value, 0),
-        child: child,
-      );
-    },
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        AnimatedBuilder(
-          animation: _shakeAnimation,
-          builder: (context, child) {
-            return Transform.translate(
-              offset: Offset(_shakeAnimation.value, 0),
-              child: child,
-            );
-          },
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              children: [
-                CustomText(
-                  text: "\$${formatFiatAmount(widget.fiatAmount)}",
-                  textType: 'heading',
-                  textSize: fontSize,
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      CustomText(
+        textType: 'text',
+        textSize: amt.length > 4
+            ? TextSize.title
+            : amt.length > 7
+                ? TextSize.h1
+                : TextSize.h2,
+        text: amt,
+      ),
+      Row(
+        children: [
+          error != ''
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CustomIcon(
+                      icon: ThemeIcon.error,
+                      iconSize: IconSize.md,
+                      iconColor: ThemeColor.danger,
+                    ),
+                    const SizedBox(width: 8),
+                    CustomText(
+                      text: error,
+                      color: ThemeColor.danger,
+                    ),
+                  ],
+                )
+              : CustomText(
+                  text: "$btc BTC",
+                  color: ThemeColor.textSecondary,
                 ),
-                if (showCents)
-                  CustomText(
-                    text: decimalExtension,
-                    textType: 'heading',
-                    textSize: fontSize,
-                    color: ThemeColor.textSecondary,
-                  )
-              ],
-            ),
-          ),
-        ),
-        if (!widget.exceedMaxBalance)
-          CustomText(
-            text: "${widget.btcAmount.toString()} BTC",
-            color: ThemeColor.textSecondary,
-          ),
-        if (widget.exceedMaxBalance)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CustomIcon(
-                icon: ThemeIcon.error,
-                iconSize: IconSize.md,
-                iconColor: ThemeColor.danger,
-              ),
-              const SizedBox(width: 8),
-              CustomText(
-                text: "\$${widget.maxBalance} maximum",
-                color: ThemeColor.danger,
-              ),
-            ],
-          ),
-      ],
-    ),
+        ],
+      )
+    ],
   );
 }
