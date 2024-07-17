@@ -646,10 +646,9 @@ pub async fn rustStart (
                         Ok(String::from_utf8(store.get(b"new_address")?.ok_or(Error::error("Main", "No new address"))?)?)
                     },
                     "check_address" => {
-                        let result = Address::from_str(&command.data).map(|a|
+                        Ok(Address::from_str(&command.data).map(|a|
                             a.require_network(Network::Bitcoin).is_ok()
-                        ).unwrap_or(false);
-                        Ok(serde_json::to_string(&result)?)
+                        ).unwrap_or(false).to_string())
                     },
                     "break" => {
                         return Err(Error::Exited("Break Requested".to_string()));

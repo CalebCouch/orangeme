@@ -200,6 +200,8 @@ Widget confirmAddressItem(
     title: "Confirm Address",
     listNum: 1,
     content: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Spacing(height: AppPadding.bumper),
         CustomText(

@@ -25,7 +25,14 @@ class Send extends StatefulWidget {
 }
 
 class SendState extends State<Send> {
+  Future<void> checkAddress(String setAddress) async {
+    addressValid =
+        (await widget.globalState.invoke("check_address", setAddress)).data ==
+            "true";
+  }
+
   String setAddress = '';
+  bool addressValid = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +57,10 @@ class SendState extends State<Send> {
           children: [
             CustomTextInput(
               address: setAddress,
-              error: isValidAddress(setAddress) ? "" : "Not a valid address",
+              onChanged: (String address) => {checkAddress(address)},
+              error: addressValid || setAddress.isEmpty
+                  ? ""
+                  : "Not a valid address",
               hint: 'Bitcoin address...',
             ),
             const Spacing(height: AppPadding.content),
