@@ -506,6 +506,7 @@ impl SseDecode for crate::api::simple::Transaction {
         let mut var_fee = <f64>::sse_decode(deserializer);
         let mut var_date = <Option<String>>::sse_decode(deserializer);
         let mut var_time = <Option<String>>::sse_decode(deserializer);
+        let mut var_raw = <Option<String>>::sse_decode(deserializer);
         return crate::api::simple::Transaction {
             isReceive: var_isReceive,
             sentAddress: var_sentAddress,
@@ -516,6 +517,7 @@ impl SseDecode for crate::api::simple::Transaction {
             fee: var_fee,
             date: var_date,
             time: var_time,
+            raw: var_raw,
         };
     }
 }
@@ -629,6 +631,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::simple::Transaction {
             self.fee.into_into_dart().into_dart(),
             self.date.into_into_dart().into_dart(),
             self.time.into_into_dart().into_dart(),
+            self.raw.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -751,6 +754,7 @@ impl SseEncode for crate::api::simple::Transaction {
         <f64>::sse_encode(self.fee, serializer);
         <Option<String>>::sse_encode(self.date, serializer);
         <Option<String>>::sse_encode(self.time, serializer);
+        <Option<String>>::sse_encode(self.raw, serializer);
     }
 }
 

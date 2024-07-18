@@ -46,7 +46,7 @@ class SendAmountState extends State<SendAmount> {
 
   Future<void> next() async {
     var json = jsonDecode((await widget.globalState
-            .invoke("create_transactions", "$amount|${widget.address}"))
+            .invoke("create_transactions", "${amount}|${widget.address}"))
         .data);
     var transactions =
         List<Transaction>.from(json.map((tx) => Transaction.fromJson(tx)));
@@ -140,6 +140,31 @@ Widget keyboardAmountDisplay(
     amount = NumberFormat("#,###.##", "en_US").format(double.parse(amount));
   }
 
+  Widget subText(String error) {
+    if (error.isNotEmpty) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CustomIcon(
+            icon: ThemeIcon.error,
+            iconSize: IconSize.md,
+            iconColor: ThemeColor.danger,
+          ),
+          const SizedBox(width: 8),
+          CustomText(
+            text: error,
+            color: ThemeColor.danger,
+          ),
+        ],
+      );
+    } else {
+      return CustomText(
+        text: "$btc BTC",
+        color: ThemeColor.textSecondary,
+      );
+    }
+  }
+
   return Column(
     mainAxisSize: MainAxisSize.min,
     mainAxisAlignment: MainAxisAlignment.start,
@@ -157,25 +182,7 @@ Widget keyboardAmountDisplay(
       Row(
         children: [
           error != ''
-              ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CustomIcon(
-                      icon: ThemeIcon.error,
-                      iconSize: IconSize.md,
-                      iconColor: ThemeColor.danger,
-                    ),
-                    const SizedBox(width: 8),
-                    CustomText(
-                      text: error,
-                      color: ThemeColor.danger,
-                    ),
-                  ],
-                )
-              : CustomText(
-                  text: "$btc BTC",
-                  color: ThemeColor.textSecondary,
-                ),
+              ? ,
         ],
       )
     ],
