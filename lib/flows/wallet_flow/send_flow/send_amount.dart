@@ -68,7 +68,9 @@ class SendAmountState extends State<SendAmount> {
   void updateAmount(String input) {
     var updatedAmount;
     if (input == "backspace") {
-      if (amount.isNotEmpty) {
+      if (amount.length == 1) {
+        updatedAmount = "0";
+      } else if (amount.isNotEmpty) {
         updatedAmount = amount.substring(0, amount.length - 1);
       } else {
         updatedAmount = amount;
@@ -80,7 +82,9 @@ class SendAmountState extends State<SendAmount> {
         updatedAmount = amount;
       }
     } else {
-      if (amount.contains(".")) {
+      if (amount == "0") {
+        updatedAmount = input;
+      } else if (amount.contains(".")) {
         if (amount.length < 11 && amount.split(".")[1].length < 2) {
           updatedAmount = amount + input;
         } else {
@@ -131,13 +135,18 @@ class SendAmountState extends State<SendAmount> {
 
 Widget keyboardAmountDisplay(
     GlobalState globalState, BuildContext context, String amt, String error) {
-  var btc = globalState.state.value.currentPrice / double.parse(amt);
+  double parsed = double.parse(amt);
+  print("Parsed: $parsed");
+  print("test: ${parsed > 0}");
+  print("test2: ${globalState.state.value.currentPrice}");
+  double btc = parsed > 0 ? (globalState.state.value.currentPrice / parsed) * 100000000 : 0.0;
+  print("BTC: $btc");
   var decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
-  var amount;
+  var usd;
   if (amt.contains(".")) {
-    amount = NumberFormat("#,###", "en_US").format(double.parse(amount));
+    usd = NumberFormat("#,###.##", "en_US").format(parsed);
   } else {
-    amount = NumberFormat("#,###.##", "en_US").format(double.parse(amount));
+    usd = NumberFormat("#,###", "en_US").format(parsed);
   }
 
   Widget subText(String error) {
@@ -177,13 +186,10 @@ Widget keyboardAmountDisplay(
             : amt.length > 7
                 ? TextSize.h1
                 : TextSize.h2,
-        text: amt,
+        text: "\$$usd",
       ),
       Row(
-        children: [
-          error != ''
-              ? ,
-        ],
+        children: [subText(error)]
       )
     ],
   );

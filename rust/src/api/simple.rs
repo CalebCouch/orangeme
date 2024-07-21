@@ -133,6 +133,7 @@ impl Transaction {
             price,
             date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
             time: datetime.map(|dt| dt.format("%l:%M %P").to_string()),
+            raw: None
         })
     }
 }
@@ -598,9 +599,9 @@ pub async fn rustStart (
 
         let price_path2 = price_path.clone();
         tokio::spawn(async move {
-            let mut db = SqliteStore::new(price_path2)?;
+            let mut price = SqliteStore::new(price_path2)?;
             loop {
-                db.set(b"price", &reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?.to_le_bytes())?;
+                price.set(b"price", &reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?.to_le_bytes())?;
                 thread::sleep(time::Duration::from_millis(600_000));
             }
             Err::<(), Error>(Error::Exited("Current Price Fetch Exited".to_string()))
@@ -616,6 +617,7 @@ pub async fn rustStart (
             loop {
                 let wallet_transactions = wallet.list_transactions(true)?;
                 let balance = wallet.get_balance()?;
+                invoke(&callback3, "print", &price.get(b"price")?.is_some().to_string()).await?;
                 let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
                 let btc = balance.get_total() as f64 / 1000_000_000.0;
                 let mut transactions: Vec<Transaction> = Vec::new();

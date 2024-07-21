@@ -242,6 +242,7 @@ _getTransactionData() {
     2.15,
     '1/2/23',
     '2:23PM',
+    null
   );
 }
 

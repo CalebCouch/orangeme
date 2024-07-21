@@ -19,9 +19,10 @@ class Transaction {
   double fee;
   String? date;
   String? time;
+  String? raw;
 
   Transaction(this.isReceive, this.sentAddress, this.txid, this.usd, this.btc,
-      this.price, this.fee, this.date, this.time);
+      this.price, this.fee, this.date, this.time, this.raw);
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
@@ -34,6 +35,7 @@ class Transaction {
       json['fee'] as double,
       json['date'] as String?,
       json['time'] as String?,
+      json['raw'] as String?,
     );
   }
 }
@@ -121,6 +123,7 @@ class GlobalState {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
       case "set_state":
+        print("set_state");
         this.state.value = DartState.fromJson(jsonDecode(command.data));
       case "secure_get":
         return await this.storage.read(key: command.data) ?? "";
@@ -137,6 +140,7 @@ class GlobalState {
         print(dartCommand);
         this.rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
       case "synced":
+        print("synced");
         this.synced = true;
       case var unknown:
         return "Error:UnknownMethod:$unknown";
