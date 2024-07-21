@@ -185,7 +185,7 @@ Widget backButton(BuildContext context) {
   return iconButton(
     context,
     () {
-      Navigator.pop(context);
+      navPop(context);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
   );

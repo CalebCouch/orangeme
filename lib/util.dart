@@ -12,6 +12,12 @@ navigateTo(BuildContext context, Widget widget) {
   );
 }
 
+Future<void> navPop(BuildContext context) async {
+  FocusScope.of(context).unfocus();
+  await new Future.delayed(new Duration(milliseconds: 250));
+  Navigator.pop(context);
+}
+
 switchPageTo(BuildContext context, Widget widget) {
   Navigator.pushReplacement(
     context,

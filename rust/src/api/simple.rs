@@ -49,6 +49,7 @@ use bdk::sled::Tree;
 use bdk::FeeRate;
 
 const STORAGE_SPLIT: &str = "\u{0000}";
+const SATS: f64 = 100_000_000.0;
 
 //INTERNAL
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -115,7 +116,7 @@ impl Transaction {
         let is_send = details.sent > 0;
         let transaction = details.transaction.ok_or(error())?;
         let datetime = details.confirmation_time.map(|ct| Ok::<DateTime<Utc>, Error>(DateTime::from_timestamp(ct.timestamp as i64, 0).ok_or(error())?)).transpose()?;
-        let net = ((details.received as f64)-(details.sent as f64)) / 10_000_000.0;
+        let net = ((details.received as f64)-(details.sent as f64)) / SATS;
         Ok(Transaction{
             isReceive: !is_send,
             sentAddress: if is_send {Some(Address::from_script(
@@ -129,7 +130,7 @@ impl Transaction {
             txid: serde_json::to_string(&details.txid)?,
             btc: net,
             usd: price * net,
-            fee: price * (details.fee.ok_or(error())? as f64 / 10_000_000.0),
+            fee: price * (details.fee.ok_or(error())? as f64 / SATS),
             price,
             date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
             time: datetime.map(|dt| dt.format("%l:%M %P").to_string()),
@@ -613,13 +614,12 @@ pub async fn rustStart (
         tokio::spawn(async move {
             let mut store = SqliteStore::new(store_path3)?;
             let mut price = SqliteStore::new(price_path3)?;
-            let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3))?;
+            let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
             loop {
                 let wallet_transactions = wallet.list_transactions(true)?;
                 let balance = wallet.get_balance()?;
-                invoke(&callback3, "print", &price.get(b"price")?.is_some().to_string()).await?;
                 let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
-                let btc = balance.get_total() as f64 / 1000_000_000.0;
+                let btc = balance.get_total() as f64 / SATS;
                 let mut transactions: Vec<Transaction> = Vec::new();
                 for tx in wallet_transactions {
                     let price = match tx.confirmation_time.as_ref() {
@@ -661,7 +661,7 @@ pub async fn rustStart (
                         let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                         let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
                         let split: Vec<&str> = command.data.split("|").collect();
-                        let amount = (f64::from_str(split.first().ok_or(error())?)? * 100_000_000.0) as u64;
+                        let amount = (f64::from_str(split.first().ok_or(error())?)? * SATS) as u64;
                         let address = Address::from_str(split.get(1).ok_or(error())?)?.require_network(Network::Bitcoin)?;
 
                         let (mut psbt, tx_details) = {
