@@ -103,6 +103,7 @@ Widget messageListItem(BuildContext context, Message message, onTap) {
   bool isGroup = false;
   if (message.contacts.length > 1) isGroup = true;
   return ImageListItem(
+    onTap: onTap,
     left: Container(
       alignment: Alignment.centerLeft,
       child: ProfilePhoto(

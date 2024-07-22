@@ -17,11 +17,7 @@ import 'package:orange/flows/messages_flow/home.dart';
 class TabNav extends StatefulWidget {
   final int index;
   final GlobalState globalState;
-  const TabNav({
-    required this.globalState,
-    required this.index,
-    super.key
-  });
+  const TabNav({required this.globalState, required this.index, super.key});
   @override
   State<TabNav> createState() => TabNavState();
 }
@@ -31,7 +27,7 @@ class TabNavState extends State<TabNav> {
   Widget build(BuildContext context) {
     void openMessages() {
       print("switching to messages");
-      switchPageTo(context, MessagesHome(globalState: widget.globalState));
+      switchPageTo(context, MessagesHome(widget.globalState));
     }
 
     void openWallet() {

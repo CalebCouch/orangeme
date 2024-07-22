@@ -11,9 +11,12 @@ import 'package:orange/components/text_input.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class ChooseRecipient extends StatefulWidget {
-  const ChooseRecipient({
+  final GlobalState globalState;
+  const ChooseRecipient(
+    this.globalState, {
     super.key,
   });
 
@@ -73,6 +76,15 @@ class ChooseRecipientState extends State<ChooseRecipient> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  buildScreen(BuildContext context, DartState state) {
     List<Contact> testContacts = [
       const Contact('Ann', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('James', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
@@ -82,6 +94,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       const Contact('Anthony', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('R. R. B.', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
     ];
+
     return DefaultInterface(
       header: stackButtonHeader(
         context,
@@ -92,6 +105,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
           navigateTo(
             context,
             Conversation(
+              widget.globalState,
               contacts:
                   _getContactsfromRecipientNames(testContacts, recipients),
             ),

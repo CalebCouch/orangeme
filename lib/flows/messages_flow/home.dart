@@ -21,8 +21,8 @@ import 'package:orange/util.dart';
 
 class MessagesHome extends StatefulWidget {
   final GlobalState globalState;
-  const MessagesHome({
-    required this.globalState,
+  const MessagesHome(
+    this.globalState, {
     super.key,
   });
 
@@ -63,13 +63,22 @@ class MessagesHomeState extends State<MessagesHome> {
   ];
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  buildScreen(BuildContext context, DartState dart) {
     return DefaultInterface(
       header: messagesHeader(
         context,
         () {
           navigateTo(
             context,
-            const MyProfile(),
+            MyProfile(widget.globalState),
           );
         },
         null,
@@ -83,8 +92,11 @@ class MessagesHomeState extends State<MessagesHome> {
                     context,
                     testMessages[index],
                     () {
-                      navigateTo(context,
-                          Conversation(contacts: testMessages[index].contacts));
+                      print("nav");
+                      navigateTo(
+                          context,
+                          Conversation(widget.globalState,
+                              contacts: testMessages[index].contacts));
                     },
                   );
                 },
@@ -103,7 +115,7 @@ class MessagesHomeState extends State<MessagesHome> {
         () {
           navigateTo(
             context,
-            const ChooseRecipient(),
+            ChooseRecipient(widget.globalState),
           );
         },
       ),

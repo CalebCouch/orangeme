@@ -14,12 +14,15 @@ import 'package:orange/components/data_item.dart';
 import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class UserProfile extends StatefulWidget {
   final Profile userInfo;
   final String address;
+  final GlobalState globalState;
 
-  const UserProfile({
+  const UserProfile(
+    this.globalState, {
     super.key,
     this.userInfo = const Profile(
       'Chris Slaughter',
@@ -37,6 +40,15 @@ class UserProfile extends StatefulWidget {
 class UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -66,12 +78,13 @@ class UserProfileState extends State<UserProfile> {
         () => navigateTo(
           context,
           Conversation(
+            widget.globalState,
             contacts: [
               Contact(widget.userInfo.name, null, widget.userInfo.did)
             ],
           ),
         ),
-        () => navigateTo(context, const Conversation()),
+        () => navigateTo(context, Conversation(widget.globalState)),
       ),
     );
   }

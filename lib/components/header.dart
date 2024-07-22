@@ -4,6 +4,7 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes.dart';
 
 class DefaultHeader extends StatelessWidget {
   final Widget? left;
@@ -111,7 +112,8 @@ Widget stackHeader(BuildContext context, String text, [iconButton]) {
   );
 }
 
-Widget stackMessageHeader(BuildContext context, List<Contact> contacts) {
+Widget stackMessageHeader(BuildContext context, GlobalState globalState,
+    List<Contact> contacts, Widget info) {
   bool isGroup = false;
   if (contacts.length > 1) isGroup = true;
   return DefaultHeader(
@@ -133,6 +135,6 @@ Widget stackMessageHeader(BuildContext context, List<Contact> contacts) {
         ),
       ],
     ),
-    right: isGroup ? infoButton(context, contacts) : null,
+    right: isGroup ? infoButton(context, globalState, contacts, info) : null,
   );
 }

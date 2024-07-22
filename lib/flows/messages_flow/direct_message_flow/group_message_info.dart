@@ -12,11 +12,14 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/messages_flow/profile_flows/user_profile.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class GroupMessageInfo extends StatefulWidget {
+  final GlobalState globalState;
   final List<Contact> contacts;
-  const GroupMessageInfo({
-    this.contacts = const [Contact('JOHN', null, 'con.r.null...')],
+  const GroupMessageInfo(
+    this.globalState, {
+    this.contacts = const [Contact('JOHN', null, 'con.r.empt...')],
     super.key,
   });
 
@@ -27,6 +30,15 @@ class GroupMessageInfo extends StatefulWidget {
 class GroupMessageInfoState extends State<GroupMessageInfo> {
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(context, 'Group members'),
       content: Content(
@@ -48,7 +60,7 @@ class GroupMessageInfoState extends State<GroupMessageInfo> {
                     return contactListItem(
                       context,
                       widget.contacts[index],
-                      navigateTo(context, const UserProfile()),
+                      navigateTo(context, UserProfile(widget.globalState)),
                     );
                   },
                 ),

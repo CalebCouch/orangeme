@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/messages_flow/direct_message_flow/group_message_info.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/classes/contact_info.dart';
@@ -10,10 +11,13 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/message_bubble.dart';
+import 'package:orange/classes.dart';
 
 class Conversation extends StatefulWidget {
   final List<Contact> contacts;
-  const Conversation({
+  final GlobalState globalState;
+  const Conversation(
+    this.globalState, {
     this.contacts = const [Contact('JOHN', null, 'a938ixOh2R...')],
     super.key,
   });
@@ -45,9 +49,19 @@ class ConversationState extends State<Conversation> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  buildScreen(BuildContext context, DartState state) {
     _getMessages();
     return DefaultInterface(
-      header: stackMessageHeader(context, widget.contacts),
+      header: stackMessageHeader(
+          context, widget.contacts, GroupMessageInfo(widget.globalState)),
       content: Content(
         content: messages.isEmpty
             ? const Center(

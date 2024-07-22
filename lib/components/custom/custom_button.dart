@@ -201,10 +201,12 @@ Widget exitButton(BuildContext context, Widget home) {
   );
 }
 
-Widget infoButton(BuildContext context, contacts) {
+Widget infoButton(BuildContext context, globalState, contacts, widget) {
   return iconButton(
     context,
-    navigateTo(context, GroupMessageInfo(contacts: contacts)),
+    () {
+      navigateTo(context, widget(globalState, contacts));
+    },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
   );
 }
