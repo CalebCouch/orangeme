@@ -247,9 +247,9 @@ _getTransactionData() {
 }
 
 Widget confirmAmountItem(
-  GlobalState globalState,
   BuildContext context,
-  speed,
+  double usd,
+  double fee
 ) {
   return DataItem(
     title: "Confirm Amount",

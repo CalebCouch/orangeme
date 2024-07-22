@@ -38,7 +38,6 @@ class CustomTextInputState extends State<CustomTextInput> {
 
   @override
   void dispose() {
-    FocusScope.of(context).unfocus();
     focusNode.dispose();
     super.dispose();
   }

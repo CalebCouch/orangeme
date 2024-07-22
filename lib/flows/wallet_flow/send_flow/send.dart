@@ -59,6 +59,7 @@ class SendState extends State<Send> {
       header: stackHeader(
         context,
         "Bitcoin address",
+        true
       ),
       content: Content(
         content: Column(
@@ -74,8 +75,8 @@ class SendState extends State<Send> {
             ),
             const Spacing(height: AppPadding.content),
             ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
-              var data = (await getClipBoardData()).toString();
-              setAddress(data);
+              String data = (await getClipBoardData()).toString();
+              if (data != "null") {setAddress(data);}
             }),
             const Spacing(height: AppPadding.tips),
             const CustomText(
@@ -87,7 +88,7 @@ class SendState extends State<Send> {
             ButtonTip(
               "Scan QR Code",
               ThemeIcon.qrcode,
-              () => switchPageTo(context, ScanQR(widget.globalState)),
+              () => switchPageTo(context, ScanQR(widget.globalState), true),
             ),
             const Spacing(height: AppPadding.tips),
           ],
@@ -100,6 +101,7 @@ class SendState extends State<Send> {
           navigateTo(
             context,
             SendAmount(widget.globalState, addressStr),
+            true
           );
         },
         true, //addressValid ? true : false,

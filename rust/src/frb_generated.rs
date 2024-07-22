@@ -443,11 +443,13 @@ impl SseDecode for crate::api::simple::DartState {
         let mut var_usdBalance = <f64>::sse_decode(deserializer);
         let mut var_btcBalance = <f64>::sse_decode(deserializer);
         let mut var_transactions = <Vec<crate::api::simple::Transaction>>::sse_decode(deserializer);
+        let mut var_fees = <Vec<f64>>::sse_decode(deserializer);
         return crate::api::simple::DartState {
             currentPrice: var_currentPrice,
             usdBalance: var_usdBalance,
             btcBalance: var_btcBalance,
             transactions: var_transactions,
+            fees: var_fees,
         };
     }
 }
@@ -456,6 +458,18 @@ impl SseDecode for f64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_f64::<NativeEndian>().unwrap()
+    }
+}
+
+impl SseDecode for Vec<f64> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<f64>::sse_decode(deserializer));
+        }
+        return ans_;
     }
 }
 
@@ -606,6 +620,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::simple::DartState {
             self.usdBalance.into_into_dart().into_dart(),
             self.btcBalance.into_into_dart().into_dart(),
             self.transactions.into_into_dart().into_dart(),
+            self.fees.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -702,6 +717,7 @@ impl SseEncode for crate::api::simple::DartState {
         <f64>::sse_encode(self.usdBalance, serializer);
         <f64>::sse_encode(self.btcBalance, serializer);
         <Vec<crate::api::simple::Transaction>>::sse_encode(self.transactions, serializer);
+        <Vec<f64>>::sse_encode(self.fees, serializer);
     }
 }
 
@@ -709,6 +725,16 @@ impl SseEncode for f64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_f64::<NativeEndian>(self).unwrap();
+    }
+}
+
+impl SseEncode for Vec<f64> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <f64>::sse_encode(item, serializer);
+        }
     }
 }
 

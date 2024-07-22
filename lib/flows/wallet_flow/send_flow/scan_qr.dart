@@ -77,6 +77,7 @@ class ScanQRState extends State<ScanQR> {
   _onQRViewCreated(GlobalState globalState, QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
+      print(scanData.code);
       switchPageTo(context, Send(globalState, address: scanData.code));
     });
   }

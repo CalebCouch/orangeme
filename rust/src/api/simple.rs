@@ -50,6 +50,7 @@ use bdk::FeeRate;
 
 const STORAGE_SPLIT: &str = "\u{0000}";
 const SATS: f64 = 100_000_000.0;
+const VBYTE: f64 = 150.0;
 
 //INTERNAL
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -112,7 +113,8 @@ pub struct Transaction {
 
 impl Transaction {
     fn from_details(details: TransactionDetails, price: f64, isMine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
-        let error = || Error::parse("Transaction", "TransactionDetails");
+        let p = serde_json::to_string(&details)?;
+        let error = || Error::parse("Transaction", &p);
         let is_send = details.sent > 0;
         let transaction = details.transaction.ok_or(error())?;
         let datetime = details.confirmation_time.map(|ct| Ok::<DateTime<Utc>, Error>(DateTime::from_timestamp(ct.timestamp as i64, 0).ok_or(error())?)).transpose()?;
@@ -145,7 +147,8 @@ pub struct DartState {
     pub currentPrice: f64,
     pub usdBalance: f64,
     pub btcBalance: f64,
-    pub transactions: Vec<Transaction>
+    pub transactions: Vec<Transaction>,
+    pub fees: Vec<f64>
 }
 
 async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
@@ -586,9 +589,10 @@ pub async fn rustStart (
 
         let wallet_path1 = wallet_path.clone();
         let descriptors1 = descriptors.clone();
+        let clinet_uri1 = client_uri.clone();
         tokio::spawn(async move {
             let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1.join("bdk.db")))?;
-            let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
+            let blockchain = ElectrumBlockchain::from(Client::new(client_uri1)?);
             let mut init_sync = true;
             loop {
                 wallet.sync(&blockchain, SyncOptions::default())?;
@@ -611,10 +615,12 @@ pub async fn rustStart (
         let store_path3 = store_path.clone();
         let price_path3 = price_path.clone();
         let descriptors3 = descriptors.clone();
+        //let client_uri3 = client_uri.clone();
         tokio::spawn(async move {
             let mut store = SqliteStore::new(store_path3)?;
             let mut price = SqliteStore::new(price_path3)?;
             let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
+            //let blockchain = ElectrumBlockchain::from(Client::new(client_uri3)?);
             loop {
                 let wallet_transactions = wallet.list_transactions(true)?;
                 let balance = wallet.get_balance()?;
@@ -632,7 +638,7 @@ pub async fn rustStart (
                     currentPrice: current_price,
                     btcBalance: btc,
                     usdBalance: current_price * btc,
-                    transactions
+                    transactions,
                 };
                 store.set(b"state", &serde_json::to_vec(&state)?)?;
                 invoke(&callback3, "set_state", &serde_json::to_string(&state)?).await?;
@@ -654,49 +660,43 @@ pub async fn rustStart (
                             a.require_network(Network::Bitcoin).is_ok()
                         ).unwrap_or(false).to_string())
                     },
-                    "create_transactions" => {
-                        let ec = "Main.create_transactions";
+                    "estimate_fee" => {
+                        Ok(serde_json::to_string(&vec![current_price * (blockchain.estimate_fee(1)? * VBYTE), current_price * (blockchain.estimate_fee(3)? * VBYTE)])?)
+                    },
+                    "create_transaction" => {
+                        let ec = "Main.create_transaction";
                         let error = || Error::bad_request(ec, "Invalid parameters");
+
+                        let split: Vec<&str> = command.data.split("|").collect();
+
+                        let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
+                        let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
+                        let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
+
                         let price_error = || Error::not_found(ec, "Cannot get price");
                         let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                         let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-                        let split: Vec<&str> = command.data.split("|").collect();
-                        let amount = (f64::from_str(split.first().ok_or(error())?)? * SATS) as u64;
-                        let address = Address::from_str(split.get(1).ok_or(error())?)?.require_network(Network::Bitcoin)?;
 
-                        let (mut psbt, tx_details) = {
+
+                        let (mut psbt, mut tx_details) = {
                             let mut builder = wallet.build_tx();
                             builder.add_recipient(address.script_pubkey(), amount);
                             builder.fee_rate(FeeRate::from_sat_per_vb(blockchain.estimate_fee(3)? as f32));
                             builder.finish()?
                         };
-                        let mut std_transaction = Transaction::from_details(tx_details, current_price, is_mine)?;
+
                         let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                         if !finalized { return Err(Error::error(ec, "Could not sign std tx"));}
+                        tx_details.transaction = Some(psbt.clone().extract_tx());
 
-                        let mut stream: Vec<u8> = Vec::new();
-                        psbt.clone().extract_tx().consensus_encode(&mut stream)?;
-                        std_transaction.raw = Some(hex::encode(&stream));
-
-                        let (mut psbt, tx_details) = {
-                            let mut builder = wallet.build_tx();
-                            builder.add_recipient(address.script_pubkey(), amount);
-                            builder.fee_rate(FeeRate::from_sat_per_vb(blockchain.estimate_fee(1)? as f32));
-                            builder.finish()?
-                        };
-                        let mut pri_transaction = Transaction::from_details(tx_details, current_price, is_mine)?;
-                        let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-                        if !finalized { return Err(Error::error(ec, "Could not sign pri tx"));}
-
-                        let mut stream: Vec<u8> = Vec::new();
-                        psbt.clone().extract_tx().consensus_encode(&mut stream)?;
-                        pri_transaction.raw = Some(hex::encode(&stream));
-
-                        Ok(serde_json::to_string(&vec![std_transaction, pri_transaction])?)
+                        Ok(serde_json::to_string(&tx_details)?)
                     },
                     "broadcast_transaction" => {
-                        let tx = bdk::bitcoin::Transaction::consensus_decode(&mut hex::decode(&command.data)?.as_slice())?;
-                        client.transaction_broadcast(&tx)?;
+                        let ec = "Main.broadcast_transaction";
+                        let error = || Error::bad_request(ec, "Invalid parameters");
+
+                        let details: Transaction = serde_json::from_str(&command.data)?;
+                        client.transaction_broadcast(&details.transaction.ok_or(error())?)?;
                         Ok("Ok".to_string())
                     },
                     "break" => {

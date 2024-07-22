@@ -44,25 +44,14 @@ class SendAmountState extends State<SendAmount> {
     );
   }
 
-  Future<void> next() async {
-    var json = jsonDecode((await widget.globalState
-            .invoke("create_transactions", "${amount}|${widget.address}"))
-        .data);
-    var transactions =
-        List<Transaction>.from(json.map((tx) => Transaction.fromJson(tx)));
-    var min = transactions[2].fee + 1;
-    var max = transactions[2].fee - widget.globalState.state.value.usdBalance;
-    if (double.parse(amount) <= min) {
-      setState(() => error = "\$$min minimum.");
-    } else if (double.parse(amount) >= max) {
-      setState(() => error = "\$$max maximum.");
-    } else {
-      navigateTo(
-          context,
-          TransactionSpeed(
-            widget.globalState, /*transactions*/
-          ));
-    }
+  Future<void> next(double btc) async {
+    navigateTo(
+      context,
+      TransactionSpeed(
+        widget.globalState, /*transactions*/
+        widget.address,
+        btc
+    ));
   }
 
   void updateAmount(String input) {
@@ -98,10 +87,24 @@ class SendAmountState extends State<SendAmount> {
         }
       }
     }
-    setState(() => amount = updatedAmount);
+    var min = widget.globalState.state.value.fees[0] + 1;
+    var max = widget.globalState.state.value.usdBalance - min;
+    max = max > 0 ? max : 0;
+    var err = "";
+    if (double.parse(amount) <= min) {
+      err = "\$$min minimum.";
+    } else if (double.parse(amount) >= max) {
+      err = "\$$max maximum.";
+    }
+    setState(() {
+        amount = updatedAmount;
+        error = err;
+    });
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
+    double parsed = double.parse(amount);
+    double btc = parsed > 0 ? (parsed / widget.globalState.state.value.currentPrice) : 0.0;
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -110,7 +113,7 @@ class SendAmountState extends State<SendAmount> {
       content: Content(
         content: Center(
           child:
-              keyboardAmountDisplay(widget.globalState, context, amount, error),
+            keyboardAmountDisplay(widget.globalState, context, amount, btc, error),
         ),
       ),
       bumper: DefaultBumper(
@@ -121,10 +124,10 @@ class SendAmountState extends State<SendAmount> {
             ),
             const Spacing(height: AppPadding.content),
             CustomButton(
-              status: true ? 0 : 2,
+              status: error == "" ? 0 : 2,
               variant: ButtonVariant.bitcoin,
               text: "Send",
-              onTap: () {},
+              onTap: () => next(btc),
             ),
           ],
         ),
@@ -134,13 +137,8 @@ class SendAmountState extends State<SendAmount> {
 }
 
 Widget keyboardAmountDisplay(
-    GlobalState globalState, BuildContext context, String amt, String error) {
+    GlobalState globalState, BuildContext context, String amt, double btc, String error) {
   double parsed = double.parse(amt);
-  print("Parsed: $parsed");
-  print("test: ${parsed > 0}");
-  print("test2: ${globalState.state.value.currentPrice}");
-  double btc = parsed > 0 ? (globalState.state.value.currentPrice / parsed) * 100000000 : 0.0;
-  print("BTC: $btc");
   var decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
   var usd;
   if (amt.contains(".")) {
@@ -174,6 +172,8 @@ Widget keyboardAmountDisplay(
     }
   }
 
+  var textSize = amt.length < 4 ? TextSize.title : amt.length < 7 ? TextSize.h1 : TextSize.h2;
+
   return Column(
     mainAxisSize: MainAxisSize.min,
     mainAxisAlignment: MainAxisAlignment.start,
@@ -181,11 +181,7 @@ Widget keyboardAmountDisplay(
     children: [
       CustomText(
         textType: 'text',
-        textSize: amt.length > 4
-            ? TextSize.title
-            : amt.length > 7
-                ? TextSize.h1
-                : TextSize.h2,
+        textSize: textSize,
         text: "\$$usd",
       ),
       Row(

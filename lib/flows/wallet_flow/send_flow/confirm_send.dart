@@ -10,13 +10,13 @@ import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
 class ConfirmSend extends StatefulWidget {
-  final String? recipient;
   final GlobalState globalState;
+  final Transaction transaction;
   const ConfirmSend(
-    this.globalState, {
-    super.key,
-    this.recipient,
-  });
+    this.globalState,
+    this.transaction,
+    {super.key}
+  );
 
   @override
   ConfirmState createState() => ConfirmState();
@@ -46,11 +46,7 @@ class ConfirmState extends State<ConfirmSend> {
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            widget.recipient == null
-                ? confirmAddressItem(widget.globalState, context,
-                    'at39Oh1dKOrTSla18eaBlaKBR94krl')
-                : confirmRecipientItem(widget.globalState, context,
-                    widget.recipient!, 'axkcarl8k9oExROL10HTbo01Brsalt'),
+            confirmAddressItem(widget.globalState, context),
             const Spacing(height: AppPadding.bumper),
             confirmAmountItem(widget.globalState, context, true),
           ],

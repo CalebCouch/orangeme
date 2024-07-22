@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-navigateTo(BuildContext context, Widget widget) {
+Future<void> navigateTo(BuildContext context, Widget widget, [bool delay = false]) async {
+  FocusScope.of(context).unfocus();
+  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
   Navigator.push(
     context,
     PageRouteBuilder(
@@ -12,13 +14,15 @@ navigateTo(BuildContext context, Widget widget) {
   );
 }
 
-Future<void> navPop(BuildContext context) async {
+Future<void> navPop(BuildContext context, [bool delay = false]) async {
   FocusScope.of(context).unfocus();
-  await new Future.delayed(new Duration(milliseconds: 250));
+  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
   Navigator.pop(context);
 }
 
-switchPageTo(BuildContext context, Widget widget) {
+Future<void> switchPageTo(BuildContext context, Widget widget, [bool delay = false]) async {
+  FocusScope.of(context).unfocus();
+  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
   Navigator.pushReplacement(
     context,
     PageRouteBuilder(
@@ -29,7 +33,9 @@ switchPageTo(BuildContext context, Widget widget) {
   );
 }
 
-resetNavTo(BuildContext context, Widget widget) {
+Future<void> resetNavTo(BuildContext context, Widget widget, [bool delay = false]) async {
+  FocusScope.of(context).unfocus();
+  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
   Navigator.pushAndRemoveUntil(
       context,
       PageRouteBuilder(

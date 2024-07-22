@@ -422,13 +422,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DartState dco_decode_dart_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return DartState(
       currentPrice: dco_decode_f_64(arr[0]),
       usdBalance: dco_decode_f_64(arr[1]),
       btcBalance: dco_decode_f_64(arr[2]),
       transactions: dco_decode_list_transaction(arr[3]),
+      fees: dco_decode_list_prim_f_64_strict(arr[4]),
     );
   }
 
@@ -436,6 +437,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   double dco_decode_f_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
+  }
+
+  @protected
+  Float64List dco_decode_list_prim_f_64_strict(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as Float64List;
   }
 
   @protected
@@ -546,17 +553,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_usdBalance = sse_decode_f_64(deserializer);
     var var_btcBalance = sse_decode_f_64(deserializer);
     var var_transactions = sse_decode_list_transaction(deserializer);
+    var var_fees = sse_decode_list_prim_f_64_strict(deserializer);
     return DartState(
         currentPrice: var_currentPrice,
         usdBalance: var_usdBalance,
         btcBalance: var_btcBalance,
-        transactions: var_transactions);
+        transactions: var_transactions,
+        fees: var_fees);
   }
 
   @protected
   double sse_decode_f_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getFloat64();
+  }
+
+  @protected
+  Float64List sse_decode_list_prim_f_64_strict(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var len_ = sse_decode_i_32(deserializer);
+    return deserializer.buffer.getFloat64List(len_);
   }
 
   @protected
@@ -701,12 +717,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_f_64(self.usdBalance, serializer);
     sse_encode_f_64(self.btcBalance, serializer);
     sse_encode_list_transaction(self.transactions, serializer);
+    sse_encode_list_prim_f_64_strict(self.fees, serializer);
   }
 
   @protected
   void sse_encode_f_64(double self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putFloat64(self);
+  }
+
+  @protected
+  void sse_encode_list_prim_f_64_strict(
+      Float64List self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    serializer.buffer.putFloat64List(self);
   }
 
   @protected

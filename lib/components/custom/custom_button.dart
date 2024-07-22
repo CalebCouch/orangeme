@@ -181,11 +181,11 @@ Widget sendButton(BuildContext context, bool isEnabled) {
   );
 }
 
-Widget backButton(BuildContext context) {
+Widget backButton(BuildContext context, [bool delay = false]) {
   return iconButton(
     context,
     () {
-      navPop(context);
+      navPop(context, delay);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
   );

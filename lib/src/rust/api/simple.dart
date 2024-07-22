@@ -26,12 +26,14 @@ class DartState {
   final double usdBalance;
   final double btcBalance;
   final List<Transaction> transactions;
+  final Float64List fees;
 
   const DartState({
     required this.currentPrice,
     required this.usdBalance,
     required this.btcBalance,
     required this.transactions,
+    required this.fees,
   });
 
   static Future<DartState> default_() =>
@@ -42,7 +44,8 @@ class DartState {
       currentPrice.hashCode ^
       usdBalance.hashCode ^
       btcBalance.hashCode ^
-      transactions.hashCode;
+      transactions.hashCode ^
+      fees.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -52,7 +55,8 @@ class DartState {
           currentPrice == other.currentPrice &&
           usdBalance == other.usdBalance &&
           btcBalance == other.btcBalance &&
-          transactions == other.transactions;
+          transactions == other.transactions &&
+          fees == other.fees;
 }
 
 class Transaction {

@@ -10,14 +10,14 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'dart:convert';
 
 class TransactionSpeed extends StatefulWidget {
   final GlobalState globalState;
-  final double priorityFee;
-  final double standardFee;
+  final String address;
+  final double btc;
 
-  const TransactionSpeed(this.globalState,
-      {super.key, this.priorityFee = 3.14, this.standardFee = 5.45});
+  const TransactionSpeed(this.globalState, this.address, this.btc, {super.key});
 
   @override
   TransactionSpeedState createState() => TransactionSpeedState();
@@ -38,7 +38,13 @@ class TransactionSpeedState extends State<TransactionSpeed> {
     );
   }
 
+  Future<void> next() async {
+    Transaction tx = jsonDecode((await widget.globalState.invoke("create_transaction",
+        "${widget.address}|${widget.btc}|${index}")).data);
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
+    var fees = widget.globalState.state.value.fees;
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -47,8 +53,18 @@ class TransactionSpeedState extends State<TransactionSpeed> {
       content: Content(
         content: Column(children: <Widget>[
           radioButton(
+            "Standard",
+            "Arrives in ~2 hours\n\$${fees[1]} bitcoin network fee",
+            index == 1 ? true : false,
+            () {
+              setState(() {
+                index = 1;
+              });
+            },
+          ),
+          radioButton(
             "Priority",
-            "Arrives in ~30 minutes\n\$${widget.priorityFee} bitcoin network fee",
+            "Arrives in ~30 minutes\n\$${fees[0]} bitcoin network fee",
             index == 0 ? true : false,
             () {
               setState(() {
@@ -56,24 +72,13 @@ class TransactionSpeedState extends State<TransactionSpeed> {
               });
             },
           ),
-          radioButton(
-            "Standard",
-            "Arrives in ~2 hours\n\$${widget.standardFee} bitcoin network fee",
-            index == 1 ? true : false,
-            () {
-              setState(() {
-                index = 1;
-              });
-            },
-          )
+
         ]),
       ),
       bumper: singleButtonBumper(
         context,
         "Continue",
-        () {
-          navigateTo(context, ConfirmSend(widget.globalState));
-        },
+        next
       ),
     );
   }
