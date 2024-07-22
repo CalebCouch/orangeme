@@ -98,8 +98,7 @@ Widget contactTabular(BuildContext context, String name, String did) {
   );
 }
 
-Widget confirmationTabular(BuildContext context, Transaction tx,
-    [bool speedPriority = true, recipient]) {
+Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
   return Column(children: [
     if (recipient != null)
       SingleTab(
@@ -117,10 +116,10 @@ Widget confirmationTabular(BuildContext context, Transaction tx,
         title: "Amount Sent",
         subtitle: "${tx.btc} BTC",
       ),
-    if (speedPriority == true && tx.sentAddress != null)
-      const SingleTab(
-        title: "Speed",
-        subtitle: "Priority",
+    if (tx.sentAddress != null)
+      SingleTab(
+        title: "Fee",
+        subtitle: "${tx.fee} USD",
       ),
   ]);
 }

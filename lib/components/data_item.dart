@@ -8,8 +8,6 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/tabular.dart';
 
-import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
-import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
 import 'package:orange/flows/wallet_flow/send_flow/send.dart';
 
 import 'package:orange/util.dart';
@@ -194,83 +192,9 @@ Widget didItem(BuildContext context, String did) {
   );
 }
 
-Widget confirmAddressItem(
-    GlobalState globalState, BuildContext context, String address) {
-  return DataItem(
-    title: "Confirm Address",
-    listNum: 1,
-    content: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Spacing(height: AppPadding.bumper),
-        CustomText(
-          textSize: TextSize.md,
-          alignment: TextAlign.left,
-          text: address,
-        ),
-        const Spacing(height: AppPadding.bumper),
-        const CustomText(
-          textSize: TextSize.sm,
-          color: ThemeColor.textSecondary,
-          alignment: TextAlign.left,
-          text: "Bitcoin sent to the wrong address can never be recovered.",
-        ),
-        const Spacing(height: AppPadding.bumper),
-      ],
-    ),
-    buttonNames: const ["Address"],
-    buttonActions: [
-      () {
-        resetNavTo(
-          context,
-          Send(globalState),
-        );
-      }
-    ],
-  );
-}
-
 _getTransactionData() {
-  return Transaction(
-    false,
-    '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL',
-    '',
-    5.00,
-    0.0000017,
-    63402.92,
-    2.15,
-    '1/2/23',
-    '2:23PM',
-    null
-  );
-}
-
-Widget confirmAmountItem(
-  BuildContext context,
-  double usd,
-  double fee
-) {
-  return DataItem(
-    title: "Confirm Amount",
-    listNum: 2,
-    content: Column(
-      children: [
-        const Spacing(height: AppPadding.bumper),
-        confirmationTabular(context, _getTransactionData(), speed),
-        const Spacing(height: AppPadding.bumper),
-      ],
-    ),
-    buttonNames: const ["Amount", "Speed"],
-    buttonActions: [
-      () {
-        resetNavTo(context, SendAmount(globalState, ''));
-      },
-      () {
-        resetNavTo(context, TransactionSpeed(globalState));
-      }
-    ],
-  );
+  return Transaction(false, '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL', '', 5.00,
+      0.0000017, 63402.92, 2.15, '1/2/23', '2:23PM', null);
 }
 
 Widget confirmRecipientItem(GlobalState globalState, BuildContext context,
