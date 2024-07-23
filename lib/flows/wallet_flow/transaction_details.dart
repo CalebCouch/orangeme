@@ -40,8 +40,9 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
         content: Column(
           children: [
             AmountDisplay(
-                value: widget.transaction.usd,
-                converted: widget.transaction.btc),
+                widget.transaction.usd,
+                widget.transaction.btc
+            ),
             const Spacing(height: AppPadding.content),
             transactionTabular(context, widget.transaction),
           ],

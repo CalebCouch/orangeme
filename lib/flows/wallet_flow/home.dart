@@ -57,7 +57,7 @@ class _WalletHomeState extends State<WalletHome> {
       topRight: CustomText(
         alignment: TextAlign.right,
         textSize: TextSize.md,
-        text: "\$${transaction.usd}",
+        text: "\$${formatValue(transaction.usd)}",
       ),
       bottomRight: const CustomText(
         alignment: TextAlign.right,
@@ -79,8 +79,8 @@ class _WalletHomeState extends State<WalletHome> {
         content: Column(
           children: [
             AmountDisplay(
-              value: state.usdBalance,
-              converted: state.btcBalance,
+              state.usdBalance,
+              state.btcBalance,
             ),
             const Spacing(height: AppPadding.content),
             Expanded(

@@ -467,8 +467,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Transaction dco_decode_transaction(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 10)
-      throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return Transaction(
       isReceive: dco_decode_bool(arr[0]),
       sentAddress: dco_decode_opt_String(arr[1]),
@@ -479,7 +479,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       fee: dco_decode_f_64(arr[6]),
       date: dco_decode_opt_String(arr[7]),
       time: dco_decode_opt_String(arr[8]),
-      raw: dco_decode_opt_String(arr[9]),
     );
   }
 
@@ -617,7 +616,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_fee = sse_decode_f_64(deserializer);
     var var_date = sse_decode_opt_String(deserializer);
     var var_time = sse_decode_opt_String(deserializer);
-    var var_raw = sse_decode_opt_String(deserializer);
     return Transaction(
         isReceive: var_isReceive,
         sentAddress: var_sentAddress,
@@ -627,8 +625,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         price: var_price,
         fee: var_fee,
         date: var_date,
-        time: var_time,
-        raw: var_raw);
+        time: var_time);
   }
 
   @protected
@@ -774,7 +771,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_f_64(self.fee, serializer);
     sse_encode_opt_String(self.date, serializer);
     sse_encode_opt_String(self.time, serializer);
-    sse_encode_opt_String(self.raw, serializer);
   }
 
   @protected

@@ -46,7 +46,6 @@ class DartState {
   double btcBalance;
   List<Transaction> transactions;
   List<double> fees;
-  int v = 0;
 
   DartState(
       this.currentPrice, this.usdBalance, this.btcBalance, this.transactions, this.fees);

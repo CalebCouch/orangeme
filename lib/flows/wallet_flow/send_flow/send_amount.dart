@@ -91,10 +91,10 @@ class SendAmountState extends State<SendAmount> {
     var max = widget.globalState.state.value.usdBalance - min;
     max = max > 0 ? max : 0;
     var err = "";
-    if (double.parse(amount) <= min) {
-      err = "\$$min minimum.";
-    } else if (double.parse(amount) >= max) {
-      err = "\$$max maximum.";
+    if (double.parse(updatedAmount) <= min) {
+      err = "\$${formatValue(min)} minimum.";
+    } else if (double.parse(updatedAmount) >= max) {
+      err = "\$${formatValue(max)} maximum.";
     }
     setState(() {
         amount = updatedAmount;
@@ -124,7 +124,7 @@ class SendAmountState extends State<SendAmount> {
             ),
             const Spacing(height: AppPadding.content),
             CustomButton(
-              status: error == "" ? 0 : 2,
+              status: (amount != "0" && error == "") ? 0 : 2,
               variant: ButtonVariant.bitcoin,
               text: "Send",
               onTap: () => next(btc),
@@ -138,15 +138,8 @@ class SendAmountState extends State<SendAmount> {
 
 Widget keyboardAmountDisplay(
     GlobalState globalState, BuildContext context, String amt, double btc, String error) {
-  double parsed = double.parse(amt);
+  double usd = double.parse(amt);
   var decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
-  var usd;
-  if (amt.contains(".")) {
-    usd = NumberFormat("#,###.##", "en_US").format(parsed);
-  } else {
-    usd = NumberFormat("#,###", "en_US").format(parsed);
-  }
-
   Widget subText(String error) {
     if (error.isNotEmpty) {
       return Row(
@@ -166,13 +159,14 @@ Widget keyboardAmountDisplay(
       );
     } else {
       return CustomText(
-        text: "$btc BTC",
+        text: "${formatValue(btc, 8)} BTC",
         color: ThemeColor.textSecondary,
       );
     }
   }
 
-  var textSize = amt.length < 4 ? TextSize.title : amt.length < 7 ? TextSize.h1 : TextSize.h2;
+  var amt_len = amt.contains(".") ? amt.length-1 : amt.length;
+  var textSize = amt_len < 4 ? TextSize.title : amt_len < 7 ? TextSize.h1 : TextSize.h2;
 
   return Column(
     mainAxisSize: MainAxisSize.min,
@@ -182,7 +176,7 @@ Widget keyboardAmountDisplay(
       CustomText(
         textType: 'text',
         textSize: textSize,
-        text: "\$$usd",
+        text: "\$${formatValue(usd)}",
       ),
       Row(
         children: [subText(error)]

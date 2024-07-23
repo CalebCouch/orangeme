@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
+import 'package:orange/components/content.dart';
+import 'package:orange/components/header.dart';
+import 'package:orange/components/bumper.dart';
+import 'package:orange/components/numeric_keypad.dart';
+import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/custom/custom_icon.dart';
+import 'package:orange/components/custom/custom_button.dart';
 
-class AmountDisplay extends StatefulWidget {
-  final double value;
-  final double converted;
+import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
 
-  const AmountDisplay({
-    super.key,
-    required this.value,
-    required this.converted,
-  });
+import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
-  @override
-  State<AmountDisplay> createState() => _AmountDisplayState();
-}
-
-class _AmountDisplayState extends State<AmountDisplay> {
+Widget AmountDisplay(double value, double converted) {
   String accountBalance = "";
 
   _getValueDisplaySize(double value) {
-    accountBalance = widget.value.toString();
+    accountBalance = value.toString();
     if (accountBalance.length <= 4) {
       //1-4
       return TextSize.title;
@@ -34,27 +32,24 @@ class _AmountDisplayState extends State<AmountDisplay> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
-      child: Column(
-        children: [
-          CustomText(
-            textType: "heading",
-            text: "\$${widget.value}",
-            textSize: _getValueDisplaySize(widget.value),
-            color: ThemeColor.heading,
-          ),
-          const Spacing(height: AppPadding.valueDisplaySep),
-          CustomText(
-            textType: "text",
-            text: "${widget.converted} BTC",
-            textSize: TextSize.lg,
-            color: ThemeColor.textSecondary,
-          ),
-        ],
-      ),
-    );
-  }
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
+    child: Column(
+      children: [
+        CustomText(
+          textType: "heading",
+          text: "\$${formatValue(value)}",
+          textSize: _getValueDisplaySize(value),
+          color: ThemeColor.heading,
+        ),
+        const Spacing(height: AppPadding.valueDisplaySep),
+        CustomText(
+          textType: "text",
+          text: "${formatValue(converted, 8)} BTC",
+          textSize: TextSize.lg,
+          color: ThemeColor.textSecondary,
+        ),
+      ],
+    ),
+  );
 }

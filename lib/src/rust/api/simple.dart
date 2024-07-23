@@ -69,7 +69,6 @@ class Transaction {
   final double fee;
   final String? date;
   final String? time;
-  final String? raw;
 
   const Transaction({
     required this.isReceive,
@@ -81,7 +80,6 @@ class Transaction {
     required this.fee,
     this.date,
     this.time,
-    this.raw,
   });
 
   @override
@@ -94,8 +92,7 @@ class Transaction {
       price.hashCode ^
       fee.hashCode ^
       date.hashCode ^
-      time.hashCode ^
-      raw.hashCode;
+      time.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -110,6 +107,5 @@ class Transaction {
           price == other.price &&
           fee == other.fee &&
           date == other.date &&
-          time == other.time &&
-          raw == other.raw;
+          time == other.time;
 }

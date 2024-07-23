@@ -101,7 +101,7 @@ class ConfirmState extends State<ConfirmSend> {
                 () {
                   resetNavTo(
                     context,
-                    SendAmount(widget.globalState, ''),
+                    SendAmount(widget.globalState, widget.tx.sentAddress!),
                   );
                 },
                 () {
@@ -109,7 +109,7 @@ class ConfirmState extends State<ConfirmSend> {
                     context,
                     TransactionSpeed(
                       widget.globalState,
-                      widget.tx.txid,
+                      widget.tx.sentAddress!,
                       widget.tx.btc,
                     ),
                   );

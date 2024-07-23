@@ -54,17 +54,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
         content: Column(children: <Widget>[
           radioButton(
             "Standard",
-            "Arrives in ~2 hours\n\$${fees[1]} bitcoin network fee",
-            index == 1 ? true : false,
-            () {
-              setState(() {
-                index = 1;
-              });
-            },
-          ),
-          radioButton(
-            "Priority",
-            "Arrives in ~30 minutes\n\$${fees[0]} bitcoin network fee",
+            "Arrives in ~2 hours\n\$${formatValue(fees[0])} bitcoin network fee",
             index == 0 ? true : false,
             () {
               setState(() {
@@ -72,7 +62,16 @@ class TransactionSpeedState extends State<TransactionSpeed> {
               });
             },
           ),
-
+          radioButton(
+            "Priority",
+            "Arrives in ~30 minutes\n\$${formatValue(fees[1])} bitcoin network fee",
+            index == 1 ? true : false,
+            () {
+              setState(() {
+                index = 1;
+              });
+            },
+          ),
         ]),
       ),
       bumper: singleButtonBumper(

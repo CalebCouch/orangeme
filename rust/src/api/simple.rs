@@ -50,7 +50,7 @@ use bdk::FeeRate;
 
 const STORAGE_SPLIT: &str = "\u{0000}";
 const SATS: f64 = 100_000_000.0;
-const VBYTE: f64 = 150.0;
+const KVBYTE: f64 = 0.15;
 
 //INTERNAL
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -107,8 +107,7 @@ pub struct Transaction {
     pub price: f64,
     pub fee: f64,
     pub date: Option<String>,
-    pub time: Option<String>,
-    pub raw: Option<String>
+    pub time: Option<String>
 }
 
 impl Transaction {
@@ -129,14 +128,13 @@ impl Transaction {
                     ).ok_or(error())?,
                 Network::Bitcoin
             )?.to_string())} else {None},
-            txid: serde_json::to_string(&details.txid)?,
+            txid: details.txid.to_string(),
             btc: net,
             usd: price * net,
             fee: price * (details.fee.ok_or(error())? as f64 / SATS),
             price,
             date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
-            time: datetime.map(|dt| dt.format("%l:%M %P").to_string()),
-            raw: None
+            time: datetime.map(|dt| dt.format("%l:%M %P").to_string())
         })
     }
 }
@@ -148,7 +146,7 @@ pub struct DartState {
     pub usdBalance: f64,
     pub btcBalance: f64,
     pub transactions: Vec<Transaction>,
-    pub fees: Vec<f64>
+    pub fees: Vec<f64>,
 }
 
 async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
@@ -582,14 +580,16 @@ pub async fn rustStart (
         let client = Client::new(client_uri)?;
 
         if let Some(old_state) = store.get(b"state")? {
-            invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
+            if serde_json::from_slice::<DartState>(&old_state).is_ok() {
+                invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
+            }
         }
         store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
         invoke(&callback, "print", "se").await?;
 
         let wallet_path1 = wallet_path.clone();
         let descriptors1 = descriptors.clone();
-        let clinet_uri1 = client_uri.clone();
+        let client_uri1 = client_uri.clone();
         tokio::spawn(async move {
             let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1.join("bdk.db")))?;
             let blockchain = ElectrumBlockchain::from(Client::new(client_uri1)?);
@@ -615,12 +615,12 @@ pub async fn rustStart (
         let store_path3 = store_path.clone();
         let price_path3 = price_path.clone();
         let descriptors3 = descriptors.clone();
-        //let client_uri3 = client_uri.clone();
+        let client_uri3 = client_uri.clone();
         tokio::spawn(async move {
             let mut store = SqliteStore::new(store_path3)?;
             let mut price = SqliteStore::new(price_path3)?;
             let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
-            //let blockchain = ElectrumBlockchain::from(Client::new(client_uri3)?);
+            let blockchain = ElectrumBlockchain::from(Client::new(client_uri3)?);
             loop {
                 let wallet_transactions = wallet.list_transactions(true)?;
                 let balance = wallet.get_balance()?;
@@ -634,11 +634,13 @@ pub async fn rustStart (
                     };
                     transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
                 }
+                let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
                 let state = DartState{
                     currentPrice: current_price,
                     btcBalance: btc,
                     usdBalance: current_price * btc,
                     transactions,
+                    fees
                 };
                 store.set(b"state", &serde_json::to_vec(&state)?)?;
                 invoke(&callback3, "set_state", &serde_json::to_string(&state)?).await?;
@@ -659,9 +661,6 @@ pub async fn rustStart (
                         Ok(Address::from_str(&command.data).map(|a|
                             a.require_network(Network::Bitcoin).is_ok()
                         ).unwrap_or(false).to_string())
-                    },
-                    "estimate_fee" => {
-                        Ok(serde_json::to_string(&vec![current_price * (blockchain.estimate_fee(1)? * VBYTE), current_price * (blockchain.estimate_fee(3)? * VBYTE)])?)
                     },
                     "create_transaction" => {
                         let ec = "Main.create_transaction";
@@ -687,7 +686,10 @@ pub async fn rustStart (
 
                         let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                         if !finalized { return Err(Error::error(ec, "Could not sign std tx"));}
-                        tx_details.transaction = Some(psbt.clone().extract_tx());
+
+                        let mut stream: Vec<u8> = Vec::new();
+                        psbt.clone().extract_tx().consensus_encode(&mut stream)?;
+                        store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
 
                         Ok(serde_json::to_string(&tx_details)?)
                     },
@@ -696,7 +698,9 @@ pub async fn rustStart (
                         let error = || Error::bad_request(ec, "Invalid parameters");
 
                         let details: Transaction = serde_json::from_str(&command.data)?;
-                        client.transaction_broadcast(&details.transaction.ok_or(error())?)?;
+                        let stream = store.get(&command.data.as_bytes())?.ok_or(error())?;
+                        let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
+                        client.transaction_broadcast(&tx)?;
                         Ok("Ok".to_string())
                     },
                     "break" => {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import "package:intl/intl.dart";
 
 Future<void> navigateTo(BuildContext context, Widget widget, [bool delay = false]) async {
   FocusScope.of(context).unfocus();
@@ -77,6 +78,11 @@ Future<String?> getClipBoardData() async {
   return 'null';
 }
 
-getCurrentBitcoinPrice() {
-  return 63492.13;
+String formatValue(double val, [int per = 2]) {
+  String val_str = val.toStringAsFixed(per);
+  if ((double.parse(val_str) % 1) > 0) {
+    return val_str;
+  } else {
+    return NumberFormat("#,###", "en_US").format(val);
+  }
 }
