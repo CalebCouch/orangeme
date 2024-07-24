@@ -88,8 +88,7 @@ class SendAmountState extends State<SendAmount> {
       }
     }
 
-    double min = 1;
-    //widget.globalState.state.value.fees[0] + 1;
+    double min = widget.globalState.state.value.fees[0] + 1;
     var max = widget.globalState.state.value.usdBalance - min;
     max = max > 0 ? max : 0;
     var err = "";
@@ -142,7 +141,7 @@ class SendAmountState extends State<SendAmount> {
 
 Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     String amt, double btc, String error) {
-  double usd = double.parse(amt);
+  String usd = amt.toString();
 
   Widget subText(String error) {
     if (error.isNotEmpty) {
@@ -175,16 +174,42 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
       : amt_len < 7
           ? TextSize.h1
           : TextSize.h2;
-  int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
+
+  displayDecimals(amt) {
+    int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
+    print(decimals);
+    String text;
+    if (decimals == 0 && amt.contains(".")) {
+      text = '00';
+    } else if (decimals == 1) {
+      text = '0';
+    } else {
+      text = '';
+    }
+    return CustomText(
+      textType: 'heading',
+      color: ThemeColor.textSecondary,
+      textSize: textSize,
+      text: text,
+    );
+  }
+
   return Column(
     mainAxisSize: MainAxisSize.min,
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
-      CustomText(
-        textType: 'heading',
-        textSize: TextSize.h1,
-        text: "\$$usd",
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CustomText(
+            textType: 'heading',
+            textSize: TextSize.title,
+            text: "\$$usd",
+          ),
+          displayDecimals(usd)
+        ],
       ),
       subText(error)
     ],
