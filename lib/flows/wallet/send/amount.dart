@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import "package:intl/intl.dart";
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/content.dart';
@@ -132,7 +130,7 @@ class SendAmountState extends State<SendAmount> {
               status: (amount != "0" && error == "") ? 0 : 2,
               variant: ButtonVariant.bitcoin,
               text: "Send",
-              onTap: () => next(btc),
+              onTap: () => next(0.00015), //change to btc
             ),
           ],
         ),

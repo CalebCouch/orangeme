@@ -98,7 +98,7 @@ class SendState extends State<Send> {
         () {
           navigateTo(context, SendAmount(widget.globalState, addressStr), true);
         },
-        true, //addressValid ? true : false,
+        addressValid ? true : false,
       ),
     );
   }

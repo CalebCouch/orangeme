@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/radio_selectors.dart';
 
-import 'package:orange/flows/wallet/send/confirm_send.dart';
-
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';

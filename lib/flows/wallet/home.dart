@@ -87,6 +87,7 @@ class _WalletHomeState extends State<WalletHome> {
               child: SingleChildScrollView(
                 child: ListView.builder(
                   shrinkWrap: true,
+                  reverse: true,
                   physics: const ScrollPhysics(),
                   itemCount: state.transactions.length,
                   itemBuilder: (BuildContext context, int index) {
