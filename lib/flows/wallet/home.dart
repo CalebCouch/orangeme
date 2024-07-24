@@ -57,7 +57,7 @@ class _WalletHomeState extends State<WalletHome> {
       topRight: CustomText(
         alignment: TextAlign.right,
         textSize: TextSize.md,
-        text: "\$${formatValue(transaction.usd)}",
+        text: "\$${formatValue((transaction.usd).abs())}",
       ),
       bottomRight: const CustomText(
         alignment: TextAlign.right,
@@ -70,6 +70,11 @@ class _WalletHomeState extends State<WalletHome> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
+    var textSize = formatValue(state.usdBalance).length <= 4
+        ? TextSize.title
+        : formatValue(state.usdBalance).length <= 7
+            ? TextSize.h1
+            : TextSize.h2;
     return DefaultInterface(
       header: primaryHeader(
         context,
@@ -78,9 +83,27 @@ class _WalletHomeState extends State<WalletHome> {
       content: Content(
         content: Column(
           children: [
-            AmountDisplay(
-              state.usdBalance,
-              state.btcBalance,
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomText(
+                    textType: "heading",
+                    text: "\$${formatValue(state.usdBalance)}",
+                    textSize: textSize,
+                    color: ThemeColor.heading,
+                  ),
+                  const Spacing(height: AppPadding.valueDisplaySep),
+                  CustomText(
+                    textType: "text",
+                    text: "${formatValue(state.btcBalance, 8)} BTC",
+                    textSize: TextSize.lg,
+                    color: ThemeColor.textSecondary,
+                  ),
+                ],
+              ),
             ),
             const Spacing(height: AppPadding.content),
             Expanded(

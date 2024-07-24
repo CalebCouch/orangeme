@@ -57,35 +57,36 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
       if (tx.sentAddress == null)
         SingleTab(
           title: "Amount Received",
-          subtitle: "${tx.btc} BTC",
+          subtitle: "${(tx.btc).abs()} BTC",
         ),
       if (tx.sentAddress != null)
         SingleTab(
           title: "Amount Sent",
-          subtitle: "${tx.btc} BTC",
+          subtitle: "${(tx.btc).abs()} BTC",
         ),
       if (tx.sentAddress != null)
-        SingleTab(title: "Bitcoin Price", subtitle: "\$${tx.price}"),
+        SingleTab(
+            title: "Bitcoin Price", subtitle: "\$${formatValue(tx.price)}"),
       if (tx.sentAddress == null)
         SingleTab(
           title: "USD Value Received",
-          subtitle: "${tx.usd} USD",
+          subtitle: "${formatValue(tx.usd)} USD",
         ),
       if (tx.sentAddress != null)
         SingleTab(
           title: "USD Value Sent",
-          subtitle: "${(tx.usd).abs()} USD",
+          subtitle: "${formatValue(tx.usd.abs())} USD",
         ),
       if (tx.sentAddress != null) const Spacing(height: AppPadding.content),
       if (tx.sentAddress != null)
         SingleTab(
           title: "Fee",
-          subtitle: "\$${tx.fee}",
+          subtitle: "\$${formatValue(tx.fee)}",
         ),
       if (tx.sentAddress != null)
         SingleTab(
           title: "Total Amount",
-          subtitle: "\$${tx.usd + tx.fee}",
+          subtitle: "\$${formatValue(tx.usd + tx.fee)}",
         ),
     ],
   );
@@ -120,7 +121,7 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
     if (tx.sentAddress != null)
       SingleTab(
         title: "Fee",
-        subtitle: "${tx.fee} USD",
+        subtitle: "\$${formatValue(tx.fee)} USD",
       ),
   ]);
 }

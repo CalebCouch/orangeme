@@ -68,6 +68,16 @@ String transactionCut(String text) {
   return '$leftPart$dotsString$rightPart';
 }
 
+String transactionCutConfirmation(String text) {
+  const numberOfDots = 3;
+  var dotsString = List<String>.filled(numberOfDots, '.').join();
+  var leftSizeLengh = 12;
+  var rightSizeLength = text.length - 4;
+  var leftPart = text.substring(0, leftSizeLengh);
+  var rightPart = text.substring(rightSizeLength);
+  return '$leftPart$dotsString$rightPart';
+}
+
 String middleCut(String text, int length) {
   const numberOfDots = 3;
   var dotsString = List<String>.filled(numberOfDots, '.').join();

@@ -166,10 +166,9 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     }
   }
 
-  var amt_len = amt.contains(".") ? amt.length - 1 : amt.length;
-  var textSize = amt_len < 4
+  var textSize = formatValue(double.parse(usd)).length <= 4
       ? TextSize.title
-      : amt_len < 7
+      : formatValue(double.parse(usd)).length <= 7
           ? TextSize.h1
           : TextSize.h2;
 
@@ -191,6 +190,20 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     );
   }
 
+  String valueUSD = '0';
+  var x;
+  if (usd.contains('.')) x = usd.split(".")[1];
+
+  if (usd.contains('.') && x.isEmpty) {
+    valueUSD = formatValue(double.parse(usd));
+    valueUSD += '.';
+  } else if (usd.contains('.') && x.isNotEmpty) {
+    valueUSD = formatValue(double.parse(usd.split('.')[0]));
+    valueUSD += '.$x';
+  } else {
+    valueUSD = formatValue(double.parse(usd));
+  }
+
   return Column(
     mainAxisSize: MainAxisSize.min,
     mainAxisAlignment: MainAxisAlignment.start,
@@ -202,8 +215,8 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
         children: [
           CustomText(
             textType: 'heading',
-            textSize: TextSize.title,
-            text: "\$$usd",
+            textSize: textSize,
+            text: "\$$valueUSD",
           ),
           displayDecimals(usd)
         ],
