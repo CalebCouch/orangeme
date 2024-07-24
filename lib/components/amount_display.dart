@@ -35,6 +35,7 @@ Widget AmountDisplay(double value, double converted) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CustomText(
           textType: "heading",
