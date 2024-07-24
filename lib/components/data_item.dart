@@ -126,7 +126,6 @@ Widget one(List<ButtonTip> tipButtons) {
 }
 
 Widget two(List<ButtonTip> tipButtons) {
-  print(tipButtons.length);
   return Row(
     children: [
       oneTip(tipButtons[0]),

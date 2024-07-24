@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
 
-Future<void> navigateTo(BuildContext context, Widget widget, [bool delay = false]) async {
+Future<void> navigateTo(BuildContext context, Widget widget,
+    [bool delay = false]) async {
   FocusScope.of(context).unfocus();
-  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
+  if (delay) {
+    await new Future.delayed(new Duration(milliseconds: 250));
+  }
   Navigator.push(
     context,
     PageRouteBuilder(
@@ -17,13 +20,18 @@ Future<void> navigateTo(BuildContext context, Widget widget, [bool delay = false
 
 Future<void> navPop(BuildContext context, [bool delay = false]) async {
   FocusScope.of(context).unfocus();
-  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
+  if (delay) {
+    await new Future.delayed(new Duration(milliseconds: 250));
+  }
   Navigator.pop(context);
 }
 
-Future<void> switchPageTo(BuildContext context, Widget widget, [bool delay = false]) async {
+Future<void> switchPageTo(BuildContext context, Widget widget,
+    [bool delay = false]) async {
   FocusScope.of(context).unfocus();
-  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
+  if (delay) {
+    await new Future.delayed(new Duration(milliseconds: 250));
+  }
   Navigator.pushReplacement(
     context,
     PageRouteBuilder(
@@ -34,9 +42,12 @@ Future<void> switchPageTo(BuildContext context, Widget widget, [bool delay = fal
   );
 }
 
-Future<void> resetNavTo(BuildContext context, Widget widget, [bool delay = false]) async {
+Future<void> resetNavTo(BuildContext context, Widget widget,
+    [bool delay = false]) async {
   FocusScope.of(context).unfocus();
-  if (delay) {await new Future.delayed(new Duration(milliseconds: 250));}
+  if (delay) {
+    await new Future.delayed(new Duration(milliseconds: 250));
+  }
   Navigator.pushAndRemoveUntil(
       context,
       PageRouteBuilder(
@@ -47,7 +58,7 @@ Future<void> resetNavTo(BuildContext context, Widget widget, [bool delay = false
       (route) => false);
 }
 
-String transactionCut(String text, int length) {
+String transactionCut(String text) {
   const numberOfDots = 3;
   var dotsString = List<String>.filled(numberOfDots, '.').join();
   var leftSizeLengh = 9;

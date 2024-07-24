@@ -63,7 +63,6 @@ class SendAmountState extends State<SendAmount> {
         updatedAmount = amount;
       }
     } else if (input == ".") {
-      print(".");
       if (!amount.contains(".")) {
         updatedAmount = amount += ".";
       } else {
@@ -97,7 +96,6 @@ class SendAmountState extends State<SendAmount> {
       err = "\$${formatValue(max)} maximum.";
     }
     setState(() {
-      print("setstate $updatedAmount");
       amount = updatedAmount;
       error = err;
     });
@@ -177,7 +175,6 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
 
   displayDecimals(amt) {
     int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
-    print(decimals);
     String text;
     if (decimals == 0 && amt.contains(".")) {
       text = '00';

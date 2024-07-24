@@ -41,6 +41,11 @@ class ConfirmState extends State<ConfirmSend> {
     );
   }
 
+  Future<void> next() async {
+    await widget.globalState.invoke("broadcast_transaction", widget.tx.txid);
+    navigateTo(context, Confirmation(widget.globalState, widget.tx.usd));
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
@@ -81,7 +86,10 @@ class ConfirmState extends State<ConfirmSend> {
                       () {
                         resetNavTo(
                           context,
-                          Send(widget.globalState),
+                          Send(
+                            widget.globalState,
+                            address: widget.tx.sentAddress,
+                          ),
                         );
                       }
                     ],
@@ -119,19 +127,7 @@ class ConfirmState extends State<ConfirmSend> {
           ],
         ),
       ),
-      bumper: singleButtonBumper(
-        context,
-        "Confirm & Send",
-        () {
-          navigateTo(
-            context,
-            Confirmation(
-              widget.globalState,
-              amount: 45.32,
-            ),
-          );
-        },
-      ),
+      bumper: singleButtonBumper(context, "Confirm & Send", next),
     );
   }
 }

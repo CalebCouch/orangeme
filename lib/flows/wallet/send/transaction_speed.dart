@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/radio_selectors.dart';
+import 'package:orange/flows/wallet/send/confirm_send.dart';
 
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
@@ -37,9 +38,11 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   }
 
   Future<void> next() async {
-    Transaction tx = jsonDecode((await widget.globalState.invoke(
-            "create_transaction", "${widget.address}|${widget.btc}|${index}"))
-        .data);
+    Transaction tx = Transaction.fromJson(jsonDecode((await widget.globalState
+            .invoke("create_transaction",
+                "${widget.address}|${widget.btc}|${index}"))
+        .data));
+    navigateTo(context, ConfirmSend(widget.globalState, tx));
   }
 
   Widget buildScreen(BuildContext context, DartState state) {

@@ -13,10 +13,8 @@ import 'package:orange/util.dart';
 
 class Confirmation extends StatefulWidget {
   final double amount;
-  final String? recipient;
   final GlobalState globalState;
-  const Confirmation(this.globalState,
-      {super.key, required this.amount, this.recipient});
+  const Confirmation(this.globalState, this.amount, {super.key});
 
   @override
   ConfirmationState createState() => ConfirmationState();
@@ -41,6 +39,8 @@ class ConfirmationState extends State<Confirmation> {
       header: stackHeader(
         context,
         "Confirm send",
+        false,
+        exitButton(context, WalletHome(widget.globalState)),
       ),
       content: Content(
         content: Column(
@@ -53,15 +53,10 @@ class ConfirmationState extends State<Confirmation> {
               iconSize: 128,
             ),
             const Spacing(height: AppPadding.bumper),
-            widget.recipient != null
-                ? CustomText(
-                    text: "You sent \$${widget.amount} to\n${widget.recipient}",
-                    textType: 'heading',
-                  )
-                : CustomText(
-                    text: "You sent \$${widget.amount}",
-                    textType: 'heading',
-                  ),
+            CustomText(
+              text: "You sent \$${(widget.amount).abs()}",
+              textType: 'heading',
+            ),
           ],
         ),
       ),

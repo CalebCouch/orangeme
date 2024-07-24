@@ -48,9 +48,12 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
       SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
       SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
       if (tx.sentAddress != null)
-        SingleTab(title: "Sent to Address", subtitle: tx.sentAddress!),
+        SingleTab(
+            title: "Sent to Address",
+            subtitle: transactionCut(tx.sentAddress!)),
       if (tx.sentAddress == null)
-        SingleTab(title: "Received from Address", subtitle: tx.txid),
+        SingleTab(
+            title: "Received from Address", subtitle: transactionCut(tx.txid)),
       if (tx.sentAddress == null)
         SingleTab(
           title: "Amount Received",
@@ -71,19 +74,18 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
       if (tx.sentAddress != null)
         SingleTab(
           title: "USD Value Sent",
-          subtitle: "${tx.usd} USD",
+          subtitle: "${(tx.usd).abs()} USD",
         ),
-      if (tx.fee != null && tx.sentAddress != null)
-        const Spacing(height: AppPadding.content),
-      if (tx.fee != null && tx.sentAddress != null)
+      if (tx.sentAddress != null) const Spacing(height: AppPadding.content),
+      if (tx.sentAddress != null)
         SingleTab(
           title: "Fee",
           subtitle: "\$${tx.fee}",
         ),
-      if (tx.fee != null && tx.sentAddress != null)
+      if (tx.sentAddress != null)
         SingleTab(
           title: "Total Amount",
-          subtitle: "\$${tx.usd + tx.fee!}",
+          subtitle: "\$${tx.usd + tx.fee}",
         ),
     ],
   );
@@ -109,8 +111,7 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
     SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
     if (tx.sentAddress != null)
       SingleTab(
-          title: "Sent to Address",
-          subtitle: transactionCut(tx.sentAddress!, 15)),
+          title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
     if (tx.sentAddress != null)
       SingleTab(
         title: "Amount Sent",
