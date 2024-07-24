@@ -39,8 +39,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   }
 
   Future<void> next() async {
-    Transaction tx = jsonDecode((await widget.globalState.invoke("create_transaction",
-        "${widget.address}|${widget.btc}|${index}")).data);
+    Transaction tx = Transaction.fromJson(jsonDecode((await widget.globalState.invoke("create_transaction", "${widget.address}|${widget.btc}|${index}")).data));
   }
 
   Widget buildScreen(BuildContext context, DartState state) {

@@ -104,7 +104,7 @@ class SendState extends State<Send> {
             true
           );
         },
-        true, //addressValid ? true : false,
+        addressValid,
       ),
     );
   }
