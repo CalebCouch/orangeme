@@ -10,10 +10,10 @@ import 'package:orange/components/amount_display.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/wallet_flow/transaction_details.dart';
+import 'package:orange/flows/wallet/transaction_details.dart';
 
-import 'package:orange/flows/wallet_flow/send_flow/send.dart';
-import 'package:orange/flows/wallet_flow/receive_flow/receive.dart';
+import 'package:orange/flows/wallet/send/send.dart';
+import 'package:orange/flows/wallet/receive/receive.dart';
 
 import 'package:orange/util.dart';
 

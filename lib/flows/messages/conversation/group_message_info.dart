@@ -9,7 +9,7 @@ import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
-import 'package:orange/flows/messages_flow/profile_flows/user_profile.dart';
+import 'package:orange/flows/messages/profile/user_profile.dart';
 
 import 'package:orange/util.dart';
 

@@ -4,8 +4,8 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/flows/wallet_flow/home.dart';
-import 'package:orange/flows/messages_flow/home.dart';
+import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/messages/home.dart';
 
 //NOTES:
 //1. Should be a function
@@ -17,11 +17,7 @@ import 'package:orange/flows/messages_flow/home.dart';
 class TabNav extends StatefulWidget {
   final int index;
   final GlobalState globalState;
-  const TabNav({
-    required this.globalState,
-    required this.index,
-    super.key
-  });
+  const TabNav({required this.globalState, required this.index, super.key});
   @override
   State<TabNav> createState() => TabNavState();
 }

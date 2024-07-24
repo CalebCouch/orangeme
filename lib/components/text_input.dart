@@ -3,7 +3,6 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/bumper.dart';
-import 'dart:async';
 
 class CustomTextInput extends StatefulWidget {
   final String hint;

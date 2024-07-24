@@ -8,7 +8,7 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/tabular.dart';
 
-import 'package:orange/flows/wallet_flow/send_flow/send.dart';
+import 'package:orange/flows/wallet/send/send.dart';
 
 import 'package:orange/util.dart';
 

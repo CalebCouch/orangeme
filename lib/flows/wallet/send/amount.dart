@@ -12,7 +12,7 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
 
-import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
+import 'package:orange/flows/wallet/send/transaction_speed.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
