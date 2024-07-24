@@ -12,9 +12,9 @@ import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/classes/message_info.dart';
 import 'package:orange/classes/contact_info.dart';
 
-import 'package:orange/flows/messages_flow/new_message_flow/choose_recipient.dart';
-import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
-import 'package:orange/flows/messages_flow/profile_flows/my_profile.dart';
+import 'package:orange/flows/messages/new_message/choose_recipient.dart';
+import 'package:orange/flows/messages/conversation/conversation.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';

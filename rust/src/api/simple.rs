@@ -676,28 +676,30 @@ pub async fn rustStart (
                         let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                         let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
 
-
                         let (mut psbt, mut tx_details) = {
                             let mut builder = wallet.build_tx();
                             builder.add_recipient(address.script_pubkey(), amount);
-                            builder.fee_rate(FeeRate::from_sat_per_vb(blockchain.estimate_fee(3)? as f32));
+                            builder.fee_rate(FeeRate::from_btc_per_kvb(blockchain.estimate_fee(3)? as f32));
                             builder.finish()?
                         };
 
                         let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                         if !finalized { return Err(Error::error(ec, "Could not sign std tx"));}
 
+                        let tx = psbt.clone().extract_tx();
                         let mut stream: Vec<u8> = Vec::new();
-                        psbt.clone().extract_tx().consensus_encode(&mut stream)?;
+                        tx.consensus_encode(&mut stream)?;
                         store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
 
-                        Ok(serde_json::to_string(&tx_details)?)
+                        tx_details.transaction = Some(tx);
+                        let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
+
+                        Ok(serde_json::to_string(&tx)?)
                     },
                     "broadcast_transaction" => {
                         let ec = "Main.broadcast_transaction";
                         let error = || Error::bad_request(ec, "Invalid parameters");
 
-                        let details: Transaction = serde_json::from_str(&command.data)?;
                         let stream = store.get(&command.data.as_bytes())?.ok_or(error())?;
                         let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
                         client.transaction_broadcast(&tx)?;

@@ -3,8 +3,8 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/default_interface.dart';
 
-import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
-import 'package:orange/flows/wallet_flow/send_flow/scan_qr.dart';
+import 'package:orange/flows/wallet/send/amount.dart';
+import 'package:orange/flows/wallet/send/scan_qr.dart';
 
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
@@ -56,11 +56,7 @@ class SendState extends State<Send> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
-      header: stackHeader(
-        context,
-        "Bitcoin address",
-        true
-      ),
+      header: stackHeader(context, "Bitcoin address", true),
       content: Content(
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,7 +72,9 @@ class SendState extends State<Send> {
             const Spacing(height: AppPadding.content),
             ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
               String data = (await getClipBoardData()).toString();
-              if (data != "null") {setAddress(data);}
+              if (data != "null") {
+                setAddress(data);
+              }
             }),
             const Spacing(height: AppPadding.tips),
             const CustomText(
@@ -98,11 +96,7 @@ class SendState extends State<Send> {
         context,
         "Continue",
         () {
-          navigateTo(
-            context,
-            SendAmount(widget.globalState, addressStr),
-            true
-          );
+          navigateTo(context, SendAmount(widget.globalState, addressStr), true);
         },
         addressValid,
       ),

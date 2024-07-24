@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/flows/wallet_flow/send_flow/confirmation.dart';
-import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
-import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
-import 'package:orange/flows/wallet_flow/send_flow/send.dart';
+import 'package:orange/flows/wallet/send/confirmation.dart';
+import 'package:orange/flows/wallet/send/amount.dart';
+import 'package:orange/flows/wallet/send/transaction_speed.dart';
+import 'package:orange/flows/wallet/send/send.dart';
 
 import 'package:orange/components/default_interface.dart';
 
@@ -39,6 +39,16 @@ class ConfirmState extends State<ConfirmSend> {
         return buildScreen(context, state);
       },
     );
+  }
+
+  Future<void> next() async {
+    await widget.globalState.invoke("broadcast_transaction", widget.tx.txid);
+    navigateTo(
+      context,
+      Confirmation(
+        widget.globalState,
+        widget.tx.usd
+    ));
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
@@ -122,15 +132,7 @@ class ConfirmState extends State<ConfirmSend> {
       bumper: singleButtonBumper(
         context,
         "Confirm & Send",
-        () {
-          navigateTo(
-            context,
-            Confirmation(
-              widget.globalState,
-              amount: 45.32,
-            ),
-          );
-        },
+        next
       ),
     );
   }

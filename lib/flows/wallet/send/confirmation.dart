@@ -7,16 +7,18 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/wallet_flow/home.dart';
+import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
 class Confirmation extends StatefulWidget {
   final double amount;
-  final String? recipient;
   final GlobalState globalState;
-  const Confirmation(this.globalState,
-      {super.key, required this.amount, this.recipient});
+  const Confirmation(
+    this.globalState,
+    this.amount,
+    {super.key}
+  );
 
   @override
   ConfirmationState createState() => ConfirmationState();
@@ -53,15 +55,10 @@ class ConfirmationState extends State<Confirmation> {
               iconSize: 128,
             ),
             const Spacing(height: AppPadding.bumper),
-            widget.recipient != null
-                ? CustomText(
-                    text: "You sent \$${widget.amount} to\n${widget.recipient}",
-                    textType: 'heading',
-                  )
-                : CustomText(
-                    text: "You sent \$${widget.amount}",
-                    textType: 'heading',
-                  ),
+            CustomText(
+              text: "You sent \$${widget.amount}",
+              textType: 'heading',
+            ),
           ],
         ),
       ),

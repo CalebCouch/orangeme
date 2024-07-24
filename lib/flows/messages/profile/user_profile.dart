@@ -11,7 +11,7 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/data_item.dart';
 
-import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
+import 'package:orange/flows/messages/conversation/conversation.dart';
 
 import 'package:orange/util.dart';
 

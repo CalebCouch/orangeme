@@ -8,7 +8,7 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/text_input.dart';
-import 'package:orange/flows/messages_flow/direct_message_flow/conversation.dart';
+import 'package:orange/flows/messages/conversation/conversation.dart';
 
 import 'package:orange/util.dart';
 

@@ -6,7 +6,7 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/text_input.dart';
 
-import 'package:orange/flows/wallet_flow/send_flow/send_amount.dart';
+import 'package:orange/flows/wallet/send/amount.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
