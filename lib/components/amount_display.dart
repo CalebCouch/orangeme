@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
-import 'package:orange/components/numeric_keypad.dart';
-import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/components/custom/custom_button.dart';
-
-import 'package:orange/flows/wallet_flow/send_flow/transaction_speed.dart';
-
 import 'package:orange/util.dart';
-import 'package:orange/classes.dart';
 
 Widget AmountDisplay(double value, double converted) {
   String accountBalance = "";

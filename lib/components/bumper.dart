@@ -5,7 +5,6 @@ import 'package:orange/components/custom/custom_button.dart';
 
 class DefaultBumper extends StatelessWidget {
   final Widget content;
-
   const DefaultBumper({
     super.key,
     required this.content,

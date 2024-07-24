@@ -46,16 +46,16 @@ class SendAmountState extends State<SendAmount> {
 
   Future<void> next(double btc) async {
     navigateTo(
-      context,
-      TransactionSpeed(
-        widget.globalState, /*transactions*/
-        widget.address,
-        btc
-    ));
+        context,
+        TransactionSpeed(
+            widget.globalState,
+            /*transactions*/
+            widget.address,
+            btc));
   }
 
   void updateAmount(String input) {
-    var updatedAmount;
+    var updatedAmount = "0";
     if (input == "backspace") {
       if (amount.length == 1) {
         updatedAmount = "0";
@@ -65,8 +65,10 @@ class SendAmountState extends State<SendAmount> {
         updatedAmount = amount;
       }
     } else if (input == ".") {
+      print(".");
       if (!amount.contains(".")) {
         updatedAmount = amount += ".";
+        print(updatedAmount);
       } else {
         updatedAmount = amount;
       }
@@ -87,7 +89,9 @@ class SendAmountState extends State<SendAmount> {
         }
       }
     }
-    var min = widget.globalState.state.value.fees[0] + 1;
+
+    double min = 1;
+    //widget.globalState.state.value.fees[0] + 1;
     var max = widget.globalState.state.value.usdBalance - min;
     max = max > 0 ? max : 0;
     var err = "";
@@ -97,14 +101,17 @@ class SendAmountState extends State<SendAmount> {
       err = "\$${formatValue(max)} maximum.";
     }
     setState(() {
-        amount = updatedAmount;
-        error = err;
+      print("setstate $updatedAmount");
+      amount = updatedAmount;
+      error = err;
     });
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
     double parsed = double.parse(amount);
-    double btc = parsed > 0 ? (parsed / widget.globalState.state.value.currentPrice) : 0.0;
+    double btc = parsed > 0
+        ? (parsed / widget.globalState.state.value.currentPrice)
+        : 0.0;
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -112,8 +119,8 @@ class SendAmountState extends State<SendAmount> {
       ),
       content: Content(
         content: Center(
-          child:
-            keyboardAmountDisplay(widget.globalState, context, amount, btc, error),
+          child: keyboardAmountDisplay(
+              widget.globalState, context, amount, btc, error),
         ),
       ),
       bumper: DefaultBumper(
@@ -136,10 +143,10 @@ class SendAmountState extends State<SendAmount> {
   }
 }
 
-Widget keyboardAmountDisplay(
-    GlobalState globalState, BuildContext context, String amt, double btc, String error) {
+Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
+    String amt, double btc, String error) {
   double usd = double.parse(amt);
-  var decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
+
   Widget subText(String error) {
     if (error.isNotEmpty) {
       return Row(
@@ -165,22 +172,25 @@ Widget keyboardAmountDisplay(
     }
   }
 
-  var amt_len = amt.contains(".") ? amt.length-1 : amt.length;
-  var textSize = amt_len < 4 ? TextSize.title : amt_len < 7 ? TextSize.h1 : TextSize.h2;
-
+  var amt_len = amt.contains(".") ? amt.length - 1 : amt.length;
+  var textSize = amt_len < 4
+      ? TextSize.title
+      : amt_len < 7
+          ? TextSize.h1
+          : TextSize.h2;
+  int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
+  print(decimals);
   return Column(
     mainAxisSize: MainAxisSize.min,
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       CustomText(
-        textType: 'text',
-        textSize: textSize,
-        text: "\$${formatValue(usd)}",
+        textType: 'heading',
+        textSize: TextSize.h1,
+        text: "\$$usd",
       ),
-      Row(
-        children: [subText(error)]
-      )
+      subText(error)
     ],
   );
 }
