@@ -44,12 +44,14 @@ class SendAmountState extends State<SendAmount> {
 
   Future<void> next(double btc) async {
     navigateTo(
-        context,
-        TransactionSpeed(
-            widget.globalState,
-            /*transactions*/
-            widget.address,
-            btc));
+      context,
+      TransactionSpeed(
+        widget.globalState,
+        /*transactions*/
+        widget.address,
+        btc,
+      ),
+    );
   }
 
   void updateAmount(String input) {
@@ -107,6 +109,7 @@ class SendAmountState extends State<SendAmount> {
         ? (parsed / widget.globalState.state.value.currentPrice)
         : 0.0;
     return DefaultInterface(
+      resizeToAvoidBottomInset: false,
       header: stackHeader(
         context,
         "Send bitcoin",

@@ -86,7 +86,7 @@ class SendState extends State<Send> {
             ButtonTip(
               "Scan QR Code",
               ThemeIcon.qrcode,
-              () => switchPageTo(context, ScanQR(widget.globalState), true),
+              () => navigateTo(context, ScanQR(widget.globalState)),
             ),
             const Spacing(height: AppPadding.tips),
           ],
@@ -96,7 +96,7 @@ class SendState extends State<Send> {
         context,
         "Continue",
         () {
-          navigateTo(context, SendAmount(widget.globalState, addressStr), true);
+          navigateTo(context, SendAmount(widget.globalState, addressStr));
         },
         addressValid,
       ),

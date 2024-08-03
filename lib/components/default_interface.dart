@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DefaultInterface extends StatelessWidget {
+  final bool? resizeToAvoidBottomInset;
   final Widget header;
   final Widget content;
   final Widget? bumper;
@@ -8,6 +9,7 @@ class DefaultInterface extends StatelessWidget {
 
   const DefaultInterface({
     super.key,
+    this.resizeToAvoidBottomInset,
     required this.header,
     required this.content,
     this.bumper,
@@ -17,6 +19,7 @@ class DefaultInterface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       body: SizedBox(
         height: MediaQuery.sizeOf(context).height,
         child: SafeArea(

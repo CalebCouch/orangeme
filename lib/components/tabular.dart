@@ -3,6 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
+import 'package:intl/intl.dart';
 
 class SingleTab extends StatelessWidget {
   final String title;
@@ -102,21 +103,22 @@ Widget contactTabular(BuildContext context, String name, String did) {
 }
 
 Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
+  final now = DateTime.now();
   return Column(children: [
     if (recipient != null)
       SingleTab(
         title: "Contact",
         subtitle: "${recipient.name}",
       ),
-    SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
-    SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
+    SingleTab(title: "Date", subtitle: DateFormat('yMd').format(now)),
+    SingleTab(title: "Time", subtitle: DateFormat.jm().format(now)),
     if (tx.sentAddress != null)
       SingleTab(
           title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
     if (tx.sentAddress != null)
       SingleTab(
         title: "Amount Sent",
-        subtitle: "${tx.btc} BTC",
+        subtitle: "${tx.btc.abs()} BTC",
       ),
     if (tx.sentAddress != null)
       SingleTab(

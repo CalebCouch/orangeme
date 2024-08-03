@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
 
-Future<void> navigateTo(BuildContext context, Widget widget,
-    [bool delay = false]) async {
-  FocusScope.of(context).unfocus();
-  if (delay) {
-    await new Future.delayed(new Duration(milliseconds: 250));
-  }
+Future<void> navigateTo(BuildContext context, Widget widget) async {
   Navigator.push(
     context,
     PageRouteBuilder(
@@ -18,20 +13,14 @@ Future<void> navigateTo(BuildContext context, Widget widget,
   );
 }
 
-Future<void> navPop(BuildContext context, [bool delay = false]) async {
-  FocusScope.of(context).unfocus();
-  if (delay) {
-    await new Future.delayed(new Duration(milliseconds: 250));
-  }
+Future<void> navPop(BuildContext context) async {
   Navigator.pop(context);
 }
 
-Future<void> switchPageTo(BuildContext context, Widget widget,
-    [bool delay = false]) async {
-  FocusScope.of(context).unfocus();
-  if (delay) {
-    await new Future.delayed(new Duration(milliseconds: 250));
-  }
+Future<void> switchPageTo(
+  BuildContext context,
+  Widget widget,
+) async {
   Navigator.pushReplacement(
     context,
     PageRouteBuilder(
@@ -42,12 +31,7 @@ Future<void> switchPageTo(BuildContext context, Widget widget,
   );
 }
 
-Future<void> resetNavTo(BuildContext context, Widget widget,
-    [bool delay = false]) async {
-  FocusScope.of(context).unfocus();
-  if (delay) {
-    await new Future.delayed(new Duration(milliseconds: 250));
-  }
+Future<void> resetNavTo(BuildContext context, Widget widget) async {
   Navigator.pushAndRemoveUntil(
       context,
       PageRouteBuilder(
