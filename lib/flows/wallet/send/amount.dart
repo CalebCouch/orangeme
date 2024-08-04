@@ -47,7 +47,6 @@ class SendAmountState extends State<SendAmount> {
       context,
       TransactionSpeed(
         widget.globalState,
-        /*transactions*/
         widget.address,
         btc,
       ),

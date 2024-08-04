@@ -54,7 +54,7 @@ class ConfirmationState extends State<Confirmation> {
             ),
             const Spacing(height: AppPadding.bumper),
             CustomText(
-              text: "You sent \$${(widget.amount).abs()}",
+              text: "You sent \$${formatValue(widget.amount.abs())}",
               textType: 'heading',
             ),
           ],

@@ -47,8 +47,8 @@ class DartState {
   List<Transaction> transactions;
   List<double> fees;
 
-  DartState(
-      this.currentPrice, this.usdBalance, this.btcBalance, this.transactions, this.fees);
+  DartState(this.currentPrice, this.usdBalance, this.btcBalance,
+      this.transactions, this.fees);
 
   factory DartState.init() {
     return DartState(0.0, 0.0, 0.0, [], []);
@@ -61,8 +61,7 @@ class DartState {
       json['btcBalance'] as double,
       List<Transaction>.from(
           json['transactions'].map((tx) => Transaction.fromJson(tx))),
-      List<double>.from(
-          json['fees'].map((fee) => fee as double)),
+      List<double>.from(json['fees'].map((fee) => fee as double)),
     );
   }
 }

@@ -54,7 +54,7 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
             subtitle: transactionCut(tx.sentAddress!)),
       if (tx.sentAddress == null)
         SingleTab(
-            title: "Received from Address", subtitle: transactionCut(tx.txid)),
+            title: "Received From Address", subtitle: transactionCut(tx.txid)),
       if (tx.sentAddress == null)
         SingleTab(
           title: "Amount Received",
@@ -65,18 +65,19 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
           title: "Amount Sent",
           subtitle: "${(tx.btc).abs()} BTC",
         ),
-      if (tx.sentAddress != null)
-        SingleTab(
-            title: "Bitcoin Price", subtitle: "\$${formatValue(tx.price)}"),
+      SingleTab(
+        title: "Bitcoin Price",
+        subtitle: "\$${NumberFormat('#,##,000.00').format(tx.price)}",
+      ),
       if (tx.sentAddress == null)
         SingleTab(
           title: "USD Value Received",
-          subtitle: "${formatValue(tx.usd)} USD",
+          subtitle: "\$${formatValue(tx.usd)}",
         ),
       if (tx.sentAddress != null)
         SingleTab(
           title: "USD Value Sent",
-          subtitle: "${formatValue(tx.usd.abs())} USD",
+          subtitle: "\$${formatValue(tx.usd.abs())}",
         ),
       if (tx.sentAddress != null) const Spacing(height: AppPadding.content),
       if (tx.sentAddress != null)
@@ -87,7 +88,7 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
       if (tx.sentAddress != null)
         SingleTab(
           title: "Total Amount",
-          subtitle: "\$${formatValue(tx.usd + tx.fee)}",
+          subtitle: "\$${formatValue((tx.usd + tx.fee).abs())}",
         ),
     ],
   );
@@ -103,27 +104,29 @@ Widget contactTabular(BuildContext context, String name, String did) {
 }
 
 Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
-  final now = DateTime.now();
-  return Column(children: [
-    if (recipient != null)
-      SingleTab(
-        title: "Contact",
-        subtitle: "${recipient.name}",
-      ),
-    SingleTab(title: "Date", subtitle: DateFormat('yMd').format(now)),
-    SingleTab(title: "Time", subtitle: DateFormat.jm().format(now)),
-    if (tx.sentAddress != null)
-      SingleTab(
-          title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
-    if (tx.sentAddress != null)
-      SingleTab(
-        title: "Amount Sent",
-        subtitle: "${tx.btc.abs()} BTC",
-      ),
-    if (tx.sentAddress != null)
-      SingleTab(
-        title: "Fee",
-        subtitle: "\$${formatValue(tx.fee)} USD",
-      ),
-  ]);
+  return Column(
+    children: [
+      if (recipient != null)
+        SingleTab(
+          title: "Contact",
+          subtitle: "${recipient.name}",
+        ),
+      //SingleTab(title: "Date", subtitle: DateFormat('yMd').format(now)),
+      //SingleTab(title: "Time", subtitle: DateFormat.jm().format(now)),
+      if (tx.sentAddress != null)
+        SingleTab(
+            title: "Sent to Address",
+            subtitle: transactionCut(tx.sentAddress!)),
+      if (tx.sentAddress != null)
+        SingleTab(
+          title: "Amount Sent",
+          subtitle: "${tx.btc.abs()} BTC",
+        ),
+      if (tx.sentAddress != null)
+        SingleTab(
+          title: "Fee",
+          subtitle: "\$${formatValue(tx.fee)} USD",
+        ),
+    ],
+  );
 }

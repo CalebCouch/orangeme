@@ -133,8 +133,8 @@ impl Transaction {
             usd: price * net,
             fee: price * (details.fee.ok_or(error())? as f64 / SATS),
             price,
-            date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
-            time: datetime.map(|dt| dt.format("%l:%M %P").to_string())
+            date: datetime.map(|dt| dt.format("%Y/%m/%d").to_string()),
+            time: datetime.map(|dt| dt.format("%l:%M %p").to_string())
         })
     }
 }
@@ -542,7 +542,7 @@ async fn get_price(prices: &mut SqliteStore, timestamp: u64) -> Result<f64, Erro
         None => {
             let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
             let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
-            let date = DateTime::from_timestamp(timestamp as i64, 0).ok_or(error)?.format("%Y-%m-%d").to_string();
+            let date = DateTime::from_timestamp(timestamp as i64, 0).ok_or(error)?.format("%Y/%m/%d").to_string();
             let url = format!("{}?date={}", base_url, date);
             let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
             let price = spot_res.data.amount.parse::<f64>()?;

@@ -58,38 +58,40 @@ class SendState extends State<Send> {
     return DefaultInterface(
       header: stackHeader(context, "Bitcoin address", true),
       content: Content(
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomTextInput(
-              address: addressStr,
-              onChanged: (String address) => {setAddress(address)},
-              error: addressValid || addressStr.isEmpty
-                  ? ""
-                  : "Not a valid address",
-              hint: 'Bitcoin address...',
-            ),
-            const Spacing(height: AppPadding.content),
-            ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
-              String data = (await getClipBoardData()).toString();
-              if (data != "null") {
-                setAddress(data);
-              }
-            }),
-            const Spacing(height: AppPadding.tips),
-            const CustomText(
-              text: 'or',
-              textSize: TextSize.sm,
-              color: ThemeColor.textSecondary,
-            ),
-            const Spacing(height: AppPadding.tips),
-            ButtonTip(
-              "Scan QR Code",
-              ThemeIcon.qrcode,
-              () => navigateTo(context, ScanQR(widget.globalState)),
-            ),
-            const Spacing(height: AppPadding.tips),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomTextInput(
+                address: addressStr,
+                onChanged: (String address) => {setAddress(address)},
+                error: addressValid || addressStr.isEmpty
+                    ? ""
+                    : "Not a valid address",
+                hint: 'Bitcoin address...',
+              ),
+              const Spacing(height: AppPadding.content),
+              ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
+                String data = (await getClipBoardData()).toString();
+                if (data != "null") {
+                  setAddress(data);
+                }
+              }),
+              const Spacing(height: AppPadding.tips),
+              const CustomText(
+                text: 'or',
+                textSize: TextSize.sm,
+                color: ThemeColor.textSecondary,
+              ),
+              const Spacing(height: AppPadding.tips),
+              ButtonTip(
+                "Scan QR Code",
+                ThemeIcon.qrcode,
+                () => navigateTo(context, ScanQR(widget.globalState)),
+              ),
+              const Spacing(height: AppPadding.tips),
+            ],
+          ),
         ),
       ),
       bumper: singleButtonBumper(

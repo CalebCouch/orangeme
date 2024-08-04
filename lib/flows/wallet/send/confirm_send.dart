@@ -58,86 +58,83 @@ class ConfirmState extends State<ConfirmSend> {
         'Confirm send',
       ),
       content: Content(
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            widget.tx.sentAddress != null
-                ? DataItem(
-                    title: "Confirm Address",
-                    listNum: 1,
-                    content: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Spacing(height: AppPadding.bumper),
-                        CustomText(
-                          textSize: TextSize.md,
-                          alignment: TextAlign.left,
-                          text: widget.tx.sentAddress!,
-                        ),
-                        const Spacing(height: AppPadding.bumper),
-                        const CustomText(
-                          textSize: TextSize.sm,
-                          color: ThemeColor.textSecondary,
-                          alignment: TextAlign.left,
-                          text:
-                              "Bitcoin sent to the wrong address can never be recovered.",
-                        ),
-                        const Spacing(height: AppPadding.bumper),
-                      ],
-                    ),
-                    buttonNames: const ["Address"],
-                    buttonActions: [
-                      () {
-                        resetNavTo(
-                          context,
-                          Send(
-                            widget.globalState,
-                            address: widget.address,
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              widget.tx.sentAddress != null
+                  ? DataItem(
+                      title: "Confirm Address",
+                      listNum: 1,
+                      content: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Spacing(height: AppPadding.bumper),
+                          CustomText(
+                            textSize: TextSize.md,
+                            alignment: TextAlign.left,
+                            text: widget.tx.sentAddress!,
                           ),
-                        );
-                      }
-                    ],
-                  )
-                : Container(),
-            const Spacing(height: AppPadding.bumper),
-            DataItem(
-              title: "Confirm Amount",
-              listNum: 2,
-              content: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: AppPadding.bumper),
-                child: confirmationTabular(context, widget.tx),
+                          const Spacing(height: AppPadding.bumper),
+                          const CustomText(
+                            textSize: TextSize.sm,
+                            color: ThemeColor.textSecondary,
+                            alignment: TextAlign.left,
+                            text:
+                                "Bitcoin sent to the wrong address can never be recovered.",
+                          ),
+                          const Spacing(height: AppPadding.bumper),
+                        ],
+                      ),
+                      buttonNames: const ["Address"],
+                      buttonActions: [
+                        () {
+                          resetNavTo(
+                            context,
+                            Send(
+                              widget.globalState,
+                              address: widget.address,
+                            ),
+                          );
+                        }
+                      ],
+                    )
+                  : Container(),
+              const Spacing(height: AppPadding.bumper),
+              DataItem(
+                title: "Confirm Amount",
+                listNum: 2,
+                content: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AppPadding.bumper),
+                  child: confirmationTabular(context, widget.tx),
+                ),
+                buttonNames: const ["Amount", "Speed"],
+                buttonActions: [
+                  () {
+                    resetNavTo(
+                      context,
+                      SendAmount(widget.globalState, widget.address),
+                    );
+                  },
+                  () {
+                    resetNavTo(
+                      context,
+                      TransactionSpeed(
+                        widget.globalState,
+                        widget.address,
+                        widget.btc,
+                      ),
+                    );
+                  }
+                ],
               ),
-              buttonNames: const ["Amount", "Speed"],
-              buttonActions: [
-                () {
-                  resetNavTo(
-                    context,
-                    SendAmount(widget.globalState, widget.address),
-                  );
-                },
-                () {
-                  resetNavTo(
-                    context,
-                    TransactionSpeed(
-                      widget.globalState,
-                      widget.address,
-                      widget.btc,
-                    ),
-                  );
-                }
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bumper: singleButtonBumper(context, "Confirm & Send", next),
     );
   }
-}
-
-_getTransactionData() {
-  return Transaction(false, '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL', '', 5.00,
-      0.0000017, 63402.92, 2.15, '1/2/23', '2:23PM', null);
 }

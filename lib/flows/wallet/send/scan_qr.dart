@@ -44,32 +44,37 @@ class ScanQRState extends State<ScanQR> {
         context,
         "Scan QR code",
       ),
-      content: Content(
-        content: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: 300,
-              width: 300,
-              decoration: BoxDecoration(
-                border: Border.all(color: ThemeColor.bgSecondary, width: 4),
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-              ),
-              child: QRView(
-                key: qrKey,
-                onQRViewCreated: (QRViewController controller) =>
-                    {_onQRViewCreated(widget.globalState, controller)},
-              ),
+      content: Stack(
+        children: [
+          Center(
+            child: QRView(
+              key: qrKey,
+              onQRViewCreated: (QRViewController controller) =>
+                  {_onQRViewCreated(widget.globalState, controller)},
             ),
-            const SizedBox(height: AppPadding.content),
-            const CustomText(
-              text: 'Scan a bitcoin QR code',
-              color: ThemeColor.textSecondary,
-              textSize: TextSize.md,
+          ),
+          Content(
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: ThemeColor.primary, width: 4),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                ),
+                const SizedBox(height: AppPadding.content),
+                const CustomText(
+                  text: 'Scan a bitcoin QR code',
+                  textSize: TextSize.md,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
