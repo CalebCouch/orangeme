@@ -46,7 +46,8 @@ class ScanQRState extends State<ScanQR> {
       ),
       content: Stack(
         children: [
-          Center(
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: AppPadding.content),
             child: QRView(
               key: qrKey,
               onQRViewCreated: (QRViewController controller) =>
@@ -62,13 +63,14 @@ class ScanQRState extends State<ScanQR> {
                   height: 300,
                   width: 300,
                   decoration: BoxDecoration(
-                    border: Border.all(color: ThemeColor.primary, width: 4),
+                    border: Border.all(color: ThemeColor.bg, width: 4),
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                 ),
-                const SizedBox(height: AppPadding.content),
+                const Spacing(height: 12),
                 const CustomText(
                   text: 'Scan a bitcoin QR code',
+                  color: ThemeColor.bgSecondary,
                   textSize: TextSize.md,
                 ),
               ],
