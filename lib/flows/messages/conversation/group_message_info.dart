@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes.dart';
 
 import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
@@ -14,9 +14,11 @@ import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/util.dart';
 
 class GroupMessageInfo extends StatefulWidget {
-  final List<Contact> contacts;
-  const GroupMessageInfo({
-    this.contacts = const [Contact('JOHN', null, 'con.r.null...')],
+  final GlobalState globalState;
+  final Conversation conversation;
+  const GroupMessageInfo(
+    this.globalState,
+    this.conversation, {
     super.key,
   });
 
@@ -27,13 +29,23 @@ class GroupMessageInfo extends StatefulWidget {
 class GroupMessageInfoState extends State<GroupMessageInfo> {
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(context, 'Group members'),
       content: Content(
         content: Column(
           children: [
             CustomText(
-              text: 'This group has ${widget.contacts.length} members',
+              text:
+                  'This group has ${widget.conversation.members.length} members',
               textSize: TextSize.md,
               color: ThemeColor.textSecondary,
             ),
@@ -43,12 +55,18 @@ class GroupMessageInfoState extends State<GroupMessageInfo> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
-                  itemCount: widget.contacts.length,
+                  itemCount: widget.conversation.members.length,
                   itemBuilder: (BuildContext context, int index) {
                     return contactListItem(
                       context,
-                      widget.contacts[index],
-                      navigateTo(context, const UserProfile()),
+                      widget.conversation.members[index],
+                      navigateTo(
+                        context,
+                        UserProfile(
+                          widget.globalState,
+                          widget.conversation.members[index],
+                        ),
+                      ),
                     );
                   },
                 ),

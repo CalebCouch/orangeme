@@ -6,7 +6,6 @@ import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
-import 'package:orange/components/amount_display.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/custom/custom_text.dart';
@@ -16,7 +15,6 @@ import 'package:orange/flows/wallet/send/send.dart';
 import 'package:orange/flows/wallet/receive/receive.dart';
 
 import 'package:orange/util.dart';
-import 'package:intl/intl.dart';
 
 class WalletHome extends StatefulWidget {
   final GlobalState globalState;
@@ -37,19 +35,6 @@ class _WalletHomeState extends State<WalletHome> {
     );
   }
 
-  _getDate(String? date, String? time) {
-    if (date == null) return 'Pending';
-    if (time != null && date == DateTime.now().toString()) {
-      return time;
-    }
-    if (date == DateTime.now().subtract(const Duration(days: 1)).toString()) {
-      return 'Yesterday';
-    }
-    return DateFormat.MMMMd()
-        .format(DateFormat('dd/MM/yyyy').parse(date))
-        .toString();
-  }
-
   Widget transactionListItem(BuildContext context, Transaction transaction) {
     return DefaultListItem(
       onTap: () {
@@ -66,7 +51,7 @@ class _WalletHomeState extends State<WalletHome> {
         alignment: TextAlign.left,
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
-        text: _getDate(transaction.date, transaction.time),
+        text: formatDate(transaction.date, transaction.time),
       ),
       topRight: CustomText(
         alignment: TextAlign.right,

@@ -3,8 +3,8 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/classes/message_info.dart';
-import 'package:orange/classes/contact_info.dart';
+
+import 'package:orange/classes.dart';
 
 class DefaultListItem extends StatelessWidget {
   final Widget? topLeft;
@@ -99,28 +99,28 @@ class ImageListItem extends StatelessWidget {
   }
 }
 
-Widget messageListItem(BuildContext context, Message message, onTap) {
-  bool isGroup = false;
-  if (message.contacts.length > 1) isGroup = true;
+Widget messageListItem(BuildContext context, Conversation conversation, onTap) {
+  bool isGroup = conversation.members.length > 1;
   return ImageListItem(
     left: Container(
       alignment: Alignment.centerLeft,
       child: ProfilePhoto(
         size: ProfileSize.lg,
         isGroup: isGroup,
-        profilePhoto: message.contacts[0].photo,
+        profilePhoto: conversation.members[0].pfp,
       ),
     ),
     topRight: CustomText(
-      text: isGroup ? 'Group message' : message.contacts[0].name,
+      text: isGroup ? 'Group message' : conversation.members[0].name,
       textSize: TextSize.md,
     ),
     bottomRight: Row(
       children: [
-        message.isReceived
+        conversation.messages[0].isIncoming
             ? CustomText(
                 alignment: TextAlign.left,
-                text: '${message.contacts[0].name}: ${String.fromCharCodes([
+                text:
+                    '${conversation.messages[0].sender.name}: ${String.fromCharCodes([
                       0x0020
                     ])}',
                 textSize: TextSize.sm,
@@ -129,7 +129,7 @@ Widget messageListItem(BuildContext context, Message message, onTap) {
             : Container(),
         CustomText(
           alignment: TextAlign.left,
-          text: message.text,
+          text: conversation.messages[0].message,
           textSize: TextSize.sm,
           color: ThemeColor.textSecondary,
         ),
@@ -145,7 +145,7 @@ Widget contactListItem(BuildContext context, Contact contact, onTap) {
       alignment: Alignment.centerLeft,
       child: ProfilePhoto(
         size: ProfileSize.lg,
-        profilePhoto: contact.photo,
+        profilePhoto: contact.pfp,
       ),
     ),
     topRight: CustomText(

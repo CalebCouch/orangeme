@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/classes/profile_info.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
@@ -11,23 +11,16 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/data_item.dart';
 
-import 'package:orange/flows/messages/conversation/conversation.dart';
-
-import 'package:orange/util.dart';
+import 'package:orange/flows/messages/conversation/message_exchange.dart';
 
 class UserProfile extends StatefulWidget {
-  final Profile userInfo;
-  final String address;
+  final GlobalState globalState;
+  final Contact userInfo;
 
-  const UserProfile({
+  const UserProfile(
+    this.globalState,
+    this.userInfo, {
     super.key,
-    this.userInfo = const Profile(
-      'Chris Slaughter',
-      null,
-      '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    ),
-    this.address = 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA',
   });
 
   @override
@@ -35,8 +28,16 @@ class UserProfile extends StatefulWidget {
 }
 
 class UserProfileState extends State<UserProfile> {
-  @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -50,11 +51,9 @@ class UserProfileState extends State<UserProfile> {
             children: [
               const ProfilePhoto(size: ProfileSize.xxl),
               const Spacing(height: AppPadding.profile),
-              aboutMeItem(context, widget.userInfo.aboutMe),
+              aboutMeItem(context, widget.userInfo.abtme ?? ''),
               const Spacing(height: AppPadding.profile),
               didItem(context, widget.userInfo.did),
-              const Spacing(height: AppPadding.profile),
-              addressItem(context, widget.address),
             ],
           ),
         ),
@@ -63,15 +62,11 @@ class UserProfileState extends State<UserProfile> {
         context,
         'Send Bitcoin',
         'Message',
+        () => {print("send bitcoin")},
         () => navigateTo(
           context,
-          Conversation(
-            contacts: [
-              Contact(widget.userInfo.name, null, widget.userInfo.did)
-            ],
-          ),
+          MessageExchange(widget.globalState, state.conversations[0]),
         ),
-        () => navigateTo(context, const Conversation()),
       ),
     );
   }

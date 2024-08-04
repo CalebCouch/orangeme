@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/classes/single_message.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes.dart';
 
 class MessageBubble extends StatelessWidget {
-  final SingleMessage message;
+  final Message message;
   final bool isGroup;
-  final SingleMessage? previousMessage;
-  final SingleMessage? nextMessage;
+  final Message? previousMessage;
+  final Message? nextMessage;
 
   const MessageBubble({
     super.key,
@@ -21,7 +20,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: message.isReceived
+      crossAxisAlignment: message.isIncoming
           ? CrossAxisAlignment.start
           : CrossAxisAlignment.end,
       children: [
@@ -35,7 +34,7 @@ class MessageBubble extends StatelessWidget {
         ),
         Spacing(
           height: nextMessage != null &&
-                  message.isReceived == nextMessage!.isReceived
+                  message.isIncoming == nextMessage!.isIncoming
               ? AppPadding.message
               : AppPadding.content,
         ),
@@ -44,14 +43,14 @@ class MessageBubble extends StatelessWidget {
   }
 }
 
-Widget displayTime(SingleMessage message, nextMessage) {
+Widget displayTime(Message message, nextMessage) {
   bool shouldDisplayTime =
       nextMessage != null && nextMessage!.time != message.time;
   if (nextMessage == null || shouldDisplayTime) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       alignment:
-          message.isReceived ? Alignment.centerLeft : Alignment.centerRight,
+          message.isIncoming ? Alignment.centerLeft : Alignment.centerRight,
       child: CustomText(
         text: message.time,
         color: ThemeColor.textSecondary,
@@ -63,23 +62,23 @@ Widget displayTime(SingleMessage message, nextMessage) {
   }
 }
 
-Widget displayName(SingleMessage message, nextMessage, isGroup) {
+Widget displayName(Message message, nextMessage, isGroup) {
   bool shouldDisplay =
-      nextMessage != null && nextMessage!.contact.name != message.contact.name;
+      nextMessage != null && nextMessage!.contact.name != message.sender.name;
   bool shouldDisplayTime =
       nextMessage != null && nextMessage!.time != message.time;
 
   if (isGroup) {
-    if (nextMessage == null || message.isReceived && shouldDisplay) {
+    if (nextMessage == null || message.isIncoming && shouldDisplay) {
       return Row(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            alignment: message.isReceived
+            alignment: message.isIncoming
                 ? Alignment.centerLeft
                 : Alignment.centerRight,
             child: CustomText(
-              text: message.contact.name,
+              text: message.sender.name,
               color: ThemeColor.textSecondary,
               textSize: TextSize.sm,
             ),
@@ -106,10 +105,10 @@ Widget displayDivider() {
   );
 }
 
-Widget bubble(SingleMessage message) {
+Widget bubble(Message message) {
   return Container(
     decoration: ShapeDecoration(
-      color: message.isReceived ? ThemeColor.bgSecondary : ThemeColor.bitcoin,
+      color: message.isIncoming ? ThemeColor.bgSecondary : ThemeColor.bitcoin,
       shape: RoundedRectangleBorder(
         borderRadius: ThemeBorders.messageBubble,
       ),
@@ -117,15 +116,15 @@ Widget bubble(SingleMessage message) {
     constraints: const BoxConstraints(maxWidth: 300),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     child: CustomText(
-      text: message.text,
+      text: message.message,
       textSize: TextSize.md,
-      alignment: message.isReceived ? TextAlign.left : TextAlign.right,
+      alignment: message.isIncoming ? TextAlign.left : TextAlign.right,
     ),
   );
 }
 
-Widget messageStack(BuildContext context, List<Contact> contacts,
-    List<SingleMessage> messages) {
+Widget messageStack(
+    BuildContext context, List<Contact> contacts, List<Message> messages) {
   var isGroup = false;
   if (contacts.length > 1) isGroup = true;
   return SizedBox(

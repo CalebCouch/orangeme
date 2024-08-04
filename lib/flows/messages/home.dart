@@ -9,11 +9,8 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/tab_navigator.dart';
 
-import 'package:orange/classes/message_info.dart';
-import 'package:orange/classes/contact_info.dart';
-
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
-import 'package:orange/flows/messages/conversation/conversation.dart';
+import 'package:orange/flows/messages/conversation/message_exchange.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 
 import 'package:orange/classes.dart';
@@ -21,8 +18,8 @@ import 'package:orange/util.dart';
 
 class MessagesHome extends StatefulWidget {
   final GlobalState globalState;
-  const MessagesHome({
-    required this.globalState,
+  const MessagesHome(
+    this.globalState, {
     super.key,
   });
 
@@ -31,38 +28,17 @@ class MessagesHome extends StatefulWidget {
 }
 
 class MessagesHomeState extends State<MessagesHome> {
-  List<Message> testMessages = [
-    const Message(
-      'totally. that makes sense',
-      true,
-      '12:21 PM',
-      [Contact('Ann Davidson', null, 'ta3Th1Omn...')],
-    ),
-    const Message(
-      'Only so much though',
-      false,
-      '12:21 PM',
-      [Contact('James', null, 'ta3Th1Omn...')],
-    ),
-    const Message(
-      'tuesday?',
-      true,
-      '12:21 PM',
-      [
-        Contact('Barbara B', null, 'ta3Th1Omn...'),
-        Contact('Cam', null, 'ta3Th1Omn...'),
-        Contact('Rita Jones', null, 'ta3Th1Omn...')
-      ],
-    ),
-    const Message(
-      'tuesday?',
-      true,
-      '12:21 PM',
-      [Contact('Barbara B', null, 'ta3Th1Omn...')],
-    ),
-  ];
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: messagesHeader(
         context,
@@ -75,26 +51,31 @@ class MessagesHomeState extends State<MessagesHome> {
         null,
       ),
       content: Content(
-        content: testMessages.isNotEmpty
-            ? ListView.builder(
-                itemCount: testMessages.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return messageListItem(
-                    context,
-                    testMessages[index],
-                    () {
-                      navigateTo(context,
-                          Conversation(contacts: testMessages[index].contacts));
-                    },
-                  );
-                },
-              )
-            : const Center(
+        content: state.conversations.isEmpty
+            ? const Center(
                 child: CustomText(
                   text: 'No messages yet.\nGet started by messaging a friend.',
                   color: ThemeColor.textSecondary,
                   textSize: TextSize.md,
                 ),
+              )
+            : ListView.builder(
+                itemCount: state.conversations.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return messageListItem(
+                    context,
+                    state.conversations[index],
+                    () {
+                      navigateTo(
+                        context,
+                        MessageExchange(
+                          widget.globalState,
+                          state.conversations[index],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
       ),
       bumper: singleButtonBumper(
@@ -103,7 +84,7 @@ class MessagesHomeState extends State<MessagesHome> {
         () {
           navigateTo(
             context,
-            const ChooseRecipient(),
+            ChooseRecipient(widget.globalState, state.users),
           );
         },
       ),

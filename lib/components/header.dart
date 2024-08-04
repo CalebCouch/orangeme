@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/messages/conversation/group_message_info.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes.dart';
 
 class DefaultHeader extends StatelessWidget {
   final Widget? left;
@@ -112,9 +113,10 @@ Widget stackHeader(BuildContext context, String text,
   );
 }
 
-Widget stackMessageHeader(BuildContext context, List<Contact> contacts) {
+Widget stackMessageHeader(
+    GlobalState globalState, BuildContext context, Conversation cnvo) {
   bool isGroup = false;
-  if (contacts.length > 1) isGroup = true;
+  if (cnvo.members.length > 1) isGroup = true;
   return DefaultHeader(
     height: 76,
     left: backButton(context),
@@ -122,18 +124,20 @@ Widget stackMessageHeader(BuildContext context, List<Contact> contacts) {
       children: [
         !isGroup
             ? ProfilePhoto(
-                profilePhoto: contacts[0].photo,
+                profilePhoto: cnvo.members[0].pfp,
               )
-            : profilePhotoStack(context, contacts),
+            : profilePhotoStack(context, cnvo.members),
         const Spacing(height: 8),
         CustomText(
           textType: "heading",
-          text: isGroup ? 'Group message' : contacts[0].name,
+          text: isGroup ? 'Group message' : cnvo.members[0].name,
           textSize: TextSize.h5,
           color: ThemeColor.heading,
         ),
       ],
     ),
-    right: isGroup ? infoButton(context, contacts) : null,
+    right: isGroup
+        ? infoButton(context, GroupMessageInfo(globalState, cnvo))
+        : null,
   );
 }

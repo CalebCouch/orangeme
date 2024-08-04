@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'dart:io';
 
@@ -76,7 +76,7 @@ Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
       itemBuilder: (BuildContext context, int index) {
         return Align(
           widthFactor: 0.75,
-          child: ProfilePhoto(outline: true, profilePhoto: contacts[0].photo),
+          child: ProfilePhoto(outline: true, profilePhoto: contacts[0].pfp),
         );
       },
     ),
