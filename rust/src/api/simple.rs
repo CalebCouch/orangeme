@@ -139,6 +139,61 @@ impl Transaction {
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Contact {
+    pub name: String,
+    pub did: String,
+    pub pfp: Option<File>,
+    pub abtme: Option<String>,
+}
+
+impl Contact {
+    fn from_details() -> Result<Self, Error> {
+        Ok(Contact{
+            name: "".to_string(),
+            did: "".to_string(),
+            pfp: None,
+            abtme: None,
+        })
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Conversation {
+    pub messages: Vec<Message>,
+    pub members: Vec<Contact>,
+}
+
+impl Conversation {
+    fn from_details() -> Result<Self, Error> {
+        Ok(Conversation{
+            messages: Vec::new(), 
+            members: Vec::new(),
+        })
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Message {
+    pub sender: Contact,
+    pub message: String,
+    pub date: String,
+    pub time: String,
+    pub is_incoming: bool,
+}
+
+impl Message {
+    fn from_details() -> Result<Self, Error> {
+        Ok(Message{
+            sender: Contact{name:"name".to_string(), did:"did".to_string(), pfp: None, abtme: None},
+            message: "".to_string(),
+            date: "".to_string(),
+            time: "".to_string(),
+            is_incoming: true,
+        })
+    }
+}
+
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct DartState {
@@ -147,6 +202,8 @@ pub struct DartState {
     pub btcBalance: f64,
     pub transactions: Vec<Transaction>,
     pub fees: Vec<f64>,
+    pub conversations: Vec<Conversation>,
+    pub users: Vec<Contact>,
 }
 
 async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
@@ -265,6 +322,22 @@ pub async fn rustStart (
                 let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
                 let btc = balance.get_total() as f64 / SATS;
                 let mut transactions: Vec<Transaction> = Vec::new();
+                let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                let ella_couch = Contact{name:"Ella Couch".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                let chris_slaughter = Contact{name:"Chris Slaughter".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                let conversations: Vec<Conversation> = vec![
+                    Conversation{
+                        members: {josh_thayer}.to_vec(),
+                        messages: {
+                            Message{ sender: josh_thayer, message: "What\'s the plan?".to_string(), date:"8/4/24".to_string(), time:"1:36 PM".to_string(), is_incoming: true};
+                            Message{ sender: ella_couch, message: "I\'m going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false};
+                            Message{ sender: josh_thayer, message: "I guess we can".to_string(), date:"8/4/24".to_string(), time:"1:38 PM".to_string(), is_incoming: true};
+                            Message{ sender: josh_thayer, message: "Keep me posted and I will update the schedule book".to_string(), date:"8/4/24".to_string(), time:"1:39 PM".to_string(), is_incoming: true};
+                        }.to_vec(),
+                    }
+                ];
+                let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
                 for tx in wallet_transactions {
                     let price = match tx.confirmation_time.as_ref() {
                         Some(ct) => get_price(&mut price, ct.timestamp).await?,
@@ -278,7 +351,9 @@ pub async fn rustStart (
                     btcBalance: btc,
                     usdBalance: current_price * btc,
                     transactions,
-                    fees
+                    fees,
+                    conversations,
+                    users
                 };
                 store.set(b"state", &serde_json::to_vec(&state)?)?;
                 invoke(&callback3, "set_state", &serde_json::to_string(&state)?).await?;

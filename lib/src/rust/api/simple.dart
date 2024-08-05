@@ -4,11 +4,12 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import '../lib.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `from_details`, `get_descriptors`, `get_price`, `invoke`
+// These functions are ignored because they are not marked as `pub`: `from_details`, `from_details`, `from_details`, `from_details`, `get_descriptors`, `get_price`, `invoke`
 // These types are ignored because they are not used by any `pub` functions: `DartCommand`, `Data`, `DescriptorSet`, `PriceRes`, `Price`, `RustCommand`, `RustResponse`, `SpotRes`, `Spot`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 Future<String> rustStart(
         {required String path,
@@ -21,12 +22,63 @@ Future<String> rustStart(
         callback3: callback3,
         callback1: callback1);
 
+class Contact {
+  final String name;
+  final String did;
+  final File? pfp;
+  final String? abtme;
+
+  const Contact({
+    required this.name,
+    required this.did,
+    this.pfp,
+    this.abtme,
+  });
+
+  @override
+  int get hashCode =>
+      name.hashCode ^ did.hashCode ^ pfp.hashCode ^ abtme.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Contact &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          did == other.did &&
+          pfp == other.pfp &&
+          abtme == other.abtme;
+}
+
+class Conversation {
+  final List<Message> messages;
+  final List<Contact> members;
+
+  const Conversation({
+    required this.messages,
+    required this.members,
+  });
+
+  @override
+  int get hashCode => messages.hashCode ^ members.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Conversation &&
+          runtimeType == other.runtimeType &&
+          messages == other.messages &&
+          members == other.members;
+}
+
 class DartState {
   final double currentPrice;
   final double usdBalance;
   final double btcBalance;
   final List<Transaction> transactions;
   final Float64List fees;
+  final List<Conversation> conversations;
+  final List<Contact> users;
 
   const DartState({
     required this.currentPrice,
@@ -34,6 +86,8 @@ class DartState {
     required this.btcBalance,
     required this.transactions,
     required this.fees,
+    required this.conversations,
+    required this.users,
   });
 
   static Future<DartState> default_() =>
@@ -45,7 +99,9 @@ class DartState {
       usdBalance.hashCode ^
       btcBalance.hashCode ^
       transactions.hashCode ^
-      fees.hashCode;
+      fees.hashCode ^
+      conversations.hashCode ^
+      users.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -56,7 +112,44 @@ class DartState {
           usdBalance == other.usdBalance &&
           btcBalance == other.btcBalance &&
           transactions == other.transactions &&
-          fees == other.fees;
+          fees == other.fees &&
+          conversations == other.conversations &&
+          users == other.users;
+}
+
+class Message {
+  final Contact sender;
+  final String message;
+  final String date;
+  final String time;
+  final bool isIncoming;
+
+  const Message({
+    required this.sender,
+    required this.message,
+    required this.date,
+    required this.time,
+    required this.isIncoming,
+  });
+
+  @override
+  int get hashCode =>
+      sender.hashCode ^
+      message.hashCode ^
+      date.hashCode ^
+      time.hashCode ^
+      isIncoming.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Message &&
+          runtimeType == other.runtimeType &&
+          sender == other.sender &&
+          message == other.message &&
+          date == other.date &&
+          time == other.time &&
+          isIncoming == other.isIncoming;
 }
 
 class Transaction {

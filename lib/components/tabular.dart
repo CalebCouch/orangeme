@@ -25,12 +25,10 @@ class SingleTab extends StatelessWidget {
           CustomText(
             text: title,
             textSize: TextSize.sm,
-            color: ThemeColor.textSecondary,
           ),
           CustomText(
             text: subtitle,
             textSize: TextSize.sm,
-            color: ThemeColor.textSecondary,
           )
         ],
       ),

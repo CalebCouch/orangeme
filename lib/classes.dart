@@ -60,8 +60,8 @@ class Message {
   String message;
   String date;
   String time;
-  bool
-      isIncoming; //Can we compare the sender's did to our did to figure this out?
+  bool isIncoming;
+  //Can we compare the sender's did to our did to figure this out?
 
   Message(this.sender, this.message, this.date, this.time, this.isIncoming);
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -160,8 +160,7 @@ class DartState {
       List<double>.from(json['fees'].map((fee) => fee as double)),
       List<Conversation>.from(
           json["conversations"].map((cnv) => Conversation.fromJson(cnv))),
-      List<Contact>.from(
-          json["users"].map((ctcs) => Conversation.fromJson(ctcs))),
+      List<Contact>.from(json["users"].map((ctcs) => Contact.fromJson(ctcs))),
     );
   }
 }
