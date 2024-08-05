@@ -5,6 +5,7 @@ use super::protocols::{SocialProtocol, ProfileProtocol};
 use flutter_rust_bridge::DartFnFuture;
 use flutter_rust_bridge::frb;
 
+use std::fs::File;
 use std::convert::TryInto;
 use std::{thread, time};
 use std::str::FromStr;
@@ -322,19 +323,21 @@ pub async fn rustStart (
                 let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
                 let btc = balance.get_total() as f64 / SATS;
                 let mut transactions: Vec<Transaction> = Vec::new();
+
                 let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
                 let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
                 let ella_couch = Contact{name:"Ella Couch".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
                 let chris_slaughter = Contact{name:"Chris Slaughter".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+
                 let conversations: Vec<Conversation> = vec![
                     Conversation{
-                        members: {josh_thayer}.to_vec(),
-                        messages: {
-                            Message{ sender: josh_thayer, message: "What\'s the plan?".to_string(), date:"8/4/24".to_string(), time:"1:36 PM".to_string(), is_incoming: true};
-                            Message{ sender: ella_couch, message: "I\'m going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false};
-                            Message{ sender: josh_thayer, message: "I guess we can".to_string(), date:"8/4/24".to_string(), time:"1:38 PM".to_string(), is_incoming: true};
-                            Message{ sender: josh_thayer, message: "Keep me posted and I will update the schedule book".to_string(), date:"8/4/24".to_string(), time:"1:39 PM".to_string(), is_incoming: true};
-                        }.to_vec(),
+                        messages: Vec<Message> = vec![
+                            Message{ sender: josh_thayer, message: "What\'s the plan?".to_string(), date:"8/4/24".to_string(), time:"1:36 PM".to_string(), is_incoming: true},
+                            Message{ sender: ella_couch, message: "I\'m going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false},
+                            Message{ sender: josh_thayer, message: "I guess we can".to_string(), date:"8/4/24".to_string(), time:"1:38 PM".to_string(), is_incoming: true},
+                            Message{ sender: josh_thayer, message: "Keep me posted and I will update the schedule book".to_string(), date:"8/4/24".to_string(), time:"1:39 PM".to_string(), is_incoming: true},
+                        ],
+                        members: Vec<Contact> = vec![josh_thayer]
                     }
                 ];
                 let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
