@@ -13,6 +13,7 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::sync::mpsc::channel;
 
+
 use web5_rust::dwn::interfaces::{ProtocolsConfigureOptions, RecordsWriteOptions};
 use web5_rust::dwn::structs::DataInfo;
 use web5_rust::common::traits::KeyValueStore;
@@ -140,21 +141,24 @@ impl Transaction {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+
+
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Contact {
     pub name: String,
     pub did: String,
-    pub pfp: Option<File>,
+    pub pfp: Option<String>,
     pub abtme: Option<String>,
 }
 
 impl Contact {
     fn from_details() -> Result<Self, Error> {
-        Ok(Contact{
-            name: "".to_string(),
-            did: "".to_string(),
-            pfp: None,
-            abtme: None,
+        Ok(Contact {
+            name: "John Doe".to_string(),
+            did: "did:example:1234567890abcdef".to_string(),
+            pfp: Some("yeeeeeeeeeet".to_string()),  
+            abtme: Some("About me description".to_string()),
         })
     }
 }
@@ -326,20 +330,25 @@ pub async fn rustStart (
 
                 let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
                 let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                let ella_couch = Contact{name:"Ella Couch".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                let chris_slaughter = Contact{name:"Chris Slaughter".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-
+                let josh_thayer = Contact{name: "Josh Thayer".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "SomeDidValue".to_string(),pfp: None, abtme: None,};
+                
+                
+                // Use .clone() to create copies of the Contact instances
                 let conversations: Vec<Conversation> = vec![
-                    Conversation{
-                        messages: Vec<Message> = vec![
-                            Message{ sender: josh_thayer, message: "What\'s the plan?".to_string(), date:"8/4/24".to_string(), time:"1:36 PM".to_string(), is_incoming: true},
-                            Message{ sender: ella_couch, message: "I\'m going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false},
-                            Message{ sender: josh_thayer, message: "I guess we can".to_string(), date:"8/4/24".to_string(), time:"1:38 PM".to_string(), is_incoming: true},
-                            Message{ sender: josh_thayer, message: "Keep me posted and I will update the schedule book".to_string(), date:"8/4/24".to_string(), time:"1:39 PM".to_string(), is_incoming: true},
+                    Conversation {
+                        messages: vec![
+                            Message { sender: josh_thayer.clone(), message: "What's the plan?".to_string(), date: "8/4/24".to_string(), time: "1:36 PM".to_string(), is_incoming: true },
+                            Message { sender: ella_couch.clone(), message: "I'm going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false },
+                            Message { sender: josh_thayer.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:38 PM".to_string(), is_incoming: true },
+                            Message { sender: josh_thayer.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: true },
                         ],
-                        members: Vec<Contact> = vec![josh_thayer]
+                        members: vec![josh_thayer.clone()]
                     }
                 ];
+
+            
                 let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
                 for tx in wallet_transactions {
                     let price = match tx.confirmation_time.as_ref() {
