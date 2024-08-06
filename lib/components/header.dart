@@ -88,16 +88,16 @@ Widget stackButtonHeader(
   );
 }
 
-Widget stackHeader(BuildContext context, String text,
-    [bool delay = false, iconButton]) {
+Widget stackHeader(BuildContext context, String text, [leftIcon, rightIcon]) {
   return DefaultHeader(
-    left: iconButton == null ? backButton(context, delay) : iconButton!,
+    left: leftIcon ?? backButton(context),
     center: CustomText(
       textType: "heading",
       text: text,
       textSize: TextSize.h4,
       color: ThemeColor.heading,
     ),
+    right: rightIcon,
   );
 }
 

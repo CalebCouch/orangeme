@@ -10,8 +10,11 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/util.dart';
+
 import 'package:orange/classes.dart';
 import 'package:orange/classes/contact_info.dart';
+
+import 'dart:io';
 
 class MessagesVisibility extends StatefulWidget {
   final GlobalState globalState;
@@ -37,6 +40,14 @@ class MessagesVisibilityState extends State<MessagesVisibility> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
+    Info dummyInfo = Info(
+      null,
+      'assets/images/joshThayer.png',
+      null,
+      'Josh Thayer',
+      '8/5/24',
+      widget.recipients.length,
+    );
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -71,7 +82,7 @@ class MessagesVisibilityState extends State<MessagesVisibility> {
         if (index == 1) {
           navigateTo(
             context,
-            Room(contacts: widget.recipients),
+            Room(contacts: widget.recipients, info: dummyInfo),
           );
         } else {
           navigateTo(

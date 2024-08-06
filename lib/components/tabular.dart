@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/classes/contact_info.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:intl/intl.dart';
@@ -8,11 +9,13 @@ import 'package:intl/intl.dart';
 class SingleTab extends StatelessWidget {
   final String title;
   final String subtitle;
+  final bool underline;
 
   const SingleTab({
     super.key,
     required this.title,
     required this.subtitle,
+    this.underline = false,
   });
 
   @override
@@ -25,12 +28,11 @@ class SingleTab extends StatelessWidget {
           CustomText(
             text: title,
             textSize: TextSize.sm,
-            color: ThemeColor.textSecondary,
           ),
           CustomText(
             text: subtitle,
             textSize: TextSize.sm,
-            color: ThemeColor.textSecondary,
+            underline: underline,
           )
         ],
       ),
@@ -127,6 +129,23 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
           title: "Fee",
           subtitle: "\$${formatValue(tx.fee)} USD",
         ),
+    ],
+  );
+}
+
+Widget roomInfoTabular(BuildContext context, Info info) {
+  return Column(
+    children: [
+      GestureDetector(
+        onTap: () {},
+        child: SingleTab(
+          title: "Created by",
+          subtitle: info.creator,
+          underline: true,
+        ),
+      ),
+      SingleTab(title: "Created", subtitle: info.date),
+      SingleTab(title: "Members", subtitle: info.members.toString()),
     ],
   );
 }

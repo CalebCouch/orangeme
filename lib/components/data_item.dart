@@ -135,9 +135,9 @@ Widget two(List<ButtonTip> tipButtons) {
   );
 }
 
-Widget aboutMeItem(BuildContext context, String aboutMe) {
+Widget aboutMeItem(BuildContext context, String aboutMe, [String? title]) {
   return DataItem(
-    title: 'About Me',
+    title: title ?? 'About Me',
     content: Container(
       padding: const EdgeInsets.symmetric(vertical: AppPadding.dataItem),
       child: CustomText(

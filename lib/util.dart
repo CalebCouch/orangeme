@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
+import 'package:orange/classes/contact_info.dart';
 
 Future<void> navigateTo(BuildContext context, Widget widget) async {
   Navigator.push(
@@ -89,5 +90,17 @@ String formatValue(double val, [int per = 2]) {
     return val_str;
   } else {
     return NumberFormat("#,###", "en_US").format(val);
+  }
+}
+
+String getName(Info? info, bool isRoom) {
+  if (isRoom) {
+    if (info!.name == null) {
+      return "${info.creator}\'s Room";
+    } else {
+      return info.name!;
+    }
+  } else {
+    return 'Group members';
   }
 }

@@ -47,7 +47,7 @@ class ConversationState extends State<Conversation> {
   Widget build(BuildContext context) {
     _getMessages();
     return DefaultInterface(
-      header: Container(), //stackMessageHeader(context, widget.contacts),
+      header: stackMessageHeader(context, widget.contacts),
       content: Content(
         content: messages.isEmpty
             ? const Center(

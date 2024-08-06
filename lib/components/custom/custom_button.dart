@@ -4,7 +4,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
-import 'package:orange/flows/messages/conversation/group_message_info.dart';
+import 'package:orange/flows/messages/conversation/info.dart';
 
 import 'package:orange/theme/border.dart';
 
@@ -181,7 +181,7 @@ Widget sendButton(BuildContext context, bool isEnabled) {
   );
 }
 
-Widget backButton(BuildContext context, [bool delay = false]) {
+Widget backButton(BuildContext context) {
   return iconButton(
     context,
     () {
@@ -201,10 +201,12 @@ Widget exitButton(BuildContext context, Widget home) {
   );
 }
 
-Widget infoButton(BuildContext context, contacts) {
+Widget infoButton(BuildContext context, contacts, [roomInfo]) {
   return iconButton(
     context,
-    navigateTo(context, GroupMessageInfo(contacts: contacts)),
+    () {
+      navigateTo(context, MessageInfo(contacts: contacts, info: roomInfo));
+    },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
   );
 }

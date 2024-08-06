@@ -39,7 +39,6 @@ class ConfirmationState extends State<Confirmation> {
       header: stackHeader(
         context,
         "Confirm send",
-        false,
         exitButton(context, WalletHome(widget.globalState)),
       ),
       content: Content(
