@@ -91,10 +91,7 @@ class _WalletHomeState extends State<WalletHome> {
             : TextSize.h2;
     return DefaultInterface(
       resizeToAvoidBottomInset: false,
-      header: primaryHeader(
-        context,
-        "Wallet",
-      ),
+      header: primaryHeader(context, null, 'Wallet'),
       content: Content(
         content: Column(
           children: [

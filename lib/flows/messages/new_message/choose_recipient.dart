@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/messages/new_message/visibility.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/classes/contact_info.dart';
@@ -8,12 +9,14 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/text_input.dart';
-import 'package:orange/flows/messages/conversation/conversation.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class ChooseRecipient extends StatefulWidget {
-  const ChooseRecipient({
+  final GlobalState globalState;
+  const ChooseRecipient(
+    this.globalState, {
     super.key,
   });
 
@@ -73,6 +76,15 @@ class ChooseRecipientState extends State<ChooseRecipient> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     List<Contact> testContacts = [
       const Contact('Ann', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('James', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
@@ -91,9 +103,9 @@ class ChooseRecipientState extends State<ChooseRecipient> {
         () {
           navigateTo(
             context,
-            Conversation(
-              contacts:
-                  _getContactsfromRecipientNames(testContacts, recipients),
+            MessagesVisibility(
+              widget.globalState,
+              _getContactsfromRecipientNames(testContacts, recipients),
             ),
           );
         },
@@ -105,7 +117,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
               hint: 'Profile name...',
             ),
             Container(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               alignment: Alignment.topLeft,
               child: Wrap(
                 spacing: 8,

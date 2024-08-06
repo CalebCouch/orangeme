@@ -61,19 +61,20 @@ class MessagesHomeState extends State<MessagesHome> {
       [Contact('Barbara B', null, 'ta3Th1Omn...')],
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return build_screen(context, state);
+      },
+    );
+  }
+
+  Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
-      header: messagesHeader(
-        context,
-        () {
-          navigateTo(
-            context,
-            const MyProfile(),
-          );
-        },
-        null,
-      ),
+      header: primaryHeader(context, null, 'Messages'),
       content: Content(
         content: testMessages.isNotEmpty
             ? ListView.builder(
@@ -103,7 +104,7 @@ class MessagesHomeState extends State<MessagesHome> {
         () {
           navigateTo(
             context,
-            const ChooseRecipient(),
+            ChooseRecipient(widget.globalState),
           );
         },
       ),

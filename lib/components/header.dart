@@ -47,29 +47,18 @@ class DefaultHeader extends StatelessWidget {
   }
 }
 
-Widget primaryHeader(BuildContext context, String text) {
-  return DefaultHeader(
-    center: CustomText(
-      textType: "heading",
-      text: text,
-      textSize: TextSize.h3,
-      color: ThemeColor.heading,
-    ),
-  );
-}
-
-Widget messagesHeader(BuildContext context, onTap, profilePhoto) {
+Widget primaryHeader(BuildContext context, profilePhoto, String title) {
   return DefaultHeader(
     left: GestureDetector(
-      onTap: onTap ?? () {},
+      onTap: () {},
       child: ProfilePhoto(
         size: ProfileSize.md,
         profilePhoto: profilePhoto,
       ),
     ),
-    center: const CustomText(
+    center: CustomText(
       textType: "heading",
-      text: 'Messages',
+      text: title,
       textSize: TextSize.h3,
       color: ThemeColor.heading,
     ),
