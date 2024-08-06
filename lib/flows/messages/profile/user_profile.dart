@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/classes/profile_info.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
@@ -11,20 +11,20 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/data_item.dart';
 
-import 'package:orange/flows/messages/conversation/conversation.dart';
+import 'package:orange/flows/messages/conversation/exchange.dart';
 
 import 'package:orange/util.dart';
 
 class UserProfile extends StatefulWidget {
-  final Profile userInfo;
+  final Contact userInfo;
   final String address;
 
   const UserProfile({
     super.key,
-    this.userInfo = const Profile(
+    this.userInfo = const Contact(
       'Chris Slaughter',
-      null,
       '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL',
+      null,
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     ),
     this.address = 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA',
@@ -50,7 +50,7 @@ class UserProfileState extends State<UserProfile> {
             children: [
               const ProfilePhoto(size: ProfileSize.xxl),
               const Spacing(height: AppPadding.profile),
-              aboutMeItem(context, widget.userInfo.aboutMe),
+              aboutMeItem(context, widget.userInfo.abtme),
               const Spacing(height: AppPadding.profile),
               didItem(context, widget.userInfo.did),
               const Spacing(height: AppPadding.profile),
@@ -65,13 +65,21 @@ class UserProfileState extends State<UserProfile> {
         'Message',
         () => navigateTo(
           context,
-          Conversation(
-            contacts: [
-              Contact(widget.userInfo.name, null, widget.userInfo.did)
+          Exchange(
+              conversation: Conversation(
+            [
+              Contact(
+                widget.userInfo.name,
+                widget.userInfo.did,
+                widget.userInfo.pfp,
+                widget.userInfo.abtme,
+              )
             ],
-          ),
+          )),
         ),
-        () => navigateTo(context, const Conversation()),
+        () {
+          print('send');
+        },
       ),
     );
   }

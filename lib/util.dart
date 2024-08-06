@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 
 Future<void> navigateTo(BuildContext context, Widget widget) async {
   Navigator.push(

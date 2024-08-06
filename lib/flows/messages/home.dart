@@ -9,21 +9,21 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/tab_navigator.dart';
 
-import 'package:orange/classes/message_info.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
-import 'package:orange/flows/messages/conversation/conversation.dart';
-import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/flows/messages/conversation/exchange.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
 class MessagesHome extends StatefulWidget {
   final GlobalState globalState;
-  const MessagesHome({
-    required this.globalState,
+  final Conversation? newConversation;
+  const MessagesHome(
+    this.globalState, {
     super.key,
+    this.newConversation,
   });
 
   @override
@@ -31,35 +31,13 @@ class MessagesHome extends StatefulWidget {
 }
 
 class MessagesHomeState extends State<MessagesHome> {
-  List<Message> testMessages = [
-    const Message(
-      'totally. that makes sense',
-      true,
-      '12:21 PM',
-      [Contact('Ann Davidson', null, 'ta3Th1Omn...')],
-    ),
-    const Message(
-      'Only so much though',
-      false,
-      '12:21 PM',
-      [Contact('James', null, 'ta3Th1Omn...')],
-    ),
-    const Message(
-      'tuesday?',
-      true,
-      '12:21 PM',
-      [
-        Contact('Barbara B', null, 'ta3Th1Omn...'),
-        Contact('Cam', null, 'ta3Th1Omn...'),
-        Contact('Rita Jones', null, 'ta3Th1Omn...')
-      ],
-    ),
-    const Message(
-      'tuesday?',
-      true,
-      '12:21 PM',
-      [Contact('Barbara B', null, 'ta3Th1Omn...')],
-    ),
+  List<Conversation> testConversations = [
+    const Conversation([
+      Contact('Chris Slaughter', 'ta3Th1Omn...', null, null)
+    ], [
+      Message(Contact('Chris Slaughter', 'ta3Th1Omn...', null, null),
+          'totally. that makes sense', '8/5/24', '12:21 PM', true)
+    ])
   ];
 
   @override
@@ -73,19 +51,26 @@ class MessagesHomeState extends State<MessagesHome> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
+    if (widget.newConversation != null) {
+      testConversations.add(widget.newConversation!);
+    }
     return DefaultInterface(
       header: primaryHeader(context, null, 'Messages'),
       content: Content(
-        content: testMessages.isNotEmpty
+        content: testConversations.isNotEmpty
             ? ListView.builder(
-                itemCount: testMessages.length,
+                itemCount: testConversations.length,
                 itemBuilder: (BuildContext context, int index) {
                   return messageListItem(
                     context,
-                    testMessages[index],
+                    testConversations[index],
                     () {
-                      navigateTo(context,
-                          Conversation(contacts: testMessages[index].contacts));
+                      navigateTo(
+                        context,
+                        Exchange(
+                          conversation: testConversations[index],
+                        ),
+                      );
                     },
                   );
                 },

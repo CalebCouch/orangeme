@@ -3,8 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/classes/message_info.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 
 class DefaultListItem extends StatelessWidget {
   final Widget? topLeft;
@@ -99,42 +98,44 @@ class ImageListItem extends StatelessWidget {
   }
 }
 
-Widget messageListItem(BuildContext context, Message message, onTap) {
+Widget messageListItem(BuildContext context, Conversation convo, onTap) {
   bool isGroup = false;
-  if (message.contacts.length > 1) isGroup = true;
+  if (convo.members.length > 1) isGroup = true;
   return ImageListItem(
     left: Container(
       alignment: Alignment.centerLeft,
       child: ProfilePhoto(
         size: ProfileSize.lg,
         isGroup: isGroup,
-        profilePhoto: message.contacts[0].photo,
+        profilePhoto: convo.members[0].pfp,
       ),
     ),
     topRight: CustomText(
-      text: isGroup ? 'Group message' : message.contacts[0].name,
+      text: isGroup ? 'Group message' : convo.members[0].name,
       textSize: TextSize.md,
     ),
-    bottomRight: Row(
-      children: [
-        message.isReceived
-            ? CustomText(
+    bottomRight: convo.messages != null
+        ? Row(
+            children: [
+              convo.messages!.last.isIncoming
+                  ? CustomText(
+                      alignment: TextAlign.left,
+                      text: '${convo.members[0].name}: ${String.fromCharCodes([
+                            0x0020
+                          ])}',
+                      textSize: TextSize.sm,
+                      color: ThemeColor.textSecondary,
+                    )
+                  : Container(),
+              CustomText(
                 alignment: TextAlign.left,
-                text: '${message.contacts[0].name}: ${String.fromCharCodes([
-                      0x0020
-                    ])}',
+                text: convo.messages!.last.message,
                 textSize: TextSize.sm,
                 color: ThemeColor.textSecondary,
-              )
-            : Container(),
-        CustomText(
-          alignment: TextAlign.left,
-          text: message.text,
-          textSize: TextSize.sm,
-          color: ThemeColor.textSecondary,
-        ),
-      ],
-    ),
+              ),
+            ],
+          )
+        : Container(),
   );
 }
 
@@ -145,7 +146,7 @@ Widget contactListItem(BuildContext context, Contact contact, onTap) {
       alignment: Alignment.centerLeft,
       child: ProfilePhoto(
         size: ProfileSize.lg,
-        profilePhoto: contact.photo,
+        profilePhoto: contact.pfp,
       ),
     ),
     topRight: CustomText(

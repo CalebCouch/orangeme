@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
@@ -26,13 +26,13 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
   @override
   Widget build(BuildContext context) {
     List<Contact> testContacts = [
-      const Contact('Ann', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('James', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Stacy', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Cam', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('J. Marks', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Anthony', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('R. R. B.', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
+      const Contact('Ann', 'VZDrYz39XxuPq...r5zKQGjTA', null, null),
+      const Contact('James', 'VZDrYz39XxuPq...r5zKQGjTA', null, null),
+      const Contact('Stacy', 'VZDrYz39XxuPq...r5zKQGjTA', null, null),
+      const Contact('Cam', 'VZDrYz39XxuPq...r5zKQGjTA', null, null),
+      const Contact('J. Marks', 'VZDrYz39XxuPq...r5zKQGjTA', null, null),
+      const Contact('Anthony', 'VZDrYz39XxuPq...r5zKQGjTA', null, null),
+      const Contact('R. R. B.', 'VZDrYz39XxuPq...r5zKQGjTA', null, null),
     ];
     return DefaultInterface(
       header: stackButtonHeader(
@@ -40,7 +40,13 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
         'Select Recipient',
         true,
         'Next',
-        () => {navigateTo(context, SendAmount(widget.globalState))},
+        () => {
+          navigateTo(
+              context,
+              SendAmount(
+                widget.globalState,
+              ))
+        },
       ),
       content: Content(
         content: Column(

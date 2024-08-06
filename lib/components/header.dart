@@ -3,7 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 
 class DefaultHeader extends StatelessWidget {
   final Widget? left;
@@ -111,7 +111,7 @@ Widget stackMessageHeader(BuildContext context, List<Contact> contacts) {
       children: [
         !isGroup
             ? ProfilePhoto(
-                profilePhoto: contacts[0].photo,
+                profilePhoto: contacts[0].pfp,
               )
             : profilePhotoStack(context, contacts),
         const Spacing(height: 8),

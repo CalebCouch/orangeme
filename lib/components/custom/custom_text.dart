@@ -53,6 +53,7 @@ class _CustomTextState extends State<CustomText> {
       widget.text,
       textAlign: widget.alignment,
       style: TextStyle(
+        overflow: TextOverflow.ellipsis,
         fontFamily: "Outfit",
         fontSize: widget.textSize,
         color: color,

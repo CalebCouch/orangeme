@@ -3,7 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/radio_selectors.dart';
-import 'package:orange/flows/messages/conversation/conversation.dart';
+import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orange/flows/messages/conversation/room.dart';
 
 import 'package:orange/components/content.dart';
@@ -12,9 +12,7 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/util.dart';
 
 import 'package:orange/classes.dart';
-import 'package:orange/classes/contact_info.dart';
-
-import 'dart:io';
+import 'package:orange/classes/test_classes.dart';
 
 class MessagesVisibility extends StatefulWidget {
   final GlobalState globalState;
@@ -46,7 +44,7 @@ class MessagesVisibilityState extends State<MessagesVisibility> {
       null,
       'Josh Thayer',
       '8/5/24',
-      widget.recipients.length,
+      widget.recipients,
     );
     return DefaultInterface(
       header: stackHeader(
@@ -82,13 +80,14 @@ class MessagesVisibilityState extends State<MessagesVisibility> {
         if (index == 1) {
           navigateTo(
             context,
-            Room(contacts: widget.recipients, info: dummyInfo),
+            Room(widget.globalState,
+                contacts: widget.recipients, info: dummyInfo),
           );
         } else {
           navigateTo(
             context,
-            Conversation(
-              contacts: widget.recipients,
+            Exchange(
+              conversation: Conversation(widget.recipients),
             ),
           );
         }

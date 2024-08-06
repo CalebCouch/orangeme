@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:intl/intl.dart';

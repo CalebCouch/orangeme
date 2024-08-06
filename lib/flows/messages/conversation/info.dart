@@ -3,11 +3,10 @@ import 'package:orange/components/data_item.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes/test_classes.dart';
 
 import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/data_item.dart';
 import 'package:orange/components/tabular.dart';
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
@@ -23,7 +22,7 @@ class MessageInfo extends StatefulWidget {
   const MessageInfo({
     super.key,
     this.contacts = const [
-      Contact('Chris Slaughter', null, 'unknown'),
+      Contact('Chris Slaughter', 'unknown', null, null),
     ],
     this.info,
   });
