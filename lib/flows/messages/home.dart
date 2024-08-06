@@ -39,7 +39,6 @@ class MessagesHomeState extends State<MessagesHome> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    print(state.conversations);
     print(state.users);
     return DefaultInterface(
       header: messagesHeader(

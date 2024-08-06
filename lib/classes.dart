@@ -88,52 +88,6 @@ class Conversation {
   }
 }
 
-/* TEST INFORMATION */
-Contact myAccount = Contact(
-  '',
-  'VZDrYz39XxuPadsBN8Bkls39ObkrSltDxae1',
-  null,
-  '',
-);
-Contact chrisSlaughter = Contact(
-  'Chris Slaughter',
-  'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA',
-  null,
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-);
-Contact joshThayer = Contact(
-  'Josh Thayer',
-  'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA',
-  null,
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-);
-
-Message mA =
-    Message(joshThayer, 'What\'s the plan?', '8/4/24', '1:38 PM', true);
-
-Message mB = Message(
-  myAccount,
-  'I\'m going to send you guys invites through email later this week',
-  '8/4/24',
-  '1:39 PM',
-  false,
-);
-
-Message mC = Message(joshThayer, 'I guess we can', '8/4/24', '1:39 PM', true);
-
-Message mD = Message(
-    joshThayer,
-    'Keep me posted and I will update the schedule book',
-    '8/4/24',
-    '1:40 PM',
-    true);
-
-Conversation cnvo = Conversation(
-  [joshThayer],
-  [mA, mB, mC, mD],
-);
-/* END TEST INFORMATION */
-
 class DartState {
   double currentPrice;
   double usdBalance;

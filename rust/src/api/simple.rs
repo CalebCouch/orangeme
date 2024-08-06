@@ -333,9 +333,6 @@ pub async fn rustStart (
                 let josh_thayer = Contact{name: "Josh Thayer".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
                 let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
                 let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "SomeDidValue".to_string(),pfp: None, abtme: None,};
-                
-                
-                // Use .clone() to create copies of the Contact instances
                 let conversations: Vec<Conversation> = vec![
                     Conversation {
                         messages: vec![
@@ -347,8 +344,6 @@ pub async fn rustStart (
                         members: vec![josh_thayer.clone()]
                     }
                 ];
-
-            
                 let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
                 for tx in wallet_transactions {
                     let price = match tx.confirmation_time.as_ref() {
@@ -358,6 +353,7 @@ pub async fn rustStart (
                     transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
                 }
                 let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
+                invoke(&callback, "print", conversations.to_string()).await?;
                 let state = DartState{
                     currentPrice: current_price,
                     btcBalance: btc,
