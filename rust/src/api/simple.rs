@@ -88,7 +88,12 @@ struct Price {amount: String, currency: String}
 #[derive(Deserialize)]
 struct Spot {amount: String, currency: String, base: String}
 #[derive(Deserialize)]
-struct SpotRes {data: Spot}
+struct SpotRes {
+    data: Option<Spot>,
+    error: Option<String>,
+    code: Option<i32>,
+    message: Option<String>
+}
 //PRICE FETCH
 
 async fn invoke(dartCallback: impl Fn(String) -> DartFnFuture<String>, method: &str, data: &str) -> Result<String, Error> {
@@ -236,16 +241,21 @@ struct Data {
 }
 
 
-async fn get_price(prices: &mut SqliteStore, timestamp: u64) -> Result<f64, Error> {
+async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &mut SqliteStore, timestamp: u64) -> Result<f64, Error> {
     Ok(match prices.get(&timestamp.to_le_bytes())? {
         Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("get_price", "Price not f64 bytes")))?),
         None => {
+            invoke(&callback, "print", "get_price:NONE").await?;
             let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
             let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
             let date = DateTime::from_timestamp(timestamp as i64, 0).ok_or(error)?.format("%Y/%m/%d").to_string();
             let url = format!("{}?date={}", base_url, date);
-            let spot_res: SpotRes = reqwest::get(&url).await?.json().await?;
-            let price = spot_res.data.amount.parse::<f64>()?;
+            invoke(&callback, "print", &format!("get_price:PRE{}", url)).await?;
+            let reqwest = reqwest::get(&url).await?;
+            invoke(&callback, "print", "reqwest").await?;
+            let spot_res: SpotRes = reqwest.json().await?;
+            invoke(&callback, "print", &format!("get_price:END{}", spot_res)).await?;
+            let price = spot_res.data.ok_or(Error::Error(spot_res.error.unwrap(), spot_res.message.unwrap()))?.amount.parse::<f64>()?;
             prices.set(&timestamp.to_le_bytes(), &price.to_le_bytes())?;
             price
         }
@@ -316,58 +326,81 @@ pub async fn rustStart (
         let price_path3 = price_path.clone();
         let descriptors3 = descriptors.clone();
         let client_uri3 = client_uri.clone();
+        invoke(&callback, "print", "I AM CRAZY").await?;
         tokio::spawn(async move {
-            let mut store = SqliteStore::new(store_path3)?;
-            let mut price = SqliteStore::new(price_path3)?;
-            let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
-            let blockchain = ElectrumBlockchain::from(Client::new(client_uri3)?);
-            loop {
-                let wallet_transactions = wallet.list_transactions(true)?;
-                let balance = wallet.get_balance()?;
-                let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
-                let btc = balance.get_total() as f64 / SATS;
-                let mut transactions: Vec<Transaction> = Vec::new();
+            invoke(&callback3, "print", "I AM NOT").await?;
+            let result: Result<(), Error> = {
+                invoke(&callback3, "print", "I AM STUPID").await?;
+                let mut store = SqliteStore::new(store_path3)?;
+                let mut price = SqliteStore::new(price_path3)?;
+                let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
+                let blockchain = ElectrumBlockchain::from(Client::new(client_uri3)?);
+                loop {
+                    invoke(&callback3, "print", "I AM ROUNDY").await?;
+                    let wallet_transactions = wallet.list_transactions(true)?;
+                    let balance = wallet.get_balance()?;
+                    let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
+                    let btc = balance.get_total() as f64 / SATS;
+                    let mut transactions: Vec<Transaction> = Vec::new();
+                    invoke(&callback3, "print", "I AM ROUNDY").await?;
 
-                let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                let josh_thayer = Contact{name: "Josh Thayer".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "SomeDidValue".to_string(),pfp: None, abtme: None,};
-                let conversations: Vec<Conversation> = vec![
-                    Conversation {
-                        messages: vec![
-                            Message { sender: josh_thayer.clone(), message: "What's the plan?".to_string(), date: "8/4/24".to_string(), time: "1:36 PM".to_string(), is_incoming: true },
-                            Message { sender: ella_couch.clone(), message: "I'm going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false },
-                            Message { sender: josh_thayer.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:38 PM".to_string(), is_incoming: true },
-                            Message { sender: josh_thayer.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: true },
-                        ],
-                        members: vec![josh_thayer.clone()]
+                    let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                    let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                    let josh_thayer = Contact{name: "Josh Thayer".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                    let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+                    let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "SomeDidValue".to_string(),pfp: None, abtme: None,};
+                    let conversations: Vec<Conversation> = vec![
+                        Conversation {
+                            messages: vec![
+                                Message { sender: josh_thayer.clone(), message: "What's the plan?".to_string(), date: "8/4/24".to_string(), time: "1:36 PM".to_string(), is_incoming: true },
+                                Message { sender: ella_couch.clone(), message: "I'm going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false },
+                                Message { sender: josh_thayer.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:38 PM".to_string(), is_incoming: true },
+                                Message { sender: josh_thayer.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: true },
+                            ],
+                            members: vec![josh_thayer.clone()]
+                        }
+                    ];
+                    invoke(&callback3, "print", "I AM ROUNDY").await?;
+
+                    let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
+                    invoke(&callback3, "print", "I AM ROUNDY3").await?;
+
+                    for tx in wallet_transactions {
+                        invoke(&callback3, "print", "I AM ROUNDY1").await?;
+                        let price = match tx.confirmation_time.as_ref() {
+                            Some(ct) => get_price(&callback3, &mut price, ct.timestamp).await?,
+                            None => current_price
+                        };
+                        invoke(&callback3, "print", "I AM ROUNDY1").await?;
+                        transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
+                        invoke(&callback3, "print", "I AM ROUNDYF").await?;
                     }
-                ];
-                let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
-                for tx in wallet_transactions {
-                    let price = match tx.confirmation_time.as_ref() {
-                        Some(ct) => get_price(&mut price, ct.timestamp).await?,
-                        None => current_price
+                    invoke(&callback3, "print", "I AM ROUNDY").await?;
+
+                    let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
+                    let state = DartState{
+                        currentPrice: current_price,
+                        btcBalance: btc,
+                        usdBalance: current_price * btc,
+                        transactions,
+                        fees,
+                        conversations,
+                        users
                     };
-                    transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
+                    invoke(&callback3, "print", "I AM ROUNDY").await?;
+
+                    store.set(b"state", &serde_json::to_vec(&state)?)?;
+                    invoke(&callback3, "print", "I AM SETTING STATE!!!").await?;
+                    invoke(&callback3, "set_state", &serde_json::to_string(&state)?).await?;
+                    thread::sleep(time::Duration::from_millis(1000));
                 }
-                let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
-                invoke(&callback, "print", conversations.to_string()).await?;
-                let state = DartState{
-                    currentPrice: current_price,
-                    btcBalance: btc,
-                    usdBalance: current_price * btc,
-                    transactions,
-                    fees,
-                    conversations,
-                    users
-                };
-                store.set(b"state", &serde_json::to_vec(&state)?)?;
-                invoke(&callback3, "set_state", &serde_json::to_string(&state)?).await?;
-                thread::sleep(time::Duration::from_millis(1000));
-            }
-            Err::<(), Error>(Error::Exited("Refresh Dart State Exited".to_string()))
+            };
+            invoke(&callback3, "print", "I AM SETTING ERROR!!!").await?;
+            invoke(&callback3, "print", &format!("{:?}", result)).await?;
+
+            let error = Error::Exited(format!("Refresh Dart State Exited {:?}", result));
+            invoke(&callback3, "error", &error.to_string()).await?;
+            Err::<(), Error>(error)
         });
 
         loop {
