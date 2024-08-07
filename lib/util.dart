@@ -96,7 +96,7 @@ String formatValue(double val, [int per = 2]) {
 String getName(Info? info, bool isRoom) {
   if (isRoom) {
     if (info!.name == null) {
-      return "${info.creator}\'s Room";
+      return "${info.creator.name}\'s Room";
     } else {
       return info.name!;
     }

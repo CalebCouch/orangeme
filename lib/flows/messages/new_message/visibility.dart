@@ -40,9 +40,10 @@ class MessagesVisibilityState extends State<MessagesVisibility> {
   Widget buildScreen(BuildContext context, DartState state) {
     Info dummyInfo = Info(
       null,
-      'assets/images/joshThayer.png',
       null,
-      'Josh Thayer',
+      null,
+      const Contact(
+          'Josh Thayer', 'unknown', 'assets/images/joshThayer.png', null),
       '8/5/24',
       widget.recipients,
     );
@@ -81,12 +82,13 @@ class MessagesVisibilityState extends State<MessagesVisibility> {
           navigateTo(
             context,
             Room(widget.globalState,
-                contacts: widget.recipients, info: dummyInfo),
+                conversation: Conversation(widget.recipients, null, dummyInfo)),
           );
         } else {
           navigateTo(
             context,
             Exchange(
+              widget.globalState,
               conversation: Conversation(widget.recipients),
             ),
           );

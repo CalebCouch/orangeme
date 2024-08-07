@@ -75,7 +75,7 @@ Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
       itemBuilder: (BuildContext context, int index) {
         return Align(
           widthFactor: 0.75,
-          child: ProfilePhoto(outline: true, profilePhoto: contacts[0].pfp),
+          child: ProfilePhoto(outline: true, profilePhoto: contacts[index].pfp),
         );
       },
     ),

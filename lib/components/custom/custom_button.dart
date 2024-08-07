@@ -210,11 +210,11 @@ Widget exitButton(BuildContext context, Widget home) {
   );
 }
 
-Widget infoButton(BuildContext context, contacts, [roomInfo]) {
+Widget infoButton(BuildContext context, Widget page) {
   return iconButton(
     context,
     () {
-      navigateTo(context, MessageInfo(contacts: contacts, info: roomInfo));
+      navigateTo(context, page);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
   );

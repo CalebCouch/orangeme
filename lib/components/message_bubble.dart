@@ -3,44 +3,27 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes/test_classes.dart';
 
-class MessageBubble extends StatelessWidget {
-  final Message message;
-  final bool isGroup;
-  final Message? previousMessage;
-  final Message? nextMessage;
-
-  const MessageBubble({
-    super.key,
-    required this.message,
-    this.isGroup = false,
-    this.previousMessage,
-    this.nextMessage,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: message.isIncoming
-          ? CrossAxisAlignment.start
-          : CrossAxisAlignment.end,
-      children: [
-        bubble(message),
-        Row(
-          children: [
-            //message.isReceived
-            displayName(message, nextMessage, isGroup),
-            displayTime(message, nextMessage),
-          ],
-        ),
-        Spacing(
-          height: nextMessage != null &&
-                  message.isIncoming == nextMessage!.isIncoming
-              ? AppPadding.message
-              : AppPadding.content,
-        ),
-      ],
-    );
-  }
+Widget messageBubble(BuildContext context, Message message, bool isGroup,
+    [Message? previousMessage, Message? nextMessage]) {
+  return Column(
+    crossAxisAlignment:
+        message.isIncoming ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+    children: [
+      bubble(message),
+      Row(
+        children: [
+          displayName(message, nextMessage, isGroup),
+          displayTime(message, nextMessage),
+        ],
+      ),
+      Spacing(
+        height:
+            nextMessage != null && message.isIncoming == nextMessage.isIncoming
+                ? AppPadding.message
+                : AppPadding.content,
+      ),
+    ],
+  );
 }
 
 Widget displayTime(Message message, nextMessage) {
@@ -62,14 +45,14 @@ Widget displayTime(Message message, nextMessage) {
   }
 }
 
-Widget displayName(Message message, nextMessage, isGroup) {
+Widget displayName(Message message, Message? nextMessage, isGroup) {
   bool shouldDisplay =
-      nextMessage != null && nextMessage!.contact.name != message.sender.name;
+      nextMessage != null && nextMessage.sender.name != message.sender.name;
   bool shouldDisplayTime =
-      nextMessage != null && nextMessage!.time != message.time;
+      nextMessage != null && nextMessage.time != message.time;
 
   if (isGroup) {
-    if (nextMessage == null || message.isIncoming && shouldDisplay) {
+    if (message.isIncoming && shouldDisplay) {
       return Row(
         children: [
           Container(
@@ -83,9 +66,7 @@ Widget displayName(Message message, nextMessage, isGroup) {
               textSize: TextSize.sm,
             ),
           ),
-          nextMessage == null || shouldDisplayTime && shouldDisplay
-              ? displayDivider()
-              : Container(),
+          shouldDisplayTime && shouldDisplay ? displayDivider() : Container(),
         ],
       );
     } else {
@@ -118,7 +99,8 @@ Widget bubble(Message message) {
     child: CustomText(
       text: message.message,
       textSize: TextSize.md,
-      alignment: message.isIncoming ? TextAlign.left : TextAlign.right,
+      alignment: TextAlign.left,
+      color: message.isIncoming ? ThemeColor.text : ThemeColor.heading,
     ),
   );
 }
@@ -132,12 +114,12 @@ Widget messageStack(
     child: ListView.builder(
       itemCount: messages.length,
       itemBuilder: (BuildContext context, int index) {
-        return MessageBubble(
-          previousMessage: index >= 1 ? messages[index - 1] : null,
-          nextMessage:
-              index < (messages.length - 1) ? messages[index + 1] : null,
-          isGroup: isGroup,
-          message: messages[index],
+        return messageBubble(
+          context,
+          messages[index],
+          isGroup,
+          index >= 1 ? messages[index - 1] : null,
+          index < (messages.length - 1) ? messages[index + 1] : null,
         );
       },
     ),

@@ -15,11 +15,14 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class MessageInfo extends StatefulWidget {
+  final GlobalState globalState;
   final List<Contact> contacts;
   final Info? info;
-  const MessageInfo({
+  const MessageInfo(
+    this.globalState, {
     super.key,
     this.contacts = const [
       Contact('Chris Slaughter', 'unknown', null, null),
@@ -34,6 +37,15 @@ class MessageInfo extends StatefulWidget {
 class MessageInfoState extends State<MessageInfo> {
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return build_screen(context, state);
+      },
+    );
+  }
+
+  Widget build_screen(BuildContext context, DartState state) {
     bool isRoom = false;
     if (widget.info != null) isRoom = true;
     String roomName = getName(widget.info, isRoom);
@@ -43,7 +55,7 @@ class MessageInfoState extends State<MessageInfo> {
         content: Column(
           children: [
             isRoom
-                ? roomInfoDisplay(context, widget.info!)
+                ? roomInfoDisplay(widget.globalState, context, widget.info!)
                 : CustomText(
                     text: 'This group has ${widget.contacts.length} members',
                     textSize: TextSize.md,
@@ -61,7 +73,10 @@ class MessageInfoState extends State<MessageInfo> {
                       context,
                       widget.contacts[index],
                       () {
-                        navigateTo(context, const UserProfile());
+                        navigateTo(
+                            context,
+                            UserProfile(widget.globalState,
+                                userInfo: widget.contacts[index]));
                       },
                     );
                   },
@@ -75,10 +90,11 @@ class MessageInfoState extends State<MessageInfo> {
   }
 }
 
-Widget roomInfoDisplay(BuildContext context, Info info) {
+Widget roomInfoDisplay(
+    GlobalState globalState, BuildContext context, Info info) {
   return Column(children: [
     ProfilePhoto(
-      profilePhoto: info.photo,
+      profilePhoto: info.photo ?? info.creator.pfp,
       size: ProfileSize.xxl,
     ),
     const Spacing(height: AppPadding.content),
@@ -93,12 +109,13 @@ Widget roomInfoDisplay(BuildContext context, Info info) {
             textSize: TextSize.md,
             alignment: TextAlign.left,
             color: ThemeColor.heading,
-            text: info.desc ?? "A room for all of ${info.creator}'s friends",
+            text:
+                info.desc ?? "A room for all of ${info.creator.name}'s friends",
           ),
           const Spacing(height: AppPadding.bumper),
           Container(
             padding: const EdgeInsets.symmetric(vertical: AppPadding.bumper),
-            child: roomInfoTabular(context, info),
+            child: roomInfoTabular(globalState, context, info),
           ),
         ],
       ),

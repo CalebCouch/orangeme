@@ -29,10 +29,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
   List<String> recipients = [];
 
   void addRecipient(String name) {
-    if (recipients.contains(name)) {
-      removeRecipient(name);
-      return;
-    }
+    if (recipients.contains(name)) return;
     setState(() {
       recipients.add(name);
     });

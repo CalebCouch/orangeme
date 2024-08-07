@@ -11,7 +11,7 @@ class Info {
   final String? name;
   final String? photo;
   final String? desc;
-  final String creator;
+  final Contact creator;
   final String date;
   final List<Contact> members;
   final List<Message>? messages;
@@ -24,8 +24,9 @@ class Info {
 class Conversation {
   final List<Contact> members;
   final List<Message>? messages;
+  final Info? info;
 
-  const Conversation(this.members, [this.messages]);
+  const Conversation(this.members, [this.messages, this.info]);
 }
 
 class Message {

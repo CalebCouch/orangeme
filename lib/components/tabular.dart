@@ -5,6 +5,7 @@ import 'package:orange/classes/test_classes.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:intl/intl.dart';
+import 'package:orange/flows/messages/profile/user_profile.dart';
 
 class SingleTab extends StatelessWidget {
   final String title;
@@ -133,19 +134,22 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
   );
 }
 
-Widget roomInfoTabular(BuildContext context, Info info) {
+Widget roomInfoTabular(
+    GlobalState globalState, BuildContext context, Info info) {
   return Column(
     children: [
       GestureDetector(
-        onTap: () {},
+        onTap: () {
+          navigateTo(context, UserProfile(globalState, userInfo: info.creator));
+        },
         child: SingleTab(
           title: "Created by",
-          subtitle: info.creator,
+          subtitle: info.creator.name,
           underline: true,
         ),
       ),
       SingleTab(title: "Created", subtitle: info.date),
-      SingleTab(title: "Members", subtitle: info.members.toString()),
+      SingleTab(title: "Members", subtitle: info.members.length.toString()),
     ],
   );
 }

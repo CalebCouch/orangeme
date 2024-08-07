@@ -13,17 +13,16 @@ import 'package:orange/classes/test_classes.dart';
 
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
+import 'package:orange/flows/messages/conversation/room.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
 class MessagesHome extends StatefulWidget {
   final GlobalState globalState;
-  final Conversation? newConversation;
   const MessagesHome(
     this.globalState, {
     super.key,
-    this.newConversation,
   });
 
   @override
@@ -32,12 +31,119 @@ class MessagesHome extends StatefulWidget {
 
 class MessagesHomeState extends State<MessagesHome> {
   List<Conversation> testConversations = [
-    const Conversation([
-      Contact('Chris Slaughter', 'ta3Th1Omn...', null, null)
-    ], [
-      Message(Contact('Chris Slaughter', 'ta3Th1Omn...', null, null),
-          'totally. that makes sense', '8/5/24', '12:21 PM', true)
-    ])
+    const Conversation(
+      [
+        Contact('Chris Slaughter', 'ta3Th1Omn...',
+            'assets/images/chrisSlaughter.png', null)
+      ],
+      [
+        Message(
+            Contact('Chris Slaughter', 'ta3Th1Omn...', null, null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            true),
+        Message(
+            Contact('Chris Slaughter', 'ta3Th1Omn...', null, null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            true),
+        Message(
+            Contact('Chris Slaughter', 'ta3Th1Omn...', null, null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            false),
+        Message(
+            Contact('Chris Slaughter', 'ta3Th1Omn...', null, null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            true),
+      ],
+    ),
+    const Conversation(
+      [
+        Contact('Josh Thayer', 'ta3Th1Omn...', 'assets/images/joshThayer.png',
+            null),
+        Contact('Chris Slaughter', 'astakxec...',
+            'assets/images/chrisSlaughter.png', null)
+      ],
+      [
+        Message(
+            Contact('Josh Thayer', 'ta3Th1Omn...',
+                'assets/images/joshThayer.png', null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            true),
+        Message(
+            Contact('Chris Slaughter', 'ta3Th1Omn...',
+                'assets/images/chrisSlaughter.png', null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            true),
+        Message(
+            Contact('Josh Thayer', 'ta3Th1Omn...',
+                'assets/images/joshThayer.png', null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            true)
+      ],
+      Info(
+        null,
+        null,
+        null,
+        Contact('Josh Thayer', 'unknown', 'assets/images/joshThayer.png', null),
+        '8/5/24',
+        [
+          Contact('Josh Thayer', 'ta3Th1Omn...', 'assets/images/joshThayer.png',
+              null),
+          Contact('Chris Slaughter', 'astakxec...',
+              'assets/images/chrisSlaughter.png', null)
+        ],
+      ),
+    ),
+    const Conversation(
+      [
+        Contact('Chris Slaughter', 'ta3Th1Omn...',
+            'assets/images/chrisSlaughter.png', null),
+        Contact('Josh Thayer', 'ta3Th1Omn...', 'assets/images/joshThayer.png',
+            null),
+        Contact('Ella Couch', 'ta3Th1Omn...', null, null)
+      ],
+      [
+        Message(
+            Contact('Josh Thayer', 'ta3Th1Omn...',
+                'assets/images/joshThayer.png', null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:21 PM',
+            true),
+        Message(
+            Contact('Chris Slaughter', 'ta3Th1Omn...',
+                'assets/images/chrisSlaughter.png', null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:23 PM',
+            true),
+        Message(
+            Contact('Me', 'ta3Th1Omn...', null, null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:24 PM',
+            false),
+        Message(
+            Contact('Ella Couch', 'ta3Th1Omn...', null, null),
+            'totally. that makes sense. More text. I need even more text. I need it to wrap down. Then it needs to cut off with elipses',
+            '8/5/24',
+            '12:27 PM',
+            true),
+      ],
+    ),
   ];
 
   @override
@@ -51,9 +157,6 @@ class MessagesHomeState extends State<MessagesHome> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
-    if (widget.newConversation != null) {
-      testConversations.add(widget.newConversation!);
-    }
     return DefaultInterface(
       header: primaryHeader(context, null, 'Messages'),
       content: Content(
@@ -61,18 +164,38 @@ class MessagesHomeState extends State<MessagesHome> {
             ? ListView.builder(
                 itemCount: testConversations.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return messageListItem(
-                    context,
-                    testConversations[index],
-                    () {
-                      navigateTo(
-                        context,
-                        Exchange(
-                          conversation: testConversations[index],
-                        ),
-                      );
-                    },
-                  );
+                  if (testConversations[index].info != null) {
+                    return messageListItem(
+                      context,
+                      testConversations[index],
+                      () {
+                        print("room");
+                        navigateTo(
+                          context,
+                          Room(
+                            widget.globalState,
+                            conversation: testConversations[index],
+                          ),
+                        );
+                      },
+                      testConversations[index].info,
+                    );
+                  } else {
+                    return messageListItem(
+                      context,
+                      testConversations[index],
+                      () {
+                        print("nav");
+                        navigateTo(
+                          context,
+                          Exchange(
+                            widget.globalState,
+                            conversation: testConversations[index],
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
               )
             : const Center(

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/classes/profile_info.dart';
 import 'package:orange/classes/test_classes.dart';
 
 import 'package:orange/components/default_interface.dart';
@@ -14,12 +12,15 @@ import 'package:orange/components/data_item.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class UserProfile extends StatefulWidget {
+  final GlobalState globalState;
   final Contact userInfo;
   final String address;
 
-  const UserProfile({
+  const UserProfile(
+    this.globalState, {
     super.key,
     this.userInfo = const Contact(
       'Chris Slaughter',
@@ -37,6 +38,15 @@ class UserProfile extends StatefulWidget {
 class UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return build_screen(context, state);
+      },
+    );
+  }
+
+  Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(
         context,
@@ -48,7 +58,10 @@ class UserProfileState extends State<UserProfile> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const ProfilePhoto(size: ProfileSize.xxl),
+              ProfilePhoto(
+                size: ProfileSize.xxl,
+                profilePhoto: widget.userInfo.pfp,
+              ),
               const Spacing(height: AppPadding.profile),
               aboutMeItem(context, widget.userInfo.abtme),
               const Spacing(height: AppPadding.profile),
@@ -63,23 +76,23 @@ class UserProfileState extends State<UserProfile> {
         context,
         'Send Bitcoin',
         'Message',
-        () => navigateTo(
-          context,
-          Exchange(
-              conversation: Conversation(
-            [
-              Contact(
-                widget.userInfo.name,
-                widget.userInfo.did,
-                widget.userInfo.pfp,
-                widget.userInfo.abtme,
-              )
-            ],
-          )),
-        ),
         () {
           print('send');
         },
+        () => navigateTo(
+          context,
+          Exchange(widget.globalState,
+              conversation: Conversation(
+                [
+                  Contact(
+                    widget.userInfo.name,
+                    widget.userInfo.did,
+                    widget.userInfo.pfp,
+                    widget.userInfo.abtme,
+                  )
+                ],
+              )),
+        ),
       ),
     );
   }

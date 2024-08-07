@@ -4,6 +4,9 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/classes/test_classes.dart';
+import 'package:orange/util.dart';
+import 'package:orange/flows/messages/profile/user_profile.dart';
+import 'package:orange/classes.dart';
 
 class DefaultHeader extends StatelessWidget {
   final Widget? left;
@@ -101,28 +104,36 @@ Widget stackHeader(BuildContext context, String text, [leftIcon, rightIcon]) {
   );
 }
 
-Widget stackMessageHeader(BuildContext context, List<Contact> contacts) {
+Widget stackMessageHeader(GlobalState globalState, BuildContext context,
+    List<Contact> contacts, Widget home, Widget info) {
   bool isGroup = false;
   if (contacts.length > 1) isGroup = true;
   return DefaultHeader(
     height: 76,
-    left: backButton(context),
-    center: Column(
-      children: [
-        !isGroup
-            ? ProfilePhoto(
-                profilePhoto: contacts[0].pfp,
-              )
-            : profilePhotoStack(context, contacts),
-        const Spacing(height: 8),
-        CustomText(
-          textType: "heading",
-          text: isGroup ? 'Group message' : contacts[0].name,
-          textSize: TextSize.h5,
-          color: ThemeColor.heading,
-        ),
-      ],
+    left: backButton(context, home),
+    center: InkWell(
+      onTap: () {
+        if (!isGroup) {
+          navigateTo(context, UserProfile(globalState, userInfo: contacts[0]));
+        }
+      },
+      child: Column(
+        children: [
+          isGroup
+              ? profilePhotoStack(context, contacts)
+              : ProfilePhoto(
+                  profilePhoto: contacts[0].pfp,
+                ),
+          const Spacing(height: 8),
+          CustomText(
+            textType: "heading",
+            text: isGroup ? 'Group message' : contacts[0].name,
+            textSize: TextSize.h5,
+            color: ThemeColor.heading,
+          ),
+        ],
+      ),
     ),
-    right: isGroup ? infoButton(context, contacts) : null,
+    right: isGroup ? infoButton(context, info) : null,
   );
 }

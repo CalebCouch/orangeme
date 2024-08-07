@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/classes/test_classes.dart';
+import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class DefaultListItem extends StatelessWidget {
   final Widget? topLeft;
@@ -76,6 +79,7 @@ class ImageListItem extends StatelessWidget {
       onTap: onTap ?? () {},
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
+        width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -84,12 +88,14 @@ class ImageListItem extends StatelessWidget {
               child: (left != null) ? left! : Container(),
             ),
             const Spacing(width: AppPadding.listItem),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (topRight != null) topRight!,
-                if (bottomRight != null) bottomRight!,
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (topRight != null) topRight!,
+                  if (bottomRight != null) bottomRight!,
+                ],
+              ),
             ),
           ],
         ),
@@ -98,43 +104,46 @@ class ImageListItem extends StatelessWidget {
   }
 }
 
-Widget messageListItem(BuildContext context, Conversation convo, onTap) {
-  bool isGroup = false;
+Widget messageListItem(
+    BuildContext context, Conversation convo, VoidCallback onTap,
+    [Info? info]) {
+  bool isGroup = false, isRoom = false;
+  String roomName = '';
   if (convo.members.length > 1) isGroup = true;
+  if (info != null) {
+    isRoom = true;
+    if (info.name == null) {
+      roomName = "${info.creator.name}'s Room";
+    } else {
+      roomName = info.name!;
+    }
+  }
   return ImageListItem(
+    onTap: onTap,
     left: Container(
       alignment: Alignment.centerLeft,
       child: ProfilePhoto(
         size: ProfileSize.lg,
         isGroup: isGroup,
-        profilePhoto: convo.members[0].pfp,
+        profilePhoto: isGroup && info == null ? null : convo.members[0].pfp,
       ),
     ),
     topRight: CustomText(
-      text: isGroup ? 'Group message' : convo.members[0].name,
+      text: isGroup && !isRoom
+          ? 'Group message'
+          : isRoom
+              ? roomName
+              : convo.members[0].name,
       textSize: TextSize.md,
     ),
     bottomRight: convo.messages != null
-        ? Row(
-            children: [
-              convo.messages!.last.isIncoming
-                  ? CustomText(
-                      alignment: TextAlign.left,
-                      text: '${convo.members[0].name}: ${String.fromCharCodes([
-                            0x0020
-                          ])}',
-                      textSize: TextSize.sm,
-                      color: ThemeColor.textSecondary,
-                    )
-                  : Container(),
-              CustomText(
-                alignment: TextAlign.left,
-                text: convo.messages!.last.message,
-                textSize: TextSize.sm,
-                color: ThemeColor.textSecondary,
-              ),
-            ],
-          )
+        ? CustomText(
+            trim: true,
+            alignment: TextAlign.left,
+            text: convo.messages!.last.message,
+            textSize: TextSize.sm,
+            color: ThemeColor.textSecondary,
+            maxLines: 2)
         : Container(),
   );
 }
@@ -157,6 +166,69 @@ Widget contactListItem(BuildContext context, Contact contact, onTap) {
       text: contact.did,
       textSize: TextSize.sm,
       color: ThemeColor.textSecondary,
+    ),
+  );
+}
+
+Widget slackMessageItem(
+    GlobalState globalState, BuildContext context, Message message) {
+  return InkWell(
+    onTap: () {
+      navigateTo(
+        context,
+        UserProfile(globalState, userInfo: message.sender),
+      );
+    },
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProfilePhoto(size: ProfileSize.md, profilePhoto: message.sender.pfp),
+          const Spacing(width: AppPadding.listItem),
+          Expanded(
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    CustomText(
+                      text: message.sender.name,
+                      textSize: TextSize.md,
+                    ),
+                    const Spacing(width: 8),
+                    CustomText(
+                      text: message.time,
+                      textSize: TextSize.sm,
+                      color: ThemeColor.textSecondary,
+                    ),
+                  ],
+                ),
+                const Spacing(height: 6),
+                CustomText(
+                  text: message.message,
+                  textSize: TextSize.md,
+                  alignment: TextAlign.left,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    ),
+  );
+}
+
+Widget slackMessageGroup(
+    GlobalState globalState, BuildContext context, List<Message> messages) {
+  return SizedBox(
+    height: double.infinity,
+    child: ListView.builder(
+      itemCount: messages.length,
+      itemBuilder: (BuildContext context, int index) {
+        return slackMessageItem(globalState, context, messages[index]);
+      },
     ),
   );
 }
