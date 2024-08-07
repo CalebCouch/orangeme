@@ -177,7 +177,6 @@ class GlobalState {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
       case "set_state":
-        print(DartState.fromJson(jsonDecode(command.data)));
         state.value = DartState.fromJson(jsonDecode(command.data));
       case "secure_get":
         return await storage.read(key: command.data) ?? "";
@@ -195,8 +194,6 @@ class GlobalState {
         rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
       case "synced":
         synced = true;
-      case "error":
-        print(command.data);
       case var unknown:
         return "Error:UnknownMethod:$unknown";
     }

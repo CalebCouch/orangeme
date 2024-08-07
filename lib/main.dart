@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
 Future<void> main() async {
