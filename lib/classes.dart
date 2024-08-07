@@ -113,8 +113,8 @@ class DartState {
           json['transactions'].map((tx) => Transaction.fromJson(tx))),
       List<double>.from(json['fees'].map((fee) => fee as double)),
       List<Conversation>.from(
-          json["conversations"].map((cnv) => Conversation.fromJson(cnv))),
-      List<Contact>.from(json["users"].map((ctcs) => Contact.fromJson(ctcs))),
+          json["conversations"].map((y) => Conversation.fromJson(y))),
+      List<Contact>.from(json["users"].map((i) => Contact.fromJson(i))),
     );
   }
 }
@@ -177,6 +177,7 @@ class GlobalState {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
       case "set_state":
+        print(DartState.fromJson(jsonDecode(command.data)));
         state.value = DartState.fromJson(jsonDecode(command.data));
       case "secure_get":
         return await storage.read(key: command.data) ?? "";
@@ -194,6 +195,8 @@ class GlobalState {
         rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
       case "synced":
         synced = true;
+      case "error":
+        print(command.data);
       case var unknown:
         return "Error:UnknownMethod:$unknown";
     }
