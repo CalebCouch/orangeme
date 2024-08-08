@@ -26,11 +26,43 @@ class ChooseRecipient extends StatefulWidget {
 
 class ChooseRecipientState extends State<ChooseRecipient> {
   List<Contact> recipients = [];
+  List<Contact> filteredContacts = [];
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    filteredContacts = widget.globalState.state.value.users;
+    searchController.addListener(_filterContacts);
+  }
+
+  @override
+  void dispose() {
+    searchController.removeListener(_filterContacts);
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterContacts() {
+    setState(() {
+      String searchTerm = searchController.text.toLowerCase();
+      if (searchTerm.isEmpty) {
+        filteredContacts = widget.globalState.state.value.users;
+      } else {
+        filteredContacts = widget.globalState.state.value.users
+            .where((contact) =>
+                contact.name.toLowerCase().startsWith(searchTerm) ||
+                contact.did.toLowerCase().startsWith(searchTerm))
+            .toList();
+      }
+    });
+  }
 
   void addRecipient(Contact selected) {
     setState(() {
-      if (recipients.contains(selected)) return;
-      recipients.add(selected);
+      if (!recipients.contains(selected)) {
+        recipients.add(selected);
+      }
     });
   }
 
@@ -55,7 +87,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       header: stackButtonHeader(
         context,
         'New message',
-        recipients.isNotEmpty ? true : false,
+        recipients.isNotEmpty,
         'Next',
         () {
           navigateTo(
@@ -70,7 +102,8 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       content: Content(
         content: Column(
           children: [
-            const CustomTextInput(
+            CustomTextInput(
+              controller: searchController,
               hint: 'Profile name...',
             ),
             Container(
@@ -91,19 +124,15 @@ class ChooseRecipientState extends State<ChooseRecipient> {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: state.users.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return contactListItem(
-                      context,
-                      state.users[index],
-                      () => addRecipient(state.users[index]),
-                    );
-                  },
-                ),
+              child: ListView.builder(
+                itemCount: filteredContacts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return contactListItem(
+                    context,
+                    filteredContacts[index],
+                    () => addRecipient(filteredContacts[index]),
+                  );
+                },
               ),
             ),
           ],
