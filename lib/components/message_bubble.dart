@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo.dart';
+import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 Widget bubble(Message message) {
   return Container(
@@ -77,7 +79,8 @@ bool _showTime(Message m, bool isGroup, [Message? pM, Message? nM]) {
   return false;
 }
 
-Widget textMessage(BuildContext context, Message m, bool isGroup,
+Widget textMessage(
+    GlobalState globalState, BuildContext context, Message m, bool isGroup,
     [Message? pM, Message? nM]) {
   bool showTime = _showTime(m, isGroup, pM, nM);
   bool showName = _showName(m, isGroup, pM, nM);
@@ -90,10 +93,16 @@ Widget textMessage(BuildContext context, Message m, bool isGroup,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               showDetails
-                  ? Container(
-                      alignment: Alignment.bottomCenter,
-                      padding: const EdgeInsets.only(right: 8, bottom: 24),
-                      child: profilePhoto(context, m.sender.pfp),
+                  ? InkWell(
+                      onTap: () {
+                        navigateTo(context,
+                            UserProfile(globalState, userInfo: m.sender));
+                      },
+                      child: Container(
+                        alignment: Alignment.bottomCenter,
+                        padding: const EdgeInsets.only(right: 8, bottom: 24),
+                        child: profilePhoto(context, m.sender.pfp),
+                      ),
                     )
                   : Container(width: 40),
               Column(
@@ -119,8 +128,8 @@ Widget textMessage(BuildContext context, Message m, bool isGroup,
   );
 }
 
-Widget messageStack(
-    BuildContext context, List<Contact> contacts, List<Message> messages) {
+Widget messageStack(GlobalState globalState, BuildContext context,
+    List<Contact> contacts, List<Message> messages) {
   var isGroup = false;
   if (contacts.length > 1) isGroup = true;
   return SizedBox(
@@ -129,6 +138,7 @@ Widget messageStack(
       itemCount: messages.length,
       itemBuilder: (BuildContext context, int index) {
         return textMessage(
+          globalState,
           context,
           messages[index],
           isGroup,

@@ -49,8 +49,8 @@ class ExchangeState extends State<Exchange> {
                   color: ThemeColor.textSecondary,
                 ),
               )
-            : messageStack(context, widget.conversation.members,
-                widget.conversation.messages),
+            : messageStack(widget.globalState, context,
+                widget.conversation.members, widget.conversation.messages),
       ),
       bumper: messageInput(),
     );
