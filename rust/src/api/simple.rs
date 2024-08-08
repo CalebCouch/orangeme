@@ -49,6 +49,7 @@ use futures::future::ok;
 use secp256k1::rand;
 use bdk::sled::Tree;
 use bdk::FeeRate;
+use tokio::task::JoinHandle;
 
 const STORAGE_SPLIT: &str = "\u{0000}";
 const SATS: f64 = 100_000_000.0;
@@ -261,18 +262,195 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
     })
 }
 
-use std::process::Command;
+async fn sync_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
+    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+    let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
+    let mut init_sync = true;
+    loop {
+        wallet.sync(&blockchain, SyncOptions::default())?;
+        if init_sync {invoke(&callback, "synced", "").await?; init_sync = false;}
+        thread::sleep(time::Duration::from_millis(250));
+    }
+    Err(Error::Exited("Wallet Sync Exited".to_string()))
+}
+
+async fn price_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, price_path: PathBuf) -> Result<(), Error> {
+    let mut price = SqliteStore::new(price_path)?;
+    loop {
+        price.set(b"price", &reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?.to_le_bytes())?;
+        thread::sleep(time::Duration::from_millis(600_000));
+    }
+    Err(Error::Exited("Current Price Fetch Exited".to_string()))
+}
+
+async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
+    invoke(&callback, "print", "State Thread Running").await?;
+    let mut store = SqliteStore::new(store_path)?;
+    let mut price = SqliteStore::new(price_path)?;
+    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+    let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
+    loop {
+        invoke(&callback, "print", "State Thread Looping").await?;
+        let wallet_transactions = wallet.list_transactions(true)?;
+        let balance = wallet.get_balance()?;
+        let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
+        let btc = balance.get_total() as f64 / SATS;
+        let mut transactions: Vec<Transaction> = Vec::new();
+
+        let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+        let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+        let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+        let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "SomeDidValue".to_string(),pfp: None, abtme: None,};
+        let conversations: Vec<Conversation> = vec![
+            Conversation {
+                messages: vec![
+                    Message { sender: josh_thayer.clone(), message: "What's the plan?".to_string(), date: "8/4/24".to_string(), time: "1:36 PM".to_string(), is_incoming: true },
+                    Message { sender: ella_couch.clone(), message: "I'm going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false },
+                    Message { sender: josh_thayer.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:38 PM".to_string(), is_incoming: true },
+                    Message { sender: josh_thayer.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: true },
+                ],
+                members: vec![josh_thayer.clone()]
+            }
+        ];
+
+        let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
+
+        for tx in wallet_transactions {
+            let price = match tx.confirmation_time.as_ref() {
+                Some(ct) => get_price(&callback, &mut price, ct.timestamp).await?,
+                None => current_price
+            };
+            transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
+        }
+
+        let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
+        let state = DartState{
+            currentPrice: current_price,
+            btcBalance: btc,
+            usdBalance: current_price * btc,
+            transactions,
+            fees,
+            conversations,
+            users
+        };
+
+        store.set(b"state", &serde_json::to_vec(&state)?)?;
+        invoke(&callback, "set_state", &serde_json::to_string(&state)?).await?;
+        thread::sleep(time::Duration::from_millis(1000));
+    }
+    Err(Error::Exited(format!("Refresh Dart State Exited")))
+}
+
+async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
+    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+    let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
+    let mut store = SqliteStore::new(store_path.clone())?;
+    let price = SqliteStore::new(price_path.clone())?;
+    let client = Client::new(&client_uri)?;
+    loop {
+        let res = invoke(&callback, "get_commands", "").await?;
+        let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
+        for command in commands {
+            let result: Result<String, Error> = match command.method.as_str() {
+                "get_new_address" => {
+                    Ok(String::from_utf8(store.get(b"new_address")?.ok_or(Error::error("Main.get_new_address", "No new address"))?)?)
+                },
+                "check_address" => {
+                    Ok(Address::from_str(&command.data).map(|a|
+                        a.require_network(Network::Bitcoin).is_ok()
+                    ).unwrap_or(false).to_string())
+                },
+                "create_transaction" => {
+                    let ec = "Main.create_transaction";
+                    let error = || Error::bad_request(ec, "Invalid parameters");
+
+                    let split: Vec<&str> = command.data.split("|").collect();
+
+                    let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
+                    let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
+                    let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
+
+                    let price_error = || Error::not_found(ec, "Cannot get price");
+                    let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
+                    let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+
+                    let (mut psbt, mut tx_details) = {
+                        let mut builder = wallet.build_tx();
+                        builder.add_recipient(address.script_pubkey(), amount);
+                        builder.fee_rate(FeeRate::from_btc_per_kvb(blockchain.estimate_fee(3)? as f32));
+                        builder.finish()?
+                    };
+
+                    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+                    if !finalized { return Err(Error::error(ec, "Could not sign std tx"));}
+
+                    let tx = psbt.clone().extract_tx();
+                    let mut stream: Vec<u8> = Vec::new();
+                    tx.consensus_encode(&mut stream)?;
+                    store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
+
+                    tx_details.transaction = Some(tx);
+                    let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
+
+                    Ok(serde_json::to_string(&tx)?)
+                },
+                "broadcast_transaction" => {
+                    let ec = "Main.broadcast_transaction";
+                    let error = || Error::bad_request(ec, "Invalid parameters");
+
+                    let stream = store.get(&command.data.as_bytes())?.ok_or(error())?;
+                    let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
+                    client.transaction_broadcast(&tx)?;
+                    Ok("Ok".to_string())
+                },
+                "break" => {
+                    return Err(Error::Exited("Break Requested".to_string()));
+                },
+                _ => {
+                    return Err(Error::bad_request("rust_start", &format!("Unknown method: {}", command.method)));
+                }
+            };
+            let data = result?;
+            let resp = RustResponse{uid: command.uid.to_string(), data};
+            invoke(&callback, "post_response", &serde_json::to_string(&resp)?).await?;
+
+            //POST PROCESSES
+            match command.method.as_str() {
+                "get_new_address" => {
+                    store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
+                },
+                _ => {}
+            }
+        }
+    }
+    Err(Error::Exited("Main Exited".to_string()))
+}
+
+async fn flatten(handle: JoinHandle<Result<(), Error>>) -> Result<(), Error> {
+    match handle.await {
+        Ok(Ok(o)) => Ok(o),
+        Ok(Err(err)) => Err(err),
+        Err(e) => match e.try_into_panic() {
+            Ok(panic) => match panic.downcast_ref::<String>() {
+                Some(p) => Err(Error::Exited(p.to_string())),
+                None => Err(Error::Exited("Cannot convert panic to string".to_string())),
+            },
+            Err(e) => Err(Error::Exited(e.to_string()))
+        }
+    }
+}
 
 pub async fn rustStart (
     path: String,
     callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
+    callback1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
+    callback2: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
     callback3: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-    callback1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
+    callback4: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
 ) -> String {
-    let err_catch = tokio::spawn(async move {
+    let result: Result<(), Error> = async move {
         let path = PathBuf::from(&path);
 
-        //INIT
         let descriptors = get_descriptors(&callback).await?;
         let wallet_path = path.join("BDK_DATA/wallet");
         std::fs::create_dir_all(wallet_path.clone())?;
@@ -280,13 +458,10 @@ pub async fn rustStart (
         std::fs::create_dir_all(store_path.clone())?;
         let price_path = path.join("STATE/price");
         std::fs::create_dir_all(price_path.clone())?;
-        let client_uri = "ssl://electrum.blockstream.info:50002";
+        let client_uri = "ssl://electrum.blockstream.info:50002".to_string();
 
         let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
-        let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
         let mut store = SqliteStore::new(store_path.clone())?;
-        let price = SqliteStore::new(price_path.clone())?;
-        let client = Client::new(client_uri)?;
 
         if let Some(old_state) = store.get(b"state")? {
             if serde_json::from_slice::<DartState>(&old_state).is_ok() {
@@ -294,201 +469,24 @@ pub async fn rustStart (
             }
         }
         store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
-        invoke(&callback, "print", "se").await?;
 
-        let wallet_path1 = wallet_path.clone();
-        let descriptors1 = descriptors.clone();
-        let client_uri1 = client_uri.clone();
-        tokio::spawn(async move {
-            let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1.join("bdk.db")))?;
-            let blockchain = ElectrumBlockchain::from(Client::new(client_uri1)?);
-            let mut init_sync = true;
-            loop {
-                wallet.sync(&blockchain, SyncOptions::default())?;
-                if init_sync {invoke(&callback1, "synced", "").await?; init_sync = false;}
-                thread::sleep(time::Duration::from_millis(250));
-            }
-            Err::<(), Error>(Error::Exited("Wallet Sync Exited".to_string()))
-        });
+        invoke(&callback, "print", "Starting Threads").await?;
+        let result = tokio::try_join!(
+            flatten(tokio::spawn(sync_thread(callback1, wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
+            flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
+            flatten(tokio::spawn(state_thread(callback3, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
+            flatten(tokio::spawn(command_thread(callback4, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
+        );
+        invoke(&callback, "print", "Handling Threads").await?;
 
-        let price_path2 = price_path.clone();
-        tokio::spawn(async move {
-            let mut price = SqliteStore::new(price_path2)?;
-            loop {
-                price.set(b"price", &reqwest::get("https://api.coinbase.com/v2/prices/BTC-USD/buy").await?.json::<PriceRes>().await?.data.amount.parse::<f64>()?.to_le_bytes())?;
-                thread::sleep(time::Duration::from_millis(600_000));
-            }
-            Err::<(), Error>(Error::Exited("Current Price Fetch Exited".to_string()))
-        });
-        let wallet_path3 = wallet_path.clone();
-        let store_path3 = store_path.clone();
-        let price_path3 = price_path.clone();
-        let descriptors3 = descriptors.clone();
-        let client_uri3 = client_uri.clone();
-        invoke(&callback, "print", "I AM CRAZY").await?;
-        tokio::spawn(async move {
-            invoke(&callback3, "print", "I AM NOT").await?;
-            let result: Result<(), Error> = {
-                invoke(&callback3, "print", "I AM STUPID").await?;
-                let mut store = SqliteStore::new(store_path3)?;
-                let mut price = SqliteStore::new(price_path3)?;
-                let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
-                let blockchain = ElectrumBlockchain::from(Client::new(client_uri3)?);
-                loop {
-                    invoke(&callback3, "print", "I AM ROUNDY").await?;
-                    let wallet_transactions = wallet.list_transactions(true)?;
-                    let balance = wallet.get_balance()?;
-                    let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
-                    let btc = balance.get_total() as f64 / SATS;
-                    let mut transactions: Vec<Transaction> = Vec::new();
-                    invoke(&callback3, "print", "I AM ROUNDY").await?;
-
-                    let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                    let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                    let josh_thayer = Contact{name: "Josh Thayer".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                    let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-                    let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "SomeDidValue".to_string(),pfp: None, abtme: None,};
-                    let conversations: Vec<Conversation> = vec![
-                        Conversation {
-                            messages: vec![
-                                Message { sender: josh_thayer.clone(), message: "What's the plan?".to_string(), date: "8/4/24".to_string(), time: "1:36 PM".to_string(), is_incoming: true },
-                                Message { sender: ella_couch.clone(), message: "I'm going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:37 PM".to_string(), is_incoming: false },
-                                Message { sender: josh_thayer.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:38 PM".to_string(), is_incoming: true },
-                                Message { sender: josh_thayer.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: true },
-                            ],
-                            members: vec![josh_thayer.clone()]
-                        }
-                    ];
-                    invoke(&callback3, "print", "I AM ROUNDY").await?;
-
-                    let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
-                    invoke(&callback3, "print", "I AM ROUNDY3").await?;
-
-                    for tx in wallet_transactions {
-                        invoke(&callback3, "print", "I AM ROUNDY1").await?;
-                        let price = match tx.confirmation_time.as_ref() {
-                            Some(ct) => get_price(&callback3, &mut price, ct.timestamp).await?,
-                            None => current_price
-                        };
-                        invoke(&callback3, "print", "I AM ROUNDY1").await?;
-                        transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
-                        invoke(&callback3, "print", "I AM ROUNDYF").await?;
-                    }
-                    invoke(&callback3, "print", "I AM ROUNDY").await?;
-
-                    let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
-                    let state = DartState{
-                        currentPrice: current_price,
-                        btcBalance: btc,
-                        usdBalance: current_price * btc,
-                        transactions,
-                        fees,
-                        conversations,
-                        users
-                    };
-                    invoke(&callback3, "print", "I AM ROUNDY").await?;
-
-                    store.set(b"state", &serde_json::to_vec(&state)?)?;
-                    invoke(&callback3, "print", "I AM SETTING STATE!!!").await?;
-                    invoke(&callback3, "set_state", &serde_json::to_string(&state)?).await?;
-                    thread::sleep(time::Duration::from_millis(1000));
-                }
-            };
-            invoke(&callback3, "print", "I AM SETTING ERROR!!!").await?;
-            invoke(&callback3, "print", &format!("{:?}", result)).await?;
-
-            let error = Error::Exited(format!("Refresh Dart State Exited {:?}", result));
-            invoke(&callback3, "error", &error.to_string()).await?;
-            Err::<(), Error>(error)
-        });
-
-        loop {
-            let res = invoke(&callback, "get_commands", "").await?;
-            let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
-            for command in commands {
-                let result: Result<String, Error> = match command.method.as_str() {
-                    "get_new_address" => {
-                        Ok(String::from_utf8(store.get(b"new_address")?.ok_or(Error::error("Main.get_new_address", "No new address"))?)?)
-                    },
-                    "check_address" => {
-                        Ok(Address::from_str(&command.data).map(|a|
-                            a.require_network(Network::Bitcoin).is_ok()
-                        ).unwrap_or(false).to_string())
-                    },
-                    "create_transaction" => {
-                        let ec = "Main.create_transaction";
-                        let error = || Error::bad_request(ec, "Invalid parameters");
-
-                        let split: Vec<&str> = command.data.split("|").collect();
-
-                        let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
-                        let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
-                        let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
-
-                        let price_error = || Error::not_found(ec, "Cannot get price");
-                        let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
-                        let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-
-                        let (mut psbt, mut tx_details) = {
-                            let mut builder = wallet.build_tx();
-                            builder.add_recipient(address.script_pubkey(), amount);
-                            builder.fee_rate(FeeRate::from_btc_per_kvb(blockchain.estimate_fee(3)? as f32));
-                            builder.finish()?
-                        };
-
-                        let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-                        if !finalized { return Err(Error::error(ec, "Could not sign std tx"));}
-
-                        let tx = psbt.clone().extract_tx();
-                        let mut stream: Vec<u8> = Vec::new();
-                        tx.consensus_encode(&mut stream)?;
-                        store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
-
-                        tx_details.transaction = Some(tx);
-                        let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
-
-                        Ok(serde_json::to_string(&tx)?)
-                    },
-                    "broadcast_transaction" => {
-                        let ec = "Main.broadcast_transaction";
-                        let error = || Error::bad_request(ec, "Invalid parameters");
-
-                        let stream = store.get(&command.data.as_bytes())?.ok_or(error())?;
-                        let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
-                        client.transaction_broadcast(&tx)?;
-                        Ok("Ok".to_string())
-                    },
-                    "break" => {
-                        return Err(Error::Exited("Break Requested".to_string()));
-                    },
-                    _ => {
-                        return Err(Error::bad_request("rust_start", &format!("Unknown method: {}", command.method)));
-                    }
-                };
-                let data = result?;
-                let resp = RustResponse{uid: command.uid.to_string(), data};
-                invoke(&callback, "post_response", &serde_json::to_string(&resp)?).await?;
-
-                //POST PROCESSES
-                match command.method.as_str() {
-                    "get_new_address" => {
-                        store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
-                    },
-                    _ => {}
-                }
-            }
-        }
-        Err(Error::Exited("Main Exited".to_string()))
-    });
-    match err_catch.await {
-        Ok(Ok(())) => "Ok".to_string(),
-        Ok(Err(e)) => format!("Err: {:#?}", e),
-        Err(e) => match e.try_into_panic() {
-            Ok(panic) => match panic.downcast_ref::<String>() {
-                Some(p) => format!("Err: Panic: {:#?}", p),
-                None => format!("Err: {:#?}", "Cannot convert panic to string")
-            },
-            Err(e) => format!("Err: {:#?}", e)
-        }
+        match result {
+            Ok(_) => Ok(()),
+            Err(e) => Err(Error::Exited(e.to_string()))
+        }?;
+        Err(Error::Exited("All Exited".to_string()))
+    }.await;
+    match result {
+        Ok(()) => "OK".to_string(),
+        Err(e) => e.to_string()
     }
 }

@@ -41,7 +41,7 @@ class Transaction {
 class Contact {
   String name;
   String did;
-  File? pfp;
+  String? pfp;
   String? abtme;
   Contact(this.name, this.did, this.pfp, this.abtme);
 
@@ -49,7 +49,7 @@ class Contact {
     return Contact(
       json['name'] as String,
       json['did'] as String,
-      json['pfp'] as File?,
+      json['pfp'] as String?,
       json['abtme'] as String?,
     );
   }
@@ -66,11 +66,11 @@ class Message {
   Message(this.sender, this.message, this.date, this.time, this.isIncoming);
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      json['sender'] as Contact,
+      Contact.fromJson(json['sender']),
       json['message'] as String,
       json['date'] as String,
       json['time'] as String,
-      json['isIncoming'] as bool,
+      json['is_incoming'] as bool,
     );
   }
 }
@@ -82,8 +82,9 @@ class Conversation {
   Conversation(this.members, this.messages);
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
-      json['members'] as List<Contact>,
-      json['messages'] as List<Message>,
+      List<Contact>.from(json['members'].map((json) => Contact.fromJson(json))),
+      List<Message>.from(
+          json['messages'].map((json) => Message.fromJson(json))),
     );
   }
 }
@@ -145,7 +146,9 @@ class GlobalState {
         path: mydir.path,
         callback: dartCallback,
         callback1: dartCallback,
-        callback3: dartCallback));
+        callback2: dartCallback,
+        callback3: dartCallback,
+        callback4: dartCallback));
   }
 
   BuildContext? getContext() {

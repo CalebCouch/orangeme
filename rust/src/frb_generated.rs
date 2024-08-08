@@ -319,10 +319,16 @@ fn wire__crate__api__simple__rustStart_impl(
             let api_callback = decode_DartFn_Inputs_String_Output_String_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
+            let api_callback1 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
+                <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+            );
+            let api_callback2 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
+                <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+            );
             let api_callback3 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
-            let api_callback1 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
+            let api_callback4 = decode_DartFn_Inputs_String_Output_String_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
             deserializer.end();
@@ -333,8 +339,10 @@ fn wire__crate__api__simple__rustStart_impl(
                             crate::api::simple::rustStart(
                                 api_path,
                                 api_callback,
-                                api_callback3,
                                 api_callback1,
+                                api_callback2,
+                                api_callback3,
+                                api_callback4,
                             )
                             .await,
                         )?;

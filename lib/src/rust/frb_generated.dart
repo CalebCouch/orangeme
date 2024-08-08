@@ -91,8 +91,10 @@ abstract class RustLibApi extends BaseApi {
   Future<String> crateApiSimpleRustStart(
       {required String path,
       required FutureOr<String> Function(String) callback,
+      required FutureOr<String> Function(String) callback1,
+      required FutureOr<String> Function(String) callback2,
       required FutureOr<String> Function(String) callback3,
-      required FutureOr<String> Function(String) callback1});
+      required FutureOr<String> Function(String) callback4});
 
   RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error;
 
@@ -301,8 +303,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Future<String> crateApiSimpleRustStart(
       {required String path,
       required FutureOr<String> Function(String) callback,
+      required FutureOr<String> Function(String) callback1,
+      required FutureOr<String> Function(String) callback2,
       required FutureOr<String> Function(String) callback3,
-      required FutureOr<String> Function(String) callback1}) {
+      required FutureOr<String> Function(String) callback4}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
@@ -310,9 +314,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
             callback, serializer);
         sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
+            callback1, serializer);
+        sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
+            callback2, serializer);
+        sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
             callback3, serializer);
         sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
-            callback1, serializer);
+            callback4, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 8, port: port_);
       },
@@ -321,14 +329,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiSimpleRustStartConstMeta,
-      argValues: [path, callback, callback3, callback1],
+      argValues: [path, callback, callback1, callback2, callback3, callback4],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiSimpleRustStartConstMeta => const TaskConstMeta(
         debugName: "rustStart",
-        argNames: ["path", "callback", "callback3", "callback1"],
+        argNames: [
+          "path",
+          "callback",
+          "callback1",
+          "callback2",
+          "callback3",
+          "callback4"
+        ],
       );
 
   Future<void> Function(int, dynamic)

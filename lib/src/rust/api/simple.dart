@@ -6,20 +6,24 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `from_details`, `from_details`, `from_details`, `from_details`, `get_descriptors`, `get_price`, `invoke`
+// These functions are ignored because they are not marked as `pub`: `command_thread`, `flatten`, `from_details`, `from_details`, `from_details`, `from_details`, `get_descriptors`, `get_price`, `invoke`, `price_thread`, `state_thread`, `sync_thread`
 // These types are ignored because they are not used by any `pub` functions: `DartCommand`, `Data`, `DescriptorSet`, `PriceRes`, `Price`, `RustCommand`, `RustResponse`, `SpotRes`, `Spot`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 Future<String> rustStart(
         {required String path,
         required FutureOr<String> Function(String) callback,
+        required FutureOr<String> Function(String) callback1,
+        required FutureOr<String> Function(String) callback2,
         required FutureOr<String> Function(String) callback3,
-        required FutureOr<String> Function(String) callback1}) =>
+        required FutureOr<String> Function(String) callback4}) =>
     RustLib.instance.api.crateApiSimpleRustStart(
         path: path,
         callback: callback,
+        callback1: callback1,
+        callback2: callback2,
         callback3: callback3,
-        callback1: callback1);
+        callback4: callback4);
 
 class Contact {
   final String name;
