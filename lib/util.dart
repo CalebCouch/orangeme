@@ -101,6 +101,6 @@ formatDate(String? date, String? time) {
     return 'Yesterday';
   }
   return DateFormat.MMMMd()
-      .format(DateFormat('dd/MM/yyyy').parse(date))
+      .format(DateFormat('yyyy-MM-dd').parse(date))
       .toString();
 }

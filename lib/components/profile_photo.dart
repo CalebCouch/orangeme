@@ -6,7 +6,7 @@ import 'package:orange/components/tip_buttons.dart';
 import 'dart:io';
 
 class ProfilePhoto extends StatelessWidget {
-  final File? profilePhoto;
+  final String? profilePhoto;
   final double size;
   final bool outline;
   final bool isGroup;
@@ -46,7 +46,7 @@ class ProfilePhoto extends StatelessWidget {
         shape: BoxShape.circle,
         image: profilePhoto != null
             ? DecorationImage(
-                image: FileImage(profilePhoto!),
+                image: AssetImage(profilePhoto!),
                 fit: BoxFit.cover,
               )
             : null,

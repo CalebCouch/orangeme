@@ -246,14 +246,14 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
     Ok(match prices.get(&timestamp.to_le_bytes())? {
         Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("get_price", "Price not f64 bytes")))?),
         None => {
-            invoke(&callback, "print", "get_price:NONE").await?;
+            //invoke(&callback, "print", "get_price:NONE").await?;
             let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
             let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
             let date = DateTime::from_timestamp(timestamp as i64, 0).ok_or(error)?.format("%Y-%m-%d").to_string();
             let url = format!("{}?date={}", base_url, date);
-            invoke(&callback, "print", &format!("get_price:PRE{}", url)).await?;
+            //invoke(&callback, "print", &format!("get_price:PRE{}", url)).await?;
             let reqwest = reqwest::get(&url).await?;
-            invoke(&callback, "print", "reqwest").await?;
+            //invoke(&callback, "print", "reqwest").await?;
             let spot_res: SpotRes = reqwest.json().await?;
             let price = spot_res.data.ok_or(Error::Error(spot_res.error.unwrap(), spot_res.message.unwrap()))?.amount.parse::<f64>()?;
             prices.set(&timestamp.to_le_bytes(), &price.to_le_bytes())?;
@@ -284,13 +284,13 @@ async fn price_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
 }
 
 async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
-    invoke(&callback, "print", "State Thread Running").await?;
+    //invoke(&callback, "print", "State Thread Running").await?;
     let mut store = SqliteStore::new(store_path)?;
     let mut price = SqliteStore::new(price_path)?;
     let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     loop {
-        invoke(&callback, "print", "State Thread Looping").await?;
+        //invoke(&callback, "print", "State Thread Looping").await?;
         let wallet_transactions = wallet.list_transactions(true)?;
         let balance = wallet.get_balance()?;
         let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
@@ -470,14 +470,14 @@ pub async fn rustStart (
         }
         store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
 
-        invoke(&callback, "print", "Starting Threads").await?;
+        //invoke(&callback, "print", "Starting Threads").await?;
         let result = tokio::try_join!(
             flatten(tokio::spawn(sync_thread(callback1, wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
             flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
             flatten(tokio::spawn(state_thread(callback3, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
             flatten(tokio::spawn(command_thread(callback4, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
         );
-        invoke(&callback, "print", "Handling Threads").await?;
+        //invoke(&callback, "print", "Handling Threads").await?;
 
         match result {
             Ok(_) => Ok(()),
