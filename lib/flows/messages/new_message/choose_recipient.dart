@@ -52,7 +52,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
         filteredContacts = widget.globalState.state.value.users
             .where((contact) =>
                 contact.name.toLowerCase().startsWith(searchTerm) ||
-                contact.did.toLowerCase().startsWith(searchTerm)) // Add this line
+                contact.did.toLowerCase().startsWith(searchTerm)) 
             .toList();
       }
     });
