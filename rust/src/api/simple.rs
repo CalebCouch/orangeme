@@ -297,9 +297,9 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
         let btc = balance.get_total() as f64 / SATS;
         let mut transactions: Vec<Transaction> = Vec::new();
 
-        let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-        let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-        let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
+        let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/josh_thayer.png".to_string()), abtme: None};
+        let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/panda.jpeg".to_string()), abtme: None};
+        let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/cat.jpg".to_string()), abtme: None};
         let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(),pfp: None, abtme: None,};
         let conversations: Vec<Conversation> = vec![
             Conversation {
@@ -310,6 +310,19 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
                     Message { sender: josh_thayer.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: true },
                 ],
                 members: vec![josh_thayer.clone()]
+            },
+            Conversation {
+                messages: vec![
+                    Message { sender: josh_thayer.clone(), message: "What's the plan?".to_string(), date: "8/4/24".to_string(), time: "1:36 PM".to_string(), is_incoming: true },
+                    Message { sender: josh_thayer.clone(), message: "I'm going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:36 PM".to_string(), is_incoming: true },
+                    Message { sender: josh_thayer.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: true },
+                    Message { sender: ella_couch.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:39 PM".to_string(), is_incoming: false },
+                    Message { sender: josh_thayer.clone(), message: "What's the plan?".to_string(), date: "8/4/24".to_string(), time: "1:40 PM".to_string(), is_incoming: true },
+                    Message { sender: chris_slaughter.clone(), message: "I'm going to send you guys invites through email later this week".to_string(), date: "8/4/24".to_string(), time: "1:45 PM".to_string(), is_incoming: true },
+                    Message { sender: chris_slaughter.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:45 PM".to_string(), is_incoming: true },
+                    Message { sender: ella_couch.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:45 PM".to_string(), is_incoming: false },
+                ],
+                members: vec![josh_thayer.clone(), chris_slaughter.clone(), ella_couch.clone()]
             }
         ];
 
