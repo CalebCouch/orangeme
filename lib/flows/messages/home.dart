@@ -10,7 +10,7 @@ import 'package:orange/components/list_item.dart';
 import 'package:orange/components/tab_navigator.dart';
 
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
-import 'package:orange/flows/messages/conversation/message_exchange.dart';
+import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 
 import 'package:orange/classes.dart';
@@ -69,9 +69,9 @@ class MessagesHomeState extends State<MessagesHome> {
                     () {
                       navigateTo(
                         context,
-                        MessageExchange(
+                        Exchange(
                           widget.globalState,
-                          state.conversations[index],
+                          conversation: state.conversations[index],
                         ),
                       );
                     },
@@ -85,7 +85,7 @@ class MessagesHomeState extends State<MessagesHome> {
         () {
           navigateTo(
             context,
-            ChooseRecipient(widget.globalState, state.users),
+            ChooseRecipient(widget.globalState),
           );
         },
       ),

@@ -199,10 +199,12 @@ Widget exitButton(BuildContext context, Widget home) {
   );
 }
 
-Widget infoButton(BuildContext context, Widget infoWidget) {
+Widget infoButton(BuildContext context, Widget page) {
   return iconButton(
     context,
-    navigateTo(context, infoWidget),
+    () {
+      navigateTo(context, page);
+    },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
   );
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/classes.dart';
-
 import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/default_interface.dart';
@@ -12,40 +10,40 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
-class GroupMessageInfo extends StatefulWidget {
+class MessageInfo extends StatefulWidget {
   final GlobalState globalState;
-  final Conversation conversation;
-  const GroupMessageInfo(
-    this.globalState,
-    this.conversation, {
+  final List<Contact> contacts;
+  const MessageInfo(
+    this.globalState, {
     super.key,
+    required this.contacts,
   });
 
   @override
-  GroupMessageInfoState createState() => GroupMessageInfoState();
+  MessageInfoState createState() => MessageInfoState();
 }
 
-class GroupMessageInfoState extends State<GroupMessageInfo> {
+class MessageInfoState extends State<MessageInfo> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: widget.globalState.state,
       builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
+        return build_screen(context, state);
       },
     );
   }
 
-  Widget buildScreen(BuildContext context, DartState state) {
+  Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
-      header: stackHeader(context, 'Group members'),
+      header: stackHeader(context, "Group members"),
       content: Content(
         content: Column(
           children: [
             CustomText(
-              text:
-                  'This group has ${widget.conversation.members.length} members',
+              text: 'This group has ${widget.contacts.length} members',
               textSize: TextSize.md,
               color: ThemeColor.textSecondary,
             ),
@@ -55,18 +53,20 @@ class GroupMessageInfoState extends State<GroupMessageInfo> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
-                  itemCount: widget.conversation.members.length,
+                  itemCount: widget.contacts.length,
                   itemBuilder: (BuildContext context, int index) {
                     return contactListItem(
                       context,
-                      widget.conversation.members[index],
-                      navigateTo(
-                        context,
-                        UserProfile(
-                          widget.globalState,
-                          widget.conversation.members[index],
-                        ),
-                      ),
+                      widget.contacts[index],
+                      () {
+                        navigateTo(
+                          context,
+                          UserProfile(
+                            widget.globalState,
+                            userInfo: widget.contacts[index],
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

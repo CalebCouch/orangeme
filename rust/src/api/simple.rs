@@ -300,7 +300,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
         let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
         let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
         let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: None, abtme: None};
-        let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "SomeDidValue".to_string(),pfp: None, abtme: None,};
+        let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(),pfp: None, abtme: None,};
         let conversations: Vec<Conversation> = vec![
             Conversation {
                 messages: vec![

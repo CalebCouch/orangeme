@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/classes.dart';
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
+
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/text_input.dart';
-import 'package:orange/flows/messages/conversation/message_exchange.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
+
+import 'package:orange/flows/messages/conversation/exchange.dart';
 
 class ChooseRecipient extends StatefulWidget {
   final GlobalState globalState;
-  final List<Contact> users;
   const ChooseRecipient(
-    this.globalState,
-    this.users, {
+    this.globalState, {
     super.key,
   });
 
@@ -28,15 +27,16 @@ class ChooseRecipient extends StatefulWidget {
 class ChooseRecipientState extends State<ChooseRecipient> {
   List<Contact> recipients = [];
 
-  void addRecipient(Contact cnt) {
+  void addRecipient(Contact selected) {
     setState(() {
-      recipients.add(cnt);
+      if (recipients.contains(selected)) return;
+      recipients.add(selected);
     });
   }
 
-  void removeRecipient(Contact cnt) {
+  void removeRecipient(Contact selected) {
     setState(() {
-      recipients.remove(cnt);
+      recipients.remove(selected);
     });
   }
 
@@ -50,27 +50,21 @@ class ChooseRecipientState extends State<ChooseRecipient> {
     );
   }
 
-  Future<void> next() async {
-    //await widget.globalState.invoke("create_conversation", contacts, messages);
-
-    navigateTo(
-      context,
-      MessageExchange(
-        widget.globalState,
-        Conversation(recipients, []),
-      ),
-    );
-  }
-
   Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackButtonHeader(
         context,
         'New message',
-        recipients.isNotEmpty,
+        recipients.isNotEmpty ? true : false,
         'Next',
         () {
-          next();
+          navigateTo(
+            context,
+            Exchange(
+              widget.globalState,
+              conversation: Conversation(recipients, []),
+            ),
+          );
         },
       ),
       content: Content(
@@ -80,16 +74,18 @@ class ChooseRecipientState extends State<ChooseRecipient> {
               hint: 'Profile name...',
             ),
             Container(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               alignment: Alignment.topLeft,
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: List<Widget>.generate(recipients.length, (index) {
-                  return ButtonTip(
-                    recipients[index].name,
-                    ThemeIcon.close,
-                    () => removeRecipient(recipients[index]),
+                  return oneTip(
+                    ButtonTip(
+                      recipients[index].name,
+                      ThemeIcon.close,
+                      () => removeRecipient(recipients[index]),
+                    ),
                   );
                 }),
               ),
@@ -99,12 +95,12 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
-                  itemCount: widget.users.length,
+                  itemCount: state.users.length,
                   itemBuilder: (BuildContext context, int index) {
                     return contactListItem(
                       context,
-                      widget.users[index],
-                      () => addRecipient(widget.users[index]),
+                      state.users[index],
+                      () => addRecipient(state.users[index]),
                     );
                   },
                 ),

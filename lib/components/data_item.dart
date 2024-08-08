@@ -191,11 +191,6 @@ Widget didItem(BuildContext context, String did) {
   );
 }
 
-_getTransactionData() {
-  return Transaction(false, '12FWmGPUCtFeZECFydRARUzfqt7h2GBqEL', '', 5.00,
-      0.0000017, 63402.92, 2.15, '1/2/23', '2:23PM', null);
-}
-
 Widget confirmRecipientItem(GlobalState globalState, BuildContext context,
     String recipient, String did) {
   return DataItem(
