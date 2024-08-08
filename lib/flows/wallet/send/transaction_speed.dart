@@ -58,7 +58,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
           radioButton(
             "Standard",
             "Arrives in ~2 hours\n\$${formatValue(fees[0])} bitcoin network fee",
-            index == 0 ? true : false,
+            index == 0,
             () {
               setState(() {
                 index = 0;
@@ -68,7 +68,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
           radioButton(
             "Priority",
             "Arrives in ~30 minutes\n\$${formatValue(fees[1])} bitcoin network fee",
-            index == 1 ? true : false,
+            index == 1,
             () {
               setState(() {
                 index = 1;
