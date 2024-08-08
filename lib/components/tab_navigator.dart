@@ -3,16 +3,11 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/classes/test_classes.dart';
 
 import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/flows/messages/home.dart';
-
-//NOTES:
-//1. Should be a function
-//2. Accept List of IconButton why does this not exist???
-//3. Use a list builder so its easy to add more IconButtons later
-//4. When declaring the TabNav pass in the Icon button for the current page but just have it disabled and custom color set to highlight. IE:
-//tabNav(context, [IconButton("wallet", disabled: true, color: highlight), IconButton("messaging", onTap(nav to messaging))])
+import 'package:orange/flows/explore/home.dart';
 
 class TabNav extends StatefulWidget {
   final int index;
@@ -25,6 +20,48 @@ class TabNav extends StatefulWidget {
 class TabNavState extends State<TabNav> {
   @override
   Widget build(BuildContext context) {
+    final List<Info> dummyRooms = [
+      const Info(
+        null,
+        null,
+        null,
+        Contact('Josh Thayer', 'unknown', 'assets/images/joshThayer.png', null),
+        '8/5/24',
+        [
+          Contact('Josh Thayer', 'ta3Th1Omn...', 'assets/images/joshThayer.png',
+              null),
+          Contact('Chris Slaughter', 'astakxec...',
+              'assets/images/chrisSlaughter.png', null)
+        ],
+      ),
+      const Info(
+        'VALORANT',
+        'assets/images/valorant.png',
+        'The official VALORANT room, in collaboration with Riot Games. Find the latest news and talk about the game!',
+        Contact(
+            'VALORANT Studios', 'unknown', 'assets/images/valorant.png', null),
+        '12/1/21',
+        [
+          Contact('Josh Thayer', 'ta3Th1Omn...', 'assets/images/joshThayer.png',
+              null),
+          Contact('Chris Slaughter', 'astakxec...',
+              'assets/images/chrisSlaughter.png', null)
+        ],
+      ),
+      const Info(
+        'orange me',
+        null,
+        'The official place to talk about orange me',
+        Contact('orange me llc', 'unknown', null, null),
+        '5/15/24',
+        [
+          Contact('Josh Thayer', 'ta3Th1Omn...', 'assets/images/joshThayer.png',
+              null),
+          Contact('Chris Slaughter', 'astakxec...',
+              'assets/images/chrisSlaughter.png', null)
+        ],
+      ),
+    ];
     void openMessages() {
       print("switching to messages");
       switchPageTo(context, MessagesHome(widget.globalState));
@@ -33,6 +70,11 @@ class TabNavState extends State<TabNav> {
     void openWallet() {
       print("switching to wallet");
       switchPageTo(context, WalletHome(widget.globalState));
+    }
+
+    void openExplore() {
+      print("switching to explore");
+      switchPageTo(context, ExploreHome(widget.globalState, dummyRooms));
     }
 
     return Container(
@@ -44,7 +86,7 @@ class TabNavState extends State<TabNav> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                if (widget.index == 1) openWallet();
+                if (widget.index != 0) openWallet();
               },
               child: Container(
                 color: ThemeColor.bg,
@@ -63,16 +105,36 @@ class TabNavState extends State<TabNav> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                if (widget.index == 0) openMessages();
+                if (widget.index != 1) openMessages();
+              },
+              child: Container(
+                color: ThemeColor.bg,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppPadding.navBar / 2),
+                alignment: Alignment.center,
+                child: CustomIcon(
+                  icon: ThemeIcon.chat,
+                  iconSize: IconSize.md,
+                  iconColor: (widget.index == 1)
+                      ? ThemeColor.primary
+                      : ThemeColor.textSecondary,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (widget.index != 2) openExplore();
               },
               child: Container(
                 color: ThemeColor.bg,
                 padding: const EdgeInsets.only(left: AppPadding.navBar / 2),
                 alignment: Alignment.centerLeft,
                 child: CustomIcon(
-                  icon: ThemeIcon.chat,
+                  icon: ThemeIcon.explore,
                   iconSize: IconSize.md,
-                  iconColor: (widget.index == 1)
+                  iconColor: (widget.index == 2)
                       ? ThemeColor.primary
                       : ThemeColor.textSecondary,
                 ),

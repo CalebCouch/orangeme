@@ -47,12 +47,7 @@ class RoomState extends State<Room> {
       header: stackHeader(
         context,
         roomName,
-        backButton(
-          context,
-          MessagesHome(
-            widget.globalState,
-          ),
-        ),
+        backButton(context),
         infoButton(
           context,
           MessageInfo(

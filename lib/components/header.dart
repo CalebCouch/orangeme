@@ -110,7 +110,7 @@ Widget stackMessageHeader(GlobalState globalState, BuildContext context,
   if (contacts.length > 1) isGroup = true;
   return DefaultHeader(
     height: 76,
-    left: backButton(context, home),
+    left: backButton(context),
     center: InkWell(
       onTap: () {
         if (!isGroup) {

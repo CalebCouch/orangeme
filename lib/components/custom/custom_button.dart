@@ -181,16 +181,7 @@ Widget sendButton(BuildContext context, bool isEnabled) {
   );
 }
 
-Widget backButton(BuildContext context, [Widget? widget]) {
-  if (widget != null) {
-    return iconButton(
-      context,
-      () {
-        resetNavTo(context, widget);
-      },
-      const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
-    );
-  }
+Widget backButton(BuildContext context) {
   return iconButton(
     context,
     () {
