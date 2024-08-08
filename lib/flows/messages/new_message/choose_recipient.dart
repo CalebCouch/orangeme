@@ -104,7 +104,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
           children: [
             CustomTextInput(
               controller: searchController,
-              hint: 'Search for a profile name or DID...',
+              hint: 'Profile name...',
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
