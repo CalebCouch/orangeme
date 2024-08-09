@@ -47,10 +47,18 @@ class _SavingsHomeState extends State<SavingsHome> {
                 'You will need to wait an hour\nafter set up to spend your bitcoin',
             isDismissable: false,
           ),
-          _bulletedPoint(
-              'Bullet points explaining the benefits of a savings account'),
-          _bulletedPoint(
-              'You need to have the orange.me desktop app installed on your laptop or desktop computer'),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _bulletedPoint(
+                    'Bullet points explaining the benefits of a savings account'),
+                _bulletedPoint(
+                    'You need to have the orange.me desktop app installed on your laptop or desktop computer'),
+              ],
+            ),
+          )
         ]),
       ),
       bumper: singleButtonBumper(
@@ -73,7 +81,7 @@ _bulletedPoint(String text) {
       children: <Widget>[
         const CustomText(text: "• "),
         Expanded(
-          child: CustomText(text: text),
+          child: CustomText(text: '$text\n', textSize: TextSize.md),
         ),
       ],
     ),
