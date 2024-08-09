@@ -15,7 +15,15 @@ import 'dart:io';
 
 class MyProfile extends StatefulWidget {
   final String? profilePhoto;
-  const MyProfile({super.key, this.profilePhoto});
+  final String initialProfileName;
+  final String initialAboutMe;
+
+  const MyProfile({
+    super.key,
+    this.profilePhoto,
+    required this.initialProfileName,
+    required this.initialAboutMe,
+  });
 
   @override
   MyProfileState createState() => MyProfileState();
@@ -24,9 +32,53 @@ class MyProfile extends StatefulWidget {
 class MyProfileState extends State<MyProfile> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
+
+  late TextEditingController _profileNameController;
+  late TextEditingController _aboutMeController;
+
+  late String _profileName;
+  late String _aboutMe;
+
+  bool _isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileName = widget.initialProfileName;
+    _aboutMe = widget.initialAboutMe;
+
+    _profileNameController = TextEditingController(text: _profileName);
+    _aboutMeController = TextEditingController(text: _aboutMe);
+
+    _updateButtonState();
+  }
+
+  @override
+  void dispose() {
+    _profileNameController.dispose();
+    _aboutMeController.dispose();
+    super.dispose();
+  }
+
+  void _updateButtonState() {
+    setState(() {
+      _isButtonEnabled = _profileName.isNotEmpty || _aboutMe.isNotEmpty;
+    });
+  }
+
+  void _saveProfile() {
+    print('Profile Name: $_profileName');
+    print('About Me: $_aboutMe');
+
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _isButtonEnabled = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    print("image file = $_image");
     return DefaultInterface(
       header: stackHeader(context, "My profile"),
       content: Content(
@@ -41,21 +93,34 @@ class MyProfileState extends State<MyProfile> {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
-                    print("image file = $_image");
                     setState(() => _image = File(image.path));
                   }
                 },
                 _image,
               ),
               const Spacing(height: AppPadding.profile),
-              const CustomTextInput(
+              CustomTextInput(
                 title: 'Profile Name',
                 hint: 'Profile name...',
+                controller: _profileNameController,
+                onChanged: (text) {
+                  setState(() {
+                    _profileName = text;
+                    _updateButtonState();
+                  });
+                },
               ),
               const Spacing(height: AppPadding.profile),
-              const CustomTextInput(
+              CustomTextInput(
                 title: 'About Me',
                 hint: 'A little bit about me...',
+                controller: _aboutMeController,
+                onChanged: (text) {
+                  setState(() {
+                    _aboutMe = text;
+                    _updateButtonState();
+                  });
+                },
               ),
               const Spacing(height: AppPadding.profile),
               didItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
@@ -65,7 +130,12 @@ class MyProfileState extends State<MyProfile> {
           ),
         ),
       ),
-      bumper: singleButtonBumper(context, 'Save', () {}, false),
+      bumper: singleButtonBumper(
+        context,
+        'Save',
+        _isButtonEnabled ? _saveProfile : null, 
+        _isButtonEnabled,
+      ),
     );
   }
 }

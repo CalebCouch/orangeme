@@ -206,6 +206,24 @@ impl Message {
 }
 
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct MyProfile {
+    pub name: Contact,
+    pub about: String,
+
+}
+
+impl MyProfile { 
+    fn from_details() -> Result<Self, Error> {
+        Ok(MyProfile{
+            name: "".to_string(),
+            about: "".to_string(),
+        })
+    }
+}
+
+
+
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct DartState {
     pub currentPrice: f64,

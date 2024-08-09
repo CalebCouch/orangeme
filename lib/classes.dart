@@ -38,6 +38,19 @@ class Transaction {
   }
 }
 
+class MyProfile {
+  String name;
+  String about;
+
+  MyProfile(this.name, this.about);
+  factory MyProfile.fromJson(Map<String, dynamic> json) {
+    return MyProfile(
+      json['name'] as String,
+      json['about'] as String
+    );
+  }
+}
+
 class Contact {
   String name;
   String did;
