@@ -35,7 +35,6 @@ class Interface extends StatelessWidget {
       );
     }
     return DesktopInterface(
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       header: header,
       content: content,
       bumper: bumper,
@@ -70,21 +69,21 @@ class MobileInterface extends StatelessWidget {
         height: MediaQuery.sizeOf(context).height,
         child: SafeArea(
           child: Column(
-            children: [
-              header,
-              Expanded(child: content),
-              if (bumper != null) bumper!,
-              if (navBar != null) navBar!,
-            ],
+              children: [
+                header,
+                Expanded(child: content),
+                if (bumper != null) bumper!,
+                if (navBar != null) navBar!,
+              ],
+            ),
           ),
         ),
-      ),
+      
     );
   }
 }
 
 class DesktopInterface extends StatelessWidget {
-  final bool? resizeToAvoidBottomInset;
   final Widget header;
   final Widget content;
   final Widget? bumper;
@@ -92,7 +91,6 @@ class DesktopInterface extends StatelessWidget {
 
   const DesktopInterface({
     super.key,
-    this.resizeToAvoidBottomInset,
     required this.header,
     required this.content,
     this.bumper,
@@ -102,23 +100,21 @@ class DesktopInterface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      body: SizedBox(
-        height: MediaQuery.sizeOf(context).height,
-        child: SafeArea(
-            child: Row(
-          children: [
-            if (sidebar != null) sidebar!,
-            Column(
+      body: SafeArea(
+          child: Row(
+        children: [
+          if (sidebar != null) sidebar!,
+          Expanded(
+            child: Column(
               children: [
                 header,
                 Expanded(child: content),
                 if (bumper != null) bumper!,
               ],
             ),
-          ],
-        )),
-      ),
+          ),
+        ],
+      )),
     );
   }
 }

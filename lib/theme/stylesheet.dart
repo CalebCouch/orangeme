@@ -53,7 +53,7 @@ class BrandSize {
 
 class Brand {
   static const String icon = 'assets/icons/icon.svg';
-  static const String logomark = 'assets/icons/logo_mark.svg';
+  static const String logomark = 'assets/icons/logomark.svg';
 }
 
 ////COLORS////

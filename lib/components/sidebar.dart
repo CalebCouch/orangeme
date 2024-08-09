@@ -42,7 +42,7 @@ class SidebarState extends State<Sidebar> {
       ),
       width: 250,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SvgPicture.asset(
             Brand.logomark,
@@ -52,16 +52,20 @@ class SidebarState extends State<Sidebar> {
           CustomButton(
             expand: true,
             text: 'Wallet',
+            buttonAlignment: Alignment.centerLeft,
             onTap: () {
               if (widget.index != 0) openWallet();
             },
             icon: ThemeIcon.wallet,
+            variant: ButtonVariant.ghost,
             status: (widget.index == 0) ? 3 : 0,
           ),
           const Spacing(height: AppPadding.buttonList),
           CustomButton(
+            variant: ButtonVariant.ghost,
             expand: true,
             text: 'Savings',
+            buttonAlignment: Alignment.centerLeft,
             onTap: () {
               if (widget.index != 1) openSavings();
             },
@@ -70,6 +74,8 @@ class SidebarState extends State<Sidebar> {
           ),
           const Spacing(height: AppPadding.buttonList),
           CustomButton(
+            variant: ButtonVariant.ghost,
+            buttonAlignment: Alignment.centerLeft,
             expand: true,
             text: 'Messages',
             onTap: () {

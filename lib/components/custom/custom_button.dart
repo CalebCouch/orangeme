@@ -109,7 +109,7 @@ class _ButtonState extends State<CustomButton> {
         children: [
           CustomIcon(
             icon: widget.icon!,
-            iconSize: widget.buttonSize == 48 ? 48 : 20,
+            iconSize: widget.buttonSize == 48 ? 32 : 20,
           ),
           Spacing(
             width: _getButtonSpacing(widget.buttonSize),

@@ -23,7 +23,6 @@ class DefaultHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      width: MediaQuery.sizeOf(context).width,
       child: Stack(
         alignment: Alignment.center,
         children: [
