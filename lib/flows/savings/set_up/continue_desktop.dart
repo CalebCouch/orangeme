@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
@@ -33,7 +33,7 @@ class ContinueDesktopState extends State<ContinueDesktop> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
-    return DefaultInterface(
+    return Interface(
       resizeToAvoidBottomInset: false,
       header: stackHeader(
         context,

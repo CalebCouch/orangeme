@@ -5,7 +5,7 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/numeric_keypad.dart';
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
@@ -107,7 +107,7 @@ class SendAmountState extends State<SendAmount> {
     double btc = parsed > 0
         ? (parsed / widget.globalState.state.value.currentPrice)
         : 0.0;
-    return DefaultInterface(
+    return Interface(
       resizeToAvoidBottomInset: false,
       header: stackHeader(
         context,

@@ -1,13 +1,52 @@
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
 
-class DefaultInterface extends StatelessWidget {
+class Interface extends StatelessWidget {
+  final bool? resizeToAvoidBottomInset;
+  final Widget header;
+  final Widget content;
+  final Widget? bumper;
+  final Widget? navBar;
+  final Widget? sidebar;
+
+  const Interface({
+    super.key,
+    this.resizeToAvoidBottomInset,
+    required this.header,
+    required this.content,
+    this.bumper,
+    this.navBar,
+    this.sidebar,
+  });
+  @override
+  Widget build(BuildContext context) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileInterface(
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        header: header,
+        content: content,
+        bumper: bumper,
+        navBar: navBar,
+      );
+    }
+    return DesktopInterface(
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      header: header,
+      content: content,
+      bumper: bumper,
+      sidebar: sidebar,
+    );
+  }
+}
+
+class MobileInterface extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
   final Widget header;
   final Widget content;
   final Widget? bumper;
   final Widget? navBar;
 
-  const DefaultInterface({
+  const MobileInterface({
     super.key,
     this.resizeToAvoidBottomInset,
     required this.header,
@@ -62,7 +101,7 @@ class DesktopInterface extends StatelessWidget {
         child: SafeArea(
             child: Row(
           children: [
-            if(sidebar != null) sidebar!,
+            if (sidebar != null) sidebar!,
             Column(
               children: [
                 header,

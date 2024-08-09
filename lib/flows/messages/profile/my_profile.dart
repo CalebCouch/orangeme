@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/profile_photo.dart';
@@ -27,7 +27,7 @@ class MyProfileState extends State<MyProfile> {
   @override
   Widget build(BuildContext context) {
     print("image file = $_image");
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(context, "My profile"),
       content: Content(
         content: SingleChildScrollView(

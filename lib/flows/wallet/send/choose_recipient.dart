@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/classes/contact_info.dart';
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
@@ -34,7 +34,7 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
       const Contact('Anthony', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
       const Contact('R. R. B.', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
     ];
-    return DefaultInterface(
+    return Interface(
       header: stackButtonHeader(
         context,
         'Select Recipient',

@@ -4,7 +4,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes/profile_info.dart';
 import 'package:orange/classes/contact_info.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
@@ -37,7 +37,7 @@ class UserProfile extends StatefulWidget {
 class UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(
         context,
         widget.userInfo.name,

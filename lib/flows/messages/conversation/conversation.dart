@@ -4,7 +4,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes/contact_info.dart';
 import 'package:orange/classes/single_message.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
@@ -46,7 +46,7 @@ class ConversationState extends State<Conversation> {
   @override
   Widget build(BuildContext context) {
     _getMessages();
-    return DefaultInterface(
+    return Interface(
       header: stackMessageHeader(context, widget.contacts),
       content: Content(
         content: messages.isEmpty

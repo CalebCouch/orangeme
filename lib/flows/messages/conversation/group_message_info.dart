@@ -5,7 +5,7 @@ import 'package:orange/classes/contact_info.dart';
 
 import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
@@ -27,7 +27,7 @@ class GroupMessageInfo extends StatefulWidget {
 class GroupMessageInfoState extends State<GroupMessageInfo> {
   @override
   Widget build(BuildContext context) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(context, 'Group members'),
       content: Content(
         content: Column(

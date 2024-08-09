@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/custom/custom_icon.dart';
+import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
@@ -37,12 +37,16 @@ class SidebarState extends State<Sidebar> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       width: 250,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          
-        ]
-      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Flexible(
+          child: CustomButton(
+            text: 'Wallet',
+            onTap: () {},
+            icon: ThemeIcon.wallet,
+            status: 3,
+          ),
+        ),
+      ]),
     );
   }
 }

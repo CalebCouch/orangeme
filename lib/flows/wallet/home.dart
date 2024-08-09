@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
@@ -89,7 +89,7 @@ class _WalletHomeState extends State<WalletHome> {
         : formatValue(state.usdBalance).length <= 7
             ? TextSize.h1
             : TextSize.h2;
-    return DefaultInterface(
+    return Interface(
       resizeToAvoidBottomInset: false,
       header: primaryHeader(
         context,

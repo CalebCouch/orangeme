@@ -7,7 +7,7 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 
 import 'package:share/share.dart';
 import 'package:orange/classes.dart';
@@ -34,7 +34,7 @@ class ReceiveState extends State<Receive> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(context, "Receive bitcoin"),
       content: Content(
         content: Center(
