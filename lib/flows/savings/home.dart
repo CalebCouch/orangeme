@@ -7,7 +7,6 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 import 'package:orange/flows/savings/set_up/desktop.dart';
@@ -68,7 +67,8 @@ class _SavingsHomeState extends State<SavingsHome> {
           navigateTo(context, DesktopSetUp(widget.globalState));
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 1),
+      globalState: widget.globalState,
+      navigationIndex: 1,
     );
   }
 }

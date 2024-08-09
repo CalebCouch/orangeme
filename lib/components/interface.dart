@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
+import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/components/sidebar.dart';
+import 'package:orange/classes.dart';
 
 class Interface extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
   final Widget header;
   final Widget content;
   final Widget? bumper;
-  final Widget? navBar;
-  final Widget? sidebar;
+  final GlobalState? globalState;
+  final int? navigationIndex;
 
   const Interface({
     super.key,
+    this.globalState,
     this.resizeToAvoidBottomInset,
     required this.header,
     required this.content,
     this.bumper,
-    this.navBar,
-    this.sidebar,
+    this.navigationIndex,
   });
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,9 @@ class Interface extends StatelessWidget {
         header: header,
         content: content,
         bumper: bumper,
-        navBar: navBar,
+        navBar: navigationIndex != null && globalState != null
+            ? TabNav(globalState!, index: navigationIndex!)
+            : Container(),
       );
     }
     return DesktopInterface(
@@ -34,7 +39,9 @@ class Interface extends StatelessWidget {
       header: header,
       content: content,
       bumper: bumper,
-      sidebar: sidebar,
+      sidebar: navigationIndex != null && globalState != null
+          ? Sidebar(globalState!, index: navigationIndex!)
+          : Container(),
     );
   }
 }

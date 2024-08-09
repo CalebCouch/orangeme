@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/brand/logo.dart';
+import 'package:orange/theme/logo.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/qr_code/custom_qr_generator.dart';
-import 'package:orange/theme/border.dart';
 
 Widget qrCode(String address) {
   return Stack(
@@ -25,7 +24,7 @@ Widget qrCode(String address) {
         ),
       ),
       const Positioned(
-        child: Logo(size: LogoSize.xxl),
+        child: Logo(size: BrandSize.xxl),
       ),
     ],
   );

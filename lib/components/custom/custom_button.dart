@@ -6,8 +6,6 @@ import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/flows/messages/conversation/group_message_info.dart';
 
-import 'package:orange/theme/border.dart';
-
 import 'package:orange/util.dart';
 
 class ButtonVariant {

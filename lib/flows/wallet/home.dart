@@ -8,7 +8,6 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/wallet/transaction_details.dart';
 
@@ -153,7 +152,8 @@ class _WalletHomeState extends State<WalletHome> {
           navigateTo(context, Send(widget.globalState));
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 0),
+      globalState: widget.globalState,
+      navigationIndex: 0,
     );
   }
 }

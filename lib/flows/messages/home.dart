@@ -7,7 +7,6 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/tab_navigator.dart';
 
 import 'package:orange/classes/message_info.dart';
 import 'package:orange/classes/contact_info.dart';
@@ -107,7 +106,8 @@ class MessagesHomeState extends State<MessagesHome> {
           );
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 2),
+      globalState: widget.globalState,
+      navigationIndex: 2,
     );
   }
 }

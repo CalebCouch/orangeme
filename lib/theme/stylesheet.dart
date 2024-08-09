@@ -208,3 +208,21 @@ class ThemeBorders {
   static final BorderRadius button = BorderRadius.circular(24);
   static final BorderRadius messageBubble = BorderRadius.circular(8);
 }
+
+class BoxDecorations {
+  static RoundedRectangleBorder button = RoundedRectangleBorder(
+    borderRadius: ThemeBorders.button,
+  );
+
+  static RoundedRectangleBorder buttonOutlined = RoundedRectangleBorder(
+    side: const BorderSide(
+      width: 1,
+      color: ThemeColor.outline,
+    ),
+    borderRadius: ThemeBorders.button,
+  );
+}
+
+class CornerRadius {
+  static BorderRadius qrCode = BorderRadius.circular(12);
+}

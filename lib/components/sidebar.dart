@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/brand/brandmark.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +12,7 @@ import 'package:orange/flows/savings/home.dart';
 class Sidebar extends StatefulWidget {
   final int index;
   final GlobalState globalState;
-  const Sidebar({required this.globalState, required this.index, super.key});
+  const Sidebar(this.globalState, {required this.index, super.key});
   @override
   State<Sidebar> createState() => SidebarState();
 }
