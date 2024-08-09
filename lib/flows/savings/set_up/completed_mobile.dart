@@ -7,20 +7,19 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/savings/home.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
-class Confirmation extends StatefulWidget {
-  final double amount;
+class CompletedMobile extends StatefulWidget {
   final GlobalState globalState;
-  const Confirmation(this.globalState, this.amount, {super.key});
+  const CompletedMobile(this.globalState, {super.key});
 
   @override
-  ConfirmationState createState() => ConfirmationState();
+  CompletedMobileState createState() => CompletedMobileState();
 }
 
-class ConfirmationState extends State<Confirmation> {
+class CompletedMobileState extends State<CompletedMobile> {
   final TextEditingController recipientAddressController =
       TextEditingController();
 
@@ -38,22 +37,21 @@ class ConfirmationState extends State<Confirmation> {
     return DefaultInterface(
       header: stackHeader(
         context,
-        "Confirm send",
-        exitButton(context, WalletHome(widget.globalState)),
+        "Set up complete",
+        exitButton(context, SavingsHome(widget.globalState)),
       ),
-      content: Content(
+      content: const Content(
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CustomIcon(
-              icon: ThemeIcon.success,
-              iconColor: ThemeColor.bitcoin,
+            CustomIcon(
+              icon: ThemeIcon.savings,
               iconSize: 128,
             ),
-            const Spacing(height: AppPadding.bumper),
+            Spacing(height: AppPadding.bumper),
             CustomText(
-              text: "You sent \$${formatValue(widget.amount.abs())}",
+              text: "Your savings account has\n been successfully created",
               textType: 'heading',
             ),
           ],
@@ -65,7 +63,7 @@ class ConfirmationState extends State<Confirmation> {
         () => {
           resetNavTo(
             context,
-            WalletHome(widget.globalState),
+            SavingsHome(widget.globalState),
           ),
         },
         true,

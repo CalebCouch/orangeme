@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 
 import 'package:orange/components/default_interface.dart';
@@ -7,22 +6,20 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tab_navigator.dart';
-import 'package:orange/components/custom/custom_text.dart';
-
-import 'package:orange/flows/savings/set_up/desktop.dart';
+import 'package:orange/components/placeholder.dart';
+import 'package:orange/flows/savings/set_up/requirements.dart';
 
 import 'package:orange/util.dart';
 
-class SavingsHome extends StatefulWidget {
+class DesktopSetUp extends StatefulWidget {
   final GlobalState globalState;
-  const SavingsHome(this.globalState, {super.key});
+  const DesktopSetUp(this.globalState, {super.key});
 
   @override
-  State<SavingsHome> createState() => _SavingsHomeState();
+  State<DesktopSetUp> createState() => DesktopSetUpState();
 }
 
-class _SavingsHomeState extends State<SavingsHome> {
+class DesktopSetUpState extends State<DesktopSetUp> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -36,7 +33,7 @@ class _SavingsHomeState extends State<SavingsHome> {
   Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
       resizeToAvoidBottomInset: false,
-      header: primaryHeader(
+      header: stackHeader(
         context,
         "Savings",
       ),
@@ -47,35 +44,20 @@ class _SavingsHomeState extends State<SavingsHome> {
                 'You will need to wait an hour\nafter set up to spend your bitcoin',
             isDismissable: false,
           ),
-          _bulletedPoint(
-              'Bullet points explaining the benefits of a savings account'),
-          _bulletedPoint(
-              'You need to have the orange.me desktop app installed on your laptop or desktop computer'),
+          placeholder(
+            context,
+            "Install the orange.me desktop app on your laptop or desktop computer by inputing the following URL in your browser\n\ndesktop.orange.me",
+            true,
+          ),
         ]),
       ),
       bumper: singleButtonBumper(
         context,
         "Continue",
         () {
-          navigateTo(context, DesktopSetUp(widget.globalState));
+          navigateTo(context, Requirements(widget.globalState));
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 1),
     );
   }
-}
-
-_bulletedPoint(String text) {
-  return Container(
-    constraints: const BoxConstraints(maxWidth: 300),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const CustomText(text: "• "),
-        Expanded(
-          child: CustomText(text: text),
-        ),
-      ],
-    ),
-  );
 }

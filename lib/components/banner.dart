@@ -7,11 +7,13 @@ import 'package:orange/components/custom/custom_text.dart';
 class CustomBanner extends StatefulWidget {
   final String message;
   final bool isError;
+  final bool isDismissable;
 
   const CustomBanner({
     super.key,
     required this.message,
     this.isError = false,
+    this.isDismissable = false,
   });
   @override
   BannerState createState() => BannerState();
@@ -21,10 +23,6 @@ class BannerState extends State<CustomBanner> {
   bool show = true;
   @override
   Widget build(BuildContext context) {
-    var parts;
-    if (widget.message.contains("orange.me")) {
-      parts = widget.message.split('orange.me');
-    }
     return Visibility(
       visible: show,
       child: Container(
@@ -43,7 +41,7 @@ class BannerState extends State<CustomBanner> {
                 children: [
                   Container(
                     alignment: Alignment.centerLeft,
-                    child: !widget.isError
+                    child: !widget.isError && widget.isDismissable
                         ? iconButton(
                             context,
                             () {
@@ -67,13 +65,13 @@ class BannerState extends State<CustomBanner> {
                 ],
               ),
               const Spacing(height: AppPadding.banner),
-              parts == null
-                  ? CustomText(
+              widget.message.contains("orange.me")
+                  ? withBrandMark(widget.message.split('orange.me'))
+                  : CustomText(
                       text: widget.message,
                       color: ThemeColor.heading,
-                      textSize: TextSize.sm,
+                      textSize: TextSize.md,
                     )
-                  : withBrandMark(parts),
             ],
           ),
         ),
@@ -90,7 +88,7 @@ Widget withBrandMark(parts) {
         TextSpan(
           text: parts[0],
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w400,
             color: ThemeColor.heading,
           ),
@@ -98,7 +96,7 @@ Widget withBrandMark(parts) {
         const TextSpan(
           text: 'orange',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w900,
             color: ThemeColor.bitcoin,
           ),
@@ -106,7 +104,7 @@ Widget withBrandMark(parts) {
         const TextSpan(
           text: '.me',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w900,
             color: ThemeColor.heading,
           ),
@@ -114,7 +112,7 @@ Widget withBrandMark(parts) {
         TextSpan(
           text: parts[1],
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w400,
             color: ThemeColor.heading,
           ),

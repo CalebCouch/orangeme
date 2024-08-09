@@ -7,22 +7,22 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
-import 'package:orange/flows/savings/set_up/desktop.dart';
+import 'package:orange/flows/savings/set_up/scan_qr.dart';
 
 import 'package:orange/util.dart';
 
-class SavingsHome extends StatefulWidget {
+class Requirements extends StatefulWidget {
   final GlobalState globalState;
-  const SavingsHome(this.globalState, {super.key});
+  const Requirements(this.globalState, {super.key});
 
   @override
-  State<SavingsHome> createState() => _SavingsHomeState();
+  State<Requirements> createState() => RequirementsState();
 }
 
-class _SavingsHomeState extends State<SavingsHome> {
+class RequirementsState extends State<Requirements> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -36,7 +36,7 @@ class _SavingsHomeState extends State<SavingsHome> {
   Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
       resizeToAvoidBottomInset: false,
-      header: primaryHeader(
+      header: stackHeader(
         context,
         "Savings",
       ),
@@ -44,38 +44,37 @@ class _SavingsHomeState extends State<SavingsHome> {
         content: Column(children: [
           const CustomBanner(
             message:
-                'You will need to wait an hour\nafter set up to spend your bitcoin',
+                'Setting up your savings account\nrequires you to create three hardware\nwallets using three USB sticks',
             isDismissable: false,
           ),
-          _bulletedPoint(
-              'Bullet points explaining the benefits of a savings account'),
-          _bulletedPoint(
-              'You need to have the orange.me desktop app installed on your laptop or desktop computer'),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CustomIcon(
+                  icon: ThemeIcon.usb,
+                  iconSize: 128,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(AppPadding.placeholder),
+                  child: const CustomText(
+                    text: '3 USB sticks',
+                    textType: 'heading',
+                    textSize: TextSize.h3,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ]),
       ),
       bumper: singleButtonBumper(
         context,
         "Continue",
         () {
-          navigateTo(context, DesktopSetUp(widget.globalState));
+          navigateTo(context, ScanQR(widget.globalState));
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 1),
     );
   }
-}
-
-_bulletedPoint(String text) {
-  return Container(
-    constraints: const BoxConstraints(maxWidth: 300),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const CustomText(text: "• "),
-        Expanded(
-          child: CustomText(text: text),
-        ),
-      ],
-    ),
-  );
 }
