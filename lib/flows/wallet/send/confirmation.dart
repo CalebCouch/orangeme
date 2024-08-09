@@ -47,8 +47,7 @@ class ConfirmationState extends State<Confirmation> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const CustomIcon(
-              icon: ThemeIcon.success,
-              iconColor: ThemeColor.bitcoin,
+              icon: ThemeIcon.bitcoin,
               iconSize: 128,
             ),
             const Spacing(height: AppPadding.bumper),

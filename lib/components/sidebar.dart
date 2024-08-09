@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:orange/theme/brand/brandmark.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
@@ -35,18 +37,50 @@ class SidebarState extends State<Sidebar> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppPadding.sidebar,
+        horizontal: AppPadding.sidebar / 2,
+      ),
       width: 250,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Flexible(
-          child: CustomButton(
-            text: 'Wallet',
-            onTap: () {},
-            icon: ThemeIcon.wallet,
-            status: 3,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            Brand.logomark,
+            height: BrandSize.xl,
           ),
-        ),
-      ]),
+          const Spacing(height: AppPadding.sidebar),
+          CustomButton(
+            expand: true,
+            text: 'Wallet',
+            onTap: () {
+              if (widget.index != 0) openWallet();
+            },
+            icon: ThemeIcon.wallet,
+            status: (widget.index == 0) ? 3 : 0,
+          ),
+          const Spacing(height: AppPadding.buttonList),
+          CustomButton(
+            expand: true,
+            text: 'Savings',
+            onTap: () {
+              if (widget.index != 1) openSavings();
+            },
+            icon: ThemeIcon.savings,
+            status: (widget.index == 1) ? 3 : 0,
+          ),
+          const Spacing(height: AppPadding.buttonList),
+          CustomButton(
+            expand: true,
+            text: 'Messages',
+            onTap: () {
+              if (widget.index != 2) openMessages();
+            },
+            icon: ThemeIcon.chat,
+            status: (widget.index == 2) ? 3 : 0,
+          ),
+        ],
+      ),
     );
   }
 }

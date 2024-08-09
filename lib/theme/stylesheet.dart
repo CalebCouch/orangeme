@@ -43,14 +43,6 @@ class TextType {
 //// BRAND ////
 
 class BrandSize {
-  static const double xl = 24;
-  static const double lg = 20;
-  static const double md = 16;
-  static const double sm = 14;
-  static const double xs = 12;
-}
-
-class LogoSize {
   static const double xxl = 74;
   static const double xl = 64;
   static const double lg = 48;
@@ -59,8 +51,9 @@ class LogoSize {
   static const double xs = 16;
 }
 
-class BrandLogo {
-  static const String icon = 'assets/icons/logo_mark.svg';
+class Brand {
+  static const String icon = 'assets/icons/icon.svg';
+  static const String logomark = 'assets/icons/logo_mark.svg';
 }
 
 ////COLORS////
@@ -125,8 +118,6 @@ class ThemeIcon {
   static const String usb = 'assets/icons/usb.svg';
   static const String monitor = 'assets/icons/monitor.svg';
   static const String savings = 'assets/icons/savings.svg';
-
-  static const String success = 'assets/icons/bitcoinsuccess.svg';
 }
 
 class IconSize {
@@ -182,6 +173,8 @@ class AppPadding {
   static const double dataItem = 16;
   static const double banner = 8;
   static const double placeholder = 16;
+  static const double buttonList = 8;
+  static const double sidebar = 32;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];
