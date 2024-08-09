@@ -44,7 +44,6 @@ class MyProfile {
 
   MyProfile({required this.name, required this.about});
 
-
   factory MyProfile.fromJson(Map<String, dynamic> json) {
     return MyProfile(
       name: json['name'] as String? ?? 'Unknown',
@@ -58,9 +57,8 @@ class MyProfile {
       'about': about,
     };
   }
-
-
 }
+
 
 class Contact {
   String name;

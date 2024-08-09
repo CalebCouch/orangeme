@@ -46,7 +46,7 @@ class MessagesHomeState extends State<MessagesHome> {
         () {
           navigateTo(
             context,
-            const MyProfile(),
+            const MyProfilePage(),
           );
         },
         null,

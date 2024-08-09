@@ -1,56 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/data_item.dart';
 import 'package:orange/theme/stylesheet.dart';
-
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/components/data_item.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
-
 import 'package:image_picker/image_picker.dart';
-
 import 'dart:io';
+import 'package:orange/flows/messages/profile/my_profile.dart'; // Import the correct MyProfile class
+import 'package:orange/classes.dart'; // Import GlobalState
 
-class MyProfile extends StatefulWidget {
-  final String? profilePhoto;
-  final String initialProfileName;
-  final String initialAboutMe;
-
-  const MyProfile({
-    super.key,
-    this.profilePhoto,
-    required this.initialProfileName,
-    required this.initialAboutMe,
-  });
+class MyProfilePage extends StatefulWidget {
+  const MyProfilePage({super.key});
 
   @override
-  MyProfileState createState() => MyProfileState();
+  MyProfilePageState createState() => MyProfilePageState();
 }
 
-class MyProfileState extends State<MyProfile> {
+class MyProfilePageState extends State<MyProfilePage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
 
   late TextEditingController _profileNameController;
   late TextEditingController _aboutMeController;
 
-  late String _profileName;
-  late String _aboutMe;
+  late GlobalState _globalState;
+  late MyProfile _profile;
 
   bool _isButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _profileName = widget.initialProfileName;
-    _aboutMe = widget.initialAboutMe;
+    _globalState = GlobalState.init(); 
 
-    _profileNameController = TextEditingController(text: _profileName);
-    _aboutMeController = TextEditingController(text: _aboutMe);
+    _profile = MyProfile(
+      name: _globalState.state.value.users.isNotEmpty
+          ? _globalState.state.value.users.first.name
+          : '',
+      about: _globalState.state.value.users.isNotEmpty
+          ? _globalState.state.value.users.first.abtme ?? ''
+          : '',
+    );
 
-    _updateButtonState();
+    _profileNameController = TextEditingController(text: _profile.name);
+    _aboutMeController = TextEditingController(text: _profile.about);
+
+    _profileNameController.addListener(_updateButtonState);
+    _aboutMeController.addListener(_updateButtonState);
   }
 
   @override
@@ -62,19 +61,39 @@ class MyProfileState extends State<MyProfile> {
 
   void _updateButtonState() {
     setState(() {
-      _isButtonEnabled = _profileName.isNotEmpty || _aboutMe.isNotEmpty;
+      _isButtonEnabled = _profileNameController.text.isNotEmpty ||
+          _aboutMeController.text.isNotEmpty;
     });
   }
 
   void _saveProfile() {
-    print('Profile Name: $_profileName');
-    print('About Me: $_aboutMe');
-
-    FocusScope.of(context).unfocus();
-
     setState(() {
+      _profile = MyProfile(
+        name: _profileNameController.text,
+        about: _aboutMeController.text,
+      );
+
+      if (_globalState.state.value.users.isNotEmpty) {
+        var user = _globalState.state.value.users.first;
+        user.name = _profile.name;
+        user.abtme = _profile.about;
+
+        _globalState.state.value = DartState(
+          _globalState.state.value.currentPrice,
+          _globalState.state.value.usdBalance,
+          _globalState.state.value.btcBalance,
+          _globalState.state.value.transactions,
+          _globalState.state.value.fees,
+          _globalState.state.value.conversations,
+          _globalState.state.value.users,
+        );
+        _globalState.state.notifyListeners();  
+      }
+
       _isButtonEnabled = false;
     });
+
+    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -103,24 +122,12 @@ class MyProfileState extends State<MyProfile> {
                 title: 'Profile Name',
                 hint: 'Profile name...',
                 controller: _profileNameController,
-                onChanged: (text) {
-                  setState(() {
-                    _profileName = text;
-                    _updateButtonState();
-                  });
-                },
               ),
               const Spacing(height: AppPadding.profile),
               CustomTextInput(
                 title: 'About Me',
                 hint: 'A little bit about me...',
                 controller: _aboutMeController,
-                onChanged: (text) {
-                  setState(() {
-                    _aboutMe = text;
-                    _updateButtonState();
-                  });
-                },
               ),
               const Spacing(height: AppPadding.profile),
               didItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
@@ -133,7 +140,7 @@ class MyProfileState extends State<MyProfile> {
       bumper: singleButtonBumper(
         context,
         'Save',
-        _isButtonEnabled ? _saveProfile : null, 
+        _isButtonEnabled ? _saveProfile : null,
         _isButtonEnabled,
       ),
     );
