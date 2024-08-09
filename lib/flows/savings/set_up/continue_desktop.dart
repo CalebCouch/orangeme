@@ -5,7 +5,6 @@ import 'package:orange/classes.dart';
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
-import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
