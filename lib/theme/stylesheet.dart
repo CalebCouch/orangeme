@@ -122,6 +122,9 @@ class ThemeIcon {
   static const String profile = 'assets/icons/profile.svg';
   static const String info = 'assets/icons/info.svg';
   static const String send = 'assets/icons/send.svg';
+  static const String usb = 'assets/icons/usb.svg';
+  static const String monitor = 'assets/icons/monitor.svg';
+  static const String savings = 'assets/icons/savings.svg';
 
   static const String success = 'assets/icons/bitcoinsuccess.svg';
 }
@@ -169,7 +172,7 @@ class AppPadding {
   static const double bumper = 16;
   static const double valueDisplaySep = 8;
   static const double valueDisplay = 32;
-  static const double navBar = 64;
+  static const double navBar = 32;
   static const double listItem = 16;
   static const double textInput = 12;
   static const double tips = 8;

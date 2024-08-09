@@ -107,7 +107,7 @@ class MessagesHomeState extends State<MessagesHome> {
           );
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 1),
+      navBar: TabNav(globalState: widget.globalState, index: 2),
     );
   }
 }

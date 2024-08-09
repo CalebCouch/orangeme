@@ -6,6 +6,7 @@ import 'package:orange/classes.dart';
 
 import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/flows/messages/home.dart';
+import 'package:orange/flows/savings/home.dart';
 
 class TabNav extends StatefulWidget {
   final int index;
@@ -28,6 +29,11 @@ class TabNavState extends State<TabNav> {
       switchPageTo(context, WalletHome(widget.globalState));
     }
 
+    void openSavings() {
+      print("switching to savings");
+      switchPageTo(context, SavingsHome(widget.globalState));
+    }
+
     return Container(
       padding: const EdgeInsets.all(AppPadding.bumper),
       width: MediaQuery.sizeOf(context).width,
@@ -37,11 +43,11 @@ class TabNavState extends State<TabNav> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                if (widget.index == 1) openWallet();
+                if (widget.index != 0) openWallet();
               },
               child: Container(
                 color: ThemeColor.bg,
-                padding: const EdgeInsets.only(right: AppPadding.navBar / 2),
+                padding: const EdgeInsets.only(right: AppPadding.navBar),
                 alignment: Alignment.centerRight,
                 child: CustomIcon(
                   icon: ThemeIcon.wallet,
@@ -56,16 +62,34 @@ class TabNavState extends State<TabNav> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                if (widget.index == 0) openMessages();
+                if (widget.index != 1) openSavings();
               },
               child: Container(
                 color: ThemeColor.bg,
-                padding: const EdgeInsets.only(left: AppPadding.navBar / 2),
+                alignment: Alignment.center,
+                child: CustomIcon(
+                  icon: ThemeIcon.savings,
+                  iconSize: IconSize.md,
+                  iconColor: (widget.index == 1)
+                      ? ThemeColor.primary
+                      : ThemeColor.textSecondary,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (widget.index != 2) openMessages();
+              },
+              child: Container(
+                color: ThemeColor.bg,
+                padding: const EdgeInsets.only(left: AppPadding.navBar),
                 alignment: Alignment.centerLeft,
                 child: CustomIcon(
                   icon: ThemeIcon.chat,
                   iconSize: IconSize.md,
-                  iconColor: (widget.index == 1)
+                  iconColor: (widget.index == 2)
                       ? ThemeColor.primary
                       : ThemeColor.textSecondary,
                 ),
