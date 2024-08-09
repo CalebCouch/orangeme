@@ -205,19 +205,17 @@ impl Message {
     }
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MyProfile {
-    pub name: Contact,
+    pub name: String,
     pub about: String,
-
 }
 
 impl MyProfile { 
-    fn from_details() -> Result<Self, Error> {
-        Ok(MyProfile{
-            name: "".to_string(),
-            about: "".to_string(),
+    fn from_details(name: &str, about: &str) -> Result<Self, Error> {
+        Ok(MyProfile {
+            name: name.to_string(),
+            about: about.to_string(),
         })
     }
 }
@@ -383,6 +381,17 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
         let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
         for command in commands {
             let result: Result<String, Error> = match command.method.as_str() {
+                "my_profile" => {
+                    let params: Vec<&str> = command.data.split("|").collect();
+                    if params.len() == 2 {
+                        let name = params[0];
+                        let about = params[1];
+                        let profile = MyProfile::from_details(name, about)?;
+                        Ok(serde_json::to_string(&profile)?)
+                    } else {
+                        Err(Error::bad_request("my_profile", "Invalid parameters"))
+                    }
+                },
                 "get_new_address" => {
                     Ok(String::from_utf8(store.get(b"new_address")?.ok_or(Error::error("Main.get_new_address", "No new address"))?)?)
                 },

@@ -39,16 +39,27 @@ class Transaction {
 }
 
 class MyProfile {
-  String name;
-  String about;
+  final String name;
+  final String about;
 
-  MyProfile(this.name, this.about);
+  MyProfile({required this.name, required this.about});
+
+
   factory MyProfile.fromJson(Map<String, dynamic> json) {
     return MyProfile(
-      json['name'] as String,
-      json['about'] as String
+      name: json['name'] as String? ?? 'Unknown',
+      about: json['about'] as String? ?? '', 
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'about': about,
+    };
+  }
+
+
 }
 
 class Contact {
