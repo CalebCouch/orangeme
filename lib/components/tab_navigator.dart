@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/savings/set_up/get_mobile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
@@ -7,6 +8,7 @@ import 'package:orange/classes.dart';
 import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/savings/home.dart';
+import 'dart:io' show Platform;
 
 class TabNav extends StatefulWidget {
   final int index;
@@ -31,7 +33,11 @@ class TabNavState extends State<TabNav> {
 
     void openSavings() {
       print("switching to savings");
-      switchPageTo(context, SavingsHome(widget.globalState));
+      if (Platform.isAndroid || Platform.isIOS) {
+        switchPageTo(context, SavingsHome(widget.globalState));
+      } else {
+        switchPageTo(context, MobileSetUp(widget.globalState));
+      }
     }
 
     return Container(
