@@ -122,19 +122,14 @@ class _WalletHomeState extends State<WalletHome> {
             const Spacing(height: AppPadding.content),
             _backupReminder(false),
             _noInternet(false),
-            Expanded(
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  reverse: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: state.transactions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return transactionListItem(
-                        context, state.transactions[index]);
-                  },
-                ),
-              ),
+            ListView.builder(
+              shrinkWrap: true,
+              reverse: true,
+              physics: const ScrollPhysics(),
+              itemCount: state.transactions.length,
+              itemBuilder: (BuildContext context, int index) {
+                return transactionListItem(context, state.transactions[index]);
+              },
             ),
           ],
         ),

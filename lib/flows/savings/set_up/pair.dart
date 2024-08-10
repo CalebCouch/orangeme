@@ -61,11 +61,10 @@ class PairState extends State<Pair> {
       bumper: singleButtonBumper(
         context,
         "Continue",
-        () {
-          navigateTo(context, Requirements(widget.globalState));
-        },
+        () {},
       ),
-      navigationIndex: 3,
+      globalState: widget.globalState,
+      navigationIndex: 1,
     );
   }
 }

@@ -4,17 +4,15 @@ import 'package:orange/components/custom/custom_text.dart';
 
 Widget placeholder(BuildContext context, String text,
     [ignoreBrandMark = false]) {
-  return Expanded(
-    child: Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(AppPadding.placeholder),
-      child: text.contains('orange.me') && !ignoreBrandMark
-          ? withBrandMark(text.split('orange.me'))
-          : CustomText(
-              textSize: TextSize.md,
-              text: text,
-            ),
-    ),
+  return Container(
+    alignment: Alignment.center,
+    padding: const EdgeInsets.all(AppPadding.placeholder),
+    child: text.contains('orange.me') && !ignoreBrandMark
+        ? withBrandMark(text.split('orange.me'))
+        : CustomText(
+            textSize: TextSize.md,
+            text: text,
+          ),
   );
 }
 

@@ -76,6 +76,9 @@ class MessagesHomeState extends State<MessagesHome> {
       content: Content(
         content: testMessages.isNotEmpty
             ? ListView.builder(
+                shrinkWrap: true,
+                reverse: true,
+                physics: const ScrollPhysics(),
                 itemCount: testMessages.length,
                 itemBuilder: (BuildContext context, int index) {
                   return messageListItem(

@@ -9,7 +9,7 @@ import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
-import 'package:orange/flows/savings/set_up/desktop.dart';
+import 'package:orange/flows/savings/set_up/get_desktop.dart';
 
 import 'package:orange/util.dart';
 

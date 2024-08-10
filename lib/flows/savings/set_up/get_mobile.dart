@@ -37,7 +37,7 @@ class MobileSetUpState extends State<MobileSetUp> {
   Widget build_screen(BuildContext context, DartState state) {
     return Interface(
       resizeToAvoidBottomInset: false,
-      header: stackHeader(
+      header: primaryHeader(
         context,
         "Savings",
       ),
@@ -48,17 +48,17 @@ class MobileSetUpState extends State<MobileSetUp> {
                 'The mobile app works with the desktop app\nto keep your friends and money safe',
             isDismissable: false,
           ),
-          Center(
-            child: Column(
-              children: [
-                qrCode("mobile.orange.me"),
-                const Spacing(height: AppPadding.content),
-                withBrandMark(
-                  'Scan this QR code to download the orange.me app'
-                      .split('orange.me'),
-                ),
-              ],
-            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              qrCode("mobile.orange.me"),
+              const Spacing(height: AppPadding.content),
+              withBrandMark(
+                'Scan this QR code to download the orange.me app'
+                    .split('orange.me'),
+              ),
+            ],
           ),
         ]),
       ),
@@ -69,7 +69,8 @@ class MobileSetUpState extends State<MobileSetUp> {
           navigateTo(context, MSetUpContinue(widget.globalState));
         },
       ),
-      navigationIndex: 3,
+      globalState: widget.globalState,
+      navigationIndex: 1,
     );
   }
 }
@@ -101,8 +102,11 @@ class MSetUpContinueState extends State<MSetUpContinue> {
         "Continue set up",
       ),
       content: Content(
-        content: Center(
+        scrollable: false,
+        content: Expanded(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               placeholder(context,
                   'On your phone, open the orange.me mobile app and go to the savings tab.'),
@@ -121,6 +125,8 @@ class MSetUpContinueState extends State<MSetUpContinue> {
           navigateTo(context, Pair(widget.globalState));
         },
       ),
+      globalState: widget.globalState,
+      navigationIndex: 1,
     );
   }
 }

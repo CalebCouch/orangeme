@@ -33,11 +33,7 @@ class TabNavState extends State<TabNav> {
 
     void openSavings() {
       print("switching to savings");
-      if (Platform.isAndroid || Platform.isIOS) {
-        switchPageTo(context, SavingsHome(widget.globalState));
-      } else {
-        switchPageTo(context, MobileSetUp(widget.globalState));
-      }
+      switchPageTo(context, SavingsHome(widget.globalState));
     }
 
     return Container(

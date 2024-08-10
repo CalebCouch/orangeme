@@ -7,7 +7,7 @@ import 'package:orange/classes.dart';
 
 import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/flows/messages/home.dart';
-import 'package:orange/flows/savings/home.dart';
+import 'package:orange/flows/savings/set_up/get_mobile.dart';
 
 class Sidebar extends StatefulWidget {
   final int index;
@@ -32,7 +32,7 @@ class SidebarState extends State<Sidebar> {
 
     void openSavings() {
       print("switching to savings");
-      switchPageTo(context, SavingsHome(widget.globalState));
+      switchPageTo(context, MobileSetUp(widget.globalState));
     }
 
     return Container(

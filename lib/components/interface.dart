@@ -36,7 +36,9 @@ class Interface extends StatelessWidget {
     }
     return DesktopInterface(
       header: header,
-      content: content,
+      content: SizedBox(
+        child: content,
+      ),
       bumper: bumper,
       sidebar: navigationIndex != null && globalState != null
           ? Sidebar(globalState!, index: navigationIndex!)
@@ -69,16 +71,15 @@ class MobileInterface extends StatelessWidget {
         height: MediaQuery.sizeOf(context).height,
         child: SafeArea(
           child: Column(
-              children: [
-                header,
-                Expanded(child: content),
-                if (bumper != null) bumper!,
-                if (navBar != null) navBar!,
-              ],
-            ),
+            children: [
+              header,
+              Expanded(child: content),
+              if (bumper != null) bumper!,
+              if (navBar != null) navBar!,
+            ],
           ),
         ),
-      
+      ),
     );
   }
 }
