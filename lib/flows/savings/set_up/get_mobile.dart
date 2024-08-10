@@ -8,8 +8,6 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/savings/set_up/requirements.dart';
 import 'package:orange/flows/savings/set_up/pair.dart';
 import 'package:orange/components/qr_code/qr_code.dart';
 

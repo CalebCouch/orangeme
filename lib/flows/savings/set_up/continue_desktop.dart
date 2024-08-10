@@ -40,6 +40,7 @@ class ContinueDesktopState extends State<ContinueDesktop> {
         "Continue set up",
       ),
       content: Content(
+        scrollable: false,
         content: Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

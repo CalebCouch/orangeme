@@ -39,6 +39,7 @@ class DesktopSetUpState extends State<DesktopSetUp> {
         "Savings",
       ),
       content: Content(
+        scrollable: false,
         content: Column(children: [
           const CustomBanner(
             message:

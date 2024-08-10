@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/placeholder.dart';
-import 'package:orange/flows/savings/set_up/requirements.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 
@@ -10,8 +9,6 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/qr_code/qr_code.dart';
-
-import 'package:orange/util.dart';
 
 class Pair extends StatefulWidget {
   final GlobalState globalState;

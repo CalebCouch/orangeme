@@ -11,15 +11,15 @@ import 'package:orange/flows/savings/home.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
-class CompletedMobile extends StatefulWidget {
+class CompletedSetUp extends StatefulWidget {
   final GlobalState globalState;
-  const CompletedMobile(this.globalState, {super.key});
+  const CompletedSetUp(this.globalState, {super.key});
 
   @override
-  CompletedMobileState createState() => CompletedMobileState();
+  CompletedSetUpState createState() => CompletedSetUpState();
 }
 
-class CompletedMobileState extends State<CompletedMobile> {
+class CompletedSetUpState extends State<CompletedSetUp> {
   final TextEditingController recipientAddressController =
       TextEditingController();
 

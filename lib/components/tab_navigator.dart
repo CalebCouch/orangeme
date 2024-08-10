@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/flows/savings/set_up/get_mobile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
@@ -8,7 +7,6 @@ import 'package:orange/classes.dart';
 import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/savings/home.dart';
-import 'dart:io' show Platform;
 
 class TabNav extends StatefulWidget {
   final int index;

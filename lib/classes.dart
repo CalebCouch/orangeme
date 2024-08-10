@@ -1,10 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:orange/src/rust/frb_generated.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/screens/error.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:io';
