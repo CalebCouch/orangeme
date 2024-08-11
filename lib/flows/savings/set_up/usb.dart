@@ -14,11 +14,11 @@ import 'package:orange/flows/savings/set_up/continue_mobile.dart';
 
 import 'package:orange/util.dart';
 
-class Requirements extends StatefulWidget {
+class USB extends StatefulWidget {
   final GlobalState globalState;
   final int number;
   final bool toInsert;
-  const Requirements(
+  const USB(
     this.globalState, {
     super.key,
     required this.number,
@@ -26,10 +26,10 @@ class Requirements extends StatefulWidget {
   });
 
   @override
-  State<Requirements> createState() => RequirementsState();
+  State<USB> createState() => USBState();
 }
 
-class RequirementsState extends State<Requirements> {
+class USBState extends State<USB> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -52,7 +52,6 @@ class RequirementsState extends State<Requirements> {
         "Insert USB stick ${widget.number}\3",
       ),
       content: Content(
-        scrollable: false,
         content: Column(children: [
           Expanded(
             child: Column(
@@ -81,6 +80,18 @@ class RequirementsState extends State<Requirements> {
         context,
         "Continue",
         () {
+          if (widget.number != 3 && widget.toInsert) {
+            if (widget.toInsert) {
+              navigateTo(
+                context,
+                USB(
+                  widget.globalState,
+                  number: widget.number + 1,
+                  toInsert: !widget.toInsert,
+                ),
+              );
+            }
+          }
           navigateTo(context, ContinueMobile(widget.globalState));
         },
       ),

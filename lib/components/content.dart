@@ -8,7 +8,7 @@ class Content extends StatelessWidget {
   const Content({
     super.key,
     required this.content,
-    this.scrollable = true,
+    this.scrollable = false,
   });
 
   @override

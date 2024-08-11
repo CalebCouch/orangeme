@@ -95,6 +95,7 @@ class _WalletHomeState extends State<WalletHome> {
         "Wallet",
       ),
       content: Content(
+        scrollable: true,
         content: Column(
           children: [
             Container(

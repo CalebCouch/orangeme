@@ -40,6 +40,7 @@ class _SavingsHomeState extends State<SavingsHome> {
         "Savings",
       ),
       content: Content(
+        scrollable: true,
         content: Column(children: [
           const CustomBanner(
             message:

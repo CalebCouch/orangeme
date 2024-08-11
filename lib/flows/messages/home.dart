@@ -74,6 +74,7 @@ class MessagesHomeState extends State<MessagesHome> {
         null,
       ),
       content: Content(
+        scrollable: true,
         content: testMessages.isNotEmpty
             ? ListView.builder(
                 shrinkWrap: true,

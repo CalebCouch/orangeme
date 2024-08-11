@@ -9,6 +9,8 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/qr_code/qr_code.dart';
+import 'package:orange/util.dart';
+import 'package:orange/flows/savings/set_up/usb.dart';
 
 class Pair extends StatefulWidget {
   final GlobalState globalState;
@@ -58,7 +60,16 @@ class PairState extends State<Pair> {
       bumper: singleButtonBumper(
         context,
         "Continue",
-        () {},
+        () {
+          navigateTo(
+            context,
+            USB(
+              widget.globalState,
+              number: 1,
+              toInsert: true,
+            ),
+          );
+        },
       ),
       globalState: widget.globalState,
       navigationIndex: 1,
