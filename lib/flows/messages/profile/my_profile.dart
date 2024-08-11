@@ -25,8 +25,8 @@ class MyProfile extends StatefulWidget {
 
 class MyProfileState extends State<MyProfile> {
   final ImagePicker _picker = ImagePicker();
-  File? _image;
-
+  late TextEditingController _profileName = TextEditingController();
+  late TextEditingController _aboutMe = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -37,7 +37,34 @@ class MyProfileState extends State<MyProfile> {
     );
   }
 
+  @override
+  void dispose() {
+    _profileName.dispose();
+    _aboutMe.dispose();
+    super.dispose();
+  }
+
+  bool save = false;
+
   Widget build_screen(BuildContext context, DartState state) {
+    saveInfo() {
+      setState(() {
+        save = false;
+        state.personal.name = _profileName.text;
+        state.personal.abtme = _aboutMe.text;
+      });
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
+
+    enableButton() {
+      setState(() {
+        save = true;
+      });
+    }
+
+    _profileName = TextEditingController(text: state.personal.name);
+    _aboutMe = TextEditingController(text: state.personal.abtme);
+
     return DefaultInterface(
       header: stackHeader(context, "My profile"),
       content: Content(
@@ -52,31 +79,43 @@ class MyProfileState extends State<MyProfile> {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
-                    setState(() => _image = File(image.path));
+                    setState(() => state.personal.pfp = image.path);
                   }
                 },
-                _image,
+                state.personal.pfp,
               ),
               const Spacing(height: AppPadding.profile),
               CustomTextInput(
-                //presetTxt: state.
                 title: 'Profile Name',
                 hint: 'Profile name...',
+                onChanged: (String str) => {enableButton()},
+                controller: _profileName,
               ),
               const Spacing(height: AppPadding.profile),
-              const CustomTextInput(
+              CustomTextInput(
                 title: 'About Me',
                 hint: 'A little bit about me...',
+                onChanged: (String str) => {enableButton()},
+                controller: _aboutMe,
               ),
               const Spacing(height: AppPadding.profile),
               didItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
               const Spacing(height: AppPadding.profile),
-              didItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
+              addressItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
             ],
           ),
         ),
       ),
-      bumper: singleButtonBumper(context, 'Save', () {}, false),
+      bumper: singleButtonBumper(
+        context,
+        'Save',
+        save
+            ? () {
+                saveInfo();
+              }
+            : () {},
+        save,
+      ),
     );
   }
 }

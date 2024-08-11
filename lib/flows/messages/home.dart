@@ -49,7 +49,7 @@ class MessagesHomeState extends State<MessagesHome> {
             MyProfile(widget.globalState),
           );
         },
-        null,
+        state.personal.pfp,
       ),
       content: Content(
         content: state.conversations.isEmpty

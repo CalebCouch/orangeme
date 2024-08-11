@@ -111,7 +111,7 @@ class DartState {
   );
 
   factory DartState.init() {
-    return DartState(0.0, 0.0, 0.0, [], [], [], [], () as Contact);
+    return DartState(0.0, 0.0, 0.0, [], [], [], [], Contact('', '', '', ''));
   }
 
   factory DartState.fromJson(Map<String, dynamic> json) {
@@ -125,7 +125,7 @@ class DartState {
       List<Conversation>.from(
           json["conversations"].map((y) => Conversation.fromJson(y))),
       List<Contact>.from(json["users"].map((i) => Contact.fromJson(i))),
-      json['personal'] as Contact,
+      Contact.fromJson(json["personal"]),
     );
   }
 }
@@ -175,7 +175,7 @@ class GlobalState {
   Future<RustR> invoke(String method, String data) async {
     var uid = uuid.v1();
     var command = RustC(uid, method, data);
-    //print(jsonEncode(command));
+    print(jsonEncode(command));
     rustCommands.add(command);
     while (true) {
       var index = rustResponses.indexWhere((res) => res.uid == uid);
