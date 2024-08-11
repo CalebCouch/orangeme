@@ -298,10 +298,14 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
         let btc = balance.get_total() as f64 / SATS;
         let mut transactions: Vec<Transaction> = Vec::new();
 
-        let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/josh_thayer.png".to_string()), abtme: None};
+        let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"Y7yOvxxua4EsGdsFvhIuAC4sDjc7judq".to_string(), pfp: Some("assets/images/josh_thayer.png".to_string()), abtme: None};
         let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/panda.jpeg".to_string()), abtme: None};
-        let ella_couch = Contact{name: "Ella Couch".to_string(), did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/cat.jpg".to_string()), abtme: None};
-        let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(),pfp: None, abtme: None,};
+        let ella_couch = Contact{name: "Ella Couch".to_string(), did: "62iDUrvk5xfUN4UccYd9sfxiQ0PCbMNo".to_string(), pfp: Some("assets/images/cat.jpg".to_string()), abtme: None};
+        let chris_slaughter = Contact {name: "Chris Slaughter".to_string(),did: "XXr4LjMCNG4xgwe0z141IDV4f3g4jr5n".to_string(),pfp: None, abtme: None,};
+        let josh_thayer_alt = Contact{name:"Josh Thayer Alt".to_string(), did:"eCKCHvzJfQn277bHxuW6VDsFXHJu820h".to_string(), pfp: Some("assets/images/josh_thayer.png".to_string()), abtme: None};
+        let jw_weatherman_alt = Contact{name:"JW Weatherman Alt".to_string(), did:"xj74clpteEvSzdoAPyLTkLVlgyZ08iD2".to_string(), pfp: Some("assets/images/panda.jpeg".to_string()), abtme: None};
+        let ella_couch_alt = Contact{name: "Ella Couch Alt".to_string(), did: "yuRYAS3KeaBeUXD4zkRbfmoj0PL0LgW9".to_string(), pfp: Some("assets/images/cat.jpg".to_string()), abtme: None};
+        let chris_slaughter_alt = Contact {name: "Chris Slaughter Alt".to_string(),did: "4r32wmOHriTmZ2cMnYtRvdBz6yNHwnKg".to_string(),pfp: None, abtme: None,};
         let conversations: Vec<Conversation> = vec![
             Conversation {
                 messages: vec![
@@ -327,7 +331,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
             }
         ];
 
-        let users: Vec<Contact> = vec![josh_thayer.clone(), ella_couch.clone(), chris_slaughter.clone(), jw_weatherman.clone()];
+        let users: Vec<Contact> = vec![josh_thayer.clone(), ella_couch.clone(), chris_slaughter.clone(), jw_weatherman.clone(), josh_thayer_alt.clone(), ella_couch_alt.clone(), chris_slaughter_alt.clone(), jw_weatherman_alt.clone()];
 
         let personal: Contact = ella_couch.clone();
 

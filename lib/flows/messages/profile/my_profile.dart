@@ -98,7 +98,7 @@ class MyProfileState extends State<MyProfile> {
                 controller: _aboutMe,
               ),
               const Spacing(height: AppPadding.profile),
-              didItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
+              didItem(context, state.personal.did),
               const Spacing(height: AppPadding.profile),
               addressItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
             ],
