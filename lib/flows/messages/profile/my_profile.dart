@@ -11,7 +11,6 @@ import 'package:orange/components/bumper.dart';
 
 import 'package:image_picker/image_picker.dart';
 
-import 'dart:io';
 import 'package:orange/classes.dart';
 
 class MyProfile extends StatefulWidget {

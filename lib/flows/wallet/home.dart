@@ -14,7 +14,6 @@ import 'package:orange/flows/wallet/transaction_details.dart';
 
 import 'package:orange/flows/wallet/send/send.dart';
 import 'package:orange/flows/wallet/receive/receive.dart';
-
 import 'package:orange/util.dart';
 
 class WalletHome extends StatefulWidget {
@@ -34,19 +33,6 @@ class _WalletHomeState extends State<WalletHome> {
         return build_screen(context, state);
       },
     );
-  }
-
-  _getDate(String? date, String? time) {
-    if (date == null) return 'Pending';
-    if (time != null && date == DateTime.now().toString()) {
-      return time;
-    }
-    if (date == DateTime.now().subtract(const Duration(days: 1)).toString()) {
-      return 'Yesterday';
-    }
-    return DateFormat.MMMMd()
-        .format(DateFormat('yyyy-MM-dd').parse(date))
-        .toString();
   }
 
   Widget transactionListItem(BuildContext context, Transaction transaction) {
