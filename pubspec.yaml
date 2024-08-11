@@ -120,6 +120,8 @@ flutter:
           weight: 500
         - asset: assets/fonts/Outfit-Bold.ttf
           weight: 700
+        - asset: assets/fonts/Outfit-Black.ttf
+          weight: 900
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

@@ -37,6 +37,7 @@ class TextType {
   static const String header = "header";
   static const String label = "label";
   static const String text = "text";
+  static const String brand = "brand";
 }
 
 //// BRAND ////
@@ -176,6 +177,7 @@ class AppPadding {
   static const double message = 8;
   static const double profile = 32;
   static const double dataItem = 16;
+  static const double banner = 8;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];

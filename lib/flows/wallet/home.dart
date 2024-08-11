@@ -6,6 +6,7 @@ import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
+import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/custom/custom_text.dart';
@@ -33,6 +34,19 @@ class _WalletHomeState extends State<WalletHome> {
         return build_screen(context, state);
       },
     );
+  }
+
+  _getDate(String? date, String? time) {
+    if (date == null) return 'Pending';
+    if (time != null && date == DateTime.now().toString()) {
+      return time;
+    }
+    if (date == DateTime.now().subtract(const Duration(days: 1)).toString()) {
+      return 'Yesterday';
+    }
+    return DateFormat.MMMMd()
+        .format(DateFormat('yyyy-MM-dd').parse(date))
+        .toString();
   }
 
   Widget transactionListItem(BuildContext context, Transaction transaction) {
@@ -106,6 +120,8 @@ class _WalletHomeState extends State<WalletHome> {
               ),
             ),
             const Spacing(height: AppPadding.content),
+            _backupReminder(false),
+            _noInternet(false),
             Expanded(
               child: SingleChildScrollView(
                 child: ListView.builder(
@@ -139,4 +155,25 @@ class _WalletHomeState extends State<WalletHome> {
       navBar: TabNav(globalState: widget.globalState, index: 0),
     );
   }
+}
+
+_backupReminder(bool display) {
+  if (display) {
+    return const CustomBanner(
+      message:
+          'orange.me recommends that you back\n your phone up to the cloud.',
+    );
+  }
+  return Container();
+}
+
+_noInternet(bool display) {
+  if (display) {
+    return const CustomBanner(
+      message:
+          'You are not connected to the internet.\norange.me requires an internet connection.',
+      isError: true,
+    );
+  }
+  return Container();
 }
