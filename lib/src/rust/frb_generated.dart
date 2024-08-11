@@ -57,7 +57,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => -1458675841;
+  int get rustContentHash => 1249572060;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -85,6 +85,8 @@ abstract class RustLibApi extends BaseApi {
 
   Future<Error> crateApiErrorErrorParse(
       {required String rtype, required String data});
+
+  Future<Contact> crateApiSimpleContactDefault();
 
   Future<DartState> crateApiSimpleDartStateDefault();
 
@@ -276,12 +278,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<DartState> crateApiSimpleDartStateDefault() {
+  Future<Contact> crateApiSimpleContactDefault() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 7, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_contact,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSimpleContactDefaultConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleContactDefaultConstMeta =>
+      const TaskConstMeta(
+        debugName: "contact_default",
+        argNames: [],
+      );
+
+  @override
+  Future<DartState> crateApiSimpleDartStateDefault() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 8, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_dart_state,
@@ -322,7 +348,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
             callback4, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 8, port: port_);
+            funcId: 9, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -463,8 +489,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DartState dco_decode_dart_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
     return DartState(
       currentPrice: dco_decode_f_64(arr[0]),
       usdBalance: dco_decode_f_64(arr[1]),
@@ -473,6 +499,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       fees: dco_decode_list_prim_f_64_strict(arr[4]),
       conversations: dco_decode_list_conversation(arr[5]),
       users: dco_decode_list_contact(arr[6]),
+      personal: dco_decode_contact(arr[7]),
     );
   }
 
@@ -650,6 +677,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_fees = sse_decode_list_prim_f_64_strict(deserializer);
     var var_conversations = sse_decode_list_conversation(deserializer);
     var var_users = sse_decode_list_contact(deserializer);
+    var var_personal = sse_decode_contact(deserializer);
     return DartState(
         currentPrice: var_currentPrice,
         usdBalance: var_usdBalance,
@@ -657,7 +685,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         transactions: var_transactions,
         fees: var_fees,
         conversations: var_conversations,
-        users: var_users);
+        users: var_users,
+        personal: var_personal);
   }
 
   @protected
@@ -885,6 +914,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_prim_f_64_strict(self.fees, serializer);
     sse_encode_list_conversation(self.conversations, serializer);
     sse_encode_list_contact(self.users, serializer);
+    sse_encode_contact(self.personal, serializer);
   }
 
   @protected

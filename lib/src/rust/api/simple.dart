@@ -38,6 +38,9 @@ class Contact {
     this.abtme,
   });
 
+  static Future<Contact> default_() =>
+      RustLib.instance.api.crateApiSimpleContactDefault();
+
   @override
   int get hashCode =>
       name.hashCode ^ did.hashCode ^ pfp.hashCode ^ abtme.hashCode;
@@ -82,6 +85,7 @@ class DartState {
   final Float64List fees;
   final List<Conversation> conversations;
   final List<Contact> users;
+  final Contact personal;
 
   const DartState({
     required this.currentPrice,
@@ -91,6 +95,7 @@ class DartState {
     required this.fees,
     required this.conversations,
     required this.users,
+    required this.personal,
   });
 
   static Future<DartState> default_() =>
@@ -104,7 +109,8 @@ class DartState {
       transactions.hashCode ^
       fees.hashCode ^
       conversations.hashCode ^
-      users.hashCode;
+      users.hashCode ^
+      personal.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -117,7 +123,8 @@ class DartState {
           transactions == other.transactions &&
           fees == other.fees &&
           conversations == other.conversations &&
-          users == other.users;
+          users == other.users &&
+          personal == other.personal;
 }
 
 class Message {

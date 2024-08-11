@@ -12,10 +12,12 @@ import 'package:orange/components/bumper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'dart:io';
+import 'package:orange/classes.dart';
 
 class MyProfile extends StatefulWidget {
   final String? profilePhoto;
-  const MyProfile({super.key, this.profilePhoto});
+  final GlobalState globalState;
+  const MyProfile(this.globalState, {super.key, this.profilePhoto});
 
   @override
   MyProfileState createState() => MyProfileState();
@@ -24,9 +26,18 @@ class MyProfile extends StatefulWidget {
 class MyProfileState extends State<MyProfile> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
+
   @override
   Widget build(BuildContext context) {
-    print("image file = $_image");
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return build_screen(context, state);
+      },
+    );
+  }
+
+  Widget build_screen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackHeader(context, "My profile"),
       content: Content(
@@ -41,14 +52,14 @@ class MyProfileState extends State<MyProfile> {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
-                    print("image file = $_image");
                     setState(() => _image = File(image.path));
                   }
                 },
                 _image,
               ),
               const Spacing(height: AppPadding.profile),
-              const CustomTextInput(
+              CustomTextInput(
+                //presetTxt: state.
                 title: 'Profile Name',
                 hint: 'Profile name...',
               ),

@@ -11,7 +11,7 @@ class CustomTextInput extends StatefulWidget {
   final VoidCallback? onEditingComplete;
   final bool showIcon;
   final String error;
-  final String? address;
+  final String? presetTxt;
   final TextEditingController? controller;
 
   const CustomTextInput({
@@ -22,7 +22,7 @@ class CustomTextInput extends StatefulWidget {
     this.onEditingComplete,
     this.showIcon = false,
     this.error = '',
-    this.address,
+    this.presetTxt,
     this.controller,
   });
 
@@ -65,8 +65,8 @@ class CustomTextInputState extends State<CustomTextInput> {
   }
 
   Widget _buildTextField() {
-    if (widget.address != null && widget.address != '') {
-      controller.text = widget.address!;
+    if (widget.presetTxt != null && widget.presetTxt != '') {
+      controller.text = widget.presetTxt!;
     }
     return Expanded(
       child: TextField(

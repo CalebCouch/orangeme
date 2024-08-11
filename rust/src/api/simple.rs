@@ -150,7 +150,7 @@ impl Transaction {
 
 
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Contact {
     pub name: String,
     pub did: String,
@@ -215,6 +215,7 @@ pub struct DartState {
     pub fees: Vec<f64>,
     pub conversations: Vec<Conversation>,
     pub users: Vec<Contact>,
+    pub personal: Contact,
 }
 
 async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
@@ -326,7 +327,9 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
             }
         ];
 
-        let users: Vec<Contact> = vec![josh_thayer, ella_couch, chris_slaughter, jw_weatherman];
+        let users: Vec<Contact> = vec![josh_thayer.clone(), ella_couch.clone(), chris_slaughter.clone(), jw_weatherman.clone()];
+
+        let personal: Contact = ella_couch.clone();
 
         for tx in wallet_transactions {
             let price = match tx.confirmation_time.as_ref() {
@@ -344,7 +347,8 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
             transactions,
             fees,
             conversations,
-            users
+            users,
+            personal,
         };
 
         store.set(b"state", &serde_json::to_vec(&state)?)?;

@@ -97,12 +97,21 @@ class DartState {
   List<double> fees;
   List<Conversation> conversations;
   List<Contact> users;
+  Contact personal;
 
-  DartState(this.currentPrice, this.usdBalance, this.btcBalance,
-      this.transactions, this.fees, this.conversations, this.users);
+  DartState(
+    this.currentPrice,
+    this.usdBalance,
+    this.btcBalance,
+    this.transactions,
+    this.fees,
+    this.conversations,
+    this.users,
+    this.personal,
+  );
 
   factory DartState.init() {
-    return DartState(0.0, 0.0, 0.0, [], [], [], []);
+    return DartState(0.0, 0.0, 0.0, [], [], [], [], () as Contact);
   }
 
   factory DartState.fromJson(Map<String, dynamic> json) {
@@ -116,6 +125,7 @@ class DartState {
       List<Conversation>.from(
           json["conversations"].map((y) => Conversation.fromJson(y))),
       List<Contact>.from(json["users"].map((i) => Contact.fromJson(i))),
+      json['personal'] as Contact,
     );
   }
 }
@@ -165,7 +175,7 @@ class GlobalState {
   Future<RustR> invoke(String method, String data) async {
     var uid = uuid.v1();
     var command = RustC(uid, method, data);
-    print(jsonEncode(command));
+    //print(jsonEncode(command));
     rustCommands.add(command);
     while (true) {
       var index = rustResponses.indexWhere((res) => res.uid == uid);

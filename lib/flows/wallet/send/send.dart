@@ -63,7 +63,7 @@ class SendState extends State<Send> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CustomTextInput(
-                address: addressStr,
+                presetTxt: addressStr,
                 onChanged: (String address) => {setAddress(address)},
                 error: addressValid || addressStr.isEmpty
                     ? ""
