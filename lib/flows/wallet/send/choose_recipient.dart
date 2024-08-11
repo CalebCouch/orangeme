@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:orange/classes/contact_info.dart';
 import 'package:orange/components/default_interface.dart';
@@ -25,15 +26,7 @@ class ChooseSendRecipient extends StatefulWidget {
 class ChooseRecipientState extends State<ChooseSendRecipient> {
   @override
   Widget build(BuildContext context) {
-    List<Contact> testContacts = [
-      const Contact('Ann', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('James', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Stacy', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Cam', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('J. Marks', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Anthony', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('R. R. B.', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-    ];
+
     return DefaultInterface(
       header: stackButtonHeader(
         context,
@@ -78,3 +71,4 @@ class ChooseRecipientState extends State<ChooseSendRecipient> {
     );
   }
 }
+*/

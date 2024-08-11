@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/classes/contact_info.dart';
 import 'package:orange/components/default_interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
+
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/text_input.dart';
-import 'package:orange/flows/messages/conversation/conversation.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
+
+import 'package:orange/flows/messages/conversation/exchange.dart';
 
 class ChooseRecipient extends StatefulWidget {
-  const ChooseRecipient({
+  final GlobalState globalState;
+  const ChooseRecipient(
+    this.globalState, {
     super.key,
   });
 
@@ -22,78 +25,76 @@ class ChooseRecipient extends StatefulWidget {
 }
 
 class ChooseRecipientState extends State<ChooseRecipient> {
-  List<String> recipients = [];
-  List<Contact> testContacts = [
-    const Contact(
-      'Chris Slaughter',
-      null,
-      'VZDrYz39XxuPq...r5zKQGjTA',
-    ),
-    const Contact(
-      'Brian Winchester',
-      null,
-      'VZDrYz39XxuPq...r5zKQGjTA',
-    ),
-    const Contact(
-      'Cam',
-      null,
-      'VZDrYz39XxuPq...r5zKQGjTA',
-    ),
-  ];
+  List<Contact> recipients = [];
+  List<Contact> filteredContacts = [];
+  TextEditingController searchController = TextEditingController();
 
-  void addRecipient(String name) {
-    if (recipients.contains(name)) {
-      removeRecipient(name);
-      return;
-    }
-    setState(() {
-      recipients.add(name);
-    });
+  @override
+  void initState() {
+    super.initState();
+    filteredContacts = widget.globalState.state.value.users;
+    searchController.addListener(_filterContacts);
   }
 
-  void removeRecipient(String name) {
-    setState(() {
-      recipients.remove(name);
-    });
+  @override
+  void dispose() {
+    searchController.removeListener(_filterContacts);
+    searchController.dispose();
+    super.dispose();
   }
 
-  _getContactsfromRecipientNames(
-      List<Contact> testContacts, List<String> recipients) {
-    List<Contact> returnContacts = [];
-    for (var i = 0; i < recipients.length; i++) {
-      for (var x = 0; x < testContacts.length; x++) {
-        if (recipients[i] == testContacts[x].name) {
-          print("Adding ${testContacts[x]}");
-          returnContacts.add(testContacts[x]);
-        }
+  void _filterContacts() {
+    setState(() {
+      String searchTerm = searchController.text.toLowerCase();
+      if (searchTerm.isEmpty) {
+        filteredContacts = widget.globalState.state.value.users;
+      } else {
+        filteredContacts = widget.globalState.state.value.users
+            .where((contact) =>
+                contact.name.toLowerCase().startsWith(searchTerm) ||
+                contact.did.toLowerCase().startsWith(searchTerm))
+            .toList();
       }
-    }
-    return returnContacts;
+    });
+  }
+
+  void addRecipient(Contact selected) {
+    setState(() {
+      if (!recipients.contains(selected)) {
+        recipients.add(selected);
+      }
+    });
+  }
+
+  void removeRecipient(Contact selected) {
+    setState(() {
+      recipients.remove(selected);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Contact> testContacts = [
-      const Contact('Ann', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('James', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Stacy', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Cam', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('J. Marks', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('Anthony', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-      const Contact('R. R. B.', null, 'VZDrYz39XxuPq...r5zKQGjTA'),
-    ];
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
     return DefaultInterface(
       header: stackButtonHeader(
         context,
         'New message',
-        recipients.isNotEmpty ? true : false,
+        recipients.isNotEmpty,
         'Next',
         () {
           navigateTo(
             context,
-            Conversation(
-              contacts:
-                  _getContactsfromRecipientNames(testContacts, recipients),
+            Exchange(
+              widget.globalState,
+              conversation: Conversation(recipients, []),
             ),
           );
         },
@@ -101,11 +102,12 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       content: Content(
         content: Column(
           children: [
-            const CustomTextInput(
+            CustomTextInput(
+              controller: searchController,
               hint: 'Profile name...',
             ),
             Container(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               alignment: Alignment.topLeft,
               child: Wrap(
                 spacing: 8,
@@ -113,7 +115,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 children: List<Widget>.generate(recipients.length, (index) {
                   return oneTip(
                     ButtonTip(
-                      recipients[index],
+                      recipients[index].name,
                       ThemeIcon.close,
                       () => removeRecipient(recipients[index]),
                     ),
@@ -122,19 +124,15 @@ class ChooseRecipientState extends State<ChooseRecipient> {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: testContacts.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return contactListItem(
-                      context,
-                      testContacts[index],
-                      () => addRecipient(testContacts[index].name),
-                    );
-                  },
-                ),
+              child: ListView.builder(
+                itemCount: filteredContacts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return contactListItem(
+                    context,
+                    filteredContacts[index],
+                    () => addRecipient(filteredContacts[index]),
+                  );
+                },
               ),
             ),
           ],

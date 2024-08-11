@@ -3,7 +3,10 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/classes/contact_info.dart';
+import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
+import 'package:orange/flows/messages/conversation/info.dart';
+import 'package:orange/flows/messages/profile/user_profile.dart';
 
 class DefaultHeader extends StatelessWidget {
   final Widget? left;
@@ -58,14 +61,11 @@ Widget primaryHeader(BuildContext context, String text) {
   );
 }
 
-Widget messagesHeader(BuildContext context, onTap, profilePhoto) {
+Widget messagesHeader(BuildContext context, onTap, pfp) {
   return DefaultHeader(
     left: GestureDetector(
       onTap: onTap ?? () {},
-      child: ProfilePhoto(
-        size: ProfileSize.md,
-        profilePhoto: profilePhoto,
-      ),
+      child: profilePhoto(context, pfp),
     ),
     center: const CustomText(
       textType: "heading",
@@ -112,28 +112,40 @@ Widget stackHeader(BuildContext context, String text,
   );
 }
 
-Widget stackMessageHeader(BuildContext context, List<Contact> contacts) {
+Widget stackMessageHeader(
+    GlobalState globalState, BuildContext context, Conversation cnvo) {
   bool isGroup = false;
-  if (contacts.length > 1) isGroup = true;
+  if (cnvo.members.length > 1) isGroup = true;
   return DefaultHeader(
     height: 76,
     left: backButton(context),
-    center: Column(
-      children: [
-        !isGroup
-            ? ProfilePhoto(
-                profilePhoto: contacts[0].photo,
-              )
-            : profilePhotoStack(context, contacts),
-        const Spacing(height: 8),
-        CustomText(
-          textType: "heading",
-          text: isGroup ? 'Group message' : contacts[0].name,
-          textSize: TextSize.h5,
-          color: ThemeColor.heading,
-        ),
-      ],
+    center: InkWell(
+      onTap: () {
+        if (!isGroup) {
+          navigateTo(
+              context, UserProfile(globalState, userInfo: cnvo.members[0]));
+        }
+      },
+      child: Column(
+        children: [
+          isGroup
+              ? profilePhotoStack(context, cnvo.members)
+              : profilePhoto(context, cnvo.members[0].pfp),
+          const Spacing(height: 8),
+          CustomText(
+            textType: "heading",
+            text: isGroup ? 'Group message' : cnvo.members[0].name,
+            textSize: TextSize.h5,
+            color: ThemeColor.heading,
+          ),
+        ],
+      ),
     ),
-    right: isGroup ? infoButton(context, contacts) : null,
+    right: isGroup
+        ? infoButton(
+            context,
+            MessageInfo(globalState, contacts: cnvo.members),
+          )
+        : null,
   );
 }

@@ -11,7 +11,8 @@ class CustomTextInput extends StatefulWidget {
   final VoidCallback? onEditingComplete;
   final bool showIcon;
   final String error;
-  final String? address;
+  final String? presetTxt;
+  final TextEditingController? controller;
 
   const CustomTextInput({
     super.key,
@@ -21,7 +22,8 @@ class CustomTextInput extends StatefulWidget {
     this.onEditingComplete,
     this.showIcon = false,
     this.error = '',
-    this.address,
+    this.presetTxt,
+    this.controller,
   });
 
   @override
@@ -29,35 +31,42 @@ class CustomTextInput extends StatefulWidget {
 }
 
 class CustomTextInputState extends State<CustomTextInput> {
-  final TextEditingController controller = TextEditingController();
+  late TextEditingController controller;
   var borderColor = ThemeColor.outline;
   var textColor = ThemeColor.primary;
   var isFocused = false;
   var focusNode = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    controller = widget.controller ?? TextEditingController();
+    focusNode.addListener(_onFocusChange);
+  }
+
+  @override
   void dispose() {
     focusNode.dispose();
+    if (widget.controller == null) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   void _onFocusChange() {
-    setState(
-      () {
-        isFocused = focusNode.hasFocus;
-        borderColor = isFocused ? ThemeColor.primary : ThemeColor.outline;
-        textColor = ThemeColor.primary;
-        if (!isFocused && controller.text.isEmpty) {
-          borderColor = ThemeColor.outline;
-        }
-      },
-    );
+    setState(() {
+      isFocused = focusNode.hasFocus;
+      borderColor = isFocused ? ThemeColor.primary : ThemeColor.outline;
+      textColor = ThemeColor.primary;
+      if (!isFocused && controller.text.isEmpty) {
+        borderColor = ThemeColor.outline;
+      }
+    });
   }
 
   Widget _buildTextField() {
-    focusNode.addListener(_onFocusChange);
-    if (widget.address != null && widget.address != '') {
-      controller.text = widget.address!;
+    if (widget.presetTxt != null && widget.presetTxt != '') {
+      controller.text = widget.presetTxt!;
     }
     return Expanded(
       child: TextField(
@@ -67,6 +76,7 @@ class CustomTextInputState extends State<CustomTextInput> {
         cursorColor: ThemeColor.textSecondary,
         style: TextStyle(color: textColor),
         onChanged: widget.onChanged,
+        onEditingComplete: widget.onEditingComplete,
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
           hintText: isFocused ? '' : widget.hint,

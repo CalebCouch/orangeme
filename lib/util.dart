@@ -91,3 +91,16 @@ String formatValue(double val, [int per = 2]) {
     return NumberFormat("#,###", "en_US").format(val);
   }
 }
+
+formatDate(String? date, String? time) {
+  if (date == null) return 'Pending';
+  if (time != null && date == DateTime.now().toString()) {
+    return time;
+  }
+  if (date == DateTime.now().subtract(const Duration(days: 1)).toString()) {
+    return 'Yesterday';
+  }
+  return DateFormat.MMMMd()
+      .format(DateFormat('yyyy-MM-dd').parse(date))
+      .toString();
+}

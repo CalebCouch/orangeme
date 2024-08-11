@@ -16,7 +16,6 @@ import 'package:orange/flows/wallet/send/send.dart';
 import 'package:orange/flows/wallet/receive/receive.dart';
 
 import 'package:orange/util.dart';
-import 'package:intl/intl.dart';
 
 class WalletHome extends StatefulWidget {
   final GlobalState globalState;
@@ -66,7 +65,7 @@ class _WalletHomeState extends State<WalletHome> {
         alignment: TextAlign.left,
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
-        text: _getDate(transaction.date, transaction.time),
+        text: formatDate(transaction.date, transaction.time),
       ),
       topRight: CustomText(
         alignment: TextAlign.right,

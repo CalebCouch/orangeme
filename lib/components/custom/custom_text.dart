@@ -8,6 +8,8 @@ class CustomText extends StatefulWidget {
   final Color? color;
   final bool underline;
   final TextAlign alignment;
+  final int? maxLines;
+  final bool trim;
 
   const CustomText({
     super.key,
@@ -17,6 +19,8 @@ class CustomText extends StatefulWidget {
     this.color,
     this.underline = false,
     this.alignment = TextAlign.center,
+    this.maxLines,
+    this.trim = false,
   });
 
   @override
@@ -55,6 +59,7 @@ class _CustomTextState extends State<CustomText> {
       widget.text,
       textAlign: widget.alignment,
       style: TextStyle(
+        overflow: widget.trim ? TextOverflow.ellipsis : null,
         fontFamily: "Outfit",
         fontSize: widget.textSize,
         color: color,
@@ -64,6 +69,7 @@ class _CustomTextState extends State<CustomText> {
         decorationColor: ThemeColor.textSecondary,
         decorationThickness: 1,
       ),
+      maxLines: widget.maxLines,
     );
   }
 }

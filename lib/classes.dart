@@ -1,10 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:orange/src/rust/frb_generated.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/screens/error.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -40,18 +38,80 @@ class Transaction {
   }
 }
 
+class Contact {
+  String name;
+  String did;
+  String? pfp;
+  String? abtme;
+  Contact(this.name, this.did, this.pfp, this.abtme);
+
+  factory Contact.fromJson(Map<String, dynamic> json) {
+    return Contact(
+      json['name'] as String,
+      json['did'] as String,
+      json['pfp'] as String?,
+      json['abtme'] as String?,
+    );
+  }
+}
+
+class Message {
+  Contact sender;
+  String message;
+  String date;
+  String time;
+  bool isIncoming;
+  //Can we compare the sender's did to our did to figure this out?
+
+  Message(this.sender, this.message, this.date, this.time, this.isIncoming);
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      Contact.fromJson(json['sender']),
+      json['message'] as String,
+      json['date'] as String,
+      json['time'] as String,
+      json['is_incoming'] as bool,
+    );
+  }
+}
+
+class Conversation {
+  List<Contact> members;
+  List<Message> messages;
+
+  Conversation(this.members, this.messages);
+  factory Conversation.fromJson(Map<String, dynamic> json) {
+    return Conversation(
+      List<Contact>.from(json['members'].map((json) => Contact.fromJson(json))),
+      List<Message>.from(
+          json['messages'].map((json) => Message.fromJson(json))),
+    );
+  }
+}
+
 class DartState {
   double currentPrice;
   double usdBalance;
   double btcBalance;
   List<Transaction> transactions;
   List<double> fees;
+  List<Conversation> conversations;
+  List<Contact> users;
+  Contact personal;
 
-  DartState(this.currentPrice, this.usdBalance, this.btcBalance,
-      this.transactions, this.fees);
+  DartState(
+    this.currentPrice,
+    this.usdBalance,
+    this.btcBalance,
+    this.transactions,
+    this.fees,
+    this.conversations,
+    this.users,
+    this.personal,
+  );
 
   factory DartState.init() {
-    return DartState(0.0, 0.0, 0.0, [], []);
+    return DartState(0.0, 0.0, 0.0, [], [], [], [], Contact('', '', '', ''));
   }
 
   factory DartState.fromJson(Map<String, dynamic> json) {
@@ -62,12 +122,16 @@ class DartState {
       List<Transaction>.from(
           json['transactions'].map((tx) => Transaction.fromJson(tx))),
       List<double>.from(json['fees'].map((fee) => fee as double)),
+      List<Conversation>.from(
+          json["conversations"].map((y) => Conversation.fromJson(y))),
+      List<Contact>.from(json["users"].map((i) => Contact.fromJson(i))),
+      Contact.fromJson(json["personal"]),
     );
   }
 }
 
 class GlobalState {
-  FlutterSecureStorage storage = FlutterSecureStorage();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   GlobalKey<NavigatorState> navkey;
   List<RustR> rustResponses = [];
   List<RustC> rustCommands = [];
@@ -88,20 +152,22 @@ class GlobalState {
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
     Directory mydir =
         await Directory('${appDocDirectory.path}/').create(recursive: true);
-    this.error(await rustStart(
+    error(await rustStart(
         path: mydir.path,
-        callback: this.dartCallback,
-        callback1: this.dartCallback,
-        callback3: this.dartCallback));
+        callback: dartCallback,
+        callback1: dartCallback,
+        callback2: dartCallback,
+        callback3: dartCallback,
+        callback4: dartCallback));
   }
 
   BuildContext? getContext() {
-    return this.navkey.currentContext;
+    return navkey.currentContext;
   }
 
   void error(String err) {
     Navigator.pushReplacement(
-      this.navkey.currentContext!,
+      navkey.currentContext!,
       MaterialPageRoute(builder: (context) => ErrorPage(message: err)),
     );
   }
@@ -110,11 +176,11 @@ class GlobalState {
     var uid = uuid.v1();
     var command = RustC(uid, method, data);
     print(jsonEncode(command));
-    this.rustCommands.add(command);
+    rustCommands.add(command);
     while (true) {
-      var index = this.rustResponses.indexWhere((res) => res.uid == uid);
+      var index = rustResponses.indexWhere((res) => res.uid == uid);
       if (index != -1) {
-        return this.rustResponses.removeAt(index);
+        return rustResponses.removeAt(index);
       }
       await Future.delayed(const Duration(milliseconds: 10));
     }
@@ -124,23 +190,26 @@ class GlobalState {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
       case "set_state":
-        this.state.value = DartState.fromJson(jsonDecode(command.data));
+        print(DartState.fromJson(jsonDecode(command.data)));
+        state.value = DartState.fromJson(jsonDecode(command.data));
       case "secure_get":
-        return await this.storage.read(key: command.data) ?? "";
+        return await storage.read(key: command.data) ?? "";
       case "secure_set":
         var split = command.data.split("\u0000");
-        await this.storage.write(key: split[0], value: split[1]);
+        await storage.write(key: split[0], value: split[1]);
       case "print":
         print(command.data);
       case "get_commands":
-        var json = jsonEncode(this.rustCommands);
-        this.rustCommands = [];
+        var json = jsonEncode(rustCommands);
+        rustCommands = [];
         return json;
       case "post_response":
         print(dartCommand);
-        this.rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
+        rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
       case "synced":
-        this.synced = true;
+        synced = true;
+      case "error":
+        print(command.data);
       case var unknown:
         return "Error:UnknownMethod:$unknown";
     }

@@ -4,8 +4,6 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
-import 'package:orange/flows/messages/conversation/group_message_info.dart';
-
 import 'package:orange/theme/border.dart';
 
 import 'package:orange/util.dart';
@@ -201,10 +199,12 @@ Widget exitButton(BuildContext context, Widget home) {
   );
 }
 
-Widget infoButton(BuildContext context, contacts) {
+Widget infoButton(BuildContext context, Widget page) {
   return iconButton(
     context,
-    navigateTo(context, GroupMessageInfo(contacts: contacts)),
+    () {
+      navigateTo(context, page);
+    },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
   );
 }

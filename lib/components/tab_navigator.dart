@@ -20,7 +20,7 @@ class TabNavState extends State<TabNav> {
   Widget build(BuildContext context) {
     void openMessages() {
       print("switching to messages");
-      switchPageTo(context, MessagesHome(globalState: widget.globalState));
+      switchPageTo(context, MessagesHome(widget.globalState));
     }
 
     void openWallet() {

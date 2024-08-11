@@ -3,8 +3,9 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/classes/message_info.dart';
-import 'package:orange/classes/contact_info.dart';
+
+import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 class DefaultListItem extends StatelessWidget {
   final Widget? topLeft;
@@ -77,6 +78,7 @@ class ImageListItem extends StatelessWidget {
       onTap: onTap ?? () {},
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
+        width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -85,12 +87,14 @@ class ImageListItem extends StatelessWidget {
               child: (left != null) ? left! : Container(),
             ),
             const Spacing(width: AppPadding.listItem),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (topRight != null) topRight!,
-                if (bottomRight != null) bottomRight!,
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (topRight != null) topRight!,
+                  if (bottomRight != null) bottomRight!,
+                ],
+              ),
             ),
           ],
         ),
@@ -99,42 +103,35 @@ class ImageListItem extends StatelessWidget {
   }
 }
 
-Widget messageListItem(BuildContext context, Message message, onTap) {
+Widget messageListItem(
+    BuildContext context, Conversation convo, VoidCallback onTap) {
   bool isGroup = false;
-  if (message.contacts.length > 1) isGroup = true;
+  if (convo.members.length > 1) isGroup = true;
   return ImageListItem(
+    onTap: onTap,
     left: Container(
       alignment: Alignment.centerLeft,
-      child: ProfilePhoto(
-        size: ProfileSize.lg,
-        isGroup: isGroup,
-        profilePhoto: message.contacts[0].photo,
+      child: profilePhoto(
+        context,
+        isGroup ? null : convo.members[0].pfp,
+        ProfileSize.lg,
+        false,
+        isGroup,
       ),
     ),
     topRight: CustomText(
-      text: isGroup ? 'Group message' : message.contacts[0].name,
+      text: isGroup ? 'Group message' : convo.members[0].name,
       textSize: TextSize.md,
     ),
-    bottomRight: Row(
-      children: [
-        message.isReceived
-            ? CustomText(
-                alignment: TextAlign.left,
-                text: '${message.contacts[0].name}: ${String.fromCharCodes([
-                      0x0020
-                    ])}',
-                textSize: TextSize.sm,
-                color: ThemeColor.textSecondary,
-              )
-            : Container(),
-        CustomText(
-          alignment: TextAlign.left,
-          text: message.text,
-          textSize: TextSize.sm,
-          color: ThemeColor.textSecondary,
-        ),
-      ],
-    ),
+    bottomRight: convo.messages.isNotEmpty
+        ? CustomText(
+            trim: true,
+            alignment: TextAlign.left,
+            text: convo.messages.last.message,
+            textSize: TextSize.sm,
+            color: ThemeColor.textSecondary,
+            maxLines: 2)
+        : Container(),
   );
 }
 
@@ -143,17 +140,14 @@ Widget contactListItem(BuildContext context, Contact contact, onTap) {
     onTap: onTap,
     left: Container(
       alignment: Alignment.centerLeft,
-      child: ProfilePhoto(
-        size: ProfileSize.lg,
-        profilePhoto: contact.photo,
-      ),
+      child: profilePhoto(context, contact.pfp, ProfileSize.lg),
     ),
     topRight: CustomText(
       text: contact.name,
       textSize: TextSize.md,
     ),
     bottomRight: CustomText(
-      text: contact.did,
+      text: middleCut(contact.did, 30),
       textSize: TextSize.sm,
       color: ThemeColor.textSecondary,
     ),
