@@ -55,8 +55,12 @@ const KVBYTE: f64 = 0.15;
 //INTERNAL
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DescriptorSet {
-    pub external: String,
-    pub internal: String
+    pub legacy_spending_external: String,
+    pub legacy_spending_internal: String,
+    pub premium_spending_internal: Option<String>,
+    pub premium_spending_external: Option<String>,
+    pub savings_internal: Option<String>,
+    pub savings_external: Option<String>
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -160,13 +164,19 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
         let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
         let internal = in_desc.0.to_string_with_secret(&in_desc.1);
-        let set = DescriptorSet{external, internal};
+        let set = DescriptorSet{legacy_spending_external:external, legacy_spending_internal:internal, premium_spending_external:None, premium_spending_internal:None, savings_external:None, savings_internal:None};
 
         invoke(&callback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
         set
     } else {serde_json::from_str::<DescriptorSet>(&descriptors)?};
     Ok(descriptors)
 }
+
+// async fn premium_challenge(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<Bool, Error> {
+//     let descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+//     let descriptor_set: Vec<DescriptorSet> = serde_json::from_str(&descriptors)?;
+//     Ok(descriptor_set.len() > 2)
+// }
 
 #[derive(Serialize, Deserialize)]
 struct Data {
@@ -199,18 +209,30 @@ pub async fn rustStart (
 ) -> String {
     let err_catch = tokio::spawn(async move {
         let path = PathBuf::from(&path);
-
         //INIT
         let descriptors = get_descriptors(&callback).await?;
-        let wallet_path = path.join("BDK_DATA/wallet");
-        std::fs::create_dir_all(wallet_path.clone())?;
+        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspendingwallet");
+        let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
+        let savings_wallet_path = path.join("BDK_DATA/savingswallet");
+
+        //need to create dirs for premium wallets
+
+        std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
         let store_path = path.join("STATE/store");
         std::fs::create_dir_all(store_path.clone())?;
         let price_path = path.join("STATE/price");
         std::fs::create_dir_all(price_path.clone())?;
         let client_uri = "ssl://electrum.blockstream.info:50002";
 
-        let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+        let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
+        
+        //check for premium status
+        // if premium_challenge(&callback).await? {
+        //     //need to update state here with premium true
+        //     let premium_wallet =
+        //     let savings_wallet = 
+        // }
+
         let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
         let mut store = SqliteStore::new(store_path.clone())?;
         let price = SqliteStore::new(price_path.clone())?;
@@ -221,18 +243,18 @@ pub async fn rustStart (
                 invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
             }
         }
-        store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
+        store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
         invoke(&callback, "print", "se").await?;
 
-        let wallet_path1 = wallet_path.clone();
+        let wallet_path1 = legacy_spending_wallet_path.clone();
         let descriptors1 = descriptors.clone();
         let client_uri1 = client_uri.clone();
         tokio::spawn(async move {
-            let wallet = Wallet::new(&descriptors1.external, Some(&descriptors1.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1.join("bdk.db")))?;
+            let legacy_spending_wallet = Wallet::new(&descriptors1.legacy_spending_external, Some(&descriptors1.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1.join("bdk.db")))?;
             let blockchain = ElectrumBlockchain::from(Client::new(client_uri1)?);
             let mut init_sync = true;
             loop {
-                wallet.sync(&blockchain, SyncOptions::default())?;
+                legacy_spending_wallet.sync(&blockchain, SyncOptions::default())?;
                 if init_sync {invoke(&callback1, "synced", "").await?; init_sync = false;}
                 thread::sleep(time::Duration::from_millis(250));
             }
@@ -248,7 +270,7 @@ pub async fn rustStart (
             }
             Err::<(), Error>(Error::Exited("Current Price Fetch Exited".to_string()))
         });
-        let wallet_path3 = wallet_path.clone();
+        let wallet_path3 = legacy_spending_wallet_path.clone();
         let store_path3 = store_path.clone();
         let price_path3 = price_path.clone();
         let descriptors3 = descriptors.clone();
@@ -256,11 +278,11 @@ pub async fn rustStart (
         tokio::spawn(async move {
             let mut store = SqliteStore::new(store_path3)?;
             let mut price = SqliteStore::new(price_path3)?;
-            let wallet = Wallet::new(&descriptors3.external, Some(&descriptors3.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
+            let legacy_spending_wallet = Wallet::new(&descriptors3.legacy_spending_external, Some(&descriptors3.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path3.join("bdk.db")))?;
             let blockchain = ElectrumBlockchain::from(Client::new(client_uri3)?);
             loop {
-                let wallet_transactions = wallet.list_transactions(true)?;
-                let balance = wallet.get_balance()?;
+                let wallet_transactions = legacy_spending_wallet.list_transactions(true)?;
+                let balance = legacy_spending_wallet.get_balance()?;
                 let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
                 let btc = balance.get_total() as f64 / SATS;
                 let mut transactions: Vec<Transaction> = Vec::new();
@@ -269,7 +291,7 @@ pub async fn rustStart (
                         Some(ct) => get_price(&mut price, ct.timestamp).await?,
                         None => current_price
                     };
-                    transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
+                    transactions.push(Transaction::from_details(tx, price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?);
                 }
                 let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
                 let state = DartState{
@@ -311,16 +333,16 @@ pub async fn rustStart (
 
                         let price_error = || Error::not_found(ec, "Cannot get price");
                         let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
-                        let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+                        let is_mine = |s: &Script| legacy_spending_wallet.is_mine(s).unwrap_or(false);
 
                         let (mut psbt, mut tx_details) = {
-                            let mut builder = wallet.build_tx();
+                            let mut builder = legacy_spending_wallet.build_tx();
                             builder.add_recipient(address.script_pubkey(), amount);
                             builder.fee_rate(FeeRate::from_btc_per_kvb(blockchain.estimate_fee(3)? as f32));
                             builder.finish()?
                         };
 
-                        let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+                        let finalized = legacy_spending_wallet.sign(&mut psbt, SignOptions::default())?;
                         if !finalized { return Err(Error::error(ec, "Could not sign std tx"));}
 
                         let tx = psbt.clone().extract_tx();
@@ -329,7 +351,7 @@ pub async fn rustStart (
                         store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
 
                         tx_details.transaction = Some(tx);
-                        let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
+                        let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?;
 
                         Ok(serde_json::to_string(&tx)?)
                     },
@@ -356,7 +378,7 @@ pub async fn rustStart (
                 //POST PROCESSES
                 match command.method.as_str() {
                     "get_new_address" => {
-                        store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
+                        store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
                     },
                     _ => {}
                 }

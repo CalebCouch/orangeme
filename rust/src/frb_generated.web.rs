@@ -8,28 +8,30 @@ use crate::api::error::*;
 use crate::api::protocols::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use flutter_rust_bridge::for_generated::transform_result_dco;
+use flutter_rust_bridge::for_generated::wasm_bindgen;
+use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
 use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: boilerplate
 
-flutter_rust_bridge::frb_generated_boilerplate_io!();
+flutter_rust_bridge::frb_generated_boilerplate_web!();
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockProtocolDefinition(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockProtocolDefinition(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<ProtocolDefinition>>::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockProtocolDefinition(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockProtocolDefinition(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<ProtocolDefinition>>::decrement_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockSelf(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockSelf(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<Self>>::increment_strong_count(
@@ -37,8 +39,8 @@ pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutt
     );
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockSelf(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockSelf(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<Self>>::decrement_strong_count(
@@ -46,8 +48,8 @@ pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutt
     );
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockbdkdescriptorDescriptorError(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockbdkdescriptorDescriptorError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<
@@ -55,8 +57,8 @@ pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutt
     >::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockbdkdescriptorDescriptorError(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockbdkdescriptorDescriptorError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<
@@ -64,78 +66,78 @@ pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutt
     >::decrement_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockhexFromHexError(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockhexFromHexError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<hex :: FromHexError>>::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockhexFromHexError(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockhexFromHexError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<hex :: FromHexError>>::decrement_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseFloatError(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseFloatError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: num :: ParseFloatError>>::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseFloatError(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseFloatError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: num :: ParseFloatError>>::decrement_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseIntError(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseIntError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: num :: ParseIntError>>::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseIntError(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdnumParseIntError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: num :: ParseIntError>>::decrement_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstrUtf8Error(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstrUtf8Error(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: str :: Utf8Error>>::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstrUtf8Error(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstrUtf8Error(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: str :: Utf8Error>>::decrement_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstringFromUtf8Error(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstringFromUtf8Error(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: string :: FromUtf8Error>>::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstringFromUtf8Error(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstdstringFromUtf8Error(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<std :: string :: FromUtf8Error>>::decrement_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstr(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstr(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<str>>::increment_strong_count(
@@ -143,8 +145,8 @@ pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutt
     );
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstr(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLockstr(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<str>>::decrement_strong_count(
@@ -152,15 +154,15 @@ pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutt
     );
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLocktokiotaskJoinError(
+#[wasm_bindgen]
+pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLocktokiotaskJoinError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<tokio :: task :: JoinError>>::increment_strong_count(ptr as _);
 }
 
-#[no_mangle]
-pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLocktokiotaskJoinError(
+#[wasm_bindgen]
+pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedrust_asyncRwLocktokiotaskJoinError(
     ptr: *const std::ffi::c_void,
 ) {
     MoiArc::<flutter_rust_bridge::for_generated::rust_async::RwLock<tokio :: task :: JoinError>>::decrement_strong_count(ptr as _);
