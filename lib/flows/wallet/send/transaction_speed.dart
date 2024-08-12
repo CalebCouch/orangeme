@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/radio_selectors.dart';
 import 'package:orange/flows/wallet/send/confirm_send.dart';
 
@@ -48,7 +48,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     var fees = widget.globalState.state.value.fees;
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(
         context,
         "Transaction speed",

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 
 import 'package:orange/flows/wallet/send/amount.dart';
 import 'package:orange/flows/wallet/send/scan_qr.dart';
@@ -55,7 +55,7 @@ class SendState extends State<Send> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(context, "Bitcoin address", true),
       content: Content(
         content: SingleChildScrollView(

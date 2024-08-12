@@ -6,7 +6,7 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/amount_display.dart';
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/classes.dart';
 
 class TransactionDetailsWidget extends StatefulWidget {
@@ -34,7 +34,7 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
   Widget buildScreen(BuildContext context, DartState state) {
     String direction = widget.transaction.isReceive ? "Received" : "Sent";
 
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(context, "$direction bitcoin"),
       content: Content(
         content: Column(

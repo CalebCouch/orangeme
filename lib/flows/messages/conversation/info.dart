@@ -3,7 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
@@ -37,7 +37,7 @@ class MessageInfoState extends State<MessageInfo> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(context, "Group members"),
       content: Content(
         content: Column(

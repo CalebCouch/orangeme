@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'dart:io';
+import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
-  await RustLib.init();
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  if (!Platform.isIOS && !Platform.isAndroid) {
+    WindowManager.instance.setMinimumSize(const Size(1200, 800));
+  }
+  await RustLib.init();
   GlobalState globalState = GlobalState.init();
   runApp(MyApp(globalState: globalState));
   SystemChrome.setPreferredOrientations(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
@@ -35,7 +35,7 @@ class UserProfileState extends State<UserProfile> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(
         context,
         widget.userInfo.name,

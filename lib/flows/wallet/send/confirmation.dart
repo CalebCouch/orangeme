@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
@@ -35,7 +35,7 @@ class ConfirmationState extends State<Confirmation> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(
         context,
         "Confirm send",
@@ -48,7 +48,7 @@ class ConfirmationState extends State<Confirmation> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const CustomIcon(
-              icon: ThemeIcon.success,
+              icon: ThemeIcon.bitcoin,
               iconColor: ThemeColor.bitcoin,
               iconSize: 128,
             ),

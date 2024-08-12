@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/placeholder.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/wallet/transaction_details.dart';
@@ -75,7 +74,7 @@ class _WalletHomeState extends State<WalletHome> {
         : formatValue(state.usdBalance).length <= 7
             ? TextSize.h1
             : TextSize.h2;
-    return DefaultInterface(
+    return Interface(
       resizeToAvoidBottomInset: false,
       header: primaryHeader(
         context,
@@ -143,7 +142,8 @@ class _WalletHomeState extends State<WalletHome> {
           navigateTo(context, Send(widget.globalState));
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 0),
+      globalState: widget.globalState,
+      navigationIndex: 0,
     );
   }
 }

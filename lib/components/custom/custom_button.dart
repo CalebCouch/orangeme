@@ -4,8 +4,6 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
-import 'package:orange/theme/border.dart';
-
 import 'package:orange/util.dart';
 
 class ButtonVariant {

@@ -6,7 +6,7 @@ import 'package:orange/flows/wallet/send/amount.dart';
 import 'package:orange/flows/wallet/send/transaction_speed.dart';
 import 'package:orange/flows/wallet/send/send.dart';
 
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/tabular.dart';
@@ -52,7 +52,7 @@ class ConfirmState extends State<ConfirmSend> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return DefaultInterface(
+    return Interface(
       header: stackHeader(
         context,
         'Confirm send',

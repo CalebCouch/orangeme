@@ -7,13 +7,13 @@ class Logo extends StatelessWidget {
 
   const Logo({
     super.key,
-    this.size = LogoSize.lg,
+    this.size = BrandSize.lg,
   });
 
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      BrandLogo.icon,
+      Brand.icon,
       width: size,
       height: size,
     );

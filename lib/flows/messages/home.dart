@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/default_interface.dart';
+import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/tab_navigator.dart';
 
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
@@ -40,7 +39,7 @@ class MessagesHomeState extends State<MessagesHome> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     //print(state.users);
-    return DefaultInterface(
+    return Interface(
       header: messagesHeader(
         context,
         () {
@@ -89,7 +88,8 @@ class MessagesHomeState extends State<MessagesHome> {
           );
         },
       ),
-      navBar: TabNav(globalState: widget.globalState, index: 1),
+      globalState: widget.globalState,
+      navigationIndex: 1,
     );
   }
 }

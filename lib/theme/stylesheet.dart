@@ -43,14 +43,6 @@ class TextType {
 //// BRAND ////
 
 class BrandSize {
-  static const double xl = 24;
-  static const double lg = 20;
-  static const double md = 16;
-  static const double sm = 14;
-  static const double xs = 12;
-}
-
-class LogoSize {
   static const double xxl = 74;
   static const double xl = 64;
   static const double lg = 48;
@@ -59,8 +51,9 @@ class LogoSize {
   static const double xs = 16;
 }
 
-class BrandLogo {
-  static const String icon = 'assets/icons/logo_mark.svg';
+class Brand {
+  static const String icon = 'assets/icons/icon.svg';
+  static const String logomark = 'assets/icons/logomark.svg';
 }
 
 ////COLORS////
@@ -122,8 +115,6 @@ class ThemeIcon {
   static const String profile = 'assets/icons/profile.svg';
   static const String info = 'assets/icons/info.svg';
   static const String send = 'assets/icons/send.svg';
-
-  static const String success = 'assets/icons/bitcoinsuccess.svg';
 }
 
 class IconSize {
@@ -179,6 +170,8 @@ class AppPadding {
   static const double dataItem = 16;
   static const double banner = 8;
   static const double placeholder = 16;
+  static const double buttonList = 8;
+  static const double sidebar = 32;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];
@@ -211,4 +204,22 @@ class ThemeBorders {
   static final BorderRadius textInput = BorderRadius.circular(8);
   static final BorderRadius button = BorderRadius.circular(24);
   static final BorderRadius messageBubble = BorderRadius.circular(8);
+}
+
+class BoxDecorations {
+  static RoundedRectangleBorder button = RoundedRectangleBorder(
+    borderRadius: ThemeBorders.button,
+  );
+
+  static RoundedRectangleBorder buttonOutlined = RoundedRectangleBorder(
+    side: const BorderSide(
+      width: 1,
+      color: ThemeColor.outline,
+    ),
+    borderRadius: ThemeBorders.button,
+  );
+}
+
+class CornerRadius {
+  static BorderRadius qrCode = BorderRadius.circular(12);
 }
