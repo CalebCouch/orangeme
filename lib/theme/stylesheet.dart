@@ -178,6 +178,7 @@ class AppPadding {
   static const double profile = 32;
   static const double dataItem = 16;
   static const double banner = 8;
+  static const double placeholder = 16;
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];

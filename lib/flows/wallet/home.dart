@@ -9,6 +9,7 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/components/placeholder.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/wallet/transaction_details.dart';
 
@@ -91,7 +92,9 @@ class _WalletHomeState extends State<WalletHome> {
                 children: [
                   CustomText(
                     textType: "heading",
-                    text: "\$${formatValue(state.usdBalance)}",
+                    text: state.usdBalance == 0
+                        ? "\$0.00"
+                        : "\$${formatValue(state.usdBalance)}",
                     textSize: textSize,
                     color: ThemeColor.heading,
                   ),
@@ -108,20 +111,22 @@ class _WalletHomeState extends State<WalletHome> {
             const Spacing(height: AppPadding.content),
             _backupReminder(false),
             _noInternet(false),
-            Expanded(
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  reverse: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: state.transactions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return transactionListItem(
-                        context, state.transactions[index]);
-                  },
-                ),
-              ),
-            ),
+            state.transactions.isNotEmpty
+                ? Expanded(
+                    child: SingleChildScrollView(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: state.transactions.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return transactionListItem(
+                              context, state.transactions[index]);
+                        },
+                      ),
+                    ),
+                  )
+                : placeholder(context, "No transactions yet."),
           ],
         ),
       ),
