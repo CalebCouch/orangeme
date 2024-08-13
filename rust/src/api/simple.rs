@@ -153,7 +153,7 @@ pub struct DartState {
     pub fees: Vec<f64>,
 }
 
-async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
+async fn get_legacy_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
     let descriptors = invoke(&callback, "secure_get", "descriptors").await?;
     let descriptors = if descriptors.is_empty() {
         let mut seed: [u8; 64] = [0; 64];
@@ -210,7 +210,7 @@ pub async fn rustStart (
     let err_catch = tokio::spawn(async move {
         let path = PathBuf::from(&path);
         //INIT
-        let descriptors = get_descriptors(&callback).await?;
+        let descriptors = get_legacy_descriptors(&callback).await?;
         let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspendingwallet");
         let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
         let savings_wallet_path = path.join("BDK_DATA/savingswallet");
