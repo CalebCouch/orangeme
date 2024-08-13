@@ -120,6 +120,16 @@ class GlobalState {
     }
   }
 
+  Future<void> clearStorage() async {
+    final keys = await this.storage.readAll();
+
+    for (var key in keys.keys) {
+      await this.storage.delete(key: key);
+    }
+
+    print("Secure storage cleared");
+  }
+
   Future<String> dartCallback(String dartCommand) async {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
@@ -141,6 +151,9 @@ class GlobalState {
         this.rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
       case "synced":
         this.synced = true;
+      case "clear_storage":
+        await clearStorage();
+        return "Storage cleared";
       case var unknown:
         return "Error:UnknownMethod:$unknown";
     }
