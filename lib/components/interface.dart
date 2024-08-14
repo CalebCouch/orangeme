@@ -23,6 +23,7 @@ class Interface extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    print("platform $Platform");
     if (Platform.isAndroid || Platform.isIOS) {
       return MobileInterface(
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,

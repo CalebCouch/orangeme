@@ -52,7 +52,7 @@ class BrandSize {
 }
 
 class Brand {
-  static const String icon = 'assets/icons/icon.svg';
+  static const String icon = 'assets/icons/logo.svg';
   static const String logomark = 'assets/icons/logomark.svg';
 }
 

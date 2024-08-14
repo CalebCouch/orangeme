@@ -64,7 +64,7 @@ class SidebarState extends State<Sidebar> {
               if (widget.index != 2) openMessages();
             },
             icon: ThemeIcon.chat,
-            status: (widget.index == 2) ? 3 : 0,
+            status: (widget.index == 1) ? 3 : 0,
           ),
         ],
       ),

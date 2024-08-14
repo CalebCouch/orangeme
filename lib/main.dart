@@ -5,15 +5,15 @@ import 'package:orange/flows/wallet/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'dart:io';
+import 'dart:io' show Platform;
 import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-  if (!Platform.isIOS && !Platform.isAndroid) {
-    WindowManager.instance.setMinimumSize(const Size(1200, 800));
-  }
   await RustLib.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    WindowManager.instance.setMaximumSize(const Size(1280, 832));
+  }
   GlobalState globalState = GlobalState.init();
   runApp(MyApp(globalState: globalState));
   SystemChrome.setPreferredOrientations(
@@ -22,7 +22,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final GlobalState globalState;
-
   const MyApp({required this.globalState, super.key});
 
   @override
