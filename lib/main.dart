@@ -8,12 +8,8 @@ import 'dart:io';
 import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-  if (!Platform.isIOS && !Platform.isAndroid) {
-    WindowManager.instance.setMinimumSize(const Size(1200, 800));
-  }
   await RustLib.init();
+   WidgetsFlutterBinding.ensureInitialized();
   GlobalState globalState = GlobalState.init();
   runApp(MyApp(globalState: globalState));
   SystemChrome.setPreferredOrientations(
