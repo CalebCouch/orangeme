@@ -49,7 +49,7 @@ class ConfirmationState extends State<Confirmation> {
           children: [
             const CustomIcon(
               icon: ThemeIcon.bitcoin,
-              iconColor: ThemeColor.bitcoin,
+              iconColor: ThemeColor.secondary,
               iconSize: 128,
             ),
             const Spacing(height: AppPadding.bumper),

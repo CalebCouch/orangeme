@@ -80,14 +80,14 @@ class ThemeColor {
   static const Color heading = ConstantsColor._white;
   static const Color text = ConstantsColor._lightGrey;
   static const Color textSecondary = ConstantsColor._grey;
-  static const Color primary = ConstantsColor._white;
+  static const Color primary = ConstantsColor._orange;
+  static const Color secondary = ConstantsColor._white;
   static const Color handle = ConstantsColor._black;
   static const Color colorHandle = ConstantsColor._white;
   static const Color outline = ConstantsColor._darkGrey;
   static const Color brand = ConstantsColor._white;
   static const Color success = ConstantsColor._green;
   static const Color danger = ConstantsColor._red;
-  static const Color bitcoin = ConstantsColor._orange;
 }
 
 ////ICONS////

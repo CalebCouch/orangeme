@@ -29,13 +29,13 @@ class ButtonColor {
 Map buttonColors = {
   ButtonVariant.primary: {
     ButtonStatus._default:
-        const ButtonColor(ThemeColor.bitcoin, ThemeColor.colorHandle),
+        const ButtonColor(ThemeColor.primary, ThemeColor.colorHandle),
     ButtonStatus._hover:
-        const ButtonColor(ThemeColor.bitcoin, ThemeColor.colorHandle),
+        const ButtonColor(ThemeColor.primary, ThemeColor.colorHandle),
     ButtonStatus._disabled:
         const ButtonColor(ThemeColor.textSecondary, ThemeColor.handle),
     ButtonStatus._selected:
-        const ButtonColor(ThemeColor.bitcoin, ThemeColor.colorHandle),
+        const ButtonColor(ThemeColor.primary, ThemeColor.colorHandle),
   },
   ButtonVariant.secondary: {
     ButtonStatus._default:

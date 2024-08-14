@@ -100,7 +100,7 @@ Widget withBrandMark(parts) {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w900,
-            color: ThemeColor.bitcoin,
+            color: ThemeColor.primary,
           ),
         ),
         const TextSpan(

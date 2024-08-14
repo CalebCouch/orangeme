@@ -47,7 +47,7 @@ class TabNavState extends State<TabNav> {
                   icon: ThemeIcon.wallet,
                   iconSize: IconSize.md,
                   iconColor: (widget.index == 0)
-                      ? ThemeColor.primary
+                      ? ThemeColor.secondary
                       : ThemeColor.textSecondary,
                 ),
               ),
@@ -66,7 +66,7 @@ class TabNavState extends State<TabNav> {
                   icon: ThemeIcon.chat,
                   iconSize: IconSize.md,
                   iconColor: (widget.index == 1)
-                      ? ThemeColor.primary
+                      ? ThemeColor.secondary
                       : ThemeColor.textSecondary,
                 ),
               ),
