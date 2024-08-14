@@ -7,7 +7,6 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
 
 class ButtonVariant {
-  static const String bitcoin = "bitcoin";
   static const String primary = "primary";
   static const String secondary = "secondary";
   static const String ghost = "ghost";
@@ -17,6 +16,7 @@ class ButtonStatus {
   static const int _default = 0;
   static const int _hover = 1;
   static const int _disabled = 2;
+  static const int _selected = 3;
 }
 
 class ButtonColor {
@@ -29,34 +29,34 @@ class ButtonColor {
 Map buttonColors = {
   ButtonVariant.primary: {
     ButtonStatus._default:
-        const ButtonColor(ThemeColor.primary, ThemeColor.handle),
+        const ButtonColor(ThemeColor.bitcoin, ThemeColor.colorHandle),
     ButtonStatus._hover:
-        const ButtonColor(ThemeColor.primary, ThemeColor.handle),
+        const ButtonColor(ThemeColor.bitcoin, ThemeColor.colorHandle),
     ButtonStatus._disabled:
         const ButtonColor(ThemeColor.textSecondary, ThemeColor.handle),
+    ButtonStatus._selected:
+        const ButtonColor(ThemeColor.bitcoin, ThemeColor.colorHandle),
   },
   ButtonVariant.secondary: {
-    ButtonStatus._default: const ButtonColor(ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._default:
+        const ButtonColor(ThemeColor.bg, ThemeColor.colorHandle),
     ButtonStatus._hover:
-        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.primary),
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
     ButtonStatus._disabled:
         const ButtonColor(ThemeColor.bg, ThemeColor.textSecondary),
+    ButtonStatus._selected:
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
   },
   ButtonVariant.ghost: {
-    ButtonStatus._default: const ButtonColor(ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._default:
+        const ButtonColor(ThemeColor.bg, ThemeColor.colorHandle),
     ButtonStatus._hover:
-        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.primary),
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
     ButtonStatus._disabled:
         const ButtonColor(ThemeColor.bg, ThemeColor.textSecondary),
+    ButtonStatus._selected:
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
   },
-  ButtonVariant.bitcoin: {
-    ButtonStatus._default:
-        const ButtonColor(ThemeColor.bitcoin, ThemeColor.primary),
-    ButtonStatus._hover:
-        const ButtonColor(ThemeColor.bitcoin, ThemeColor.primary),
-    ButtonStatus._disabled:
-        const ButtonColor(ThemeColor.textSecondary, ThemeColor.handle),
-  }
 };
 
 class CustomButton extends StatefulWidget {
@@ -73,7 +73,7 @@ class CustomButton extends StatefulWidget {
   const CustomButton({
     super.key,
     required this.text,
-    this.variant = ButtonVariant.bitcoin,
+    this.variant = ButtonVariant.primary,
     this.buttonSize = ButtonSize.lg,
     this.expand = true,
     this.status = ButtonStatus._default,
@@ -109,7 +109,7 @@ class _ButtonState extends State<CustomButton> {
         children: [
           CustomIcon(
             icon: widget.icon!,
-            iconSize: widget.buttonSize == 48 ? 48 : 20,
+            iconSize: widget.buttonSize == 48 ? 32 : 20,
           ),
           Spacing(
             width: _getButtonSpacing(widget.buttonSize),
