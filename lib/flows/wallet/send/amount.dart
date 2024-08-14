@@ -9,6 +9,7 @@ import 'package:orange/components/interface.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
+import 'dart:io' show Platform;
 
 import 'package:orange/flows/wallet/send/transaction_speed.dart';
 
@@ -107,6 +108,7 @@ class SendAmountState extends State<SendAmount> {
     double btc = parsed > 0
         ? (parsed / widget.globalState.state.value.currentPrice)
         : 0.0;
+    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
       resizeToAvoidBottomInset: false,
       header: stackHeader(
@@ -122,9 +124,11 @@ class SendAmountState extends State<SendAmount> {
       bumper: DefaultBumper(
         content: Column(
           children: [
-            NumericKeypad(
-              onNumberPressed: updateAmount,
-            ),
+            !onDesktop
+                ? NumericKeypad(
+                    onNumberPressed: updateAmount,
+                  )
+                : Container(),
             const Spacing(height: AppPadding.content),
             CustomButton(
               status: (amount != "0" && error == "") ? 0 : 2,
@@ -142,6 +146,7 @@ class SendAmountState extends State<SendAmount> {
 Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     String amt, double btc, String error) {
   String usd = amt.toString();
+  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
   Widget subText(String error) {
     if (error.isNotEmpty) {
@@ -159,6 +164,11 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
             color: ThemeColor.danger,
           ),
         ],
+      );
+    } else if (onDesktop && amt == "0") {
+      return const CustomText(
+        text: "Type dollar amount.",
+        color: ThemeColor.textSecondary,
       );
     } else {
       return CustomText(
