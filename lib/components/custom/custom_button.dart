@@ -123,7 +123,7 @@ class _ButtonState extends State<CustomButton> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: widget.status == ButtonStatus._default ? widget.onTap : () {},
       child: Container(
         alignment: widget.expand ? widget.buttonAlignment : null,
@@ -157,9 +157,13 @@ class _ButtonState extends State<CustomButton> {
 }
 
 Widget iconButton(BuildContext context, onTap, CustomIcon icon) {
-  return GestureDetector(
+  return InkWell(
     onTap: onTap ?? () {},
-    child: icon,
+    child: Container(
+      width: 50,
+      alignment: Alignment.centerLeft,
+      child: icon,
+    ),
   );
 }
 

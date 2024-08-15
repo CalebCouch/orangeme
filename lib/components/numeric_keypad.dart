@@ -42,7 +42,7 @@ class _getButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () => onPressed(number),
       child: Container(
         color: Colors.transparent,

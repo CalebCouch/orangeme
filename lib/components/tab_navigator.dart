@@ -35,7 +35,7 @@ class TabNavState extends State<TabNav> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: GestureDetector(
+            child: InkWell(
               onTap: () {
                 if (widget.index == 1) openWallet();
               },
@@ -54,7 +54,7 @@ class TabNavState extends State<TabNav> {
             ),
           ),
           Expanded(
-            child: GestureDetector(
+            child: InkWell(
               onTap: () {
                 if (widget.index == 0) openMessages();
               },

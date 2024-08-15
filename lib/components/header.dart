@@ -63,9 +63,13 @@ Widget homeDesktopHeader(BuildContext context, String text) {
 
 Widget homeHeader(BuildContext context, onTap, text, pfp) {
   return DefaultHeader(
-    left: GestureDetector(
+    left: InkWell(
       onTap: onTap ?? () {},
-      child: profilePhoto(context, pfp),
+      child: Container(
+        width: 50,
+        alignment: Alignment.centerLeft,
+        child: profilePhoto(context, pfp),
+      ),
     ),
     center: CustomText(
       textType: "heading",
@@ -119,28 +123,39 @@ Widget stackMessageHeader(
   return DefaultHeader(
     height: 76,
     left: backButton(context),
-    center: InkWell(
-      onTap: () {
-        if (!isGroup) {
-          navigateTo(
-              context, UserProfile(globalState, userInfo: cnvo.members[0]));
-        }
-      },
-      child: Column(
-        children: [
-          isGroup
-              ? profilePhotoStack(context, cnvo.members)
-              : profilePhoto(context, cnvo.members[0].pfp),
-          const Spacing(height: 8),
-          CustomText(
-            textType: "heading",
-            text: isGroup ? 'Group message' : cnvo.members[0].name,
-            textSize: TextSize.h5,
-            color: ThemeColor.heading,
+    center: !isGroup
+        ? InkWell(
+            onTap: () {
+              navigateTo(
+                context,
+                UserProfile(globalState, userInfo: cnvo.members[0]),
+              );
+            },
+            child: Column(
+              children: [
+                profilePhoto(context, cnvo.members[0].pfp),
+                const Spacing(height: 8),
+                CustomText(
+                  textType: "heading",
+                  text: cnvo.members[0].name,
+                  textSize: TextSize.h5,
+                  color: ThemeColor.heading,
+                ),
+              ],
+            ),
+          )
+        : Column(
+            children: [
+              profilePhotoStack(context, cnvo.members),
+              const Spacing(height: 8),
+              const CustomText(
+                textType: "heading",
+                text: 'Group message',
+                textSize: TextSize.h5,
+                color: ThemeColor.heading,
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
     right: isGroup
         ? infoButton(
             context,
