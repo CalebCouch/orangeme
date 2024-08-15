@@ -153,8 +153,32 @@ pub struct DartState {
     pub fees: Vec<f64>,
 }
 
-async fn get_legacy_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
-    let descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+async fn get_os(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<String, Error>{
+    let os = invoke(&callback, "check_os", "").await?;
+    Ok(os)
+}
+
+async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
+    let os = get_os(&callback).await?;
+    let descriptors: String;
+    match os.as_str() {
+        "IOS" => {
+            descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+        }
+        "Android" =>{
+            //TODO needs different get logic
+            descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+        }
+        "Linux" | "Windows" | "MacOS" => {
+            //TODO needs different get logic
+            descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+        }
+        _ => {
+            return Err(Error::Exited("Unsupported OS".to_string()));
+
+        }
+        }
+    //create legacy descriptor if it does not exist
     let descriptors = if descriptors.is_empty() {
         let mut seed: [u8; 64] = [0; 64];
         rand::thread_rng().fill_bytes(&mut seed);
@@ -172,10 +196,8 @@ async fn get_legacy_descriptors(callback: impl Fn(String) -> DartFnFuture<String
     Ok(descriptors)
 }
 
-// async fn premium_challenge(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<Bool, Error> {
-//     let descriptors = invoke(&callback, "secure_get", "descriptors").await?;
-//     let descriptor_set: Vec<DescriptorSet> = serde_json::from_str(&descriptors)?;
-//     Ok(descriptor_set.len() > 2)
+// async fn create_premium_descriptors(){
+
 // }
 
 #[derive(Serialize, Deserialize)]
@@ -208,14 +230,28 @@ pub async fn rustStart (
     callback1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
 ) -> String {
     let err_catch = tokio::spawn(async move {
-        let path = PathBuf::from(&path);
         //INIT
-        let descriptors = get_legacy_descriptors(&callback).await?;
+        let path = PathBuf::from(&path);
+        //get descriptors
+        let descriptors = get_descriptors(&callback).await?;
+        //check for premium
+        let premium = false;
+        
+        //premium onboard flow
+        //1. generate xpubs for premium spending & savings
+        //2. import xpubs from phone for premium spending & savings to desktop devices
+        //3. format the descriptors with all available xpubs
+        //4. create and store descriptors on desktop, export to mobile
+        //5. store premium descriptors
+                
+
+        //2.load legacy wallet
         let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspendingwallet");
         let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
         let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
-        //need to create dirs for premium wallets
+        //3. load premium wallets 
+        //TODO need to create dirs for premium wallets
 
         std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
         let store_path = path.join("STATE/store");
@@ -225,13 +261,6 @@ pub async fn rustStart (
         let client_uri = "ssl://electrum.blockstream.info:50002";
 
         let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
-        
-        //check for premium status
-        // if premium_challenge(&callback).await? {
-        //     //need to update state here with premium true
-        //     let premium_wallet =
-        //     let savings_wallet = 
-        // }
 
         let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
         let mut store = SqliteStore::new(store_path.clone())?;

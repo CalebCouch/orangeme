@@ -130,6 +130,22 @@ class GlobalState {
     print("Secure storage cleared");
   }
 
+  String checkPlatform() {
+    if (Platform.isAndroid) {
+      return "Android";
+    } else if (Platform.isIOS) {
+      return 'IOS';
+    } else if (Platform.isLinux) {
+      return 'Linux';
+    } else if (Platform.isMacOS) {
+      return 'MacOS';
+    } else if (Platform.isWindows) {
+      return 'Windows';
+    } else {
+      return 'Unknown';
+    }
+  }
+
   Future<String> dartCallback(String dartCommand) async {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
@@ -154,6 +170,8 @@ class GlobalState {
       case "clear_storage":
         await clearStorage();
         return "Storage cleared";
+      case "check_os":
+        return checkPlatform();
       case var unknown:
         return "Error:UnknownMethod:$unknown";
     }
