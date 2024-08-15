@@ -13,6 +13,7 @@ class DefaultBumper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: const BoxConstraints(maxWidth: 396),
       padding: const EdgeInsets.all(AppPadding.bumper),
       width: MediaQuery.sizeOf(context).width,
       alignment: Alignment.center,

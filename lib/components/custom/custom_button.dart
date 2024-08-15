@@ -172,7 +172,7 @@ Widget sendButton(BuildContext context, bool isEnabled) {
     CustomIcon(
       iconSize: IconSize.md,
       icon: ThemeIcon.send,
-      iconColor: isEnabled ? ThemeColor.primary : ThemeColor.textSecondary,
+      iconColor: isEnabled ? ThemeColor.secondary : ThemeColor.textSecondary,
     ),
   );
 }

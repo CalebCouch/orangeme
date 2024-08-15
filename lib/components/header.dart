@@ -50,7 +50,7 @@ class DefaultHeader extends StatelessWidget {
   }
 }
 
-Widget primaryHeader(BuildContext context, String text) {
+Widget homeDesktopHeader(BuildContext context, String text) {
   return DefaultHeader(
     center: CustomText(
       textType: "heading",
@@ -61,15 +61,15 @@ Widget primaryHeader(BuildContext context, String text) {
   );
 }
 
-Widget messagesHeader(BuildContext context, onTap, pfp) {
+Widget homeHeader(BuildContext context, onTap, text, pfp) {
   return DefaultHeader(
     left: GestureDetector(
       onTap: onTap ?? () {},
       child: profilePhoto(context, pfp),
     ),
-    center: const CustomText(
+    center: CustomText(
       textType: "heading",
-      text: 'Messages',
+      text: text,
       textSize: TextSize.h3,
       color: ThemeColor.heading,
     ),

@@ -9,6 +9,7 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/placeholder.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/wallet/transaction_details.dart';
 
@@ -76,9 +77,16 @@ class _WalletHomeState extends State<WalletHome> {
             : TextSize.h2;
     return Interface(
       resizeToAvoidBottomInset: false,
-      header: primaryHeader(
+      header: homeHeader(
         context,
+        () {
+          navigateTo(
+            context,
+            MyProfile(widget.globalState),
+          );
+        },
         "Wallet",
+        state.personal.pfp,
       ),
       content: Content(
         content: Column(
@@ -125,7 +133,7 @@ class _WalletHomeState extends State<WalletHome> {
                       ),
                     ),
                   )
-                : placeholder(context, "No transactions yet."),
+                : Container(),
           ],
         ),
       ),
