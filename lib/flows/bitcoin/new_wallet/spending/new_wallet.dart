@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
-
-import 'package:orange/flows/bitcoin/send/amount.dart';
-import 'package:orange/flows/bitcoin/send/scan_qr.dart';
+import 'package:orange/flows/bitcoin/new_wallet/spending/success.dart';
 
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tip_buttons.dart';
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 class NewWallet extends StatefulWidget {
   final GlobalState globalState;
@@ -35,16 +30,18 @@ class NewWalletState extends State<NewWallet> {
     );
   }
 
+  final TextEditingController controller =
+      TextEditingController(text: "My Wallet 2");
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
       header: stackHeader(context, "New spending wallet"),
-      content: const Content(
+      content: Content(
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomTextInput(
-              presetTxt: "My Wallet 2",
+              controller: controller,
             ),
           ],
         ),
@@ -53,7 +50,7 @@ class NewWalletState extends State<NewWallet> {
         context,
         "Continue",
         () {
-          //navigateTo(context, SendAmount(widget.globalState, addressStr));
+          navigateTo(context, Success(widget.globalState, controller.text));
         },
       ),
       desktopOnly: true,
