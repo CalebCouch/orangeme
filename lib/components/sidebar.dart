@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 
@@ -80,9 +80,9 @@ void openMessages(BuildContext context, GlobalState globalState) {
   switchPageTo(context, MessagesHome(globalState));
 }
 
-void openWallet(BuildContext context, GlobalState globalState) {
-  print("switching to wallet");
-  switchPageTo(context, WalletHome(globalState));
+void openBitcoin(BuildContext context, GlobalState globalState) {
+  print("switching to bitcoin");
+  switchPageTo(context, BitcoinHome(globalState));
 }
 
 Widget buttonList(BuildContext context, GlobalState globalState, int index) {
@@ -90,10 +90,10 @@ Widget buttonList(BuildContext context, GlobalState globalState, int index) {
     children: [
       CustomButton(
         expand: true,
-        text: 'Wallet',
+        text: 'Bitcoin',
         buttonAlignment: Alignment.centerLeft,
         onTap: () {
-          if (index != 0) openWallet(context, globalState);
+          if (index != 0) openBitcoin(context, globalState);
         },
         icon: ThemeIcon.wallet,
         variant: ButtonVariant.ghost,

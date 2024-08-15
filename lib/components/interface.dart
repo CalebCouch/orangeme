@@ -108,7 +108,7 @@ class DesktopInterface extends StatelessWidget {
           if (sidebar != null) sidebar!,
           Expanded(
             child: Container(
-              padding: const EdgeInsets.all(AppPadding.desktop);
+              padding: const EdgeInsets.all(AppPadding.desktop),
               child: Column(
                 children: [
                   header,

@@ -7,7 +7,7 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
@@ -41,7 +41,7 @@ class ConfirmationState extends State<Confirmation> {
         context,
         "Confirm send",
         false,
-        exitButton(context, WalletHome(widget.globalState)),
+        exitButton(context, BitcoinHome(widget.globalState)),
       ),
       content: Content(
         content: Column(
@@ -67,7 +67,7 @@ class ConfirmationState extends State<Confirmation> {
         () => {
           resetNavTo(
             context,
-            WalletHome(widget.globalState),
+            BitcoinHome(widget.globalState),
           ),
         },
         true,

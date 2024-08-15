@@ -3,8 +3,8 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
 
-import 'package:orange/flows/wallet/send/amount.dart';
-import 'package:orange/flows/wallet/send/scan_qr.dart';
+import 'package:orange/flows/bitcoin/send/amount.dart';
+import 'package:orange/flows/bitcoin/send/scan_qr.dart';
 
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';

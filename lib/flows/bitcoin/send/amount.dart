@@ -11,7 +11,7 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'dart:io' show Platform;
 
-import 'package:orange/flows/wallet/send/transaction_speed.dart';
+import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';

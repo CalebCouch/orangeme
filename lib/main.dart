@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/src/rust/frb_generated.dart';
-import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'dart:io';
@@ -31,6 +31,6 @@ class MyApp extends StatelessWidget {
         navigatorKey: globalState.navkey,
         title: 'Orange',
         theme: theme(),
-        home: WalletHome(globalState));
+        home: BitcoinHome(globalState));
   }
 }

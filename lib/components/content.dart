@@ -14,7 +14,7 @@ class Content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxWidth: 396),
+      constraints: const BoxConstraints(maxWidth: 396),
       padding: const EdgeInsets.all(AppPadding.content),
       width: MediaQuery.sizeOf(context).width,
       child: scrollable
