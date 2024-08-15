@@ -29,7 +29,12 @@ class SidebarState extends State<Sidebar> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    var splitName = state.personal.name.split(" ");
+    var displayName;
+    if (state.personal.name.length > 12) {
+      displayName = state.personal.name.split(" ")[0];
+    } else {
+      displayName = state.personal.name;
+    }
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: AppPadding.sidebar,
@@ -48,7 +53,7 @@ class SidebarState extends State<Sidebar> {
           const Spacer(),
           CustomButton(
             expand: true,
-            text: splitName[0],
+            text: displayName,
             buttonAlignment: Alignment.centerLeft,
             onTap: () {
               if (widget.index != 2) {

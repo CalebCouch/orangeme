@@ -32,7 +32,7 @@ class Interface extends StatelessWidget {
         header: header,
         content: content,
         bumper: bumper,
-        navBar: !desktopOnly && navigationIndex != null && globalState != null
+        navBar: !desktopOnly
             ? TabNav(globalState, index: navigationIndex)
             : Container(),
       );
