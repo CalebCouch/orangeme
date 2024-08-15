@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'dart:io' show Platform;
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/sidebar.dart';
@@ -106,12 +107,15 @@ class DesktopInterface extends StatelessWidget {
         children: [
           if (sidebar != null) sidebar!,
           Expanded(
-            child: Column(
-              children: [
-                header,
-                Expanded(child: content),
-                if (bumper != null) bumper!,
-              ],
+            child: Container(
+              padding: const EdgeInsets.all(AppPadding.desktop);
+              child: Column(
+                children: [
+                  header,
+                  Expanded(child: content),
+                  if (bumper != null) bumper!,
+                ],
+              ),
             ),
           ),
         ],

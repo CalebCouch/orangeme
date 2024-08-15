@@ -155,6 +155,7 @@ class ButtonSize {
 //// PADDINGS ////
 
 class AppPadding {
+  static const double desktop = 16;
   static const double header = 16;
   static const double content = 24;
   static const double bumper = 16;
