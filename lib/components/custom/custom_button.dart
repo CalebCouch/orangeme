@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/profile_photo.dart';
+import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
@@ -71,6 +72,7 @@ class CustomButton extends StatefulWidget {
   final VoidCallback? onTap;
   final bool expand;
   final Alignment buttonAlignment;
+  final ShakeController? shakeController;
 
   const CustomButton({
     super.key,
@@ -83,6 +85,7 @@ class CustomButton extends StatefulWidget {
     this.pfp,
     this.onTap,
     this.buttonAlignment = Alignment.center,
+    this.shakeController,
   });
 
   @override
@@ -135,10 +138,18 @@ class _ButtonState extends State<CustomButton> {
     );
   }
 
+  disabled() {
+    if (widget.shakeController != null) widget.shakeController!.shake();
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.status == ButtonStatus._default ? widget.onTap : () {},
+      onTap: widget.status == ButtonStatus._default
+          ? widget.onTap
+          : () {
+              disabled();
+            },
       child: Container(
         alignment: widget.expand ? widget.buttonAlignment : null,
         width: widget.expand ? double.infinity : null,

@@ -16,6 +16,82 @@ import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'dart:math';
+
+class ShakeController extends ChangeNotifier {
+  void shake() => notifyListeners();
+}
+
+class ShakeWidget extends StatefulWidget {
+  const ShakeWidget({
+    super.key,
+    required this.child,
+    required this.controller,
+    this.duration = const Duration(milliseconds: 500),
+    this.deltaX = 4,
+    this.oscillations = 6,
+    this.curve = Curves.linear,
+  });
+
+  final Duration duration;
+  final double deltaX;
+  final int oscillations;
+  final Widget child;
+  final Curve curve;
+  final ShakeController controller;
+
+  @override
+  ShakeWidgetState createState() => ShakeWidgetState();
+}
+
+class ShakeWidgetState extends State<ShakeWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: widget.curve),
+    );
+
+    widget.controller.addListener(_startShaking);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_startShaking);
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _startShaking() {
+    _animationController.forward(from: 0);
+  }
+
+  double _wave(double t) =>
+      sin(widget.oscillations * 2 * pi * t) * (1 - (2 * t - 1).abs());
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) => Transform.translate(
+          offset: Offset(
+            widget.deltaX * _wave(_animation.value),
+            0,
+          ),
+          child: widget.child,
+        ),
+        child: widget.child,
+      );
+}
 
 class SimpleKeyboardListener extends StatefulWidget {
   final void Function(String) onPressed;
@@ -66,6 +142,7 @@ class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return widget.child;
   }
@@ -117,12 +194,14 @@ class SendAmountState extends State<SendAmount> {
       } else if (amount.isNotEmpty) {
         updatedAmount = amount.substring(0, amount.length - 1);
       } else {
+        _shakeController.shake();
         updatedAmount = amount;
       }
     } else if (input == ".") {
-      if (!amount.contains(".") && amount.length <= 8) {
+      if (!amount.contains(".") && amount.length <= 7) {
         updatedAmount = amount += ".";
       } else {
+        _shakeController.shake();
         updatedAmount = amount;
       }
     } else {
@@ -132,12 +211,14 @@ class SendAmountState extends State<SendAmount> {
         if (amount.length < 11 && amount.split(".")[1].length < 2) {
           updatedAmount = amount + input;
         } else {
+          _shakeController.shake();
           updatedAmount = amount;
         }
       } else {
         if (amount.length < 10) {
           updatedAmount = amount + input;
         } else {
+          _shakeController.shake();
           updatedAmount = amount;
         }
       }
@@ -158,6 +239,7 @@ class SendAmountState extends State<SendAmount> {
     });
   }
 
+  final ShakeController _shakeController = ShakeController();
   Widget buildScreen(BuildContext context, DartState state) {
     double parsed = double.parse(amount);
     double btc = parsed > 0
@@ -175,9 +257,12 @@ class SendAmountState extends State<SendAmount> {
       content: SimpleKeyboardListener(
         onPressed: updateAmount,
         child: Content(
-          content: Center(
-            child: keyboardAmountDisplay(
-                widget.globalState, context, amount, btc, error),
+          content: ShakeWidget(
+            controller: _shakeController,
+            child: Center(
+              child: keyboardAmountDisplay(
+                  widget.globalState, context, amount, btc, error),
+            ),
           ),
         ),
       ),
@@ -193,6 +278,7 @@ class SendAmountState extends State<SendAmount> {
             CustomButton(
               status: (amount != "0" && error == "") ? 0 : 2,
               text: "Send",
+              shakeController: _shakeController,
               onTap: () => next(btc), //change to btc
             ),
           ],
@@ -241,18 +327,17 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
 
   displayDecimals(amt) {
     int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
-    String text;
     if (decimals == 0 && amt.contains(".")) {
-      return text = '00';
+      return '00';
     } else if (decimals == 1) {
-      return text = '0';
+      return '0';
     } else {
-      return text = '';
+      return '';
     }
   }
 
   String valueUSD = '0';
-  var x;
+  String x = '';
   if (usd.contains('.')) x = usd.split(".")[1];
   if (usd.contains('.') && x.isEmpty) {
     valueUSD = formatValue(double.parse(usd));
@@ -267,8 +352,6 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
   var length = usd.length;
   if (usd.contains('.')) length - 1;
   length = usd.length + displayDecimals(usd).length;
-
-  print(usd);
 
   var textSize = length <= 5
       ? TextSize.title
