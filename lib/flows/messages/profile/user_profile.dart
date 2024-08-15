@@ -59,13 +59,9 @@ class UserProfileState extends State<UserProfile> {
           ),
         ),
       ),
-      bumper: doubleButtonBumper(
+      bumper: singleButtonBumper(
         context,
-        'Send Bitcoin',
         'Message',
-        () {
-          //print('send');
-        },
         () => navigateTo(
           context,
           Exchange(
