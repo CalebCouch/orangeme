@@ -17,8 +17,6 @@ import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-import 'dart:ui';
-
 class SimpleKeyboardListener extends StatefulWidget {
   final void Function(String) onPressed;
   final Widget child;
@@ -39,15 +37,12 @@ class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
 
     if (event is KeyDownEvent) {
       if (isNumeric(key)) {
-        print("Key down: $key");
         widget.onPressed(key);
       }
       if (event.logicalKey == LogicalKeyboardKey.backspace) {
-        print("Key down: $key");
         widget.onPressed('backspace');
       }
       if (event.logicalKey == LogicalKeyboardKey.period) {
-        print("Key down: $key");
         widget.onPressed('.');
       }
     }
@@ -125,7 +120,7 @@ class SendAmountState extends State<SendAmount> {
         updatedAmount = amount;
       }
     } else if (input == ".") {
-      if (!amount.contains(".")) {
+      if (!amount.contains(".") && amount.length <= 8) {
         updatedAmount = amount += ".";
       } else {
         updatedAmount = amount;
@@ -198,7 +193,7 @@ class SendAmountState extends State<SendAmount> {
             CustomButton(
               status: (amount != "0" && error == "") ? 0 : 2,
               text: "Send",
-              onTap: () => next(0.00015), //change to btc
+              onTap: () => next(btc), //change to btc
             ),
           ],
         ),
@@ -244,34 +239,21 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     }
   }
 
-  var textSize = formatValue(double.parse(usd)).length <= 4
-      ? TextSize.title
-      : formatValue(double.parse(usd)).length <= 7
-          ? TextSize.h1
-          : TextSize.h2;
-
   displayDecimals(amt) {
     int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
     String text;
     if (decimals == 0 && amt.contains(".")) {
-      text = '00';
+      return text = '00';
     } else if (decimals == 1) {
-      text = '0';
+      return text = '0';
     } else {
-      text = '';
+      return text = '';
     }
-    return CustomText(
-      textType: 'heading',
-      color: ThemeColor.textSecondary,
-      textSize: textSize,
-      text: text,
-    );
   }
 
   String valueUSD = '0';
   var x;
   if (usd.contains('.')) x = usd.split(".")[1];
-
   if (usd.contains('.') && x.isEmpty) {
     valueUSD = formatValue(double.parse(usd));
     valueUSD += '.';
@@ -281,6 +263,18 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
   } else {
     valueUSD = formatValue(double.parse(usd));
   }
+
+  var length = usd.length;
+  if (usd.contains('.')) length - 1;
+  length = usd.length + displayDecimals(usd).length;
+
+  print(usd);
+
+  var textSize = length <= 5
+      ? TextSize.title
+      : length <= 7
+          ? TextSize.subtitle
+          : TextSize.h1;
 
   return Column(
     mainAxisSize: MainAxisSize.min,
@@ -296,7 +290,12 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
             textSize: textSize,
             text: "\$$valueUSD",
           ),
-          displayDecimals(usd)
+          CustomText(
+            textType: 'heading',
+            color: ThemeColor.textSecondary,
+            textSize: textSize,
+            text: displayDecimals(usd),
+          ),
         ],
       ),
       subText(error)
