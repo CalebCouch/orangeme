@@ -6,7 +6,10 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
+import 'package:orange/flows/bitcoin/new_wallet/spending/new_wallet.dart';
+
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 class ButtonVariant {
   static const String primary = "primary";
@@ -182,10 +185,19 @@ class _ButtonState extends State<CustomButton> {
   }
 }
 
-Widget iconButton(BuildContext context, onTap, CustomIcon icon) {
+Widget iconButton(BuildContext context, onTap, CustomIcon icon,
+    [bool widenLeft = false, bool widenRight = false]) {
   return InkWell(
     onTap: onTap ?? () {},
-    child: icon,
+    child: Container(
+      width: widenLeft || widenRight ? 50 : null,
+      alignment: widenLeft
+          ? Alignment.centerRight
+          : widenRight
+              ? Alignment.centerLeft
+              : null,
+      child: icon,
+    ),
   );
 }
 
@@ -210,6 +222,8 @@ Widget backButton(BuildContext context) {
       navPop(context);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
+    false,
+    true,
   );
 }
 
@@ -220,6 +234,8 @@ Widget exitButton(BuildContext context, Widget home) {
       resetNavTo(context, home);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.close),
+    false,
+    true,
   );
 }
 
@@ -230,15 +246,19 @@ Widget infoButton(BuildContext context, Widget page) {
       navigateTo(context, page);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
+    true,
+    false,
   );
 }
 
-Widget newWalletButton(BuildContext context) {
+Widget newWalletButton(BuildContext context, GlobalState globalState) {
   return iconButton(
     context,
     () {
-      //navigateTo(context, SendAmount());
+      navigateTo(context, NewWallet(globalState));
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.add),
+    true,
+    false,
   );
 }

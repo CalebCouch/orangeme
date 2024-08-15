@@ -94,7 +94,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
               widget.globalState,
               'Wallet',
               state.personal.pfp,
-              newWalletButton(context),
+              newWalletButton(context, widget.globalState),
             ),
       content: Content(
         content: Column(

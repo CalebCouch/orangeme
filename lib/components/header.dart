@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/components/custom/custom_text.dart';
@@ -115,9 +114,9 @@ Widget stackButtonHeader(
   );
 }
 
-Widget stackHeader(BuildContext context, String text, [iconButton]) {
+Widget stackHeader(BuildContext context, String text, [Widget? iconButton]) {
   return DefaultHeader(
-    left: iconButton == null ? backButton(context) : iconButton!,
+    left: iconButton ?? backButton(context),
     center: CustomText(
       textType: "heading",
       text: text,
