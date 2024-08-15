@@ -38,6 +38,7 @@ class MessageInfoState extends State<MessageInfo> {
 
   Widget build_screen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(context, "Group members"),
       content: Content(
         content: Column(
@@ -75,6 +76,8 @@ class MessageInfoState extends State<MessageInfo> {
           ],
         ),
       ),
+      desktopOnly: true,
+      navigationIndex: 1,
     );
   }
 }

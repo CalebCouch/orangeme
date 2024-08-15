@@ -10,6 +10,7 @@ import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'dart:io' show Platform;
 
 import 'package:orange/classes.dart';
 
@@ -64,8 +65,12 @@ class MyProfileState extends State<MyProfile> {
     _profileName = TextEditingController(text: state.personal.name);
     _aboutMe = TextEditingController(text: state.personal.abtme);
 
+    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
-      header: stackHeader(context, "My profile"),
+      widget.globalState,
+      header: onDesktop
+          ? homeDesktopHeader(context, "My profile")
+          : stackHeader(context, "My profile"),
       content: Content(
         content: SingleChildScrollView(
           child: Column(
@@ -115,6 +120,8 @@ class MyProfileState extends State<MyProfile> {
             : () {},
         save,
       ),
+      desktopOnly: true,
+      navigationIndex: 2,
     );
   }
 }

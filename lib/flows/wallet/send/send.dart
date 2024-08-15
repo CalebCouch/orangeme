@@ -56,6 +56,7 @@ class SendState extends State<Send> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(context, "Bitcoin address", true),
       content: Content(
         content: SingleChildScrollView(
@@ -102,6 +103,8 @@ class SendState extends State<Send> {
         },
         addressValid,
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

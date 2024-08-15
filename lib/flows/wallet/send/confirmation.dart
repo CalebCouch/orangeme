@@ -36,6 +36,7 @@ class ConfirmationState extends State<Confirmation> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(
         context,
         "Confirm send",
@@ -72,6 +73,8 @@ class ConfirmationState extends State<Confirmation> {
         true,
         ButtonVariant.secondary,
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

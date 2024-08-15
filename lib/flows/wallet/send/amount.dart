@@ -110,6 +110,7 @@ class SendAmountState extends State<SendAmount> {
         : 0.0;
     bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
+      widget.globalState,
       resizeToAvoidBottomInset: false,
       header: stackHeader(
         context,
@@ -138,6 +139,8 @@ class SendAmountState extends State<SendAmount> {
           ],
         ),
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

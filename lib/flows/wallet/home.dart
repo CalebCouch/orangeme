@@ -76,6 +76,7 @@ class _WalletHomeState extends State<WalletHome> {
             ? TextSize.h1
             : TextSize.h2;
     return Interface(
+      widget.globalState,
       resizeToAvoidBottomInset: false,
       header: homeHeader(
         context,
@@ -150,7 +151,6 @@ class _WalletHomeState extends State<WalletHome> {
           navigateTo(context, Send(widget.globalState));
         },
       ),
-      globalState: widget.globalState,
       navigationIndex: 0,
     );
   }

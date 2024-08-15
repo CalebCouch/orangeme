@@ -40,6 +40,7 @@ class ScanQRState extends State<ScanQR> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(
         context,
         "Scan QR code",
@@ -78,6 +79,8 @@ class ScanQRState extends State<ScanQR> {
           ),
         ],
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 

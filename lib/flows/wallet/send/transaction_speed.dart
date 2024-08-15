@@ -49,6 +49,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   Widget buildScreen(BuildContext context, DartState state) {
     var fees = widget.globalState.state.value.fees;
     return Interface(
+      widget.globalState,
       header: stackHeader(
         context,
         "Transaction speed",
@@ -78,6 +79,8 @@ class TransactionSpeedState extends State<TransactionSpeed> {
         ]),
       ),
       bumper: singleButtonBumper(context, "Continue", next),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

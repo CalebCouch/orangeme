@@ -40,6 +40,7 @@ class MessagesHomeState extends State<MessagesHome> {
   Widget buildScreen(BuildContext context, DartState state) {
     //print(state.users);
     return Interface(
+      widget.globalState,
       header: homeHeader(
         context,
         () {
@@ -89,7 +90,6 @@ class MessagesHomeState extends State<MessagesHome> {
           );
         },
       ),
-      globalState: widget.globalState,
       navigationIndex: 1,
     );
   }

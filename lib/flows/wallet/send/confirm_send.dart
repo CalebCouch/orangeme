@@ -53,6 +53,7 @@ class ConfirmState extends State<ConfirmSend> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(
         context,
         'Confirm send',
@@ -135,6 +136,8 @@ class ConfirmState extends State<ConfirmSend> {
         ),
       ),
       bumper: singleButtonBumper(context, "Confirm & Send", next),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

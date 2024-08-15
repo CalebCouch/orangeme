@@ -9,17 +9,19 @@ class Interface extends StatelessWidget {
   final Widget header;
   final Widget content;
   final Widget? bumper;
-  final GlobalState? globalState;
-  final int? navigationIndex;
+  final GlobalState globalState;
+  final int navigationIndex;
+  final bool desktopOnly;
 
-  const Interface({
+  const Interface(
+    this.globalState, {
     super.key,
-    this.globalState,
     this.resizeToAvoidBottomInset,
     required this.header,
     required this.content,
     this.bumper,
-    this.navigationIndex,
+    required this.navigationIndex,
+    this.desktopOnly = false,
   });
   @override
   Widget build(BuildContext context) {
@@ -30,21 +32,18 @@ class Interface extends StatelessWidget {
         header: header,
         content: content,
         bumper: bumper,
-        navBar: navigationIndex != null && globalState != null
-            ? TabNav(globalState!, index: navigationIndex!)
+        navBar: !desktopOnly && navigationIndex != null && globalState != null
+            ? TabNav(globalState, index: navigationIndex)
             : Container(),
       );
     }
     return DesktopInterface(
-      header: header,
-      content: SizedBox(
-        child: content,
-      ),
-      bumper: bumper,
-      sidebar: navigationIndex != null && globalState != null
-          ? Sidebar(globalState!, index: navigationIndex!)
-          : Container(),
-    );
+        header: header,
+        content: SizedBox(
+          child: content,
+        ),
+        bumper: bumper,
+        sidebar: Sidebar(globalState, index: navigationIndex));
   }
 }
 

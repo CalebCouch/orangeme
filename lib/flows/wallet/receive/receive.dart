@@ -38,6 +38,7 @@ class ReceiveState extends State<Receive> {
   Widget buildScreen(BuildContext context, DartState state) {
     bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
+      widget.globalState,
       header: stackHeader(context, "Receive bitcoin"),
       content: Content(
         content: Column(
@@ -68,6 +69,8 @@ class ReceiveState extends State<Receive> {
               "Share",
               () => {Share.share(widget.address)},
             ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

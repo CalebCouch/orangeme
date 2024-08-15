@@ -84,6 +84,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackButtonHeader(
         context,
         'New message',
@@ -138,6 +139,8 @@ class ChooseRecipientState extends State<ChooseRecipient> {
           ],
         ),
       ),
+      desktopOnly: true,
+      navigationIndex: 1,
     );
   }
 }

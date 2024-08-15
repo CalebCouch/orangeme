@@ -51,10 +51,14 @@ class SidebarState extends State<Sidebar> {
             text: splitName[0],
             buttonAlignment: Alignment.centerLeft,
             onTap: () {
-              switchPageTo(
-                context,
-                MyProfile(widget.globalState, profilePhoto: state.personal.pfp),
-              );
+              if (widget.index != 2) {
+                switchPageTo(
+                  context,
+                  MyProfile(widget.globalState,
+                      profilePhoto: state.personal.pfp),
+                );
+              }
+              ;
             },
             pfp: state.personal.pfp,
             variant: ButtonVariant.ghost,
@@ -97,7 +101,7 @@ Widget buttonList(BuildContext context, GlobalState globalState, int index) {
         expand: true,
         text: 'Messages',
         onTap: () {
-          if (index != 2) openMessages(context, globalState);
+          if (index != 1) openMessages(context, globalState);
         },
         icon: ThemeIcon.chat,
         status: (index == 1) ? 3 : 0,
