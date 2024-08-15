@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/content.dart';
@@ -15,6 +16,65 @@ import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+
+import 'dart:ui';
+
+class SimpleKeyboardListener extends StatefulWidget {
+  final void Function(String) onPressed;
+  final Widget child;
+
+  const SimpleKeyboardListener({
+    super.key,
+    required this.onPressed,
+    required this.child,
+  });
+
+  @override
+  State<SimpleKeyboardListener> createState() => _SimpleKeyboardListenerState();
+}
+
+class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
+  bool _onKey(KeyEvent event) {
+    final key = event.logicalKey.keyLabel;
+
+    if (event is KeyDownEvent) {
+      if (isNumeric(key)) {
+        print("Key down: $key");
+        widget.onPressed(key);
+      }
+      if (event.logicalKey == LogicalKeyboardKey.backspace) {
+        print("Key down: $key");
+        widget.onPressed('backspace');
+      }
+      if (event.logicalKey == LogicalKeyboardKey.period) {
+        print("Key down: $key");
+        widget.onPressed('.');
+      }
+    }
+
+    return false;
+  }
+
+  bool isNumeric(String s) {
+    return double.tryParse(s) != null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
+  }
+
+  @override
+  void dispose() {
+    ServicesBinding.instance.keyboard.removeHandler(_onKey);
+    super.dispose();
+  }
+
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
 
 class SendAmount extends StatefulWidget {
   final GlobalState globalState;
@@ -109,6 +169,7 @@ class SendAmountState extends State<SendAmount> {
         ? (parsed / widget.globalState.state.value.currentPrice)
         : 0.0;
     bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
     return Interface(
       widget.globalState,
       resizeToAvoidBottomInset: false,
@@ -116,10 +177,13 @@ class SendAmountState extends State<SendAmount> {
         context,
         "Send bitcoin",
       ),
-      content: Content(
-        content: Center(
-          child: keyboardAmountDisplay(
-              widget.globalState, context, amount, btc, error),
+      content: SimpleKeyboardListener(
+        onPressed: updateAmount,
+        child: Content(
+          content: Center(
+            child: keyboardAmountDisplay(
+                widget.globalState, context, amount, btc, error),
+          ),
         ),
       ),
       bumper: DefaultBumper(
