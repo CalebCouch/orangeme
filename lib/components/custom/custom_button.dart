@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/profile_photo.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
@@ -66,6 +67,7 @@ class CustomButton extends StatefulWidget {
   final String text;
 
   final String? icon;
+  final String? pfp;
   final VoidCallback? onTap;
   final bool expand;
   final Alignment buttonAlignment;
@@ -78,6 +80,7 @@ class CustomButton extends StatefulWidget {
     this.expand = true,
     this.status = ButtonStatus._default,
     this.icon,
+    this.pfp,
     this.onTap,
     this.buttonAlignment = Alignment.center,
   });
@@ -121,6 +124,17 @@ class _ButtonState extends State<CustomButton> {
     }
   }
 
+  _displayPfp() {
+    return Row(
+      children: [
+        profilePhoto(context, widget.pfp, ProfileSize.sm),
+        Spacing(
+          width: _getButtonSpacing(widget.buttonSize),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -142,7 +156,8 @@ class _ButtonState extends State<CustomButton> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _displayIcon(),
+            widget.icon != null ? _displayIcon() : Container(),
+            widget.pfp != null ? _displayPfp() : Container(),
             CustomText(
               textSize: widget.buttonSize == 48 ? TextSize.lg : TextSize.md,
               textType: "label",
