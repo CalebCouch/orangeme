@@ -232,6 +232,9 @@ class SendAmountState extends State<SendAmount> {
       err = "\$${formatValue(min)} minimum.";
     } else if (double.parse(updatedAmount) >= max) {
       err = "\$${formatValue(max)} maximum.";
+      if (err == "\$0 maximum.") {
+        err = "You have no bitcoin.";
+      }
     }
     setState(() {
       amount = updatedAmount;
@@ -359,29 +362,32 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
           ? TextSize.subtitle
           : TextSize.h1;
 
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CustomText(
-            textType: 'heading',
-            textSize: textSize,
-            text: "\$$valueUSD",
-          ),
-          CustomText(
-            textType: 'heading',
-            color: ThemeColor.textSecondary,
-            textSize: textSize,
-            text: displayDecimals(usd),
-          ),
-        ],
-      ),
-      subText(error)
-    ],
+  return FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomText(
+              textType: 'heading',
+              textSize: textSize,
+              text: "\$$valueUSD",
+            ),
+            CustomText(
+              textType: 'heading',
+              color: ThemeColor.textSecondary,
+              textSize: textSize,
+              text: displayDecimals(usd),
+            ),
+          ],
+        ),
+        subText(error)
+      ],
+    ),
   );
 }
