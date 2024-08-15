@@ -8,12 +8,15 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/flows/messages/profile/my_profile.dart';
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/bitcoin/transaction_details.dart';
+import 'package:orange/components/tip_buttons.dart';
 
+import 'package:orange/components/custom/custom_text.dart';
+
+import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
+
 import 'package:orange/util.dart';
 
 class BitcoinHome extends StatefulWidget {
@@ -118,6 +121,10 @@ class BitcoinHomeState extends State<BitcoinHome> {
             const Spacing(height: AppPadding.content),
             _backupReminder(false),
             _noInternet(false),
+            ButtonTip(
+              text: 'Connect to a Computer',
+              onTap: () {},
+            ),
             state.transactions.isNotEmpty
                 ? Expanded(
                     child: SingleChildScrollView(

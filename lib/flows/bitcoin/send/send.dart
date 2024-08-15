@@ -72,12 +72,15 @@ class SendState extends State<Send> {
                 hint: 'Bitcoin address...',
               ),
               const Spacing(height: AppPadding.content),
-              ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
-                String data = (await getClipBoardData()).toString();
-                if (data != "null") {
-                  setAddress(data);
-                }
-              }),
+              ButtonTip(
+                  text: "Paste Clipboard",
+                  icon: ThemeIcon.paste,
+                  onTap: () async {
+                    String data = (await getClipBoardData()).toString();
+                    if (data != "null") {
+                      setAddress(data);
+                    }
+                  }),
               const Spacing(height: AppPadding.tips),
               const CustomText(
                 text: 'or',
@@ -86,9 +89,9 @@ class SendState extends State<Send> {
               ),
               const Spacing(height: AppPadding.tips),
               ButtonTip(
-                "Scan QR Code",
-                ThemeIcon.qrcode,
-                () => navigateTo(context, ScanQR(widget.globalState)),
+                text: "Scan QR Code",
+                icon: ThemeIcon.qrcode,
+                onTap: () => navigateTo(context, ScanQR(widget.globalState)),
               ),
               const Spacing(height: AppPadding.tips),
             ],

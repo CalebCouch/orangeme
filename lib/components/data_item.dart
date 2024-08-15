@@ -78,11 +78,11 @@ class DataItem extends StatelessWidget {
                           buttonNames!.length == 1
                       ? editButtons([
                           ButtonTip(
-                            buttonNames![0],
-                            buttonIcons == null
+                            text: buttonNames![0],
+                            icon: buttonIcons == null
                                 ? ThemeIcon.edit
                                 : buttonIcons![0],
-                            buttonActions![0],
+                            onTap: buttonActions![0],
                           ),
                         ])
                       : buttonNames != null &&
@@ -90,18 +90,18 @@ class DataItem extends StatelessWidget {
                               buttonNames!.length == 2
                           ? editButtons([
                               ButtonTip(
-                                buttonNames![0],
-                                buttonIcons == null
+                                text: buttonNames![0],
+                                icon: buttonIcons == null
                                     ? ThemeIcon.edit
                                     : buttonIcons![0],
-                                buttonActions![0],
+                                onTap: buttonActions![0],
                               ),
                               ButtonTip(
-                                buttonNames![1],
-                                buttonIcons == null
+                                text: buttonNames![1],
+                                icon: buttonIcons == null
                                     ? ThemeIcon.edit
                                     : buttonIcons![1],
-                                buttonActions![1],
+                                onTap: buttonActions![1],
                               ),
                             ])
                           : Container(),
@@ -122,15 +122,15 @@ Widget editButtons(List<ButtonTip> tipButtons) {
 }
 
 Widget one(List<ButtonTip> tipButtons) {
-  return oneTip(tipButtons[0]);
+  return tipButtons[0];
 }
 
 Widget two(List<ButtonTip> tipButtons) {
   return Row(
     children: [
-      oneTip(tipButtons[0]),
+      tipButtons[0],
       const Spacing(width: AppPadding.tips),
-      oneTip(tipButtons[1]),
+      tipButtons[1],
     ],
   );
 }

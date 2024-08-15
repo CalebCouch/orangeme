@@ -114,12 +114,10 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 spacing: 8,
                 runSpacing: 8,
                 children: List<Widget>.generate(recipients.length, (index) {
-                  return oneTip(
-                    ButtonTip(
-                      recipients[index].name,
-                      ThemeIcon.close,
-                      () => removeRecipient(recipients[index]),
-                    ),
+                  return ButtonTip(
+                    text: recipients[index].name,
+                    icon: ThemeIcon.close,
+                    onTap: () => removeRecipient(recipients[index]),
                   );
                 }),
               ),

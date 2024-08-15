@@ -78,7 +78,7 @@ Widget editPhoto(BuildContext context, onTap, [pfp]) {
     children: [
       profilePhoto(context, pfp, ProfileSize.xxl),
       const Spacing(height: AppPadding.header),
-      ButtonTip('Photo', ThemeIcon.edit, onTap)
+      ButtonTip(text: 'Photo', icon: ThemeIcon.edit, onTap: onTap)
     ],
   );
 }
