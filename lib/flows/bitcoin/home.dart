@@ -11,11 +11,12 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tip_buttons.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/custom/custom_button.dart';
 
-import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
+import 'dart:io' show Platform;
 
 import 'package:orange/util.dart';
 
@@ -72,6 +73,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
+    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     var textSize = formatValue(state.usdBalance).length <= 4
         ? TextSize.title
         : formatValue(state.usdBalance).length <= 7
@@ -80,17 +82,20 @@ class BitcoinHomeState extends State<BitcoinHome> {
     return Interface(
       widget.globalState,
       resizeToAvoidBottomInset: false,
-      header: homeHeader(
-        context,
-        () {
-          navigateTo(
-            context,
-            MyProfile(widget.globalState),
-          );
-        },
-        "Wallet",
-        state.personal.pfp,
-      ),
+      header: onDesktop
+          ? homeHeader(
+              context,
+              widget.globalState,
+              "Wallet",
+              state.personal.pfp,
+            )
+          : homeHeader(
+              context,
+              widget.globalState,
+              'Wallet',
+              state.personal.pfp,
+              newWalletButton(context),
+            ),
       content: Content(
         content: Column(
           children: [

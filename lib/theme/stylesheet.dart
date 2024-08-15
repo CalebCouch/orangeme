@@ -115,6 +115,9 @@ class ThemeIcon {
   static const String profile = 'assets/icons/profile.svg';
   static const String info = 'assets/icons/info.svg';
   static const String send = 'assets/icons/send.svg';
+  static const String cancel = 'assets/icons/cancel.svg';
+  static const String checkmark = 'assets/icons/checkmark.svg';
+  static const String add = 'assets/icons/add.svg';
 }
 
 class IconSize {

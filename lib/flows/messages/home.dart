@@ -43,12 +43,7 @@ class MessagesHomeState extends State<MessagesHome> {
       widget.globalState,
       header: homeHeader(
         context,
-        () {
-          navigateTo(
-            context,
-            MyProfile(widget.globalState),
-          );
-        },
+        widget.globalState,
         "Messages",
         state.personal.pfp,
       ),

@@ -185,11 +185,7 @@ class _ButtonState extends State<CustomButton> {
 Widget iconButton(BuildContext context, onTap, CustomIcon icon) {
   return InkWell(
     onTap: onTap ?? () {},
-    child: Container(
-      width: 50,
-      alignment: Alignment.centerLeft,
-      child: icon,
-    ),
+    child: icon,
   );
 }
 
@@ -207,7 +203,7 @@ Widget sendButton(BuildContext context, bool isEnabled) {
   );
 }
 
-Widget backButton(BuildContext context, [bool delay = false]) {
+Widget backButton(BuildContext context) {
   return iconButton(
     context,
     () {
@@ -234,5 +230,15 @@ Widget infoButton(BuildContext context, Widget page) {
       navigateTo(context, page);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
+  );
+}
+
+Widget newWalletButton(BuildContext context) {
+  return iconButton(
+    context,
+    () {
+      //navigateTo(context, SendAmount());
+    },
+    const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.add),
   );
 }

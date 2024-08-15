@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
@@ -62,12 +64,18 @@ Widget homeDesktopHeader(BuildContext context, String text) {
   );
 }
 
-Widget homeHeader(BuildContext context, onTap, text, pfp) {
+Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
+    [Widget? iconButton]) {
   bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
   if (onDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
     left: InkWell(
-      onTap: onTap ?? () {},
+      onTap: () {
+        navigateTo(
+          context,
+          MyProfile(globalState),
+        );
+      },
       child: Container(
         width: 50,
         alignment: Alignment.centerLeft,
@@ -80,6 +88,7 @@ Widget homeHeader(BuildContext context, onTap, text, pfp) {
       textSize: TextSize.h3,
       color: ThemeColor.heading,
     ),
+    right: iconButton,
   );
 }
 
@@ -106,10 +115,9 @@ Widget stackButtonHeader(
   );
 }
 
-Widget stackHeader(BuildContext context, String text,
-    [bool delay = false, iconButton]) {
+Widget stackHeader(BuildContext context, String text, [iconButton]) {
   return DefaultHeader(
-    left: iconButton == null ? backButton(context, delay) : iconButton!,
+    left: iconButton == null ? backButton(context) : iconButton!,
     center: CustomText(
       textType: "heading",
       text: text,
