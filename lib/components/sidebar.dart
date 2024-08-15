@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/profile_photo.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';

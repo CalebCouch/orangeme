@@ -12,6 +12,7 @@ import 'package:orange/flows/messages/conversation/exchange.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'dart:io' show Platform;
 
 class UserProfile extends StatefulWidget {
   final GlobalState globalState;
@@ -35,11 +36,17 @@ class UserProfileState extends State<UserProfile> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
+    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
-      header: stackHeader(
-        context,
-        widget.userInfo.name,
-      ),
+      header: onDesktop
+          ? homeDesktopHeader(
+              context,
+              widget.userInfo.name,
+            )
+          : stackHeader(
+              context,
+              widget.userInfo.name,
+            ),
       content: Content(
         content: SingleChildScrollView(
           child: Column(
