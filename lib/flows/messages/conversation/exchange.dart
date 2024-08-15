@@ -35,6 +35,7 @@ class ExchangeState extends State<Exchange> {
 
   Widget build_screen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackMessageHeader(
         widget.globalState,
         context,
@@ -53,6 +54,8 @@ class ExchangeState extends State<Exchange> {
                 widget.conversation.members, widget.conversation.messages),
       ),
       bumper: messageInput(),
+      desktopOnly: true,
+      navigationIndex: 1,
     );
   }
 }

@@ -40,7 +40,8 @@ class MessagesHomeState extends State<MessagesHome> {
   Widget buildScreen(BuildContext context, DartState state) {
     //print(state.users);
     return Interface(
-      header: messagesHeader(
+      widget.globalState,
+      header: homeHeader(
         context,
         () {
           navigateTo(
@@ -48,6 +49,7 @@ class MessagesHomeState extends State<MessagesHome> {
             MyProfile(widget.globalState),
           );
         },
+        "Messages",
         state.personal.pfp,
       ),
       content: Content(
@@ -88,7 +90,6 @@ class MessagesHomeState extends State<MessagesHome> {
           );
         },
       ),
-      globalState: widget.globalState,
       navigationIndex: 1,
     );
   }

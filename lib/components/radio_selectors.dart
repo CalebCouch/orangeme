@@ -5,7 +5,7 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 Widget radioButton(String title, String subtitle, bool isEnabled, onTap) {
-  return GestureDetector(
+  return InkWell(
     onTap: onTap,
     child: Container(
       color: Colors.transparent,

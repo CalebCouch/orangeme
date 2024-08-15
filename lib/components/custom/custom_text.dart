@@ -42,7 +42,7 @@ class _CustomTextState extends State<CustomText> {
 
   _getFontWeight(String type) {
     if (type == "label") {
-      return FontWeight.w500;
+      return FontWeight.w700;
     } else if (type == "heading") {
       return FontWeight.w700;
     } else if (type == "brand") {

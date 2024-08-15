@@ -8,23 +8,23 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/placeholder.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/wallet/transaction_details.dart';
+import 'package:orange/flows/bitcoin/transaction_details.dart';
 
-import 'package:orange/flows/wallet/send/send.dart';
-import 'package:orange/flows/wallet/receive/receive.dart';
+import 'package:orange/flows/bitcoin/send/send.dart';
+import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/util.dart';
 
-class WalletHome extends StatefulWidget {
+class BitcoinHome extends StatefulWidget {
   final GlobalState globalState;
-  const WalletHome(this.globalState, {super.key});
+  const BitcoinHome(this.globalState, {super.key});
 
   @override
-  State<WalletHome> createState() => _WalletHomeState();
+  State<BitcoinHome> createState() => BitcoinHomeState();
 }
 
-class _WalletHomeState extends State<WalletHome> {
+class BitcoinHomeState extends State<BitcoinHome> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -75,10 +75,18 @@ class _WalletHomeState extends State<WalletHome> {
             ? TextSize.h1
             : TextSize.h2;
     return Interface(
+      widget.globalState,
       resizeToAvoidBottomInset: false,
-      header: primaryHeader(
+      header: homeHeader(
         context,
+        () {
+          navigateTo(
+            context,
+            MyProfile(widget.globalState),
+          );
+        },
         "Wallet",
+        state.personal.pfp,
       ),
       content: Content(
         content: Column(
@@ -125,7 +133,7 @@ class _WalletHomeState extends State<WalletHome> {
                       ),
                     ),
                   )
-                : placeholder(context, "No transactions yet."),
+                : Container(),
           ],
         ),
       ),
@@ -142,7 +150,6 @@ class _WalletHomeState extends State<WalletHome> {
           navigateTo(context, Send(widget.globalState));
         },
       ),
-      globalState: widget.globalState,
       navigationIndex: 0,
     );
   }

@@ -36,6 +36,7 @@ class UserProfileState extends State<UserProfile> {
 
   Widget build_screen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(
         context,
         widget.userInfo.name,
@@ -58,13 +59,9 @@ class UserProfileState extends State<UserProfile> {
           ),
         ),
       ),
-      bumper: doubleButtonBumper(
+      bumper: singleButtonBumper(
         context,
-        'Send Bitcoin',
         'Message',
-        () {
-          //print('send');
-        },
         () => navigateTo(
           context,
           Exchange(
@@ -79,6 +76,8 @@ class UserProfileState extends State<UserProfile> {
           ),
         ),
       ),
+      desktopOnly: true,
+      navigationIndex: 1,
     );
   }
 }

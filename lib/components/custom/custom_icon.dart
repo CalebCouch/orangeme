@@ -12,7 +12,7 @@ class CustomIcon extends StatelessWidget {
     super.key,
     required this.icon,
     this.iconSize = IconSize.lg,
-    this.iconColor = ThemeColor.primary,
+    this.iconColor = ThemeColor.secondary,
   });
 
   @override
@@ -30,7 +30,7 @@ Widget numberButton(BuildContext context, String number) {
   return CustomText(
     text: number,
     textType: 'label',
-    color: ThemeColor.primary,
+    color: ThemeColor.secondary,
   );
 }
 
@@ -38,6 +38,6 @@ Widget deleteButton(BuildContext context) {
   return const CustomIcon(
     icon: ThemeIcon.back,
     iconSize: IconSize.md,
-    iconColor: ThemeColor.primary,
+    iconColor: ThemeColor.secondary,
   );
 }

@@ -3,8 +3,8 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
 
-import 'package:orange/flows/wallet/send/amount.dart';
-import 'package:orange/flows/wallet/send/scan_qr.dart';
+import 'package:orange/flows/bitcoin/send/amount.dart';
+import 'package:orange/flows/bitcoin/send/scan_qr.dart';
 
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
@@ -56,6 +56,7 @@ class SendState extends State<Send> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(context, "Bitcoin address", true),
       content: Content(
         content: SingleChildScrollView(
@@ -102,6 +103,8 @@ class SendState extends State<Send> {
         },
         addressValid,
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

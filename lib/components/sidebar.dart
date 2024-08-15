@@ -5,8 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/messages/home.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 
 class Sidebar extends StatefulWidget {
   final int index;
@@ -19,16 +20,21 @@ class Sidebar extends StatefulWidget {
 class SidebarState extends State<Sidebar> {
   @override
   Widget build(BuildContext context) {
-    void openMessages() {
-      print("switching to messages");
-      switchPageTo(context, MessagesHome(widget.globalState));
-    }
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
 
-    void openWallet() {
-      print("switching to wallet");
-      switchPageTo(context, WalletHome(widget.globalState));
+  Widget buildScreen(BuildContext context, DartState state) {
+    var displayName;
+    if (state.personal.name.length > 12) {
+      displayName = state.personal.name.split(" ")[0];
+    } else {
+      displayName = state.personal.name;
     }
-
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: AppPadding.sidebar,
@@ -43,31 +49,68 @@ class SidebarState extends State<Sidebar> {
             height: BrandSize.xl,
           ),
           const Spacing(height: AppPadding.sidebar),
+          buttonList(context, widget.globalState, widget.index),
+          const Spacer(),
           CustomButton(
             expand: true,
-            text: 'Wallet',
+            text: displayName,
             buttonAlignment: Alignment.centerLeft,
             onTap: () {
-              if (widget.index != 0) openWallet();
+              if (widget.index != 2) {
+                switchPageTo(
+                  context,
+                  MyProfile(widget.globalState,
+                      profilePhoto: state.personal.pfp),
+                );
+              }
+              ;
             },
-            icon: ThemeIcon.wallet,
+            pfp: state.personal.pfp,
             variant: ButtonVariant.ghost,
-            status: (widget.index == 0) ? 3 : 0,
-          ),
-          const Spacing(height: AppPadding.buttonList),
-          CustomButton(
-            variant: ButtonVariant.ghost,
-            buttonAlignment: Alignment.centerLeft,
-            expand: true,
-            text: 'Messages',
-            onTap: () {
-              if (widget.index != 2) openMessages();
-            },
-            icon: ThemeIcon.chat,
             status: (widget.index == 2) ? 3 : 0,
           ),
         ],
       ),
     );
   }
+}
+
+void openMessages(BuildContext context, GlobalState globalState) {
+  print("switching to messages");
+  switchPageTo(context, MessagesHome(globalState));
+}
+
+void openBitcoin(BuildContext context, GlobalState globalState) {
+  print("switching to bitcoin");
+  switchPageTo(context, BitcoinHome(globalState));
+}
+
+Widget buttonList(BuildContext context, GlobalState globalState, int index) {
+  return Column(
+    children: [
+      CustomButton(
+        expand: true,
+        text: 'Bitcoin',
+        buttonAlignment: Alignment.centerLeft,
+        onTap: () {
+          if (index != 0) openBitcoin(context, globalState);
+        },
+        icon: ThemeIcon.wallet,
+        variant: ButtonVariant.ghost,
+        status: (index == 0) ? 3 : 0,
+      ),
+      const Spacing(height: AppPadding.buttonList),
+      CustomButton(
+        variant: ButtonVariant.ghost,
+        buttonAlignment: Alignment.centerLeft,
+        expand: true,
+        text: 'Messages',
+        onTap: () {
+          if (index != 1) openMessages(context, globalState);
+        },
+        icon: ThemeIcon.chat,
+        status: (index == 1) ? 3 : 0,
+      ),
+    ],
+  );
 }

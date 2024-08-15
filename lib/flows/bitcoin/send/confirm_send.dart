@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/flows/wallet/send/confirmation.dart';
-import 'package:orange/flows/wallet/send/amount.dart';
-import 'package:orange/flows/wallet/send/transaction_speed.dart';
-import 'package:orange/flows/wallet/send/send.dart';
+import 'package:orange/flows/bitcoin/send/confirmation.dart';
+import 'package:orange/flows/bitcoin/send/amount.dart';
+import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
+import 'package:orange/flows/bitcoin/send/send.dart';
 
 import 'package:orange/components/interface.dart';
 
@@ -53,6 +53,7 @@ class ConfirmState extends State<ConfirmSend> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(
         context,
         'Confirm send',
@@ -135,6 +136,8 @@ class ConfirmState extends State<ConfirmSend> {
         ),
       ),
       bumper: singleButtonBumper(context, "Confirm & Send", next),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

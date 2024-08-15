@@ -4,7 +4,7 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/messages/home.dart';
 
 class TabNav extends StatefulWidget {
@@ -23,9 +23,9 @@ class TabNavState extends State<TabNav> {
       switchPageTo(context, MessagesHome(widget.globalState));
     }
 
-    void openWallet() {
-      print("switching to wallet");
-      switchPageTo(context, WalletHome(widget.globalState));
+    void openBitcoin() {
+      print("switching to bitcoin");
+      switchPageTo(context, BitcoinHome(widget.globalState));
     }
 
     return Container(
@@ -35,38 +35,38 @@ class TabNavState extends State<TabNav> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: GestureDetector(
+            child: InkWell(
               onTap: () {
-                if (widget.index == 1) openWallet();
+                if (widget.index == 1) openBitcoin();
               },
               child: Container(
                 color: ThemeColor.bg,
-                padding: const EdgeInsets.only(right: AppPadding.navBar / 2),
+                padding: const EdgeInsets.only(right: AppPadding.navBar),
                 alignment: Alignment.centerRight,
                 child: CustomIcon(
                   icon: ThemeIcon.wallet,
                   iconSize: IconSize.md,
                   iconColor: (widget.index == 0)
-                      ? ThemeColor.primary
+                      ? ThemeColor.secondary
                       : ThemeColor.textSecondary,
                 ),
               ),
             ),
           ),
           Expanded(
-            child: GestureDetector(
+            child: InkWell(
               onTap: () {
                 if (widget.index == 0) openMessages();
               },
               child: Container(
                 color: ThemeColor.bg,
-                padding: const EdgeInsets.only(left: AppPadding.navBar / 2),
+                padding: const EdgeInsets.only(left: AppPadding.navBar),
                 alignment: Alignment.centerLeft,
                 child: CustomIcon(
                   icon: ThemeIcon.chat,
                   iconSize: IconSize.md,
                   iconColor: (widget.index == 1)
-                      ? ThemeColor.primary
+                      ? ThemeColor.secondary
                       : ThemeColor.textSecondary,
                 ),
               ),

@@ -13,6 +13,7 @@ class DefaultBumper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: const BoxConstraints(maxWidth: 396),
       padding: const EdgeInsets.all(AppPadding.bumper),
       width: MediaQuery.sizeOf(context).width,
       alignment: Alignment.center,
@@ -25,7 +26,7 @@ Widget singleButtonBumper(BuildContext context, String text, onTap,
     [bool isEnabled = true, variant]) {
   return DefaultBumper(
     content: CustomButton(
-      variant: variant ?? ButtonVariant.bitcoin,
+      variant: variant ?? ButtonVariant.primary,
       text: text,
       onTap: onTap,
       status: isEnabled ? 0 : 2,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'dart:io' show Platform;
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/sidebar.dart';
@@ -9,41 +10,41 @@ class Interface extends StatelessWidget {
   final Widget header;
   final Widget content;
   final Widget? bumper;
-  final GlobalState? globalState;
-  final int? navigationIndex;
+  final GlobalState globalState;
+  final int navigationIndex;
+  final bool desktopOnly;
 
-  const Interface({
+  const Interface(
+    this.globalState, {
     super.key,
-    this.globalState,
     this.resizeToAvoidBottomInset,
     required this.header,
     required this.content,
     this.bumper,
-    this.navigationIndex,
+    required this.navigationIndex,
+    this.desktopOnly = false,
   });
   @override
   Widget build(BuildContext context) {
+    print("platform $Platform");
     if (Platform.isAndroid || Platform.isIOS) {
       return MobileInterface(
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         header: header,
         content: content,
         bumper: bumper,
-        navBar: navigationIndex != null && globalState != null
-            ? TabNav(globalState!, index: navigationIndex!)
+        navBar: !desktopOnly
+            ? TabNav(globalState, index: navigationIndex)
             : Container(),
       );
     }
     return DesktopInterface(
-      header: header,
-      content: SizedBox(
-        child: content,
-      ),
-      bumper: bumper,
-      sidebar: navigationIndex != null && globalState != null
-          ? Sidebar(globalState!, index: navigationIndex!)
-          : Container(),
-    );
+        header: header,
+        content: SizedBox(
+          child: content,
+        ),
+        bumper: bumper,
+        sidebar: Sidebar(globalState, index: navigationIndex));
   }
 }
 
@@ -106,12 +107,15 @@ class DesktopInterface extends StatelessWidget {
         children: [
           if (sidebar != null) sidebar!,
           Expanded(
-            child: Column(
-              children: [
-                header,
-                Expanded(child: content),
-                if (bumper != null) bumper!,
-              ],
+            child: Container(
+              padding: const EdgeInsets.all(AppPadding.desktop),
+              child: Column(
+                children: [
+                  header,
+                  Expanded(child: content),
+                  if (bumper != null) bumper!,
+                ],
+              ),
             ),
           ),
         ],

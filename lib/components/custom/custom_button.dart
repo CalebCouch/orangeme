@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:orange/components/profile_photo.dart';
+import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
@@ -7,7 +9,6 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
 
 class ButtonVariant {
-  static const String bitcoin = "bitcoin";
   static const String primary = "primary";
   static const String secondary = "secondary";
   static const String ghost = "ghost";
@@ -17,6 +18,7 @@ class ButtonStatus {
   static const int _default = 0;
   static const int _hover = 1;
   static const int _disabled = 2;
+  static const int _selected = 3;
 }
 
 class ButtonColor {
@@ -29,34 +31,34 @@ class ButtonColor {
 Map buttonColors = {
   ButtonVariant.primary: {
     ButtonStatus._default:
-        const ButtonColor(ThemeColor.primary, ThemeColor.handle),
+        const ButtonColor(ThemeColor.primary, ThemeColor.colorHandle),
     ButtonStatus._hover:
-        const ButtonColor(ThemeColor.primary, ThemeColor.handle),
+        const ButtonColor(ThemeColor.primary, ThemeColor.colorHandle),
     ButtonStatus._disabled:
         const ButtonColor(ThemeColor.textSecondary, ThemeColor.handle),
+    ButtonStatus._selected:
+        const ButtonColor(ThemeColor.primary, ThemeColor.colorHandle),
   },
   ButtonVariant.secondary: {
-    ButtonStatus._default: const ButtonColor(ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._default:
+        const ButtonColor(ThemeColor.bg, ThemeColor.colorHandle),
     ButtonStatus._hover:
-        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.primary),
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
     ButtonStatus._disabled:
         const ButtonColor(ThemeColor.bg, ThemeColor.textSecondary),
+    ButtonStatus._selected:
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
   },
   ButtonVariant.ghost: {
-    ButtonStatus._default: const ButtonColor(ThemeColor.bg, ThemeColor.primary),
+    ButtonStatus._default:
+        const ButtonColor(ThemeColor.bg, ThemeColor.colorHandle),
     ButtonStatus._hover:
-        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.primary),
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
     ButtonStatus._disabled:
         const ButtonColor(ThemeColor.bg, ThemeColor.textSecondary),
+    ButtonStatus._selected:
+        const ButtonColor(ThemeColor.bgSecondary, ThemeColor.colorHandle),
   },
-  ButtonVariant.bitcoin: {
-    ButtonStatus._default:
-        const ButtonColor(ThemeColor.bitcoin, ThemeColor.primary),
-    ButtonStatus._hover:
-        const ButtonColor(ThemeColor.bitcoin, ThemeColor.primary),
-    ButtonStatus._disabled:
-        const ButtonColor(ThemeColor.textSecondary, ThemeColor.handle),
-  }
 };
 
 class CustomButton extends StatefulWidget {
@@ -66,20 +68,24 @@ class CustomButton extends StatefulWidget {
   final String text;
 
   final String? icon;
+  final String? pfp;
   final VoidCallback? onTap;
   final bool expand;
   final Alignment buttonAlignment;
+  final ShakeController? shakeController;
 
   const CustomButton({
     super.key,
     required this.text,
-    this.variant = ButtonVariant.bitcoin,
+    this.variant = ButtonVariant.primary,
     this.buttonSize = ButtonSize.lg,
     this.expand = true,
     this.status = ButtonStatus._default,
     this.icon,
+    this.pfp,
     this.onTap,
     this.buttonAlignment = Alignment.center,
+    this.shakeController,
   });
 
   @override
@@ -109,7 +115,7 @@ class _ButtonState extends State<CustomButton> {
         children: [
           CustomIcon(
             icon: widget.icon!,
-            iconSize: widget.buttonSize == 48 ? 48 : 20,
+            iconSize: widget.buttonSize == 48 ? 32 : 20,
           ),
           Spacing(
             width: _getButtonSpacing(widget.buttonSize),
@@ -121,10 +127,29 @@ class _ButtonState extends State<CustomButton> {
     }
   }
 
+  _displayPfp() {
+    return Row(
+      children: [
+        profilePhoto(context, widget.pfp, ProfileSize.sm),
+        Spacing(
+          width: _getButtonSpacing(widget.buttonSize),
+        )
+      ],
+    );
+  }
+
+  disabled() {
+    if (widget.shakeController != null) widget.shakeController!.shake();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.status == ButtonStatus._default ? widget.onTap : () {},
+    return InkWell(
+      onTap: widget.status == ButtonStatus._default
+          ? widget.onTap
+          : () {
+              disabled();
+            },
       child: Container(
         alignment: widget.expand ? widget.buttonAlignment : null,
         width: widget.expand ? double.infinity : null,
@@ -142,7 +167,8 @@ class _ButtonState extends State<CustomButton> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _displayIcon(),
+            widget.icon != null ? _displayIcon() : Container(),
+            widget.pfp != null ? _displayPfp() : Container(),
             CustomText(
               textSize: widget.buttonSize == 48 ? TextSize.lg : TextSize.md,
               textType: "label",
@@ -157,9 +183,13 @@ class _ButtonState extends State<CustomButton> {
 }
 
 Widget iconButton(BuildContext context, onTap, CustomIcon icon) {
-  return GestureDetector(
+  return InkWell(
     onTap: onTap ?? () {},
-    child: icon,
+    child: Container(
+      width: 50,
+      alignment: Alignment.centerLeft,
+      child: icon,
+    ),
   );
 }
 
@@ -172,7 +202,7 @@ Widget sendButton(BuildContext context, bool isEnabled) {
     CustomIcon(
       iconSize: IconSize.md,
       icon: ThemeIcon.send,
-      iconColor: isEnabled ? ThemeColor.primary : ThemeColor.textSecondary,
+      iconColor: isEnabled ? ThemeColor.secondary : ThemeColor.textSecondary,
     ),
   );
 }

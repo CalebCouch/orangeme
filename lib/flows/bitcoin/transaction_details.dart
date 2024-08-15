@@ -35,6 +35,7 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
     String direction = widget.transaction.isReceive ? "Received" : "Sent";
 
     return Interface(
+      widget.globalState,
       header: stackHeader(context, "$direction bitcoin"),
       content: Content(
         content: Column(
@@ -57,6 +58,8 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
         true,
         ButtonVariant.secondary,
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

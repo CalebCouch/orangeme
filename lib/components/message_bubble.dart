@@ -9,7 +9,7 @@ import 'package:orange/util.dart';
 Widget bubble(Message message) {
   return Container(
     decoration: ShapeDecoration(
-      color: message.isIncoming ? ThemeColor.bgSecondary : ThemeColor.bitcoin,
+      color: message.isIncoming ? ThemeColor.bgSecondary : ThemeColor.primary,
       shape: RoundedRectangleBorder(
         borderRadius: ThemeBorders.messageBubble,
       ),

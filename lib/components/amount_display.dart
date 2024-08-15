@@ -14,10 +14,10 @@ Widget AmountDisplay(double value, double converted) {
       return TextSize.title;
     } else if (accountBalance.length >= 5 && accountBalance.length <= 7) {
       //5-7
-      return TextSize.h1;
+      return TextSize.subtitle;
     } else {
       // 8-10
-      return TextSize.h2;
+      return TextSize.h1;
     }
   }
 

@@ -33,7 +33,7 @@ class CustomTextInput extends StatefulWidget {
 class CustomTextInputState extends State<CustomTextInput> {
   late TextEditingController controller;
   var borderColor = ThemeColor.outline;
-  var textColor = ThemeColor.primary;
+  var textColor = ThemeColor.secondary;
   var isFocused = false;
   var focusNode = FocusNode();
 
@@ -56,8 +56,8 @@ class CustomTextInputState extends State<CustomTextInput> {
   void _onFocusChange() {
     setState(() {
       isFocused = focusNode.hasFocus;
-      borderColor = isFocused ? ThemeColor.primary : ThemeColor.outline;
-      textColor = ThemeColor.primary;
+      borderColor = isFocused ? ThemeColor.secondary : ThemeColor.outline;
+      textColor = ThemeColor.secondary;
       if (!isFocused && controller.text.isEmpty) {
         borderColor = ThemeColor.outline;
       }

@@ -8,7 +8,7 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:orange/flows/wallet/send/send.dart';
+import 'package:orange/flows/bitcoin/send/send.dart';
 
 class ScanQR extends StatefulWidget {
   final GlobalState globalState;
@@ -40,6 +40,7 @@ class ScanQRState extends State<ScanQR> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
+      widget.globalState,
       header: stackHeader(
         context,
         "Scan QR code",
@@ -78,6 +79,8 @@ class ScanQRState extends State<ScanQR> {
           ),
         ],
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 

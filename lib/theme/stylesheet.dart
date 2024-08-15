@@ -52,7 +52,7 @@ class BrandSize {
 }
 
 class Brand {
-  static const String icon = 'assets/icons/icon.svg';
+  static const String icon = 'assets/icons/logo.svg';
   static const String logomark = 'assets/icons/logomark.svg';
 }
 
@@ -80,14 +80,14 @@ class ThemeColor {
   static const Color heading = ConstantsColor._white;
   static const Color text = ConstantsColor._lightGrey;
   static const Color textSecondary = ConstantsColor._grey;
-  static const Color primary = ConstantsColor._white;
+  static const Color primary = ConstantsColor._orange;
+  static const Color secondary = ConstantsColor._white;
   static const Color handle = ConstantsColor._black;
   static const Color colorHandle = ConstantsColor._white;
   static const Color outline = ConstantsColor._darkGrey;
   static const Color brand = ConstantsColor._white;
   static const Color success = ConstantsColor._green;
   static const Color danger = ConstantsColor._red;
-  static const Color bitcoin = ConstantsColor._orange;
 }
 
 ////ICONS////
@@ -155,12 +155,13 @@ class ButtonSize {
 //// PADDINGS ////
 
 class AppPadding {
+  static const double desktop = 16;
   static const double header = 16;
   static const double content = 24;
   static const double bumper = 16;
   static const double valueDisplaySep = 8;
   static const double valueDisplay = 32;
-  static const double navBar = 64;
+  static const double navBar = 32;
   static const double listItem = 16;
   static const double textInput = 12;
   static const double tips = 8;

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/src/rust/frb_generated.dart';
-import 'package:orange/flows/wallet/home.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'dart:io';
+import 'dart:io' show Platform;
 import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
   await RustLib.init();
-   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    WindowManager.instance.setMaximumSize(const Size(1280, 832));
+  }
   GlobalState globalState = GlobalState.init();
   runApp(MyApp(globalState: globalState));
   SystemChrome.setPreferredOrientations(
@@ -18,7 +22,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final GlobalState globalState;
-
   const MyApp({required this.globalState, super.key});
 
   @override
@@ -28,6 +31,6 @@ class MyApp extends StatelessWidget {
         navigatorKey: globalState.navkey,
         title: 'Orange',
         theme: theme(),
-        home: WalletHome(globalState));
+        home: BitcoinHome(globalState));
   }
 }

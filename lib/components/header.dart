@@ -7,6 +7,7 @@ import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:orange/flows/messages/conversation/info.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
+import 'dart:io' show Platform;
 
 class DefaultHeader extends StatelessWidget {
   final Widget? left;
@@ -50,7 +51,7 @@ class DefaultHeader extends StatelessWidget {
   }
 }
 
-Widget primaryHeader(BuildContext context, String text) {
+Widget homeDesktopHeader(BuildContext context, String text) {
   return DefaultHeader(
     center: CustomText(
       textType: "heading",
@@ -61,15 +62,21 @@ Widget primaryHeader(BuildContext context, String text) {
   );
 }
 
-Widget messagesHeader(BuildContext context, onTap, pfp) {
+Widget homeHeader(BuildContext context, onTap, text, pfp) {
+  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+  if (onDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
-    left: GestureDetector(
+    left: InkWell(
       onTap: onTap ?? () {},
-      child: profilePhoto(context, pfp),
+      child: Container(
+        width: 50,
+        alignment: Alignment.centerLeft,
+        child: profilePhoto(context, pfp),
+      ),
     ),
-    center: const CustomText(
+    center: CustomText(
       textType: "heading",
-      text: 'Messages',
+      text: text,
       textSize: TextSize.h3,
       color: ThemeColor.heading,
     ),
@@ -119,28 +126,39 @@ Widget stackMessageHeader(
   return DefaultHeader(
     height: 76,
     left: backButton(context),
-    center: InkWell(
-      onTap: () {
-        if (!isGroup) {
-          navigateTo(
-              context, UserProfile(globalState, userInfo: cnvo.members[0]));
-        }
-      },
-      child: Column(
-        children: [
-          isGroup
-              ? profilePhotoStack(context, cnvo.members)
-              : profilePhoto(context, cnvo.members[0].pfp),
-          const Spacing(height: 8),
-          CustomText(
-            textType: "heading",
-            text: isGroup ? 'Group message' : cnvo.members[0].name,
-            textSize: TextSize.h5,
-            color: ThemeColor.heading,
+    center: !isGroup
+        ? InkWell(
+            onTap: () {
+              navigateTo(
+                context,
+                UserProfile(globalState, userInfo: cnvo.members[0]),
+              );
+            },
+            child: Column(
+              children: [
+                profilePhoto(context, cnvo.members[0].pfp),
+                const Spacing(height: 8),
+                CustomText(
+                  textType: "heading",
+                  text: cnvo.members[0].name,
+                  textSize: TextSize.h5,
+                  color: ThemeColor.heading,
+                ),
+              ],
+            ),
+          )
+        : Column(
+            children: [
+              profilePhotoStack(context, cnvo.members),
+              const Spacing(height: 8),
+              const CustomText(
+                textType: "heading",
+                text: 'Group message',
+                textSize: TextSize.h5,
+                color: ThemeColor.heading,
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
     right: isGroup
         ? infoButton(
             context,

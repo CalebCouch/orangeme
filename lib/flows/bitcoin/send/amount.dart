@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/content.dart';
@@ -9,11 +10,143 @@ import 'package:orange/components/interface.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
+import 'dart:io' show Platform;
 
-import 'package:orange/flows/wallet/send/transaction_speed.dart';
+import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'dart:math';
+
+class ShakeController extends ChangeNotifier {
+  void shake() => notifyListeners();
+}
+
+class ShakeWidget extends StatefulWidget {
+  const ShakeWidget({
+    super.key,
+    required this.child,
+    required this.controller,
+    this.duration = const Duration(milliseconds: 500),
+    this.deltaX = 4,
+    this.oscillations = 6,
+    this.curve = Curves.linear,
+  });
+
+  final Duration duration;
+  final double deltaX;
+  final int oscillations;
+  final Widget child;
+  final Curve curve;
+  final ShakeController controller;
+
+  @override
+  ShakeWidgetState createState() => ShakeWidgetState();
+}
+
+class ShakeWidgetState extends State<ShakeWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: widget.curve),
+    );
+
+    widget.controller.addListener(_startShaking);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_startShaking);
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _startShaking() {
+    _animationController.forward(from: 0);
+  }
+
+  double _wave(double t) =>
+      sin(widget.oscillations * 2 * pi * t) * (1 - (2 * t - 1).abs());
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) => Transform.translate(
+          offset: Offset(
+            widget.deltaX * _wave(_animation.value),
+            0,
+          ),
+          child: widget.child,
+        ),
+        child: widget.child,
+      );
+}
+
+class SimpleKeyboardListener extends StatefulWidget {
+  final void Function(String) onPressed;
+  final Widget child;
+
+  const SimpleKeyboardListener({
+    super.key,
+    required this.onPressed,
+    required this.child,
+  });
+
+  @override
+  State<SimpleKeyboardListener> createState() => _SimpleKeyboardListenerState();
+}
+
+class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
+  bool _onKey(KeyEvent event) {
+    final key = event.logicalKey.keyLabel;
+
+    if (event is KeyDownEvent) {
+      if (isNumeric(key)) {
+        widget.onPressed(key);
+      }
+      if (event.logicalKey == LogicalKeyboardKey.backspace) {
+        widget.onPressed('backspace');
+      }
+      if (event.logicalKey == LogicalKeyboardKey.period) {
+        widget.onPressed('.');
+      }
+    }
+
+    return false;
+  }
+
+  bool isNumeric(String s) {
+    return double.tryParse(s) != null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
+  }
+
+  @override
+  void dispose() {
+    ServicesBinding.instance.keyboard.removeHandler(_onKey);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
 
 class SendAmount extends StatefulWidget {
   final GlobalState globalState;
@@ -61,12 +194,14 @@ class SendAmountState extends State<SendAmount> {
       } else if (amount.isNotEmpty) {
         updatedAmount = amount.substring(0, amount.length - 1);
       } else {
+        _shakeController.shake();
         updatedAmount = amount;
       }
     } else if (input == ".") {
-      if (!amount.contains(".")) {
+      if (!amount.contains(".") && amount.length <= 7) {
         updatedAmount = amount += ".";
       } else {
+        _shakeController.shake();
         updatedAmount = amount;
       }
     } else {
@@ -76,12 +211,14 @@ class SendAmountState extends State<SendAmount> {
         if (amount.length < 11 && amount.split(".")[1].length < 2) {
           updatedAmount = amount + input;
         } else {
+          _shakeController.shake();
           updatedAmount = amount;
         }
       } else {
         if (amount.length < 10) {
           updatedAmount = amount + input;
         } else {
+          _shakeController.shake();
           updatedAmount = amount;
         }
       }
@@ -102,39 +239,53 @@ class SendAmountState extends State<SendAmount> {
     });
   }
 
+  final ShakeController _shakeController = ShakeController();
   Widget buildScreen(BuildContext context, DartState state) {
     double parsed = double.parse(amount);
     double btc = parsed > 0
         ? (parsed / widget.globalState.state.value.currentPrice)
         : 0.0;
+    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
     return Interface(
+      widget.globalState,
       resizeToAvoidBottomInset: false,
       header: stackHeader(
         context,
         "Send bitcoin",
       ),
-      content: Content(
-        content: Center(
-          child: keyboardAmountDisplay(
-              widget.globalState, context, amount, btc, error),
+      content: SimpleKeyboardListener(
+        onPressed: updateAmount,
+        child: Content(
+          content: ShakeWidget(
+            controller: _shakeController,
+            child: Center(
+              child: keyboardAmountDisplay(
+                  widget.globalState, context, amount, btc, error),
+            ),
+          ),
         ),
       ),
       bumper: DefaultBumper(
         content: Column(
           children: [
-            NumericKeypad(
-              onNumberPressed: updateAmount,
-            ),
+            !onDesktop
+                ? NumericKeypad(
+                    onNumberPressed: updateAmount,
+                  )
+                : Container(),
             const Spacing(height: AppPadding.content),
             CustomButton(
               status: (amount != "0" && error == "") ? 0 : 2,
-              variant: ButtonVariant.bitcoin,
               text: "Send",
-              onTap: () => next(0.00015), //change to btc
+              shakeController: _shakeController,
+              onTap: () => next(btc), //change to btc
             ),
           ],
         ),
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }
@@ -142,6 +293,7 @@ class SendAmountState extends State<SendAmount> {
 Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     String amt, double btc, String error) {
   String usd = amt.toString();
+  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
   Widget subText(String error) {
     if (error.isNotEmpty) {
@@ -160,6 +312,11 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
           ),
         ],
       );
+    } else if (onDesktop && amt == "0") {
+      return const CustomText(
+        text: "Type dollar amount.",
+        color: ThemeColor.textSecondary,
+      );
     } else {
       return CustomText(
         text: "${formatValue(btc, 8)} BTC",
@@ -168,34 +325,20 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     }
   }
 
-  var textSize = formatValue(double.parse(usd)).length <= 4
-      ? TextSize.title
-      : formatValue(double.parse(usd)).length <= 7
-          ? TextSize.h1
-          : TextSize.h2;
-
   displayDecimals(amt) {
     int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
-    String text;
     if (decimals == 0 && amt.contains(".")) {
-      text = '00';
+      return '00';
     } else if (decimals == 1) {
-      text = '0';
+      return '0';
     } else {
-      text = '';
+      return '';
     }
-    return CustomText(
-      textType: 'heading',
-      color: ThemeColor.textSecondary,
-      textSize: textSize,
-      text: text,
-    );
   }
 
   String valueUSD = '0';
-  var x;
+  String x = '';
   if (usd.contains('.')) x = usd.split(".")[1];
-
   if (usd.contains('.') && x.isEmpty) {
     valueUSD = formatValue(double.parse(usd));
     valueUSD += '.';
@@ -205,6 +348,16 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
   } else {
     valueUSD = formatValue(double.parse(usd));
   }
+
+  var length = usd.length;
+  if (usd.contains('.')) length - 1;
+  length = usd.length + displayDecimals(usd).length;
+
+  var textSize = length <= 5
+      ? TextSize.title
+      : length <= 7
+          ? TextSize.subtitle
+          : TextSize.h1;
 
   return Column(
     mainAxisSize: MainAxisSize.min,
@@ -220,7 +373,12 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
             textSize: textSize,
             text: "\$$valueUSD",
           ),
-          displayDecimals(usd)
+          CustomText(
+            textType: 'heading',
+            color: ThemeColor.textSecondary,
+            textSize: textSize,
+            text: displayDecimals(usd),
+          ),
         ],
       ),
       subText(error)
