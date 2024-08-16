@@ -13,6 +13,8 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'dart:io' show Platform;
 
 import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
+import 'package:vibration/vibration.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
@@ -164,6 +166,7 @@ class SendAmount extends StatefulWidget {
 class SendAmountState extends State<SendAmount> {
   String amount = "0";
   String error = "";
+  //Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
   @override
   Widget build(BuildContext context) {
@@ -187,6 +190,8 @@ class SendAmountState extends State<SendAmount> {
   }
 
   void updateAmount(String input) {
+    var buzz = FeedbackType.warning;
+    HapticFeedback.heavyImpact();
     var updatedAmount = "0";
     if (input == "backspace") {
       if (amount.length == 1) {
@@ -194,6 +199,7 @@ class SendAmountState extends State<SendAmount> {
       } else if (amount.isNotEmpty) {
         updatedAmount = amount.substring(0, amount.length - 1);
       } else {
+        Vibrate.feedback(buzz);
         _shakeController.shake();
         updatedAmount = amount;
       }
@@ -201,6 +207,7 @@ class SendAmountState extends State<SendAmount> {
       if (!amount.contains(".") && amount.length <= 7) {
         updatedAmount = amount += ".";
       } else {
+        Vibrate.feedback(buzz);
         _shakeController.shake();
         updatedAmount = amount;
       }
@@ -211,6 +218,7 @@ class SendAmountState extends State<SendAmount> {
         if (amount.length < 11 && amount.split(".")[1].length < 2) {
           updatedAmount = amount + input;
         } else {
+          Vibrate.feedback(buzz);
           _shakeController.shake();
           updatedAmount = amount;
         }
@@ -218,6 +226,7 @@ class SendAmountState extends State<SendAmount> {
         if (amount.length < 10) {
           updatedAmount = amount + input;
         } else {
+          Vibrate.feedback(buzz);
           _shakeController.shake();
           updatedAmount = amount;
         }

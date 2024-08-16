@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
@@ -87,6 +89,7 @@ class SendState extends State<Send> {
               ),
               const Spacing(height: AppPadding.content),
               ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
+                HapticFeedback.heavyImpact();
                 String data = (await getClipBoardData()).toString();
                 if (data != "null") {
                   setAddress(data);
