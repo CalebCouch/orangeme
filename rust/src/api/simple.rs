@@ -327,7 +327,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
                     Message { sender: chris_slaughter.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:45 PM".to_string(), is_incoming: true },
                     Message { sender: ella_couch.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:45 PM".to_string(), is_incoming: false },
                 ],
-                members: vec![josh_thayer.clone(), chris_slaughter.clone(), ella_couch.clone()]
+                members: vec![josh_thayer.clone(), chris_slaughter.clone(), ella_couch.clone(), josh_thayer_alt.clone(), chris_slaughter_alt.clone(), jw_weatherman.clone()]
             }
         ];
 
