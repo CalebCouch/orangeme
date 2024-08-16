@@ -166,7 +166,6 @@ class SendAmount extends StatefulWidget {
 class SendAmountState extends State<SendAmount> {
   String amount = "0";
   String error = "";
-  //Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
   @override
   Widget build(BuildContext context) {
