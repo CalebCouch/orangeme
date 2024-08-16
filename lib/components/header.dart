@@ -7,6 +7,7 @@ import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:orange/flows/messages/conversation/info.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'dart:io' show Platform;
 
 class DefaultHeader extends StatelessWidget {
@@ -62,12 +63,18 @@ Widget homeDesktopHeader(BuildContext context, String text) {
   );
 }
 
-Widget homeHeader(BuildContext context, onTap, text, pfp) {
+Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
+    [Widget? iconButton]) {
   bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
   if (onDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
     left: InkWell(
-      onTap: onTap ?? () {},
+      onTap: () {
+        navigateTo(
+          context,
+          MyProfile(globalState),
+        );
+      },
       child: Container(
         width: 50,
         alignment: Alignment.centerLeft,
@@ -80,6 +87,7 @@ Widget homeHeader(BuildContext context, onTap, text, pfp) {
       textSize: TextSize.h3,
       color: ThemeColor.heading,
     ),
+    right: iconButton,
   );
 }
 

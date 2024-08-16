@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
@@ -115,11 +116,10 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 runSpacing: 8,
                 children: List<Widget>.generate(recipients.length, (index) {
                   return oneTip(
-                    ButtonTip(
-                      recipients[index].name,
-                      ThemeIcon.close,
-                      () => removeRecipient(recipients[index]),
-                    ),
+                    ButtonTip(recipients[index].name, ThemeIcon.close, () {
+                      HapticFeedback.heavyImpact();
+                      removeRecipient(recipients[index]);
+                    }),
                   );
                 }),
               ),
@@ -128,11 +128,10 @@ class ChooseRecipientState extends State<ChooseRecipient> {
               child: ListView.builder(
                 itemCount: filteredContacts.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return contactListItem(
-                    context,
-                    filteredContacts[index],
-                    () => addRecipient(filteredContacts[index]),
-                  );
+                  return contactListItem(context, filteredContacts[index], () {
+                    HapticFeedback.heavyImpact();
+                    addRecipient(filteredContacts[index]);
+                  });
                 },
               ),
             ),

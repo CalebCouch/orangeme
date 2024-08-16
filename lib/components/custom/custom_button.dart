@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
-
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:orange/util.dart';
 
 class ButtonVariant {
@@ -139,7 +140,10 @@ class _ButtonState extends State<CustomButton> {
   }
 
   disabled() {
-    if (widget.shakeController != null) widget.shakeController!.shake();
+    if (widget.shakeController != null) {
+      widget.shakeController!.shake();
+      Vibrate.feedback(FeedbackType.warning);
+    }
   }
 
   @override
@@ -182,12 +186,17 @@ class _ButtonState extends State<CustomButton> {
   }
 }
 
-Widget iconButton(BuildContext context, onTap, CustomIcon icon) {
+Widget iconButton(BuildContext context, onTap, CustomIcon icon,
+    [bool widenLeft = false, bool widenRight = false]) {
   return InkWell(
     onTap: onTap ?? () {},
     child: Container(
-      width: 50,
-      alignment: Alignment.centerLeft,
+      width: widenLeft || widenRight ? 50 : null,
+      alignment: widenLeft
+          ? Alignment.centerRight
+          : widenRight
+              ? Alignment.centerLeft
+              : null,
       child: icon,
     ),
   );

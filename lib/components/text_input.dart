@@ -9,6 +9,7 @@ class CustomTextInput extends StatefulWidget {
   final String? title;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
+  final ValueChanged<String>? onSubmitted;
   final bool showIcon;
   final String error;
   final String? presetTxt;
@@ -20,6 +21,7 @@ class CustomTextInput extends StatefulWidget {
     this.hint = 'Enter the text here',
     this.onChanged,
     this.onEditingComplete,
+    this.onSubmitted,
     this.showIcon = false,
     this.error = '',
     this.presetTxt,
@@ -36,11 +38,14 @@ class CustomTextInputState extends State<CustomTextInput> {
   var textColor = ThemeColor.secondary;
   var isFocused = false;
   var focusNode = FocusNode();
+  bool iconEnabled = true;
 
   @override
   void initState() {
     super.initState();
-    controller = widget.controller ?? TextEditingController();
+    controller =
+        widget.controller ?? TextEditingController(text: widget.presetTxt);
+    if (widget.showIcon == true) iconEnabled = false;
     focusNode.addListener(_onFocusChange);
   }
 
@@ -64,29 +69,14 @@ class CustomTextInputState extends State<CustomTextInput> {
     });
   }
 
-  Widget _buildTextField() {
-    if (widget.presetTxt != null && widget.presetTxt != '') {
-      controller.text = widget.presetTxt!;
-    }
-    return Expanded(
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        cursorWidth: 2.0,
-        cursorColor: ThemeColor.textSecondary,
-        style: TextStyle(color: textColor),
-        onChanged: widget.onChanged,
-        onEditingComplete: widget.onEditingComplete,
-        textInputAction: TextInputAction.done,
-        decoration: InputDecoration(
-          hintText: isFocused ? '' : widget.hint,
-          hintStyle: const TextStyle(color: ThemeColor.outline),
-          border: InputBorder.none,
-          filled: true,
-          fillColor: ThemeColor.bg,
-        ),
-      ),
-    );
+  Future<void> iconStatus(String text) async {
+    setState(() {
+      if (text == '') {
+        iconEnabled = false;
+      } else {
+        iconEnabled = true;
+      }
+    });
   }
 
   @override
@@ -120,8 +110,31 @@ class CustomTextInputState extends State<CustomTextInput> {
                 const EdgeInsets.symmetric(horizontal: AppPadding.textInput),
             child: Row(
               children: [
-                _buildTextField(),
-                widget.showIcon ? sendButton(context, true) : Container(),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    cursorWidth: 2.0,
+                    cursorColor: ThemeColor.textSecondary,
+                    style: TextStyle(color: textColor),
+                    onChanged: widget.showIcon
+                        ? (String text) => iconStatus(text)
+                        : widget.onChanged,
+                    onSubmitted: widget.onSubmitted,
+                    onEditingComplete: widget.onEditingComplete,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      hintText: widget.hint,
+                      hintStyle: const TextStyle(color: ThemeColor.outline),
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: ThemeColor.bg,
+                    ),
+                  ),
+                ),
+                widget.showIcon
+                    ? sendButton(context, iconEnabled)
+                    : Container(),
               ],
             ),
           ),
@@ -143,7 +156,7 @@ class CustomTextInputState extends State<CustomTextInput> {
 }
 
 Widget messageInput() {
-  return const DefaultBumper(
+  return DefaultBumper(
     content: CustomTextInput(
       hint: 'Message',
       showIcon: true,

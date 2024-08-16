@@ -39,6 +39,7 @@ class MessageInfoState extends State<MessageInfo> {
   Widget build_screen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
+      resizeToAvoidBottomInset: false,
       header: stackHeader(context, "Group members"),
       content: Content(
         content: Column(

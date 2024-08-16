@@ -106,7 +106,16 @@ class ImageListItem extends StatelessWidget {
 Widget messageListItem(
     BuildContext context, Conversation convo, VoidCallback onTap) {
   bool isGroup = false;
+  String listNames = '';
   if (convo.members.length > 1) isGroup = true;
+  for (var contact in convo.members) {
+    if (listNames.isEmpty) {
+      listNames = contact.name;
+    } else {
+      listNames = '$listNames, ${contact.name}';
+    }
+  }
+
   return ImageListItem(
     onTap: onTap,
     left: Container(
@@ -127,11 +136,19 @@ Widget messageListItem(
         ? CustomText(
             trim: true,
             alignment: TextAlign.left,
-            text: convo.messages.last.message,
+            text: isGroup ? listNames : convo.messages.last.message,
             textSize: TextSize.sm,
             color: ThemeColor.textSecondary,
-            maxLines: 2)
-        : Container(),
+            maxLines: 2,
+          )
+        : CustomText(
+            trim: true,
+            alignment: TextAlign.left,
+            text: listNames,
+            textSize: TextSize.sm,
+            color: ThemeColor.textSecondary,
+            maxLines: 2,
+          ),
   );
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
@@ -80,6 +81,7 @@ class MyProfileState extends State<MyProfile> {
               editPhoto(
                 context,
                 () async {
+                  HapticFeedback.heavyImpact();
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {

@@ -8,7 +8,6 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/bitcoin/transaction_details.dart';
 
@@ -79,12 +78,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
       resizeToAvoidBottomInset: false,
       header: homeHeader(
         context,
-        () {
-          navigateTo(
-            context,
-            MyProfile(widget.globalState),
-          );
-        },
+        widget.globalState,
         "Wallet",
         state.personal.pfp,
       ),

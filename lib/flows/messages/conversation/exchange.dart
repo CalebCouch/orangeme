@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
@@ -33,7 +35,14 @@ class ExchangeState extends State<Exchange> {
     );
   }
 
+  ScrollController scrollController = ScrollController();
+
+  _scrollToBottom() {
+    scrollController.jumpTo(scrollController.position.maxScrollExtent);
+  }
+
   Widget build_screen(BuildContext context, DartState state) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     return Interface(
       widget.globalState,
       header: stackMessageHeader(
@@ -50,7 +59,7 @@ class ExchangeState extends State<Exchange> {
                   color: ThemeColor.textSecondary,
                 ),
               )
-            : messageStack(widget.globalState, context,
+            : messageStack(widget.globalState, context, scrollController,
                 widget.conversation.members, widget.conversation.messages),
       ),
       bumper: messageInput(),

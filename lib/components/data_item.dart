@@ -164,6 +164,7 @@ Widget addressItem(BuildContext context, String address) {
     buttonIcons: const [ThemeIcon.copy],
     buttonActions: [
       () async {
+        HapticFeedback.heavyImpact();
         await Clipboard.setData(ClipboardData(text: address));
       },
     ],
@@ -185,6 +186,7 @@ Widget didItem(BuildContext context, String did) {
     buttonIcons: const [ThemeIcon.copy],
     buttonActions: [
       () async {
+        HapticFeedback.heavyImpact();
         await Clipboard.setData(ClipboardData(text: did));
       },
     ],
