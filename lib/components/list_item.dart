@@ -59,14 +59,18 @@ class DefaultListItem extends StatelessWidget {
 }
 
 class ImageListItem extends StatelessWidget {
-  final Widget? left;
+  final Widget? image;
   final Widget? topRight;
   final Widget? bottomRight;
+  final Widget? topLeft;
+  final Widget? bottomLeft;
   final VoidCallback? onTap;
 
   const ImageListItem({
     super.key,
-    this.left,
+    this.image,
+    this.topLeft,
+    this.bottomLeft,
     this.topRight,
     this.bottomRight,
     this.onTap,
@@ -84,18 +88,29 @@ class ImageListItem extends StatelessWidget {
           children: [
             Container(
               alignment: Alignment.centerLeft,
-              child: (left != null) ? left! : Container(),
+              child: (image != null) ? image! : Container(),
             ),
             const Spacing(width: AppPadding.listItem),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (topRight != null) topRight!,
-                  if (bottomRight != null) bottomRight!,
+                  if (topLeft != null) topLeft!,
+                  if (bottomLeft != null) bottomLeft!,
                 ],
               ),
             ),
+            topRight != null || bottomRight != null
+                ? Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (topRight != null) topRight!,
+                        if (bottomRight != null) bottomRight!,
+                      ],
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -109,21 +124,21 @@ Widget messageListItem(
   if (convo.members.length > 1) isGroup = true;
   return ImageListItem(
     onTap: onTap,
-    left: Container(
+    image: Container(
       alignment: Alignment.centerLeft,
       child: profilePhoto(
         context,
         isGroup ? null : convo.members[0].pfp,
+        'group',
         ProfileSize.lg,
-        false,
         isGroup,
       ),
     ),
-    topRight: CustomText(
+    topLeft: CustomText(
       text: isGroup ? 'Group message' : convo.members[0].name,
       textSize: TextSize.md,
     ),
-    bottomRight: convo.messages.isNotEmpty
+    bottomLeft: convo.messages.isNotEmpty
         ? CustomText(
             trim: true,
             alignment: TextAlign.left,
@@ -138,15 +153,15 @@ Widget messageListItem(
 Widget contactListItem(BuildContext context, Contact contact, onTap) {
   return ImageListItem(
     onTap: onTap,
-    left: Container(
+    image: Container(
       alignment: Alignment.centerLeft,
-      child: profilePhoto(context, contact.pfp, ProfileSize.lg),
+      child: profilePhoto(context, contact.pfp, null, ProfileSize.lg),
     ),
-    topRight: CustomText(
+    topLeft: CustomText(
       text: contact.name,
       textSize: TextSize.md,
     ),
-    bottomRight: CustomText(
+    bottomLeft: CustomText(
       text: middleCut(contact.did, 30),
       textSize: TextSize.sm,
       color: ThemeColor.textSecondary,

@@ -47,7 +47,7 @@ class UserProfileState extends State<UserProfile> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              profilePhoto(context, widget.userInfo.pfp, ProfileSize.xxl),
+              profilePhoto(context, widget.userInfo.pfp, null, ProfileSize.xxl),
               const Spacing(height: AppPadding.profile),
               aboutMeItem(
                   context, widget.userInfo.abtme ?? "There's nothing here..."),

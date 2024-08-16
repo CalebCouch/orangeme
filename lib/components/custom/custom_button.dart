@@ -7,6 +7,7 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/flows/bitcoin/new_wallet/spending/new_wallet.dart';
+import 'package:orange/flows/bitcoin/new_wallet/wallet_info.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
@@ -133,7 +134,7 @@ class _ButtonState extends State<CustomButton> {
   _displayPfp() {
     return Row(
       children: [
-        profilePhoto(context, widget.pfp, ProfileSize.sm),
+        profilePhoto(context, widget.pfp, null, ProfileSize.sm),
         Spacing(
           width: _getButtonSpacing(widget.buttonSize),
         )
@@ -240,6 +241,18 @@ Widget exitButton(BuildContext context, Widget home) {
 }
 
 Widget infoButton(BuildContext context, Widget page) {
+  return iconButton(
+    context,
+    () {
+      navigateTo(context, page);
+    },
+    const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
+    true,
+    false,
+  );
+}
+
+Widget walletInfoButton(BuildContext context, Widget page) {
   return iconButton(
     context,
     () {

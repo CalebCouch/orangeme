@@ -4,6 +4,7 @@ import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/classes/test_classes.dart';
 import 'dart:io';
 import 'dart:io' show Platform;
 import 'package:window_manager/window_manager.dart';
@@ -27,10 +28,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        navigatorKey: globalState.navkey,
-        title: 'Orange',
-        theme: theme(),
-        home: BitcoinHome(globalState));
+      debugShowCheckedModeBanner: false,
+      navigatorKey: globalState.navkey,
+      title: 'Orange',
+      theme: theme(),
+      home: BitcoinHome(globalState, wallets: const [
+        Wallet(
+          'Wallet',
+          [],
+          13.83,
+          0.00003452,
+          true,
+        ),
+        Wallet(
+          'My Wallet 2',
+          [],
+          13.83,
+          0.00003452,
+          true,
+        ),
+      ]),
+    );
   }
 }

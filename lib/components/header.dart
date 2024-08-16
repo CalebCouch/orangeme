@@ -114,15 +114,17 @@ Widget stackButtonHeader(
   );
 }
 
-Widget stackHeader(BuildContext context, String text, [Widget? iconButton]) {
+Widget stackHeader(BuildContext context, String text,
+    [Widget? rightIcon, Widget? leftIcon]) {
   return DefaultHeader(
-    left: iconButton ?? backButton(context),
+    left: rightIcon ?? backButton(context),
     center: CustomText(
       textType: "heading",
       text: text,
       textSize: TextSize.h4,
       color: ThemeColor.heading,
     ),
+    right: leftIcon,
   );
 }
 

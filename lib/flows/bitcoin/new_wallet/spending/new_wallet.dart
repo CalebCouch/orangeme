@@ -12,8 +12,7 @@ import 'package:orange/util.dart';
 
 class NewWallet extends StatefulWidget {
   final GlobalState globalState;
-  final String? address;
-  const NewWallet(this.globalState, {super.key, this.address});
+  const NewWallet(this.globalState, {super.key});
 
   @override
   NewWalletState createState() => NewWalletState();
@@ -41,6 +40,7 @@ class NewWalletState extends State<NewWallet> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomTextInput(
+              title: 'Wallet Name',
               controller: controller,
             ),
           ],

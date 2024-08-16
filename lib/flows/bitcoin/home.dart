@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/classes/test_classes.dart';
 
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/list_item.dart';
@@ -12,8 +13,11 @@ import 'package:orange/components/tip_buttons.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/flows/bitcoin/transaction_details.dart';
+import 'package:orange/flows/bitcoin/new_wallet/wallet_info.dart';
+import 'package:orange/flows/bitcoin/multi_home.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'dart:io' show Platform;
@@ -22,7 +26,12 @@ import 'package:orange/util.dart';
 
 class BitcoinHome extends StatefulWidget {
   final GlobalState globalState;
-  const BitcoinHome(this.globalState, {super.key});
+  final List<Wallet>? wallets;
+  const BitcoinHome(
+    this.globalState, {
+    super.key,
+    this.wallets,
+  });
 
   @override
   State<BitcoinHome> createState() => BitcoinHomeState();
@@ -82,20 +91,61 @@ class BitcoinHomeState extends State<BitcoinHome> {
     return Interface(
       widget.globalState,
       resizeToAvoidBottomInset: false,
-      header: onDesktop
-          ? homeHeader(
+      header: widget.wallets != null && widget.wallets!.length > 1
+          ? stackHeader(
               context,
-              widget.globalState,
-              "Wallet",
-              state.personal.pfp,
-            )
-          : homeHeader(
-              context,
-              widget.globalState,
               'Wallet',
-              state.personal.pfp,
-              newWalletButton(context, widget.globalState),
-            ),
+              iconButton(
+                context,
+                () {
+                  navigateTo(
+                    context,
+                    MultiHome(
+                      widget.globalState,
+                      [
+                        Wallet(
+                          'Wallet',
+                          state.transactions,
+                          state.usdBalance,
+                          state.btcBalance,
+                          true,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
+                false,
+                true,
+              ),
+              walletInfoButton(
+                context,
+                WalletInfo(
+                  widget.globalState,
+                  Wallet(
+                    'Wallet',
+                    state.transactions,
+                    state.usdBalance,
+                    state.btcBalance,
+                    true,
+                  ),
+                ),
+              ),
+            )
+          : onDesktop
+              ? homeHeader(
+                  context,
+                  widget.globalState,
+                  "Wallet",
+                  state.personal.pfp,
+                )
+              : homeHeader(
+                  context,
+                  widget.globalState,
+                  'Wallet',
+                  state.personal.pfp,
+                  newWalletButton(context, widget.globalState),
+                ),
       content: Content(
         content: Column(
           children: [
