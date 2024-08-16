@@ -9,6 +9,7 @@ class CustomTextInput extends StatefulWidget {
   final String? title;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
+  final ValueChanged<String>? onSubmitted;
   final bool showIcon;
   final String error;
   final String? presetTxt;
@@ -20,6 +21,7 @@ class CustomTextInput extends StatefulWidget {
     this.hint = 'Enter the text here',
     this.onChanged,
     this.onEditingComplete,
+    this.onSubmitted,
     this.showIcon = false,
     this.error = '',
     this.presetTxt,
@@ -40,7 +42,8 @@ class CustomTextInputState extends State<CustomTextInput> {
   @override
   void initState() {
     super.initState();
-    controller = widget.controller ?? TextEditingController();
+    controller =
+        widget.controller ?? TextEditingController(text: widget.presetTxt);
     focusNode.addListener(_onFocusChange);
   }
 
@@ -62,31 +65,6 @@ class CustomTextInputState extends State<CustomTextInput> {
         borderColor = ThemeColor.outline;
       }
     });
-  }
-
-  Widget _buildTextField() {
-    if (widget.presetTxt != null && widget.presetTxt != '') {
-      controller.text = widget.presetTxt!;
-    }
-    return Expanded(
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        cursorWidth: 2.0,
-        cursorColor: ThemeColor.textSecondary,
-        style: TextStyle(color: textColor),
-        onChanged: widget.onChanged,
-        onEditingComplete: widget.onEditingComplete,
-        textInputAction: TextInputAction.done,
-        decoration: InputDecoration(
-          hintText: isFocused ? '' : widget.hint,
-          hintStyle: const TextStyle(color: ThemeColor.outline),
-          border: InputBorder.none,
-          filled: true,
-          fillColor: ThemeColor.bg,
-        ),
-      ),
-    );
   }
 
   @override
@@ -120,7 +98,26 @@ class CustomTextInputState extends State<CustomTextInput> {
                 const EdgeInsets.symmetric(horizontal: AppPadding.textInput),
             child: Row(
               children: [
-                _buildTextField(),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    cursorWidth: 2.0,
+                    cursorColor: ThemeColor.textSecondary,
+                    style: TextStyle(color: textColor),
+                    onChanged: widget.onChanged,
+                    onSubmitted: widget.onSubmitted,
+                    onEditingComplete: widget.onEditingComplete,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      hintText: isFocused ? '' : widget.hint,
+                      hintStyle: const TextStyle(color: ThemeColor.outline),
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: ThemeColor.bg,
+                    ),
+                  ),
+                ),
                 widget.showIcon ? sendButton(context, true) : Container(),
               ],
             ),

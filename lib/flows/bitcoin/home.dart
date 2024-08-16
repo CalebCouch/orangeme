@@ -79,12 +79,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
       resizeToAvoidBottomInset: false,
       header: homeHeader(
         context,
-        () {
-          navigateTo(
-            context,
-            MyProfile(widget.globalState),
-          );
-        },
+        widget.globalState,
         "Wallet",
         state.personal.pfp,
       ),

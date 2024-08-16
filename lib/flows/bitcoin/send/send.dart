@@ -28,6 +28,15 @@ class SendState extends State<Send> {
   String addressStr = '';
   bool addressValid = false;
 
+  Future<void> checkAddress(String address) async {
+    var valid =
+        (await widget.globalState.invoke("check_address", address)).data ==
+            "true";
+    setState(() {
+      addressValid = valid;
+    });
+  }
+
   Future<void> setAddress(String address) async {
     var valid =
         (await widget.globalState.invoke("check_address", address)).data ==
@@ -35,11 +44,13 @@ class SendState extends State<Send> {
     setState(() {
       addressStr = address;
       addressValid = valid;
+      controller.text = addressStr;
     });
   }
 
   @override
   initState() {
+    controller.text = addressStr;
     setAddress(widget.address ?? "");
     super.initState();
   }
@@ -54,6 +65,8 @@ class SendState extends State<Send> {
     );
   }
 
+  final TextEditingController controller = TextEditingController();
+
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
@@ -64,8 +77,9 @@ class SendState extends State<Send> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CustomTextInput(
-                presetTxt: addressStr,
-                onChanged: (String address) => {setAddress(address)},
+                controller: controller,
+                onSubmitted: (String address) => {setAddress(address)},
+                onChanged: (String address) => {checkAddress(address)},
                 error: addressValid || addressStr.isEmpty
                     ? ""
                     : "Not a valid address",

@@ -182,12 +182,17 @@ class _ButtonState extends State<CustomButton> {
   }
 }
 
-Widget iconButton(BuildContext context, onTap, CustomIcon icon) {
+Widget iconButton(BuildContext context, onTap, CustomIcon icon,
+    [bool widenLeft = false, bool widenRight = false]) {
   return InkWell(
     onTap: onTap ?? () {},
     child: Container(
-      width: 50,
-      alignment: Alignment.centerLeft,
+      width: widenLeft || widenRight ? 50 : null,
+      alignment: widenLeft
+          ? Alignment.centerRight
+          : widenRight
+              ? Alignment.centerLeft
+              : null,
       child: icon,
     ),
   );
