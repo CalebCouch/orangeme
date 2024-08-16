@@ -38,12 +38,14 @@ class CustomTextInputState extends State<CustomTextInput> {
   var textColor = ThemeColor.secondary;
   var isFocused = false;
   var focusNode = FocusNode();
+  bool iconEnabled = true;
 
   @override
   void initState() {
     super.initState();
     controller =
         widget.controller ?? TextEditingController(text: widget.presetTxt);
+    if (widget.showIcon == true) iconEnabled = false;
     focusNode.addListener(_onFocusChange);
   }
 
@@ -63,6 +65,16 @@ class CustomTextInputState extends State<CustomTextInput> {
       textColor = ThemeColor.secondary;
       if (!isFocused && controller.text.isEmpty) {
         borderColor = ThemeColor.outline;
+      }
+    });
+  }
+
+  Future<void> iconStatus(String text) async {
+    setState(() {
+      if (text == '') {
+        iconEnabled = false;
+      } else {
+        iconEnabled = true;
       }
     });
   }
@@ -105,12 +117,14 @@ class CustomTextInputState extends State<CustomTextInput> {
                     cursorWidth: 2.0,
                     cursorColor: ThemeColor.textSecondary,
                     style: TextStyle(color: textColor),
-                    onChanged: widget.onChanged,
+                    onChanged: widget.showIcon
+                        ? (String text) => iconStatus(text)
+                        : widget.onChanged,
                     onSubmitted: widget.onSubmitted,
                     onEditingComplete: widget.onEditingComplete,
                     textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
-                      hintText: isFocused ? '' : widget.hint,
+                      hintText: widget.hint,
                       hintStyle: const TextStyle(color: ThemeColor.outline),
                       border: InputBorder.none,
                       filled: true,
@@ -118,7 +132,9 @@ class CustomTextInputState extends State<CustomTextInput> {
                     ),
                   ),
                 ),
-                widget.showIcon ? sendButton(context, true) : Container(),
+                widget.showIcon
+                    ? sendButton(context, iconEnabled)
+                    : Container(),
               ],
             ),
           ),
@@ -140,7 +156,7 @@ class CustomTextInputState extends State<CustomTextInput> {
 }
 
 Widget messageInput() {
-  return const DefaultBumper(
+  return DefaultBumper(
     content: CustomTextInput(
       hint: 'Message',
       showIcon: true,

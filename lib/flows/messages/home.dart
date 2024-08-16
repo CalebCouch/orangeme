@@ -10,7 +10,6 @@ import 'package:orange/components/list_item.dart';
 
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
-import 'package:orange/flows/messages/profile/my_profile.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
@@ -41,6 +40,7 @@ class MessagesHomeState extends State<MessagesHome> {
     //print(state.users);
     return Interface(
       widget.globalState,
+      resizeToAvoidBottomInset: false,
       header: homeHeader(
         context,
         widget.globalState,

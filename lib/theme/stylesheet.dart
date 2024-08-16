@@ -163,7 +163,7 @@ class AppPadding {
   static const double valueDisplay = 32;
   static const double navBar = 32;
   static const double listItem = 16;
-  static const double textInput = 12;
+  static const double textInput = 8;
   static const double tips = 8;
   static const double tab = 4;
   static const double message = 8;
