@@ -128,13 +128,18 @@ Widget textMessage(
   );
 }
 
-Widget messageStack(GlobalState globalState, BuildContext context,
-    List<Contact> contacts, List<Message> messages) {
+Widget messageStack(
+    GlobalState globalState,
+    BuildContext context,
+    ScrollController controller,
+    List<Contact> contacts,
+    List<Message> messages) {
   var isGroup = false;
   if (contacts.length > 1) isGroup = true;
   return SizedBox(
     height: double.infinity,
     child: ListView.builder(
+      controller: controller,
       itemCount: messages.length,
       itemBuilder: (BuildContext context, int index) {
         return textMessage(
