@@ -5,9 +5,11 @@ import 'package:orange/components/qr_code/qr_code.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/flows/bitcoin/pairing/download_mobile.dart';
 
 import 'package:orange/components/interface.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 class PairingCode extends StatefulWidget {
   final GlobalState globalState;
@@ -32,7 +34,7 @@ class PairingCodeState extends State<PairingCode> {
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
-      header: stackHeader(context, "Receive bitcoin"),
+      header: homeDesktopHeader(context, "Receive bitcoin"),
       content: Content(
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -70,7 +72,11 @@ class PairingCodeState extends State<PairingCode> {
               textSize: TextSize.md,
             ),
             const Spacing(height: AppPadding.content),
-            ButtonTip(text: 'Download the App', onTap: () {})
+            ButtonTip(
+                text: 'Download the App',
+                onTap: () {
+                  navigateTo(context, DownloadMobile(widget.globalState));
+                })
           ],
         ),
       ),

@@ -14,7 +14,7 @@ Future<void> main() async {
   await RustLib.init();
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    WindowManager.instance.setMaximumSize(const Size(1280, 832));
+    WindowManager.instance.setMinimumSize(const Size(1280, 832));
   }
   GlobalState globalState = GlobalState.init();
   runApp(MyApp(globalState: globalState));

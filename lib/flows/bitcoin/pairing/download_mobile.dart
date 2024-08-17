@@ -12,15 +12,15 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
-class DownloadDesktop extends StatefulWidget {
+class DownloadMobile extends StatefulWidget {
   final GlobalState globalState;
-  const DownloadDesktop(this.globalState, {super.key});
+  const DownloadMobile(this.globalState, {super.key});
 
   @override
-  State<DownloadDesktop> createState() => DownloadDesktopState();
+  State<DownloadMobile> createState() => DownloadMobileState();
 }
 
-class DownloadDesktopState extends State<DownloadDesktop> {
+class DownloadMobileState extends State<DownloadMobile> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
