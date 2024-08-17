@@ -39,7 +39,7 @@ class ConnectPhoneState extends State<ConnectPhone> {
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/mobile_home.png'),
+            Image.asset('assets/images/mobile_home.png', width: 200),
             const Spacing(height: 32),
             RichText(
               textAlign: TextAlign.center,
@@ -98,7 +98,7 @@ class DesktopConfirmState extends State<DesktopConfirm> {
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/mobile_get_desktop.png'),
+            Image.asset('assets/images/mobile_get_desktop.png', width: 200),
             const Spacing(height: 32),
             const CustomText(
               textType: 'heading',

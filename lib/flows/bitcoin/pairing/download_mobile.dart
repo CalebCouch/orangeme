@@ -3,7 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 import 'package:orange/flows/bitcoin/pairing/phone_walkthrough.dart';
-
+import 'package:orange/components/qr_code/qr_code.dart';
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
@@ -34,12 +34,12 @@ class DownloadMobileState extends State<DownloadMobile> {
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
-      header: stackHeader(context, "Download desktop"),
+      header: stackHeader(context, "Get the app"),
       content: Content(
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/desktop_home.png'),
+            qrCode('nothing to see here'),
             const Spacing(height: 32),
             RichText(
               textAlign: TextAlign.center,
