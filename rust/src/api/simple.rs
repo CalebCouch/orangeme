@@ -247,14 +247,14 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
     Ok(match prices.get(&timestamp.to_le_bytes())? {
         Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("get_price", "Price not f64 bytes")))?),
         None => {
-            //invoke(&callback, "print", "get_price:NONE").await?;
+            invoke(&callback, "print", "get_price:NONE").await?;
             let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
             let base_url = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
             let date = DateTime::from_timestamp(timestamp as i64, 0).ok_or(error)?.format("%Y-%m-%d").to_string();
             let url = format!("{}?date={}", base_url, date);
-            //invoke(&callback, "print", &format!("get_price:PRE{}", url)).await?;
+            invoke(&callback, "print", &format!("get_price:PRE{}", url)).await?;
             let reqwest = reqwest::get(&url).await?;
-            //invoke(&callback, "print", "reqwest").await?;
+            invoke(&callback, "print", "reqwest").await?;
             let spot_res: SpotRes = reqwest.json().await?;
             let price = spot_res.data.ok_or(Error::Error(spot_res.error.unwrap(), spot_res.message.unwrap()))?.amount.parse::<f64>()?;
             prices.set(&timestamp.to_le_bytes(), &price.to_le_bytes())?;
@@ -390,15 +390,17 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
                     let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
                     let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
-
+                    invoke(&callback, "print", &format!("{}", priority)).await?;
                     let price_error = || Error::not_found(ec, "Cannot get price");
                     let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                     let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+                    
+                    let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
 
                     let (mut psbt, mut tx_details) = {
                         let mut builder = wallet.build_tx();
                         builder.add_recipient(address.script_pubkey(), amount);
-                        builder.fee_rate(FeeRate::from_btc_per_kvb(blockchain.estimate_fee(3)? as f32));
+                        builder.fee_rate(FeeRate::from_btc_per_kvb(fees[0] as f32));
                         builder.finish()?
                     };
 
@@ -491,14 +493,14 @@ pub async fn rustStart (
         }
         store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
 
-        //invoke(&callback, "print", "Starting Threads").await?;
+        invoke(&callback, "print", "Starting Threads").await?;
         let result = tokio::try_join!(
             flatten(tokio::spawn(sync_thread(callback1, wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
             flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
             flatten(tokio::spawn(state_thread(callback3, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
             flatten(tokio::spawn(command_thread(callback4, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
         );
-        //invoke(&callback, "print", "Handling Threads").await?;
+        invoke(&callback, "print", "Handling Threads").await?;
 
         match result {
             Ok(_) => Ok(()),

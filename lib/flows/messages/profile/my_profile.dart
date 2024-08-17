@@ -77,17 +77,17 @@ class MyProfileState extends State<MyProfile> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              editPhoto(
+              /*editPhoto(
                 context,
                 () async {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
-                    setState(() => state.personal.pfp = image.path);
+                    //setState(() => state.personal.pfp = image.path);
                   }
                 },
                 state.personal.pfp,
-              ),
+              ),*/
               const Spacing(height: AppPadding.profile),
               CustomTextInput(
                 title: 'Profile Name',

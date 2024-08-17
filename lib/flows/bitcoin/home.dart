@@ -86,7 +86,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
           );
         },
         "Wallet",
-        state.personal.pfp,
+        //state.personal.pfp,
       ),
       content: Content(
         content: Column(

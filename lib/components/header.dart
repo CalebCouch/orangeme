@@ -62,7 +62,7 @@ Widget homeDesktopHeader(BuildContext context, String text) {
   );
 }
 
-Widget homeHeader(BuildContext context, onTap, text, pfp) {
+Widget homeHeader(BuildContext context, onTap, text, [pfp]) {
   bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
   if (onDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
