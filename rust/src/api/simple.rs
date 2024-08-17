@@ -158,42 +158,57 @@ async fn get_os(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<Str
     Ok(os)
 }
 
+async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<String>, os: String) -> Result<DescriptorSet, Error>{
+    let mut seed: [u8; 64] = [0; 64];
+    let action = if os == "IOS"{
+        "ios_set"
+    }else if os == "Android"{
+        "android_set"
+    }else{
+        "unknown"
+    };
+    rand::thread_rng().fill_bytes(&mut seed);
+    invoke(&callback, action, &format!("{}{}{}", "seed", STORAGE_SPLIT, &serde_json::to_string(&seed.to_vec())?)).await?;
+    let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
+    let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
+    let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
+    let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
+    let internal = in_desc.0.to_string_with_secret(&in_desc.1);
+    let set = DescriptorSet{legacy_spending_external:external, legacy_spending_internal:internal, premium_spending_external:None, premium_spending_internal:None, savings_external:None, savings_internal:None};
+    invoke(&callback, action, &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
+    return Ok(set)
+}
+
 async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
     let os = get_os(&callback).await?;
     let descriptors: String;
     match os.as_str() {
         "IOS" => {
-            descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+            descriptors = invoke(&callback, "ios_get", "descriptors").await?;
+            if descriptors.is_empty() {
+            let set = generate_legacy_descriptor(&callback, os).await?;
+            Ok(set)
+            } else {Ok(serde_json::from_str::<DescriptorSet>(&descriptors)?)}
         }
         "Android" =>{
-            //TODO needs different get logic
-            descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+            descriptors = invoke(&callback, "android_get", "descriptors").await?;
+            if descriptors.is_empty() {
+            let set = generate_legacy_descriptor(&callback, os).await?;
+            invoke(&callback, "android_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
+            Ok(set)
+            } else {Ok(serde_json::from_str::<DescriptorSet>(&descriptors)?)}
         }
         "Linux" | "Windows" | "MacOS" => {
-            //TODO needs different get logic
-            descriptors = invoke(&callback, "secure_get", "descriptors").await?;
+            //TODO may need different get logic
+            descriptors = invoke(&callback, "android_get", "descriptors").await?;
+            let descriptors = serde_json::from_str::<DescriptorSet>(&descriptors)?;
+            Ok(descriptors)
         }
         _ => {
             return Err(Error::Exited("Unsupported OS".to_string()));
 
         }
         }
-    //create legacy descriptor if it does not exist
-    let descriptors = if descriptors.is_empty() {
-        let mut seed: [u8; 64] = [0; 64];
-        rand::thread_rng().fill_bytes(&mut seed);
-        invoke(&callback, "secure_set", &format!("{}{}{}", "seed", STORAGE_SPLIT, &serde_json::to_string(&seed.to_vec())?)).await?;
-        let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
-        let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
-        let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
-        let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
-        let internal = in_desc.0.to_string_with_secret(&in_desc.1);
-        let set = DescriptorSet{legacy_spending_external:external, legacy_spending_internal:internal, premium_spending_external:None, premium_spending_internal:None, savings_external:None, savings_internal:None};
-
-        invoke(&callback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
-        set
-    } else {serde_json::from_str::<DescriptorSet>(&descriptors)?};
-    Ok(descriptors)
 }
 
 // async fn create_premium_descriptors(){

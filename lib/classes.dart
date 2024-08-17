@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Transaction {
   bool isReceive;
@@ -146,16 +147,50 @@ class GlobalState {
     }
   }
 
+  Future<void> iosWrite(data) async {
+    var split = data.split("\u0000");
+    await this.storage.write(key: split[0], value: split[1]);
+  }
+
+  Future<String> iosRead(data) async {
+    return await this.storage.read(key: data) ?? "";
+  }
+
+  Future<void> androidWrite(String data) async {
+    // Split the data by the delimiter
+    var split = data
+        .split("\u0000"); // Ensure that the split resulted in a key-value pair
+    if (split.length != 2) {
+      throw ArgumentError(
+          "Data must be a key-value pair separated by '\u0000'");
+    }
+    String key = split[0];
+    String value = split[1]; // Obtain SharedPreferences instance
+    final SharedPreferences prefs = await SharedPreferences
+        .getInstance(); // Write the data to SharedPreferences
+    await prefs.setString(key, value);
+  }
+
+  Future<String> androidRead(String key) async {
+    // Obtain SharedPreferences instance
+    final SharedPreferences prefs = await SharedPreferences
+        .getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
+    return prefs.getString(key) ?? "";
+  }
+
   Future<String> dartCallback(String dartCommand) async {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
       case "set_state":
         this.state.value = DartState.fromJson(jsonDecode(command.data));
-      case "secure_get":
-        return await this.storage.read(key: command.data) ?? "";
-      case "secure_set":
-        var split = command.data.split("\u0000");
-        await this.storage.write(key: split[0], value: split[1]);
+      case "ios_get":
+        return await iosRead(command.data);
+      case "ios_set":
+        await iosWrite(command.data);
+      case "android_get":
+        return await androidRead(command.data);
+      case "android_set":
+        await androidWrite(command.data);
       case "print":
         print(command.data);
       case "get_commands":
