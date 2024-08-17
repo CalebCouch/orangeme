@@ -40,7 +40,7 @@ class ConnectPhoneState extends State<ConnectPhone> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/images/mobile_home.png', width: 200),
-            const Spacing(height: 32),
+            const Spacing(height: 48),
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
@@ -65,7 +65,7 @@ class ConnectPhoneState extends State<ConnectPhone> {
       bumper: singleButtonBumper(context, 'Continue', () {
         navigateTo(context, DesktopConfirm(widget.globalState));
       }),
-      desktopOnly: true,
+      hide: true,
       navigationIndex: 2,
     );
   }
@@ -99,7 +99,7 @@ class DesktopConfirmState extends State<DesktopConfirm> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/images/mobile_get_desktop.png', width: 200),
-            const Spacing(height: 32),
+            const Spacing(height: 48),
             const CustomText(
               textType: 'heading',
               textSize: TextSize.h3,
@@ -113,6 +113,7 @@ class DesktopConfirmState extends State<DesktopConfirm> {
       }),
       desktopOnly: true,
       navigationIndex: 2,
+      hide: true,
     );
   }
 }

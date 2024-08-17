@@ -39,7 +39,7 @@ class DownloadMobileState extends State<DownloadMobile> {
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            qrCode('nothing to see here'),
+            qrCode('mobile.orange.me'),
             const Spacing(height: 32),
             RichText(
               textAlign: TextAlign.center,
