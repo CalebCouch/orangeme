@@ -13,6 +13,7 @@ class Interface extends StatelessWidget {
   final GlobalState globalState;
   final int navigationIndex;
   final bool desktopOnly;
+  final bool hide;
 
   const Interface(
     this.globalState, {
@@ -23,6 +24,7 @@ class Interface extends StatelessWidget {
     this.bumper,
     required this.navigationIndex,
     this.desktopOnly = false,
+    this.hide = false,
   });
   @override
   Widget build(BuildContext context) {
@@ -39,12 +41,14 @@ class Interface extends StatelessWidget {
       );
     }
     return DesktopInterface(
-        header: header,
-        content: SizedBox(
-          child: content,
-        ),
-        bumper: bumper,
-        sidebar: Sidebar(globalState, index: navigationIndex));
+      header: header,
+      content: SizedBox(
+        child: content,
+      ),
+      bumper: bumper,
+      sidebar:
+          hide ? Container() : Sidebar(globalState, index: navigationIndex),
+    );
   }
 }
 

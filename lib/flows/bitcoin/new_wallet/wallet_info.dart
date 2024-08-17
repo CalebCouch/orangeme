@@ -6,7 +6,6 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/classes/test_classes.dart';
-import 'dart:io' show Platform;
 
 import 'package:orange/classes.dart';
 

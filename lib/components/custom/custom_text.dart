@@ -73,3 +73,18 @@ class _CustomTextState extends State<CustomText> {
     );
   }
 }
+
+TextSpan textMark(textSize) {
+  return TextSpan(
+    style: TextStyle(
+      fontFamily: 'outfit',
+      fontSize: textSize,
+      fontWeight: FontWeight.w900,
+      color: ThemeColor.heading,
+    ),
+    children: const <TextSpan>[
+      TextSpan(text: 'orange', style: TextStyle(color: ThemeColor.primary)),
+      TextSpan(text: '.me'),
+    ],
+  );
+}

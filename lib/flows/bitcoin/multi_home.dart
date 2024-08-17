@@ -8,15 +8,11 @@ import 'package:orange/components/list_item.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/banner.dart';
-import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tip_buttons.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/flows/bitcoin/transaction_details.dart';
-import 'package:orange/flows/bitcoin/send/send.dart';
-import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'dart:io' show Platform;
 
 import 'package:orange/util.dart';

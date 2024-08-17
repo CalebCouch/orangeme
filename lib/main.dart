@@ -5,6 +5,7 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/classes/test_classes.dart';
+import 'package:orange/flows/bitcoin/pairing/pairing_code.dart';
 import 'dart:io';
 import 'dart:io' show Platform;
 import 'package:window_manager/window_manager.dart';
@@ -27,27 +28,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    bool isPaired = false;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: globalState.navkey,
       title: 'Orange',
       theme: theme(),
-      home: BitcoinHome(globalState, wallets: const [
-        Wallet(
-          'Wallet',
-          [],
-          13.83,
-          0.00003452,
-          true,
-        ),
-        Wallet(
-          'My Wallet 2',
-          [],
-          13.83,
-          0.00003452,
-          true,
-        ),
-      ]),
+      home: onDesktop && !isPaired
+          ? PairingCode(globalState)
+          : BitcoinHome(
+              globalState,
+            ),
     );
   }
 }

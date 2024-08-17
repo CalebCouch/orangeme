@@ -17,6 +17,7 @@ import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/flows/bitcoin/new_wallet/wallet_info.dart';
+import 'package:orange/flows/bitcoin/pairing/download_desktop.dart';
 import 'package:orange/flows/bitcoin/multi_home.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
@@ -178,7 +179,9 @@ class BitcoinHomeState extends State<BitcoinHome> {
             _noInternet(false),
             ButtonTip(
               text: 'Connect to a Computer',
-              onTap: () {},
+              onTap: () {
+                navigateTo(context, DownloadDesktop(widget.globalState));
+              },
             ),
             state.transactions.isNotEmpty
                 ? Expanded(
