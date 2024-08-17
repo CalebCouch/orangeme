@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange/flows/bitcoin/transactions/confirm_transaction.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
@@ -31,15 +32,17 @@ class MyApp extends StatelessWidget {
     bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     bool isPaired = false;
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      navigatorKey: globalState.navkey,
-      title: 'Orange',
-      theme: theme(),
-      home: onDesktop && !isPaired
+        debugShowCheckedModeBanner: false,
+        navigatorKey: globalState.navkey,
+        title: 'orange me',
+        theme: theme(),
+        home: ConfirmTransaction(globalState)
+
+        /*onDesktop && !isPaired
           ? PairingCode(globalState)
           : BitcoinHome(
               globalState,
-            ),
-    );
+            ),*/
+        );
   }
 }

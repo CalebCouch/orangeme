@@ -15,7 +15,7 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
-import 'package:orange/flows/bitcoin/transaction_details.dart';
+import 'package:orange/flows/bitcoin/transactions/transaction_details.dart';
 import 'package:orange/flows/bitcoin/new_wallet/wallet_info.dart';
 import 'package:orange/flows/bitcoin/pairing/download_desktop.dart';
 import 'package:orange/flows/bitcoin/multi_home.dart';

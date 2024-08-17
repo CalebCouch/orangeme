@@ -11,16 +11,15 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
-class Confirmation extends StatefulWidget {
-  final double amount;
+class Cancel extends StatefulWidget {
   final GlobalState globalState;
-  const Confirmation(this.globalState, this.amount, {super.key});
+  const Cancel(this.globalState, {super.key});
 
   @override
-  ConfirmationState createState() => ConfirmationState();
+  CancelState createState() => CancelState();
 }
 
-class ConfirmationState extends State<Confirmation> {
+class CancelState extends State<Cancel> {
   final TextEditingController recipientAddressController =
       TextEditingController();
 
@@ -39,24 +38,23 @@ class ConfirmationState extends State<Confirmation> {
       widget.globalState,
       header: stackHeader(
         context,
-        "Confirm send",
+        "Canceled transaction",
         exitButton(context, BitcoinHome(widget.globalState)),
       ),
-      content: Content(
+      content: const Content(
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const CustomIcon(
-              icon: ThemeIcon.bitcoin,
+              icon: ThemeIcon.cancel,
               iconColor: ThemeColor.secondary,
               iconSize: 128,
             ),
             const Spacing(height: AppPadding.bumper),
             CustomText(
-              text: "You sent \$${formatValue(widget.amount.abs())}",
+              text: "Transaction canceled",
               textType: 'heading',
-              textSize: TextSize.h3,
             ),
           ],
         ),
