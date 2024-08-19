@@ -21,13 +21,8 @@ import 'package:orange/classes.dart';
 
 class ConfirmSend extends StatefulWidget {
   final GlobalState globalState;
-  final String address;
-  final double btc;
-  final int fee_index;
   final Transaction tx;
-  const ConfirmSend(
-      this.globalState, this.tx, this.address, this.btc, this.fee_index,
-      {super.key});
+  const ConfirmSend(this.globalState, this.tx, {super.key});
 
   @override
   ConfirmState createState() => ConfirmState();
@@ -96,7 +91,7 @@ class ConfirmState extends State<ConfirmSend> {
                             context,
                             Send(
                               widget.globalState,
-                              address: widget.address,
+                              address: widget.tx.sentAddress!,
                             ),
                           );
                         }
@@ -117,7 +112,7 @@ class ConfirmState extends State<ConfirmSend> {
                   () {
                     resetNavTo(
                       context,
-                      SendAmount(widget.globalState, widget.address),
+                      SendAmount(widget.globalState, widget.tx.sentAddress!),
                     );
                   },
                   () {
@@ -125,8 +120,8 @@ class ConfirmState extends State<ConfirmSend> {
                       context,
                       TransactionSpeed(
                         widget.globalState,
-                        widget.address,
-                        widget.btc,
+                        widget.tx.sentAddress!,
+                        widget.tx.btc,
                       ),
                     );
                   }

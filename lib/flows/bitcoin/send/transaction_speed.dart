@@ -42,8 +42,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
             .invoke(
                 "create_transaction", "${widget.address}|${widget.btc}|$index"))
         .data));
-    navigateTo(context,
-        ConfirmSend(widget.globalState, tx, widget.address, widget.btc, index));
+    navigateTo(context, ConfirmSend(widget.globalState, tx));
   }
 
   Widget buildScreen(BuildContext context, DartState state) {

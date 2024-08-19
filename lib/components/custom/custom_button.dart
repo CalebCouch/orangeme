@@ -150,7 +150,10 @@ class _ButtonState extends State<CustomButton> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: widget.status == ButtonStatus._default
-          ? widget.onTap
+          ? () {
+              HapticFeedback.heavyImpact();
+              if (widget.onTap != null) widget.onTap!();
+            }
           : () {
               disabled();
             },
@@ -189,7 +192,10 @@ class _ButtonState extends State<CustomButton> {
 Widget iconButton(BuildContext context, onTap, CustomIcon icon,
     [bool widenLeft = false, bool widenRight = false]) {
   return InkWell(
-    onTap: onTap ?? () {},
+    onTap: () {
+      HapticFeedback.heavyImpact();
+      if (onTap != null) onTap!();
+    },
     child: Container(
       width: widenLeft || widenRight ? 50 : null,
       alignment: widenLeft

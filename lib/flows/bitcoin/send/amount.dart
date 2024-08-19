@@ -16,6 +16,7 @@ import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
 import 'package:vibration/vibration.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
+import "package:intl/intl.dart";
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'dart:math';
@@ -166,7 +167,7 @@ class SendAmount extends StatefulWidget {
 class SendAmountState extends State<SendAmount> {
   String amount = "0";
   String error = "";
-  
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -178,14 +179,14 @@ class SendAmountState extends State<SendAmount> {
   }
 
   Future<void> next(double btc) async {
-    /*navigateTo(
+    navigateTo(
       context,
       TransactionSpeed(
         widget.globalState,
         widget.address,
         btc,
       ),
-    );*/
+    );
   }
 
   void updateAmount(String input) {
@@ -236,12 +237,14 @@ class SendAmountState extends State<SendAmount> {
     var max = widget.globalState.state.value.usdBalance - min;
     max = max > 0 ? max : 0;
     var err = "";
-    if (double.parse(updatedAmount) <= min) {
-      err = "\$${formatValue(min)} minimum.";
-    } else if (double.parse(updatedAmount) >= max) {
-      err = "\$${formatValue(max)} maximum.";
-      if (err == "\$0 maximum.") {
-        err = "You have no bitcoin.";
+    if (double.parse(updatedAmount) != 0) {
+      if (double.parse(updatedAmount) <= min) {
+        err = "\$${formatValue(min)} minimum.";
+      } else if (double.parse(updatedAmount) >= max) {
+        err = "\$${formatValue(max)} maximum.";
+        if (err == "\$0 maximum.") {
+          err = "You have no bitcoin.";
+        }
       }
     }
     setState(() {
@@ -251,7 +254,6 @@ class SendAmountState extends State<SendAmount> {
   }
 
   final ShakeController _shakeController = ShakeController();
-  
   Widget buildScreen(BuildContext context, DartState state) {
     double parsed = double.parse(amount);
     double btc = parsed > 0
@@ -291,7 +293,7 @@ class SendAmountState extends State<SendAmount> {
               status: (amount != "0" && error == "") ? 0 : 2,
               text: "Send",
               shakeController: _shakeController,
-              onTap: () => next(btc),
+              onTap: () => next(btc), //change to btc
             ),
           ],
         ),
@@ -331,7 +333,7 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
       );
     } else {
       return CustomText(
-        text: "${formatValue(btc, 8)} BTC",
+        text: "${formatBTC(btc, 8)} BTC",
         color: ThemeColor.textSecondary,
       );
     }
@@ -352,13 +354,14 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
   String x = '';
   if (usd.contains('.')) x = usd.split(".")[1];
   if (usd.contains('.') && x.isEmpty) {
-    valueUSD = formatValue(double.parse(usd));
+    valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
     valueUSD += '.';
   } else if (usd.contains('.') && x.isNotEmpty) {
-    valueUSD = formatValue(double.parse(usd.split('.')[0]));
+    valueUSD =
+        NumberFormat("#,###", "en_US").format(double.parse(usd.split('.')[0]));
     valueUSD += '.$x';
   } else {
-    valueUSD = formatValue(double.parse(usd));
+    valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
   }
 
   var length = usd.length;
