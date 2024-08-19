@@ -166,7 +166,7 @@ class SendAmount extends StatefulWidget {
 class SendAmountState extends State<SendAmount> {
   String amount = "0";
   String error = "";
-
+  
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -178,14 +178,14 @@ class SendAmountState extends State<SendAmount> {
   }
 
   Future<void> next(double btc) async {
-    navigateTo(
+    /*navigateTo(
       context,
       TransactionSpeed(
         widget.globalState,
         widget.address,
         btc,
       ),
-    );
+    );*/
   }
 
   void updateAmount(String input) {
@@ -251,6 +251,7 @@ class SendAmountState extends State<SendAmount> {
   }
 
   final ShakeController _shakeController = ShakeController();
+  
   Widget buildScreen(BuildContext context, DartState state) {
     double parsed = double.parse(amount);
     double btc = parsed > 0
@@ -290,7 +291,7 @@ class SendAmountState extends State<SendAmount> {
               status: (amount != "0" && error == "") ? 0 : 2,
               text: "Send",
               shakeController: _shakeController,
-              onTap: () => next(btc), //change to btc
+              onTap: () => next(btc),
             ),
           ],
         ),

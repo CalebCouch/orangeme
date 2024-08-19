@@ -31,7 +31,7 @@ class SendState extends State<Send> {
   bool addressValid = false;
 
   Future<void> checkAddress(String address) async {
-    if (address.contains('bitcoin:')) address = address.substring(8);
+    //if (address.contains('bitcoin:')) address = address.substring(8);
     var valid =
         (await widget.globalState.invoke("check_address", address)).data ==
             "true";
@@ -41,7 +41,7 @@ class SendState extends State<Send> {
   }
 
   Future<void> setAddress(String address) async {
-    if (address.contains('bitcoin:')) address = address.substring(8);
+    //if (address.contains('bitcoin:')) address = address.substring(8);
     var valid =
         (await widget.globalState.invoke("check_address", address)).data ==
             "true";
@@ -118,7 +118,8 @@ class SendState extends State<Send> {
         context,
         "Continue",
         () {
-          navigateTo(context, SendAmount(widget.globalState, addressStr));
+          checkAddress(controller.text);
+          if(addressValid) navigateTo(context, SendAmount(widget.globalState, controller.text));
         },
         addressValid,
       ),
