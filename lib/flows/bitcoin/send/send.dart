@@ -35,11 +35,13 @@ class SendState extends State<Send> {
     setState(() {
       addressStr = address;
       addressValid = valid;
+      print("valid: $valid");
     });
   }
 
   @override
   initState() {
+    print("widget.address: ${widget.address}");
     setAddress(widget.address ?? "");
     super.initState();
   }
@@ -57,7 +59,7 @@ class SendState extends State<Send> {
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
-      header: stackHeader(context, "Bitcoin address", true),
+      header: stackHeader(context, "Bitcoin address"),
       content: Content(
         content: SingleChildScrollView(
           child: Column(
