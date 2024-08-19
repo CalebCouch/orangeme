@@ -122,12 +122,22 @@ class GlobalState {
   }
 
   Future<void> clearStorage() async {
-    final keys = await this.storage.readAll();
+    final os = checkPlatform();
+    print("operating system: $os");
+    if (os == "IOS") {
+      final keys = await this.storage.readAll();
 
-    for (var key in keys.keys) {
-      await this.storage.delete(key: key);
+      for (var key in keys.keys) {
+        await this.storage.delete(key: key);
+      }
+    } else if (os == "Android") {
+      final SharedPreferences pref = await SharedPreferences.getInstance();
+
+      await pref.clear();
+    } else {
+      print("cannot clear storage, desktop found");
+      return;
     }
-
     print("Secure storage cleared");
   }
 
@@ -148,30 +158,34 @@ class GlobalState {
   }
 
   Future<void> iosWrite(data) async {
+    print("IOS write");
+    print("data: $data");
     var split = data.split("\u0000");
     await this.storage.write(key: split[0], value: split[1]);
   }
 
   Future<String> iosRead(data) async {
+    print("IOS read");
     return await this.storage.read(key: data) ?? "";
   }
 
   Future<void> androidWrite(String data) async {
+    print("android write");
+    print("data: $data");
     // Split the data by the delimiter
-    var split = data
-        .split("\u0000"); // Ensure that the split resulted in a key-value pair
-    if (split.length != 2) {
-      throw ArgumentError(
-          "Data must be a key-value pair separated by '\u0000'");
-    }
+    var split = data.split("\u0000");
     String key = split[0];
-    String value = split[1]; // Obtain SharedPreferences instance
+    print("key: $key");
+    String value = split[1];
+    print("value: $value");
+    // Obtain SharedPreferences instance
     final SharedPreferences prefs = await SharedPreferences
         .getInstance(); // Write the data to SharedPreferences
     await prefs.setString(key, value);
   }
 
   Future<String> androidRead(String key) async {
+    print("android read");
     // Obtain SharedPreferences instance
     final SharedPreferences prefs = await SharedPreferences
         .getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
@@ -184,13 +198,17 @@ class GlobalState {
       case "set_state":
         this.state.value = DartState.fromJson(jsonDecode(command.data));
       case "ios_get":
+        print(command.data);
         return await iosRead(command.data);
       case "ios_set":
         await iosWrite(command.data);
+        print(command.data);
       case "android_get":
+        print(command.data);
         return await androidRead(command.data);
       case "android_set":
         await androidWrite(command.data);
+        print(command.data);
       case "print":
         print(command.data);
       case "get_commands":
@@ -205,6 +223,7 @@ class GlobalState {
       case "clear_storage":
         await clearStorage();
         return "Storage cleared";
+
       case "check_os":
         return checkPlatform();
       case var unknown:

@@ -162,9 +162,11 @@ async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<St
     let mut seed: [u8; 64] = [0; 64];
     let action = if os == "IOS"{
         "ios_set"
-    }else if os == "Android"{
+    }
+    else if os == "Android"{
         "android_set"
-    }else{
+    }
+    else{
         "unknown"
     };
     rand::thread_rng().fill_bytes(&mut seed);
@@ -185,6 +187,7 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
     match os.as_str() {
         "IOS" => {
             descriptors = invoke(&callback, "ios_get", "descriptors").await?;
+            invoke(&callback, "print", &descriptors).await?;
             if descriptors.is_empty() {
             let set = generate_legacy_descriptor(&callback, os).await?;
             Ok(set)
@@ -192,9 +195,9 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         }
         "Android" =>{
             descriptors = invoke(&callback, "android_get", "descriptors").await?;
+            invoke(&callback, "print", &descriptors).await?;
             if descriptors.is_empty() {
             let set = generate_legacy_descriptor(&callback, os).await?;
-            invoke(&callback, "android_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
             Ok(set)
             } else {Ok(serde_json::from_str::<DescriptorSet>(&descriptors)?)}
         }
@@ -246,6 +249,7 @@ pub async fn rustStart (
 ) -> String {
     let err_catch = tokio::spawn(async move {
         //INIT
+        invoke(&callback, "clear_storage", "").await?;
         let path = PathBuf::from(&path);
         //get descriptors
         let descriptors = get_descriptors(&callback).await?;
