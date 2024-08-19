@@ -19,8 +19,8 @@ abstract class Error implements RustOpaqueInterface {
   static Future<Error> conflict({required String ctx, required String err}) =>
       RustLib.instance.api.crateApiErrorErrorConflict(ctx: ctx, err: err);
 
-  static Future<Error> error({required String ctx, required String err}) =>
-      RustLib.instance.api.crateApiErrorErrorError(ctx: ctx, err: err);
+  static Future<Error> err({required String ctx, required String err}) =>
+      RustLib.instance.api.crateApiErrorErrorErr(ctx: ctx, err: err);
 
   static Future<Error> notFound({required String ctx, required String err}) =>
       RustLib.instance.api.crateApiErrorErrorNotFound(ctx: ctx, err: err);

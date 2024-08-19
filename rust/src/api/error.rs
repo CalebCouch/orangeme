@@ -73,5 +73,5 @@ impl Error {
         Error::Conflict(ctx.to_string(), err.to_string())
     }
     pub fn parse(rtype: &str, data: &str) -> Self {Error::Parse(rtype.to_string(), data.to_string())}
-    pub fn error(ctx: &str, err: &str) -> Self {Error::Error(ctx.to_string(), err.to_string())}
+    pub fn err(ctx: &str, err: &str) -> Self {Error::Error(ctx.to_string(), err.to_string())}
 }

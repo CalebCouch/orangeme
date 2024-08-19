@@ -80,7 +80,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
         context,
         widget.globalState,
         "Wallet",
-        state.personal.pfp,
+        null, //state.personal.pfp,
       ),
       content: Content(
         content: Column(
