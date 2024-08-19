@@ -91,9 +91,6 @@ struct Spot {amount: String, currency: String, base: String}
 #[derive(Deserialize)]
 struct SpotRes {
     data: Option<Spot>,
-    error: Option<String>,
-    code: Option<i32>,
-    message: Option<String>
 }
 //PRICE FETCH
 
@@ -245,7 +242,7 @@ struct Data {
 
 async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &mut SqliteStore, timestamp: u64) -> Result<f64, Error> {
     Ok(match prices.get(&timestamp.to_le_bytes())? {
-        Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::error("get_price", "Price not f64 bytes")))?),
+        Some(price) => f64::from_le_bytes(price.try_into().or(Err(Error::err("get_price", "Price not f64 bytes")))?),
         None => {
             //invoke(&callback, "print", "get_price:NONE").await?;
             let error = Error::bad_request("Prices.get_price", "Invalid timestamp");
@@ -255,8 +252,13 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
             //invoke(&callback, "print", &format!("get_price:PRE{}", url)).await?;
             let reqwest = reqwest::get(&url).await?;
             //invoke(&callback, "print", "reqwest").await?;
-            let spot_res: SpotRes = reqwest.json().await?;
-            let price = spot_res.data.ok_or(Error::Error(spot_res.error.unwrap(), spot_res.message.unwrap()))?.amount.parse::<f64>()?;
+            
+            let value: serde_json::Value = reqwest.json().await?;
+            let spot_res: SpotRes = serde_json::from_value(value.clone())?;
+            
+            //let spot_res: SpotRes = reqwest.json().await?;
+            let price = spot_res.data.ok_or(Error::err("Fetching price from coinbases api", &serde_json::to_string(&value)?))?.amount.parse::<f64>()?;
+            //invoke(&callback, "print", "xyzj").await?;
             prices.set(&timestamp.to_le_bytes(), &price.to_le_bytes())?;
             price
         }
@@ -285,16 +287,17 @@ async fn price_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
 }
 
 async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
-    //invoke(&callback, "print", "State Thread Running").await?;
+    //invoke(&callback, "print", "a").await?;
     let mut store = SqliteStore::new(store_path)?;
     let mut price = SqliteStore::new(price_path)?;
     let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     loop {
+       //invoke(&callback, "print", "b").await?;
         //invoke(&callback, "print", "State Thread Looping").await?;
         let wallet_transactions = wallet.list_transactions(true)?;
         let balance = wallet.get_balance()?;
-        let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::error("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
+        let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
         let btc = balance.get_total() as f64 / SATS;
         let mut transactions: Vec<Transaction> = Vec::new();
 
@@ -327,19 +330,21 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
                     Message { sender: chris_slaughter.clone(), message: "I guess we can".to_string(), date: "8/4/24".to_string(), time: "1:45 PM".to_string(), is_incoming: true },
                     Message { sender: ella_couch.clone(), message: "Keep me posted and I will update the schedule book".to_string(), date: "8/4/24".to_string(), time: "1:45 PM".to_string(), is_incoming: false },
                 ],
-                members: vec![josh_thayer.clone(), chris_slaughter.clone(), ella_couch.clone(), josh_thayer_alt.clone(), chris_slaughter_alt.clone(), jw_weatherman.clone()]
+                members: vec![josh_thayer.clone(), chris_slaughter.clone(), ella_couch.clone()]
             }
         ];
-
+       //invoke(&callback, "print", "c").await?;
         let users: Vec<Contact> = vec![josh_thayer.clone(), ella_couch.clone(), chris_slaughter.clone(), jw_weatherman.clone(), josh_thayer_alt.clone(), ella_couch_alt.clone(), chris_slaughter_alt.clone(), jw_weatherman_alt.clone()];
 
         let personal: Contact = ella_couch.clone();
 
         for tx in wallet_transactions {
+           // invoke(&callback, "print", "tx a").await?;
             let price = match tx.confirmation_time.as_ref() {
                 Some(ct) => get_price(&callback, &mut price, ct.timestamp).await?,
                 None => current_price
             };
+           // invoke(&callback, "print", "tx c").await?;
             transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
         }
 
@@ -354,11 +359,12 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
             users,
             personal,
         };
-
+       // invoke(&callback, "print", "d").await?;
         store.set(b"state", &serde_json::to_vec(&state)?)?;
-        invoke(&callback, "set_state", &serde_json::to_string(&state)?).await?;
+       // invoke(&callback, "set_state", &serde_json::to_string(&state)?).await?;
         thread::sleep(time::Duration::from_millis(1000));
     }
+    invoke(&callback, "print", "e").await?;
     Err(Error::Exited(format!("Refresh Dart State Exited")))
 }
 
@@ -374,7 +380,7 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
         for command in commands {
             let result: Result<String, Error> = match command.method.as_str() {
                 "get_new_address" => {
-                    Ok(String::from_utf8(store.get(b"new_address")?.ok_or(Error::error("Main.get_new_address", "No new address"))?)?)
+                    Ok(String::from_utf8(store.get(b"new_address")?.ok_or(Error::err("Main.get_new_address", "No new address"))?)?)
                 },
                 "check_address" => {
                     Ok(Address::from_str(&command.data).map(|a|
@@ -382,28 +388,29 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     ).unwrap_or(false).to_string())
                 },
                 "create_transaction" => {
+                    invoke(&callback, "print", "tuv").await?;
                     let ec = "Main.create_transaction";
                     let error = || Error::bad_request(ec, "Invalid parameters");
 
+                    invoke(&callback, "print", &format!("split {}", command.data.clone())).await?;
                     let split: Vec<&str> = command.data.split("|").collect();
-
                     let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
                     let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
                     let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
-
                     let price_error = || Error::not_found(ec, "Cannot get price");
                     let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                     let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-
+                    invoke(&callback, "print", "xyz").await?;
+                    let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
                     let (mut psbt, mut tx_details) = {
                         let mut builder = wallet.build_tx();
                         builder.add_recipient(address.script_pubkey(), amount);
-                        builder.fee_rate(FeeRate::from_btc_per_kvb(blockchain.estimate_fee(3)? as f32));
+                        builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
                         builder.finish()?
                     };
-
+                    invoke(&callback, "print", "abc").await?;
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-                    if !finalized { return Err(Error::error(ec, "Could not sign std tx"));}
+                    if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
 
                     let tx = psbt.clone().extract_tx();
                     let mut stream: Vec<u8> = Vec::new();
@@ -446,21 +453,22 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
     }
     Err(Error::Exited("Main Exited".to_string()))
 }
-
 async fn flatten(handle: JoinHandle<Result<(), Error>>) -> Result<(), Error> {
     match handle.await {
         Ok(Ok(o)) => Ok(o),
         Ok(Err(err)) => Err(err),
         Err(e) => match e.try_into_panic() {
-            Ok(panic) => match panic.downcast_ref::<String>() {
-                Some(p) => Err(Error::Exited(p.to_string())),
-                None => Err(Error::Exited("Cannot convert panic to string".to_string())),
+            Ok(panic) => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Debug>>() {
+                Some(p) => Err(Error::Exited(format!("{:?}", p))),
+                None => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Display>>() {
+                    Some(p) => Err(Error::Exited(p.to_string())),
+                    None => Err(Error::Exited(format!("Cannot convert panic with type id {:?} to string", panic.type_id()))),
+                }
             },
             Err(e) => Err(Error::Exited(e.to_string()))
         }
     }
 }
-
 pub async fn rustStart (
     path: String,
     callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
@@ -491,14 +499,14 @@ pub async fn rustStart (
         }
         store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
 
-        //invoke(&callback, "print", "Starting Threads").await?;
+        invoke(&callback, "print", "Starting Threads").await?;
         let result = tokio::try_join!(
             flatten(tokio::spawn(sync_thread(callback1, wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
             flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
             flatten(tokio::spawn(state_thread(callback3, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
             flatten(tokio::spawn(command_thread(callback4, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
         );
-        //invoke(&callback, "print", "Handling Threads").await?;
+        invoke(&callback, "print", "Handling Threads").await?;
 
         match result {
             Ok(_) => Ok(()),
