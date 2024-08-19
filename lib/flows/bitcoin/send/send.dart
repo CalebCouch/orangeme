@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
@@ -28,6 +30,15 @@ class SendState extends State<Send> {
   String addressStr = '';
   bool addressValid = false;
 
+  Future<void> checkAddress(String address) async {
+    var valid =
+        (await widget.globalState.invoke("check_address", address)).data ==
+            "true";
+    setState(() {
+      addressValid = valid;
+    });
+  }
+
   Future<void> setAddress(String address) async {
     var valid =
         (await widget.globalState.invoke("check_address", address)).data ==
@@ -35,13 +46,13 @@ class SendState extends State<Send> {
     setState(() {
       addressStr = address;
       addressValid = valid;
-      print("valid: $valid");
+      controller.text = addressStr;
     });
   }
 
   @override
   initState() {
-    print("widget.address: ${widget.address}");
+    controller.text = addressStr;
     setAddress(widget.address ?? "");
     super.initState();
   }
@@ -56,18 +67,21 @@ class SendState extends State<Send> {
     );
   }
 
+  final TextEditingController controller = TextEditingController();
+
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
-      header: stackHeader(context, "Bitcoin address"),
+      header: stackHeader(context, "Bitcoin address", true),
       content: Content(
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CustomTextInput(
-                presetTxt: addressStr,
-                onChanged: (String address) => {setAddress(address)},
+                controller: controller,
+                onSubmitted: (String address) => {setAddress(address)},
+                onChanged: (String address) => {checkAddress(address)},
                 error: addressValid || addressStr.isEmpty
                     ? ""
                     : "Not a valid address",
@@ -75,6 +89,7 @@ class SendState extends State<Send> {
               ),
               const Spacing(height: AppPadding.content),
               ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
+                HapticFeedback.heavyImpact();
                 String data = (await getClipBoardData()).toString();
                 if (data != "null") {
                   setAddress(data);
@@ -101,7 +116,11 @@ class SendState extends State<Send> {
         context,
         "Continue",
         () {
-          navigateTo(context, SendAmount(widget.globalState, addressStr));
+          checkAddress(controller.text);
+          if (addressValid) {
+            navigateTo(
+                context, SendAmount(widget.globalState, controller.text));
+          }
         },
         addressValid,
       ),

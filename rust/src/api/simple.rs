@@ -388,28 +388,27 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     ).unwrap_or(false).to_string())
                 },
                 "create_transaction" => {
+                    invoke(&callback, "print", "tuv").await?;
                     let ec = "Main.create_transaction";
                     let error = || Error::bad_request(ec, "Invalid parameters");
 
+                    invoke(&callback, "print", &format!("split {}", command.data.clone())).await?;
                     let split: Vec<&str> = command.data.split("|").collect();
-
                     let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
                     let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
                     let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
-                    invoke(&callback, "print", &format!("{}", priority)).await?;
                     let price_error = || Error::not_found(ec, "Cannot get price");
                     let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                     let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-                    
+                    invoke(&callback, "print", "xyz").await?;
                     let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
-
                     let (mut psbt, mut tx_details) = {
                         let mut builder = wallet.build_tx();
                         builder.add_recipient(address.script_pubkey(), amount);
-                        builder.fee_rate(FeeRate::from_btc_per_kvb(blockchain.estimate_fee(3)? as f32));
+                        builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
                         builder.finish()?
                     };
-
+                    invoke(&callback, "print", "abc").await?;
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                     if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
 

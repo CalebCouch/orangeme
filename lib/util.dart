@@ -88,7 +88,7 @@ String formatValue(double val, [int per = 2]) {
   if ((double.parse(val_str) % 1) > 0) {
     return val_str;
   } else {
-    return NumberFormat("#,###", "en_US").format(val);
+    return NumberFormat("#,###.00", "en_US").format(val);
   }
 }
 

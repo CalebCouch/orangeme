@@ -8,6 +8,7 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/amount_display.dart';
 import 'package:orange/components/interface.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 
 class TransactionDetailsWidget extends StatefulWidget {
   final GlobalState globalState;
@@ -41,7 +42,7 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
         content: Column(
           children: [
             AmountDisplay(
-              (widget.transaction.usd).abs(),
+              (widget.transaction.usd.abs() - widget.transaction.fee.abs()),
               (widget.transaction.btc).abs(),
             ),
             const Spacing(height: AppPadding.content),
