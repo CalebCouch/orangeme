@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/flows/bitcoin/send/confirmation.dart';
+import 'package:orange/flows/bitcoin/send/success.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
-import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
+import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 
 import 'package:orange/components/interface.dart';

@@ -12,7 +12,7 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'dart:io' show Platform;
 
-import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
+import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 import "package:intl/intl.dart";
