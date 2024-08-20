@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
+import 'package:flutter/services.dart';
 
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/list_item.dart';
@@ -37,6 +38,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
   Widget transactionListItem(BuildContext context, Transaction transaction) {
     return DefaultListItem(
       onTap: () {
+        HapticFeedback.mediumImpact();
         navigateTo(
             context, TransactionDetailsWidget(widget.globalState, transaction));
       },
@@ -102,7 +104,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
                   const Spacing(height: AppPadding.valueDisplaySep),
                   CustomText(
                     textType: "text",
-                    text: "${formatValue(state.btcBalance, 8)} BTC",
+                    text: "${formatBTC(state.btcBalance, 8)} BTC",
                     textSize: TextSize.lg,
                     color: ThemeColor.textSecondary,
                   ),
@@ -143,6 +145,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
         () {
           navigateTo(context, Send(widget.globalState));
         },
+        false,
       ),
       navigationIndex: 0,
     );

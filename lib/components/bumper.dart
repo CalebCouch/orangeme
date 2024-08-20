@@ -14,7 +14,7 @@ class DefaultBumper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 396),
-      padding: const EdgeInsets.all(AppPadding.bumper),
+      padding: const EdgeInsets.symmetric(horizontal: AppPadding.bumper),
       width: MediaQuery.sizeOf(context).width,
       alignment: Alignment.center,
       child: content,
@@ -23,36 +23,47 @@ class DefaultBumper extends StatelessWidget {
 }
 
 Widget singleButtonBumper(BuildContext context, String text, onTap,
-    [bool isEnabled = true, variant]) {
+    [bool isEnabled = true, variant, bool padding = true]) {
   return DefaultBumper(
-    content: CustomButton(
-      variant: variant ?? ButtonVariant.primary,
-      text: text,
-      onTap: onTap,
-      status: isEnabled ? 0 : 2,
+    content: Container(
+      padding: padding
+          ? const EdgeInsets.symmetric(vertical: AppPadding.bumper)
+          : null,
+      child: CustomButton(
+        variant: variant ?? ButtonVariant.primary,
+        text: text,
+        onTap: onTap,
+        status: isEnabled ? 0 : 2,
+      ),
     ),
   );
 }
 
 Widget doubleButtonBumper(BuildContext context, String text, String secondText,
-    onTapFirst, onTapSecond) {
+    onTapFirst, onTapSecond,
+    [bool padding = true]) {
   return DefaultBumper(
-    content: Row(
-      children: [
-        Flexible(
-          child: CustomButton(
-            text: text,
-            onTap: onTapFirst,
+    content: Container(
+      padding: padding
+          ? const EdgeInsets.symmetric(vertical: AppPadding.bumper)
+          : null,
+      child: Row(
+        children: [
+          Flexible(
+            child: CustomButton(
+              text: text,
+              onTap: onTapFirst,
+            ),
           ),
-        ),
-        const Spacing(width: AppPadding.bumper),
-        Flexible(
-          child: CustomButton(
-            text: secondText,
-            onTap: onTapSecond,
+          const Spacing(width: AppPadding.bumper),
+          Flexible(
+            child: CustomButton(
+              text: secondText,
+              onTap: onTapSecond,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

@@ -6,12 +6,15 @@ import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/list_item.dart';
 
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
 
 import 'package:orange/classes.dart';
+
+import 'package:flutter/services.dart';
 import 'package:orange/util.dart';
 
 class MessagesHome extends StatefulWidget {
@@ -63,6 +66,7 @@ class MessagesHomeState extends State<MessagesHome> {
                     context,
                     state.conversations[index],
                     () {
+                      HapticFeedback.mediumImpact();
                       navigateTo(
                         context,
                         Exchange(
@@ -84,6 +88,9 @@ class MessagesHomeState extends State<MessagesHome> {
             ChooseRecipient(widget.globalState),
           );
         },
+        true,
+        ButtonVariant.primary,
+        false,
       ),
       navigationIndex: 1,
     );

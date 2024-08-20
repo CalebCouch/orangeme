@@ -13,7 +13,6 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'dart:io' show Platform;
 
 import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
-import 'package:vibration/vibration.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 import "package:intl/intl.dart";
@@ -233,14 +232,14 @@ class SendAmountState extends State<SendAmount> {
       }
     }
 
-    double min = widget.globalState.state.value.fees[0] + 1;
+    double min = widget.globalState.state.value.fees[0] + 0.10;
     var max = widget.globalState.state.value.usdBalance - min;
     max = max > 0 ? max : 0;
     var err = "";
     if (double.parse(updatedAmount) != 0) {
       if (double.parse(updatedAmount) <= min) {
         err = "\$${formatValue(min)} minimum.";
-      } else if (double.parse(updatedAmount) >= max) {
+      } else if (double.parse(updatedAmount) > max) {
         err = "\$${formatValue(max)} maximum.";
         if (err == "\$0 maximum.") {
           err = "You have no bitcoin.";
