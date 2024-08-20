@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/radio_selectors.dart';
@@ -26,6 +27,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   final TextEditingController recipientAddressController =
       TextEditingController();
   int index = 0;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +39,27 @@ class TransactionSpeedState extends State<TransactionSpeed> {
     );
   }
 
+  @override
+  void initState() {
+    setState(() {
+      isLoading = false;
+    });
+    super.initState();
+  }
+
   Future<void> next() async {
+    setState(() {
+      isLoading = true;
+    });
     Transaction tx = Transaction.fromJson(jsonDecode((await widget.globalState
             .invoke(
                 "create_transaction", "${widget.address}|${widget.btc}|$index"))
         .data));
+
     navigateTo(context, ConfirmSend(widget.globalState, tx));
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
@@ -53,30 +70,36 @@ class TransactionSpeedState extends State<TransactionSpeed> {
         context,
         "Transaction speed",
       ),
-      content: Content(
-        content: Column(children: <Widget>[
-          radioButton(
-            "Standard",
-            "Arrives in ~2 hours\n\$${formatValue(fees[0])} bitcoin network fee",
-            index == 0,
-            () {
-              setState(() {
-                index = 0;
-              });
-            },
-          ),
-          radioButton(
-            "Priority",
-            "Arrives in ~30 minutes\n\$${formatValue(fees[1])} bitcoin network fee",
-            index == 1,
-            () {
-              setState(() {
-                index = 1;
-              });
-            },
-          ),
-        ]),
-      ),
+      content: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+              strokeCap: StrokeCap.round,
+              backgroundColor: ThemeColor.bgSecondary,
+            ))
+          : Content(
+              content: Column(children: <Widget>[
+                radioButton(
+                  "Standard",
+                  "Arrives in ~2 hours\n\$${formatValue(fees[0])} bitcoin network fee",
+                  index == 0,
+                  () {
+                    setState(() {
+                      index = 0;
+                    });
+                  },
+                ),
+                radioButton(
+                  "Priority",
+                  "Arrives in ~30 minutes\n\$${formatValue(fees[1])} bitcoin network fee",
+                  index == 1,
+                  () {
+                    setState(() {
+                      index = 1;
+                    });
+                  },
+                ),
+              ]),
+            ),
       bumper: singleButtonBumper(context, "Continue", next),
       desktopOnly: true,
       navigationIndex: 0,
