@@ -10,6 +10,8 @@ ThemeData theme() {
     hoverColor: Colors.transparent,
     splashColor: Colors.transparent,
     splashFactory: NoSplash.splashFactory,
+    progressIndicatorTheme:
+        const ProgressIndicatorThemeData(color: ThemeColor.primary),
   );
 }
 

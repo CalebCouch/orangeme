@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
 
 Future<void> navigateTo(BuildContext context, Widget widget) async {
-  HapticFeedback.heavyImpact();
   Navigator.push(
     context,
     PageRouteBuilder(
@@ -15,7 +14,6 @@ Future<void> navigateTo(BuildContext context, Widget widget) async {
 }
 
 Future<void> navPop(BuildContext context) async {
-  HapticFeedback.heavyImpact();
   Navigator.pop(context);
 }
 
@@ -23,7 +21,6 @@ Future<void> switchPageTo(
   BuildContext context,
   Widget widget,
 ) async {
-  HapticFeedback.heavyImpact();
   Navigator.pushReplacement(
     context,
     PageRouteBuilder(
@@ -35,7 +32,6 @@ Future<void> switchPageTo(
 }
 
 Future<void> resetNavTo(BuildContext context, Widget widget) async {
-  HapticFeedback.heavyImpact();
   Navigator.pushAndRemoveUntil(
       context,
       PageRouteBuilder(
@@ -92,16 +88,33 @@ String formatValue(double val, [int per = 2]) {
   if ((double.parse(val_str) % 1) > 0) {
     return val_str;
   } else {
+    return NumberFormat("#,###.00", "en_US").format(val);
+  }
+}
+
+String formatBTC(double val, [int per = 2]) {
+  String val_str = val.toStringAsFixed(per);
+  if ((double.parse(val_str) % 1) > 0) {
+    return val_str;
+  } else {
     return NumberFormat("#,###", "en_US").format(val);
   }
 }
 
 formatDate(String? date, String? time) {
   if (date == null) return 'Pending';
-  if (time != null && date == DateTime.now().toString()) {
-    return time;
+  print(DateFormat('yMd').format(DateTime.now()));
+  if (DateFormat('yMd').format(DateTime.parse(date)) ==
+      DateFormat('yMd').format(DateTime.now())) {
+    if (time != null) {
+      return time;
+    } else {
+      return 'Pending';
+    }
   }
-  if (date == DateTime.now().subtract(const Duration(days: 1)).toString()) {
+  if (DateFormat('yMd').format(DateTime.parse(date)) ==
+      DateFormat('yMd')
+          .format(DateTime.now().subtract(const Duration(days: 1)))) {
     return 'Yesterday';
   }
   return DateFormat.MMMMd()

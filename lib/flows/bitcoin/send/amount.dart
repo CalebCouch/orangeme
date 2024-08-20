@@ -12,10 +12,10 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'dart:io' show Platform;
 
-import 'package:orange/flows/bitcoin/send/transaction_speed.dart';
-import 'package:vibration/vibration.dart';
+import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
+import "package:intl/intl.dart";
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'dart:math';
@@ -232,16 +232,18 @@ class SendAmountState extends State<SendAmount> {
       }
     }
 
-    double min = widget.globalState.state.value.fees[0] + 1;
+    double min = widget.globalState.state.value.fees[0] + 0.10;
     var max = widget.globalState.state.value.usdBalance - min;
     max = max > 0 ? max : 0;
     var err = "";
-    if (double.parse(updatedAmount) <= min) {
-      err = "\$${formatValue(min)} minimum.";
-    } else if (double.parse(updatedAmount) >= max) {
-      err = "\$${formatValue(max)} maximum.";
-      if (err == "\$0 maximum.") {
-        err = "You have no bitcoin.";
+    if (double.parse(updatedAmount) != 0) {
+      if (double.parse(updatedAmount) <= min) {
+        err = "\$${formatValue(min)} minimum.";
+      } else if (double.parse(updatedAmount) > max) {
+        err = "\$${formatValue(max)} maximum.";
+        if (err == "\$0 maximum.") {
+          err = "You have no bitcoin.";
+        }
       }
     }
     setState(() {
@@ -330,7 +332,7 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
       );
     } else {
       return CustomText(
-        text: "${formatValue(btc, 8)} BTC",
+        text: "${formatBTC(btc, 8)} BTC",
         color: ThemeColor.textSecondary,
       );
     }
@@ -351,13 +353,14 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
   String x = '';
   if (usd.contains('.')) x = usd.split(".")[1];
   if (usd.contains('.') && x.isEmpty) {
-    valueUSD = formatValue(double.parse(usd));
+    valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
     valueUSD += '.';
   } else if (usd.contains('.') && x.isNotEmpty) {
-    valueUSD = formatValue(double.parse(usd.split('.')[0]));
+    valueUSD =
+        NumberFormat("#,###", "en_US").format(double.parse(usd.split('.')[0]));
     valueUSD += '.$x';
   } else {
-    valueUSD = formatValue(double.parse(usd));
+    valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
   }
 
   var length = usd.length;

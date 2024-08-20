@@ -57,6 +57,7 @@ class ConfirmationState extends State<Confirmation> {
             CustomText(
               text: "You sent \$${formatValue(widget.amount.abs())}",
               textType: 'heading',
+              textSize: TextSize.h3,
             ),
           ],
         ),

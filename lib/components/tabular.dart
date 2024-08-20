@@ -37,6 +37,12 @@ class SingleTab extends StatelessWidget {
 }
 
 Widget transactionTabular(BuildContext context, Transaction tx) {
+  late String formattedDate;
+  if (tx.date != null) {
+    formattedDate = DateFormat.yMd()
+        .format(DateFormat('yyyy-MM-dd').parse(tx.date!))
+        .toString();
+  }
   return Column(
     children: [
       /*if (tx.recipient != null)
@@ -44,7 +50,8 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
         title: "Contact",
         subtitle: "${tx.recipient}",
       ),*/
-      SingleTab(title: "Date", subtitle: tx.date ?? "Pending"),
+      SingleTab(
+          title: "Date", subtitle: tx.date != null ? formattedDate : "Pending"),
       SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
       if (tx.sentAddress != null)
         SingleTab(
@@ -75,7 +82,7 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
       if (tx.sentAddress != null)
         SingleTab(
           title: "USD Value Sent",
-          subtitle: "\$${formatValue(tx.usd.abs())}",
+          subtitle: "\$${formatValue(tx.usd.abs() - tx.fee.abs())}",
         ),
       if (tx.sentAddress != null) const Spacing(height: AppPadding.content),
       if (tx.sentAddress != null)
@@ -86,7 +93,7 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
       if (tx.sentAddress != null)
         SingleTab(
           title: "Total Amount",
-          subtitle: "\$${formatValue((tx.usd + tx.fee).abs())}",
+          subtitle: "\$${formatValue(tx.usd.abs())}",
         ),
     ],
   );
@@ -119,6 +126,11 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
         SingleTab(
           title: "Amount Sent",
           subtitle: "${tx.btc.abs()} BTC",
+        ),
+      if (tx.sentAddress != null)
+        SingleTab(
+          title: "USD Value Sent",
+          subtitle: "\$${formatValue(tx.usd.abs() - tx.fee.abs())}",
         ),
       if (tx.sentAddress != null)
         SingleTab(

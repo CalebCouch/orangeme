@@ -68,7 +68,8 @@ class MobileInterface extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      body: SizedBox(
+      body: Container(
+        // color: Colors.blueGrey,
         height: MediaQuery.sizeOf(context).height,
         child: SafeArea(
           child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
@@ -20,17 +21,20 @@ class TabNavState extends State<TabNav> {
   Widget build(BuildContext context) {
     void openMessages() {
       print("switching to messages");
+      HapticFeedback.heavyImpact();
       switchPageTo(context, MessagesHome(widget.globalState));
     }
 
     void openBitcoin() {
       print("switching to bitcoin");
+      HapticFeedback.heavyImpact();
       switchPageTo(context, BitcoinHome(widget.globalState));
     }
 
     return Container(
-      padding: const EdgeInsets.all(AppPadding.bumper),
+      //color: const Color.fromARGB(255, 21, 48, 61),
       width: MediaQuery.sizeOf(context).width,
+      height: 64,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -40,7 +44,7 @@ class TabNavState extends State<TabNav> {
                 if (widget.index == 1) openBitcoin();
               },
               child: Container(
-                color: ThemeColor.bg,
+                //color: const Color.fromARGB(255, 134, 175, 195),
                 padding: const EdgeInsets.only(right: AppPadding.navBar),
                 alignment: Alignment.centerRight,
                 child: CustomIcon(
@@ -59,7 +63,7 @@ class TabNavState extends State<TabNav> {
                 if (widget.index == 0) openMessages();
               },
               child: Container(
-                color: ThemeColor.bg,
+                //color: const Color.fromARGB(255, 55, 75, 85),
                 padding: const EdgeInsets.only(left: AppPadding.navBar),
                 alignment: Alignment.centerLeft,
                 child: CustomIcon(

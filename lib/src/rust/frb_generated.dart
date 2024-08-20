@@ -57,7 +57,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => 1249572060;
+  int get rustContentHash => -477255841;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -77,7 +77,7 @@ abstract class RustLibApi extends BaseApi {
   Future<Error> crateApiErrorErrorConflict(
       {required String ctx, required String err});
 
-  Future<Error> crateApiErrorErrorError(
+  Future<Error> crateApiErrorErrorErr(
       {required String ctx, required String err});
 
   Future<Error> crateApiErrorErrorNotFound(
@@ -197,7 +197,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<Error> crateApiErrorErrorError(
+  Future<Error> crateApiErrorErrorErr(
       {required String ctx, required String err}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -212,14 +212,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
         decodeErrorData: null,
       ),
-      constMeta: kCrateApiErrorErrorErrorConstMeta,
+      constMeta: kCrateApiErrorErrorErrConstMeta,
       argValues: [ctx, err],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateApiErrorErrorErrorConstMeta => const TaskConstMeta(
-        debugName: "Error_error",
+  TaskConstMeta get kCrateApiErrorErrorErrConstMeta => const TaskConstMeta(
+        debugName: "Error_err",
         argNames: ["ctx", "err"],
       );
 
