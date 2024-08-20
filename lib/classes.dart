@@ -123,22 +123,22 @@ class GlobalState {
 
   Future<void> clearStorage() async {
     final os = checkPlatform();
-    print("operating system: $os");
     if (os == "IOS") {
       final keys = await this.storage.readAll();
 
       for (var key in keys.keys) {
         await this.storage.delete(key: key);
       }
+      print("IOS storage cleared");
     } else if (os == "Android") {
       final SharedPreferences pref = await SharedPreferences.getInstance();
 
       await pref.clear();
+      print("Android storage cleared");
     } else {
       print("cannot clear storage, desktop found");
       return;
     }
-    print("Secure storage cleared");
   }
 
   String checkPlatform() {
@@ -158,26 +158,19 @@ class GlobalState {
   }
 
   Future<void> iosWrite(data) async {
-    print("IOS write");
-    print("data: $data");
     var split = data.split("\u0000");
     await this.storage.write(key: split[0], value: split[1]);
   }
 
   Future<String> iosRead(data) async {
-    print("IOS read");
     return await this.storage.read(key: data) ?? "";
   }
 
   Future<void> androidWrite(String data) async {
-    print("android write");
-    print("data: $data");
     // Split the data by the delimiter
     var split = data.split("\u0000");
     String key = split[0];
-    print("key: $key");
     String value = split[1];
-    print("value: $value");
     // Obtain SharedPreferences instance
     final SharedPreferences prefs = await SharedPreferences
         .getInstance(); // Write the data to SharedPreferences
@@ -185,7 +178,6 @@ class GlobalState {
   }
 
   Future<String> androidRead(String key) async {
-    print("android read");
     // Obtain SharedPreferences instance
     final SharedPreferences prefs = await SharedPreferences
         .getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
@@ -198,17 +190,13 @@ class GlobalState {
       case "set_state":
         this.state.value = DartState.fromJson(jsonDecode(command.data));
       case "ios_get":
-        print(command.data);
         return await iosRead(command.data);
       case "ios_set":
         await iosWrite(command.data);
-        print(command.data);
       case "android_get":
-        print(command.data);
         return await androidRead(command.data);
       case "android_set":
         await androidWrite(command.data);
-        print(command.data);
       case "print":
         print(command.data);
       case "get_commands":
@@ -216,7 +204,6 @@ class GlobalState {
         this.rustCommands = [];
         return json;
       case "post_response":
-        print(dartCommand);
         this.rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
       case "synced":
         this.synced = true;

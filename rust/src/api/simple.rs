@@ -187,7 +187,6 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
     match os.as_str() {
         "IOS" => {
             descriptors = invoke(&callback, "ios_get", "descriptors").await?;
-            invoke(&callback, "print", &descriptors).await?;
             if descriptors.is_empty() {
             let set = generate_legacy_descriptor(&callback, os).await?;
             Ok(set)
@@ -195,7 +194,6 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         }
         "Android" =>{
             descriptors = invoke(&callback, "android_get", "descriptors").await?;
-            invoke(&callback, "print", &descriptors).await?;
             if descriptors.is_empty() {
             let set = generate_legacy_descriptor(&callback, os).await?;
             Ok(set)
@@ -249,7 +247,7 @@ pub async fn rustStart (
 ) -> String {
     let err_catch = tokio::spawn(async move {
         //INIT
-        invoke(&callback, "clear_storage", "").await?;
+        // invoke(&callback, "clear_storage", "").await?;
         let path = PathBuf::from(&path);
         //get descriptors
         let descriptors = get_descriptors(&callback).await?;
@@ -265,9 +263,9 @@ pub async fn rustStart (
                 
 
         //2.load legacy wallet
-        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspendingwallet");
-        let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
-        let savings_wallet_path = path.join("BDK_DATA/savingswallet");
+        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending");
+        // let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
+        // let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
         //3. load premium wallets 
         //TODO need to create dirs for premium wallets
@@ -278,14 +276,11 @@ pub async fn rustStart (
         let price_path = path.join("STATE/price");
         std::fs::create_dir_all(price_path.clone())?;
         let client_uri = "ssl://electrum.blockstream.info:50002";
-
         let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
-
         let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
         let mut store = SqliteStore::new(store_path.clone())?;
         let price = SqliteStore::new(price_path.clone())?;
         let client = Client::new(client_uri)?;
-
         if let Some(old_state) = store.get(b"state")? {
             if serde_json::from_slice::<DartState>(&old_state).is_ok() {
                 invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
@@ -293,7 +288,6 @@ pub async fn rustStart (
         }
         store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
         invoke(&callback, "print", "se").await?;
-
         let wallet_path1 = legacy_spending_wallet_path.clone();
         let descriptors1 = descriptors.clone();
         let client_uri1 = client_uri.clone();
