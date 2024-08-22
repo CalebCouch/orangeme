@@ -279,24 +279,24 @@ class SendAmountState extends State<SendAmount> {
           ),
         ),
       ),
-      bumper: DefaultBumper(
-        content: Column(
-          children: [
-            !onDesktop
-                ? NumericKeypad(
-                    onNumberPressed: updateAmount,
-                  )
-                : Container(),
-            const Spacing(height: AppPadding.content),
-            CustomButton(
-              status: (amount != "0" && error == "") ? 0 : 2,
-              text: "Send",
-              shakeController: _shakeController,
-              onTap: () => next(btc), //change to btc
+      bumper: !onDesktop
+          ? keypadBumper(
+              context,
+              'Send',
+              () => next(btc),
+              amount != "0" && error == "" ? true : false,
+              updateAmount,
+              _shakeController,
+            )
+          : singleButtonBumper(
+              context,
+              'Send',
+              () => next(btc),
+              amount != "0" && error == "" ? true : false,
+              ButtonVariant.primary,
+              true,
+              _shakeController,
             ),
-          ],
-        ),
-      ),
       desktopOnly: true,
       navigationIndex: 0,
     );

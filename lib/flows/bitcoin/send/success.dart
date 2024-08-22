@@ -40,7 +40,6 @@ class ConfirmationState extends State<Confirmation> {
       header: stackHeader(
         context,
         "Confirm send",
-        false,
         exitButton(context, BitcoinHome(widget.globalState)),
       ),
       content: Content(
