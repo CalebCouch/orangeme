@@ -63,6 +63,17 @@ pub struct DescriptorSet {
     pub savings_external: Option<String>
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SeedSet {
+    pub legacy: [u8; 64],
+    pub premium_mobile_spending: Option<[u8; 64]>,
+    pub premium_mobile_savings: Option<[u8; 64]>,,
+    pub premium_desktop_spending: Option<[u8; 64]>,,
+    pub premium_desktop_savings: Option<[u8; 64]>,,
+}
+
+
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DartCommand {
     pub method: String,
@@ -170,14 +181,16 @@ async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<St
         "unknown"
     };
     rand::thread_rng().fill_bytes(&mut seed);
+    //TODO store seeds in a seed struct
+    let seed_set = SeedSet{legacy: seed, premium_desktop_savings: None, premium_desktop_spending: None, premium_mobile_savings: None, premium_mobile_spending: None}
     invoke(&callback, action, &format!("{}{}{}", "seed", STORAGE_SPLIT, &serde_json::to_string(&seed.to_vec())?)).await?;
     let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
     let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
     let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
     let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
     let internal = in_desc.0.to_string_with_secret(&in_desc.1);
-    let set = DescriptorSet{legacy_spending_external:external, legacy_spending_internal:internal, premium_spending_external:None, premium_spending_internal:None, savings_external:None, savings_internal:None};
-    invoke(&callback, action, &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
+    let desc_set = DescriptorSet{legacy_spending_external:external, legacy_spending_internal:internal, premium_spending_external:None, premium_spending_internal:None, savings_external:None, savings_internal:None};
+    invoke(&callback, action, &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&desc_set)?)).await?;
     return Ok(set)
 }
 
@@ -194,6 +207,7 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         }
         "Android" =>{
             descriptors = invoke(&callback, "android_get", "descriptors").await?;
+            invoke(&callback, "print", descriptors).await?;
             if descriptors.is_empty() {
             let set = generate_legacy_descriptor(&callback, os).await?;
             Ok(set)
@@ -363,7 +377,7 @@ pub async fn rustStart (
                             a.require_network(Network::Bitcoin).is_ok()
                         ).unwrap_or(false).to_string())
                     },
-                    "create_transaction" => {
+                    "create_legacy_transaction" => {
                         let ec = "Main.create_transaction";
                         let error = || Error::bad_request(ec, "Invalid parameters");
 
@@ -405,6 +419,34 @@ pub async fn rustStart (
                         let tx = bdk::bitcoin::Transaction::consensus_decode(&mut stream.as_slice())?;
                         client.transaction_broadcast(&tx)?;
                         Ok("Ok".to_string())
+                    },
+                    "create_premium_seeds" => {
+                        //determine OS
+                        //generate the premium seeds
+                        //store premium seeds in the seed struct in the proper location based on environment
+                    },
+                    "export_pubkeys" => {
+                        //determine OS
+                        //derive xpubs from seeds
+                        //export xpubs
+                    },
+                    "create_premium_descriptors" => {
+                        //determine oS
+                        //derive local xprivs from seeds
+                        //import remote xpubs
+                        //create descriptors
+                    },
+                    "create_psbt" => {
+                        //create a psbt
+                    },
+                    "sign_psbt" => {
+                        //sign a psbt
+                    },
+                    "export_psbt" => {
+                        //export a psbt
+                    },
+                    "finalize_psbt" => {
+                        //finalize a fully signed psbt for broadcast
                     },
                     "break" => {
                         return Err(Error::Exited("Break Requested".to_string()));

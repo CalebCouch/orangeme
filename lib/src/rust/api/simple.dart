@@ -7,8 +7,8 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `from_details`, `generate_legacy_descriptor`, `get_descriptors`, `get_os`, `get_price`, `invoke`
-// These types are ignored because they are not used by any `pub` functions: `DartCommand`, `Data`, `DescriptorSet`, `PriceRes`, `Price`, `RustCommand`, `RustResponse`, `SpotRes`, `Spot`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These types are ignored because they are not used by any `pub` functions: `DartCommand`, `Data`, `DescriptorSet`, `PriceRes`, `Price`, `RustCommand`, `RustResponse`, `SeedSet`, `SpotRes`, `Spot`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 Future<String> rustStart(
         {required String path,

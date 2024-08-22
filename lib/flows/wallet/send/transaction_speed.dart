@@ -39,8 +39,8 @@ class TransactionSpeedState extends State<TransactionSpeed> {
 
   Future<void> next() async {
     Transaction tx = Transaction.fromJson(jsonDecode((await widget.globalState
-            .invoke(
-                "create_transaction", "${widget.address}|${widget.btc}|$index"))
+            .invoke("create_legacy_transaction",
+                "${widget.address}|${widget.btc}|$index"))
         .data));
     navigateTo(context,
         ConfirmSend(widget.globalState, tx, widget.address, widget.btc, index));
