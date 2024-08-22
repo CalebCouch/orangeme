@@ -114,10 +114,9 @@ Widget stackButtonHeader(
   );
 }
 
-Widget stackHeader(BuildContext context, String text,
-    [bool delay = false, iconButton]) {
+Widget stackHeader(BuildContext context, String text, [iconButton]) {
   return DefaultHeader(
-    left: iconButton == null ? backButton(context, delay) : iconButton!,
+    left: iconButton == null ? backButton(context) : iconButton!,
     center: CustomText(
       textType: "heading",
       text: text,

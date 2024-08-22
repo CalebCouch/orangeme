@@ -121,7 +121,7 @@ class ConfirmState extends State<ConfirmSend> {
                       TransactionSpeed(
                         widget.globalState,
                         widget.tx.sentAddress!,
-                        widget.tx.btc,
+                        widget.tx.btc.abs(),
                       ),
                     );
                   }

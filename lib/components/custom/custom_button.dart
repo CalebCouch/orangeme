@@ -222,7 +222,7 @@ Widget sendButton(BuildContext context, bool isEnabled) {
   );
 }
 
-Widget backButton(BuildContext context, [bool delay = false]) {
+Widget backButton(BuildContext context) {
   return iconButton(
     context,
     () {

@@ -294,7 +294,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     loop {
        //invoke(&callback, "print", "b").await?;
-        //invoke(&callback, "print", "State Thread Looping").await?;
+       // invoke(&callback, "print", "State Thread Looping").await?;
         let wallet_transactions = wallet.list_transactions(true)?;
         let balance = wallet.get_balance()?;
         let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
@@ -361,7 +361,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
         };
        // invoke(&callback, "print", "d").await?;
         store.set(b"state", &serde_json::to_vec(&state)?)?;
-       // invoke(&callback, "set_state", &serde_json::to_string(&state)?).await?;
+        invoke(&callback, "set_state", &serde_json::to_string(&state)?).await?;
         thread::sleep(time::Duration::from_millis(1000));
     }
     invoke(&callback, "print", "e").await?;
@@ -388,7 +388,6 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     ).unwrap_or(false).to_string())
                 },
                 "create_transaction" => {
-                    invoke(&callback, "print", "tuv").await?;
                     let ec = "Main.create_transaction";
                     let error = || Error::bad_request(ec, "Invalid parameters");
 
@@ -400,7 +399,6 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     let price_error = || Error::not_found(ec, "Cannot get price");
                     let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                     let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-                    invoke(&callback, "print", "xyz").await?;
                     let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
                     let (mut psbt, mut tx_details) = {
                         let mut builder = wallet.build_tx();
@@ -408,7 +406,6 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                         builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
                         builder.finish()?
                     };
-                    invoke(&callback, "print", "abc").await?;
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                     if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
 
