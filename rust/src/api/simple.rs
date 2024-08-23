@@ -65,11 +65,11 @@ pub struct DescriptorSet {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SeedSet {
-    pub legacy: [u8; 64],
-    pub premium_mobile_spending: Option<[u8; 64]>,
-    pub premium_mobile_savings: Option<[u8; 64]>,,
-    pub premium_desktop_spending: Option<[u8; 64]>,,
-    pub premium_desktop_savings: Option<[u8; 64]>,,
+    pub legacy: Vec<u8>,
+    pub premium_mobile_spending: Option<Vec<u8>>,
+    pub premium_mobile_savings: Option<Vec<u8>>,
+    pub premium_desktop_spending: Option<Vec<u8>>,
+    pub premium_desktop_savings: Option<Vec<u8>>,
 }
 
 
@@ -169,8 +169,16 @@ async fn get_os(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<Str
     Ok(os)
 }
 
-async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<String>, os: String) -> Result<DescriptorSet, Error>{
+
+async fn generate_seed() -> [u8; 64] {
     let mut seed: [u8; 64] = [0; 64];
+    rand::thread_rng().fill_bytes(&mut seed);
+    seed
+}
+
+async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<String>, os: String) -> Result<DescriptorSet, Error>{
+    let mut seed = generate_seed().await;
+    invoke(&callback, "print", &serde_json::to_string(&seed.to_vec())?);
     let action = if os == "IOS"{
         "ios_set"
     }
@@ -180,10 +188,9 @@ async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<St
     else{
         "unknown"
     };
-    rand::thread_rng().fill_bytes(&mut seed);
-    //TODO store seeds in a seed struct
-    let seed_set = SeedSet{legacy: seed, premium_desktop_savings: None, premium_desktop_spending: None, premium_mobile_savings: None, premium_mobile_spending: None}
-    invoke(&callback, action, &format!("{}{}{}", "seed", STORAGE_SPLIT, &serde_json::to_string(&seed.to_vec())?)).await?;
+    let seed_set = SeedSet{legacy: seed.to_vec(), premium_desktop_savings: None, premium_desktop_spending: None, premium_mobile_savings: None, premium_mobile_spending: None};
+    let seed_set_json = serde_json::to_string(&seed_set)?;
+    invoke(&callback, action, &format!("{}{}{}", "seed_set", STORAGE_SPLIT, seed_set_json)).await?;
     let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
     let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
     let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
@@ -191,7 +198,7 @@ async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<St
     let internal = in_desc.0.to_string_with_secret(&in_desc.1);
     let desc_set = DescriptorSet{legacy_spending_external:external, legacy_spending_internal:internal, premium_spending_external:None, premium_spending_internal:None, savings_external:None, savings_internal:None};
     invoke(&callback, action, &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&desc_set)?)).await?;
-    return Ok(set)
+    return Ok(desc_set)
 }
 
 async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
@@ -207,7 +214,7 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         }
         "Android" =>{
             descriptors = invoke(&callback, "android_get", "descriptors").await?;
-            invoke(&callback, "print", descriptors).await?;
+            invoke(&callback, "print", &descriptors).await?;
             if descriptors.is_empty() {
             let set = generate_legacy_descriptor(&callback, os).await?;
             Ok(set)
@@ -277,7 +284,7 @@ pub async fn rustStart (
                 
 
         //2.load legacy wallet
-        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending");
+        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending1");
         // let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
         // let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
@@ -424,29 +431,36 @@ pub async fn rustStart (
                         //determine OS
                         //generate the premium seeds
                         //store premium seeds in the seed struct in the proper location based on environment
+                        Ok("Ok".to_string())
                     },
                     "export_pubkeys" => {
                         //determine OS
                         //derive xpubs from seeds
                         //export xpubs
+                        Ok("Ok".to_string())
                     },
                     "create_premium_descriptors" => {
                         //determine oS
                         //derive local xprivs from seeds
                         //import remote xpubs
                         //create descriptors
+                        Ok("Ok".to_string())
                     },
                     "create_psbt" => {
                         //create a psbt
+                        Ok("Ok".to_string())
                     },
                     "sign_psbt" => {
                         //sign a psbt
+                        Ok("Ok".to_string())
                     },
                     "export_psbt" => {
                         //export a psbt
+                        Ok("Ok".to_string())
                     },
                     "finalize_psbt" => {
                         //finalize a fully signed psbt for broadcast
+                        Ok("Ok".to_string())
                     },
                     "break" => {
                         return Err(Error::Exited("Break Requested".to_string()));
