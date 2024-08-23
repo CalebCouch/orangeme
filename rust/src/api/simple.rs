@@ -274,7 +274,7 @@ pub async fn rustStart (
         //get descriptors
         let descriptors = get_descriptors(&callback).await?;
         invoke(&callback, "print", &descriptors);
-        
+
         //TODO check for premium
         let premium = false;
         
@@ -292,8 +292,9 @@ pub async fn rustStart (
         let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
         //3. load premium wallets 
-        //TODO need to create dirs for premium wallets
         std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
+        std::fs::create_dir_all(premium_spending_wallet_path.clone())?;
+        std::fs::create_dir_all(savings_wallet_path.clone())?;
         let store_path = path.join("STATE/store");
         std::fs::create_dir_all(store_path.clone())?;
         let price_path = path.join("STATE/price");
