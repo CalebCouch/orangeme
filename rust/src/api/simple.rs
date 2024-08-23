@@ -271,27 +271,17 @@ pub async fn rustStart (
         // invoke(&callback, "clear_storage", "").await?;
         let path = PathBuf::from(&path);
 
-        //get descriptors
+        //1. get descriptors
         let descriptors = get_descriptors(&callback).await?;
         invoke(&callback, "print", &descriptors);
-
-        //TODO check for premium
-        let premium = false;
-        
-        //premium onboard flow
-        //1. generate xpubs for premium spending & savings
-        //2. import xpubs from phone for premium spending & savings to desktop devices
-        //3. format the descriptors with all available xpubs
-        //4. create and store descriptors on desktop, export to mobile
-        //5. store premium descriptors
                 
 
-        //2.load legacy wallet
+        //2.load wallets
         let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending1");
         let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
         let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
-        //3. load premium wallets 
+        //3. create dirs
         std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
         std::fs::create_dir_all(premium_spending_wallet_path.clone())?;
         std::fs::create_dir_all(savings_wallet_path.clone())?;
@@ -301,6 +291,9 @@ pub async fn rustStart (
         std::fs::create_dir_all(price_path.clone())?;
         let client_uri = "ssl://electrum.blockstream.info:50002";
         let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
+
+        //TODO check for premium
+        let premium = false;
         //TODO load premium wallets if premium
 
         let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
@@ -313,11 +306,15 @@ pub async fn rustStart (
             }
         }
         //TODO premium new address if premium
+
         store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
         invoke(&callback, "print", "se").await?;
         let wallet_path1 = legacy_spending_wallet_path.clone();
         let descriptors1 = descriptors.clone();
         let client_uri1 = client_uri.clone();
+
+        //TODO sync premium wallets if premium
+
         tokio::spawn(async move {
             let legacy_spending_wallet = Wallet::new(&descriptors1.legacy_spending_external, Some(&descriptors1.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path1.join("bdk.db")))?;
             let blockchain = ElectrumBlockchain::from(Client::new(client_uri1)?);
@@ -339,7 +336,9 @@ pub async fn rustStart (
             }
             Err::<(), Error>(Error::Exited("Current Price Fetch Exited".to_string()))
         });
+
         //TODO premium transaction lists if premium
+
         let wallet_path3 = legacy_spending_wallet_path.clone();
         let store_path3 = store_path.clone();
         let price_path3 = price_path.clone();
@@ -434,6 +433,12 @@ pub async fn rustStart (
                         client.transaction_broadcast(&tx)?;
                         Ok("Ok".to_string())
                     },
+                    //premium onboard flow
+                    //1. generate mobile seeds for premium spending & savings
+                    //2. export xpubs from mobile to desktop
+                    //3. generate desktop seeds for premium spending & savings
+                    //4. export xpubs from desktop to mobile
+                    //5. create and store the descriptors on both mobile and desktop with all available xpubs
                     "create_premium_seeds" => {
                         //determine OS
                         //generate the premium seeds
