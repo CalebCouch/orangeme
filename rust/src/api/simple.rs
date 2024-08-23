@@ -270,9 +270,12 @@ pub async fn rustStart (
         //INIT
         // invoke(&callback, "clear_storage", "").await?;
         let path = PathBuf::from(&path);
+
         //get descriptors
         let descriptors = get_descriptors(&callback).await?;
-        //check for premium
+        invoke(&callback, "print", &descriptors);
+        
+        //TODO check for premium
         let premium = false;
         
         //premium onboard flow
@@ -285,12 +288,11 @@ pub async fn rustStart (
 
         //2.load legacy wallet
         let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending1");
-        // let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
-        // let savings_wallet_path = path.join("BDK_DATA/savingswallet");
+        let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
+        let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
         //3. load premium wallets 
         //TODO need to create dirs for premium wallets
-
         std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
         let store_path = path.join("STATE/store");
         std::fs::create_dir_all(store_path.clone())?;
@@ -298,6 +300,8 @@ pub async fn rustStart (
         std::fs::create_dir_all(price_path.clone())?;
         let client_uri = "ssl://electrum.blockstream.info:50002";
         let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
+        //TODO load premium wallets if premium
+
         let blockchain = ElectrumBlockchain::from(Client::new(client_uri)?);
         let mut store = SqliteStore::new(store_path.clone())?;
         let price = SqliteStore::new(price_path.clone())?;
@@ -307,6 +311,7 @@ pub async fn rustStart (
                 invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
             }
         }
+        //TODO premium new address if premium
         store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
         invoke(&callback, "print", "se").await?;
         let wallet_path1 = legacy_spending_wallet_path.clone();
@@ -333,6 +338,7 @@ pub async fn rustStart (
             }
             Err::<(), Error>(Error::Exited("Current Price Fetch Exited".to_string()))
         });
+        //TODO premium transaction lists if premium
         let wallet_path3 = legacy_spending_wallet_path.clone();
         let store_path3 = store_path.clone();
         let price_path3 = price_path.clone();
