@@ -13,6 +13,9 @@ import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
+// Displays detailed information about a user, including their profile photo,
+// about me section, DID, and address, with an option to start a conversation.
+
 class UserProfile extends StatefulWidget {
   final GlobalState globalState;
   final Contact userInfo;

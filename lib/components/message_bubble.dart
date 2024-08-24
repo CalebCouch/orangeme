@@ -6,6 +6,13 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
+// This page provides a set of widgets and utility functions for rendering and
+// managing chat messages, including message bubbles, sender details, and a
+// scrollable message list, with special handling for group and
+// one-on-one conversations.
+
+/*  Creates a chat message bubble with a rounded rectangle shape, colored based 
+on whether the message is incoming or outgoing, and displays the message text. */
 Widget bubble(Message message) {
   return Container(
     decoration: ShapeDecoration(
@@ -25,6 +32,8 @@ Widget bubble(Message message) {
   );
 }
 
+/* isplays message details including the sender's name and message timestamp, 
+with an option to show only the time. */
 Widget details(Message m, [bool showTimeOnly = false]) {
   if (!showTimeOnly) {
     return Row(
@@ -65,12 +74,16 @@ Widget details(Message m, [bool showTimeOnly = false]) {
   }
 }
 
+/* Determines whether to display the sender's name based on the message context, 
+such as group messages and adjacent messages. */
 bool _showName(Message m, bool isGroup, [Message? pM, Message? nM]) {
   if (nM == null) return true;
   if (isGroup && m.isIncoming && m.sender.name != nM.sender.name) return true;
   return false;
 }
 
+/* Determines whether to display the timestamp based on whether it differs from 
+adjacent messages and other contextual factors. */
 bool _showTime(Message m, bool isGroup, [Message? pM, Message? nM]) {
   if (nM == null) return true;
 
@@ -79,6 +92,8 @@ bool _showTime(Message m, bool isGroup, [Message? pM, Message? nM]) {
   return false;
 }
 
+/* Constructs a message item with a bubble, optional sender photo, and details, 
+adapting for group or one-on-one chats. */
 Widget textMessage(
     GlobalState globalState, BuildContext context, Message m, bool isGroup,
     [Message? pM, Message? nM]) {
@@ -128,6 +143,7 @@ Widget textMessage(
   );
 }
 
+/* Builds a scrollable list of messages, adapting for group or individual chats and using textMessage for rendering. */
 Widget messageStack(
     GlobalState globalState,
     BuildContext context,

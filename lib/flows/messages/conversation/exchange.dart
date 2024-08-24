@@ -9,6 +9,8 @@ import 'package:orange/components/text_input.dart';
 import 'package:orange/components/message_bubble.dart';
 import 'package:orange/classes.dart';
 
+// Provides a chat interface for viewing and sending messages within a conversation.
+
 class Exchange extends StatefulWidget {
   final GlobalState globalState;
   final Conversation conversation;

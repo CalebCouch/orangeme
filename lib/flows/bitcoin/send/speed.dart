@@ -12,6 +12,12 @@ import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'dart:convert';
 
+// BITCOIN SEND STEP THREE //
+
+// This page allows users to select the transaction speed for sending Bitcoin. 
+// Users can choose between different speeds and associated fees, 
+// and proceed to confirm the transaction.
+
 class TransactionSpeed extends StatefulWidget {
   final GlobalState globalState;
   final String address;

@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/theme/stylesheet.dart';
 
+import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/numeric_keypad.dart';
+
+// This code provides a DefaultBumper widget for consistent button layouts and
+// defines three functions to create single-button, double-button, and keypad
+// configurations with customizable styles and padding.
 
 class DefaultBumper extends StatelessWidget {
   final Widget content;
@@ -93,6 +98,35 @@ Widget doubleButtonBumper(BuildContext context, String text, String secondText,
           ),
         ],
       ),
+    ),
+  );
+}
+
+Widget keypadBumper(
+  BuildContext context,
+  onTap,
+  updateAmount,
+  status,
+  shakeController,
+) {
+  return DefaultBumper(
+    content: Column(
+      children: [
+        NumericKeypad(
+          onNumberPressed: updateAmount,
+        ),
+        const Spacing(height: AppPadding.content),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: AppPadding.bumper),
+          child: CustomButton(
+            variant: ButtonVariant.primary,
+            text: 'Send',
+            onTap: onTap,
+            status: status,
+            shakeController: shakeController,
+          ),
+        ),
+      ],
     ),
   );
 }

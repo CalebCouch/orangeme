@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/interface.dart';
-import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/result.dart';
+
 import 'package:orange/flows/bitcoin/home.dart';
+
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
+
+// This page displays a confirmation screen after a Bitcoin transaction has been sent.
+// It shows the transaction amount and provides a button to return to the home screen.
 
 class Confirmation extends StatefulWidget {
   final double amount;
@@ -43,23 +47,7 @@ class ConfirmationState extends State<Confirmation> {
         exitButton(context, BitcoinHome(widget.globalState)),
       ),
       content: Content(
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CustomIcon(
-              icon: ThemeIcon.bitcoin,
-              iconColor: ThemeColor.secondary,
-              iconSize: 128,
-            ),
-            const Spacing(height: AppPadding.bumper),
-            CustomText(
-              text: "You sent \$${formatValue(widget.amount.abs())}",
-              textType: 'heading',
-              textSize: TextSize.h3,
-            ),
-          ],
-        ),
+        content: result('You sent \$${formatValue(widget.amount.abs())}'),
       ),
       bumper: singleButtonBumper(
         context,

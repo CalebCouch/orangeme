@@ -17,6 +17,9 @@ import 'package:orange/classes.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/util.dart';
 
+// Provides an overview of user conversations with an option to start a new message,
+// displaying a list of conversations or a prompt to begin messaging if none are present.
+
 class MessagesHome extends StatefulWidget {
   final GlobalState globalState;
   const MessagesHome(

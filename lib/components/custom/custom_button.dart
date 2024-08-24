@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/components/profile_photo.dart';
-import 'package:orange/flows/bitcoin/send/amount.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+
 import 'package:orange/theme/stylesheet.dart';
 
+import 'package:orange/flows/bitcoin/send/amount.dart';
+
+import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+
 import 'package:orange/util.dart';
+
+// This Dart code defines a customizable Flutter button widget that adapts its
+// style, size, and appearance based on different states, and includes helper
+// functions for creating buttons with specific icons for actions like sending,
+// navigating, and exiting.
 
 class ButtonVariant {
   static const String primary = "primary";
@@ -62,17 +70,19 @@ Map buttonColors = {
   },
 };
 
+// This class creates a custom button //
 class CustomButton extends StatefulWidget {
-  final String variant;
-  final int status;
-  final double buttonSize;
   final String text;
+  final String variant;
+
+  final double buttonSize;
+  final int status;
+  final bool expand;
+  final Alignment buttonAlignment;
 
   final String? icon;
   final String? pfp;
   final VoidCallback? onTap;
-  final bool expand;
-  final Alignment buttonAlignment;
   final ShakeController? shakeController;
 
   const CustomButton({
@@ -80,12 +90,12 @@ class CustomButton extends StatefulWidget {
     required this.text,
     this.variant = ButtonVariant.primary,
     this.buttonSize = ButtonSize.lg,
-    this.expand = true,
     this.status = ButtonStatus._default,
+    this.expand = true,
+    this.buttonAlignment = Alignment.center,
     this.icon,
     this.pfp,
     this.onTap,
-    this.buttonAlignment = Alignment.center,
     this.shakeController,
   });
 
@@ -94,6 +104,7 @@ class CustomButton extends StatefulWidget {
 }
 
 class _ButtonState extends State<CustomButton> {
+  // Get the button padding for different sizes //
   _getButtonPadding(buttonSize) {
     if (buttonSize == ButtonSize.lg) {
       return AppPadding.button[0].toDouble();
@@ -102,6 +113,7 @@ class _ButtonState extends State<CustomButton> {
     }
   }
 
+  // Get the button spacing for different sizes //
   _getButtonSpacing(buttonSize) {
     if (buttonSize == ButtonSize.lg) {
       return AppPadding.buttonSpacing[0].toDouble();
@@ -110,6 +122,7 @@ class _ButtonState extends State<CustomButton> {
     }
   }
 
+  // If an icon has been supplied, display it //
   _displayIcon() {
     if (widget.icon != null) {
       return Row(
@@ -128,6 +141,7 @@ class _ButtonState extends State<CustomButton> {
     }
   }
 
+  // If a profile picture has been supplied, display it //
   _displayPfp() {
     return Row(
       children: [
@@ -139,6 +153,7 @@ class _ButtonState extends State<CustomButton> {
     );
   }
 
+  // On button tap while disabled
   disabled() {
     if (widget.shakeController != null) {
       widget.shakeController!.shake();
@@ -189,6 +204,7 @@ class _ButtonState extends State<CustomButton> {
   }
 }
 
+// Icon with an onTap functionality //
 Widget iconButton(BuildContext context, onTap, CustomIcon icon,
     [bool widenLeft = false, bool widenRight = false]) {
   return InkWell(
@@ -249,5 +265,21 @@ Widget infoButton(BuildContext context, Widget page) {
       navigateTo(context, page);
     },
     const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.info),
+  );
+}
+
+Widget numberButton(BuildContext context, String number) {
+  return CustomText(
+    text: number,
+    textType: 'label',
+    color: ThemeColor.secondary,
+  );
+}
+
+Widget deleteButton(BuildContext context) {
+  return const CustomIcon(
+    icon: ThemeIcon.back,
+    iconSize: IconSize.md,
+    iconColor: ThemeColor.secondary,
   );
 }

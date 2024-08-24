@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
+
+import 'package:orange/components/tabular.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/amount_display.dart';
 import 'package:orange/components/interface.dart';
+import 'package:orange/components/amount_display.dart';
+
 import 'package:orange/classes.dart';
+
+// This page displays detailed information about a specific Bitcoin transaction.
+// It shows whether the transaction was received or sent, and provides a breakdown
+// of the transaction amount and associated details.
 
 class TransactionDetailsWidget extends StatefulWidget {
   final GlobalState globalState;
@@ -40,7 +46,7 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
       content: Content(
         content: Column(
           children: [
-            AmountDisplay(
+            amountDisplay(
               (widget.transaction.usd.abs() - widget.transaction.fee.abs()),
               (widget.transaction.btc).abs(),
             ),

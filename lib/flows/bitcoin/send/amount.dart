@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import "package:intl/intl.dart";
+
+import 'dart:math';
+import 'dart:io' show Platform;
+
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/components/custom/custom_button.dart';
-import 'dart:io' show Platform;
 
 import 'package:orange/flows/bitcoin/send/speed.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 
-import "package:intl/intl.dart";
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-import 'dart:math';
 
+/* BITCOIN SEND STEP TWO */
+
+// This code defines a page for sending Bitcoin. It includes 
+// components for entering an amount, validating it, and transitioning to the 
+// next step in the transaction process. The interface features custom 
+// animations, keyboard handling, and conditional content based on the platform.
+
+
+/* Manages and triggers shake animations by notifying listeners. */
 class ShakeController extends ChangeNotifier {
   void shake() => notifyListeners();
 }
 
+/* Applies a shake animation to its child widget, controlled by a ShakeController. 
+Useful for indicating errors or important actions. */
 class ShakeWidget extends StatefulWidget {
   const ShakeWidget({
     super.key,
@@ -95,6 +106,8 @@ class ShakeWidgetState extends State<ShakeWidget>
       );
 }
 
+/* Listens for keyboard events and processes numeric inputs, backspace, 
+and period key presses for computer keyboards. */
 class SimpleKeyboardListener extends StatefulWidget {
   final void Function(String) onPressed;
   final Widget child;
@@ -150,6 +163,8 @@ class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
   }
 }
 
+/* Allows users to input and validate the amount of Bitcoin to send. Handles numeric 
+input, error display, and transitions to the next step based on the input and validation. */
 class SendAmount extends StatefulWidget {
   final GlobalState globalState;
   final String address;
@@ -188,6 +203,8 @@ class SendAmountState extends State<SendAmount> {
     );
   }
 
+  /* Updates the input amount based on keyboard input, handles backspace, 
+  decimal point, and numeric values. Validates the amount against minimum and maximum limits. */
   void updateAmount(String input) {
     var buzz = FeedbackType.warning;
     HapticFeedback.heavyImpact();
@@ -252,12 +269,15 @@ class SendAmountState extends State<SendAmount> {
     });
   }
 
-  final ShakeController _shakeController = ShakeController();
-  Widget buildScreen(BuildContext context, DartState state) {
+  double getBTC(amount) {
     double parsed = double.parse(amount);
-    double btc = parsed > 0
+    return parsed > 0
         ? (parsed / widget.globalState.state.value.currentPrice)
         : 0.0;
+  }
+
+  final ShakeController _shakeController = ShakeController();
+  Widget buildScreen(BuildContext context, DartState state) {
     bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
     return Interface(
@@ -274,35 +294,24 @@ class SendAmountState extends State<SendAmount> {
             controller: _shakeController,
             child: Center(
               child: keyboardAmountDisplay(
-                  widget.globalState, context, amount, btc, error),
+                  widget.globalState, context, amount, getBTC(amount), error),
             ),
           ),
         ),
       ),
-      bumper: !onDesktop
-          ? keypadBumper(
-              context,
-              'Send',
-              () => next(btc),
-              amount != "0" && error == "" ? true : false,
-              updateAmount,
-              _shakeController,
-            )
-          : singleButtonBumper(
-              context,
-              'Send',
-              () => next(btc),
-              amount != "0" && error == "" ? true : false,
-              ButtonVariant.primary,
-              true,
-              _shakeController,
-            ),
+      bumper: onDesktop
+          ? singleButtonBumper(context, 'Send', () => next(getBTC(amount)),
+              (amount != "0" && error == "") ? true : false)
+          : keypadBumper(context, () => next(getBTC(amount)), updateAmount,
+              (amount != "0" && error == "") ? 0 : 2, _shakeController),
       desktopOnly: true,
       navigationIndex: 0,
     );
   }
 }
 
+/*  Displays the formatted amount in USD and BTC, along with any validation errors. 
+Adjusts text size based on the amount length. */
 Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     String amt, double btc, String error) {
   String usd = amt.toString();

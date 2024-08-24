@@ -8,6 +8,9 @@ import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/messages/home.dart';
 
+// Creates a tab navigation bar with icons for switching between the different
+// tabs, providing visual feedback and navigation functionality.
+
 class TabNav extends StatefulWidget {
   final int index;
   final GlobalState globalState;

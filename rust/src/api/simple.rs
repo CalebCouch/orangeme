@@ -399,6 +399,7 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     let price_error = || Error::not_found(ec, "Cannot get price");
                     let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
                     let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+                    invoke(&callback, "print", &format!("amount: {}", amount)).await?;
                     let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
                     let (mut psbt, mut tx_details) = {
                         let mut builder = wallet.build_tx();

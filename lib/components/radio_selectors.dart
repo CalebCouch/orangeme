@@ -4,6 +4,8 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
+// Creates a radio button UI component with a title, subtitle, and toggleable enabled state.
+
 Widget radioButton(String title, String subtitle, bool isEnabled, onTap) {
   return InkWell(
     onTap: onTap,

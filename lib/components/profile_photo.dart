@@ -4,6 +4,10 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/classes.dart';
 
+// Handles profile photo display with customizable sizes, borders, fallback
+// icons, a stacked view for multiple profiles, and an option to edit the profile picture.
+
+/* Returns icon size based on profile size. */
 _getIconSize(double profileSize) {
   switch (profileSize) {
     case 96:
@@ -19,6 +23,7 @@ _getIconSize(double profileSize) {
   }
 }
 
+/* Displays a profile photo with optional border, size, and fallback icon. */
 Widget profilePhoto(
   BuildContext context, [
   String? pfp,
@@ -53,6 +58,7 @@ Widget profilePhoto(
   );
 }
 
+/* Shows a horizontal list of profile photos for up to five contacts. */
 Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
   return Container(
     width: 128,
@@ -73,6 +79,7 @@ Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
   );
 }
 
+/* Provides a profile photo with an edit button for updating the photo. */
 Widget editPhoto(BuildContext context, onTap, [pfp]) {
   return Column(
     children: [

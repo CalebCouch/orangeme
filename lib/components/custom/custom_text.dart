@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
+// A customizable text widget that allows you to adjust text type, size, color, 
+// style, and alignment. Supports underlining, text trimming, and line limits, 
+// using theme-based colors and font weights.
+
 class CustomText extends StatefulWidget {
   final String textType;
   final String text;

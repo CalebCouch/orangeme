@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
+//This Content widget serves as a reusable layout component for pages, providing
+//consistent padding, maximum width, and optional scrolling for the main content.
+
 class Content extends StatelessWidget {
   final Widget content;
   final bool scrollable;

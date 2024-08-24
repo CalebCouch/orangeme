@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/classes.dart';
+import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/tip_buttons.dart';
@@ -10,8 +9,14 @@ import 'package:orange/components/tabular.dart';
 
 import 'package:orange/flows/bitcoin/send/send.dart';
 
+import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
+// This code defines a DataItem widget for displaying content with optional
+// labels and buttons, and includes functions for creating specific DataItem
+// variations like aboutMeItem and addressItem.
+
+/* A versatile widget for displaying a title, content, and optional buttons. Supports dynamic button actions and icons. */
 class DataItem extends StatelessWidget {
   final String title;
   final int? listNum;
@@ -115,26 +120,30 @@ class DataItem extends StatelessWidget {
   }
 }
 
+/* A function that arranges ButtonTip widgets based on the number of provided buttons (1 or 2). */
 Widget editButtons(List<ButtonTip> tipButtons) {
   if (tipButtons.length == 1) return one(tipButtons);
   if (tipButtons.length == 2) return two(tipButtons);
   return Container();
 }
 
+/* Returns a single ButtonTip widget. */
 Widget one(List<ButtonTip> tipButtons) {
-  return oneTip(tipButtons[0]);
+  return ButtonTip(tipButtons[0].text, tipButtons[0].icon, tipButtons[0].onTap);
 }
 
+/* Returns a row of two ButtonTip widgets. */
 Widget two(List<ButtonTip> tipButtons) {
   return Row(
     children: [
-      oneTip(tipButtons[0]),
+      ButtonTip(tipButtons[0].text, tipButtons[0].icon, tipButtons[0].onTap),
       const Spacing(width: AppPadding.tips),
-      oneTip(tipButtons[1]),
+      ButtonTip(tipButtons[1].text, tipButtons[1].icon, tipButtons[1].onTap),
     ],
   );
 }
 
+/* Creates a DataItem displaying an "About Me" section with the provided text. */
 Widget aboutMeItem(BuildContext context, String aboutMe) {
   return DataItem(
     title: 'About Me',
@@ -149,6 +158,7 @@ Widget aboutMeItem(BuildContext context, String aboutMe) {
   );
 }
 
+/* Creates a DataItem for displaying a Bitcoin address with a "Copy" button to copy the address to the clipboard. */
 Widget addressItem(BuildContext context, String address) {
   return DataItem(
     title: 'Bitcoin address',
@@ -171,6 +181,7 @@ Widget addressItem(BuildContext context, String address) {
   );
 }
 
+/* Creates a DataItem for displaying a Digital ID with a "Copy" button to copy the ID to the clipboard. */
 Widget didItem(BuildContext context, String did) {
   return DataItem(
     title: 'Digital ID',
@@ -193,6 +204,7 @@ Widget didItem(BuildContext context, String did) {
   );
 }
 
+/*  Creates a DataItem for confirming a recipient's details before sending Bitcoin, with a button to navigate to a send screen. */
 Widget confirmRecipientItem(GlobalState globalState, BuildContext context,
     String recipient, String did) {
   return DataItem(
