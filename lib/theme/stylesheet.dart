@@ -73,6 +73,7 @@ class ConstantsColor {
   static const Color _red = Color(0xFFFF3B00);
   static const Color _green = Color(0xFF00CC00);
   static const Color _orange = Color(0xFFF3474D);
+  static const Color _yellow = Color(0xFFF6C000);
 }
 
 class ThemeColor {
@@ -90,6 +91,7 @@ class ThemeColor {
   static const Color brand = ConstantsColor._white;
   static const Color success = ConstantsColor._green;
   static const Color danger = ConstantsColor._red;
+  static const Color warning = ConstantsColor._yellow;
 }
 
 ////ICONS////
@@ -117,6 +119,10 @@ class ThemeIcon {
   static const String profile = 'assets/icons/profile.svg';
   static const String info = 'assets/icons/info.svg';
   static const String send = 'assets/icons/send.svg';
+  static const String add = 'assets/icons/add.svg';
+  static const String cancel = 'assets/icons/cancel.svg';
+  static const String checkmark = 'assets/icons/checkmark.svg';
+  static const String warning = 'assets/icons/warning.svg';
 }
 
 class IconSize {

@@ -23,13 +23,43 @@ _getIconSize(double profileSize) {
   }
 }
 
-/* Displays a profile photo with optional border, size, and fallback icon. */
+profilePhotoPresets(String choice, double size) {
+  switch (choice) {
+    case 'group':
+      return SvgPicture.asset(
+        height: _getIconSize(size),
+        width: _getIconSize(size),
+        ThemeIcon.group,
+        colorFilter:
+            const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
+      );
+
+    case 'profile':
+      return SvgPicture.asset(
+        height: _getIconSize(size),
+        width: _getIconSize(size),
+        ThemeIcon.profile,
+        colorFilter:
+            const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
+      );
+
+    case 'wallet':
+      return SvgPicture.asset(
+        height: _getIconSize(size),
+        width: _getIconSize(size),
+        ThemeIcon.wallet,
+        colorFilter:
+            const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
+      );
+  }
+}
+
 Widget profilePhoto(
   BuildContext context, [
   String? pfp,
+  String? preset,
   double size = ProfileSize.md,
   bool outline = false,
-  bool isGroup = false,
 ]) {
   return Container(
     alignment: Alignment.center,
@@ -47,18 +77,13 @@ Widget profilePhoto(
           : null,
     ),
     child: pfp == null
-        ? SvgPicture.asset(
-            height: _getIconSize(size),
-            width: _getIconSize(size),
-            isGroup ? ThemeIcon.group : ThemeIcon.profile,
-            colorFilter: const ColorFilter.mode(
-                ThemeColor.textSecondary, BlendMode.srcIn),
-          )
+        ? preset == null
+            ? profilePhotoPresets('profile', size)
+            : profilePhotoPresets(preset, size)
         : Container(),
   );
 }
 
-/* Shows a horizontal list of profile photos for up to five contacts. */
 Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
   return Container(
     width: 128,
@@ -72,18 +97,17 @@ Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
         return Align(
           widthFactor: 0.75,
           child: profilePhoto(
-              context, contacts[index].pfp, ProfileSize.md, true, false),
+              context, contacts[index].pfp, null, ProfileSize.md, false),
         );
       },
     ),
   );
 }
 
-/* Provides a profile photo with an edit button for updating the photo. */
 Widget editPhoto(BuildContext context, onTap, [pfp]) {
   return Column(
     children: [
-      profilePhoto(context, pfp, ProfileSize.xxl),
+      profilePhoto(context, pfp, null, ProfileSize.xxl),
       const Spacing(height: AppPadding.header),
       ButtonTip('Photo', ThemeIcon.edit, onTap)
     ],

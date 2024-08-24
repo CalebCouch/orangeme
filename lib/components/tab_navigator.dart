@@ -5,7 +5,7 @@ import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/bitcoin/wallet.dart';
 import 'package:orange/flows/messages/home.dart';
 
 // Creates a tab navigation bar with icons for switching between the different
@@ -31,7 +31,7 @@ class TabNavState extends State<TabNav> {
     void openBitcoin() {
       print("switching to bitcoin");
       HapticFeedback.heavyImpact();
-      switchPageTo(context, BitcoinHome(widget.globalState));
+      switchPageTo(context, WalletHome(widget.globalState));
     }
 
     return Container(

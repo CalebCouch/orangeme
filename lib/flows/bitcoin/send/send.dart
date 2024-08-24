@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/bitcoin/wallet.dart';
 
 import 'package:orange/theme/stylesheet.dart';
-
 
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
@@ -23,7 +22,7 @@ import 'package:orange/classes.dart';
 
 // BITCOIN SEND STEP ONE //
 
-// This page allows users to input a Bitcoin address, validate it, and proceed 
+// This page allows users to input a Bitcoin address, validate it, and proceed
 // to send Bitcoin. It supports manual entry, pasting from clipboard,
 // and scanning QR codes.
 
@@ -92,7 +91,7 @@ class SendState extends State<Send> {
         iconButton(
           context,
           () {
-            resetNavTo(context, BitcoinHome(widget.globalState));
+            resetNavTo(context, WalletHome(widget.globalState));
           },
           const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
         ),

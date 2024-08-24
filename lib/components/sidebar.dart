@@ -4,14 +4,14 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_button.dart';
 
-import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/bitcoin/wallet.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-// Provides a sidebar navigation component for desktop with options for 
+// Provides a sidebar navigation component for desktop with options for
 // switching between different sections and a user profile button.
 
 class Sidebar extends StatefulWidget {
@@ -87,7 +87,7 @@ void openMessages(BuildContext context, GlobalState globalState) {
 
 /* Navigates to the Bitcoin tab. */
 void openBitcoin(BuildContext context, GlobalState globalState) {
-  switchPageTo(context, BitcoinHome(globalState));
+  switchPageTo(context, WalletHome(globalState));
 }
 
 /* Creates a list of sidebar buttons for navigating to the different tabs. */

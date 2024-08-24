@@ -127,16 +127,18 @@ Widget stackButtonHeader(
   );
 }
 
-/* A basic header with optional back button and centered text. */
-Widget stackHeader(BuildContext context, String text, [iconButton]) {
+/* A basic header with optional icons and centered text. */
+Widget stackHeader(BuildContext context, String text,
+    [leftIconButton, rightIconButton]) {
   return DefaultHeader(
-    left: iconButton == null ? backButton(context) : iconButton!,
+    left: leftIconButton ?? backButton(context),
     center: CustomText(
       textType: "heading",
       text: text,
       textSize: TextSize.h4,
       color: ThemeColor.heading,
     ),
+    right: rightIconButton,
   );
 }
 

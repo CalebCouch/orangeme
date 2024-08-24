@@ -145,7 +145,7 @@ class _ButtonState extends State<CustomButton> {
   _displayPfp() {
     return Row(
       children: [
-        profilePhoto(context, widget.pfp, ProfileSize.sm),
+        profilePhoto(context, widget.pfp, null, ProfileSize.sm),
         Spacing(
           width: _getButtonSpacing(widget.buttonSize),
         )

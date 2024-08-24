@@ -5,6 +5,7 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo.dart';
 
 import 'package:orange/classes.dart';
+import 'package:orange/temp_classes.dart';
 import 'package:orange/util.dart';
 
 // This file defines several types of list items:
@@ -66,6 +67,8 @@ class DefaultListItem extends StatelessWidget {
 /* A list item widget designed to display an image on the left. */
 class ImageListItem extends StatelessWidget {
   final Widget? left;
+  final Widget? topLeft;
+  final Widget? bottomLeft;
   final Widget? topRight;
   final Widget? bottomRight;
   final VoidCallback? onTap;
@@ -75,6 +78,8 @@ class ImageListItem extends StatelessWidget {
     this.left,
     this.topRight,
     this.bottomRight,
+    this.topLeft,
+    this.bottomLeft,
     this.onTap,
   });
 
@@ -97,11 +102,22 @@ class ImageListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (topRight != null) topRight!,
-                  if (bottomRight != null) bottomRight!,
+                  if (topLeft != null) topLeft!,
+                  if (bottomLeft != null) bottomLeft!,
                 ],
               ),
             ),
+            topRight != null || bottomRight != null
+                ? Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (topRight != null) topRight!,
+                        if (bottomRight != null) bottomRight!,
+                      ],
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -130,16 +146,16 @@ Widget messageListItem(
       child: profilePhoto(
         context,
         isGroup ? null : convo.members[0].pfp,
+        'group',
         ProfileSize.lg,
         false,
-        isGroup,
       ),
     ),
-    topRight: CustomText(
+    topLeft: CustomText(
       text: isGroup ? 'Group message' : convo.members[0].name,
       textSize: TextSize.md,
     ),
-    bottomRight: convo.messages.isNotEmpty
+    bottomLeft: convo.messages.isNotEmpty
         ? CustomText(
             trim: true,
             alignment: TextAlign.left,
@@ -166,14 +182,44 @@ Widget contactListItem(BuildContext context, Contact contact, onTap) {
     onTap: onTap,
     left: Container(
       alignment: Alignment.centerLeft,
-      child: profilePhoto(context, contact.pfp, ProfileSize.lg),
+      child: profilePhoto(context, contact.pfp, null, ProfileSize.lg),
     ),
-    topRight: CustomText(
+    topLeft: CustomText(
       text: contact.name,
       textSize: TextSize.md,
     ),
-    bottomRight: CustomText(
+    bottomLeft: CustomText(
       text: middleCut(contact.did, 30),
+      textSize: TextSize.sm,
+      color: ThemeColor.textSecondary,
+    ),
+  );
+}
+
+Widget walletListItem(BuildContext context, Wallet wallet, onTap) {
+  return ImageListItem(
+    onTap: onTap,
+    left: Container(
+      alignment: Alignment.centerLeft,
+      child: profilePhoto(context, null, 'wallet', ProfileSize.lg),
+    ),
+    topLeft: CustomText(
+      text: wallet.name,
+      textSize: TextSize.h5,
+      textType: 'heading',
+    ),
+    bottomLeft: CustomText(
+      text: wallet.isSpending ? 'Spending' : 'Savings',
+      textSize: TextSize.sm,
+      color: ThemeColor.textSecondary,
+    ),
+    topRight: CustomText(
+      text: "\$${formatValue(wallet.balance)}",
+      textSize: TextSize.h5,
+      textType: 'heading',
+    ),
+    bottomRight: CustomText(
+      text: "${wallet.btc} BTC",
       textSize: TextSize.sm,
       color: ThemeColor.textSecondary,
     ),

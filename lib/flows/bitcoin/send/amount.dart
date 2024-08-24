@@ -22,11 +22,10 @@ import 'package:orange/classes.dart';
 
 /* BITCOIN SEND STEP TWO */
 
-// This code defines a page for sending Bitcoin. It includes 
-// components for entering an amount, validating it, and transitioning to the 
-// next step in the transaction process. The interface features custom 
+// This code defines a page for sending Bitcoin. It includes
+// components for entering an amount, validating it, and transitioning to the
+// next step in the transaction process. The interface features custom
 // animations, keyboard handling, and conditional content based on the platform.
-
 
 /* Manages and triggers shake animations by notifying listeners. */
 class ShakeController extends ChangeNotifier {
@@ -300,10 +299,20 @@ class SendAmountState extends State<SendAmount> {
         ),
       ),
       bumper: onDesktop
-          ? singleButtonBumper(context, 'Send', () => next(getBTC(amount)),
-              (amount != "0" && error == "") ? true : false)
-          : keypadBumper(context, () => next(getBTC(amount)), updateAmount,
-              (amount != "0" && error == "") ? 0 : 2, _shakeController),
+          ? singleButtonBumper(
+              context,
+              'Send',
+              () => next(getBTC(amount)),
+              (amount != "0" && error == "") ? true : false,
+            )
+          : keypadBumper(
+              context,
+              'Send',
+              () => next(getBTC(amount)),
+              (amount != "0" && error == "") ? true : false,
+              updateAmount,
+              _shakeController,
+            ),
       desktopOnly: true,
       navigationIndex: 0,
     );
