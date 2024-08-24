@@ -118,6 +118,7 @@ Widget contactTabular(BuildContext context, String name, String did) {
 such as sent address, amount sent, and USD value. */
 
 Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
+  print("usd: ${tx.usd}");
   return Column(
     children: [
       if (recipient != null)
@@ -137,7 +138,7 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
       if (tx.sentAddress != null)
         SingleTab(
           title: "USD Value Sent",
-          subtitle: "\$${tx.usd.abs()}",
+          subtitle: "\$${tx.usd.abs() - tx.fee.abs()}",
         ),
       if (tx.sentAddress != null)
         SingleTab(

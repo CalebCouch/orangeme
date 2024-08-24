@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange/components/custom/custom_button.dart';
+import 'package:orange/components/custom/custom_icon.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 
 import 'package:orange/theme/stylesheet.dart';
 
@@ -83,7 +86,17 @@ class SendState extends State<Send> {
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
-      header: stackHeader(context, "Bitcoin address", true),
+      header: stackHeader(
+        context,
+        "Bitcoin address",
+        iconButton(
+          context,
+          () {
+            resetNavTo(context, BitcoinHome(widget.globalState));
+          },
+          const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
+        ),
+      ),
       content: Content(
         content: SingleChildScrollView(
           child: Column(

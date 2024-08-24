@@ -30,8 +30,6 @@ class TransactionSpeed extends StatefulWidget {
 }
 
 class TransactionSpeedState extends State<TransactionSpeed> {
-  final TextEditingController recipientAddressController =
-      TextEditingController();
   int index = 0;
   bool isLoading = false;
 
@@ -61,7 +59,6 @@ class TransactionSpeedState extends State<TransactionSpeed> {
             .invoke(
                 "create_transaction", "${widget.address}|${widget.btc}|$index"))
         .data));
-
     navigateTo(context, ConfirmSend(widget.globalState, tx));
     setState(() {
       isLoading = false;
@@ -69,6 +66,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
+    print('BTC: ${widget.btc}');
     var fees = widget.globalState.state.value.fees;
     return Interface(
       widget.globalState,
@@ -108,9 +106,7 @@ class TransactionSpeedState extends State<TransactionSpeed> {
                 ),
               ]),
             ),
-      bumper: isLoading
-          ? Container()
-          : singleButtonBumper(context, "Continue", next),
+      bumper: isLoading ? null : singleButtonBumper(context, "Continue", next),
       desktopOnly: true,
       navigationIndex: 0,
     );

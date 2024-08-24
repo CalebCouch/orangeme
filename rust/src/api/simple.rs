@@ -294,7 +294,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     loop {
        //invoke(&callback, "print", "b").await?;
-        //invoke(&callback, "print", "State Thread Looping").await?;
+       // invoke(&callback, "print", "State Thread Looping").await?;
         let wallet_transactions = wallet.list_transactions(true)?;
         let balance = wallet.get_balance()?;
         let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
@@ -388,7 +388,6 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     ).unwrap_or(false).to_string())
                 },
                 "create_transaction" => {
-                    invoke(&callback, "print", "tuv").await?;
                     let ec = "Main.create_transaction";
                     let error = || Error::bad_request(ec, "Invalid parameters");
 
@@ -408,7 +407,6 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                         builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
                         builder.finish()?
                     };
-                    invoke(&callback, "print", "abc").await?;
                     let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
                     if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
 
