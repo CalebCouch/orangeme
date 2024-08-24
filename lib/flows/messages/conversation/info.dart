@@ -12,6 +12,8 @@ import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
+// Displays a list of group members with the option to view individual profiles.
+
 class MessageInfo extends StatefulWidget {
   final GlobalState globalState;
   final List<Contact> contacts;

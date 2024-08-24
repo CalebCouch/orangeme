@@ -14,6 +14,8 @@ import 'package:orange/classes.dart';
 
 import 'package:orange/flows/messages/conversation/exchange.dart';
 
+// Allows users to search for and select contacts to start a new message conversation.
+
 class ChooseRecipient extends StatefulWidget {
   final GlobalState globalState;
   const ChooseRecipient(
@@ -115,12 +117,10 @@ class ChooseRecipientState extends State<ChooseRecipient> {
                 spacing: 8,
                 runSpacing: 8,
                 children: List<Widget>.generate(recipients.length, (index) {
-                  return oneTip(
-                    ButtonTip(recipients[index].name, ThemeIcon.close, () {
-                      HapticFeedback.heavyImpact();
-                      removeRecipient(recipients[index]);
-                    }),
-                  );
+                  return ButtonTip(recipients[index].name, ThemeIcon.close, () {
+                    HapticFeedback.heavyImpact();
+                    removeRecipient(recipients[index]);
+                  });
                 }),
               ),
             ),

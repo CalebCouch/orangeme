@@ -5,6 +5,11 @@ import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/sidebar.dart';
 import 'package:orange/classes.dart';
 
+// This file defines a responsive Interface layout that adapts between mobile and 
+// desktop views, using MobileInterface for mobile devices with optional navigation 
+// and bumper, and DesktopInterface for desktops with a sidebar and padding.
+
+/* A responsive layout that switches between mobile and desktop views based on the platform. */
 class Interface extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
   final Widget header;
@@ -48,6 +53,7 @@ class Interface extends StatelessWidget {
   }
 }
 
+/* A mobile layout with optional bottom navigation bar and bumper. */
 class MobileInterface extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
   final Widget header;
@@ -86,6 +92,7 @@ class MobileInterface extends StatelessWidget {
   }
 }
 
+/* A desktop layout featuring a sidebar and padding, with optional bumper. */
 class DesktopInterface extends StatelessWidget {
   final Widget header;
   final Widget content;

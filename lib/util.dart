@@ -103,7 +103,6 @@ String formatBTC(double val, [int per = 2]) {
 
 formatDate(String? date, String? time) {
   if (date == null) return 'Pending';
-  print(DateFormat('yMd').format(DateTime.now()));
   if (DateFormat('yMd').format(DateTime.parse(date)) ==
       DateFormat('yMd').format(DateTime.now())) {
     if (time != null) {

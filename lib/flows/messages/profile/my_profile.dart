@@ -10,10 +10,13 @@ import 'package:orange/components/data_item.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
 
+import 'package:orange/classes.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'dart:io' show Platform;
 
-import 'package:orange/classes.dart';
+// rovides a user interface for viewing and editing personal profile details,
+// including updating profile photo, name, and about me section.
 
 class MyProfile extends StatefulWidget {
   final String? profilePhoto;

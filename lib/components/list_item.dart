@@ -7,6 +7,11 @@ import 'package:orange/components/profile_photo.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
+// This file defines several types of list items:
+// DefaultListItem for general use with customizable sections,
+// ImageListItem for items featuring images, and specific item builders such as
+// messageListItem for conversation messages and contactListItem for displaying contacts.
+
 class DefaultListItem extends StatelessWidget {
   final Widget? topLeft;
   final Widget? bottomLeft;
@@ -58,6 +63,7 @@ class DefaultListItem extends StatelessWidget {
   }
 }
 
+/* A list item widget designed to display an image on the left. */
 class ImageListItem extends StatelessWidget {
   final Widget? left;
   final Widget? topRight;
@@ -103,6 +109,7 @@ class ImageListItem extends StatelessWidget {
   }
 }
 
+/* Constructs a list item for displaying a conversation */
 Widget messageListItem(
     BuildContext context, Conversation convo, VoidCallback onTap) {
   bool isGroup = false;
@@ -152,6 +159,8 @@ Widget messageListItem(
   );
 }
 
+/* List item for showing contact information, including a profile photo,
+ the contact's name, and a truncated version of the contact's DID. */
 Widget contactListItem(BuildContext context, Contact contact, onTap) {
   return ImageListItem(
     onTap: onTap,

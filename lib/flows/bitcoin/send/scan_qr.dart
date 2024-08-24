@@ -10,6 +10,9 @@ import 'package:orange/util.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 
+// Provides a QR code scanner for capturing Bitcoin addresses and navigating to the transaction screen.
+
+/* Manages the QR code scanning interface for capturing Bitcoin addresses. */
 class ScanQR extends StatefulWidget {
   final GlobalState globalState;
   const ScanQR(this.globalState, {super.key});
@@ -84,6 +87,7 @@ class ScanQRState extends State<ScanQR> {
     );
   }
 
+  /* Initializes the QR view controller and handles scanned data. */
   _onQRViewCreated(GlobalState globalState, QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {

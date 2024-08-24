@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
+
 import 'package:orange/theme/stylesheet.dart';
+
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
+
 import 'package:orange/flows/messages/conversation/info.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
-import 'dart:io' show Platform;
 
+import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
+
+// This code provides several DefaultHeader variations for different app sections,
+// including home, stack navigation, and message headers, with configurations for
+// left, center, and right widgets, as well as handling desktop vs. mobile layouts
+// and group vs. individual message views.
+
+/* A flexible header widget with customizable left, center, and right content. */
 class DefaultHeader extends StatelessWidget {
   final Widget? left;
   final Widget center;
@@ -52,6 +62,7 @@ class DefaultHeader extends StatelessWidget {
   }
 }
 
+/* A desktop-specific header with centered text. */
 Widget homeDesktopHeader(BuildContext context, String text) {
   return DefaultHeader(
     center: CustomText(
@@ -63,6 +74,7 @@ Widget homeDesktopHeader(BuildContext context, String text) {
   );
 }
 
+/* A responsive header for home pages with profile photo and optional icon */
 Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
     [Widget? iconButton]) {
   bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
@@ -91,6 +103,7 @@ Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
   );
 }
 
+/* A header with optional icon button, centered text, and optional right button. */
 Widget stackButtonHeader(
     BuildContext context, String text, bool rightEnabled, rightText, rightOnTap,
     [iconButton]) {
@@ -114,6 +127,7 @@ Widget stackButtonHeader(
   );
 }
 
+/* A basic header with optional back button and centered text. */
 Widget stackHeader(BuildContext context, String text,
     [bool delay = false, iconButton]) {
   return DefaultHeader(
@@ -127,6 +141,7 @@ Widget stackHeader(BuildContext context, String text,
   );
 }
 
+/* A message header that displays user or group info */
 Widget stackMessageHeader(
     GlobalState globalState, BuildContext context, Conversation cnvo) {
   bool isGroup = false;

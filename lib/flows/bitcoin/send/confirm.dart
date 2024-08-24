@@ -19,6 +19,13 @@ import 'package:orange/components/data_item.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
+/* BITCOIN SEND STEP FOUR */
+
+// The ConfirmSend class provides a confirmation screen for a Bitcoin transaction. 
+// It allows users to review the transaction details, such as the recipient address
+// and amount, and provides options to confirm and send the transaction or adjust 
+// the amount or speed settings.
+
 class ConfirmSend extends StatefulWidget {
   final GlobalState globalState;
   final Transaction tx;
@@ -48,6 +55,7 @@ class ConfirmState extends State<ConfirmSend> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
+    print(widget.tx.usd);
     return Interface(
       widget.globalState,
       header: stackHeader(
@@ -121,7 +129,7 @@ class ConfirmState extends State<ConfirmSend> {
                       TransactionSpeed(
                         widget.globalState,
                         widget.tx.sentAddress!,
-                        widget.tx.btc,
+                        widget.tx.btc.abs(),
                       ),
                     );
                   }

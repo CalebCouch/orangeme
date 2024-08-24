@@ -5,6 +5,10 @@ import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:intl/intl.dart';
 
+// Displays tabular information for transactions, contacts, and confirmations
+// using SingleTab widgets to organize and present various details.
+
+/*  A widget displaying a title and subtitle in a row, with padding applied. */
 class SingleTab extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -36,6 +40,7 @@ class SingleTab extends StatelessWidget {
   }
 }
 
+/* Creates a column of SingleTab widgets showing detailed information about a transaction, including date, time, addresses, amounts, and value in USD. */
 Widget transactionTabular(BuildContext context, Transaction tx) {
   late String formattedDate;
   if (tx.date != null) {
@@ -99,6 +104,7 @@ Widget transactionTabular(BuildContext context, Transaction tx) {
   );
 }
 
+/* Shows a column of SingleTab widgets with contact details, including profile name and digital ID. */
 Widget contactTabular(BuildContext context, String name, String did) {
   return Column(
     children: [
@@ -108,6 +114,9 @@ Widget contactTabular(BuildContext context, String name, String did) {
   );
 }
 
+/* Provides a column of SingleTab widgets summarizing transaction confirmation details, 
+such as sent address, amount sent, and USD value. */
+
 Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
   return Column(
     children: [
@@ -116,8 +125,6 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
           title: "Contact",
           subtitle: "${recipient.name}",
         ),
-      //SingleTab(title: "Date", subtitle: DateFormat('yMd').format(now)),
-      //SingleTab(title: "Time", subtitle: DateFormat.jm().format(now)),
       if (tx.sentAddress != null)
         SingleTab(
             title: "Sent to Address",
@@ -130,7 +137,7 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
       if (tx.sentAddress != null)
         SingleTab(
           title: "USD Value Sent",
-          subtitle: "\$${formatValue(tx.usd.abs() - tx.fee.abs())}",
+          subtitle: "\$${tx.usd.abs()}",
         ),
       if (tx.sentAddress != null)
         SingleTab(

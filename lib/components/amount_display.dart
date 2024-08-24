@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
 
+import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/util.dart';
 
-Widget AmountDisplay(double value, double converted) {
+// Displays a formatted monetary value and its equivalent in BTC. Adjusts text
+// size based on the length of the value and uses different text styles for the
+// currency amount and its conversion.
+
+Widget amountDisplay(double value, double converted) {
   String accountBalance = "";
 
-  _getValueDisplaySize(double value) {
+  getValueDisplaySize(double value) {
     accountBalance = value.toString();
     if (accountBalance.length <= 4) {
       //1-4
@@ -29,7 +33,7 @@ Widget AmountDisplay(double value, double converted) {
         CustomText(
           textType: "heading",
           text: "\$${formatValue(value)}",
-          textSize: _getValueDisplaySize(value),
+          textSize: getValueDisplaySize(value),
           color: ThemeColor.heading,
         ),
         const Spacing(height: AppPadding.valueDisplaySep),

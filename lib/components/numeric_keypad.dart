@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/custom/custom_icon.dart';
+import 'package:orange/components/custom/custom_button.dart';
+
+// This code creates a numeric keypad with buttons for digits, a decimal point, 
+// and a backspace function, handling presses through a callback.
 
 class NumericKeypad extends StatelessWidget {
   final void Function(String) onNumberPressed;

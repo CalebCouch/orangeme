@@ -16,6 +16,11 @@ import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/util.dart';
 
+// This page serves as the main screen for Bitcoin transactions. 
+// It displays the user's balance in both USD and BTC, a list of recent transactions,
+// and provides buttons for sending and receiving Bitcoin. The screen also shows
+// optional reminders for backing up and internet connectivity.
+
 class BitcoinHome extends StatefulWidget {
   final GlobalState globalState;
   const BitcoinHome(this.globalState, {super.key});

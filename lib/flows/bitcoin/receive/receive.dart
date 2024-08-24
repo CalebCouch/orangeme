@@ -14,6 +14,11 @@ import 'dart:io' show Platform;
 import 'package:share/share.dart';
 import 'package:orange/classes.dart';
 
+// The Receive widget provides an interface for users to receive Bitcoin by
+// displaying a QR code and address. It supports both desktop and mobile 
+// platforms, allowing users to either copy the address or share it via different
+// methods depending on the platform.
+
 class Receive extends StatefulWidget {
   final GlobalState globalState;
   final String address;

@@ -3,6 +3,8 @@ import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_button.dart';
 
+/* A widget that creates a medium-sized button with text and an icon, using a secondary style. Includes an optional tap callback. */
+
 class ButtonTip extends StatelessWidget {
   final String text;
   final String icon;
@@ -21,12 +23,4 @@ class ButtonTip extends StatelessWidget {
       onTap: onTap,
     );
   }
-}
-
-Widget oneTip(ButtonTip buttonTip) {
-  return Column(
-    children: [
-      buttonTip,
-    ],
-  );
 }

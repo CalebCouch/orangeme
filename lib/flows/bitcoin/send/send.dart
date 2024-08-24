@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/interface.dart';
 
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
@@ -14,8 +13,16 @@ import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/interface.dart';
+
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+
+// BITCOIN SEND STEP ONE //
+
+// This page allows users to input a Bitcoin address, validate it, and proceed 
+// to send Bitcoin. It supports manual entry, pasting from clipboard,
+// and scanning QR codes.
 
 class Send extends StatefulWidget {
   final GlobalState globalState;
@@ -30,6 +37,7 @@ class SendState extends State<Send> {
   String addressStr = '';
   bool addressValid = false;
 
+  /* Validates the Bitcoin address by invoking a backend check. */
   Future<void> checkAddress(String address) async {
     if (address.contains('bitcoin:')) address = address.substring(8);
     var valid =
@@ -40,6 +48,7 @@ class SendState extends State<Send> {
     });
   }
 
+  /* Updates the address and its validity, also sets the address in the text controller. */
   Future<void> setAddress(String address) async {
     if (address.contains('bitcoin:')) address = address.substring(8);
     var valid =
