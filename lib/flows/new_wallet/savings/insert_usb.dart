@@ -60,8 +60,6 @@ class InsertUSBState extends State<InsertUSB> {
       bumper: singleButtonBumper(context, "Continue", () {
         navigateTo(context, CreatingKey(widget.globalState));
       }),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

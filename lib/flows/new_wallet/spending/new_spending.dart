@@ -6,7 +6,7 @@ import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/bumper.dart';
 
-import 'package:orange/flows/new_wallet/success.dart';
+import 'package:orange/flows/new_wallet/savings/success.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';

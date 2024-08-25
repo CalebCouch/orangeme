@@ -60,8 +60,6 @@ class RemoveUSBState extends State<RemoveUSB> {
       bumper: singleButtonBumper(context, "Continue", () {
         navigateTo(context, CreationConfirmed(widget.globalState));
       }),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

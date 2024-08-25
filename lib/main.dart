@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:orange/flows/bitcoin/wallet.dart';
 import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/flows/pairing/pair_desktop.dart';
+import 'package:orange/flows/pairing/pair.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/temp_classes.dart';

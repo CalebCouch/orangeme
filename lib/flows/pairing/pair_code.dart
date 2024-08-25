@@ -12,15 +12,15 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/interface.dart';
 import 'package:orange/classes.dart';
 
-class PairDesktop extends StatefulWidget {
+class PairCode extends StatefulWidget {
   final GlobalState globalState;
-  const PairDesktop(this.globalState, {super.key});
+  const PairCode(this.globalState, {super.key});
 
   @override
-  PairDesktopState createState() => PairDesktopState();
+  PairCodeState createState() => PairCodeState();
 }
 
-class PairDesktopState extends State<PairDesktop> {
+class PairCodeState extends State<PairCode> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -37,7 +37,7 @@ class PairDesktopState extends State<PairDesktop> {
       content: Content(
         content: Column(
           children: [
-            qrCode("RANDOMPAIRINGCODE"),
+            qrCode("RANDOMPAIRINGCODE-1234hexak820xbosuxhdoi02oxc2345"),
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
                 'Scan with orange.me app', TextSize.h3, FontWeight.w700),

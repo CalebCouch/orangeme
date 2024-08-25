@@ -60,8 +60,6 @@ class CreatingKeyState extends State<CreatingKey> {
       bumper: singleButtonBumper(context, "Continue", () {
         navigateTo(context, RemoveUSB(widget.globalState));
       }),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

@@ -84,8 +84,6 @@ class NameWalletState extends State<NameWallet> {
             : () {},
         canContinue,
       ),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

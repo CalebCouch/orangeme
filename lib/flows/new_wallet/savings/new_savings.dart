@@ -63,8 +63,6 @@ class NewSavingsState extends State<NewSavings> {
       bumper: singleButtonBumper(context, "Continue", () {
         navigateTo(context, SetupDesktop(widget.globalState));
       }),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

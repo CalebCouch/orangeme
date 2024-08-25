@@ -6,24 +6,22 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 
-import 'package:orange/components/custom/custom_button.dart';
-
-import 'package:orange/flows/new_wallet/savings/requirements.dart';
-import 'package:orange/flows/pairing/download_desktop.dart';
+import 'package:orange/flows/pairing/download_mobile.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-class SetupDesktop extends StatefulWidget {
-  final GlobalState globalState;
+// DESKTOP ONLY
 
-  const SetupDesktop(this.globalState, {super.key});
+class ConnectPhone extends StatefulWidget {
+  final GlobalState globalState;
+  const ConnectPhone(this.globalState, {super.key});
 
   @override
-  SetupDesktopState createState() => SetupDesktopState();
+  ConnectPhoneState createState() => ConnectPhoneState();
 }
 
-class SetupDesktopState extends State<SetupDesktop> {
+class ConnectPhoneState extends State<ConnectPhone> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -39,29 +37,25 @@ class SetupDesktopState extends State<SetupDesktop> {
       widget.globalState,
       header: stackHeader(
         context,
-        "Set up desktop",
+        "Connect phone",
       ),
       content: Content(
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/images/mockups/desktop-wallet-home.png'),
+            Image.asset('assets/images/mockups/wallet-home.png'),
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
-              'To create a savings wallet, you will need the orange.me desktop app on your laptop or desktop computer',
-              TextSize.h4,
+              'On the orange.me app, press Connect to a Computer',
+              TextSize.h3,
               FontWeight.w700,
             ),
-            const Spacing(height: AppPadding.content),
-            ButtonTip('Download the App', null, () {
-              navigateTo(context, DownloadDesktop(widget.globalState));
-            })
           ],
         ),
       ),
       bumper: singleButtonBumper(context, "Continue", () {
-        navigateTo(context, Requirements(widget.globalState));
+        navigateTo(context, DownloadMobile(widget.globalState));
       }),
     );
   }

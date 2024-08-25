@@ -9,7 +9,7 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 import 'package:orange/flows/new_wallet/savings/insert_usb.dart';
-import 'package:orange/flows/new_wallet/success.dart';
+import 'package:orange/flows/new_wallet/savings/success.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
@@ -71,8 +71,6 @@ class CreationConfirmedState extends State<CreationConfirmed> {
       }, () {
         navigateTo(context, InsertUSB(widget.globalState));
       }),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

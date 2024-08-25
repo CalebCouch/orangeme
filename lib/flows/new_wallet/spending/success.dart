@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_button.dart';
@@ -8,15 +9,14 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/result.dart';
 
-import 'package:orange/flows/bitcoin/wallet.dart';
-
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'dart:io' show Platform;
 
 class Success extends StatefulWidget {
   final GlobalState globalState;
-  const Success(this.globalState, {super.key});
+  final String walletName;
+  const Success(this.globalState, this.walletName, {super.key});
 
   @override
   SuccessState createState() => SuccessState();
@@ -42,15 +42,13 @@ class SuccessState extends State<Success> {
       widget.globalState,
       header: stackHeader(
         context,
-        "Connection confirmed",
-        exitButton(context, WalletHome(widget.globalState)),
+        "Wallet created",
+        exitButton(context, MultiWalletHome(widget.globalState, wallets: [])),
       ),
       content: Content(
         content: result(
-          onDesktop
-              ? 'This computer has been connected to your phone'
-              : 'Your computer has been connected to this phone',
-          ThemeIcon.checkmark,
+          '${widget.walletName} has been successfully created',
+          ThemeIcon.wallet,
         ),
       ),
       bumper: singleButtonBumper(
@@ -59,12 +57,14 @@ class SuccessState extends State<Success> {
         () => {
           resetNavTo(
             context,
-            WalletHome(widget.globalState),
+            MultiWalletHome(widget.globalState, wallets: []),
           ),
         },
         true,
         ButtonVariant.secondary,
       ),
+      desktopOnly: true,
+      navigationIndex: 0,
     );
   }
 }

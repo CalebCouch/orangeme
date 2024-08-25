@@ -58,8 +58,6 @@ class RequirementsState extends State<Requirements> {
       bumper: singleButtonBumper(context, "Continue", () {
         navigateTo(context, NameWallet(widget.globalState));
       }),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

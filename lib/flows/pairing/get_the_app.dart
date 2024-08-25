@@ -6,21 +6,22 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 
-import 'package:orange/flows/pairing/download_desktop.dart';
+import 'package:orange/flows/pairing/download_mobile.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-class ConnectStart extends StatefulWidget {
-  final GlobalState globalState;
+// DESKTOP ONLY
 
-  const ConnectStart(this.globalState, {super.key});
+class GetTheApp extends StatefulWidget {
+  final GlobalState globalState;
+  const GetTheApp(this.globalState, {super.key});
 
   @override
-  ConnectStartState createState() => ConnectStartState();
+  GetTheAppState createState() => GetTheAppState();
 }
 
-class ConnectStartState extends State<ConnectStart> {
+class GetTheAppState extends State<GetTheApp> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -36,7 +37,7 @@ class ConnectStartState extends State<ConnectStart> {
       widget.globalState,
       header: stackHeader(
         context,
-        "Connect to a computer",
+        "Get the app",
       ),
       content: Content(
         content: Column(
@@ -44,19 +45,18 @@ class ConnectStartState extends State<ConnectStart> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('assets/images/mockups/multi-device.png'),
+            const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
-              'Connect your phone to the orange.me desktop app on your laptop or desktop computer',
-              TextSize.h4,
+              'The orange.me mobile app works with the desktop app to keep your friends and money safe.',
+              TextSize.h3,
               FontWeight.w700,
-            )
+            ),
           ],
         ),
       ),
       bumper: singleButtonBumper(context, "Continue", () {
-        navigateTo(context, DownloadDesktop(widget.globalState));
+        navigateTo(context, DownloadMobile(widget.globalState));
       }),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

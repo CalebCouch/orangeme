@@ -14,7 +14,7 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/flows/bitcoin/wallet.dart';
-import 'package:orange/flows/pairing/connect_start.dart';
+import 'package:orange/flows/pairing/pair_code.dart';
 import 'package:orange/flows/new_wallet/type.dart';
 import 'package:orange/util.dart';
 
@@ -118,7 +118,7 @@ class MultiWalletHomeState extends State<MultiWalletHome> {
             ButtonTip('Connect to a Computer', null, () {
               navigateTo(
                 context,
-                ConnectStart(widget.globalState),
+                Pair(widget.globalState),
               );
             }, padding: true),
             const Spacing(height: AppPadding.content),
