@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/flows/bitcoin/wallet.dart';
 
+import 'package:orange/flows/bitcoin/wallet.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/flows/bitcoin/send/amount.dart';
@@ -13,9 +11,11 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tip_buttons.dart';
-import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/interface.dart';
+
+import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/custom/custom_button.dart';
+import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';

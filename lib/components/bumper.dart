@@ -74,7 +74,7 @@ Widget keypadBumper(BuildContext context, String text, onTap,
 
 Widget doubleButtonBumper(BuildContext context, String text, String secondText,
     onTapFirst, onTapSecond,
-    [bool padding = true]) {
+    [bool padding = true, firstIsSecondary = false]) {
   return DefaultBumper(
     content: Container(
       padding: padding
@@ -84,6 +84,9 @@ Widget doubleButtonBumper(BuildContext context, String text, String secondText,
         children: [
           Flexible(
             child: CustomButton(
+              variant: firstIsSecondary
+                  ? ButtonVariant.secondary
+                  : ButtonVariant.primary,
               text: text,
               onTap: onTapFirst,
             ),

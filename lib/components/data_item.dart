@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/tip_buttons.dart';
+import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/tabular.dart';
 
 import 'package:orange/flows/bitcoin/send/send.dart';

@@ -14,6 +14,8 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/flows/bitcoin/wallet.dart';
+import 'package:orange/flows/pairing/connect_start.dart';
+import 'package:orange/flows/new_wallet/type.dart';
 import 'package:orange/util.dart';
 
 // NEEDED VARIABLES
@@ -74,7 +76,9 @@ class MultiWalletHomeState extends State<MultiWalletHome> {
         null, //state.personal.pfp,
         iconButton(
           context,
-          () {},
+          () {
+            navigateTo(context, WalletType(widget.globalState));
+          },
           const CustomIcon(
             icon: ThemeIcon.add,
             iconSize: IconSize.md,
@@ -111,6 +115,13 @@ class MultiWalletHomeState extends State<MultiWalletHome> {
             const Spacing(height: AppPadding.content),
             _backupReminder(false),
             _noInternet(false),
+            ButtonTip('Connect to a Computer', null, () {
+              navigateTo(
+                context,
+                ConnectStart(widget.globalState),
+              );
+            }, padding: true),
+            const Spacing(height: AppPadding.content),
             widget.wallets.isNotEmpty
                 ? Expanded(
                     child: SingleChildScrollView(

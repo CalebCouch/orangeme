@@ -3,6 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/util.dart';
 
 // A customizable banner that shows a message with optional error styling and a
 // close button, adjusting display based on the message content and banner type.
@@ -26,10 +27,6 @@ class CustomBannerState extends State<CustomBanner> {
 
   @override
   Widget build(BuildContext context) {
-    final parts = widget.message.contains("orange.me")
-        ? widget.message.split('orange.me')
-        : null;
-
     return Visibility(
       visible: _isVisible,
       child: Container(
@@ -46,13 +43,14 @@ class CustomBannerState extends State<CustomBanner> {
             children: [
               _buildBannerHeader(),
               const SizedBox(height: AppPadding.banner),
-              parts == null
-                  ? CustomText(
+              widget.message.contains('orange.me')
+                  ? buildTextWithBrandMark(
+                      widget.message, TextSize.sm, FontWeight.w400)
+                  : CustomText(
                       text: widget.message,
                       color: ThemeColor.heading,
                       textSize: TextSize.sm,
                     )
-                  : _buildTextWithBrandMark(parts),
             ],
           ),
         ),
@@ -87,48 +85,6 @@ class CustomBannerState extends State<CustomBanner> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTextWithBrandMark(List<String> parts) {
-    return Text.rich(
-      textAlign: TextAlign.center,
-      TextSpan(
-        children: <TextSpan>[
-          TextSpan(
-            text: parts[0],
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: ThemeColor.heading,
-            ),
-          ),
-          const TextSpan(
-            text: 'orange',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: ThemeColor.primary,
-            ),
-          ),
-          const TextSpan(
-            text: '.me',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: ThemeColor.heading,
-            ),
-          ),
-          TextSpan(
-            text: parts[1],
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: ThemeColor.heading,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

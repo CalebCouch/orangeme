@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/tip_buttons.dart';
+import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/classes.dart';
 
 // Handles profile photo display with customizable sizes, borders, fallback

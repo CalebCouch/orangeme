@@ -7,7 +7,7 @@ import 'package:orange/components/custom/custom_button.dart';
 
 class ButtonTip extends StatelessWidget {
   final String text;
-  final String icon;
+  final String? icon;
   final VoidCallback? onTap;
 
   const ButtonTip(this.text, this.icon, this.onTap, {super.key});

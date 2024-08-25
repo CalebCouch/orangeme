@@ -11,34 +11,36 @@ Widget radioButton(String title, String subtitle, bool isEnabled, onTap) {
     onTap: onTap,
     child: Container(
       color: Colors.transparent,
-      width: double.infinity,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CustomIcon(
-              icon: isEnabled ? ThemeIcon.radioFilled : ThemeIcon.radio,
-              iconSize: IconSize.md),
-          const Spacing(width: AppPadding.bumper),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  textType: 'heading',
-                  alignment: TextAlign.left,
-                  text: title,
-                  textSize: TextSize.h5,
-                ),
-                const Spacing(height: 8),
-                CustomText(
-                  alignment: TextAlign.left,
-                  text: subtitle,
-                  textSize: TextSize.sm,
-                  color: ThemeColor.textSecondary,
-                ),
-              ],
+            icon: isEnabled ? ThemeIcon.radioFilled : ThemeIcon.radio,
+            iconSize: IconSize.md,
+          ),
+          const Spacing(width: 16),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    textType: 'heading',
+                    alignment: TextAlign.left,
+                    text: title,
+                    textSize: TextSize.h5,
+                  ),
+                  const Spacing(height: 8),
+                  CustomText(
+                    alignment: TextAlign.left,
+                    text: subtitle,
+                    textSize: TextSize.sm,
+                    color: ThemeColor.textSecondary,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

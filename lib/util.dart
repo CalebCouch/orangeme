@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
 
@@ -119,4 +120,38 @@ formatDate(String? date, String? time) {
   return DateFormat.MMMMd()
       .format(DateFormat('yyyy-MM-dd').parse(date))
       .toString();
+}
+
+Widget buildTextWithBrandMark(String text, double size, FontWeight weight,
+    [TextAlign alignment = TextAlign.center, int? maxLines]) {
+  List<String> parts = text.split('orange.me');
+  return Text.rich(
+    maxLines: maxLines,
+    style: TextStyle(
+      fontSize: size,
+      fontWeight: weight,
+      color: ThemeColor.heading,
+    ),
+    textAlign: alignment,
+    TextSpan(
+      children: <TextSpan>[
+        TextSpan(text: parts[0]),
+        const TextSpan(
+          text: 'orange',
+          style: TextStyle(
+            fontWeight: FontWeight.w900,
+            color: ThemeColor.primary,
+          ),
+        ),
+        const TextSpan(
+          text: '.me',
+          style: TextStyle(
+            fontWeight: FontWeight.w900,
+            color: ThemeColor.heading,
+          ),
+        ),
+        TextSpan(text: parts[1]),
+      ],
+    ),
+  );
 }

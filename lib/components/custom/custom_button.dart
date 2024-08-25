@@ -204,6 +204,32 @@ class _ButtonState extends State<CustomButton> {
   }
 }
 
+/* Secondary button commonly used for tips, has optional icon and onTap functionality */
+class ButtonTip extends StatelessWidget {
+  final String text;
+  final String? icon;
+  final VoidCallback? onTap;
+  final bool padding;
+
+  const ButtonTip(this.text, this.icon, this.onTap,
+      {super.key, this.padding = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding ? const EdgeInsets.all(8) : null,
+      child: CustomButton(
+        buttonSize: ButtonSize.md,
+        expand: false,
+        variant: ButtonVariant.secondary,
+        text: text,
+        icon: icon,
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
 // Icon with an onTap functionality //
 Widget iconButton(BuildContext context, onTap, CustomIcon icon,
     [bool widenLeft = false, bool widenRight = false]) {

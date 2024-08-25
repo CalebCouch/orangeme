@@ -3,10 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:orange/flows/bitcoin/wallet.dart';
 import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/pairing/pair_desktop.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/temp_classes.dart';
-import 'dart:io';
+
 import 'dart:io' show Platform;
 import 'package:window_manager/window_manager.dart';
 
@@ -26,10 +27,12 @@ const Wallet dummyWallet2 = Wallet(
   true, // isSpending
 );
 
+bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
 Future<void> main() async {
   await RustLib.init();
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+  if (onDesktop) {
     WindowManager.instance.setMaximumSize(const Size(1280, 832));
   }
   GlobalState globalState = GlobalState.init();
@@ -49,8 +52,10 @@ class MyApp extends StatelessWidget {
       navigatorKey: globalState.navkey,
       title: 'Orange',
       theme: theme(),
-      home: MultiWalletHome(globalState,
-          wallets: const [dummyWallet, dummyWallet2]),
+      home: onDesktop
+          ? PairDesktop(globalState)
+          : MultiWalletHome(globalState,
+              wallets: const [dummyWallet, dummyWallet2]),
     );
   }
 }

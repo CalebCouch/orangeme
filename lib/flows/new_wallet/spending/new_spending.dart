@@ -6,25 +6,25 @@ import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/bumper.dart';
 
+import 'package:orange/flows/new_wallet/success.dart';
+
 import 'package:orange/classes.dart';
-import 'package:orange/temp_classes.dart';
+import 'package:orange/util.dart';
 
-// Settings for a wallet. Currently only allows the user to rename their wallet.
-
-class Settings extends StatefulWidget {
+class NewSpending extends StatefulWidget {
   final GlobalState globalState;
-  final Wallet wallet;
-  const Settings(
-    this.globalState, {
+  final int walletCount;
+  const NewSpending(
+    this.globalState,
+    this.walletCount, {
     super.key,
-    required this.wallet,
   });
 
   @override
-  SettingsState createState() => SettingsState();
+  NewSpendingState createState() => NewSpendingState();
 }
 
-class SettingsState extends State<Settings> {
+class NewSpendingState extends State<NewSpending> {
   late TextEditingController controller;
   @override
   Widget build(BuildContext context) {
@@ -42,27 +42,29 @@ class SettingsState extends State<Settings> {
     super.dispose();
   }
 
-  bool save = false;
+  bool canContinue = true;
 
   Widget build_screen(BuildContext context, DartState state) {
-    saveInfo() {
+    next() {
       setState(() {
-        save = false;
+        canContinue = false;
+        navigateTo(context, Success(widget.globalState, controller.text));
       });
       FocusScope.of(context).requestFocus(FocusNode());
     }
 
     enableButton() {
       setState(() {
-        save = true;
+        canContinue = true;
       });
     }
 
-    controller = TextEditingController(text: widget.wallet.name);
+    controller =
+        TextEditingController(text: 'My Wallet ${widget.walletCount + 1}');
 
     return Interface(
       widget.globalState,
-      header: stackHeader(context, "Settings"),
+      header: stackHeader(context, "New spending wallet"),
       content: Content(
         content: Column(
           children: [
@@ -77,13 +79,13 @@ class SettingsState extends State<Settings> {
       ),
       bumper: singleButtonBumper(
         context,
-        'Save',
-        save
+        'Confirm & Create',
+        canContinue
             ? () {
-                saveInfo();
+                next();
               }
             : () {},
-        save,
+        canContinue,
       ),
       desktopOnly: true,
       navigationIndex: 0,
