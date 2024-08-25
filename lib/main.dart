@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       title: 'Orange',
       theme: theme(),
       home: onDesktop
-          ? PairDesktop(globalState)
+          ? Pair(globalState)
           : MultiWalletHome(globalState,
               wallets: const [dummyWallet, dummyWallet2]),
     );

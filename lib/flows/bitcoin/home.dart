@@ -14,7 +14,7 @@ import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/flows/bitcoin/wallet.dart';
-import 'package:orange/flows/pairing/pair_code.dart';
+import 'package:orange/flows/pairing/pair.dart';
 import 'package:orange/flows/new_wallet/type.dart';
 import 'package:orange/util.dart';
 
