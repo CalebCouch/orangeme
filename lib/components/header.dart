@@ -24,23 +24,20 @@ class DefaultHeader extends StatelessWidget {
   final Widget? left;
   final Widget center;
   final Widget? right;
-  final double height;
 
   const DefaultHeader({
     super.key,
     this.left,
     required this.center,
     this.right,
-    this.height = 48,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height,
       width: MediaQuery.sizeOf(context).width,
       child: Stack(
-        alignment: Alignment.center,
+        alignment: Alignment.topCenter,
         children: [
           Container(
             padding: const EdgeInsets.only(left: 16),
@@ -146,7 +143,6 @@ Widget stackMessageHeader(
   bool isGroup = false;
   if (cnvo.members.length > 1) isGroup = true;
   return DefaultHeader(
-    height: 76,
     left: backButton(context),
     center: !isGroup
         ? InkWell(
