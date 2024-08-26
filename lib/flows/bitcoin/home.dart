@@ -73,7 +73,7 @@ class MultiWalletHomeState extends State<MultiWalletHome> {
         context,
         widget.globalState,
         "Wallet",
-        null, //state.personal.pfp,
+        true,
         iconButton(
           context,
           () {

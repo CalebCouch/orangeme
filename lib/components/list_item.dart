@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:orange/components/custom/custom_icon.dart';
+import 'package:orange/flows/bitcoin/transactions/transaction_details.dart';
+import 'package:orange/flows/bitcoin/transactions/unconfirmed_transaction.dart';
+
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/custom/custom_text.dart';
@@ -32,7 +37,10 @@ class DefaultListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap ?? () {},
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        if (onTap != null) onTap!();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
         child: Row(
@@ -86,7 +94,10 @@ class ImageListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap ?? () {},
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        onTap;
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
         width: double.infinity,
@@ -222,6 +233,56 @@ Widget walletListItem(BuildContext context, Wallet wallet, onTap) {
       text: "${wallet.btc} BTC",
       textSize: TextSize.sm,
       color: ThemeColor.textSecondary,
+    ),
+  );
+}
+
+Widget transactionListItem(GlobalState globalState, BuildContext context,
+    Transaction transaction, bool pendingConfirmation) {
+  return DefaultListItem(
+    onTap: () {
+      if (pendingConfirmation) {
+        navigateTo(context, UnconfirmedTransaction(globalState, transaction));
+      } else {
+        navigateTo(context, TransactionDetailsWidget(globalState, transaction));
+      }
+    },
+    topLeft: Row(children: [
+      CustomText(
+        alignment: TextAlign.left,
+        textType: "text",
+        textSize: TextSize.md,
+        text: pendingConfirmation
+            ? "Sending bitcoin"
+            : transaction.isReceive
+                ? "Received bitcoin"
+                : "Sent bitcoin",
+        color: pendingConfirmation ? ThemeColor.warning : ThemeColor.text,
+      ),
+      const Spacing(width: 8),
+      const CustomIcon(
+        icon: ThemeIcon.warning,
+        iconColor: ThemeColor.warning,
+        iconSize: IconSize.sm,
+      ),
+    ]),
+    bottomLeft: CustomText(
+      alignment: TextAlign.left,
+      textSize: TextSize.sm,
+      color: ThemeColor.textSecondary,
+      text: formatDate(transaction.date, transaction.time),
+    ),
+    topRight: CustomText(
+      alignment: TextAlign.right,
+      textSize: TextSize.md,
+      text: "\$${formatValue((transaction.usd).abs())}",
+    ),
+    bottomRight: const CustomText(
+      alignment: TextAlign.right,
+      textSize: TextSize.sm,
+      color: ThemeColor.textSecondary,
+      text: "Details",
+      underline: true,
     ),
   );
 }

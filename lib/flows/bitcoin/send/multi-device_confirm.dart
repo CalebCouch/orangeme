@@ -1,16 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/flows/bitcoin/wallet.dart';
+import 'dart:io' show Platform;
+
 import 'package:orange/theme/stylesheet.dart';
+
+import 'package:orange/flows/bitcoin/wallet.dart';
 
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 
-import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/custom/custom_button.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
+
+class ConfirmTransaction extends StatefulWidget {
+  final GlobalState globalState;
+  const ConfirmTransaction(this.globalState, {super.key});
+
+  @override
+  ConfirmTransactionState createState() => ConfirmTransactionState();
+}
+
+class ConfirmTransactionState extends State<ConfirmTransaction> {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+  Widget buildScreen(BuildContext context, DartState state) {
+    return onDesktop
+        ? ConfTxDesktop(widget.globalState)
+        : ConfTxMobile(widget.globalState);
+  }
+}
 
 class ConfTxDesktop extends StatefulWidget {
   final GlobalState globalState;
@@ -102,7 +131,7 @@ class ConfTxMobileState extends State<ConfTxMobile> {
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
               'Open the orange.me desktop app on your computer and follow the instructions',
-              TextSize.h4,
+              TextSize.h3,
               FontWeight.w700,
             ),
           ],

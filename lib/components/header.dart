@@ -75,8 +75,8 @@ Widget homeDesktopHeader(BuildContext context, String text) {
 }
 
 /* A responsive header for home pages with profile photo and optional icon */
-Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
-    [Widget? iconButton]) {
+Widget homeHeader(BuildContext context, GlobalState globalState, text,
+    [bool pfp = true, Widget? iconButton]) {
   bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
   if (onDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
@@ -90,7 +90,9 @@ Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
       child: Container(
         width: 50,
         alignment: Alignment.centerLeft,
-        child: profilePhoto(context, pfp),
+        child: pfp
+            ? profilePhoto(context, null)
+            : Container(), //user profile picture
       ),
     ),
     center: CustomText(

@@ -51,7 +51,6 @@ class MessagesHomeState extends State<MessagesHome> {
         context,
         widget.globalState,
         "Messages",
-        state.personal.pfp,
       ),
       content: Content(
         content: state.conversations.isEmpty

@@ -69,3 +69,54 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
     );
   }
 }
+
+class UnconfirmedTxDetails extends StatefulWidget {
+  final GlobalState globalState;
+  final Transaction transaction;
+  const UnconfirmedTxDetails(this.globalState, this.transaction, {super.key});
+
+  @override
+  UnconfirmedDetailsState createState() => UnconfirmedDetailsState();
+}
+
+class UnconfirmedDetailsState extends State<UnconfirmedTxDetails> {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
+    return Interface(
+      widget.globalState,
+      header: stackHeader(context, "Sending bitcoin"),
+      content: Content(
+        content: Column(
+          children: [
+            amountDisplay(
+              (widget.transaction.usd.abs() - widget.transaction.fee.abs()),
+              (widget.transaction.btc).abs(),
+            ),
+            const Spacing(height: AppPadding.content),
+            transactionTabular(context, widget.transaction),
+          ],
+        ),
+      ),
+      bumper: singleButtonBumper(
+        context,
+        "Cancel Send",
+        () {
+          Navigator.pop(context);
+        },
+        true,
+        ButtonVariant.secondary,
+      ),
+      desktopOnly: true,
+      navigationIndex: 0,
+    );
+  }
+}
