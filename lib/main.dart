@@ -12,7 +12,7 @@ Future<void> main() async {
   await RustLib.init();
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    WindowManager.instance.setMaximumSize(const Size(1280, 832));
+    WindowManager.instance.setMinimumSize(const Size(1280, 832));
   }
   GlobalState globalState = GlobalState.init();
   runApp(MyApp(globalState: globalState));
@@ -27,10 +27,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        navigatorKey: globalState.navkey,
-        title: 'Orange',
-        theme: theme(),
-        home: BitcoinHome(globalState));
+      debugShowCheckedModeBanner: false,
+      navigatorKey: globalState.navkey,
+      title: 'orange.me',
+      theme: theme(),
+      home: BitcoinHome(globalState),
+    );
   }
 }

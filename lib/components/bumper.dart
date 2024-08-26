@@ -105,7 +105,10 @@ Widget doubleButtonBumper(BuildContext context, String text, String secondText,
 Widget messageInput() {
   return DefaultBumper(
     content: Container(
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.bumper),
+      padding: const EdgeInsets.only(
+        bottom: AppPadding.bumper,
+        top: AppPadding.bumper / 2,
+      ),
       child: const CustomTextInput(
         hint: 'Message',
         showIcon: true,
