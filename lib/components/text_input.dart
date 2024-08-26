@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/bumper.dart';
 
 // A customizable text input field widget that supports optional icons, error
 // messages, and various callback functions for text changes, submission, and completion.
@@ -156,14 +155,4 @@ class CustomTextInputState extends State<CustomTextInput> {
       ],
     );
   }
-}
-
-/* A default instance of CustomTextInput configured for message input with an icon for sending messages. */
-Widget messageInput() {
-  return const DefaultBumper(
-    content: CustomTextInput(
-      hint: 'Message',
-      showIcon: true,
-    ),
-  );
 }

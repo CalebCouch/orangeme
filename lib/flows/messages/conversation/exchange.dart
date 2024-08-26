@@ -5,7 +5,7 @@ import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/text_input.dart';
+import 'package:orange/components/bumper.dart';
 import 'package:orange/components/message_bubble.dart';
 import 'package:orange/classes.dart';
 
@@ -37,12 +37,17 @@ class ExchangeState extends State<Exchange> {
 
   ScrollController scrollController = ScrollController();
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    super.initState();
+  }
+
   _scrollToBottom() {
     scrollController.jumpTo(scrollController.position.maxScrollExtent);
   }
 
   Widget build_screen(BuildContext context, DartState state) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     return Interface(
       widget.globalState,
       header: stackMessageHeader(

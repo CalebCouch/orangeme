@@ -3,6 +3,7 @@ import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/numeric_keypad.dart';
+import 'package:orange/components/text_input.dart';
 import 'package:orange/components/custom/custom_button.dart';
 
 // This code provides a DefaultBumper widget for consistent button layouts and
@@ -96,6 +97,18 @@ Widget doubleButtonBumper(BuildContext context, String text, String secondText,
             ),
           ),
         ],
+      ),
+    ),
+  );
+}
+
+Widget messageInput() {
+  return DefaultBumper(
+    content: Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.bumper),
+      child: const CustomTextInput(
+        hint: 'Message',
+        showIcon: true,
       ),
     ),
   );
