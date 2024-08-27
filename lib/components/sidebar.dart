@@ -89,7 +89,7 @@ Widget buttonList(BuildContext context, GlobalState globalState, int index) {
         text: 'Bitcoin',
         buttonAlignment: Alignment.centerLeft,
         onTap: () {
-          if (index == 1) switchPageTo(context, BitcoinHome(globalState));
+          if (index != 0) switchPageTo(context, BitcoinHome(globalState));
           if (index == 0) resetNavTo(context, BitcoinHome(globalState));
         },
         icon: ThemeIcon.wallet,
@@ -103,7 +103,7 @@ Widget buttonList(BuildContext context, GlobalState globalState, int index) {
         expand: true,
         text: 'Messages',
         onTap: () {
-          if (index == 0) switchPageTo(context, MessagesHome(globalState));
+          if (index != 1) switchPageTo(context, MessagesHome(globalState));
           if (index == 1) resetNavTo(context, MessagesHome(globalState));
         },
         icon: ThemeIcon.chat,
