@@ -74,11 +74,10 @@ class NewSpendingState extends State<NewSpending> {
             ? Column(
                 children: [
                   Flexible(
-                    child: Image.asset(
-                        'assets/images/mockups/mobile-new-savings.png'),
+                    child: Image.asset('assets/images/mockups/wallet-home.png'),
                   ),
                   buildTextWithBrandMark(
-                    'To create a savings wallet open the orange.me app on your phone',
+                    'To create a spending wallet open the orange.me app on your phone',
                     TextSize.h4,
                     FontWeight.w700,
                   ),
@@ -95,16 +94,18 @@ class NewSpendingState extends State<NewSpending> {
                 ],
               ),
       ),
-      bumper: singleButtonBumper(
-        context,
-        'Confirm & Create',
-        canContinue
-            ? () {
-                next();
-              }
-            : () {},
-        canContinue,
-      ),
+      bumper: onDesktop
+          ? null
+          : singleButtonBumper(
+              context,
+              'Confirm & Create',
+              canContinue
+                  ? () {
+                      next();
+                    }
+                  : () {},
+              canContinue,
+            ),
       desktopOnly: true,
       navigationIndex: 0,
     );

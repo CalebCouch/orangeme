@@ -76,10 +76,12 @@ class NewSavingsState extends State<NewSavings> {
                 },
               ),
       ),
-      paginator: paginator(index),
-      bumper: singleButtonBumper(context, "Continue", () {
-        navigateTo(context, SetupDesktop(widget.globalState));
-      }),
+      paginator: onDesktop ? null : paginator(index),
+      bumper: onDesktop
+          ? null
+          : singleButtonBumper(context, "Continue", () {
+              navigateTo(context, SetupDesktop(widget.globalState));
+            }),
     );
   }
 }
