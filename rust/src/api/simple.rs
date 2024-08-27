@@ -160,7 +160,7 @@ impl Contact {
         Ok(Contact {
             name: "John Doe".to_string(),
             did: "did:example:1234567890abcdef".to_string(),
-            pfp: Some("yeeeeeeeeeet".to_string()),  
+            pfp: None,  
             abtme: Some("About me description".to_string()),
         })
     }
