@@ -164,7 +164,7 @@ class _ButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.status == ButtonStatus._default
+      onTap: widget.status == 0 || widget.status == 3
           ? () {
               HapticFeedback.heavyImpact();
               if (widget.onTap != null) widget.onTap!();
