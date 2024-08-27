@@ -16,7 +16,9 @@ import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/util.dart';
 
-// This page serves as the main screen for Bitcoin transactions. 
+import 'dart:io' show Platform;
+
+// This page serves as the main screen for Bitcoin transactions.
 // It displays the user's balance in both USD and BTC, a list of recent transactions,
 // and provides buttons for sending and receiving Bitcoin. The screen also shows
 // optional reminders for backing up and internet connectivity.
@@ -39,6 +41,8 @@ class BitcoinHomeState extends State<BitcoinHome> {
       },
     );
   }
+
+  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
   Widget transactionListItem(BuildContext context, Transaction transaction) {
     return DefaultListItem(
@@ -150,7 +154,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
         () {
           navigateTo(context, Send(widget.globalState));
         },
-        false,
+        onDesktop ? true : false,
       ),
       navigationIndex: 0,
     );
