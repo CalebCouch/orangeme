@@ -63,7 +63,8 @@ class DefaultHeader extends StatelessWidget {
 }
 
 /* A desktop-specific header with centered text. */
-Widget homeDesktopHeader(BuildContext context, String text) {
+Widget homeDesktopHeader(BuildContext context, String text,
+    [Widget? iconButton]) {
   return DefaultHeader(
     center: CustomText(
       textType: "heading",
@@ -71,6 +72,7 @@ Widget homeDesktopHeader(BuildContext context, String text) {
       textSize: TextSize.h3,
       color: ThemeColor.heading,
     ),
+    right: iconButton,
   );
 }
 
@@ -78,7 +80,7 @@ Widget homeDesktopHeader(BuildContext context, String text) {
 Widget homeHeader(BuildContext context, GlobalState globalState, text,
     [bool pfp = true, Widget? iconButton]) {
   bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-  if (onDesktop) return homeDesktopHeader(context, text);
+  if (onDesktop) return homeDesktopHeader(context, text, iconButton);
   return DefaultHeader(
     left: InkWell(
       onTap: () {
