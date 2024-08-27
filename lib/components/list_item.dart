@@ -96,7 +96,7 @@ class ImageListItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         HapticFeedback.mediumImpact();
-        onTap;
+        if (onTap != null) onTap!();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
