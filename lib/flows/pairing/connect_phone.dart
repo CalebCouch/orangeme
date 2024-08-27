@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/pairing/confirm_download.dart';
 import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
@@ -55,7 +56,7 @@ class ConnectPhoneState extends State<ConnectPhone> {
         ),
       ),
       bumper: singleButtonBumper(context, "Continue", () {
-        navigateTo(context, DownloadMobile(widget.globalState));
+        navigateTo(context, ConfirmDownload(widget.globalState));
       }),
     );
   }
