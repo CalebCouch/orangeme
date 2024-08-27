@@ -9,6 +9,7 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/flows/new_wallet/savings/success.dart';
 
 import 'package:orange/classes.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/util.dart';
 import 'dart:io' show Platform;
 
