@@ -45,7 +45,11 @@ class ConfirmDownloadState extends State<ConfirmDownload> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/images/mockups/mobile-download-desktop.png'),
+            Container(
+              constraints: const BoxConstraints(maxWidth: 250),
+              child: Image.asset(
+                  'assets/images/mockups/mobile-download-desktop.png'),
+            ),
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
               'On the orange.me app, confirm you have the desktop app by pressing Continue',

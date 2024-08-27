@@ -45,7 +45,10 @@ class ConnectPhoneState extends State<ConnectPhone> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/images/mockups/wallet-home.png', width: 250),
+            Container(
+              constraints: const BoxConstraints(maxWidth: 250),
+              child: Image.asset('assets/images/mockups/wallet-home.png'),
+            ),
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
               'On the orange.me app, press Connect to a Computer',
