@@ -48,9 +48,11 @@ class UnconfirmedTransactionState extends State<UnconfirmedTransaction> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset(onDesktop
-                ? 'assets/images/mockups/confirm-on-mobile.png'
-                : 'assets/images/mockups/confirm-on-desktop.png'),
+            Flexible(
+              child: Image.asset(onDesktop
+                  ? 'assets/images/mockups/confirm-on-mobile.png'
+                  : 'assets/images/mockups/confirm-on-desktop.png'),
+            ),
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
               onDesktop
