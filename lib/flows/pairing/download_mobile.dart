@@ -44,12 +44,13 @@ class DownloadMobileState extends State<DownloadMobile> {
             qrCode("https://orange.me/download"),
             const Spacing(height: AppPadding.content),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   'assets/images/mockups/app-store.png',
                   height: 42,
                 ),
-                const Spacing(height: AppPadding.content),
+                const Spacing(width: AppPadding.content),
                 Image.asset(
                   'assets/images/mockups/google-play.png',
                   height: 42,
