@@ -11,7 +11,7 @@ import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
-// Provides a sidebar navigation component for desktop with options for 
+// Provides a sidebar navigation component for desktop with options for
 // switching between different sections and a user profile button.
 
 class Sidebar extends StatefulWidget {
@@ -80,16 +80,6 @@ class SidebarState extends State<Sidebar> {
   }
 }
 
-/* Navigates to the messages tab. */
-void openMessages(BuildContext context, GlobalState globalState) {
-  switchPageTo(context, MessagesHome(globalState));
-}
-
-/* Navigates to the Bitcoin tab. */
-void openBitcoin(BuildContext context, GlobalState globalState) {
-  switchPageTo(context, BitcoinHome(globalState));
-}
-
 /* Creates a list of sidebar buttons for navigating to the different tabs. */
 Widget buttonList(BuildContext context, GlobalState globalState, int index) {
   return Column(
@@ -99,7 +89,8 @@ Widget buttonList(BuildContext context, GlobalState globalState, int index) {
         text: 'Bitcoin',
         buttonAlignment: Alignment.centerLeft,
         onTap: () {
-          if (index != 0) openBitcoin(context, globalState);
+          if (index != 0) switchPageTo(context, BitcoinHome(globalState));
+          if (index != 1) resetNavTo(context, BitcoinHome(globalState));
         },
         icon: ThemeIcon.wallet,
         variant: ButtonVariant.ghost,
@@ -112,7 +103,8 @@ Widget buttonList(BuildContext context, GlobalState globalState, int index) {
         expand: true,
         text: 'Messages',
         onTap: () {
-          if (index != 1) openMessages(context, globalState);
+          if (index != 1) switchPageTo(context, MessagesHome(globalState));
+          if (index != 0) resetNavTo(context, MessagesHome(globalState));
         },
         icon: ThemeIcon.chat,
         status: (index == 1) ? 3 : 0,
