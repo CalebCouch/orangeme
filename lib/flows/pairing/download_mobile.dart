@@ -49,7 +49,7 @@ class DownloadMobileState extends State<DownloadMobile> {
                   'assets/images/mockups/app-store.png',
                   height: 42,
                 ),
-                const Spacer(),
+                const Spacing(height: AppPadding.content),
                 Image.asset(
                   'assets/images/mockups/google-play.png',
                   height: 42,
