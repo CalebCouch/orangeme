@@ -45,8 +45,7 @@ class ConfirmDownloadState extends State<ConfirmDownload> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              constraints: const BoxConstraints(maxWidth: 250),
+            Flexible(
               child: Image.asset(
                   'assets/images/mockups/mobile-download-desktop.png'),
             ),
