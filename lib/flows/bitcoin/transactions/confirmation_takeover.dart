@@ -48,10 +48,12 @@ class ConfirmationTakeoverState extends State<ConfirmationTakeover> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset(
-              onDesktop
-                  ? 'assets/images/mockups/tx-start-mobile.png'
-                  : 'assets/images/mockups/tx-start-desktop.png',
+            Flexible(
+              child: Image.asset(
+                onDesktop
+                    ? 'assets/images/mockups/tx-start-mobile.png'
+                    : 'assets/images/mockups/tx-start-desktop.png',
+              ),
             ),
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
