@@ -14,6 +14,7 @@ import 'package:orange/flows/new_wallet/savings/setup_desktop.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'dart:io' show Platform;
 
 class NewSavings extends StatefulWidget {
   final GlobalState globalState;
@@ -35,6 +36,8 @@ class NewSavingsState extends State<NewSavings> {
     );
   }
 
+  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
   int index = 0;
 
   Widget buildScreen(BuildContext context, DartState state) {
@@ -46,18 +49,32 @@ class NewSavingsState extends State<NewSavings> {
         "New savings wallet",
       ),
       content: Content(
-        content: LoopPageView.builder(
-          onPageChanged: (page) => {
-            setState(() {
-              index = page;
-            })
-          },
-          controller: controller,
-          itemCount: 4,
-          itemBuilder: (_, index) {
-            return page(pages(index));
-          },
-        ),
+        content: onDesktop
+            ? Column(
+                children: [
+                  Flexible(
+                    child: Image.asset(
+                        'assets/images/mockups/mobile-new-savings.png'),
+                  ),
+                  buildTextWithBrandMark(
+                    'To create a savings wallet open the orange.me app on your phone',
+                    TextSize.h4,
+                    FontWeight.w700,
+                  ),
+                ],
+              )
+            : LoopPageView.builder(
+                onPageChanged: (page) => {
+                  setState(() {
+                    index = page;
+                  })
+                },
+                controller: controller,
+                itemCount: 4,
+                itemBuilder: (_, index) {
+                  return page(pages(index));
+                },
+              ),
       ),
       paginator: paginator(index),
       bumper: singleButtonBumper(context, "Continue", () {

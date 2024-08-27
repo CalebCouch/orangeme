@@ -10,6 +10,7 @@ import 'package:orange/flows/new_wallet/savings/success.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
+import 'dart:io' show Platform;
 
 class NewSpending extends StatefulWidget {
   final GlobalState globalState;
@@ -59,6 +60,8 @@ class NewSpendingState extends State<NewSpending> {
       });
     }
 
+    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
     controller =
         TextEditingController(text: 'My Wallet ${widget.walletCount + 1}');
 
@@ -66,16 +69,30 @@ class NewSpendingState extends State<NewSpending> {
       widget.globalState,
       header: stackHeader(context, "New spending wallet"),
       content: Content(
-        content: Column(
-          children: [
-            CustomTextInput(
-              title: 'Wallet Name',
-              hint: 'Wallet name...',
-              onChanged: (String str) => {enableButton()},
-              controller: controller,
-            ),
-          ],
-        ),
+        content: onDesktop
+            ? Column(
+                children: [
+                  Flexible(
+                    child: Image.asset(
+                        'assets/images/mockups/mobile-new-savings.png'),
+                  ),
+                  buildTextWithBrandMark(
+                    'To create a savings wallet open the orange.me app on your phone',
+                    TextSize.h4,
+                    FontWeight.w700,
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  CustomTextInput(
+                    title: 'Wallet Name',
+                    hint: 'Wallet name...',
+                    onChanged: (String str) => {enableButton()},
+                    controller: controller,
+                  ),
+                ],
+              ),
       ),
       bumper: singleButtonBumper(
         context,
