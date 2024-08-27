@@ -7,8 +7,6 @@ import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 
-import 'package:orange/flows/pairing/download_mobile.dart';
-
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
@@ -45,8 +43,7 @@ class ConnectPhoneState extends State<ConnectPhone> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              constraints: const BoxConstraints(maxWidth: 250),
+            Flexible(
               child: Image.asset('assets/images/mockups/wallet-home.png'),
             ),
             const Spacing(height: AppPadding.content),

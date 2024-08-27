@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: globalState.navkey,
       title: 'Orange',
       theme: theme(),
-      home: PairCode(globalState),
+      home: ConfirmTransaction(globalState),
       //MultiWalletHome(globalState,
       // wallets: const [dummyWallet, dummyWallet2]),
     );

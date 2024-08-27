@@ -34,38 +34,13 @@ class ConfirmTransactionState extends State<ConfirmTransaction> {
   }
 
   bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-  Widget buildScreen(BuildContext context, DartState state) {
-    return onDesktop
-        ? ConfTxDesktop(widget.globalState)
-        : ConfTxMobile(widget.globalState);
-  }
-}
-
-class ConfTxDesktop extends StatefulWidget {
-  final GlobalState globalState;
-  const ConfTxDesktop(this.globalState, {super.key});
-
-  @override
-  ConfTxDesktopState createState() => ConfTxDesktopState();
-}
-
-class ConfTxDesktopState extends State<ConfTxDesktop> {
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
-    );
-  }
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
       header: stackHeader(
         context,
-        "Confirm on mobile",
+        onDesktop ? "Confirm on mobile" : "Confirm on desktop",
         exitButton(
           context,
           WalletHome(widget.globalState),
@@ -79,59 +54,10 @@ class ConfTxDesktopState extends State<ConfTxDesktop> {
             Image.asset('assets/images/mockups/confirm-on-mobile.png'),
             const Spacing(height: AppPadding.content),
             buildTextWithBrandMark(
-              'Open the orange.me mobile app on your phone and follow the instructions',
-              TextSize.h4,
-              FontWeight.w700,
-            ),
-          ],
-        ),
-      ),
-      navigationIndex: 0,
-      desktopOnly: true,
-    );
-  }
-}
-
-class ConfTxMobile extends StatefulWidget {
-  final GlobalState globalState;
-  const ConfTxMobile(this.globalState, {super.key});
-
-  @override
-  ConfTxMobileState createState() => ConfTxMobileState();
-}
-
-class ConfTxMobileState extends State<ConfTxMobile> {
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
-    );
-  }
-
-  Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackHeader(
-        context,
-        "Confirm on desktop",
-        exitButton(
-          context,
-          WalletHome(widget.globalState),
-        ),
-      ),
-      content: Content(
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset('assets/images/mockups/confirm-on-desktop.png'),
-            const Spacing(height: AppPadding.content),
-            buildTextWithBrandMark(
-              'Open the orange.me desktop app on your computer and follow the instructions',
-              TextSize.h3,
+              onDesktop
+                  ? 'Open the orange.me mobile app on your phone and follow the instructions'
+                  : 'Open the orange.me desktop app on your computer and follow the instructions',
+              onDesktop ? TextSize.h4 : TextSize.h3,
               FontWeight.w700,
             ),
           ],

@@ -60,7 +60,7 @@ class ConfirmDownloadState extends State<ConfirmDownload> {
       ),
       bumper: singleButtonBumper(
         context,
-        "Continue",
+        "Done",
         () {
           navigateTo(context, PairCode(widget.globalState));
         },
