@@ -205,7 +205,7 @@ class _ButtonState extends State<CustomButton> {
 }
 
 // Icon with an onTap functionality //
-Widget iconButton(BuildContext context, onTap, CustomIcon icon,
+Widget iconButton(BuildContext context, onTap, Widget icon,
     [bool widenLeft = false, bool widenRight = false]) {
   return InkWell(
     onTap: () {
@@ -230,10 +230,13 @@ Widget sendButton(BuildContext context, bool isEnabled) {
     () {
       print("send");
     },
-    CustomIcon(
-      iconSize: IconSize.md,
-      icon: ThemeIcon.send,
-      iconColor: isEnabled ? ThemeColor.secondary : ThemeColor.textSecondary,
+    Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: CustomIcon(
+        iconSize: IconSize.md,
+        icon: ThemeIcon.send,
+        iconColor: isEnabled ? ThemeColor.secondary : ThemeColor.textSecondary,
+      ),
     ),
   );
 }

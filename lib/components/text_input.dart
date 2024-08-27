@@ -16,6 +16,7 @@ class CustomTextInput extends StatefulWidget {
   final String error;
   final String? presetTxt;
   final TextEditingController? controller;
+  final int? maxLines;
 
   const CustomTextInput({
     super.key,
@@ -28,6 +29,7 @@ class CustomTextInput extends StatefulWidget {
     this.error = '',
     this.presetTxt,
     this.controller,
+    this.maxLines = 10,
   });
 
   @override
@@ -111,9 +113,12 @@ class CustomTextInputState extends State<CustomTextInput> {
             padding:
                 const EdgeInsets.symmetric(horizontal: AppPadding.textInput),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Expanded(
                   child: TextField(
+                    minLines: 1,
+                    maxLines: widget.maxLines,
                     controller: controller,
                     focusNode: focusNode,
                     cursorWidth: 2.0,

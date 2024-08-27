@@ -107,6 +107,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
         content: Column(
           children: [
             CustomTextInput(
+              maxLines: 1,
               controller: searchController,
               hint: 'Profile name...',
             ),
