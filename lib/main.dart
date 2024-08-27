@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:orange/flows/bitcoin/send/multi-device_confirm.dart';
 import 'package:orange/flows/bitcoin/transactions/confirmation_takeover.dart';
 import 'package:orange/flows/bitcoin/wallet.dart';
+import 'package:orange/flows/pairing/pair_code.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:orange/flows/bitcoin/wallet.dart';
 import 'package:orange/flows/bitcoin/home.dart';
@@ -55,7 +56,14 @@ class MyApp extends StatelessWidget {
       navigatorKey: globalState.navkey,
       title: 'Orange',
       theme: theme(),
-      home: ConfirmationTakeover(
+      home: PairCode(globalState),
+      //MultiWalletHome(globalState,
+      // wallets: const [dummyWallet, dummyWallet2]),
+    );
+  }
+}
+
+/* ConfirmationTakeover(
         globalState,
         Transaction(
           false,
@@ -69,9 +77,4 @@ class MyApp extends StatelessWidget {
           '12:34 PM',
           'raw',
         ),
-      ),
-      //MultiWalletHome(globalState,
-      // wallets: const [dummyWallet, dummyWallet2]),
-    );
-  }
-}
+      ),*/

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/pairing/get_the_app.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/util.dart';
@@ -36,6 +37,7 @@ class PairCodeState extends State<PairCode> {
       widget.globalState,
       content: Content(
         content: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             qrCode("RANDOMPAIRINGCODE-1234hexak820xbosuxhdoi02oxc2345"),
             const Spacing(height: AppPadding.content),
@@ -54,7 +56,9 @@ class PairCodeState extends State<PairCode> {
               color: ThemeColor.textSecondary,
             ),
             const Spacing(height: AppPadding.content),
-            ButtonTip("Download the App", null, () {})
+            ButtonTip("Download the App", null, () {
+              navigateTo(context, GetTheApp(widget.globalState));
+            })
           ],
         ),
       ),
