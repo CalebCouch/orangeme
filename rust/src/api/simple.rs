@@ -439,6 +439,7 @@ pub async fn rustStart (
                     //3. generate desktop seeds for premium spending & savings
                     //4. export xpubs from desktop to mobile
                     //5. create and store the descriptors on both mobile and desktop with all available xpubs
+                    //6. OPEN QUESTION: once premium descriptors are built should the app just reboot? Otherwise, how to load the wallets into the loop?
                     "create_premium_seeds" => {
                         //determine OS
                         //generate the premium seeds
@@ -459,20 +460,30 @@ pub async fn rustStart (
                         Ok("Ok".to_string())
                     },
                     "create_psbt" => {
+                        //determine OS
                         //create a psbt
                         Ok("Ok".to_string())
                     },
                     "sign_psbt" => {
+                        //determine OS
                         //sign a psbt
                         Ok("Ok".to_string())
                     },
                     "export_psbt" => {
+                        //determine OS
                         //export a psbt
                         Ok("Ok".to_string())
                     },
                     "finalize_psbt" => {
+                        //determine OS
                         //finalize a fully signed psbt for broadcast
                         Ok("Ok".to_string())
+                    },
+                    "detect_usb" => {
+                        //determine OS
+                        //if Mac => /Volumes
+                        //if Linux => /media
+                        //if windows => Drive Name i.e. "E:\"
                     },
                     "break" => {
                         return Err(Error::Exited("Break Requested".to_string()));
