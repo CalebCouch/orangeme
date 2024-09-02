@@ -14,8 +14,8 @@ import 'dart:convert';
 
 // BITCOIN SEND STEP THREE //
 
-// This page allows users to select the transaction speed for sending Bitcoin. 
-// Users can choose between different speeds and associated fees, 
+// This page allows users to select the transaction speed for sending Bitcoin.
+// Users can choose between different speeds and associated fees,
 // and proceed to confirm the transaction.
 
 class TransactionSpeed extends StatefulWidget {
@@ -56,8 +56,8 @@ class TransactionSpeedState extends State<TransactionSpeed> {
       isLoading = true;
     });
     Transaction tx = Transaction.fromJson(jsonDecode((await widget.globalState
-            .invoke(
-                "create_transaction", "${widget.address}|${widget.btc}|$index"))
+            .invoke("create_legacy_transaction",
+                "${widget.address}|${widget.btc}|$index"))
         .data));
     navigateTo(context, ConfirmSend(widget.globalState, tx));
     setState(() {

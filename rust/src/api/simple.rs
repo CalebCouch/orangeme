@@ -58,8 +58,21 @@ const KVBYTE: f64 = 0.15;
 //INTERNAL
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DescriptorSet {
-    pub external: String,
-    pub internal: String
+    pub legacy_spending_external: String,
+    pub legacy_spending_internal: String,
+    pub premium_spending_internal: Option<String>,
+    pub premium_spending_external: Option<String>,
+    pub savings_internal: Option<String>,
+    pub savings_external: Option<String>
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SeedSet {
+    pub legacy: Vec<u8>,
+    pub premium_mobile_spending: Option<Vec<u8>>,
+    pub premium_mobile_savings: Option<Vec<u8>>,
+    pub premium_desktop_spending: Option<Vec<u8>>,
+    pub premium_desktop_savings: Option<Vec<u8>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -215,23 +228,71 @@ pub struct DartState {
     pub personal: Contact,
 }
 
-async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
-    let descriptors = invoke(&callback, "secure_get", "descriptors").await?;
-    let descriptors = if descriptors.is_empty() {
-        let mut seed: [u8; 64] = [0; 64];
-        rand::thread_rng().fill_bytes(&mut seed);
-        invoke(&callback, "secure_set", &format!("{}{}{}", "seed", STORAGE_SPLIT, &serde_json::to_string(&seed.to_vec())?)).await?;
-        let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
-        let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
-        let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
-        let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
-        let internal = in_desc.0.to_string_with_secret(&in_desc.1);
-        let set = DescriptorSet{external, internal};
+async fn get_os(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<String, Error>{
+    let os = invoke(&callback, "check_os", "").await?;
+    Ok(os)
+}
 
-        invoke(&callback, "secure_set", &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&set)?)).await?;
-        set
-    } else {serde_json::from_str::<DescriptorSet>(&descriptors)?};
-    Ok(descriptors)
+async fn generate_seed() -> [u8; 64] {
+    let mut seed: [u8; 64] = [0; 64];
+    rand::thread_rng().fill_bytes(&mut seed);
+    seed
+}
+
+async fn generate_legacy_descriptor(callback: impl Fn(String) -> DartFnFuture<String>, os: String) -> Result<DescriptorSet, Error>{
+    let mut seed = generate_seed().await;
+    invoke(&callback, "print", &serde_json::to_string(&seed.to_vec())?);
+    let action = if os == "IOS"{
+        "ios_set"
+    }
+    else if os == "Android"{
+        "android_set"
+    }
+    else{
+        "unknown"
+    };
+    let seed_set = SeedSet{legacy: seed.to_vec(), premium_desktop_savings: None, premium_desktop_spending: None, premium_mobile_savings: None, premium_mobile_spending: None};
+    let seed_set_json = serde_json::to_string(&seed_set)?;
+    invoke(&callback, action, &format!("{}{}{}", "seed_set", STORAGE_SPLIT, seed_set_json)).await?;
+    let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
+    let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
+    let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
+    let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
+    let internal = in_desc.0.to_string_with_secret(&in_desc.1);
+    let desc_set = DescriptorSet{legacy_spending_external:external, legacy_spending_internal:internal, premium_spending_external:None, premium_spending_internal:None, savings_external:None, savings_internal:None};
+    invoke(&callback, action, &format!("{}{}{}", "descriptors", STORAGE_SPLIT, &serde_json::to_string(&desc_set)?)).await?;
+    return Ok(desc_set)
+}
+
+async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<DescriptorSet, Error> {
+    let os = get_os(&callback).await?;
+    let descriptors: String;
+    match os.as_str() {
+        "IOS" => {
+            descriptors = invoke(&callback, "ios_get", "descriptors").await?;
+            if descriptors.is_empty() {
+            let set = generate_legacy_descriptor(&callback, os).await?;
+            Ok(set)
+            } else {Ok(serde_json::from_str::<DescriptorSet>(&descriptors)?)}
+        }
+        "Android" =>{
+            descriptors = invoke(&callback, "android_get", "descriptors").await?;
+            invoke(&callback, "print", &descriptors).await?;
+            if descriptors.is_empty() {
+            let set = generate_legacy_descriptor(&callback, os).await?;
+            Ok(set)
+            } else {Ok(serde_json::from_str::<DescriptorSet>(&descriptors)?)}
+        }
+        "Linux" | "Windows" | "MacOS" => {
+            //TODO may need different get logic
+            descriptors = invoke(&callback, "android_get", "descriptors").await?;
+            let descriptors = serde_json::from_str::<DescriptorSet>(&descriptors)?;
+            Ok(descriptors)
+        }
+        _ => {
+            return Err(Error::Exited("Unsupported OS".to_string()));
+        }
+        }
 }
 
 #[derive(Serialize, Deserialize)]
@@ -266,11 +327,11 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
 }
 
 async fn sync_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
-    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+    let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     let mut init_sync = true;
     loop {
-        wallet.sync(&blockchain, SyncOptions::default())?;
+        legacy_spending_wallet.sync(&blockchain, SyncOptions::default())?;
         if init_sync {invoke(&callback, "synced", "").await?; init_sync = false;}
         thread::sleep(time::Duration::from_millis(250));
     }
@@ -290,13 +351,13 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     //invoke(&callback, "print", "a").await?;
     let mut store = SqliteStore::new(store_path)?;
     let mut price = SqliteStore::new(price_path)?;
-    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+    let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     loop {
        //invoke(&callback, "print", "b").await?;
        // invoke(&callback, "print", "State Thread Looping").await?;
-        let wallet_transactions = wallet.list_transactions(true)?;
-        let balance = wallet.get_balance()?;
+        let wallet_transactions = legacy_spending_wallet.list_transactions(true)?;
+        let balance = legacy_spending_wallet.get_balance()?;
         let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
         let btc = balance.get_total() as f64 / SATS;
         let mut transactions: Vec<Transaction> = Vec::new();
@@ -345,7 +406,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
                 None => current_price
             };
            // invoke(&callback, "print", "tx c").await?;
-            transactions.push(Transaction::from_details(tx, price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?);
+            transactions.push(Transaction::from_details(tx, price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?);
         }
 
         let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
@@ -369,7 +430,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
 }
 
 async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
-    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+    let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     let mut store = SqliteStore::new(store_path.clone())?;
     let price = SqliteStore::new(price_path.clone())?;
@@ -398,16 +459,16 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
                     let price_error = || Error::not_found(ec, "Cannot get price");
                     let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
-                    let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+                    let is_mine = |s: &Script| legacy_spending_wallet.is_mine(s).unwrap_or(false);
                     invoke(&callback, "print", &format!("amount: {}", amount)).await?;
                     let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
                     let (mut psbt, mut tx_details) = {
-                        let mut builder = wallet.build_tx();
+                        let mut builder = legacy_spending_wallet.build_tx();
                         builder.add_recipient(address.script_pubkey(), amount);
                         builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
                         builder.finish()?
                     };
-                    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+                    let finalized = legacy_spending_wallet.sign(&mut psbt, SignOptions::default())?;
                     if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
 
                     let tx = psbt.clone().extract_tx();
@@ -416,7 +477,7 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                     store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
 
                     tx_details.transaction = Some(tx);
-                    let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
+                    let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?;
 
                     Ok(serde_json::to_string(&tx)?)
                 },
@@ -443,7 +504,7 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
             //POST PROCESSES
             match command.method.as_str() {
                 "get_new_address" => {
-                    store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
+                    store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
                 },
                 _ => {}
             }
@@ -477,17 +538,35 @@ pub async fn rustStart (
 ) -> String {
     let result: Result<(), Error> = async move {
         let path = PathBuf::from(&path);
-
+        //debug function for clearing descriptor storage from memory
+        // invoke(&callback, "clear_storage", "").await?;
+        //1. get descriptors
+        invoke(&callback, "print", "getting descriptors").await?;
         let descriptors = get_descriptors(&callback).await?;
-        let wallet_path = path.join("BDK_DATA/wallet");
-        std::fs::create_dir_all(wallet_path.clone())?;
+
+        //2.load wallets
+        invoke(&callback, "print", "creating paths").await?;
+        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending1");
+        let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
+        let savings_wallet_path = path.join("BDK_DATA/savingswallet");
+
+        //3. create dirs
+        invoke(&callback, "print", "creating dirs").await?;
+        std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
+        std::fs::create_dir_all(premium_spending_wallet_path.clone())?;
+        std::fs::create_dir_all(savings_wallet_path.clone())?;
         let store_path = path.join("STATE/store");
         std::fs::create_dir_all(store_path.clone())?;
         let price_path = path.join("STATE/price");
         std::fs::create_dir_all(price_path.clone())?;
         let client_uri = "ssl://electrum.blockstream.info:50002".to_string();
+        invoke(&callback, "print", "defining wallet").await?;
+        let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
 
-        let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+        //TODO check for premium
+        let premium = false;
+        //TODO load premium wallets if premium
+        invoke(&callback, "print", "defining store").await?;
         let mut store = SqliteStore::new(store_path.clone())?;
 
         if let Some(old_state) = store.get(b"state")? {
@@ -495,14 +574,15 @@ pub async fn rustStart (
                 invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
             }
         }
-        store.set(b"new_address", &wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
-
+        store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
+        invoke(&callback, "print", "se").await?;
+        
         invoke(&callback, "print", "Starting Threads").await?;
         let result = tokio::try_join!(
-            flatten(tokio::spawn(sync_thread(callback1, wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
+            flatten(tokio::spawn(sync_thread(callback1, legacy_spending_wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
             flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
-            flatten(tokio::spawn(state_thread(callback3, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
-            flatten(tokio::spawn(command_thread(callback4, wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
+            flatten(tokio::spawn(state_thread(callback3, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
+            flatten(tokio::spawn(command_thread(callback4, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
         );
         invoke(&callback, "print", "Handling Threads").await?;
 
