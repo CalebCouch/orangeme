@@ -448,7 +448,7 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
                         a.require_network(Network::Bitcoin).is_ok()
                     ).unwrap_or(false).to_string())
                 },
-                "create_transaction" => {
+                "create_legacy_transaction" => {
                     let ec = "Main.create_transaction";
                     let error = || Error::bad_request(ec, "Invalid parameters");
 
@@ -539,14 +539,14 @@ pub async fn rustStart (
     let result: Result<(), Error> = async move {
         let path = PathBuf::from(&path);
         //debug function for clearing descriptor storage from memory
-        // invoke(&callback, "clear_storage", "").await?;
+        invoke(&callback, "clear_storage", "").await?;
         //1. get descriptors
         invoke(&callback, "print", "getting descriptors").await?;
         let descriptors = get_descriptors(&callback).await?;
 
         //2.load wallets
         invoke(&callback, "print", "creating paths").await?;
-        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending1");
+        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending2");
         let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
         let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
