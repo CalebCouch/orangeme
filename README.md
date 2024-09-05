@@ -40,6 +40,13 @@ Run this command to keep rust binary updated.
 
 `flutter_rust_bridge_codegen generate --watch`
 
+If running on desktop (Linux)
+`sudo apt-get update`
+
+`sudo apt-get install libsecret-1-dev pkg-config`
+
+If running on emulator, ensure the proper Android or IOS environment is configured
+
 To startup the app
 
 `flutter run`
