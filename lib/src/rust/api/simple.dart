@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `command_thread`, `flatten`, `from_details`, `from_details`, `from_details`, `from_details`, `generate_legacy_descriptor`, `generate_seed`, `get_descriptors`, `get_os`, `get_price`, `invoke`, `price_thread`, `state_thread`, `sync_thread`
+// These functions are ignored because they are not marked as `pub`: `command_thread`, `detect_usb`, `find_device_path`, `flatten`, `from_details`, `from_details`, `from_details`, `from_details`, `generate_legacy_descriptor`, `generate_seed`, `get_descriptors`, `get_os`, `get_price`, `invoke`, `price_thread`, `query_devices`, `state_thread`, `sync_thread`
 // These types are ignored because they are not used by any `pub` functions: `DartCommand`, `Data`, `DescriptorSet`, `PriceRes`, `Price`, `RustCommand`, `RustResponse`, `SeedSet`, `SpotRes`, `Spot`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
@@ -81,6 +81,7 @@ class DartState {
   final double currentPrice;
   final double usdBalance;
   final double btcBalance;
+  final String devicePath;
   final List<Transaction> transactions;
   final Float64List fees;
   final List<Conversation> conversations;
@@ -91,6 +92,7 @@ class DartState {
     required this.currentPrice,
     required this.usdBalance,
     required this.btcBalance,
+    required this.devicePath,
     required this.transactions,
     required this.fees,
     required this.conversations,
@@ -106,6 +108,7 @@ class DartState {
       currentPrice.hashCode ^
       usdBalance.hashCode ^
       btcBalance.hashCode ^
+      devicePath.hashCode ^
       transactions.hashCode ^
       fees.hashCode ^
       conversations.hashCode ^
@@ -120,6 +123,7 @@ class DartState {
           currentPrice == other.currentPrice &&
           usdBalance == other.usdBalance &&
           btcBalance == other.btcBalance &&
+          devicePath == other.devicePath &&
           transactions == other.transactions &&
           fees == other.fees &&
           conversations == other.conversations &&

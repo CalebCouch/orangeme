@@ -12,6 +12,9 @@ use std::str::FromStr;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::sync::mpsc::channel;
+use std::collections::HashSet;
+use std::process::Command;
+use std::env;
 
 
 use web5_rust::dwn::interfaces::{ProtocolsConfigureOptions, RecordsWriteOptions};
@@ -221,11 +224,27 @@ pub struct DartState {
     pub currentPrice: f64,
     pub usdBalance: f64,
     pub btcBalance: f64,
+    pub devicePath: String,
     pub transactions: Vec<Transaction>,
     pub fees: Vec<f64>,
     pub conversations: Vec<Conversation>,
     pub users: Vec<Contact>,
     pub personal: Contact,
+}
+
+async fn detect_usb(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<String, Error>{
+    let os = get_os(&callback).await?;
+
+    //if OS == windows
+    //do some stuff
+
+
+    //else if OS == linux
+    //do some stuff
+
+    //else if OS == Mac 
+    //do some stuff
+    Ok(os)
 }
 
 async fn get_os(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<String, Error>{
@@ -326,6 +345,95 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
     })
 }
 
+//this function is used to take an initial snapshot of the users usb device path
+//this function will only fire on windows, linux, and ios.
+async fn query_devices(os: &str) -> String {
+    let mut device_baseline = String::new();    
+    match os {
+        "windows" => {
+            // On Windows, use `wmic` to list logical disks (drives)
+            match Command::new("wmic")
+                .args(&["logicaldisk", "get", "name"])
+                .output()
+            {
+                Ok(output) => {
+                    let result = String::from_utf8_lossy(&output.stdout);
+                    device_baseline = result.into_owned();
+                }
+                Err(e) => {
+                    println!("Failed to query devices on Windows: {}", e);
+                    return "None".to_string();
+                }
+            }
+        }
+        "linux" => {
+            // On Linux, list the contents of `/media/$USER` or `/mnt`
+            if let Some(user) = env::var_os("USER") {
+                let media_path = format!("/media/{}", user.to_string_lossy());
+                match Command::new("ls")
+                    .arg(&media_path)
+                    .output()
+                {
+                    Ok(output) => {
+                        let result = String::from_utf8_lossy(&output.stdout);
+                        device_baseline = result.into_owned();
+                    }
+                    Err(_) => {
+                        // If `/media/$USER` fails, fallback to `/mnt`
+                        match Command::new("ls")
+                            .arg("/mnt")
+                            .output()
+                        {
+                            Ok(output) => {
+                                let result = String::from_utf8_lossy(&output.stdout);
+                                device_baseline = result.into_owned();
+                            }
+                            Err(e) => {
+                                println!("Failed to query devices on Linux: {}", e);
+                                return "None".to_string();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        "macos" => {
+            // On macOS, list the contents of `/Volumes`
+            match Command::new("ls")
+                .arg("/Volumes")
+                .output()
+            {
+                Ok(output) => {
+                    let result = String::from_utf8_lossy(&output.stdout);
+                    device_baseline = result.into_owned();
+                }
+                Err(e) => {
+                    println!("Failed to query devices on macOS: {}", e);
+                    return "None".to_string();
+                }
+            }
+        }
+        _ => {
+            println!("Unsupported operating system");
+            return "None".to_string();
+        }
+    }    // Return the device baseline if found
+    device_baseline
+}
+
+async fn find_device_path(baseline: &str, os: &str) -> String {
+    // Convert baseline query (first snapshot) into a HashSet
+    let baseline_hash: HashSet<_> = baseline.lines().collect();
+    //obtain a new snapshot of the device list
+    let new_snapshot = query_devices(os).await;
+    // convert new snapshot into a HashSet
+    let new_hash: HashSet<_> = new_snapshot.lines().collect();
+    for device in new_hash.difference(&baseline_hash) {
+        return device.to_string(); // Return the first difference found
+    }    // If no new device was found, return None
+    return "None".to_string();
+}
+
 async fn sync_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
     let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
@@ -353,7 +461,21 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     let mut price = SqliteStore::new(price_path)?;
     let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
+    //determine OS
+    let mut os = "unknown";
+    if cfg!(target_os = "windows"){
+        os = "windows";
+    }else if cfg!(target_os = "macos"){
+        os = "macos";
+    }else if cfg!(target_os = "linux"){
+        os = "linux";
+    }
+    //device baseline will be taken when the app first starts and is used to compare device list snapshots within the system loop
+    let device_baseline  = query_devices(os).await;
     loop {
+        //The baseline will only be evaluated if the operating system is windows, linux or macos
+        let device_path = find_device_path(&device_baseline, &os).await;
+        invoke(&callback, "print", &device_path).await?;
        //invoke(&callback, "print", "b").await?;
        // invoke(&callback, "print", "State Thread Looping").await?;
         let wallet_transactions = legacy_spending_wallet.list_transactions(true)?;
@@ -361,7 +483,6 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
         let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
         let btc = balance.get_total() as f64 / SATS;
         let mut transactions: Vec<Transaction> = Vec::new();
-
         let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"Y7yOvxxua4EsGdsFvhIuAC4sDjc7judq".to_string(), pfp: Some("assets/images/josh_thayer.png".to_string()), abtme: None};
         let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/panda.jpeg".to_string()), abtme: None};
         let ella_couch = Contact{name: "Ella Couch".to_string(), did: "62iDUrvk5xfUN4UccYd9sfxiQ0PCbMNo".to_string(), pfp: Some("assets/images/cat.jpg".to_string()), abtme: None};
@@ -414,6 +535,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
             currentPrice: current_price,
             btcBalance: btc,
             usdBalance: current_price * btc,
+            devicePath: device_path,
             transactions,
             fees,
             conversations,
@@ -539,14 +661,14 @@ pub async fn rustStart (
     let result: Result<(), Error> = async move {
         let path = PathBuf::from(&path);
         //debug function for clearing descriptor storage from memory
-        invoke(&callback, "clear_storage", "").await?;
+        // invoke(&callback, "clear_storage", "").await?;
         //1. get descriptors
         invoke(&callback, "print", "getting descriptors").await?;
         let descriptors = get_descriptors(&callback).await?;
 
         //2.load wallets
         invoke(&callback, "print", "creating paths").await?;
-        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending2");
+        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending3");
         let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
         let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
