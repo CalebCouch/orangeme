@@ -19,9 +19,15 @@ import 'dart:io' show Platform;
 // including updating profile photo, name, and about me section.
 
 class MyProfile extends StatefulWidget {
-  final String? profilePhoto;
   final GlobalState globalState;
-  const MyProfile(this.globalState, {super.key, this.profilePhoto});
+  final String? profilePhoto;
+  final String address;
+  const MyProfile(
+    this.globalState,
+    this.address, {
+    super.key,
+    this.profilePhoto,
+  });
 
   @override
   MyProfileState createState() => MyProfileState();
@@ -110,7 +116,7 @@ class MyProfileState extends State<MyProfile> {
               const Spacing(height: AppPadding.profile),
               didItem(context, state.personal.did),
               const Spacing(height: AppPadding.profile),
-              addressItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
+              addressItem(context, widget.address),
             ],
           ),
         ),

@@ -78,11 +78,9 @@ Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
   if (onDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
     left: InkWell(
-      onTap: () {
-        navigateTo(
-          context,
-          MyProfile(globalState),
-        );
+      onTap: () async {
+        var address = (await globalState.invoke("get_new_address", "")).data;
+        navigateTo(context, MyProfile(globalState, address));
       },
       child: Container(
         width: 50,
@@ -146,10 +144,16 @@ Widget stackMessageHeader(
     left: backButton(context),
     center: !isGroup
         ? InkWell(
-            onTap: () {
-              navigateTo(
+            onTap: () async {
+              var address =
+                  (await globalState.invoke("get_new_address", "")).data;
+              switchPageTo(
                 context,
-                UserProfile(globalState, userInfo: cnvo.members[0]),
+                UserProfile(
+                  globalState,
+                  address,
+                  userInfo: cnvo.members[0],
+                ),
               );
             },
             child: Column(

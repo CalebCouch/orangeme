@@ -62,11 +62,15 @@ class MessageInfoState extends State<MessageInfo> {
                     return contactListItem(
                       context,
                       widget.contacts[index],
-                      () {
-                        navigateTo(
+                      () async {
+                        var address = (await widget.globalState
+                                .invoke("get_new_address", ""))
+                            .data;
+                        switchPageTo(
                           context,
                           UserProfile(
                             widget.globalState,
+                            address,
                             userInfo: widget.contacts[index],
                           ),
                         );

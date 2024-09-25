@@ -37,6 +37,9 @@ class SidebarState extends State<Sidebar> {
     var displayName;
     if (state.personal.name.length > 12) {
       displayName = state.personal.name.split(" ")[0];
+      if (displayName.length > 12) {
+        displayName = displayName.substring(0, 10) + '...';
+      }
     } else {
       displayName = state.personal.name;
     }
@@ -60,15 +63,20 @@ class SidebarState extends State<Sidebar> {
             expand: true,
             text: displayName,
             buttonAlignment: Alignment.centerLeft,
-            onTap: () {
+            onTap: () async {
               if (widget.index != 2) {
+                var address =
+                    (await widget.globalState.invoke("get_new_address", ""))
+                        .data;
                 switchPageTo(
                   context,
-                  MyProfile(widget.globalState,
-                      profilePhoto: state.personal.pfp),
+                  MyProfile(
+                    widget.globalState,
+                    address,
+                    profilePhoto: state.personal.pfp,
+                  ),
                 );
               }
-              ;
             },
             pfp: state.personal.pfp,
             variant: ButtonVariant.ghost,

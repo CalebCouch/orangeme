@@ -19,8 +19,14 @@ import 'package:orange/classes.dart';
 class UserProfile extends StatefulWidget {
   final GlobalState globalState;
   final Contact userInfo;
+  final String address;
 
-  const UserProfile(this.globalState, {super.key, required this.userInfo});
+  const UserProfile(
+    this.globalState,
+    this.address, {
+    super.key,
+    required this.userInfo,
+  });
 
   @override
   UserProfileState createState() => UserProfileState();
@@ -57,7 +63,7 @@ class UserProfileState extends State<UserProfile> {
               const Spacing(height: AppPadding.profile),
               didItem(context, widget.userInfo.did),
               const Spacing(height: AppPadding.profile),
-              addressItem(context, "GENERATED ADDRESS"),
+              addressItem(context, widget.address),
             ],
           ),
         ),
