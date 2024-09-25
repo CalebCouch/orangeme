@@ -43,35 +43,8 @@ class UserProfileState extends State<UserProfile> {
     );
   }
 
-  Widget build_screen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackHeader(
-        context,
-        widget.userInfo.name,
-      ),
-      content: Content(
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              profilePhoto(context, widget.userInfo.pfp, ProfileSize.xxl),
-              const Spacing(height: AppPadding.profile),
-              aboutMeItem(
-                  context, widget.userInfo.abtme ?? "There's nothing here..."),
-              const Spacing(height: AppPadding.profile),
-              didItem(context, widget.userInfo.did),
-              const Spacing(height: AppPadding.profile),
-              addressItem(context, widget.address),
-            ],
-          ),
-        ),
-      ),
-      bumper: singleButtonBumper(
-        context,
-        'Message',
-        () => navigateTo(
+  onMessage() {
+    () => navigateTo(
           context,
           Exchange(
             widget.globalState,
@@ -83,8 +56,26 @@ class UserProfileState extends State<UserProfile> {
               [],
             ),
           ),
-        ),
+        );
+  }
+
+  Widget build_screen(BuildContext context, DartState state) {
+    return Interface(
+      widget.globalState,
+      header: stackHeader(
+        context,
+        widget.userInfo.name,
       ),
+      content: Content(
+        children: [
+          profilePhoto(context, widget.userInfo.pfp, ProfileSize.xxl),
+          aboutMeItem(
+              context, widget.userInfo.abtme ?? "There's nothing here..."),
+          didItem(context, widget.userInfo.did),
+          addressItem(context, widget.address),
+        ],
+      ),
+      bumper: singleButtonBumper(context, 'Message', onMessage),
       desktopOnly: true,
       navigationIndex: 1,
     );

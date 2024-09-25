@@ -15,7 +15,7 @@ import 'package:share/share.dart';
 import 'package:orange/classes.dart';
 
 // The Receive widget provides an interface for users to receive Bitcoin by
-// displaying a QR code and address. It supports both desktop and mobile 
+// displaying a QR code and address. It supports both desktop and mobile
 // platforms, allowing users to either copy the address or share it via different
 // methods depending on the platform.
 
@@ -46,20 +46,16 @@ class ReceiveState extends State<Receive> {
       widget.globalState,
       header: stackHeader(context, "Receive bitcoin"),
       content: Content(
-        content: Column(
-          mainAxisAlignment:
-              onDesktop ? MainAxisAlignment.center : MainAxisAlignment.start,
-          children: [
-            qrCode(widget.address),
-            const Spacing(height: AppPadding.content),
-            const CustomText(
-              text: 'Scan to receive bitcoin.',
-              textType: "text",
-              color: ThemeColor.textSecondary,
-              textSize: TextSize.md,
-            )
-          ],
-        ),
+        scrollable: false,
+        alignment: MainAxisAlignment.center,
+        children: [
+          qrCode(widget.address),
+          const CustomText(
+            text: 'Scan to receive bitcoin.',
+            color: ThemeColor.textSecondary,
+            textSize: TextSize.md,
+          )
+        ],
       ),
       bumper: onDesktop
           ? singleButtonBumper(

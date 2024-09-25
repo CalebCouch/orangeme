@@ -56,20 +56,33 @@ class ExchangeState extends State<Exchange> {
         widget.conversation,
       ),
       content: Content(
-        content: widget.conversation.messages.isEmpty
-            ? const Center(
-                child: CustomText(
-                  text: 'No messages yet.',
-                  textSize: TextSize.md,
-                  color: ThemeColor.textSecondary,
+        scrollable: false,
+        children: [
+          widget.conversation.messages.isEmpty
+              ? noMessages()
+              : Expanded(
+                  child: messageStack(
+                      widget.globalState,
+                      context,
+                      scrollController,
+                      widget.conversation.members,
+                      widget.conversation.messages),
                 ),
-              )
-            : messageStack(widget.globalState, context, scrollController,
-                widget.conversation.members, widget.conversation.messages),
+        ],
       ),
       bumper: messageInput(),
       desktopOnly: true,
       navigationIndex: 1,
     );
   }
+}
+
+Widget noMessages() {
+  return const Center(
+    child: CustomText(
+      text: 'No messages yet.',
+      textSize: TextSize.md,
+      color: ThemeColor.textSecondary,
+    ),
+  );
 }

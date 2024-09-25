@@ -14,8 +14,8 @@ import 'dart:convert';
 
 // BITCOIN SEND STEP THREE //
 
-// This page allows users to select the transaction speed for sending Bitcoin. 
-// Users can choose between different speeds and associated fees, 
+// This page allows users to select the transaction speed for sending Bitcoin.
+// Users can choose between different speeds and associated fees,
 // and proceed to confirm the transaction.
 
 class TransactionSpeed extends StatefulWidget {
@@ -66,49 +66,46 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    print('BTC: ${widget.btc}');
     var fees = widget.globalState.state.value.fees;
     return Interface(
       widget.globalState,
-      header: isLoading
-          ? Container()
-          : stackHeader(
-              context,
-              "Transaction speed",
-            ),
+      header:
+          isLoading ? Container() : stackHeader(context, "Transaction speed"),
       content: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-              strokeCap: StrokeCap.round,
-              backgroundColor: ThemeColor.bgSecondary,
-            ))
-          : Content(
-              content: Column(children: <Widget>[
-                radioButton(
-                  "Standard",
-                  "Arrives in ~2 hours\n\$${formatValue(fees[0])} bitcoin network fee",
-                  index == 0,
-                  () {
-                    setState(() {
-                      index = 0;
-                    });
-                  },
-                ),
-                radioButton(
-                  "Priority",
-                  "Arrives in ~30 minutes\n\$${formatValue(fees[1])} bitcoin network fee",
-                  index == 1,
-                  () {
-                    setState(() {
-                      index = 1;
-                    });
-                  },
-                ),
-              ]),
-            ),
+          ? loadingCircle()
+          : Content(children: [
+              radioButton(
+                "Standard",
+                "Arrives in ~2 hours\n\$${formatValue(fees[0])} bitcoin network fee",
+                index == 0,
+                () {
+                  setState(() {
+                    index = 0;
+                  });
+                },
+              ),
+              radioButton(
+                "Priority",
+                "Arrives in ~30 minutes\n\$${formatValue(fees[1])} bitcoin network fee",
+                index == 1,
+                () {
+                  setState(() {
+                    index = 1;
+                  });
+                },
+              ),
+            ]),
       bumper: isLoading ? null : singleButtonBumper(context, "Continue", next),
       desktopOnly: true,
       navigationIndex: 0,
     );
   }
+}
+
+Widget loadingCircle() {
+  return const Center(
+      child: CircularProgressIndicator(
+    strokeCap: StrokeCap.round,
+    backgroundColor: ThemeColor.bgSecondary,
+  ));
 }

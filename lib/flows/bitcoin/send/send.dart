@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/flows/bitcoin/home.dart';
-
-import 'package:orange/theme/stylesheet.dart';
-
 
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
@@ -15,15 +9,18 @@ import 'package:orange/components/header.dart';
 import 'package:orange/components/text_input.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/tip_buttons.dart';
-import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/interface.dart';
+
+import 'package:orange/components/custom/custom_text.dart';
+import 'package:orange/components/custom/custom_button.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/theme/stylesheet.dart';
 
 // BITCOIN SEND STEP ONE //
 
-// This page allows users to input a Bitcoin address, validate it, and proceed 
+// This page allows users to input a Bitcoin address, validate it, and proceed
 // to send Bitcoin. It supports manual entry, pasting from clipboard,
 // and scanning QR codes.
 
@@ -40,18 +37,7 @@ class SendState extends State<Send> {
   String addressStr = '';
   bool addressValid = false;
 
-  /* Validates the Bitcoin address by invoking a backend check. */
-  Future<void> checkAddress(String address) async {
-    if (address.contains('bitcoin:')) address = address.substring(8);
-    var valid =
-        (await widget.globalState.invoke("check_address", address)).data ==
-            "true";
-    setState(() {
-      addressValid = valid;
-    });
-  }
-
-  /* Updates the address and its validity, also sets the address in the text controller. */
+  //This function checks the address validity and sets the input field
   Future<void> setAddress(String address) async {
     if (address.contains('bitcoin:')) address = address.substring(8);
     var valid =
@@ -62,6 +48,24 @@ class SendState extends State<Send> {
       addressValid = valid;
       controller.text = addressStr;
     });
+  }
+
+  //This function only checks the address validity
+  Future<void> checkAddress(String address) async {
+    if (address.contains('bitcoin:')) address = address.substring(8);
+    var valid =
+        (await widget.globalState.invoke("check_address", address)).data ==
+            "true";
+    setState(() {
+      addressValid = valid;
+    });
+  }
+
+  onContinue() {
+    checkAddress(controller.text);
+    if (addressValid) {
+      navigateTo(context, SendAmount(widget.globalState, controller.text));
+    }
   }
 
   @override
@@ -86,70 +90,64 @@ class SendState extends State<Send> {
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
-      header: stackHeader(
-        context,
-        "Bitcoin address",
-        iconButton(
-          context,
-          () {
-            resetNavTo(context, BitcoinHome(widget.globalState));
-          },
-          const CustomIcon(iconSize: IconSize.md, icon: ThemeIcon.left),
-        ),
-      ),
+      header: stackHeader(context, "Bitcoin address", backButton(context)),
       content: Content(
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomTextInput(
-                controller: controller,
-                onSubmitted: (String address) => {setAddress(address)},
-                onChanged: (String address) => {checkAddress(address)},
-                error: addressValid || addressStr.isEmpty
-                    ? ""
-                    : "Not a valid address",
-                hint: 'Bitcoin address...',
-              ),
-              const Spacing(height: AppPadding.content),
-              ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
-                HapticFeedback.heavyImpact();
-                String data = (await getClipBoardData()).toString();
-                if (data != "null") {
-                  setAddress(data);
-                }
-              }),
-              const Spacing(height: AppPadding.tips),
-              const CustomText(
-                text: 'or',
-                textSize: TextSize.sm,
-                color: ThemeColor.textSecondary,
-              ),
-              const Spacing(height: AppPadding.tips),
-              ButtonTip(
-                "Scan QR Code",
-                ThemeIcon.qrcode,
-                () => navigateTo(context, ScanQR(widget.globalState)),
-              ),
-              const Spacing(height: AppPadding.tips),
-            ],
+        children: [
+          addressInput(
+            controller,
+            addressValid,
+            addressStr,
+            setAddress,
+            checkAddress,
           ),
-        ),
+          buttonTips(context, widget.globalState, setAddress)
+        ],
       ),
       bumper: singleButtonBumper(
         context,
         "Continue",
-        () {
-          checkAddress(controller.text);
-          if (addressValid) {
-            navigateTo(
-                context, SendAmount(widget.globalState, controller.text));
-          }
-        },
+        onContinue,
         addressValid,
       ),
       desktopOnly: true,
       navigationIndex: 0,
     );
   }
+}
+
+Widget addressInput(controller, bool addressValid, String addressStr,
+    setAddress, checkAddress) {
+  return CustomTextInput(
+    controller: controller,
+    onSubmitted: (String address) => {setAddress(address)},
+    onChanged: (String address) => {checkAddress(address)},
+    error: addressValid || addressStr.isEmpty ? "" : "Not a valid address",
+    hint: 'Bitcoin address...',
+  );
+}
+
+Widget buttonTips(BuildContext context, GlobalState globalState, setAddress) {
+  return Column(
+    children: [
+      ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
+        HapticFeedback.heavyImpact();
+        String data = (await getClipBoardData()).toString();
+        if (data != "null") {
+          setAddress(data);
+        }
+      }),
+      const Spacing(height: AppPadding.tips),
+      const CustomText(
+        text: 'or',
+        textSize: TextSize.sm,
+        color: ThemeColor.textSecondary,
+      ),
+      const Spacing(height: AppPadding.tips),
+      ButtonTip(
+        "Scan QR Code",
+        ThemeIcon.qrcode,
+        () => navigateTo(context, ScanQR(globalState)),
+      ),
+    ],
+  );
 }

@@ -144,9 +144,6 @@ impl Transaction {
     }
 }
 
-
-
-
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Contact {
     pub name: String,

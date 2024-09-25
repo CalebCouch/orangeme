@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/tabular.dart';
 import 'package:orange/components/content.dart';
@@ -44,16 +43,13 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
       widget.globalState,
       header: stackHeader(context, "$direction bitcoin"),
       content: Content(
-        content: Column(
-          children: [
-            amountDisplay(
-              (widget.transaction.usd.abs() - widget.transaction.fee.abs()),
-              (widget.transaction.btc).abs(),
-            ),
-            const Spacing(height: AppPadding.content),
-            transactionTabular(context, widget.transaction),
-          ],
-        ),
+        children: [
+          amountDisplay(
+            (widget.transaction.usd.abs() - widget.transaction.fee.abs()),
+            (widget.transaction.btc).abs(),
+          ),
+          transactionTabular(context, widget.transaction),
+        ],
       ),
       bumper: singleButtonBumper(
         context,

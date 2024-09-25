@@ -44,47 +44,48 @@ class MessageInfoState extends State<MessageInfo> {
       resizeToAvoidBottomInset: false,
       header: stackHeader(context, "Group members"),
       content: Content(
-        content: Column(
-          children: [
-            CustomText(
-              text: 'This group has ${widget.contacts.length} members',
-              textSize: TextSize.md,
-              color: ThemeColor.textSecondary,
-            ),
-            const Spacing(height: AppPadding.content),
-            Expanded(
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: widget.contacts.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return contactListItem(
-                      context,
-                      widget.contacts[index],
-                      () async {
-                        var address = (await widget.globalState
-                                .invoke("get_new_address", ""))
-                            .data;
-                        switchPageTo(
-                          context,
-                          UserProfile(
-                            widget.globalState,
-                            address,
-                            userInfo: widget.contacts[index],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
+        scrollable: false,
+        children: [
+          CustomText(
+            text: 'This group has ${widget.contacts.length} members',
+            textSize: TextSize.md,
+            color: ThemeColor.textSecondary,
+          ),
+          listMembers(widget.globalState, widget.contacts)
+        ],
       ),
       desktopOnly: true,
       navigationIndex: 1,
     );
   }
+}
+
+Widget listMembers(GlobalState globalState, contacts) {
+  return Expanded(
+    child: SingleChildScrollView(
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const ScrollPhysics(),
+        itemCount: contacts.length,
+        itemBuilder: (BuildContext context, int index) {
+          return contactListItem(
+            context,
+            contacts[index],
+            () async {
+              var address =
+                  (await globalState.invoke("get_new_address", "")).data;
+              switchPageTo(
+                context,
+                UserProfile(
+                  globalState,
+                  address,
+                  userInfo: contacts[index],
+                ),
+              );
+            },
+          );
+        },
+      ),
+    ),
+  );
 }

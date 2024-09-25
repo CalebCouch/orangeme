@@ -38,6 +38,15 @@ class ConfirmationState extends State<Confirmation> {
     );
   }
 
+  onDone() {
+    () {
+      resetNavTo(
+        context,
+        BitcoinHome(widget.globalState),
+      );
+    };
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
@@ -46,18 +55,13 @@ class ConfirmationState extends State<Confirmation> {
         "Confirm send",
         exitButton(context, BitcoinHome(widget.globalState)),
       ),
-      content: Content(
-        content: result('You sent \$${formatValue(widget.amount.abs())}'),
-      ),
+      content: Content(children: [
+        result('You sent \$${formatValue(widget.amount.abs())}'),
+      ]),
       bumper: singleButtonBumper(
         context,
         "Done",
-        () => {
-          resetNavTo(
-            context,
-            BitcoinHome(widget.globalState),
-          ),
-        },
+        onDone,
         true,
         ButtonVariant.secondary,
       ),
