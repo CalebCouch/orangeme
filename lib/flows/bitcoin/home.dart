@@ -15,6 +15,7 @@ import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/util.dart';
+import 'package:orange/global.dart' as global;
 
 import 'dart:io' show Platform;
 
@@ -23,33 +24,27 @@ import 'dart:io' show Platform;
 // and provides buttons for sending and receiving Bitcoin. The screen also shows
 // optional reminders for backing up and internet connectivity.
 
-class BitcoinHome extends StatefulWidget {
+class BitcoinHome extends StatelessWidget {
   final GlobalState globalState;
   const BitcoinHome(this.globalState, {super.key});
 
   @override
-  State<BitcoinHome> createState() => BitcoinHomeState();
-}
-
-class BitcoinHomeState extends State<BitcoinHome> {
-  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return build_screen(context, state);
+      valueListenable: global.bitcoinHomeState,
+      builder: (BuildContext context, BitcoinHomeState state, Widget? child) {
+        return build_screen(globalState, context, state);
       },
     );
   }
+}
 
-  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-
-  Widget transactionListItem(BuildContext context, Transaction transaction) {
+Widget transactionListItem(GlobalState globalState, BuildContext context, BitcoinHomeTransaction transaction) {
     return DefaultListItem(
       onTap: () {
         HapticFeedback.mediumImpact();
-        navigateTo(
-            context, TransactionDetailsWidget(widget.globalState, transaction));
+      //navigateTo(
+      //    context, TransactionDetailsWidget(globalState, transaction));
       },
       topLeft: CustomText(
         alignment: TextAlign.left,
@@ -61,12 +56,12 @@ class BitcoinHomeState extends State<BitcoinHome> {
         alignment: TextAlign.left,
         textSize: TextSize.sm,
         color: ThemeColor.textSecondary,
-        text: formatDate(transaction.date, transaction.time),
+        text: transaction.datetime, //formatDate(transaction.date, transaction.time),
       ),
       topRight: CustomText(
         alignment: TextAlign.right,
         textSize: TextSize.md,
-        text: "\$${formatValue((transaction.usd).abs())}",
+        text: transaction.usd,//"\$${formatValue((transaction.usd).abs())}",
       ),
       bottomRight: const CustomText(
         alignment: TextAlign.right,
@@ -76,20 +71,20 @@ class BitcoinHomeState extends State<BitcoinHome> {
         underline: true,
       ),
     );
-  }
+}
 
-  Widget build_screen(BuildContext context, DartState state) {
-    var textSize = formatValue(state.usdBalance).length <= 4
-        ? TextSize.title
-        : formatValue(state.usdBalance).length <= 7
-            ? TextSize.h1
-            : TextSize.h2;
+Widget build_screen(GlobalState globalState, BuildContext context, BitcoinHomeState state) {
+  //var textSize = formatValue(state.usdBalance).length <= 4
+  //    ? TextSize.title
+  //    : formatValue(state.usdBalance).length <= 7
+  //        ? TextSize.h1
+  //        : TextSize.h2;
     return Interface(
-      widget.globalState,
+      globalState,
       resizeToAvoidBottomInset: false,
       header: homeHeader(
         context,
-        widget.globalState,
+        globalState,
         "Wallet",
         null, //state.personal.pfp,
       ),
@@ -104,16 +99,14 @@ class BitcoinHomeState extends State<BitcoinHome> {
                 children: [
                   CustomText(
                     textType: "heading",
-                    text: state.usdBalance == 0
-                        ? "\$0.00"
-                        : "\$${formatValue(state.usdBalance)}",
-                    textSize: textSize,
+                    text: state.usd,// state.usdBalance == 0 ? "\$0.00" : "\$${formatValue(state.usdBalance)}",
+                    textSize: TextSize.h1,
                     color: ThemeColor.heading,
                   ),
                   const Spacing(height: AppPadding.valueDisplaySep),
                   CustomText(
                     textType: "text",
-                    text: "${formatBTC(state.btcBalance, 8)} BTC",
+                    text: state.btc,// "${formatBTC(state.btcBalance, 8)} BTC",
                     textSize: TextSize.lg,
                     color: ThemeColor.textSecondary,
                   ),
@@ -133,7 +126,7 @@ class BitcoinHomeState extends State<BitcoinHome> {
                         itemCount: state.transactions.length,
                         itemBuilder: (BuildContext context, int index) {
                           return transactionListItem(
-                              context, state.transactions[index]);
+                              globalState, context, state.transactions[index]);
                         },
                       ),
                     ),
@@ -147,18 +140,18 @@ class BitcoinHomeState extends State<BitcoinHome> {
         "Receive",
         "Send",
         () async {
-          var address =
-              (await widget.globalState.invoke("get_new_address", "")).data;
-          navigateTo(context, Receive(widget.globalState, address));
+            global.add();
+        //var address =
+        //    (await globalState.invoke("get_new_address", "")).data;
+        //navigateTo(context, Receive(globalState, address));
         },
         () {
-          navigateTo(context, Send(widget.globalState));
+          navigateTo(context, Send(globalState));
         },
-        onDesktop ? true : false,
+        false //globalState.isDesktop ? true : false,
       ),
       navigationIndex: 0,
     );
-  }
 }
 
 _backupReminder(bool display) {

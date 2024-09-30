@@ -6,24 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `command_thread`, `flatten`, `from_details`, `from_details`, `from_details`, `from_details`, `generate_legacy_descriptor`, `generate_seed`, `get_descriptors`, `get_os`, `get_price`, `invoke`, `price_thread`, `spawn`, `state_thread`, `sync_thread`
-// These types are ignored because they are not used by any `pub` functions: `DartCommand`, `Data`, `DescriptorSet`, `PriceRes`, `Price`, `RustCommand`, `RustResponse`, `SeedSet`, `SpotRes`, `Spot`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
-
-Future<String> rustStart(
-        {required String path,
-        required FutureOr<String> Function(String) callback,
-        required FutureOr<String> Function(String) callback1,
-        required FutureOr<String> Function(String) callback2,
-        required FutureOr<String> Function(String) callback3,
-        required FutureOr<String> Function(String) callback4}) =>
-    RustLib.instance.api.crateApiSimpleRustStart(
-        path: path,
-        callback: callback,
-        callback1: callback1,
-        callback2: callback2,
-        callback3: callback3,
-        callback4: callback4);
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 class Contact {
   final String name;
@@ -39,7 +22,7 @@ class Contact {
   });
 
   static Future<Contact> default_() =>
-      RustLib.instance.api.crateApiSimpleContactDefault();
+      RustLib.instance.api.crateApiStructsContactDefault();
 
   @override
   int get hashCode =>
@@ -65,6 +48,9 @@ class Conversation {
     required this.members,
   });
 
+  static Future<Conversation> default_() =>
+      RustLib.instance.api.crateApiStructsConversationDefault();
+
   @override
   int get hashCode => messages.hashCode ^ members.hashCode;
 
@@ -75,6 +61,30 @@ class Conversation {
           runtimeType == other.runtimeType &&
           messages == other.messages &&
           members == other.members;
+}
+
+class DartCommand {
+  final String method;
+  final String data;
+
+  const DartCommand({
+    required this.method,
+    required this.data,
+  });
+
+  static Future<DartCommand> default_() =>
+      RustLib.instance.api.crateApiStructsDartCommandDefault();
+
+  @override
+  int get hashCode => method.hashCode ^ data.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DartCommand &&
+          runtimeType == other.runtimeType &&
+          method == other.method &&
+          data == other.data;
 }
 
 class DartState {
@@ -99,7 +109,7 @@ class DartState {
   });
 
   static Future<DartState> default_() =>
-      RustLib.instance.api.crateApiSimpleDartStateDefault();
+      RustLib.instance.api.crateApiStructsDartStateDefault();
 
   @override
   int get hashCode =>
@@ -127,6 +137,30 @@ class DartState {
           personal == other.personal;
 }
 
+class DescriptorSet {
+  final String external_;
+  final String internal;
+
+  const DescriptorSet({
+    required this.external_,
+    required this.internal,
+  });
+
+  static Future<DescriptorSet> default_() =>
+      RustLib.instance.api.crateApiStructsDescriptorSetDefault();
+
+  @override
+  int get hashCode => external_.hashCode ^ internal.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DescriptorSet &&
+          runtimeType == other.runtimeType &&
+          external_ == other.external_ &&
+          internal == other.internal;
+}
+
 class Message {
   final Contact sender;
   final String message;
@@ -141,6 +175,9 @@ class Message {
     required this.time,
     required this.isIncoming,
   });
+
+  static Future<Message> default_() =>
+      RustLib.instance.api.crateApiStructsMessageDefault();
 
   @override
   int get hashCode =>
@@ -160,6 +197,57 @@ class Message {
           date == other.date &&
           time == other.time &&
           isIncoming == other.isIncoming;
+}
+
+class RustCommand {
+  final String uid;
+  final String method;
+  final String data;
+
+  const RustCommand({
+    required this.uid,
+    required this.method,
+    required this.data,
+  });
+
+  static Future<RustCommand> default_() =>
+      RustLib.instance.api.crateApiStructsRustCommandDefault();
+
+  @override
+  int get hashCode => uid.hashCode ^ method.hashCode ^ data.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RustCommand &&
+          runtimeType == other.runtimeType &&
+          uid == other.uid &&
+          method == other.method &&
+          data == other.data;
+}
+
+class RustResponse {
+  final String uid;
+  final String data;
+
+  const RustResponse({
+    required this.uid,
+    required this.data,
+  });
+
+  static Future<RustResponse> default_() =>
+      RustLib.instance.api.crateApiStructsRustResponseDefault();
+
+  @override
+  int get hashCode => uid.hashCode ^ data.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RustResponse &&
+          runtimeType == other.runtimeType &&
+          uid == other.uid &&
+          data == other.data;
 }
 
 class Transaction {
@@ -184,6 +272,9 @@ class Transaction {
     this.date,
     this.time,
   });
+
+  static Future<Transaction> default_() =>
+      RustLib.instance.api.crateApiStructsTransactionDefault();
 
   @override
   int get hashCode =>

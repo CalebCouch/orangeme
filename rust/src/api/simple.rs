@@ -1,6 +1,6 @@
 use super::Error;
 
-use super::protocols::{SocialProtocol, ProfileProtocol};
+//use super::protocols::{SocialProtocol, ProfileProtocol};
 
 use flutter_rust_bridge::DartFnFuture;
 use flutter_rust_bridge::frb;
@@ -13,19 +13,8 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::sync::mpsc::channel;
 
-
-use web5_rust::dwn::interfaces::{ProtocolsConfigureOptions, RecordsWriteOptions};
-use web5_rust::dwn::structs::DataInfo;
+use web5_rust::common::SqliteStore;
 use web5_rust::common::traits::KeyValueStore;
-use web5_rust::common::structs::{Url, DataFormat};
-use web5_rust::common::{SqliteStore, Cache};
-use web5_rust::agent::Agent;
-
-pub use web5_rust::dwn::protocol::{
-    ProtocolPath,
-    ProtocolUri,
-    Protocol,
-};
 
 use bdk::{TransactionDetails, Wallet, KeychainKind, SyncOptions, SignOptions};
 use bdk::bitcoin::consensus::{Encodable, Decodable};
@@ -173,7 +162,7 @@ impl Contact {
         Ok(Contact {
             name: "John Doe".to_string(),
             did: "did:example:1234567890abcdef".to_string(),
-            pfp: Some("yeeeeeeeeeet".to_string()),  
+            pfp: Some("yeeeeeeeeeet".to_string()), 
             abtme: Some("About me description".to_string()),
         })
     }
@@ -292,7 +281,7 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         _ => {
             return Err(Error::Exited("Unsupported OS".to_string()));
         }
-        }
+    }
 }
 
 #[derive(Serialize, Deserialize)]
@@ -512,6 +501,7 @@ async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'sta
     }
     Err(Error::Exited("Main Exited".to_string()))
 }
+
 async fn flatten(handle: JoinHandle<Result<(), Error>>) -> Result<(), Error> {
     match handle.await {
         Ok(Ok(o)) => Ok(o),
@@ -521,13 +511,47 @@ async fn flatten(handle: JoinHandle<Result<(), Error>>) -> Result<(), Error> {
                 Some(p) => Err(Error::Exited(format!("{:?}", p))),
                 None => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Display>>() {
                     Some(p) => Err(Error::Exited(p.to_string())),
-                    None => Err(Error::Exited(format!("Cannot convert panic with type id {:?} to string", panic.type_id()))),
+                    None => Err(Error::Exited(format!("Cannot convert panic with type id {:?} to string via Debug or Display", panic.type_id()))),
                 }
             },
             Err(e) => Err(Error::Exited(e.to_string()))
         }
     }
 }
+
+async fn spawn<T>(task: T, interval: Option<u64>) -> Result<(), Error>
+    where
+        T: std::future::Future<Output = Result<(), Error>> + Sync + Send + Copy + 'static
+{
+    match tokio::spawn(
+        async move {
+            match interval {
+                Some(interval) => {
+                    loop {
+                        task.await?;
+                        thread::sleep(time::Duration::from_millis(interval));
+                    }
+                    Err(Error::Exited("Interval Unexpectedly Exited".to_string()))
+                },
+                None => task.await
+            }
+        }
+    ).await {
+        Ok(Ok(o)) => Ok(o),
+        Ok(Err(err)) => Err(err),
+        Err(e) => match e.try_into_panic() {
+            Ok(panic) => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Debug>>() {
+                Some(p) => Err(Error::Exited(format!("{:?}", p))),
+                None => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Display>>() {
+                    Some(p) => Err(Error::Exited(p.to_string())),
+                    None => Err(Error::Exited(format!("Cannot convert panic with type id {:?} to string via Debug or Display", panic.type_id()))),
+                }
+            },
+            Err(e) => Err(Error::Exited(e.to_string()))
+        }
+    }
+}
+
 pub async fn rustStart (
     path: String,
     callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
@@ -537,59 +561,62 @@ pub async fn rustStart (
     callback4: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
 ) -> String {
     let result: Result<(), Error> = async move {
-        let path = PathBuf::from(&path);
-        //debug function for clearing descriptor storage from memory
-        invoke(&callback, "clear_storage", "").await?;
-        //1. get descriptors
-        invoke(&callback, "print", "getting descriptors").await?;
-        let descriptors = get_descriptors(&callback).await?;
+    ////let path = PathBuf::from(&path);
+    //////debug function for clearing descriptor storage from memory
+    ////invoke(&callback, "clear_storage", "").await?;
+    //////1. get descriptors
+    ////invoke(&callback, "print", "getting descriptors").await?;
+    ////let descriptors = get_descriptors(&callback).await?;
 
-        //2.load wallets
-        invoke(&callback, "print", "creating paths").await?;
-        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending2");
-        let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
-        let savings_wallet_path = path.join("BDK_DATA/savingswallet");
+    //////2.load wallets
+    ////invoke(&callback, "print", "creating paths").await?;
+    ////let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending2");
+    ////let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
+    ////let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
-        //3. create dirs
-        invoke(&callback, "print", "creating dirs").await?;
-        std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
-        std::fs::create_dir_all(premium_spending_wallet_path.clone())?;
-        std::fs::create_dir_all(savings_wallet_path.clone())?;
-        let store_path = path.join("STATE/store");
-        std::fs::create_dir_all(store_path.clone())?;
-        let price_path = path.join("STATE/price");
-        std::fs::create_dir_all(price_path.clone())?;
-        let client_uri = "ssl://electrum.blockstream.info:50002".to_string();
-        invoke(&callback, "print", "defining wallet").await?;
-        let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
+    //////3. create dirs
+    ////invoke(&callback, "print", "creating dirs").await?;
+    ////std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
+    ////std::fs::create_dir_all(premium_spending_wallet_path.clone())?;
+    ////std::fs::create_dir_all(savings_wallet_path.clone())?;
+    ////let store_path = path.join("STATE/store");
+    ////std::fs::create_dir_all(store_path.clone())?;
+    ////let price_path = path.join("STATE/price");
+    ////std::fs::create_dir_all(price_path.clone())?;
+    ////let client_uri = "ssl://electrum.blockstream.info:50002".to_string();
+    ////invoke(&callback, "print", "defining wallet").await?;
+    ////let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
 
-        //TODO check for premium
-        let premium = false;
-        //TODO load premium wallets if premium
-        invoke(&callback, "print", "defining store").await?;
-        let mut store = SqliteStore::new(store_path.clone())?;
+    //////TODO check for premium
+    ////let premium = false;
+    //////TODO load premium wallets if premium
+    ////invoke(&callback, "print", "defining store").await?;
+    ////let mut store = SqliteStore::new(store_path.clone())?;
 
-        if let Some(old_state) = store.get(b"state")? {
-            if serde_json::from_slice::<DartState>(&old_state).is_ok() {
-                invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
-            }
+    ////if let Some(old_state) = store.get(b"state")? {
+    ////    if serde_json::from_slice::<DartState>(&old_state).is_ok() {
+    ////        invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
+    ////    }
+    ////}
+    ////store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
+    ////invoke(&callback, "print", "se").await?;
+    ////
+    ////invoke(&callback, "print", "Starting Threads").await?;
+    ////let result = tokio::try_join!(
+    ////    flatten(tokio::spawn(sync_thread(callback1, legacy_spending_wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
+    ////    flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
+    ////    flatten(tokio::spawn(state_thread(callback3, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
+    ////    flatten(tokio::spawn(command_thread(callback4, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
+    ////);
+    ////invoke(&callback, "print", "Handling Threads").await?;
+
+    ////match result {
+    ////    Ok(_) => Ok(()),
+    ////    Err(e) => Err(Error::Exited(e.to_string()))
+    ////}?;
+        loop {
+            invoke(&callback, "add", "").await?;
         }
-        store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
-        invoke(&callback, "print", "se").await?;
-        
-        invoke(&callback, "print", "Starting Threads").await?;
-        let result = tokio::try_join!(
-            flatten(tokio::spawn(sync_thread(callback1, legacy_spending_wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
-            flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
-            flatten(tokio::spawn(state_thread(callback3, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
-            flatten(tokio::spawn(command_thread(callback4, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
-        );
-        invoke(&callback, "print", "Handling Threads").await?;
-
-        match result {
-            Ok(_) => Ok(()),
-            Err(e) => Err(Error::Exited(e.to_string()))
-        }?;
         Err(Error::Exited("All Exited".to_string()))
     }.await;
     match result {
@@ -597,3 +624,7 @@ pub async fn rustStart (
         Err(e) => e.to_string()
     }
 }
+
+//1. Pull data from sources and store in databases
+//2. Take data from database and process and cache
+//3. Provide needed data from backend to frontend

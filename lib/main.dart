@@ -5,19 +5,19 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'dart:io';
-import 'dart:io' show Platform;
 import 'package:window_manager/window_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
-  await RustLib.init();
-  WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    WindowManager.instance.setMinimumSize(const Size(1280, 832));
-  }
-  GlobalState globalState = GlobalState.init();
-  runApp(MyApp(globalState: globalState));
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    await RustLib.init();
+    WidgetsFlutterBinding.ensureInitialized();
+    var sp = await SharedPreferences.getInstance();
+    GlobalState globalState = GlobalState.init(sp);
+  //if (globalState.isDesktop) {
+  //    WindowManager.instance.setMinimumSize(const Size(1280, 832));
+  //}
+    runApp(MyApp(globalState: globalState));
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
 class MyApp extends StatelessWidget {

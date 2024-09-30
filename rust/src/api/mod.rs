@@ -5,7 +5,10 @@
 pub mod error;
 use error::Error;
 
-/// flutter_rust_bridge:ignore
-pub mod protocols;
+//// flutter_rust_bridge:ignore
+//pub mod protocols;
+//pub mod structs;
+//pub mod price;
+//pub mod wallet;
 
 pub mod simple;

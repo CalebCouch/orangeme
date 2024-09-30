@@ -6,7 +6,62 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' as DartIO;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:orange/global.dart' as global;
+
+enum Platform { Windows, Linux, Mac, IOS, Android, Fuchsia;
+
+    const Platform();
+
+    Platform init() {
+        if (DartIO.Platform.isWindows) {return Platform.Windows;}
+        if (DartIO.Platform.isLinux) {return Platform.Linux;}
+        if (DartIO.Platform.isMacOS) {return Platform.Mac;}
+        if (DartIO.Platform.isIOS) {return Platform.IOS;}
+        if (DartIO.Platform.isAndroid) {return Platform.Android;}
+        if (DartIO.Platform.isFuchsia) {return Platform.Fuchsia;}
+        throw 'Unsupported Platform';
+    }
+
+    bool isDesktop() {
+        switch(this) {
+            case Platform.Mac:
+                return true;
+            case Platform.Linux:
+                return true;
+            case Platform.Windows:
+                return true;
+            default:
+                return false;
+        }
+    }
+}
+
+//  enum Platform { Windows, Linux, Mac, IOS, Android, Fuchsia }
+
+//  extension CatExtension on Platform {
+//      Platform init() {
+//          //      }
+
+//      
+//  }
+
+class BitcoinHomeTransaction{
+    String usd;
+    String datetime;
+    bool isReceive;
+
+    BitcoinHomeTransaction(this.usd, this.datetime, this.isReceive);
+}
+
+class BitcoinHomeState {
+    String usd;
+    String btc;
+    List<BitcoinHomeTransaction> transactions;
+
+    BitcoinHomeState(this.usd, this.btc, this.transactions);
+}
 
 class Transaction {
   bool isReceive;
@@ -133,18 +188,22 @@ class DartState {
 
 class GlobalState {
   FlutterSecureStorage storage = const FlutterSecureStorage();
+  SharedPreferences prefs;
   GlobalKey<NavigatorState> navkey;
   List<RustR> rustResponses = [];
   List<RustC> rustCommands = [];
   Uuid uuid = const Uuid();
-  bool synced;
+  int counter = 0;
 
   ValueNotifier<DartState> state = ValueNotifier(DartState.init());
 
-  GlobalState(this.navkey, this.synced);
+  GlobalState(this.navkey, this.prefs);
 
-  factory GlobalState.init() {
-    var state = GlobalState(GlobalKey<NavigatorState>(), false);
+  factory GlobalState.init(sp) {
+    var state = GlobalState(GlobalKey<NavigatorState>(), sp);
+  //if (Platform.isWindows && Platform.isLinux && Platform.isMacOS && Platform.isAndroid && Platform.isIOS && Platform.isFuchsia) {
+  //    state.error("Platform is unknown");
+  //}
     state.startRust();
     return state;
   }
@@ -187,41 +246,41 @@ class GlobalState {
     }
   }
 
-  Future<void> clearStorage() async {
-    final os = checkPlatform();
-    if (os == "IOS") {
-      final keys = await this.storage.readAll();
+//Future<void> clearStorage() async {
+//  final os = checkPlatform();
+//  if (os == "IOS") {
+//    final keys = await this.storage.readAll();
 
-      for (var key in keys.keys) {
-        await this.storage.delete(key: key);
-      }
-      print("IOS storage cleared");
-    } else if (os == "Android") {
-      final SharedPreferences pref = await SharedPreferences.getInstance();
+//    for (var key in keys.keys) {
+//      await this.storage.delete(key: key);
+//    }
+//    print("IOS storage cleared");
+//  } else if (os == "Android") {
+//    final SharedPreferences pref = await SharedPreferences.getInstance();
 
-      await pref.clear();
-      print("Android storage cleared");
-    } else {
-      print("cannot clear storage, desktop found");
-      return;
-    }
-  }
+//    await pref.clear();
+//    print("Android storage cleared");
+//  } else {
+//    print("cannot clear storage, desktop found");
+//    return;
+//  }
+//}
 
-  String checkPlatform() {
-    if (Platform.isAndroid) {
-      return "Android";
-    } else if (Platform.isIOS) {
-      return 'IOS';
-    } else if (Platform.isLinux) {
-      return 'Linux';
-    } else if (Platform.isMacOS) {
-      return 'MacOS';
-    } else if (Platform.isWindows) {
-      return 'Windows';
-    } else {
-      return 'Unknown';
-    }
-  }
+//String checkPlatform() {
+//  if (Platform.isAndroid) {
+//    return "Android";
+//  } else if (Platform.isIOS) {
+//    return 'IOS';
+//  } else if (Platform.isLinux) {
+//    return 'Linux';
+//  } else if (Platform.isMacOS) {
+//    return 'MacOS';
+//  } else if (Platform.isWindows) {
+//    return 'Windows';
+//  } else {
+//    return 'Unknown';
+//  }
+//}
 
   Future<void> iosWrite(data) async {
     var split = data.split("\u0000");
@@ -253,6 +312,8 @@ class GlobalState {
   Future<String> dartCallback(String dartCommand) async {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
+      case "add":
+        counter += 1;
       case "set_state":
         print(DartState.fromJson(jsonDecode(command.data)));
         state.value = DartState.fromJson(jsonDecode(command.data));
@@ -273,13 +334,11 @@ class GlobalState {
       case "post_response":
         print(dartCommand);
         rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
-      case "synced":
-        synced = true;
-      case "clear_storage":
-        await clearStorage();
-        return "Storage cleared";
-      case "check_os":
-        return checkPlatform();
+//    case "clear_storage":
+//      await clearStorage();
+//      return "Storage cleared";
+//    case "check_os":
+//      return checkPlatform();
       case "error":
         print(command.data);
       case var unknown:

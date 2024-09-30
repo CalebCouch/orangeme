@@ -9,10 +9,10 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_text.dart';
 
 import 'package:orange/components/interface.dart';
-import 'dart:io' show Platform;
 
 import 'package:share/share.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/global.dart' as global;
 
 // The Receive widget provides an interface for users to receive Bitcoin by
 // displaying a QR code and address. It supports both desktop and mobile 
@@ -41,14 +41,13 @@ class ReceiveState extends State<Receive> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
       widget.globalState,
       header: stackHeader(context, "Receive bitcoin"),
       content: Content(
         content: Column(
           mainAxisAlignment:
-              onDesktop ? MainAxisAlignment.center : MainAxisAlignment.start,
+              global.platform_isDesktop ? MainAxisAlignment.center : MainAxisAlignment.start,
           children: [
             qrCode(widget.address),
             const Spacing(height: AppPadding.content),
@@ -61,7 +60,7 @@ class ReceiveState extends State<Receive> {
           ],
         ),
       ),
-      bumper: onDesktop
+      bumper: global.platform_isDesktop
           ? singleButtonBumper(
               context,
               "Copy Address",
