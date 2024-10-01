@@ -486,6 +486,8 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
          let balance = legacy_spending_wallet.get_balance()?;
          current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
          btc = balance.get_total() as f64 / SATS;
+
+         transactions.clear();
          for tx in wallet_transactions {
              let price = match tx.confirmation_time.as_ref() {
                  Some(ct) => get_price(&callback, &mut price, ct.timestamp).await?,
@@ -493,7 +495,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
              };
              transactions.push(Transaction::from_details(tx, price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?);
          }
-         //TODO load premium wallets if found
+         //TODO load premium wallets for mobile if found
        }
 
         let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"Y7yOvxxua4EsGdsFvhIuAC4sDjc7judq".to_string(), pfp: Some("assets/images/josh_thayer.png".to_string()), abtme: None};
@@ -538,7 +540,7 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
             btcBalance: btc,
             usdBalance: current_price * btc,
             devicePath: device_path.clone(),
-            transactions,
+            &transactions,
             fees,
             conversations,
             users,
