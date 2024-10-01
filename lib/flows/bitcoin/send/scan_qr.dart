@@ -44,41 +44,20 @@ class ScanQRState extends State<ScanQR> {
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
-      header: stackHeader(
-        context,
-        "Scan QR code",
-      ),
+      header: stackHeader(context, "Scan QR code"),
       content: Stack(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: AppPadding.content),
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: (QRViewController controller) =>
-                  {_onQRViewCreated(widget.globalState, controller)},
-            ),
-          ),
+          qrScanner(),
           Content(
-            content: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ThemeColor.bg, width: 4),
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  ),
-                ),
-                const Spacing(height: 12),
-                const CustomText(
-                  text: 'Scan a bitcoin QR code',
-                  color: ThemeColor.bgSecondary,
-                  textSize: TextSize.md,
-                ),
-              ],
-            ),
+            alignment: MainAxisAlignment.center,
+            children: [
+              scanBox(),
+              const CustomText(
+                text: 'Scan a bitcoin QR code',
+                color: ThemeColor.bgSecondary,
+                textSize: TextSize.md,
+              ),
+            ],
           ),
         ],
       ),
@@ -93,5 +72,27 @@ class ScanQRState extends State<ScanQR> {
     controller.scannedDataStream.listen((scanData) {
       switchPageTo(context, Send(globalState, address: scanData.code));
     });
+  }
+
+  scanBox() {
+    return Container(
+      height: 300,
+      width: 300,
+      decoration: BoxDecoration(
+        border: Border.all(color: ThemeColor.bg, width: 4),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+      ),
+    );
+  }
+
+  qrScanner() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.content),
+      child: QRView(
+        key: qrKey,
+        onQRViewCreated: (QRViewController controller) =>
+            {_onQRViewCreated(widget.globalState, controller)},
+      ),
+    );
   }
 }

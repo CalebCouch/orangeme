@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import "package:intl/intl.dart";
 
-import 'dart:math';
+import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
-
-import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/content.dart';
 import 'package:orange/components/header.dart';
 import 'package:orange/components/bumper.dart';
 import 'package:orange/components/interface.dart';
+import 'package:orange/components/shake.dart';
+
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
@@ -19,6 +18,7 @@ import 'package:orange/flows/bitcoin/send/speed.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/theme/stylesheet.dart';
 
 /* BITCOIN SEND STEP TWO */
 
@@ -27,86 +27,13 @@ import 'package:orange/classes.dart';
 // next step in the transaction process. The interface features custom
 // animations, keyboard handling, and conditional content based on the platform.
 
-/* Manages and triggers shake animations by notifying listeners. */
 class ShakeController extends ChangeNotifier {
   void shake() => notifyListeners();
 }
 
-/* Applies a shake animation to its child widget, controlled by a ShakeController. 
-Useful for indicating errors or important actions. */
-class ShakeWidget extends StatefulWidget {
-  const ShakeWidget({
-    super.key,
-    required this.child,
-    required this.controller,
-    this.duration = const Duration(milliseconds: 500),
-    this.deltaX = 4,
-    this.oscillations = 6,
-    this.curve = Curves.linear,
-  });
-
-  final Duration duration;
-  final double deltaX;
-  final int oscillations;
-  final Widget child;
-  final Curve curve;
-  final ShakeController controller;
-
-  @override
-  ShakeWidgetState createState() => ShakeWidgetState();
-}
-
-class ShakeWidgetState extends State<ShakeWidget>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
-
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animationController, curve: widget.curve),
-    );
-
-    widget.controller.addListener(_startShaking);
-  }
-
-  @override
-  void dispose() {
-    widget.controller.removeListener(_startShaking);
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _startShaking() {
-    _animationController.forward(from: 0);
-  }
-
-  double _wave(double t) =>
-      sin(widget.oscillations * 2 * pi * t) * (1 - (2 * t - 1).abs());
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) => Transform.translate(
-          offset: Offset(
-            widget.deltaX * _wave(_animation.value),
-            0,
-          ),
-          child: widget.child,
-        ),
-        child: widget.child,
-      );
-}
-
 /* Listens for keyboard events and processes numeric inputs, backspace, 
 and period key presses for computer keyboards. */
+
 class SimpleKeyboardListener extends StatefulWidget {
   final void Function(String) onPressed;
   final Widget child;
@@ -282,20 +209,25 @@ class SendAmountState extends State<SendAmount> {
     return Interface(
       widget.globalState,
       resizeToAvoidBottomInset: false,
-      header: stackHeader(
-        context,
-        "Send bitcoin",
-      ),
+      header: stackHeader(context, "Send bitcoin"),
       content: SimpleKeyboardListener(
         onPressed: updateAmount,
         child: Content(
-          content: ShakeWidget(
-            controller: _shakeController,
-            child: Center(
-              child: keyboardAmountDisplay(
-                  widget.globalState, context, amount, getBTC(amount), error),
+          alignment: MainAxisAlignment.center,
+          children: [
+            ShakeWidget(
+              controller: _shakeController,
+              child: Center(
+                child: keyboardAmountDisplay(
+                  widget.globalState,
+                  context,
+                  amount,
+                  getBTC(amount),
+                  error,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
       bumper: onDesktop

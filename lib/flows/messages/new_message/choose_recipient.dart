@@ -85,6 +85,18 @@ class ChooseRecipientState extends State<ChooseRecipient> {
     );
   }
 
+  onNext() {
+    () {
+      navigateTo(
+        context,
+        Exchange(
+          widget.globalState,
+          conversation: Conversation(recipients, []),
+        ),
+      );
+    };
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
     return Interface(
       widget.globalState,
@@ -93,54 +105,53 @@ class ChooseRecipientState extends State<ChooseRecipient> {
         'New message',
         recipients.isNotEmpty,
         'Next',
-        () {
-          navigateTo(
-            context,
-            Exchange(
-              widget.globalState,
-              conversation: Conversation(recipients, []),
-            ),
-          );
-        },
+        onNext,
       ),
       content: Content(
-        content: Column(
-          children: [
-            CustomTextInput(
-              maxLines: 1,
-              controller: searchController,
-              hint: 'Profile name...',
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              alignment: Alignment.topLeft,
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: List<Widget>.generate(recipients.length, (index) {
-                  return ButtonTip(recipients[index].name, ThemeIcon.close, () {
-                    HapticFeedback.heavyImpact();
-                    removeRecipient(recipients[index]);
-                  });
-                }),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredContacts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return contactListItem(context, filteredContacts[index], () {
-                    HapticFeedback.heavyImpact();
-                    addRecipient(filteredContacts[index]);
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
+        scrollable: false,
+        children: [
+          CustomTextInput(
+            maxLines: 1,
+            controller: searchController,
+            hint: 'Profile name...',
+          ),
+          selected(recipients, removeRecipient),
+          listContacts(filteredContacts, removeRecipient),
+        ],
       ),
       desktopOnly: true,
       navigationIndex: 1,
     );
   }
+}
+
+Widget selected(recipients, removeRecipient) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    alignment: Alignment.topLeft,
+    child: Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: List<Widget>.generate(recipients.length, (index) {
+        return ButtonTip(recipients[index].name, ThemeIcon.close, () {
+          HapticFeedback.heavyImpact();
+          removeRecipient(recipients[index]);
+        });
+      }),
+    ),
+  );
+}
+
+Widget listContacts(filteredContacts, addRecipient) {
+  return Expanded(
+    child: ListView.builder(
+      itemCount: filteredContacts.length,
+      itemBuilder: (BuildContext context, int index) {
+        return contactListItem(context, filteredContacts[index], () {
+          HapticFeedback.heavyImpact();
+          addRecipient(filteredContacts[index]);
+        });
+      },
+    ),
+  );
 }

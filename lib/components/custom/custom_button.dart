@@ -74,29 +74,28 @@ Map buttonColors = {
 class CustomButton extends StatefulWidget {
   final String text;
   final String variant;
-
-  final double buttonSize;
-  final int status;
-  final bool expand;
-  final Alignment buttonAlignment;
-
   final String? icon;
   final String? pfp;
+
+  final int status;
+  final bool expand;
+  final double buttonSize;
   final VoidCallback? onTap;
+  final Alignment buttonAlignment;
   final ShakeController? shakeController;
 
   const CustomButton({
     super.key,
+    this.pfp,
+    this.icon,
+    this.onTap,
     required this.text,
-    this.variant = ButtonVariant.primary,
+    this.expand = true,
+    this.shakeController,
     this.buttonSize = ButtonSize.lg,
     this.status = ButtonStatus._default,
-    this.expand = true,
+    this.variant = ButtonVariant.primary,
     this.buttonAlignment = Alignment.center,
-    this.icon,
-    this.pfp,
-    this.onTap,
-    this.shakeController,
   });
 
   @override
@@ -105,40 +104,32 @@ class CustomButton extends StatefulWidget {
 
 class _ButtonState extends State<CustomButton> {
   // Get the button padding for different sizes //
-  _getButtonPadding(buttonSize) {
-    if (buttonSize == ButtonSize.lg) {
-      return AppPadding.button[0].toDouble();
-    } else if (buttonSize == ButtonSize.md) {
-      return AppPadding.button[1].toDouble();
-    }
+  double _getButtonPadding(double buttonSize) {
+    return buttonSize == ButtonSize.lg
+        ? AppPadding.button[0].toDouble()
+        : AppPadding.button[1].toDouble();
   }
 
   // Get the button spacing for different sizes //
-  _getButtonSpacing(buttonSize) {
-    if (buttonSize == ButtonSize.lg) {
-      return AppPadding.buttonSpacing[0].toDouble();
-    } else if (buttonSize == ButtonSize.md) {
-      return AppPadding.buttonSpacing[1].toDouble();
-    }
+  double _getButtonSpacing(double buttonSize) {
+    return buttonSize == ButtonSize.lg
+        ? AppPadding.buttonSpacing[0].toDouble()
+        : AppPadding.buttonSpacing[1].toDouble();
   }
 
   // If an icon has been supplied, display it //
-  _displayIcon() {
-    if (widget.icon != null) {
-      return Row(
-        children: [
-          CustomIcon(
-            icon: widget.icon!,
-            iconSize: widget.buttonSize == 48 ? 32 : 20,
-          ),
-          Spacing(
-            width: _getButtonSpacing(widget.buttonSize),
-          )
-        ],
-      );
-    } else {
-      return Container();
-    }
+  Widget _displayIcon() {
+    return Row(
+      children: [
+        CustomIcon(
+          icon: widget.icon!,
+          iconSize: widget.buttonSize == 48 ? 32 : 20,
+        ),
+        Spacing(
+          width: _getButtonSpacing(widget.buttonSize),
+        ),
+      ],
+    );
   }
 
   // If a profile picture has been supplied, display it //

@@ -5,13 +5,15 @@ import 'package:orange/theme/stylesheet.dart';
 //consistent padding, maximum width, and optional scrolling for the main content.
 
 class Content extends StatelessWidget {
-  final Widget content;
+  final List<Widget> children;
+  final MainAxisAlignment alignment;
   final bool scrollable;
 
   const Content({
     super.key,
-    required this.content,
-    this.scrollable = false,
+    required this.children,
+    this.scrollable = true,
+    this.alignment = MainAxisAlignment.start,
   });
 
   @override
@@ -21,10 +23,16 @@ class Content extends StatelessWidget {
       padding: const EdgeInsets.all(AppPadding.content),
       width: MediaQuery.sizeOf(context).width,
       child: scrollable
-          ? SingleChildScrollView(
-              child: content,
-            )
-          : content,
+          ? SingleChildScrollView(child: items(alignment, children))
+          : items(alignment, children),
     );
   }
+}
+
+items(alignment, children) {
+  return Column(
+    mainAxisAlignment: alignment,
+    spacing: AppPadding.content,
+    children: children,
+  );
 }

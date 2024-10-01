@@ -45,8 +45,14 @@ class MessagesHomeState extends State<MessagesHome> {
 
   bool onDesktop = Platform.isWindows || Platform.isMacOS || Platform.isLinux;
 
+  createNewMessage() {
+    navigateTo(
+      context,
+      ChooseRecipient(widget.globalState),
+    );
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
-    //print(state.users);
     return Interface(
       widget.globalState,
       resizeToAvoidBottomInset: false,
@@ -57,43 +63,17 @@ class MessagesHomeState extends State<MessagesHome> {
         null,
       ),
       content: Content(
-        content: state.conversations.isEmpty
-            ? const Center(
-                child: CustomText(
-                  text: 'No messages yet.\nGet started by messaging a friend.',
-                  color: ThemeColor.textSecondary,
-                  textSize: TextSize.md,
-                ),
-              )
-            : ListView.builder(
-                itemCount: state.conversations.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return messageListItem(
-                    context,
-                    state.conversations[index],
-                    () {
-                      HapticFeedback.mediumImpact();
-                      navigateTo(
-                        context,
-                        Exchange(
-                          widget.globalState,
-                          conversation: state.conversations[index],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+        scrollable: false,
+        children: state.conversations.isEmpty
+            ? [noMessages()]
+            : [
+                listConversations(state, widget.globalState),
+              ],
       ),
       bumper: singleButtonBumper(
         context,
         "New Message",
-        () {
-          navigateTo(
-            context,
-            ChooseRecipient(widget.globalState),
-          );
-        },
+        createNewMessage,
         true,
         ButtonVariant.primary,
         onDesktop ? true : false,
@@ -101,4 +81,38 @@ class MessagesHomeState extends State<MessagesHome> {
       navigationIndex: 1,
     );
   }
+}
+
+Widget noMessages() {
+  return const Expanded(
+    child: Center(
+      child: CustomText(
+        text: 'No messages yet.\nGet started by messaging a friend.',
+        color: ThemeColor.textSecondary,
+        textSize: TextSize.md,
+      ),
+    ),
+  );
+}
+
+Widget listConversations(state, GlobalState globalState) {
+  return Expanded(
+    child: ListView.builder(
+      itemCount: state.conversations.length,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        return messageListItem(
+          context,
+          state.conversations[index],
+          () {
+            HapticFeedback.mediumImpact();
+            navigateTo(
+              context,
+              Exchange(globalState, conversation: state.conversations[index]),
+            );
+          },
+        );
+      },
+    ),
+  );
 }

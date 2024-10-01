@@ -94,70 +94,34 @@ class BitcoinHomeState extends State<BitcoinHome> {
         null, //state.personal.pfp,
       ),
       content: Content(
-        content: Column(
-          children: [
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomText(
-                    textType: "heading",
-                    text: state.usdBalance == 0
-                        ? "\$0.00"
-                        : "\$${formatValue(state.usdBalance)}",
-                    textSize: textSize,
-                    color: ThemeColor.heading,
-                  ),
-                  const Spacing(height: AppPadding.valueDisplaySep),
-                  CustomText(
-                    textType: "text",
-                    text: "${formatBTC(state.btcBalance, 8)} BTC",
-                    textSize: TextSize.lg,
-                    color: ThemeColor.textSecondary,
-                  ),
-                ],
-              ),
-            ),
-            const Spacing(height: AppPadding.content),
-            _backupReminder(false),
-            _noInternet(false),
-            state.transactions.isNotEmpty
-                ? Expanded(
-                    child: SingleChildScrollView(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        reverse: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: state.transactions.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return transactionListItem(
-                              context, state.transactions[index]);
-                        },
-                      ),
-                    ),
-                  )
-                : Container(),
-          ],
-        ),
+        children: [
+          valueDisplay(state, textSize),
+          _backupReminder(false),
+          _noInternet(false),
+          state.transactions.isNotEmpty
+              ? displayTransactions(state, transactionListItem)
+              : Container(),
+        ],
       ),
       bumper: doubleButtonBumper(
         context,
         "Receive",
         "Send",
-        () async {
-          var address =
-              (await widget.globalState.invoke("get_new_address", "")).data;
-          navigateTo(context, Receive(widget.globalState, address));
-        },
-        () {
-          navigateTo(context, Send(widget.globalState));
-        },
+        onReceive,
+        onSend,
         onDesktop ? true : false,
       ),
       navigationIndex: 0,
     );
+  }
+
+  onReceive() async {
+    var address = (await widget.globalState.invoke("get_new_address", "")).data;
+    navigateTo(context, Receive(widget.globalState, address));
+  }
+
+  onSend() {
+    navigateTo(context, Send(widget.globalState));
   }
 }
 
@@ -180,4 +144,46 @@ _noInternet(bool display) {
     );
   }
   return Container();
+}
+
+Widget valueDisplay(state, textSize) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CustomText(
+          textType: "heading",
+          text: state.usdBalance == 0
+              ? "\$0.00"
+              : "\$${formatValue(state.usdBalance)}",
+          textSize: textSize,
+          color: ThemeColor.heading,
+        ),
+        const Spacing(height: AppPadding.valueDisplaySep),
+        CustomText(
+          textType: "text",
+          text: "${formatBTC(state.btcBalance, 8)} BTC",
+          textSize: TextSize.lg,
+          color: ThemeColor.textSecondary,
+        ),
+      ],
+    ),
+  );
+}
+
+Widget displayTransactions(state, transactionListItem) {
+  return Expanded(
+    child: SingleChildScrollView(
+      child: ListView.builder(
+        shrinkWrap: true,
+        reverse: true,
+        physics: const ScrollPhysics(),
+        itemCount: state.transactions.length,
+        itemBuilder: (BuildContext context, int index) {
+          return transactionListItem(context, state.transactions[index]);
+        },
+      ),
+    ),
+  );
 }

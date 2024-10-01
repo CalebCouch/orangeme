@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/theme/stylesheet.dart';
 
 import 'package:orange/components/interface.dart';
 import 'package:orange/components/content.dart';
@@ -19,9 +18,15 @@ import 'dart:io' show Platform;
 // including updating profile photo, name, and about me section.
 
 class MyProfile extends StatefulWidget {
-  final String? profilePhoto;
   final GlobalState globalState;
-  const MyProfile(this.globalState, {super.key, this.profilePhoto});
+  final String? profilePhoto;
+  final String address;
+  const MyProfile(
+    this.globalState,
+    this.address, {
+    super.key,
+    this.profilePhoto,
+  });
 
   @override
   MyProfileState createState() => MyProfileState();
@@ -68,6 +73,16 @@ class MyProfileState extends State<MyProfile> {
 
     _profileName = TextEditingController(text: state.personal.name);
     _aboutMe = TextEditingController(text: state.personal.abtme);
+    onEdit() {
+      () async {
+        HapticFeedback.heavyImpact();
+        final XFile? image =
+            await _picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          setState(() => state.personal.pfp = image.path);
+        }
+      };
+    }
 
     bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
@@ -76,44 +91,27 @@ class MyProfileState extends State<MyProfile> {
           ? homeDesktopHeader(context, "My profile")
           : stackHeader(context, "My profile"),
       content: Content(
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              editPhoto(
-                context,
-                () async {
-                  HapticFeedback.heavyImpact();
-                  final XFile? image =
-                      await _picker.pickImage(source: ImageSource.gallery);
-                  if (image != null) {
-                    setState(() => state.personal.pfp = image.path);
-                  }
-                },
-                state.personal.pfp,
-              ),
-              const Spacing(height: AppPadding.profile),
-              CustomTextInput(
-                title: 'Profile Name',
-                hint: 'Profile name...',
-                onChanged: (String str) => {enableButton()},
-                controller: _profileName,
-              ),
-              const Spacing(height: AppPadding.profile),
-              CustomTextInput(
-                title: 'About Me',
-                hint: 'A little bit about me...',
-                onChanged: (String str) => {enableButton()},
-                controller: _aboutMe,
-              ),
-              const Spacing(height: AppPadding.profile),
-              didItem(context, state.personal.did),
-              const Spacing(height: AppPadding.profile),
-              addressItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
-            ],
+        children: [
+          editPhoto(
+            context,
+            onEdit,
+            state.personal.pfp,
           ),
-        ),
+          CustomTextInput(
+            title: 'Profile Name',
+            hint: 'Profile name...',
+            onChanged: (String str) => {enableButton()},
+            controller: _profileName,
+          ),
+          CustomTextInput(
+            title: 'About Me',
+            hint: 'A little bit about me...',
+            onChanged: (String str) => {enableButton()},
+            controller: _aboutMe,
+          ),
+          didItem(context, state.personal.did),
+          addressItem(context, widget.address),
+        ],
       ),
       bumper: singleButtonBumper(
         context,

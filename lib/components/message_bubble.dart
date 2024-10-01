@@ -110,8 +110,19 @@ Widget textMessage(
               showDetails
                   ? InkWell(
                       onTap: () {
-                        navigateTo(context,
-                            UserProfile(globalState, userInfo: m.sender));
+                        () async {
+                          var address =
+                              (await globalState.invoke("get_new_address", ""))
+                                  .data;
+                          navigateTo(
+                            context,
+                            UserProfile(
+                              globalState,
+                              address,
+                              userInfo: m.sender,
+                            ),
+                          );
+                        };
                       },
                       child: Container(
                         alignment: Alignment.bottomCenter,

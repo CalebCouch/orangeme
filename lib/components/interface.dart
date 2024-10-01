@@ -5,8 +5,8 @@ import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/sidebar.dart';
 import 'package:orange/classes.dart';
 
-// This file defines a responsive Interface layout that adapts between mobile and 
-// desktop views, using MobileInterface for mobile devices with optional navigation 
+// This file defines a responsive Interface layout that adapts between mobile and
+// desktop views, using MobileInterface for mobile devices with optional navigation
 // and bumper, and DesktopInterface for desktops with a sidebar and padding.
 
 /* A responsive layout that switches between mobile and desktop views based on the platform. */
