@@ -12,6 +12,9 @@ use std::str::FromStr;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::sync::mpsc::channel;
+use std::collections::HashSet;
+use std::process::Command;
+use std::env;
 
 
 use web5_rust::dwn::interfaces::{ProtocolsConfigureOptions, RecordsWriteOptions};
@@ -218,11 +221,27 @@ pub struct DartState {
     pub currentPrice: f64,
     pub usdBalance: f64,
     pub btcBalance: f64,
+    pub devicePath: String,
     pub transactions: Vec<Transaction>,
     pub fees: Vec<f64>,
     pub conversations: Vec<Conversation>,
     pub users: Vec<Contact>,
     pub personal: Contact,
+}
+
+async fn detect_usb(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<String, Error>{
+    let os = get_os(&callback).await?;
+
+    //if OS == windows
+    //do some stuff
+
+
+    //else if OS == linux
+    //do some stuff
+
+    //else if OS == Mac 
+    //do some stuff
+    Ok(os)
 }
 
 async fn get_os(callback: impl Fn(String) -> DartFnFuture<String>) -> Result<String, Error>{
@@ -282,9 +301,10 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         }
         "Linux" | "Windows" | "MacOS" => {
             //TODO may need different get logic
-            descriptors = invoke(&callback, "android_get", "descriptors").await?;
-            let descriptors = serde_json::from_str::<DescriptorSet>(&descriptors)?;
-            Ok(descriptors)
+            // descriptors = invoke(&callback, "android_get", "descriptors").await?;
+            // let descriptors = serde_json::from_str::<DescriptorSet>(&descriptors)?;
+            // Ok(descriptors)
+
         }
         _ => {
             return Err(Error::Exited("Unsupported OS".to_string()));
@@ -323,7 +343,98 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
     })
 }
 
-async fn sync_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
+//this function is used to take an initial snapshot of the users usb device path
+//this function will only fire on windows, linux, and ios.
+async fn query_devices(os: &str) -> String {
+    let mut device_baseline = String::new();    
+    match os {
+        "windows" => {
+            // On Windows, use `wmic` to list logical disks (drives)
+            match Command::new("wmic")
+                .args(&["logicaldisk", "get", "name"])
+                .output()
+            {
+                Ok(output) => {
+                    let result = String::from_utf8_lossy(&output.stdout);
+                    device_baseline = result.into_owned();
+                }
+                Err(e) => {
+                    println!("Failed to query devices on Windows: {}", e);
+                    return "None".to_string();
+                }
+            }
+        }
+        "linux" => {
+            // On Linux, list the contents of `/media/$USER` or `/mnt`
+            if let Some(user) = env::var_os("USER") {
+                let media_path = format!("/media/{}", user.to_string_lossy());
+                match Command::new("ls")
+                    .arg(&media_path)
+                    .output()
+                {
+                    Ok(output) => {
+                        let result = String::from_utf8_lossy(&output.stdout);
+                        device_baseline = result.into_owned();
+                    }
+                    Err(_) => {
+                        // If `/media/$USER` fails, fallback to `/mnt`
+                        match Command::new("ls")
+                            .arg("/mnt")
+                            .output()
+                        {
+                            Ok(output) => {
+                                let result = String::from_utf8_lossy(&output.stdout);
+                                device_baseline = result.into_owned();
+                            }
+                            Err(e) => {
+                                println!("Failed to query devices on Linux: {}", e);
+                                return "None".to_string();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        "macos" => {
+            // On macOS, list the contents of `/Volumes`
+            match Command::new("ls")
+                .arg("/Volumes")
+                .output()
+            {
+                Ok(output) => {
+                    let result = String::from_utf8_lossy(&output.stdout);
+                    device_baseline = result.into_owned();
+                }
+                Err(e) => {
+                    println!("Failed to query devices on macOS: {}", e);
+                    return "None".to_string();
+                }
+            }
+        }
+        _ => {
+            println!("Unsupported operating system");
+            return "None".to_string();
+        }
+    }    // Return the device baseline if found
+    device_baseline
+}
+
+async fn find_device_path(baseline: &str, os: &str) -> String {
+    // Convert baseline query (first snapshot) into a HashSet
+    let baseline_hash: HashSet<_> = baseline.lines().collect();
+    //obtain a new snapshot of the device list
+    let new_snapshot = query_devices(os).await;
+    // convert new snapshot into a HashSet
+    let new_hash: HashSet<_> = new_snapshot.lines().collect();
+    for device in new_hash.difference(&baseline_hash) {
+        return device.to_string(); // Return the first difference found
+    }    // If no new device was found, return None
+    return "None".to_string();
+}
+
+async fn sync_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, descriptors: DescriptorSet, client_uri: String, os: String) -> Result<(), Error> {
+    //TODO add premium wallet support
+    //TODO handle desktop scenario
     let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     let mut init_sync = true;
@@ -344,20 +455,45 @@ async fn price_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     Err(Error::Exited("Current Price Fetch Exited".to_string()))
 }
 
-async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
+async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String, os: String) -> Result<(), Error> {
     //invoke(&callback, "print", "a").await?;
     let mut store = SqliteStore::new(store_path)?;
     let mut price = SqliteStore::new(price_path)?;
     let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
+    //device baseline will be taken when the app first starts and is used to compare device list snapshots within the desktop loop
+    let device_baseline  = query_devices(&os).await;
+    let mut device_path = String::new();
+    let mut wallet_transactions = Vec::new();
+    let mut current_price = 0.0;
+    let mut btc = 0.0;
+    let mut transactions: Vec<Transaction> = Vec:new();
     loop {
-       //invoke(&callback, "print", "b").await?;
-       // invoke(&callback, "print", "State Thread Looping").await?;
-        let wallet_transactions = legacy_spending_wallet.list_transactions(true)?;
-        let balance = legacy_spending_wallet.get_balance()?;
-        let current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
-        let btc = balance.get_total() as f64 / SATS;
-        let mut transactions: Vec<Transaction> = Vec::new();
+        //desktop state
+        if os == "windows" || os == "macos" || os =="linux"{
+        //The baseline will only be evaluated if the operating system is windows, linux or macos
+        device_path = find_device_path(&device_baseline, &os).await;
+        invoke(&callback, "print", &device_path).await?;
+        }
+        //TODO load premium wallets for desktop if found
+        else if os == "ios" || os == "android"{
+        //mobile state
+         //load the legacy wallet
+         wallet_transactions = legacy_spending_wallet.list_transactions(true)?;
+         let balance = legacy_spending_wallet.get_balance()?;
+         current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
+         btc = balance.get_total() as f64 / SATS;
+
+         transactions.clear();
+         for tx in wallet_transactions {
+             let price = match tx.confirmation_time.as_ref() {
+                 Some(ct) => get_price(&callback, &mut price, ct.timestamp).await?,
+                 None => current_price
+             };
+             transactions.push(Transaction::from_details(tx, price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?);
+         }
+         //TODO load premium wallets for mobile if found
+       }
 
         let josh_thayer = Contact{name:"Josh Thayer".to_string(), did:"Y7yOvxxua4EsGdsFvhIuAC4sDjc7judq".to_string(), pfp: Some("assets/images/josh_thayer.png".to_string()), abtme: None};
         let jw_weatherman = Contact{name:"JW Weatherman".to_string(), did:"VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA".to_string(), pfp: Some("assets/images/panda.jpeg".to_string()), abtme: None};
@@ -391,33 +527,22 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
                 members: vec![josh_thayer.clone(), chris_slaughter.clone(), ella_couch.clone()]
             }
         ];
-       //invoke(&callback, "print", "c").await?;
         let users: Vec<Contact> = vec![josh_thayer.clone(), ella_couch.clone(), chris_slaughter.clone(), jw_weatherman.clone(), josh_thayer_alt.clone(), ella_couch_alt.clone(), chris_slaughter_alt.clone(), jw_weatherman_alt.clone()];
 
         let personal: Contact = ella_couch.clone();
-
-        for tx in wallet_transactions {
-           // invoke(&callback, "print", "tx a").await?;
-            let price = match tx.confirmation_time.as_ref() {
-                Some(ct) => get_price(&callback, &mut price, ct.timestamp).await?,
-                None => current_price
-            };
-           // invoke(&callback, "print", "tx c").await?;
-            transactions.push(Transaction::from_details(tx, price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?);
-        }
 
         let fees = vec![current_price * (blockchain.estimate_fee(3)? * KVBYTE), current_price * (blockchain.estimate_fee(1)? * KVBYTE)];
         let state = DartState{
             currentPrice: current_price,
             btcBalance: btc,
             usdBalance: current_price * btc,
-            transactions,
+            devicePath: device_path.clone(),
+            &transactions,
             fees,
             conversations,
             users,
             personal,
         };
-       // invoke(&callback, "print", "d").await?;
         store.set(b"state", &serde_json::to_vec(&state)?)?;
         invoke(&callback, "set_state", &serde_json::to_string(&state)?).await?;
         thread::sleep(time::Duration::from_millis(1000));
@@ -426,7 +551,9 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     Err(Error::Exited(format!("Refresh Dart State Exited")))
 }
 
-async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String) -> Result<(), Error> {
+async fn command_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String, os: String) -> Result<(), Error> {
+    //TODO support premium wallets
+    //TODO support desktop scenario
     let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     let mut store = SqliteStore::new(store_path.clone())?;
@@ -534,16 +661,28 @@ pub async fn rustStart (
     callback4: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send
 ) -> String {
     let result: Result<(), Error> = async move {
+        let mut os = "unknown";
+        if cfg!(target_os = "windows"){
+            os = "windows";
+        }else if cfg!(target_os = "macos"){
+            os = "macos";
+        }else if cfg!(target_os = "linux"){
+            os = "linux";
+        }else if cfg!(target_os = "ios"){
+            os = "ios";
+        }else if cfg!(target_os = "android"){
+            os = "android";
+        }
         let path = PathBuf::from(&path);
         //debug function for clearing descriptor storage from memory
-        invoke(&callback, "clear_storage", "").await?;
+        // invoke(&callback, "clear_storage", "").await?;
         //1. get descriptors
         invoke(&callback, "print", "getting descriptors").await?;
         let descriptors = get_descriptors(&callback).await?;
 
         //2.load wallets
         invoke(&callback, "print", "creating paths").await?;
-        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending2");
+        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending3");
         let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
         let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
@@ -576,10 +715,10 @@ pub async fn rustStart (
         
         invoke(&callback, "print", "Starting Threads").await?;
         let result = tokio::try_join!(
-            flatten(tokio::spawn(sync_thread(callback1, legacy_spending_wallet_path.clone(), descriptors.clone(), client_uri.clone()))),
+            flatten(tokio::spawn(sync_thread(callback1, legacy_spending_wallet_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string()))),
             flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
-            flatten(tokio::spawn(state_thread(callback3, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone()))),
-            flatten(tokio::spawn(command_thread(callback4, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone())))
+            flatten(tokio::spawn(state_thread(callback3, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string()))),
+            flatten(tokio::spawn(command_thread(callback4, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string())))
         );
         invoke(&callback, "print", "Handling Threads").await?;
 

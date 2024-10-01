@@ -510,6 +510,7 @@ impl SseDecode for crate::api::simple::DartState {
         let mut var_currentPrice = <f64>::sse_decode(deserializer);
         let mut var_usdBalance = <f64>::sse_decode(deserializer);
         let mut var_btcBalance = <f64>::sse_decode(deserializer);
+        let mut var_devicePath = <String>::sse_decode(deserializer);
         let mut var_transactions = <Vec<crate::api::simple::Transaction>>::sse_decode(deserializer);
         let mut var_fees = <Vec<f64>>::sse_decode(deserializer);
         let mut var_conversations =
@@ -520,6 +521,7 @@ impl SseDecode for crate::api::simple::DartState {
             currentPrice: var_currentPrice,
             usdBalance: var_usdBalance,
             btcBalance: var_btcBalance,
+            devicePath: var_devicePath,
             transactions: var_transactions,
             fees: var_fees,
             conversations: var_conversations,
@@ -788,6 +790,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::simple::DartState {
             self.currentPrice.into_into_dart().into_dart(),
             self.usdBalance.into_into_dart().into_dart(),
             self.btcBalance.into_into_dart().into_dart(),
+            self.devicePath.into_into_dart().into_dart(),
             self.transactions.into_into_dart().into_dart(),
             self.fees.into_into_dart().into_dart(),
             self.conversations.into_into_dart().into_dart(),
@@ -926,6 +929,7 @@ impl SseEncode for crate::api::simple::DartState {
         <f64>::sse_encode(self.currentPrice, serializer);
         <f64>::sse_encode(self.usdBalance, serializer);
         <f64>::sse_encode(self.btcBalance, serializer);
+        <String>::sse_encode(self.devicePath, serializer);
         <Vec<crate::api::simple::Transaction>>::sse_encode(self.transactions, serializer);
         <Vec<f64>>::sse_encode(self.fees, serializer);
         <Vec<crate::api::simple::Conversation>>::sse_encode(self.conversations, serializer);

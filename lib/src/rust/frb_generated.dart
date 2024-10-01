@@ -489,17 +489,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DartState dco_decode_dart_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 8)
-      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return DartState(
       currentPrice: dco_decode_f_64(arr[0]),
       usdBalance: dco_decode_f_64(arr[1]),
       btcBalance: dco_decode_f_64(arr[2]),
-      transactions: dco_decode_list_transaction(arr[3]),
-      fees: dco_decode_list_prim_f_64_strict(arr[4]),
-      conversations: dco_decode_list_conversation(arr[5]),
-      users: dco_decode_list_contact(arr[6]),
-      personal: dco_decode_contact(arr[7]),
+      devicePath: dco_decode_String(arr[3]),
+      transactions: dco_decode_list_transaction(arr[4]),
+      fees: dco_decode_list_prim_f_64_strict(arr[5]),
+      conversations: dco_decode_list_conversation(arr[6]),
+      users: dco_decode_list_contact(arr[7]),
+      personal: dco_decode_contact(arr[8]),
     );
   }
 
@@ -673,6 +674,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_currentPrice = sse_decode_f_64(deserializer);
     var var_usdBalance = sse_decode_f_64(deserializer);
     var var_btcBalance = sse_decode_f_64(deserializer);
+    var var_devicePath = sse_decode_String(deserializer);
     var var_transactions = sse_decode_list_transaction(deserializer);
     var var_fees = sse_decode_list_prim_f_64_strict(deserializer);
     var var_conversations = sse_decode_list_conversation(deserializer);
@@ -682,6 +684,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         currentPrice: var_currentPrice,
         usdBalance: var_usdBalance,
         btcBalance: var_btcBalance,
+        devicePath: var_devicePath,
         transactions: var_transactions,
         fees: var_fees,
         conversations: var_conversations,
@@ -910,6 +913,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_f_64(self.currentPrice, serializer);
     sse_encode_f_64(self.usdBalance, serializer);
     sse_encode_f_64(self.btcBalance, serializer);
+    sse_encode_String(self.devicePath, serializer);
     sse_encode_list_transaction(self.transactions, serializer);
     sse_encode_list_prim_f_64_strict(self.fees, serializer);
     sse_encode_list_conversation(self.conversations, serializer);
