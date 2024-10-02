@@ -6,15 +6,14 @@ import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 
 import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/flows/messages/home.dart';
+//import 'package:orange/flows/messages/home.dart';
 
 // Creates a tab navigation bar with icons for switching between the different
 // tabs, providing visual feedback and navigation functionality.
 
 class TabNav extends StatefulWidget {
   final int index;
-  final GlobalState globalState;
-  const TabNav(this.globalState, {required this.index, super.key});
+  const TabNav({required this.index, super.key});
   @override
   State<TabNav> createState() => TabNavState();
 }
@@ -25,13 +24,13 @@ class TabNavState extends State<TabNav> {
     void openMessages() {
       print("switching to messages");
       HapticFeedback.heavyImpact();
-      switchPageTo(context, MessagesHome(widget.globalState));
+      //switchPageTo(context, MessagesHome(widget.globalState));
     }
 
     void openBitcoin() {
       print("switching to bitcoin");
       HapticFeedback.heavyImpact();
-      switchPageTo(context, BitcoinHome(widget.globalState));
+      switchPageTo(context, BitcoinHome());
     }
 
     return Container(

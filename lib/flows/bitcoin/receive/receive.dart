@@ -19,37 +19,31 @@ import 'package:orange/global.dart' as global;
 // platforms, allowing users to either copy the address or share it via different
 // methods depending on the platform.
 
-class Receive extends StatefulWidget {
+class Receive extends StatelessWidget {
   final GlobalState globalState;
-  final String address;
-  const Receive(this.globalState, this.address, {super.key});
+  const Receive(this.globalState, {super.key});
 
-  @override
-  ReceiveState createState() => ReceiveState();
-}
-
-class ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        print("rebuild");
-        return buildScreen(context, state);
+      valueListenable: global.receiveState,
+      builder: (BuildContext context, ReceiveState state, Widget? child) {
+        return buildScreen(globalState, context, state);
       },
     );
   }
+}
 
-  Widget buildScreen(BuildContext context, DartState state) {
+Widget buildScreen(GlobalState globalState, BuildContext context, ReceiveState state) {
     return Interface(
-      widget.globalState,
+      globalState,
       header: stackHeader(context, "Receive bitcoin"),
       content: Content(
         content: Column(
           mainAxisAlignment:
               global.platform_isDesktop ? MainAxisAlignment.center : MainAxisAlignment.start,
           children: [
-            qrCode(widget.address),
+            qrCode(state.address),
             const Spacing(height: AppPadding.content),
             const CustomText(
               text: 'Scan to receive bitcoin.',
@@ -65,16 +59,15 @@ class ReceiveState extends State<Receive> {
               context,
               "Copy Address",
               () async {
-                await Clipboard.setData(ClipboardData(text: widget.address));
+                await Clipboard.setData(ClipboardData(text: state.address));
               },
             )
           : singleButtonBumper(
               context,
               "Share",
-              () => {Share.share(widget.address)},
+              () => {Share.share(state.address)},
             ),
       desktopOnly: true,
       navigationIndex: 0,
     );
-  }
 }

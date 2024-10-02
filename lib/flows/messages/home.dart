@@ -17,6 +17,7 @@ import 'package:orange/classes.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/util.dart';
 import 'dart:io' show Platform;
+import 'package:orange/global.dart' as global;
 
 // Provides an overview of user conversations with an option to start a new message,
 // displaying a list of conversations or a prompt to begin messaging if none are present.
@@ -42,8 +43,6 @@ class MessagesHomeState extends State<MessagesHome> {
       },
     );
   }
-
-  bool onDesktop = Platform.isWindows || Platform.isMacOS || Platform.isLinux;
 
   Widget buildScreen(BuildContext context, DartState state) {
     //print(state.users);
@@ -96,7 +95,7 @@ class MessagesHomeState extends State<MessagesHome> {
         },
         true,
         ButtonVariant.primary,
-        onDesktop ? true : false,
+        global.platform_isDesktop ? true : false,
       ),
       navigationIndex: 1,
     );

@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
-import 'package:orange/screens/error.dart';
-
-void error(BuildContext context, String err) {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => ErrorPage(message: err)),
-  );
-}
 
 Future<void> navigateTo(BuildContext context, Widget widget) async {
   Navigator.push(

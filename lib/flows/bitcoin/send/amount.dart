@@ -19,6 +19,8 @@ import 'package:orange/flows/bitcoin/send/speed.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/global.dart' as global;
+
 
 /* BITCOIN SEND STEP TWO */
 
@@ -277,8 +279,6 @@ class SendAmountState extends State<SendAmount> {
 
   final ShakeController _shakeController = ShakeController();
   Widget buildScreen(BuildContext context, DartState state) {
-    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-
     return Interface(
       widget.globalState,
       resizeToAvoidBottomInset: false,
@@ -298,7 +298,7 @@ class SendAmountState extends State<SendAmount> {
           ),
         ),
       ),
-      bumper: onDesktop
+      bumper: global.platform_isDesktop
           ? singleButtonBumper(
               context,
               'Send',
@@ -324,7 +324,6 @@ Adjusts text size based on the amount length. */
 Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
     String amt, double btc, String error) {
   String usd = amt.toString();
-  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
   Widget subText(String error) {
     if (error.isNotEmpty) {
@@ -343,7 +342,7 @@ Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
           ),
         ],
       );
-    } else if (onDesktop && amt == "0") {
+    } else if (global.platform_isDesktop && amt == "0") {
       return const CustomText(
         text: "Type dollar amount.",
         color: ThemeColor.textSecondary,

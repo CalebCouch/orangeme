@@ -14,6 +14,7 @@ import 'package:orange/classes.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'dart:io' show Platform;
+import 'package:orange/global.dart' as global;
 
 // rovides a user interface for viewing and editing personal profile details,
 // including updating profile photo, name, and about me section.
@@ -69,10 +70,9 @@ class MyProfileState extends State<MyProfile> {
     _profileName = TextEditingController(text: state.personal.name);
     _aboutMe = TextEditingController(text: state.personal.abtme);
 
-    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
     return Interface(
       widget.globalState,
-      header: onDesktop
+      header: global.platform_isDesktop
           ? homeDesktopHeader(context, "My profile")
           : stackHeader(context, "My profile"),
       content: Content(

@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/components/sidebar.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/global.dart' as global;
 
 // This file defines a responsive Interface layout that adapts between mobile and 
 // desktop views, using MobileInterface for mobile devices with optional navigation 
@@ -15,12 +16,10 @@ class Interface extends StatelessWidget {
   final Widget header;
   final Widget content;
   final Widget? bumper;
-  final GlobalState globalState;
   final int navigationIndex;
   final bool desktopOnly;
 
-  const Interface(
-    this.globalState, {
+  const Interface({
     super.key,
     this.resizeToAvoidBottomInset,
     required this.header,
@@ -32,25 +31,25 @@ class Interface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("platform $Platform");
-    if (Platform.isAndroid || Platform.isIOS) {
+  //if (global.platform_isMobile) {
       return MobileInterface(
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         header: header,
         content: content,
         bumper: bumper,
         navBar: !desktopOnly
-            ? TabNav(globalState, index: navigationIndex)
+            ? TabNav(index: navigationIndex)
             : Container(),
       );
-    }
-    return DesktopInterface(
-        header: header,
-        content: SizedBox(
-          child: content,
-        ),
-        bumper: bumper,
-        sidebar: Sidebar(globalState, index: navigationIndex));
-  }
+  //}
+  //return DesktopInterface(
+  //    header: header,
+  //    content: SizedBox(
+  //      child: content,
+  //    ),
+  //    bumper: bumper,
+  //    sidebar: Sidebar(index: navigationIndex));
+  //}
 }
 
 /* A mobile layout with optional bottom navigation bar and bumper. */

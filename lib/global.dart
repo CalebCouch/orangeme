@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/error.dart';
 
 int counter = 400;
 SharedPreferencesAsync android_storage = SharedPreferencesAsync();
@@ -13,23 +14,20 @@ FlutterSecureStorage ios_storage = const FlutterSecureStorage();
 
 Platform platform = Platform.Mac.init();//Use Mac to call INIT and get the actual platform
 bool platform_isDesktop = platform.isDesktop();
-//var state = GlobalState(GlobalKey<NavigatorState>(), sp, isDesktop);
-
-void init() {
-//  if (Platform.isWindows && Platform.isLinux && Platform.isMacOS && Platform.isAndroid && Platform.isIOS && Platform.isFuchsia) {
-//      error("Platform is unknown");
-//  }
-}
-
-void add() {
-    counter += 1;
-}
+bool platform_isMobile = !platform_isDesktop;
 
 ValueNotifier<BitcoinHomeState> bitcoinHomeState = ValueNotifier(
     BitcoinHomeState("\$1.20", "0.003 BTC", <BitcoinHomeTransaction>[
         BitcoinHomeTransaction("\$1.20", "12:20 PM", true)
     ])
 );
+
+ValueNotifier<ReceiveState> receiveState = ValueNotifier(
+    ReceiveState("emptyaddress")
+);
+
+
+
 
 //  Future<void> storage_write(String key, String value) async {
 //      if Platform.isIOS {
@@ -62,3 +60,54 @@ ValueNotifier<BitcoinHomeState> bitcoinHomeState = ValueNotifier(
 //  final SharedPreferences prefs = await SharedPreferences
 //      .getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
 // 
+
+//Navigation
+GlobalKey<NavigatorState> navkey = GlobalKey<NavigatorState>();
+
+void throwError(String err) {
+    Navigator.pushReplacement(
+        navkey.currentContext!,
+        MaterialPageRoute(builder: (context) => ErrorPage(message: err)),
+    );
+}
+
+Future<void> navigateTo(Widget widget) async {
+  Navigator.push(
+    navkey.currentContext!,
+    PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => widget,
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    ),
+  );
+}
+
+Future<void> navPop() async {
+  Navigator.pop(navkey.currentContext!);
+}
+
+Future<void> switchPageTo(
+  Widget widget,
+) async {
+  var context = navkey.currentContext!;
+  Navigator.pushReplacement(
+    context,
+    PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => widget,
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    ),
+  );
+}
+
+Future<void> resetNavTo(Widget widget) async {
+  var context = navkey.currentContext!;
+  Navigator.pushAndRemoveUntil(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => widget,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+      (route) => false);
+}

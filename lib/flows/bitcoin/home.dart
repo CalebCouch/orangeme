@@ -12,7 +12,7 @@ import 'package:orange/components/bumper.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/flows/bitcoin/transaction_details.dart';
 
-import 'package:orange/flows/bitcoin/send/send.dart';
+//import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/util.dart';
 import 'package:orange/global.dart' as global;
@@ -140,13 +140,12 @@ Widget build_screen(GlobalState globalState, BuildContext context, BitcoinHomeSt
         "Receive",
         "Send",
         () async {
-            global.add();
         //var address =
         //    (await globalState.invoke("get_new_address", "")).data;
-        //navigateTo(context, Receive(globalState, address));
+          navigateTo(context, Receive(globalState));
         },
         () {
-          navigateTo(context, Send(globalState));
+          //navigateTo(context, Send(globalState));
         },
         false //globalState.isDesktop ? true : false,
       ),

@@ -13,6 +13,7 @@ import 'package:orange/flows/messages/profile/my_profile.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
+import 'package:orange/global.dart' as global;
 
 // This code provides several DefaultHeader variations for different app sections,
 // including home, stack navigation, and message headers, with configurations for
@@ -74,8 +75,7 @@ Widget homeDesktopHeader(BuildContext context, String text) {
 /* A responsive header for home pages with profile photo and optional icon */
 Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
     [Widget? iconButton]) {
-  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-  if (onDesktop) return homeDesktopHeader(context, text);
+  if (global.platform_isDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
     left: InkWell(
       onTap: () {
