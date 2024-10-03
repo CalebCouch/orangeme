@@ -32,7 +32,7 @@ class Content extends StatelessWidget {
 items(alignment, children) {
   return Column(
     mainAxisAlignment: alignment,
-    spacing: AppPadding.content,
+    // spacing: AppPadding.content,
     children: children,
   );
 }

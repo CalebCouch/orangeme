@@ -1,6 +1,7 @@
 use super::Error;
 
 use super::protocols::{SocialProtocol, ProfileProtocol};
+use super::usb::UsbInfo;
 
 use flutter_rust_bridge::DartFnFuture;
 use flutter_rust_bridge::frb;
@@ -301,6 +302,7 @@ async fn get_descriptors(callback: impl Fn(String) -> DartFnFuture<String>) -> R
         }
         "Linux" | "Windows" | "MacOS" => {
             //TODO may need different get logic
+            todo!("get descriptors not implemented for desktop");
             // descriptors = invoke(&callback, "android_get", "descriptors").await?;
             // let descriptors = serde_json::from_str::<DescriptorSet>(&descriptors)?;
             // Ok(descriptors)
@@ -345,92 +347,92 @@ async fn get_price(callback: impl Fn(String) -> DartFnFuture<String>, prices: &m
 
 //this function is used to take an initial snapshot of the users usb device path
 //this function will only fire on windows, linux, and ios.
-async fn query_devices(os: &str) -> String {
-    let mut device_baseline = String::new();    
-    match os {
-        "windows" => {
-            // On Windows, use `wmic` to list logical disks (drives)
-            match Command::new("wmic")
-                .args(&["logicaldisk", "get", "name"])
-                .output()
-            {
-                Ok(output) => {
-                    let result = String::from_utf8_lossy(&output.stdout);
-                    device_baseline = result.into_owned();
-                }
-                Err(e) => {
-                    println!("Failed to query devices on Windows: {}", e);
-                    return "None".to_string();
-                }
-            }
-        }
-        "linux" => {
-            // On Linux, list the contents of `/media/$USER` or `/mnt`
-            if let Some(user) = env::var_os("USER") {
-                let media_path = format!("/media/{}", user.to_string_lossy());
-                match Command::new("ls")
-                    .arg(&media_path)
-                    .output()
-                {
-                    Ok(output) => {
-                        let result = String::from_utf8_lossy(&output.stdout);
-                        device_baseline = result.into_owned();
-                    }
-                    Err(_) => {
-                        // If `/media/$USER` fails, fallback to `/mnt`
-                        match Command::new("ls")
-                            .arg("/mnt")
-                            .output()
-                        {
-                            Ok(output) => {
-                                let result = String::from_utf8_lossy(&output.stdout);
-                                device_baseline = result.into_owned();
-                            }
-                            Err(e) => {
-                                println!("Failed to query devices on Linux: {}", e);
-                                return "None".to_string();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        "macos" => {
-            // On macOS, list the contents of `/Volumes`
-            match Command::new("ls")
-                .arg("/Volumes")
-                .output()
-            {
-                Ok(output) => {
-                    let result = String::from_utf8_lossy(&output.stdout);
-                    device_baseline = result.into_owned();
-                }
-                Err(e) => {
-                    println!("Failed to query devices on macOS: {}", e);
-                    return "None".to_string();
-                }
-            }
-        }
-        _ => {
-            println!("Unsupported operating system");
-            return "None".to_string();
-        }
-    }    // Return the device baseline if found
-    device_baseline
-}
+// async fn query_devices(os: &str) -> String {
+//     let mut device_baseline = String::new();    
+//     match os {
+//         "windows" => {
+//             // On Windows, use `wmic` to list logical disks (drives)
+//             match Command::new("wmic")
+//                 .args(&["logicaldisk", "get", "name"])
+//                 .output()
+//             {
+//                 Ok(output) => {
+//                     let result = String::from_utf8_lossy(&output.stdout);
+//                     device_baseline = result.into_owned();
+//                 }
+//                 Err(e) => {
+//                     println!("Failed to query devices on Windows: {}", e);
+//                     return "None".to_string();
+//                 }
+//             }
+//         }
+//         "linux" => {
+//             // On Linux, list the contents of `/media/$USER` or `/mnt`
+//             if let Some(user) = env::var_os("USER") {
+//                 let media_path = format!("/media/{}", user.to_string_lossy());
+//                 match Command::new("ls")
+//                     .arg(&media_path)
+//                     .output()
+//                 {
+//                     Ok(output) => {
+//                         let result = String::from_utf8_lossy(&output.stdout);
+//                         device_baseline = result.into_owned();
+//                     }
+//                     Err(_) => {
+//                         // If `/media/$USER` fails, fallback to `/mnt`
+//                         match Command::new("ls")
+//                             .arg("/mnt")
+//                             .output()
+//                         {
+//                             Ok(output) => {
+//                                 let result = String::from_utf8_lossy(&output.stdout);
+//                                 device_baseline = result.into_owned();
+//                             }
+//                             Err(e) => {
+//                                 println!("Failed to query devices on Linux: {}", e);
+//                                 return "None".to_string();
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         "macos" => {
+//             // On macOS, list the contents of `/Volumes`
+//             match Command::new("ls")
+//                 .arg("/Volumes")
+//                 .output()
+//             {
+//                 Ok(output) => {
+//                     let result = String::from_utf8_lossy(&output.stdout);
+//                     device_baseline = result.into_owned();
+//                 }
+//                 Err(e) => {
+//                     println!("Failed to query devices on macOS: {}", e);
+//                     return "None".to_string();
+//                 }
+//             }
+//         }
+//         _ => {
+//             println!("Unsupported operating system");
+//             return "None".to_string();
+//         }
+//     }    // Return the device baseline if found
+//     device_baseline
+// }
 
-async fn find_device_path(baseline: &str, os: &str) -> String {
-    // Convert baseline query (first snapshot) into a HashSet
-    let baseline_hash: HashSet<_> = baseline.lines().collect();
-    //obtain a new snapshot of the device list
-    let new_snapshot = query_devices(os).await;
-    // convert new snapshot into a HashSet
-    let new_hash: HashSet<_> = new_snapshot.lines().collect();
-    for device in new_hash.difference(&baseline_hash) {
-        return device.to_string(); // Return the first difference found
-    }    // If no new device was found, return None
-    return "None".to_string();
-}
+// async fn find_device_path(baseline: &str, os: &str) -> String {
+//     // Convert baseline query (first snapshot) into a HashSet
+//     let baseline_hash: HashSet<_> = baseline.lines().collect();
+//     //obtain a new snapshot of the device list
+//     let new_snapshot = query_devices(os).await;
+//     // convert new snapshot into a HashSet
+//     let new_hash: HashSet<_> = new_snapshot.lines().collect();
+//     for device in new_hash.difference(&baseline_hash) {
+//         return device.to_string(); // Return the first difference found
+//     }    // If no new device was found, return None
+//     return "None".to_string();
+// }
 
 async fn sync_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, descriptors: DescriptorSet, client_uri: String, os: String) -> Result<(), Error> {
     //TODO add premium wallet support
@@ -462,17 +464,20 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     //device baseline will be taken when the app first starts and is used to compare device list snapshots within the desktop loop
-    let device_baseline  = query_devices(&os).await;
-    let mut device_path = String::new();
+    let mut usb_info = UsbInfo{
+        baseline: UsbInfo::query_devices(&os).await,
+        device_path: String::new(),
+    };
     let mut wallet_transactions = Vec::new();
     let mut current_price = 0.0;
     let mut btc = 0.0;
-    let mut transactions: Vec<Transaction> = Vec:new();
+    // let transactions: Vec<Transaction> = Vec:new();
+    let mut device_path = "";
     loop {
         //desktop state
         if os == "windows" || os == "macos" || os =="linux"{
         //The baseline will only be evaluated if the operating system is windows, linux or macos
-        device_path = find_device_path(&device_baseline, &os).await;
+        // let device_path = &usb_info.find_device_path(&os).await;
         invoke(&callback, "print", &device_path).await?;
         }
         //TODO load premium wallets for desktop if found
@@ -483,15 +488,14 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
          let balance = legacy_spending_wallet.get_balance()?;
          current_price = price.get(b"price")?.map(|b| Ok::<f64, Error>(f64::from_le_bytes(b.try_into().or(Err(Error::err("Main", "Price not f64 bytes")))?))).unwrap_or(Ok(0.0))?;
          btc = balance.get_total() as f64 / SATS;
-
-         transactions.clear();
-         for tx in wallet_transactions {
-             let price = match tx.confirmation_time.as_ref() {
-                 Some(ct) => get_price(&callback, &mut price, ct.timestamp).await?,
-                 None => current_price
-             };
-             transactions.push(Transaction::from_details(tx, price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?);
-         }
+        //  transactions.clear();
+        //  for tx in wallet_transactions {
+        //      let price = match tx.confirmation_time.as_ref() {
+        //          Some(ct) => get_price(&callback, &mut price, ct.timestamp).await?,
+        //          None => current_price
+        //      };
+        //      transactions.push(Transaction::from_details(tx, price, |s: &Script| {legacy_spending_wallet.is_mine(s).unwrap_or(false)})?);
+        //  }
          //TODO load premium wallets for mobile if found
        }
 
@@ -536,8 +540,8 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
             currentPrice: current_price,
             btcBalance: btc,
             usdBalance: current_price * btc,
-            devicePath: device_path.clone(),
-            &transactions,
+            devicePath: device_path.clone().to_string(),
+            transactions: Vec::new(),
             fees,
             conversations,
             users,

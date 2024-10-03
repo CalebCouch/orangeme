@@ -7,5 +7,6 @@ use error::Error;
 
 /// flutter_rust_bridge:ignore
 pub mod protocols;
+pub mod usb;
 
 pub mod simple;
