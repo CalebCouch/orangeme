@@ -1,27 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/classes.dart';
 import 'package:flutter/services.dart';
-
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/list_item.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
+import 'package:orange/classes.dart';
 import 'package:orange/components/banner.dart';
-import 'package:orange/components/bumper.dart';
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/flows/bitcoin/transaction_details.dart';
-
-import 'package:orange/flows/bitcoin/send/send.dart';
+import 'package:orange/components/list_item.dart';
+import 'package:orange/components/profile_photo.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
+import 'package:orange/flows/bitcoin/send/send.dart';
+import 'package:orange/flows/bitcoin/transaction_details.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/util.dart';
-
-import 'dart:io' show Platform;
-
-// This page serves as the main screen for Bitcoin transactions.
-// It displays the user's balance in both USD and BTC, a list of recent transactions,
-// and provides buttons for sending and receiving Bitcoin. The screen also shows
-// optional reminders for backing up and internet connectivity.
+import 'package:orangeme_material/orangeme_material.dart';
 
 class BitcoinHome extends StatefulWidget {
   final GlobalState globalState;
@@ -42,79 +30,6 @@ class BitcoinHomeState extends State<BitcoinHome> {
     );
   }
 
-  bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-
-  Widget transactionListItem(BuildContext context, Transaction transaction) {
-    return DefaultListItem(
-      onTap: () {
-        HapticFeedback.mediumImpact();
-        navigateTo(
-            context, TransactionDetailsWidget(widget.globalState, transaction));
-      },
-      topLeft: CustomText(
-        alignment: TextAlign.left,
-        textType: "text",
-        textSize: TextSize.md,
-        text: transaction.isReceive ? "Received bitcoin" : "Sent bitcoin",
-      ),
-      bottomLeft: CustomText(
-        alignment: TextAlign.left,
-        textSize: TextSize.sm,
-        color: ThemeColor.textSecondary,
-        text: formatDate(transaction.date, transaction.time),
-      ),
-      topRight: CustomText(
-        alignment: TextAlign.right,
-        textSize: TextSize.md,
-        text: "\$${formatValue((transaction.usd).abs())}",
-      ),
-      bottomRight: const CustomText(
-        alignment: TextAlign.right,
-        textSize: TextSize.sm,
-        color: ThemeColor.textSecondary,
-        text: "Details",
-        underline: true,
-      ),
-    );
-  }
-
-  Widget build_screen(BuildContext context, DartState state) {
-    var textSize = formatValue(state.usdBalance).length <= 4
-        ? TextSize.title
-        : formatValue(state.usdBalance).length <= 7
-            ? TextSize.h1
-            : TextSize.h2;
-    return Interface(
-      widget.globalState,
-      resizeToAvoidBottomInset: false,
-      header: homeHeader(
-        context,
-        widget.globalState,
-        "Wallet",
-        null, //state.personal.pfp,
-      ),
-      content: Content(
-        children: [
-          valueDisplay(state, textSize),
-          _backupReminder(false),
-          _noInternet(false),
-          state.transactions.isNotEmpty
-              ? displayTransactions(state, transactionListItem)
-              : Container(),
-        ],
-      ),
-      bumper: doubleButtonBumper(
-        context,
-        "Receive",
-        "Send",
-        onReceive,
-        onSend,
-        onDesktop ? true : false,
-      ),
-      navigationIndex: 0,
-    );
-  }
-
   onReceive() async {
     var address = (await widget.globalState.invoke("get_new_address", "")).data;
     navigateTo(context, Receive(widget.globalState, address));
@@ -123,56 +38,65 @@ class BitcoinHomeState extends State<BitcoinHome> {
   onSend() {
     navigateTo(context, Send(widget.globalState));
   }
-}
 
-_backupReminder(bool display) {
-  if (display) {
-    return const CustomBanner(
-      message:
-          'orange.me recommends that you back\n your phone up to the cloud.',
-    );
-  }
-  return Container();
-}
-
-_noInternet(bool display) {
-  if (display) {
-    return const CustomBanner(
-      message:
-          'You are not connected to the internet.\norange.me requires an internet connection.',
-      isError: true,
-    );
-  }
-  return Container();
-}
-
-Widget valueDisplay(state, textSize) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CustomText(
-          textType: "heading",
-          text: state.usdBalance == 0
-              ? "\$0.00"
-              : "\$${formatValue(state.usdBalance)}",
-          textSize: textSize,
-          color: ThemeColor.heading,
-        ),
-        const Spacing(height: AppPadding.valueDisplaySep),
-        CustomText(
-          textType: "text",
-          text: "${formatBTC(state.btcBalance, 8)} BTC",
-          textSize: TextSize.lg,
-          color: ThemeColor.textSecondary,
-        ),
+  Widget build_screen(BuildContext context, DartState state) {
+    return Root_Home(
+      widget.globalState,
+      Header_Home(ProfileButton, "Wallet"),
+      [
+        BalanceDisplay(state),
+        BackupReminder(false),
+        NoInternet(false),
+        TransactionList(state, TransactionItem),
       ],
-    ),
+      Bumper([
+        CustomButton('Receive', 'primary lg enabled expand none', onReceive()),
+        CustomButton('Send', 'primary lg enabled expand none', onSend()),
+      ]),
+      0,
+    );
+  }
+}
+
+//The following widgets can ONLY be used in this file
+
+Widget BalanceDisplay(DartState state) {
+  dynamic_size(x) {
+    if (x <= 4) return 'title';
+    if (x <= 7) return 'h1';
+    return 'h2';
+  }
+
+  String usd = state.usdBalance == 0 ? "\$0.00" : "\$${formatValue(state.usdBalance)}";
+
+  return Container(
+    alignment: Alignment.center,
+    padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
+    child: CustomColumn([
+      CustomText('heading ${dynamic_size(formatValue(state.usdBalance).length)}', '$usd USD'),
+      CustomText('text lg text_secondary', '${formatBTC(state.btcBalance, 8)} BTC')
+    ], AppPadding.valueDisplaySep),
   );
 }
 
-Widget displayTransactions(state, transactionListItem) {
+BackupReminder(bool display) {
+  return display
+      ? const CustomBanner(
+          'orange.me recommends that you back\n your phone up to the cloud.',
+        )
+      : Container();
+}
+
+NoInternet(bool display) {
+  return display
+      ? const CustomBanner(
+          'You are not connected to the internet.\norange.me requires an internet connection.',
+          isError: true,
+        )
+      : Container();
+}
+
+Widget TransactionList(state, TransactionItem) {
   return Expanded(
     child: SingleChildScrollView(
       child: ListView.builder(
@@ -181,9 +105,22 @@ Widget displayTransactions(state, transactionListItem) {
         physics: const ScrollPhysics(),
         itemCount: state.transactions.length,
         itemBuilder: (BuildContext context, int index) {
-          return transactionListItem(context, state.transactions[index]);
+          return TransactionItem(context, state.transactions[index]);
         },
       ),
     ),
+  );
+}
+
+Widget TransactionItem(GlobalState globalState, BuildContext context, Transaction transaction) {
+  return ListItem(
+    onTap: () {
+      HapticFeedback.mediumImpact();
+      navigateTo(context, ViewTransactionDetails(globalState, transaction));
+    },
+    title: transaction.isReceive ? "Received bitcoin" : "Sent bitcoin",
+    sub: formatDate(transaction.date, transaction.time),
+    titleR: "\$${formatValue((transaction.usd).abs())}",
+    subR: "Details",
   );
 }

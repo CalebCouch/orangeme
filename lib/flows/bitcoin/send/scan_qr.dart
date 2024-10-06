@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:orange/flows/bitcoin/send/send.dart';
 
-// Provides a QR code scanner for capturing Bitcoin addresses and navigating to the transaction screen.
-
-/* Manages the QR code scanning interface for capturing Bitcoin addresses. */
 class ScanQR extends StatefulWidget {
   final GlobalState globalState;
   const ScanQR(this.globalState, {super.key});
@@ -42,28 +35,25 @@ class ScanQRState extends State<ScanQR> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackHeader(context, "Scan QR code"),
-      content: Stack(
-        children: [
+    return Stack_Default(
+      Header_Stack(context, "Scan QR code"),
+      [
+        Stack(children: [
           qrScanner(),
-          Content(
-            alignment: MainAxisAlignment.center,
-            children: [
-              scanBox(),
-              const CustomText(
-                text: 'Scan a bitcoin QR code',
-                color: ThemeColor.bgSecondary,
-                textSize: TextSize.md,
-              ),
-            ],
-          ),
-        ],
-      ),
-      desktopOnly: true,
-      navigationIndex: 0,
+          Guide(),
+        ]),
+      ],
+      Bumper([Container()]),
     );
+  }
+
+  //The following widgets can ONLY be used in this file
+
+  Widget Guide() {
+    return CustomColumn([
+      scanBox(),
+      const CustomText('text md bg_secondary', 'Scan a bitcoin QR code'),
+    ]);
   }
 
   /* Initializes the QR view controller and handles scanned data. */
@@ -90,8 +80,7 @@ class ScanQRState extends State<ScanQR> {
       padding: const EdgeInsets.symmetric(vertical: AppPadding.content),
       child: QRView(
         key: qrKey,
-        onQRViewCreated: (QRViewController controller) =>
-            {_onQRViewCreated(widget.globalState, controller)},
+        onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(widget.globalState, controller)},
       ),
     );
   }

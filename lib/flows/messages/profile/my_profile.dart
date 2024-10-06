@@ -1,21 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/data_item.dart';
-import 'package:orange/components/text_input.dart';
-import 'package:orange/components/bumper.dart';
-
 import 'package:orange/classes.dart';
-
 import 'package:image_picker/image_picker.dart';
-import 'dart:io' show Platform;
-
-// rovides a user interface for viewing and editing personal profile details,
-// including updating profile photo, name, and about me section.
+import 'package:orange/components/profile_photo.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
 class MyProfile extends StatefulWidget {
   final GlobalState globalState;
@@ -56,6 +45,18 @@ class MyProfileState extends State<MyProfile> {
   bool save = false;
 
   Widget build_screen(BuildContext context, DartState state) {
+    _profileName = TextEditingController(text: state.personal.name);
+    _aboutMe = TextEditingController(text: state.personal.abtme);
+    onEdit() {
+      () async {
+        HapticFeedback.heavyImpact();
+        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          setState(() => state.personal.pfp = image.path);
+        }
+      };
+    }
+
     saveInfo() {
       setState(() {
         save = false;
@@ -71,60 +72,38 @@ class MyProfileState extends State<MyProfile> {
       });
     }
 
-    _profileName = TextEditingController(text: state.personal.name);
-    _aboutMe = TextEditingController(text: state.personal.abtme);
-    onEdit() {
-      () async {
-        HapticFeedback.heavyImpact();
-        final XFile? image =
-            await _picker.pickImage(source: ImageSource.gallery);
-        if (image != null) {
-          setState(() => state.personal.pfp = image.path);
-        }
-      };
+    Widget EditName() {
+      return CustomTextInput(
+        title: 'Profile Name',
+        hint: 'Profile name...',
+        onChanged: (String str) => {enableButton()},
+        controller: _profileName,
+      );
     }
 
-    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-    return Interface(
-      widget.globalState,
-      header: onDesktop
-          ? homeDesktopHeader(context, "My profile")
-          : stackHeader(context, "My profile"),
-      content: Content(
-        children: [
-          editPhoto(
-            context,
-            onEdit,
-            state.personal.pfp,
-          ),
-          CustomTextInput(
-            title: 'Profile Name',
-            hint: 'Profile name...',
-            onChanged: (String str) => {enableButton()},
-            controller: _profileName,
-          ),
-          CustomTextInput(
-            title: 'About Me',
-            hint: 'A little bit about me...',
-            onChanged: (String str) => {enableButton()},
-            controller: _aboutMe,
-          ),
-          didItem(context, state.personal.did),
-          addressItem(context, widget.address),
-        ],
-      ),
-      bumper: singleButtonBumper(
-        context,
-        'Save',
-        save
-            ? () {
-                saveInfo();
-              }
-            : () {},
-        save,
-      ),
-      desktopOnly: true,
-      navigationIndex: 2,
+    Widget EditDesc() {
+      return CustomTextInput(
+        title: 'About Me',
+        hint: 'A little bit about me...',
+        onChanged: (String str) => {enableButton()},
+        controller: _aboutMe,
+      );
+    }
+
+    onSave() {
+      if (save) saveInfo();
+    }
+
+    return Stack_Default(
+      Header_Stack(context, "My profile"),
+      [
+        EditPhoto(context, onEdit, state.personal.pfp),
+        EditName(),
+        EditDesc(),
+        didItem(context, state.personal.did),
+        addressItem(context, widget.address),
+      ],
+      Bumper([CustomButton('Save', 'primary lg $save expand none', onSave())]),
     );
   }
 }

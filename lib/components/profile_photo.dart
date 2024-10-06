@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/tip_buttons.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
-// Handles profile photo display with customizable sizes, borders, fallback
-// icons, a stacked view for multiple profiles, and an option to edit the profile picture.
-
-/* Returns icon size based on profile size. */
 _getIconSize(double profileSize) {
   switch (profileSize) {
     case 96:
@@ -24,7 +20,7 @@ _getIconSize(double profileSize) {
 }
 
 /* Displays a profile photo with optional border, size, and fallback icon. */
-Widget profilePhoto(
+Widget ProfilePhoto(
   BuildContext context, [
   String? pfp,
   double size = ProfileSize.md,
@@ -51,14 +47,16 @@ Widget profilePhoto(
             height: _getIconSize(size),
             width: _getIconSize(size),
             isGroup ? ThemeIcon.group : ThemeIcon.profile,
-            colorFilter: const ColorFilter.mode(
-                ThemeColor.textSecondary, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
           )
         : Container(),
   );
 }
 
-/* Shows a horizontal list of profile photos for up to five contacts. */
+Widget ProfileButton(BuildContext context, pfp, onTap) {
+  return InkWell(onTap: onTap, child: ProfilePhoto(context));
+}
+
 Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
   return Container(
     width: 128,
@@ -71,21 +69,19 @@ Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
       itemBuilder: (BuildContext context, int index) {
         return Align(
           widthFactor: 0.75,
-          child: profilePhoto(
-              context, contacts[index].pfp, ProfileSize.md, true, false),
+          child: ProfilePhoto(context, contacts[index].pfp, ProfileSize.md, true, false),
         );
       },
     ),
   );
 }
 
-/* Provides a profile photo with an edit button for updating the photo. */
-Widget editPhoto(BuildContext context, onTap, [pfp]) {
-  return Column(
-    children: [
-      profilePhoto(context, pfp, ProfileSize.xxl),
-      const Spacing(height: AppPadding.header),
-      ButtonTip('Photo', ThemeIcon.edit, onTap)
+Widget EditPhoto(BuildContext context, onTap, [pfp]) {
+  return CustomColumn(
+    [
+      ProfilePhoto(context, pfp, ProfileSize.xxl),
+      CustomButton('Photo', 'secondary md enabled hug edit', onTap),
     ],
+    AppPadding.header,
   );
 }

@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
 import 'package:orange/components/result.dart';
 
 import 'package:orange/flows/bitcoin/home.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
-
-// This page displays a confirmation screen after a Bitcoin transaction has been sent.
-// It shows the transaction amount and provides a button to return to the home screen.
+import 'package:orangeme_material/orangeme_material.dart';
 
 class Confirmation extends StatefulWidget {
   final double amount;
@@ -25,8 +17,7 @@ class Confirmation extends StatefulWidget {
 }
 
 class ConfirmationState extends State<Confirmation> {
-  final TextEditingController recipientAddressController =
-      TextEditingController();
+  final TextEditingController recipientAddressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,25 +39,14 @@ class ConfirmationState extends State<Confirmation> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackHeader(
-        context,
-        "Confirm send",
-        exitButton(context, BitcoinHome(widget.globalState)),
+    return Stack_Default(
+      Header_Stack(context, "Confirm send", exitButton(context, BitcoinHome(widget.globalState))),
+      [
+        Result('You sent \$${formatValue(widget.amount.abs())}'),
+      ],
+      Bumper(
+        [CustomButton('Done', 'secondary lg enabled expand none', onDone)],
       ),
-      content: Content(children: [
-        result('You sent \$${formatValue(widget.amount.abs())}'),
-      ]),
-      bumper: singleButtonBumper(
-        context,
-        "Done",
-        onDone,
-        true,
-        ButtonVariant.secondary,
-      ),
-      desktopOnly: true,
-      navigationIndex: 0,
     );
   }
 }

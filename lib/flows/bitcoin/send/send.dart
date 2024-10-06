@@ -1,28 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
+import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
-
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/text_input.dart';
-import 'package:orange/components/bumper.dart';
-import 'package:orange/components/tip_buttons.dart';
-import 'package:orange/components/interface.dart';
-
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/custom/custom_button.dart';
-
 import 'package:orange/util.dart';
-import 'package:orange/classes.dart';
-import 'package:orange/theme/stylesheet.dart';
-
-// BITCOIN SEND STEP ONE //
-
-// This page allows users to input a Bitcoin address, validate it, and proceed
-// to send Bitcoin. It supports manual entry, pasting from clipboard,
-// and scanning QR codes.
+import 'package:orangeme_material/orangeme_material.dart';
 
 class Send extends StatefulWidget {
   final GlobalState globalState;
@@ -34,18 +15,30 @@ class Send extends StatefulWidget {
 }
 
 class SendState extends State<Send> {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  @override
+  initState() {
+    controller.text = addressStr;
+    setAddress(widget.address ?? "");
+    super.initState();
+  }
+
   String addressStr = '';
   bool addressValid = false;
 
-  //This function checks the address validity and sets the input field
   Future<void> setAddress(String address) async {
-    if (address.contains('bitcoin:')) address = address.substring(8);
-    var valid =
-        (await widget.globalState.invoke("check_address", address)).data ==
-            "true";
+    checkAddress(address);
     setState(() {
       addressStr = address;
-      addressValid = valid;
       controller.text = addressStr;
     });
   }
@@ -53,9 +46,7 @@ class SendState extends State<Send> {
   //This function only checks the address validity
   Future<void> checkAddress(String address) async {
     if (address.contains('bitcoin:')) address = address.substring(8);
-    var valid =
-        (await widget.globalState.invoke("check_address", address)).data ==
-            "true";
+    var valid = (await widget.globalState.invoke("check_address", address)).data == "true";
     setState(() {
       addressValid = valid;
     });
@@ -68,86 +59,52 @@ class SendState extends State<Send> {
     }
   }
 
-  @override
-  initState() {
-    controller.text = addressStr;
-    setAddress(widget.address ?? "");
-    super.initState();
+  onPaste() async {
+    String data = (await getClipBoardData()).toString();
+    if (data != "null") {
+      setAddress(data);
+    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
-    );
+  onScan() {
+    navigateTo(context, ScanQR(widget.globalState));
   }
 
   final TextEditingController controller = TextEditingController();
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackHeader(context, "Bitcoin address", backButton(context)),
-      content: Content(
-        children: [
-          addressInput(
-            controller,
-            addressValid,
-            addressStr,
-            setAddress,
-            checkAddress,
-          ),
-          buttonTips(context, widget.globalState, setAddress)
-        ],
-      ),
-      bumper: singleButtonBumper(
-        context,
-        "Continue",
-        onContinue,
-        addressValid,
-      ),
-      desktopOnly: true,
-      navigationIndex: 0,
+    return Stack_Default(
+      Header_Stack(context, "Bitcoin address"),
+      [
+        AddressInput(controller),
+        ButtonTips(widget.address),
+      ],
+      Bumper([
+        CustomButton('Continue', 'primary lg enabled expand none', onContinue()),
+      ]),
     );
   }
-}
 
-Widget addressInput(controller, bool addressValid, String addressStr,
-    setAddress, checkAddress) {
-  return CustomTextInput(
-    controller: controller,
-    onSubmitted: (String address) => {setAddress(address)},
-    onChanged: (String address) => {checkAddress(address)},
-    error: addressValid || addressStr.isEmpty ? "" : "Not a valid address",
-    hint: 'Bitcoin address...',
-  );
-}
+//The following widgets can ONLY be used in this file
 
-Widget buttonTips(BuildContext context, GlobalState globalState, setAddress) {
-  return Column(
-    children: [
-      ButtonTip("Paste Clipboard", ThemeIcon.paste, () async {
-        HapticFeedback.heavyImpact();
-        String data = (await getClipBoardData()).toString();
-        if (data != "null") {
-          setAddress(data);
-        }
-      }),
-      const Spacing(height: AppPadding.tips),
-      const CustomText(
-        text: 'or',
-        textSize: TextSize.sm,
-        color: ThemeColor.textSecondary,
-      ),
-      const Spacing(height: AppPadding.tips),
-      ButtonTip(
-        "Scan QR Code",
-        ThemeIcon.qrcode,
-        () => navigateTo(context, ScanQR(globalState)),
-      ),
-    ],
-  );
+  Widget AddressInput(controller) {
+    return CustomTextInput(
+      controller: controller,
+      onSubmitted: (String address) => {setAddress(address)},
+      onChanged: (String address) => {checkAddress(address)},
+      error: addressValid || addressStr.isEmpty ? "" : "Not a valid address",
+      hint: 'Bitcoin address...',
+    );
+  }
+
+  Widget ButtonTips(String? address) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: CustomColumn([
+        CustomButton('Paste Clipboard', 'secondary md enabled hug paste', onPaste()),
+        const CustomText('text sm text_secondary', 'or'),
+        CustomButton('Scan QR Code', 'secondary md enabled hug qr-code', onScan()),
+      ], 8),
+    );
+  }
 }

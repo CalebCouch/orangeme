@@ -7,17 +7,15 @@ Widget qrCode(String address) {
   return Stack(
     alignment: Alignment.center,
     children: [
-      Container(
-        child: ClipRRect(
-          borderRadius: CornerRadius.qrCode,
-          child: CustomPaint(
-            size: const Size(312, 312),
-            painter: QrPainter(
-              data: address,
-              options: const QrOptions(
-                shapes: QrShapes(
-                  darkPixel: QrPixelShapeCircle(),
-                ),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: CustomPaint(
+          size: const Size(312, 312),
+          painter: QrPainter(
+            data: address,
+            options: const QrOptions(
+              shapes: QrShapes(
+                darkPixel: QrPixelShapeCircle(),
               ),
             ),
           ),

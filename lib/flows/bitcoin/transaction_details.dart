@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
 
 import 'package:orange/components/tabular.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/amount_display.dart';
 
 import 'package:orange/classes.dart';
+import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/util.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
-// This page displays detailed information about a specific Bitcoin transaction.
-// It shows whether the transaction was received or sent, and provides a breakdown
-// of the transaction amount and associated details.
-
-class TransactionDetailsWidget extends StatefulWidget {
+class ViewTransactionDetails extends StatefulWidget {
   final GlobalState globalState;
   final Transaction transaction;
-  const TransactionDetailsWidget(this.globalState, this.transaction,
-      {super.key});
+  const ViewTransactionDetails(this.globalState, this.transaction, {super.key});
 
   @override
-  TransactionDetailsWidgetState createState() =>
-      TransactionDetailsWidgetState();
+  ViewTransactionDetailsState createState() => ViewTransactionDetailsState();
 }
 
-class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
+class ViewTransactionDetailsState extends State<ViewTransactionDetails> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -36,32 +27,41 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
     );
   }
 
+  onDone() {
+    Navigator.pop(context);
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
     String direction = widget.transaction.isReceive ? "Received" : "Sent";
+    return Stack_Default(
+      Header_Stack(context, "Confirm $direction"),
+      [
+        AmountDisplay(widget.transaction),
+        transactionTabular(context, widget.transaction),
+      ],
+      Bumper([CustomButton('Done', 'secondary lg enabled expand none', () => onDone())]),
+    );
+  }
 
-    return Interface(
-      widget.globalState,
-      header: stackHeader(context, "$direction bitcoin"),
-      content: Content(
-        children: [
-          amountDisplay(
-            (widget.transaction.usd.abs() - widget.transaction.fee.abs()),
-            (widget.transaction.btc).abs(),
-          ),
-          transactionTabular(context, widget.transaction),
-        ],
-      ),
-      bumper: singleButtonBumper(
-        context,
-        "Done",
-        () {
-          Navigator.pop(context);
-        },
-        true,
-        ButtonVariant.secondary,
-      ),
-      desktopOnly: true,
-      navigationIndex: 0,
+  //The following widgets can ONLY be used in this file
+
+  Widget AmountDisplay(tx) {
+    dynamic_size(x) {
+      if (x <= 4) return 'title';
+      if (x <= 7) return 'h1';
+      return 'h2';
+    }
+
+    double usd = (tx.usd.abs() - tx.fee.abs());
+    double btc = (tx.btc).abs();
+
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
+      child: CustomColumn([
+        CustomText('heading ${dynamic_size(formatValue(usd).length)}', '$usd USD'),
+        CustomText('text lg text_secondary', '${formatBTC(btc, 8)} BTC')
+      ], AppPadding.valueDisplaySep),
     );
   }
 }

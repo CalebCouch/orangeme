@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
-import 'package:flutter/services.dart';
-
-import 'package:orange/components/qr_code/qr_code.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
-import 'package:orange/components/custom/custom_text.dart';
-
-import 'package:orange/components/interface.dart';
-import 'dart:io' show Platform;
-
+import 'package:orange/components/qr_code/options/options.dart';
+import 'package:orange/components/qr_code/options/shapes.dart';
+import 'package:orange/components/qr_code/qr_painter.dart';
+import 'package:orange/components/qr_code/shapes/pixel_shape.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 import 'package:share/share.dart';
 import 'package:orange/classes.dart';
-
-// The Receive widget provides an interface for users to receive Bitcoin by
-// displaying a QR code and address. It supports both desktop and mobile
-// platforms, allowing users to either copy the address or share it via different
-// methods depending on the platform.
 
 class Receive extends StatefulWidget {
   final GlobalState globalState;
@@ -34,44 +22,56 @@ class ReceiveState extends State<Receive> {
     return ValueListenableBuilder(
       valueListenable: widget.globalState.state,
       builder: (BuildContext context, DartState state, Widget? child) {
-        print("rebuild");
         return buildScreen(context, state);
       },
     );
   }
 
+  onShare() {
+    () => {Share.share(widget.address)};
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
-    bool onDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
-    return Interface(
-      widget.globalState,
-      header: stackHeader(context, "Receive bitcoin"),
-      content: Content(
-        scrollable: false,
-        alignment: MainAxisAlignment.center,
-        children: [
-          qrCode(widget.address),
-          const CustomText(
-            text: 'Scan to receive bitcoin.',
-            color: ThemeColor.textSecondary,
-            textSize: TextSize.md,
-          )
-        ],
-      ),
-      bumper: onDesktop
-          ? singleButtonBumper(
-              context,
-              "Copy Address",
-              () async {
-                await Clipboard.setData(ClipboardData(text: widget.address));
-              },
-            )
-          : singleButtonBumper(
-              context,
-              "Share",
-              () => {Share.share(widget.address)},
-            ),
-      desktopOnly: true,
-      navigationIndex: 0,
+    return Stack_Default(
+      Header_Stack(context, "Receive bitcoin"),
+      [
+        QRCode(widget.address),
+        Instructions(),
+      ],
+      Bumper([
+        CustomButton('Share', 'primary lg enabled expand none', onShare()),
+      ]),
     );
   }
+}
+
+//The following widgets can ONLY be used in this file
+
+Widget QRCode(String address) {
+  return Stack(
+    alignment: Alignment.center,
+    children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: CustomPaint(
+          size: const Size(312, 312),
+          painter: QrPainter(
+            data: address,
+            options: const QrOptions(
+              shapes: QrShapes(
+                darkPixel: QrPixelShapeCircle(),
+              ),
+            ),
+          ),
+        ),
+      ),
+      Positioned(
+        child: Logo('xxl'),
+      ),
+    ],
+  );
+}
+
+Widget Instructions() {
+  return const CustomText('text md text_secondary', 'Scan to receive bitcoin.');
 }

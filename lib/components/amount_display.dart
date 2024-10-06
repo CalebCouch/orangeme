@@ -1,49 +1,65 @@
-import 'package:flutter/material.dart';
-
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/custom/custom_text.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 
-// Displays a formatted monetary value and its equivalent in BTC. Adjusts text
-// size based on the length of the value and uses different text styles for the
-// currency amount and its conversion.
-
-Widget amountDisplay(double value, double converted) {
-  String accountBalance = "";
-
-  getValueDisplaySize(double value) {
-    accountBalance = value.toString();
-    if (accountBalance.length <= 4) {
-      //1-4
-      return TextSize.title;
-    } else if (accountBalance.length >= 5 && accountBalance.length <= 7) {
-      //5-7
-      return TextSize.subtitle;
+List<String> updateAmount(GlobalState globalState, String input, String error, amount, shakeController) {
+  var buzz = FeedbackType.warning;
+  HapticFeedback.heavyImpact();
+  var updatedAmount = "0";
+  if (input == "backspace") {
+    if (amount.length == 1) {
+      updatedAmount = "0";
+    } else if (amount.isNotEmpty) {
+      updatedAmount = amount.substring(0, amount.length - 1);
     } else {
-      // 8-10
-      return TextSize.h1;
+      Vibrate.feedback(buzz);
+      shakeController.shake();
+      updatedAmount = amount;
+    }
+  } else if (input == ".") {
+    if (!amount.contains(".") && amount.length <= 7) {
+      updatedAmount = amount += ".";
+    } else {
+      Vibrate.feedback(buzz);
+      shakeController.shake();
+      updatedAmount = amount;
+    }
+  } else {
+    if (amount == "0") {
+      updatedAmount = input;
+    } else if (amount.contains(".")) {
+      if (amount.length < 11 && amount.split(".")[1].length < 2) {
+        updatedAmount = amount + input;
+      } else {
+        Vibrate.feedback(buzz);
+        shakeController.shake();
+        updatedAmount = amount;
+      }
+    } else {
+      if (amount.length < 10) {
+        updatedAmount = amount + input;
+      } else {
+        Vibrate.feedback(buzz);
+        shakeController.shake();
+        updatedAmount = amount;
+      }
     }
   }
 
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CustomText(
-          textType: "heading",
-          text: "\$${formatValue(value)}",
-          textSize: getValueDisplaySize(value),
-          color: ThemeColor.heading,
-        ),
-        const Spacing(height: AppPadding.valueDisplaySep),
-        CustomText(
-          textType: "text",
-          text: "${formatValue(converted, 8)} BTC",
-          textSize: TextSize.lg,
-          color: ThemeColor.textSecondary,
-        ),
-      ],
-    ),
-  );
+  double min = globalState.state.value.fees[0] + 0.10;
+  var max = globalState.state.value.usdBalance - min;
+  max = max > 0 ? max : 0;
+  var err = "";
+  if (double.parse(updatedAmount) != 0) {
+    if (double.parse(updatedAmount) <= min) {
+      err = "\$${formatValue(min)} minimum.";
+    } else if (double.parse(updatedAmount) > max) {
+      err = "\$${formatValue(max)} maximum.";
+      if (err == "\$0 maximum.") {
+        err = "You have no bitcoin.";
+      }
+    }
+  }
+  return [amount = updatedAmount, error = err];
 }

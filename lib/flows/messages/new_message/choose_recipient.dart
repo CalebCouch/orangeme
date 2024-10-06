@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/tip_buttons.dart';
-import 'package:orange/components/text_input.dart';
-
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-
 import 'package:orange/flows/messages/conversation/exchange.dart';
-
-// Allows users to search for and select contacts to start a new message conversation.
+import 'package:orangeme_material/orangeme_material.dart';
 
 class ChooseRecipient extends StatefulWidget {
   final GlobalState globalState;
@@ -28,6 +18,40 @@ class ChooseRecipient extends StatefulWidget {
 }
 
 class ChooseRecipientState extends State<ChooseRecipient> {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: widget.globalState.state,
+      builder: (BuildContext context, DartState state, Widget? child) {
+        return buildScreen(context, state);
+      },
+    );
+  }
+
+  Widget buildScreen(BuildContext context, DartState state) {
+    return Stack_Default(
+      Header_Button(context, "Confirm send", CustomButton('Next', 'ghost md ${recipients.isNotEmpty} hug none', () => onNext())),
+      [
+        Searchbar(searchController),
+        SelectedContacts(recipients, removeRecipient),
+        ListContacts(filteredContacts, removeRecipient),
+      ],
+      Bumper([Container()]),
+    );
+  }
+
+  //The following widgets can ONLY be used in this file
+
+  onNext() {
+    navigateTo(
+      context,
+      Exchange(
+        widget.globalState,
+        conversation: Conversation(recipients, []),
+      ),
+    );
+  }
+
   List<Contact> recipients = [];
   List<Contact> filteredContacts = [];
   TextEditingController searchController = TextEditingController();
@@ -53,9 +77,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
         filteredContacts = widget.globalState.state.value.users;
       } else {
         filteredContacts = widget.globalState.state.value.users
-            .where((contact) =>
-                contact.name.toLowerCase().startsWith(searchTerm) ||
-                contact.did.toLowerCase().startsWith(searchTerm))
+            .where((contact) => contact.name.toLowerCase().startsWith(searchTerm) || contact.did.toLowerCase().startsWith(searchTerm))
             .toList();
       }
     });
@@ -74,58 +96,17 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       recipients.remove(selected);
     });
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
-    );
-  }
-
-  onNext() {
-    () {
-      navigateTo(
-        context,
-        Exchange(
-          widget.globalState,
-          conversation: Conversation(recipients, []),
-        ),
-      );
-    };
-  }
-
-  Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackButtonHeader(
-        context,
-        'New message',
-        recipients.isNotEmpty,
-        'Next',
-        onNext,
-      ),
-      content: Content(
-        scrollable: false,
-        children: [
-          CustomTextInput(
-            maxLines: 1,
-            controller: searchController,
-            hint: 'Profile name...',
-          ),
-          selected(recipients, removeRecipient),
-          listContacts(filteredContacts, removeRecipient),
-        ],
-      ),
-      desktopOnly: true,
-      navigationIndex: 1,
-    );
-  }
 }
 
-Widget selected(recipients, removeRecipient) {
+Widget Searchbar(controller) {
+  return CustomTextInput(
+    maxLines: 1,
+    controller: controller,
+    hint: 'Profile name...',
+  );
+}
+
+Widget SelectedContacts(recipients, removeRecipient) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 8),
     alignment: Alignment.topLeft,
@@ -133,8 +114,7 @@ Widget selected(recipients, removeRecipient) {
       spacing: 8,
       runSpacing: 8,
       children: List<Widget>.generate(recipients.length, (index) {
-        return ButtonTip(recipients[index].name, ThemeIcon.close, () {
-          HapticFeedback.heavyImpact();
+        return CustomButton(recipients[index].name, 'ghost md enabled hug close', () {
           removeRecipient(recipients[index]);
         });
       }),
@@ -142,12 +122,12 @@ Widget selected(recipients, removeRecipient) {
   );
 }
 
-Widget listContacts(filteredContacts, addRecipient) {
+Widget ListContacts(filteredContacts, addRecipient) {
   return Expanded(
     child: ListView.builder(
       itemCount: filteredContacts.length,
       itemBuilder: (BuildContext context, int index) {
-        return contactListItem(context, filteredContacts[index], () {
+        return ContactItem(context, filteredContacts[index], () {
           HapticFeedback.heavyImpact();
           addRecipient(filteredContacts[index]);
         });

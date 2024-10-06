@@ -1,27 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/components/custom/custom_text.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
 // Displays a centered result message with an optional icon.
 
-Widget result(String resultMessage, [String icon = ThemeIcon.bitcoin]) {
+Widget Result(String resultMessage, [String icon = ThemeIcon.bitcoin]) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      CustomIcon(
-        icon: icon,
-        iconColor: ThemeColor.secondary,
-        iconSize: 128,
-      ),
-      const Spacing(height: AppPadding.bumper),
-      CustomText(
-        text: resultMessage,
-        textType: 'heading',
-        textSize: TextSize.h3,
-      ),
+      CustomIcon('$icon xxl'),
+      const Spacing(AppPadding.bumper),
+      CustomText('heading h3', resultMessage),
     ],
   );
 }
