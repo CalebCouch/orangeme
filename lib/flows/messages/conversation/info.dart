@@ -49,7 +49,7 @@ Widget Information(List<Contact> contacts) {
 Widget ListMembers(BuildContext context, GlobalState globalState, contacts) {
   onPressed(index) async {
     var address = (await globalState.invoke("get_new_address", "")).data;
-    switchPageTo(
+    navigateTo(
       context,
       UserProfile(
         globalState,

@@ -3,7 +3,9 @@ import 'package:orange/components/message_bubble.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/flows/messages/conversation/info.dart';
+import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Exchange extends StatefulWidget {
@@ -42,13 +44,26 @@ class ExchangeState extends State<Exchange> {
     scrollController.jumpTo(scrollController.position.maxScrollExtent);
   }
 
+  directProfile() async {
+    var address = (await widget.globalState.invoke("get_new_address", "")).data;
+    navigateTo(
+      context,
+      UserProfile(
+        widget.globalState,
+        address,
+        userInfo: widget.conversation.members[0],
+      ),
+    );
+  }
+
   Widget build_screen(BuildContext context, DartState state) {
     List<Contact> members = widget.conversation.members;
+
     return Stack_Chat(
       Header_Message(
         context,
         ChatRecipients(context, members),
-        infoButton(context, MessageInfo(widget.globalState, contacts: members)),
+        members.length > 1 ? infoButton(context, MessageInfo(widget.globalState, contacts: members)) : iconButton(directProfile, 'info lg'),
       ),
       [
         false, //widget.conversation.messages.isNotEmpty,

@@ -49,6 +49,8 @@ class UserProfileState extends State<UserProfile> {
     );
   }
 
+  onBitcoin() {}
+
   Widget build_screen(BuildContext context, DartState state) {
     return Stack_Default(
       Header_Stack(context, widget.userInfo.name),
@@ -58,7 +60,10 @@ class UserProfileState extends State<UserProfile> {
         didItem(context, widget.userInfo.did),
         addressItem(context, widget.address),
       ],
-      Bumper(context, [CustomButton('Message', 'primary lg enabled expand none', onMessage)]),
+      Bumper(context, [
+        CustomButton('Message', 'primary lg enabled expand none', onMessage),
+        CustomButton('Send Bitcoin', 'primary lg enabled expand none', onBitcoin),
+      ]),
     );
   }
 }

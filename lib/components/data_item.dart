@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class DataItem extends StatelessWidget {
@@ -71,7 +72,7 @@ Widget addressItem(BuildContext context, String address) {
 
   return DataItem(
     title: 'Bitcoin address',
-    content: CustomText('text md secondary', address),
+    content: CustomText('text md secondary', transactionCut(address)),
     buttons: [
       CustomButton('Copy', 'secondary md enabled hug copy', () => copyAddress()),
     ],
