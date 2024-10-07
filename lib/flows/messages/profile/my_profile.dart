@@ -103,7 +103,7 @@ class MyProfileState extends State<MyProfile> {
         didItem(context, state.personal.did),
         addressItem(context, widget.address),
       ],
-      Bumper([CustomButton('Save', 'primary lg $save expand none', onSave())]),
+      Bumper(context, [CustomButton('Save', 'primary lg $save expand none', onSave)]),
     );
   }
 }

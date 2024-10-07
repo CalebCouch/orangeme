@@ -33,7 +33,7 @@ class TabNavState extends State<TabNav> {
     }
 
     return SizedBox(
-      width: MediaQuery.sizeOf(context).width,
+      width: MediaQuery.of(context).size.width,
       height: 64,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +46,7 @@ class TabNavState extends State<TabNav> {
               child: Container(
                 padding: const EdgeInsets.only(right: AppPadding.navBar),
                 alignment: Alignment.centerRight,
-                child: CustomIcon('wallet md ${(widget.index == 0) ? 'secondary' : 'text_secondary'}'),
+                child: CustomIcon('wallet lg ${(widget.index == 0) ? 'secondary' : 'text_secondary'}'),
               ),
             ),
           ),
@@ -58,7 +58,7 @@ class TabNavState extends State<TabNav> {
               child: Container(
                 padding: const EdgeInsets.only(left: AppPadding.navBar),
                 alignment: Alignment.centerLeft,
-                child: CustomIcon('message md ${(widget.index == 1) ? 'secondary' : 'text_secondary'}'),
+                child: CustomIcon('message lg ${(widget.index == 1) ? 'secondary' : 'text_secondary'}'),
               ),
             ),
           ),

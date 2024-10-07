@@ -77,10 +77,10 @@ class SendState extends State<Send> {
       Header_Stack(context, "Bitcoin address"),
       [
         AddressInput(controller),
-        ButtonTips(widget.address),
+        ButtonTips(),
       ],
-      Bumper([
-        CustomButton('Continue', 'primary lg enabled expand none', onContinue()),
+      Bumper(context, [
+        CustomButton('Continue', 'primary lg enabled expand none', onContinue),
       ]),
     );
   }
@@ -97,13 +97,13 @@ class SendState extends State<Send> {
     );
   }
 
-  Widget ButtonTips(String? address) {
+  Widget ButtonTips() {
     return Container(
       padding: const EdgeInsets.all(8),
       child: CustomColumn([
-        CustomButton('Paste Clipboard', 'secondary md enabled hug paste', onPaste()),
+        CustomButton('Paste Clipboard', 'secondary md enabled hug paste', onPaste),
         const CustomText('text sm text_secondary', 'or'),
-        CustomButton('Scan QR Code', 'secondary md enabled hug qr-code', onScan()),
+        CustomButton('Scan QR Code', 'secondary md enabled hug qrcode', onScan),
       ], 8),
     );
   }

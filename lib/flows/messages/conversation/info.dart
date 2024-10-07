@@ -34,7 +34,7 @@ class MessageInfoState extends State<MessageInfo> {
       Header_Stack(context, "Group members"),
       [
         Information(widget.contacts),
-        ListMembers(widget.globalState, widget.contacts),
+        ListMembers(context, widget.globalState, widget.contacts),
       ],
     );
   }
@@ -46,33 +46,25 @@ Widget Information(List<Contact> contacts) {
   return CustomText('text md text_secondary', 'This group has ${contacts.length} members');
 }
 
-onPressed(GlobalState globalState, BuildContext context, Contact contact) async {
-  var address = (await globalState.invoke("get_new_address", "")).data;
-  switchPageTo(
-    context,
-    UserProfile(
-      globalState,
-      address,
-      userInfo: contact,
-    ),
-  );
-}
-
-Widget ListMembers(GlobalState globalState, contacts) {
-  return Expanded(
-    child: SingleChildScrollView(
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const ScrollPhysics(),
-        itemCount: contacts.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ContactItem(
-            context,
-            contacts[index],
-            onPressed(globalState, context, contacts[index]),
-          );
-        },
+Widget ListMembers(BuildContext context, GlobalState globalState, contacts) {
+  onPressed(index) async {
+    var address = (await globalState.invoke("get_new_address", "")).data;
+    switchPageTo(
+      context,
+      UserProfile(
+        globalState,
+        address,
+        userInfo: contacts[index],
       ),
-    ),
+    );
+  }
+
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: const ScrollPhysics(),
+    itemCount: contacts.length,
+    itemBuilder: (BuildContext context, int index) {
+      return ContactItem(context, contacts[index], () => onPressed(index));
+    },
   );
 }

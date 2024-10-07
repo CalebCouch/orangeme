@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
-import 'package:orange/components/amount_display.dart';
 import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+
+class ShakeController extends ChangeNotifier {
+  void shake() => notifyListeners();
+}
 
 class SendAmount extends StatefulWidget {
   final GlobalState globalState;
@@ -54,51 +58,92 @@ class SendAmountState extends State<SendAmount> {
 
   final ShakeController _shakeController = ShakeController();
   Widget buildScreen(BuildContext context, DartState state) {
-    return SimpleKeyboardListener(
-      onPressed: (String input) => updateAmount(widget.globalState, error, input, amount, _shakeController),
-      child: Stack_Default(
-        Header_Stack(context, "Bitcoin address"),
+    return Stack_Default(
+      Header_Stack(context, "Send bitcoin"),
+      [
+        AmountDisplay(amount, getBTC(amount)),
+      ],
+      Bumper(
+        context,
         [
-          AmountDisplay(amount, getBTC(amount)),
           NumericKeypad(
-            onNumberPressed: (String input) => updateAmount(widget.globalState, error, input, amount, _shakeController),
+            onNumberPressed: updateAmount,
           ),
+          CustomButton(
+            'Continue',
+            'primary lg ${(amount != "0" && error == "") ? 'enabled' : 'disabled'} expand none',
+            () => onContinue(getBTC(amount)),
+          )
         ],
-        Bumper(
-          [
-            CustomButton(
-              'Confirm',
-              'primary lg  ${(amount != "0" && error == "") ? 'enabled' : 'disabled'} expand none',
-              () => onContinue(getBTC(amount)),
-            )
-          ],
-        ),
+        true,
       ),
     );
   }
 
+  /*return SimpleKeyboardListener(
+      onPressed: updateAmount,*/
+
 //The following widgets can ONLY be used in this file
 
-  Widget BalanceDisplay(DartState state) {
-    dynamic_size(x) {
-      if (x <= 4) return 'title';
-      if (x <= 7) return 'h1';
-      return 'h2';
+  List<String> updateAmount(String input) {
+    var buzz = FeedbackType.warning;
+    HapticFeedback.heavyImpact();
+    var updatedAmount = "0";
+    if (input == "backspace") {
+      if (amount.length == 1) {
+        updatedAmount = "0";
+      } else if (amount.isNotEmpty) {
+        updatedAmount = amount.substring(0, amount.length - 1);
+      } else {
+        Vibrate.feedback(buzz);
+        _shakeController.shake();
+        updatedAmount = amount;
+      }
+    } else if (input == ".") {
+      if (!amount.contains(".") && amount.length <= 7) {
+        updatedAmount = amount += ".";
+      } else {
+        Vibrate.feedback(buzz);
+        _shakeController.shake();
+        updatedAmount = amount;
+      }
+    } else {
+      if (amount == "0") {
+        updatedAmount = input;
+      } else if (amount.contains(".")) {
+        if (amount.length < 11 && amount.split(".")[1].length < 2) {
+          updatedAmount = amount + input;
+        } else {
+          Vibrate.feedback(buzz);
+          _shakeController.shake();
+          updatedAmount = amount;
+        }
+      } else {
+        if (amount.length < 10) {
+          updatedAmount = amount + input;
+        } else {
+          Vibrate.feedback(buzz);
+          _shakeController.shake();
+          updatedAmount = amount;
+        }
+      }
     }
 
-    String usd = state.usdBalance == 0 ? "\$0.00" : "\$${formatValue(state.usdBalance)}";
-
-    return Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
-      child: CustomColumn([
-        CustomText(
-          'heading ${dynamic_size(formatValue(state.usdBalance).length)}',
-          '$usd USD',
-        ),
-        CustomText('text lg text_secondary', '${formatBTC(state.btcBalance, 8)} BTC')
-      ], AppPadding.valueDisplaySep),
-    );
+    double min = widget.globalState.state.value.fees[0] + 0.10;
+    var max = widget.globalState.state.value.usdBalance - min;
+    max = max > 0 ? max : 0;
+    var err = "";
+    if (double.parse(updatedAmount) != 0) {
+      if (double.parse(updatedAmount) <= min) {
+        err = "\$${formatValue(min)} minimum.";
+      } else if (double.parse(updatedAmount) > max) {
+        err = "\$${formatValue(max)} maximum.";
+        if (err == "\$0 maximum.") {
+          err = "You have no bitcoin.";
+        }
+      }
+    }
+    return [amount = updatedAmount, error = err];
   }
 
   Widget AmountDisplay(amt, btc) {
@@ -109,11 +154,11 @@ class SendAmountState extends State<SendAmount> {
         return Row(
           children: [const CustomIcon('error md danger'), const SizedBox(width: 8), CustomText('text lg danger', error)],
         );
-      } else if (true && amt == "0") {
+      } else if (false && amt == "0") {
         //onDesktop only
-        return const CustomText('text lg textSecondary', "Type dollar amount.");
+        return const CustomText('text lg text_secondary', "Type dollar amount.");
       } else {
-        return CustomText('text lg textSecondary', "${formatBTC(btc, 8)} BTC");
+        return CustomText('text lg text_secondary', "${formatBTC(btc, 8)} BTC");
       }
     }
 
@@ -145,31 +190,29 @@ class SendAmountState extends State<SendAmount> {
     if (usd.contains('.')) length - 1;
     length = usd.length + displayDecimals(usd).length;
 
-    dynamic_size(x) {
-      if (x <= 4) return 'title';
-      if (x <= 7) return 'h1';
+    dynamic_size(y) {
+      if (y <= 4) return 'title';
+      if (y <= 7) return 'h1';
       return 'h2';
     }
 
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: CustomColumn([
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomText('heading ${dynamic_size(text_size)}', "\$$valueUSD"),
-            CustomText('heading ${dynamic_size(text_size)}, textSecondary', displayDecimals(usd))
-          ],
-        ),
-        subText(error)
-      ]),
+    return Expanded(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: CustomColumn([
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomText('heading ${dynamic_size(valueUSD.length)}', "\$$valueUSD"),
+              CustomText('heading ${dynamic_size(valueUSD.length)} text_secondary', displayDecimals(usd))
+            ],
+          ),
+          subText(error)
+        ]),
+      ),
     );
   }
-}
-
-class ShakeController extends ChangeNotifier {
-  void shake() => notifyListeners();
 }
 
 class SimpleKeyboardListener extends StatefulWidget {

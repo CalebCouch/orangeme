@@ -35,25 +35,33 @@ class ScanQRState extends State<ScanQR> {
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
-    return Stack_Default(
+    return Root_Takeover(
       Header_Stack(context, "Scan QR code"),
-      [
-        Stack(children: [
+      Expanded(
+        child: Stack(children: [
           qrScanner(),
           Guide(),
         ]),
-      ],
-      Bumper([Container()]),
+      ),
     );
   }
 
   //The following widgets can ONLY be used in this file
 
   Widget Guide() {
-    return CustomColumn([
-      scanBox(),
-      const CustomText('text md bg_secondary', 'Scan a bitcoin QR code'),
-    ]);
+    return Expanded(
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            scanBox(),
+            const Spacing(12),
+            const CustomText('text md text_secondary', 'Scan a bitcoin QR code'),
+          ],
+        ),
+      ),
+    );
   }
 
   /* Initializes the QR view controller and handles scanned data. */
@@ -76,12 +84,9 @@ class ScanQRState extends State<ScanQR> {
   }
 
   qrScanner() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.content),
-      child: QRView(
-        key: qrKey,
-        onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(widget.globalState, controller)},
-      ),
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(widget.globalState, controller)},
     );
   }
 }

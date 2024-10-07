@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/custom/custom_text.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
 class ErrorPage extends StatefulWidget {
   final String message;
@@ -26,10 +26,7 @@ class ErrorPageState extends State<ErrorPage> {
               ),
               child: IntrinsicHeight(
                 child: Center(
-                  child: CustomText(
-                    text: "error message: ${widget.message}",
-                    alignment: TextAlign.center,
-                  ),
+                  child: CustomText('text md', "error message: ${widget.message}"),
                 ),
               ),
             ),

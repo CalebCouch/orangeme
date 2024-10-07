@@ -55,9 +55,9 @@ class TransactionSpeedState extends State<TransactionSpeed> {
     var fees = widget.globalState.state.value.fees;
 
     return Stack_Default(
-      isLoading ? Container() : Header_Stack(context, "Bitcoin address"),
+      isLoading ? Container() : Header_Stack(context, "Transaction speed"),
       [isLoading ? loadingCircle() : SpeedSelector(fees)],
-      isLoading ? Container() : Bumper([CustomButton('Confirm', 'primary lg enabled expand none', () => onContinue())]),
+      isLoading ? Container() : Bumper(context, [CustomButton('Continue', 'primary lg enabled expand none', () => onContinue())]),
     );
   }
 
@@ -89,9 +89,39 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   }
 
   Widget loadingCircle() {
-    return const CircularProgressIndicator(
-      strokeCap: StrokeCap.round,
-      backgroundColor: ThemeColor.bgSecondary,
+    return const Expanded(
+      child: Center(
+        child: CircularProgressIndicator(
+          strokeCap: StrokeCap.round,
+          backgroundColor: ThemeColor.bgSecondary,
+        ),
+      ),
     );
   }
+}
+
+Widget radioButton(String title, String subtitle, bool isEnabled, onTap) {
+  String icon = isEnabled ? 'radioFilled' : 'radio';
+  return InkWell(
+    onTap: onTap,
+    child: Container(
+      color: Colors.transparent,
+      width: double.infinity,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          CustomIcon('$icon lg', key: UniqueKey()),
+          const Spacing(16),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: CustomColumn([
+              CustomText('heading h5', title, alignment: TextAlign.left),
+              CustomText('text sm text_secondary', subtitle, alignment: TextAlign.left),
+            ], 8, true, false),
+          ),
+        ],
+      ),
+    ),
+  );
 }

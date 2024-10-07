@@ -36,7 +36,7 @@ class ChooseRecipientState extends State<ChooseRecipient> {
         SelectedContacts(recipients, removeRecipient),
         ListContacts(filteredContacts, removeRecipient),
       ],
-      Bumper([Container()]),
+      Bumper(context, [Container()]),
     );
   }
 

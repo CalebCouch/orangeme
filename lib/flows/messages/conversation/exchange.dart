@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/message_bubble.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/components/profile_photo.dart';
+import 'package:orange/flows/messages/conversation/info.dart';
+import 'package:orange/theme/stylesheet.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Exchange extends StatefulWidget {
@@ -40,20 +43,33 @@ class ExchangeState extends State<Exchange> {
   }
 
   Widget build_screen(BuildContext context, DartState state) {
+    List<Contact> members = widget.conversation.members;
     return Stack_Chat(
-      Header_Message(context, "Confirm send"), //widget.conversation,
+      Header_Message(
+        context,
+        ChatRecipients(context, members),
+        infoButton(context, MessageInfo(widget.globalState, contacts: members)),
+      ),
       [
-        widget.conversation.messages.isEmpty,
-        messageStack(widget.globalState, context, scrollController, widget.conversation.members, widget.conversation.messages)
+        false, //widget.conversation.messages.isNotEmpty,
+        messageStack(widget.globalState, context, scrollController, members, widget.conversation.messages)
       ],
-      Bumper([MessageInput()]),
+      Bumper(context, [MessageInput()], true),
     );
   }
 }
 
+Widget ChatRecipients(BuildContext context, List<Contact> contacts) {
+  bool isGroup = contacts.length > 1;
+  return CustomColumn([
+    isGroup ? profilePhotoStack(context, contacts) : ProfilePhoto(context, contacts[0].pfp, ProfileSize.lg, true, true),
+    CustomText('heading h5', isGroup ? 'Group Message' : contacts[0].name),
+  ], 8);
+}
+
 Widget MessageInput() {
   return Container(
-    padding: const EdgeInsets.only(bottom: 16, top: 8),
+    padding: const EdgeInsets.only(top: 16, bottom: 8),
     child: const CustomTextInput(
       hint: 'Message',
       showIcon: true,

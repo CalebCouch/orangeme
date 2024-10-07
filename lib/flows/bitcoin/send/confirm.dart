@@ -43,7 +43,7 @@ class ConfirmState extends State<ConfirmSend> {
         ConfirmAddress(context, widget.globalState, widget.tx),
         ConfirmAmount(context, widget.globalState, widget.tx),
       ],
-      Bumper([CustomButton('Confirm & Send', 'primary lg enabled expand none', () => onContinue())]),
+      Bumper(context, [CustomButton('Confirm & Send', 'primary lg enabled expand none', () => onContinue())]),
     );
   }
 }
@@ -66,7 +66,7 @@ ConfirmAddress(BuildContext context, GlobalState globalState, tx) {
       const CustomText('text sm text_secondary', "Bitcoin sent to the wrong address can never be recovered."),
     ], 16),
     buttons: [
-      CustomButton('Address', 'secondary md enabled hug edit', changeAddress()),
+      CustomButton('Address', 'secondary md enabled hug edit', changeAddress),
     ],
   );
 }
@@ -98,8 +98,8 @@ ConfirmAmount(BuildContext context, GlobalState globalState, tx) {
       const CustomText('text sm text_secondary', "Bitcoin sent to the wrong address can never be recovered."),
     ], 16),
     buttons: [
-      CustomButton('Amount', 'secondary md enabled hug edit', changeAmount()),
-      CustomButton('Speed', 'secondary md enabled hug edit', changeSpeed()),
+      CustomButton('Amount', 'secondary md enabled hug edit', changeAmount),
+      CustomButton('Speed', 'secondary md enabled hug edit', changeSpeed),
     ],
   );
 }

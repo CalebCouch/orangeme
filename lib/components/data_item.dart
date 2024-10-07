@@ -23,6 +23,8 @@ class DataItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (number != null) ListNumber(number),
         if (number != null) const Spacing(16),
@@ -34,7 +36,7 @@ class DataItem extends StatelessWidget {
             if (helperText != null) CustomText('text sm text_secondary', helperText!),
             content,
             if (buttons != null) CustomRow(buttons!, 10)
-          ]),
+          ], 16, true, false),
         )
       ],
     );

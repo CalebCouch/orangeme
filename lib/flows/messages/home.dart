@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/profile_photo.dart';
+import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/list_item.dart';
 
@@ -47,11 +48,10 @@ class MessagesHomeState extends State<MessagesHome> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Root_Home(
-      widget.globalState,
-      Header_Home(ProfileButton, "Messages"),
+      Header_Home(ProfileButton(context, state.personal.pfp, () {}), "Messages"),
       state.conversations.isEmpty ? [noMessages()] : [listConversations(state, widget.globalState)],
-      Bumper([CustomButton('New Message', 'primary lg enabled expand none', createNewMessage)]),
-      1,
+      Bumper(context, [CustomButton('New Message', 'primary lg enabled expand none', createNewMessage)]),
+      TabNav(widget.globalState, 1),
     );
   }
 
@@ -71,8 +71,8 @@ class MessagesHomeState extends State<MessagesHome> {
         itemBuilder: (BuildContext context, int index) {
           return ConversationItem(
             context,
-            state.conversations[index].contacts,
-            state.conversations[index].messages[0],
+            state.conversations[index].members,
+            state.conversations[index].messages[0].message,
             () {
               HapticFeedback.mediumImpact();
               navigateTo(
@@ -86,12 +86,13 @@ class MessagesHomeState extends State<MessagesHome> {
     );
   }
 
-  Widget ConversationItem(BuildContext context, Contact contact, String lastText, onTap) {
+  Widget ConversationItem(BuildContext context, List<Contact> contact, String lastText, onTap) {
+    bool isGroup = contact.length > 1;
     return ListItem(
       onTap: onTap,
-      visual: ProfilePhoto(context, contact.pfp, ProfileSize.lg),
-      title: contact.name,
-      sub: lastText,
+      visual: ProfilePhoto(context, contact[0].pfp, ProfileSize.lg, isGroup),
+      title: isGroup ? 'Group Message' : contact[0].name,
+      desc: lastText,
     );
   }
 }

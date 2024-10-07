@@ -28,7 +28,7 @@ class ReceiveState extends State<Receive> {
   }
 
   onShare() {
-    () => {Share.share(widget.address)};
+    Share.share(widget.address);
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
@@ -38,9 +38,10 @@ class ReceiveState extends State<Receive> {
         QRCode(widget.address),
         Instructions(),
       ],
-      Bumper([
-        CustomButton('Share', 'primary lg enabled expand none', onShare()),
+      Bumper(context, [
+        CustomButton('Share', 'primary lg enabled expand none', onShare),
       ]),
+      Alignment.center,
     );
   }
 }

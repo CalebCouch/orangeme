@@ -44,9 +44,7 @@ class ConfirmationState extends State<Confirmation> {
       [
         Result('You sent \$${formatValue(widget.amount.abs())}'),
       ],
-      Bumper(
-        [CustomButton('Done', 'secondary lg enabled expand none', onDone)],
-      ),
+      Bumper(context, [CustomButton('Done', 'secondary lg enabled expand none', onDone)]),
     );
   }
 }

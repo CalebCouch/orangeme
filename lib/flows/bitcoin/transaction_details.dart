@@ -39,7 +39,7 @@ class ViewTransactionDetailsState extends State<ViewTransactionDetails> {
         AmountDisplay(widget.transaction),
         transactionTabular(context, widget.transaction),
       ],
-      Bumper([CustomButton('Done', 'secondary lg enabled expand none', () => onDone())]),
+      Bumper(context, [CustomButton('Done', 'secondary lg enabled expand none', () => onDone())]),
     );
   }
 

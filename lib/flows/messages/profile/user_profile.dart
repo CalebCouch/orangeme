@@ -58,7 +58,7 @@ class UserProfileState extends State<UserProfile> {
         didItem(context, widget.userInfo.did),
         addressItem(context, widget.address),
       ],
-      Bumper([CustomButton('Message', 'primary lg enabled expand none', onMessage)]),
+      Bumper(context, [CustomButton('Message', 'primary lg enabled expand none', onMessage)]),
     );
   }
 }

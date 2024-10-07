@@ -4,6 +4,7 @@ import 'package:orange/classes.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/profile_photo.dart';
+import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/transaction_details.dart';
@@ -41,19 +42,18 @@ class BitcoinHomeState extends State<BitcoinHome> {
 
   Widget build_screen(BuildContext context, DartState state) {
     return Root_Home(
-      widget.globalState,
-      Header_Home(ProfileButton, "Wallet"),
+      Header_Home(ProfileButton(context, state.personal.pfp, () {}), "Wallet"),
       [
         BalanceDisplay(state),
-        BackupReminder(false),
-        NoInternet(false),
-        TransactionList(state, TransactionItem),
+        //  BackupReminder(false),
+        //  NoInternet(false),
+        TransactionList(widget.globalState, state.transactions),
       ],
-      Bumper([
-        CustomButton('Receive', 'primary lg enabled expand none', onReceive()),
-        CustomButton('Send', 'primary lg enabled expand none', onSend()),
+      Bumper(context, [
+        CustomButton('Receive', 'primary lg enabled expand none', onReceive),
+        CustomButton('Send', 'primary lg enabled expand none', onSend),
       ]),
-      0,
+      TabNav(widget.globalState, 0),
     );
   }
 }
@@ -71,15 +71,15 @@ Widget BalanceDisplay(DartState state) {
 
   return Container(
     alignment: Alignment.center,
-    padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
+    padding: const EdgeInsets.symmetric(vertical: 64),
     child: CustomColumn([
-      CustomText('heading ${dynamic_size(formatValue(state.usdBalance).length)}', '$usd USD'),
+      CustomText('heading ${dynamic_size(formatValue(state.usdBalance).length)}', usd),
       CustomText('text lg text_secondary', '${formatBTC(state.btcBalance, 8)} BTC')
     ], AppPadding.valueDisplaySep),
   );
 }
 
-BackupReminder(bool display) {
+Widget BackupReminder(bool display) {
   return display
       ? const CustomBanner(
           'orange.me recommends that you back\n your phone up to the cloud.',
@@ -87,7 +87,7 @@ BackupReminder(bool display) {
       : Container();
 }
 
-NoInternet(bool display) {
+Widget NoInternet(bool display) {
   return display
       ? const CustomBanner(
           'You are not connected to the internet.\norange.me requires an internet connection.',
@@ -96,19 +96,16 @@ NoInternet(bool display) {
       : Container();
 }
 
-Widget TransactionList(state, TransactionItem) {
-  return Expanded(
-    child: SingleChildScrollView(
-      child: ListView.builder(
-        shrinkWrap: true,
-        reverse: true,
-        physics: const ScrollPhysics(),
-        itemCount: state.transactions.length,
-        itemBuilder: (BuildContext context, int index) {
-          return TransactionItem(context, state.transactions[index]);
-        },
-      ),
-    ),
+Widget TransactionList(GlobalState globalState, List<Transaction> transactions) {
+  if (transactions.isEmpty) return const CustomText('text md text_secondary', 'No transactions yet.');
+  return ListView.builder(
+    shrinkWrap: true,
+    reverse: true,
+    physics: const ScrollPhysics(),
+    itemCount: transactions.length,
+    itemBuilder: (BuildContext context, int index) {
+      return TransactionItem(globalState, context, transactions[index]);
+    },
   );
 }
 

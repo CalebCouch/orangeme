@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 import 'dart:io';
 import 'dart:io' show Platform;
 import 'package:window_manager/window_manager.dart';
@@ -16,8 +16,7 @@ Future<void> main() async {
   }
   GlobalState globalState = GlobalState.init();
   runApp(MyApp(globalState: globalState));
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
 class MyApp extends StatelessWidget {
