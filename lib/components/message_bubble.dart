@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/flows/messages/profile/user_profile.dart';
+//import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';

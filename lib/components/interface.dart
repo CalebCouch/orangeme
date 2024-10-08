@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'dart:io' show Platform;
 import 'package:orange/components/tab_navigator.dart';
-import 'package:orange/components/sidebar.dart';
+//import 'package:orange/components/sidebar.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/global.dart' as global;
 
@@ -28,9 +28,9 @@ class Interface extends StatelessWidget {
     required this.navigationIndex,
     this.desktopOnly = false,
   });
+
   @override
   Widget build(BuildContext context) {
-    print("platform $Platform");
   //if (global.platform_isMobile) {
       return MobileInterface(
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
@@ -49,7 +49,7 @@ class Interface extends StatelessWidget {
   //    ),
   //    bumper: bumper,
   //    sidebar: Sidebar(index: navigationIndex));
-  //}
+  }
 }
 
 /* A mobile layout with optional bottom navigation bar and bumper. */

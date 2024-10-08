@@ -16,9 +16,8 @@ import 'package:orange/classes.dart';
 // of the transaction amount and associated details.
 
 class TransactionDetailsWidget extends StatefulWidget {
-  final GlobalState globalState;
   final Transaction transaction;
-  const TransactionDetailsWidget(this.globalState, this.transaction,
+  const TransactionDetailsWidget(this.transaction,
       {super.key});
 
   @override
@@ -41,7 +40,6 @@ class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
     String direction = widget.transaction.isReceive ? "Received" : "Sent";
 
     return Interface(
-      widget.globalState,
       header: stackHeader(context, "$direction bitcoin"),
       content: Content(
         content: Column(

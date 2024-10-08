@@ -29,11 +29,6 @@ import 'package:orange/global.dart' as global;
 // next step in the transaction process. The interface features custom
 // animations, keyboard handling, and conditional content based on the platform.
 
-/* Manages and triggers shake animations by notifying listeners. */
-class ShakeController extends ChangeNotifier {
-  void shake() => notifyListeners();
-}
-
 /* Applies a shake animation to its child widget, controlled by a ShakeController. 
 Useful for indicating errors or important actions. */
 class ShakeWidget extends StatefulWidget {

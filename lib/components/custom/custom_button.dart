@@ -4,13 +4,12 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 import 'package:orange/theme/stylesheet.dart';
 
-import 'package:orange/flows/bitcoin/send/amount.dart';
-
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_icon.dart';
 
 import 'package:orange/util.dart';
+import 'package:orange/classes.dart';
 
 // This Dart code defines a customizable Flutter button widget that adapts its
 // style, size, and appearance based on different states, and includes helper

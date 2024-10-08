@@ -7,9 +7,9 @@ import 'package:orange/components/custom/custom_text.dart';
 import 'package:orange/components/custom/custom_button.dart';
 import 'package:orange/components/profile_photo.dart';
 
-import 'package:orange/flows/messages/conversation/info.dart';
-import 'package:orange/flows/messages/profile/user_profile.dart';
-import 'package:orange/flows/messages/profile/my_profile.dart';
+//  import 'package:orange/flows/messages/conversation/info.dart';
+//  import 'package:orange/flows/messages/profile/user_profile.dart';
+//  import 'package:orange/flows/messages/profile/my_profile.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
@@ -73,16 +73,16 @@ Widget homeDesktopHeader(BuildContext context, String text) {
 }
 
 /* A responsive header for home pages with profile photo and optional icon */
-Widget homeHeader(BuildContext context, GlobalState globalState, text, pfp,
+Widget homeHeader(BuildContext context, text, pfp,
     [Widget? iconButton]) {
   if (global.platform_isDesktop) return homeDesktopHeader(context, text);
   return DefaultHeader(
     left: InkWell(
       onTap: () {
-        navigateTo(
-          context,
-          MyProfile(globalState),
-        );
+      //navigateTo(
+      //  context,
+      //  MyProfile(),
+      //);
       },
       child: Container(
         width: 50,
@@ -125,9 +125,9 @@ Widget stackButtonHeader(
 }
 
 /* A basic header with optional back button and centered text. */
-Widget stackHeader(BuildContext context, String text, [iconButton]) {
+Widget stackHeader(Widget back, String text, [iconButton]) {
   return DefaultHeader(
-    left: iconButton == null ? backButton(context) : iconButton!,
+    left: iconButton == null ? global.navigation.switchPageTo(back) : iconButton!,
     center: CustomText(
       textType: "heading",
       text: text,
@@ -138,8 +138,7 @@ Widget stackHeader(BuildContext context, String text, [iconButton]) {
 }
 
 /* A message header that displays user or group info */
-Widget stackMessageHeader(
-    GlobalState globalState, BuildContext context, Conversation cnvo) {
+Widget stackMessageHeader(BuildContext context, Conversation cnvo) {
   bool isGroup = false;
   if (cnvo.members.length > 1) isGroup = true;
   return DefaultHeader(
@@ -147,10 +146,10 @@ Widget stackMessageHeader(
     center: !isGroup
         ? InkWell(
             onTap: () {
-              navigateTo(
-                context,
-                UserProfile(globalState, userInfo: cnvo.members[0]),
-              );
+            //navigateTo(
+            //  context,
+            //  UserProfile(userInfo: cnvo.members[0]),
+            //);
             },
             child: Column(
               children: [
@@ -177,11 +176,11 @@ Widget stackMessageHeader(
               ),
             ],
           ),
-    right: isGroup
-        ? infoButton(
-            context,
-            MessageInfo(globalState, contacts: cnvo.members),
-          )
-        : null,
+    right: null// isGroup
+      //? infoButton(
+      //    context,
+      //    MessageInfo(contacts: cnvo.members),
+      //  )
+      //: null,
   );
 }

@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:io' as DartIO;
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
 
@@ -25,48 +26,82 @@ enum Platform { Windows, Linux, Mac, IOS, Android, Fuchsia;
     }
 
     bool isDesktop() {
-        switch(this) {
-            case Platform.Mac:
-                return true;
-            case Platform.Linux:
-                return true;
-            case Platform.Windows:
-                return true;
-            default:
-                return false;
-        }
+        return switch(this) {
+            Platform.Mac => true,
+            Platform.Linux => true,
+            Platform.Windows => true,
+            _ => false
+        };
+    }
+
+    String toString() {
+        return switch(this) {
+            Platform.Mac => "Mac",
+            Platform.Linux => "Linux",
+            Platform.Windows => "Windows",
+            Platform.IOS => "IOS",
+            Platform.Android => "Android",
+            Platform.Fuchsia => "Fuchsia"
+        };
     }
 }
 
-//  enum Platform { Windows, Linux, Mac, IOS, Android, Fuchsia }
+/* Manages and triggers shake animations by notifying listeners. */
+class ShakeController extends ChangeNotifier {
+  void shake() => notifyListeners();
+}
 
-//  extension CatExtension on Platform {
-//      Platform init() {
-//          //      }
+abstract class GenericWidget extends StatefulWidget {
+    Timer? timer;
 
-//      
-//  }
+    GenericWidget({super.key});
+}
 
-class BitcoinHomeTransaction{
+abstract class GenericState<T extends GenericWidget> extends State<T> {
+    String stateName();
+    int refreshInterval();
+
+    void unpack_state(Map<String, dynamic> json);
+
+    @override
+    void initState() {
+        super.initState();
+        var interval = refreshInterval();
+        if (interval > 0) {
+            widget.timer = Timer.periodic(Duration(milliseconds: interval), (Timer t) async {
+                String state = await global.invoke("get_state", stateName());
+                unpack_state(jsonDecode(state));
+            });
+        } else {_asyncInitState();}
+    }
+
+    _asyncInitState() async {
+        String state = await global.invoke("get_state", stateName());
+        unpack_state(jsonDecode(state));
+    }
+
+    @override
+    void dispose() {
+      widget.timer?.cancel();
+      super.dispose();
+    }
+}
+
+class BitcoinHomeTransaction {
     String usd;
     String datetime;
-    bool isReceive;
+    bool is_withdraw;
 
-    BitcoinHomeTransaction(this.usd, this.datetime, this.isReceive);
-}
+    BitcoinHomeTransaction(this.usd, this.datetime, this.is_withdraw);
 
-class BitcoinHomeState {
-    String usd;
-    String btc;
-    List<BitcoinHomeTransaction> transactions;
-
-    BitcoinHomeState(this.usd, this.btc, this.transactions);
-}
-
-class ReceiveState {
-    String address;
-
-    ReceiveState(this.address);
+    @override
+    factory BitcoinHomeTransaction.fromJson(Map<String, dynamic> json) {
+        return BitcoinHomeTransaction(
+            json['usd'] as String,
+            json['datetime'] as String,
+            json['is_withdraw'] as bool,
+        );
+    }
 }
 
 class Transaction {
@@ -210,26 +245,26 @@ class GlobalState {
   //if (Platform.isWindows && Platform.isLinux && Platform.isMacOS && Platform.isAndroid && Platform.isIOS && Platform.isFuchsia) {
   //    state.error("Platform is unknown");
   //}
-    state.startRust();
+    //state.startRust();
     return state;
   }
 
-  Future<void> startRust() async {
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    Directory mydir =
-        await Directory('${appDocDirectory.path}/').create(recursive: true);
-    error(await rustStart(
-        path: mydir.path,
-        callback: dartCallback,
-        callback1: dartCallback,
-        callback2: dartCallback,
-        callback3: dartCallback,
-        callback4: dartCallback));
-  }
+//Future<void> startRust() async {
+//  Directory appDocDirectory = await getApplicationDocumentsDirectory();
+//  Directory mydir =
+//      await Directory('${appDocDirectory.path}/').create(recursive: true);
+//  error(await rustStart(
+//      path: mydir.path,
+//      callback: dartCallback,
+//      callback1: dartCallback,
+//      callback2: dartCallback,
+//      callback3: dartCallback,
+//      callback4: dartCallback));
+//}
 
-  BuildContext? getContext() {
-    return navkey.currentContext;
-  }
+//BuildContext? getContext() {
+//  return navkey.currentContext;
+//}
 
   void error(String err) {
     Navigator.pushReplacement(

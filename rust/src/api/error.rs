@@ -34,6 +34,8 @@ pub enum Error {
     Utf8String(#[from] std::string::FromUtf8Error),
     #[error(transparent)]
     TokioJoin(#[from] tokio::task::JoinError),
+    #[error(transparent)]
+    EsploraError(#[from] bdk::esplora_client::Error),
 
 
 

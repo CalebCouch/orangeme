@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:orange/flows/bitcoin/send/amount.dart';
+//import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/theme/stylesheet.dart';
+import 'package:orange/classes.dart';
 
 import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/components/text_input.dart';

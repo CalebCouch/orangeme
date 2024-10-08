@@ -6,16 +6,11 @@
 import '../frb_generated.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'structs.dart';
+
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BDKWallet < SqliteDatabase >>>
 abstract class BdkWalletSqliteDatabase implements RustOpaqueInterface {}
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<(DescriptorSet)>>
-abstract class DescriptorSet implements RustOpaqueInterface {
-  static Future<DescriptorSet> default_() =>
-      RustLib.instance.api.crateApiStructsDescriptorSetDefault();
-}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ElectrumBlockchain>>
 abstract class ElectrumBlockchain implements RustOpaqueInterface {}
@@ -33,13 +28,7 @@ abstract class Wallet implements RustOpaqueInterface {
 
   set inner(BdkWalletSqliteDatabase inner);
 
-  static Future<DescriptorSet> generateDescs({required U8Array64 seed}) =>
-      RustLib.instance.api.crateApiWalletWalletGenerateDescs(seed: seed);
-
-  static Future<U8Array64> generateSeed() =>
-      RustLib.instance.api.crateApiWalletWalletGenerateSeed();
-
-  Future<List<Transaction>> listTxs();
+  Future<String> getnewaddress();
 
   // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
   static Future<Wallet> newInstance(
@@ -48,6 +37,54 @@ abstract class Wallet implements RustOpaqueInterface {
           .crateApiWalletWalletNew(descriptors: descriptors, path: path);
 
   Future<void> sync_();
+}
+
+class DescriptorSet {
+  final String external_;
+  final String internal;
+
+  const DescriptorSet({
+    required this.external_,
+    required this.internal,
+  });
+
+  static Future<DescriptorSet> fromSeed({required Seed seed}) =>
+      RustLib.instance.api.crateApiWalletDescriptorSetFromSeed(seed: seed);
+
+  @override
+  int get hashCode => external_.hashCode ^ internal.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DescriptorSet &&
+          runtimeType == other.runtimeType &&
+          external_ == other.external_ &&
+          internal == other.internal;
+}
+
+class Seed {
+  final Uint8List inner;
+
+  const Seed({
+    required this.inner,
+  });
+
+  Future<U8Array64> get_() => RustLib.instance.api.crateApiWalletSeedGet(
+        that: this,
+      );
+
+  // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
+  static Future<Seed> newInstance() =>
+      RustLib.instance.api.crateApiWalletSeedNew();
+
+  @override
+  int get hashCode => inner.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Seed && runtimeType == other.runtimeType && inner == other.inner;
 }
 
 class U8Array64 extends NonGrowableListView<int> {

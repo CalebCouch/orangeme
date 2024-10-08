@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from_str`
 
 class Contact {
   final String name;
@@ -137,30 +137,6 @@ class DartState {
           personal == other.personal;
 }
 
-class DescriptorSet {
-  final String external_;
-  final String internal;
-
-  const DescriptorSet({
-    required this.external_,
-    required this.internal,
-  });
-
-  static Future<DescriptorSet> default_() =>
-      RustLib.instance.api.crateApiStructsDescriptorSetDefault();
-
-  @override
-  int get hashCode => external_.hashCode ^ internal.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DescriptorSet &&
-          runtimeType == other.runtimeType &&
-          external_ == other.external_ &&
-          internal == other.internal;
-}
-
 class Message {
   final Contact sender;
   final String message;
@@ -197,6 +173,21 @@ class Message {
           date == other.date &&
           time == other.time &&
           isIncoming == other.isIncoming;
+}
+
+enum Platform {
+  mac,
+  linux,
+  windows,
+  ios,
+  android,
+  fuchsia,
+  ;
+
+  Future<bool> isDesktop() =>
+      RustLib.instance.api.crateApiStructsPlatformIsDesktop(
+        that: this,
+      );
 }
 
 class RustCommand {
