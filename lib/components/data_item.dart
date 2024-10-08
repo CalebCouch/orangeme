@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class DataItem extends StatelessWidget {

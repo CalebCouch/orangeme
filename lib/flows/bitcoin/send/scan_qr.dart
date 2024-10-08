@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
-import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';

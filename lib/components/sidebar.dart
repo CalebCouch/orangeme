@@ -89,7 +89,7 @@ Widget buttonList(BuildContext context, GlobalState globalState, int index) {
   }
 
   return CustomColumn([
-    CustomButton('Bitcoin', 'ghost lg ${(index == 0) ? 'selected' : 'enabled'} expand wallet', bitcoinPressed()),
-    CustomButton('Messages', 'ghost lg ${(index == 1) ? 'selected' : 'enabled'} expand message', messagesPressed()),
+    CustomButton('Bitcoin', 'ghost lg ${(index == 0) ? 'selected' : 'enabled'} expand wallet', bitcoinPressed),
+    CustomButton('Messages', 'ghost lg ${(index == 1) ? 'selected' : 'enabled'} expand message', messagesPressed),
   ], AppPadding.buttonList);
 }
