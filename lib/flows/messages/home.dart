@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/list_item.dart';
@@ -55,7 +56,10 @@ class MessagesHomeState extends State<MessagesHome> {
       Header_Home(ProfileButton(context, state.personal.pfp, toProfile), "Messages"),
       [listConversations(state, widget.globalState)],
       Bumper(context, [CustomButton('New Message', 'primary lg enabled expand none', createNewMessage)]),
-      TabNav(widget.globalState, 1),
+      TabNav(widget.globalState, 1, [
+        TabInfo(BitcoinHome(widget.globalState), 'wallet'),
+        TabInfo(MessagesHome(widget.globalState), 'message'),
+      ]),
     );
   }
 

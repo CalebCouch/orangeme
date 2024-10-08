@@ -3,18 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-
-import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/flows/messages/home.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
-// Creates a tab navigation bar with icons for switching between the different
-// tabs, providing visual feedback and navigation functionality.
+class TabInfo {
+  final Widget page;
+  final String icon;
+
+  const TabInfo(this.page, this.icon);
+}
 
 class TabNav extends StatefulWidget {
   final int index;
+  final List<TabInfo> tabs;
   final GlobalState globalState;
-  const TabNav(this.globalState, this.index, {super.key});
+  const TabNav(this.globalState, this.index, this.tabs, {super.key});
   @override
   State<TabNav> createState() => TabNavState();
 }
@@ -22,14 +24,14 @@ class TabNav extends StatefulWidget {
 class TabNavState extends State<TabNav> {
   @override
   Widget build(BuildContext context) {
-    void openMessages() {
+    void openTabZero() {
       HapticFeedback.heavyImpact();
-      switchPageTo(context, MessagesHome(widget.globalState));
+      switchPageTo(context, widget.tabs[0].page);
     }
 
-    void openBitcoin() {
+    void openTabOne() {
       HapticFeedback.heavyImpact();
-      switchPageTo(context, BitcoinHome(widget.globalState));
+      switchPageTo(context, widget.tabs[1].page);
     }
 
     return SizedBox(
@@ -41,24 +43,24 @@ class TabNavState extends State<TabNav> {
           Expanded(
             child: InkWell(
               onTap: () {
-                if (widget.index == 1) openBitcoin();
+                if (widget.index != 0) openTabZero();
               },
               child: Container(
                 padding: const EdgeInsets.only(right: AppPadding.navBar),
                 alignment: Alignment.centerRight,
-                child: CustomIcon('wallet lg ${(widget.index == 0) ? 'secondary' : 'text_secondary'}'),
+                child: CustomIcon('${widget.tabs[0].icon} lg ${(widget.index == 0) ? 'secondary' : 'text_secondary'}'),
               ),
             ),
           ),
           Expanded(
             child: InkWell(
               onTap: () {
-                if (widget.index == 0) openMessages();
+                if (widget.index != 1) openTabOne();
               },
               child: Container(
                 padding: const EdgeInsets.only(left: AppPadding.navBar),
                 alignment: Alignment.centerLeft,
-                child: CustomIcon('message lg ${(widget.index == 1) ? 'secondary' : 'text_secondary'}'),
+                child: CustomIcon('${widget.tabs[1].icon} lg ${(widget.index == 1) ? 'secondary' : 'text_secondary'}'),
               ),
             ),
           ),

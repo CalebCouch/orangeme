@@ -32,14 +32,13 @@ class ErrorPageState extends State<ErrorPage> {
       navPop(context);
     }
 
-    return Stack_Scroll(
+    return Stack_Default(
       Container(),
       [
-        const Spacing(32),
+        const Spacing(24),
         Container(
           alignment: Alignment.center,
-          height: 400,
-          width: 400,
+          constraints: const BoxConstraints(maxHeight: 400, maxWidth: 400),
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: ThemeColor.bgSecondary,
@@ -47,12 +46,12 @@ class ErrorPageState extends State<ErrorPage> {
           child: SvgPicture.asset('assets/images/error.svg'),
         ),
         const CustomText('heading h3 heading', 'Oops! Something  went wrong.'),
-        CustomButton('Try Again', 'secondary lg enabled expand none', back),
         Container(height: 1, width: 400, color: ThemeColor.bgSecondary),
         CustomButton(showError ? 'Hide Error' : 'Show Error', 'secondary md enabled hug none', onTap),
         showError ? error(widget.message) : Container(),
-        const Spacing(32),
+        const Spacing(12),
       ],
+      Bumper(context, [CustomButton('Try Again', 'secondary lg enabled expand none', back)]),
     );
   }
 }

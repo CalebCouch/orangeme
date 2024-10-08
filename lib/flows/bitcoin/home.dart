@@ -8,6 +8,7 @@ import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/transaction_details.dart';
+import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/util.dart';
@@ -60,7 +61,10 @@ class BitcoinHomeState extends State<BitcoinHome> {
         CustomButton('Receive', 'primary lg enabled expand none', onReceive),
         CustomButton('Send', 'primary lg enabled expand none', onSend),
       ]),
-      TabNav(widget.globalState, 0),
+      TabNav(widget.globalState, 0, [
+        TabInfo(BitcoinHome(widget.globalState), 'wallet'),
+        TabInfo(MessagesHome(widget.globalState), 'message'),
+      ]),
       noTransactions ? Alignment.center : Alignment.topCenter,
       !noTransactions,
     );
