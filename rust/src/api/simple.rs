@@ -457,6 +457,28 @@ async fn price_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     Err(Error::Exited("Current Price Fetch Exited".to_string()))
 }
 
+async fn usb_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, os: String) -> Result<(), Error> {
+    let mut usb_info = UsbInfo{
+        baseline: UsbInfo::query_devices(&os).await,
+        device_path: None,
+    };
+    if os == "windows" || os == "macos" || os =="linux"{
+        //The baseline will only be evaluated if the operating system is windows, linux or macos
+        loop{
+            let device_path = &usb_info.find_device_path(&os).await;
+            // Convert Option<PathBuf> to String safely
+            let device_path_str = match device_path { 
+                Some(path) => path.to_string_lossy().into_owned(), // Convert PathBuf to a string
+                None => "None".to_string(), // If no device path is found, return "None" 
+                }; 
+                
+                // Pass the string to the invoke function
+                invoke(&callback, "print", &device_path_str).await?;
+            }
+        }
+    Err(Error::Exited("USB check Exited".to_string()))
+}
+
 async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send, wallet_path: PathBuf, store_path: PathBuf, price_path: PathBuf, descriptors: DescriptorSet, client_uri: String, os: String) -> Result<(), Error> {
     //invoke(&callback, "print", "a").await?;
     let mut store = SqliteStore::new(store_path)?;
@@ -464,10 +486,6 @@ async fn state_thread(callback: impl Fn(String) -> DartFnFuture<String> + 'stati
     let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
     let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
     //device baseline will be taken when the app first starts and is used to compare device list snapshots within the desktop loop
-    let mut usb_info = UsbInfo{
-        baseline: UsbInfo::query_devices(&os).await,
-        device_path: String::new(),
-    };
     let mut wallet_transactions = Vec::new();
     let mut current_price = 0.0;
     let mut btc = 0.0;
@@ -677,52 +695,55 @@ pub async fn rustStart (
         }else if cfg!(target_os = "android"){
             os = "android";
         }
-        let path = PathBuf::from(&path);
+        invoke(&callback, "print", os).await?;
+
+        // let path = PathBuf::from(&path);
         //debug function for clearing descriptor storage from memory
         // invoke(&callback, "clear_storage", "").await?;
         //1. get descriptors
-        invoke(&callback, "print", "getting descriptors").await?;
-        let descriptors = get_descriptors(&callback).await?;
+        // invoke(&callback, "print", "getting descriptors").await?;
+        // let descriptors = get_descriptors(&callback).await?;
 
         //2.load wallets
-        invoke(&callback, "print", "creating paths").await?;
-        let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending3");
-        let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
-        let savings_wallet_path = path.join("BDK_DATA/savingswallet");
+        // invoke(&callback, "print", "creating paths").await?;
+        // let legacy_spending_wallet_path = path.join("BDK_DATA/legacyspending3");
+        // let premium_spending_wallet_path = path.join("BDK_DATA/premiumspendingwallet");
+        // let savings_wallet_path = path.join("BDK_DATA/savingswallet");
 
         //3. create dirs
-        invoke(&callback, "print", "creating dirs").await?;
-        std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
-        std::fs::create_dir_all(premium_spending_wallet_path.clone())?;
-        std::fs::create_dir_all(savings_wallet_path.clone())?;
-        let store_path = path.join("STATE/store");
-        std::fs::create_dir_all(store_path.clone())?;
-        let price_path = path.join("STATE/price");
-        std::fs::create_dir_all(price_path.clone())?;
-        let client_uri = "ssl://electrum.blockstream.info:50002".to_string();
-        invoke(&callback, "print", "defining wallet").await?;
-        let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
+        // invoke(&callback, "print", "creating dirs").await?;
+        // std::fs::create_dir_all(legacy_spending_wallet_path.clone())?;
+        // std::fs::create_dir_all(premium_spending_wallet_path.clone())?;
+        // std::fs::create_dir_all(savings_wallet_path.clone())?;
+        // let store_path = path.join("STATE/store");
+        // std::fs::create_dir_all(store_path.clone())?;
+        // let price_path = path.join("STATE/price");
+        // std::fs::create_dir_all(price_path.clone())?;
+        // let client_uri = "ssl://electrum.blockstream.info:50002".to_string();
+        // invoke(&callback, "print", "defining wallet").await?;
+        // let legacy_spending_wallet = Wallet::new(&descriptors.legacy_spending_external, Some(&descriptors.legacy_spending_internal), Network::Bitcoin, SqliteDatabase::new(legacy_spending_wallet_path.join("bdk.db")))?;
 
         //TODO check for premium
-        let premium = false;
+        // let premium = false;
         //TODO load premium wallets if premium
-        invoke(&callback, "print", "defining store").await?;
-        let mut store = SqliteStore::new(store_path.clone())?;
+        // invoke(&callback, "print", "defining store").await?;
+        // let mut store = SqliteStore::new(store_path.clone())?;
 
-        if let Some(old_state) = store.get(b"state")? {
-            if serde_json::from_slice::<DartState>(&old_state).is_ok() {
-                invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
-            }
-        }
-        store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
-        invoke(&callback, "print", "se").await?;
+    //     if let Some(old_state) = store.get(b"state")? {
+    //         if serde_json::from_slice::<DartState>(&old_state).is_ok() {
+    //             invoke(&callback, "set_state", std::str::from_utf8(&old_state)?).await?;
+    //         }
+    //     }
+    //     store.set(b"new_address", &legacy_spending_wallet.get_address(AddressIndex::New)?.address.to_string().as_bytes())?;
+    //     invoke(&callback, "print", "se").await?;
         
-        invoke(&callback, "print", "Starting Threads").await?;
+    //     invoke(&callback, "print", "Starting Threads").await?;
         let result = tokio::try_join!(
-            flatten(tokio::spawn(sync_thread(callback1, legacy_spending_wallet_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string()))),
-            flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
-            flatten(tokio::spawn(state_thread(callback3, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string()))),
-            flatten(tokio::spawn(command_thread(callback4, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string())))
+            flatten(tokio::spawn(usb_thread(callback1, os.to_string())))
+            // flatten(tokio::spawn(sync_thread(callback1, legacy_spending_wallet_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string()))),
+            // flatten(tokio::spawn(price_thread(callback2, price_path.clone()))),
+            // flatten(tokio::spawn(state_thread(callback3, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string()))),
+            // flatten(tokio::spawn(command_thread(callback4, legacy_spending_wallet_path.clone(), store_path.clone(), price_path.clone(), descriptors.clone(), client_uri.clone(), os.clone().to_string())))
         );
         invoke(&callback, "print", "Handling Threads").await?;
 

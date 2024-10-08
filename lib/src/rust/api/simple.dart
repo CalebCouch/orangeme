@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `command_thread`, `detect_usb`, `flatten`, `from_details`, `from_details`, `from_details`, `from_details`, `generate_legacy_descriptor`, `generate_seed`, `get_descriptors`, `get_os`, `get_price`, `invoke`, `price_thread`, `state_thread`, `sync_thread`
+// These functions are ignored because they are not marked as `pub`: `command_thread`, `detect_usb`, `flatten`, `from_details`, `from_details`, `from_details`, `from_details`, `generate_legacy_descriptor`, `generate_seed`, `get_descriptors`, `get_os`, `get_price`, `invoke`, `price_thread`, `state_thread`, `sync_thread`, `usb_thread`
 // These types are ignored because they are not used by any `pub` functions: `DartCommand`, `Data`, `DescriptorSet`, `PriceRes`, `Price`, `RustCommand`, `RustResponse`, `SeedSet`, `SpotRes`, `Spot`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
