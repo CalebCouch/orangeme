@@ -36,6 +36,7 @@ class SendState extends State<Send> {
   bool addressValid = false;
 
   Future<void> setAddress(String address) async {
+    if (address.contains('bitcoin:')) address = address.substring(8);
     checkAddress(address);
     setState(() {
       addressStr = address;
@@ -67,7 +68,7 @@ class SendState extends State<Send> {
   }
 
   onScan() {
-    navigateTo(context, ScanQR(widget.globalState));
+    switchPageTo(context, ScanQR(widget.globalState));
   }
 
   final TextEditingController controller = TextEditingController();

@@ -8,6 +8,7 @@ import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/transaction_details.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';
@@ -40,20 +41,28 @@ class BitcoinHomeState extends State<BitcoinHome> {
     navigateTo(context, Send(widget.globalState));
   }
 
+  toProfile() async {
+    var address = (await widget.globalState.invoke("get_new_address", "")).data;
+    navigateTo(context, MyProfile(widget.globalState, address));
+  }
+
   Widget build_screen(BuildContext context, DartState state) {
+    bool noTransactions = state.transactions.isEmpty;
     return Root_Home(
-      Header_Home(ProfileButton(context, state.personal.pfp, () {}), "Wallet"),
+      Header_Home(ProfileButton(context, state.personal.pfp, toProfile), "Wallet"),
       [
         BalanceDisplay(state),
         //  BackupReminder(false),
         //  NoInternet(false),
-        TransactionList(widget.globalState, state.transactions),
+        TransactionList(widget.globalState, state),
       ],
       Bumper(context, [
         CustomButton('Receive', 'primary lg enabled expand none', onReceive),
         CustomButton('Send', 'primary lg enabled expand none', onSend),
       ]),
       TabNav(widget.globalState, 0),
+      noTransactions ? Alignment.center : Alignment.topCenter,
+      !noTransactions,
     );
   }
 }
@@ -96,15 +105,14 @@ Widget NoInternet(bool display) {
       : Container();
 }
 
-Widget TransactionList(GlobalState globalState, List<Transaction> transactions) {
-  if (transactions.isEmpty) return const CustomText('text md text_secondary', 'No transactions yet.');
+Widget TransactionList(GlobalState globalState, state) {
   return ListView.builder(
     shrinkWrap: true,
     reverse: true,
     physics: const ScrollPhysics(),
-    itemCount: transactions.length,
+    itemCount: state.transactions.length,
     itemBuilder: (BuildContext context, int index) {
-      return TransactionItem(globalState, context, transactions[index]);
+      return TransactionItem(globalState, context, state.transactions[index]);
     },
   );
 }

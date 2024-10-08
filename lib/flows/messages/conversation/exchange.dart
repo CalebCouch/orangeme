@@ -66,8 +66,8 @@ class ExchangeState extends State<Exchange> {
         members.length > 1 ? infoButton(context, MessageInfo(widget.globalState, contacts: members)) : iconButton(directProfile, 'info lg'),
       ),
       [
-        false, //widget.conversation.messages.isNotEmpty,
-        messageStack(widget.globalState, context, scrollController, members, widget.conversation.messages)
+        widget.conversation.messages.isNotEmpty,
+        messageStack(widget.globalState, context, scrollController, members, widget.conversation.messages),
       ],
       Bumper(context, [MessageInput()], true),
     );

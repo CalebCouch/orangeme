@@ -43,12 +43,20 @@ class TransactionSpeedState extends State<TransactionSpeed> {
     setState(() {
       isLoading = true;
     });
-    Transaction tx = Transaction.fromJson(
-        jsonDecode((await widget.globalState.invoke("create_legacy_transaction", "${widget.address}|${widget.btc}|$index")).data));
-    navigateTo(context, ConfirmSend(widget.globalState, tx));
-    setState(() {
-      isLoading = false;
-    });
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    try {
+      Transaction tx = Transaction.fromJson(
+          jsonDecode((await widget.globalState.invoke("create_legacy_transaction", "${widget.address}|${widget.btc}|$index")).data));
+      navigateTo(context, ConfirmSend(widget.globalState, tx));
+      setState(() {
+        isLoading = false;
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Widget buildScreen(BuildContext context, DartState state) {
@@ -57,7 +65,9 @@ class TransactionSpeedState extends State<TransactionSpeed> {
     return Stack_Default(
       isLoading ? Container() : Header_Stack(context, "Transaction speed"),
       [isLoading ? loadingCircle() : SpeedSelector(fees)],
-      isLoading ? Container() : Bumper(context, [CustomButton('Continue', 'primary lg enabled expand none', () => onContinue())]),
+      isLoading ? Container() : Bumper(context, [CustomButton('Continue', 'primary lg enabled expand none', onContinue)]),
+      isLoading ? Alignment.center : Alignment.topCenter,
+      !isLoading,
     );
   }
 
@@ -89,12 +99,10 @@ class TransactionSpeedState extends State<TransactionSpeed> {
   }
 
   Widget loadingCircle() {
-    return const Expanded(
-      child: Center(
-        child: CircularProgressIndicator(
-          strokeCap: StrokeCap.round,
-          backgroundColor: ThemeColor.bgSecondary,
-        ),
+    return const Center(
+      child: CircularProgressIndicator(
+        strokeCap: StrokeCap.round,
+        backgroundColor: ThemeColor.bgSecondary,
       ),
     );
   }

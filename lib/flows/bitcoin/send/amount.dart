@@ -6,13 +6,72 @@ import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/theme/stylesheet.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class ShakeController extends ChangeNotifier {
   void shake() => notifyListeners();
 }
 
+/* Listens for keyboard events and processes numeric inputs, backspace, 
+and period key presses for computer keyboards. */
+
+class SimpleKeyboardListener extends StatefulWidget {
+  final void Function(String) onPressed;
+  final Widget child;
+
+  const SimpleKeyboardListener({
+    super.key,
+    required this.onPressed,
+    required this.child,
+  });
+
+  @override
+  State<SimpleKeyboardListener> createState() => _SimpleKeyboardListenerState();
+}
+
+class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
+  bool _onKey(KeyEvent event) {
+    final key = event.logicalKey.keyLabel;
+
+    if (event is KeyDownEvent) {
+      if (isNumeric(key)) {
+        widget.onPressed(key);
+      }
+      if (event.logicalKey == LogicalKeyboardKey.backspace) {
+        widget.onPressed('backspace');
+      }
+      if (event.logicalKey == LogicalKeyboardKey.period) {
+        widget.onPressed('.');
+      }
+    }
+
+    return false;
+  }
+
+  bool isNumeric(String s) {
+    return double.tryParse(s) != null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
+  }
+
+  @override
+  void dispose() {
+    ServicesBinding.instance.keyboard.removeHandler(_onKey);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
+
+/* Allows users to input and validate the amount of Bitcoin to send. Handles numeric 
+input, error display, and transitions to the next step based on the input and validation. */
 class SendAmount extends StatefulWidget {
   final GlobalState globalState;
   final String address;
@@ -51,41 +110,9 @@ class SendAmountState extends State<SendAmount> {
     );
   }
 
-  double getBTC(amount) {
-    double parsed = double.parse(amount);
-    return parsed > 0 ? (parsed / widget.globalState.state.value.currentPrice) : 0.0;
-  }
-
-  final ShakeController _shakeController = ShakeController();
-  Widget buildScreen(BuildContext context, DartState state) {
-    return Stack_Default(
-      Header_Stack(context, "Send bitcoin"),
-      [
-        AmountDisplay(amount, getBTC(amount)),
-      ],
-      Bumper(
-        context,
-        [
-          NumericKeypad(
-            onNumberPressed: updateAmount,
-          ),
-          CustomButton(
-            'Continue',
-            'primary lg ${(amount != "0" && error == "") ? 'enabled' : 'disabled'} expand none',
-            () => onContinue(getBTC(amount)),
-          )
-        ],
-        true,
-      ),
-    );
-  }
-
-  /*return SimpleKeyboardListener(
-      onPressed: updateAmount,*/
-
-//The following widgets can ONLY be used in this file
-
-  List<String> updateAmount(String input) {
+  /* Updates the input amount based on keyboard input, handles backspace, 
+  decimal point, and numeric values. Validates the amount against minimum and maximum limits. */
+  void updateAmount(String input) {
     var buzz = FeedbackType.warning;
     HapticFeedback.heavyImpact();
     var updatedAmount = "0";
@@ -143,20 +170,57 @@ class SendAmountState extends State<SendAmount> {
         }
       }
     }
-    return [amount = updatedAmount, error = err];
+    setState(() {
+      amount = updatedAmount;
+      error = err;
+    });
   }
 
-  Widget AmountDisplay(amt, btc) {
+  double getBTC(amount) {
+    double parsed = double.parse(amount);
+    return parsed > 0 ? (parsed / widget.globalState.state.value.currentPrice) : 0.0;
+  }
+
+  final ShakeController _shakeController = ShakeController();
+  Widget buildScreen(BuildContext context, DartState state) {
+    String enabled = amount != "0" && error == "" ? 'enabled' : 'disabled';
+    print(enabled);
+    return Stack_Default(
+      Header_Stack(context, "Send bitcoin"),
+      [
+        Expanded(
+          child: Center(
+            child: ShakeWidget(
+              controller: _shakeController,
+              child: keyboardAmountDisplay(widget.globalState, context, amount, getBTC(amount), error),
+            ),
+          ),
+        ),
+      ],
+      Bumper(
+        context,
+        [
+          NumericKeypad(
+            onNumberPressed: updateAmount,
+          ),
+          CustomButton('Continue', 'primary lg $enabled expand none', () => onContinue(getBTC(amount)), key: UniqueKey())
+        ],
+        true,
+      ),
+      Alignment.topCenter,
+      false,
+    );
+  }
+
+  Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context, String amt, double btc, String error) {
     String usd = amt.toString();
 
     Widget subText(String error) {
       if (error.isNotEmpty) {
         return Row(
+          mainAxisSize: MainAxisSize.min,
           children: [const CustomIcon('error md danger'), const SizedBox(width: 8), CustomText('text lg danger', error)],
         );
-      } else if (false && amt == "0") {
-        //onDesktop only
-        return const CustomText('text lg text_secondary', "Type dollar amount.");
       } else {
         return CustomText('text lg text_secondary', "${formatBTC(btc, 8)} BTC");
       }
@@ -190,82 +254,34 @@ class SendAmountState extends State<SendAmount> {
     if (usd.contains('.')) length - 1;
     length = usd.length + displayDecimals(usd).length;
 
-    dynamic_size(y) {
-      if (y <= 4) return 'title';
-      if (y <= 7) return 'h1';
+    dynamic_size() {
+      if (length <= 4) return 'title';
+      if (length <= 7) return 'h1';
       return 'h2';
     }
 
-    return Expanded(
-      child: FittedBox(
+    String size = dynamic_size();
+    return FittedBox(
         fit: BoxFit.scaleDown,
-        child: CustomColumn([
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomText('heading ${dynamic_size(valueUSD.length)}', "\$$valueUSD"),
-              CustomText('heading ${dynamic_size(valueUSD.length)} text_secondary', displayDecimals(usd))
-            ],
-          ),
-          subText(error)
-        ]),
-      ),
-    );
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomText('heading $size', "\$$valueUSD"),
+                CustomText('heading $size text_secondary', displayDecimals(usd)),
+              ],
+            ),
+            subText(error)
+          ],
+        ));
   }
 }
 
-class SimpleKeyboardListener extends StatefulWidget {
-  final void Function(String) onPressed;
-  final Widget child;
 
-  const SimpleKeyboardListener({
-    super.key,
-    required this.onPressed,
-    required this.child,
-  });
-
-  @override
-  State<SimpleKeyboardListener> createState() => _SimpleKeyboardListenerState();
-}
-
-class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
-  bool isNumeric(String s) {
-    return double.tryParse(s) != null;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    ServicesBinding.instance.keyboard.addHandler(_onKey);
-  }
-
-  @override
-  void dispose() {
-    ServicesBinding.instance.keyboard.removeHandler(_onKey);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
-
-  bool _onKey(KeyEvent event) {
-    final key = event.logicalKey.keyLabel;
-
-    if (event is KeyDownEvent) {
-      if (isNumeric(key)) {
-        widget.onPressed(key);
-      }
-      if (event.logicalKey == LogicalKeyboardKey.backspace) {
-        widget.onPressed('backspace');
-      }
-      if (event.logicalKey == LogicalKeyboardKey.period) {
-        widget.onPressed('.');
-      }
-    }
-
-    return false;
-  }
-}
+/*
+else if (false && amt == "0") {
+        //onDesktop
+        return const CustomText('text lg text_secondary', 'Type dollar amount.');
+      } */

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/list_item.dart';
 
@@ -46,14 +47,21 @@ class MessagesHomeState extends State<MessagesHome> {
     );
   }
 
+  toProfile() async {
+    var address = (await widget.globalState.invoke("get_new_address", "")).data;
+    navigateTo(context, MyProfile(widget.globalState, address));
+  }
+
   Widget buildScreen(BuildContext context, DartState state) {
     return Root_Home(
-      Header_Home(ProfileButton(context, state.personal.pfp, () {}), "Messages"),
-      state.conversations.isEmpty ? [noMessages()] : [listConversations(state, widget.globalState)],
+      Header_Home(ProfileButton(context, state.personal.pfp, toProfile), "Messages"),
+      [listConversations(state, widget.globalState)],
       Bumper(context, [CustomButton('New Message', 'primary lg enabled expand none', createNewMessage)]),
       TabNav(widget.globalState, 1),
     );
   }
+
+//state.conversations.isEmpty ? [noMessages()] :
 
   Widget noMessages() {
     return const Expanded(
@@ -64,25 +72,23 @@ class MessagesHomeState extends State<MessagesHome> {
   }
 
   Widget listConversations(state, GlobalState globalState) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: state.conversations.length,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (BuildContext context, int index) {
-          return ConversationItem(
-            context,
-            state.conversations[index].members,
-            state.conversations[index].messages[0].message,
-            () {
-              HapticFeedback.mediumImpact();
-              navigateTo(
-                context,
-                Exchange(globalState, conversation: state.conversations[index]),
-              );
-            },
-          );
-        },
-      ),
+    List<Conversation> conversations = state.conversations;
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: state.conversations.length,
+      itemBuilder: (context, index) {
+        return ConversationItem(
+          context,
+          conversations[index].members,
+          conversations[index].messages[0].message,
+          () {
+            navigateTo(
+              context,
+              Exchange(globalState, conversation: conversations[index]),
+            );
+          },
+        );
+      },
     );
   }
 

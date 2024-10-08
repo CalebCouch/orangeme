@@ -56,7 +56,7 @@ class UserProfileState extends State<UserProfile> {
       Header_Stack(context, widget.userInfo.name),
       [
         ProfilePhoto(context, widget.userInfo.pfp, ProfileSize.xxl),
-        aboutMeItem(context, widget.userInfo.abtme ?? "There's nothing here..."),
+        aboutMeItem(context, widget.userInfo.abtme ?? "This profile is still a mystery."),
         didItem(context, widget.userInfo.did),
         addressItem(context, widget.address),
       ],

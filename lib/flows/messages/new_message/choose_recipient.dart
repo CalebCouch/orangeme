@@ -28,13 +28,18 @@ class ChooseRecipientState extends State<ChooseRecipient> {
     );
   }
 
+  List<Contact> recipients = [];
+  List<Contact> filteredContacts = [];
+  TextEditingController searchController = TextEditingController();
+
   Widget buildScreen(BuildContext context, DartState state) {
+    String enabled = recipients.isEmpty ? 'disabled' : 'enabled';
     return Stack_Default(
-      Header_Button(context, "Confirm send", CustomButton('Next', 'ghost md ${recipients.isNotEmpty} hug none', () => onNext())),
+      Header_Button(context, "Confirm send", CustomButton('Next', 'ghost md $enabled hug none', onNext, key: UniqueKey())),
       [
         Searchbar(searchController),
-        SelectedContacts(recipients, removeRecipient),
-        ListContacts(filteredContacts, removeRecipient),
+        recipients.isEmpty ? Container() : SelectedContacts(recipients),
+        ListContacts(filteredContacts),
       ],
       Bumper(context, [Container()]),
     );
@@ -42,19 +47,41 @@ class ChooseRecipientState extends State<ChooseRecipient> {
 
   //The following widgets can ONLY be used in this file
 
-  onNext() {
-    navigateTo(
-      context,
-      Exchange(
-        widget.globalState,
-        conversation: Conversation(recipients, []),
+  Widget SelectedContacts(recipients) {
+    return Container(
+      alignment: Alignment.topLeft,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: List<Widget>.generate(recipients.length, (index) {
+          return CustomButton(recipients[index].name, 'secondary md enabled hug close', () {
+            removeRecipient(recipients[index]);
+          });
+        }),
       ),
     );
   }
 
-  List<Contact> recipients = [];
-  List<Contact> filteredContacts = [];
-  TextEditingController searchController = TextEditingController();
+  Widget ListContacts(filteredContacts) {
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: filteredContacts.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ContactItem(context, filteredContacts[index], () {
+          HapticFeedback.heavyImpact();
+          addRecipient(filteredContacts[index]);
+        });
+      },
+    );
+  }
+
+  onNext() {
+    navigateTo(
+      context,
+      Exchange(widget.globalState, conversation: Conversation(recipients, [])),
+    );
+  }
 
   @override
   void initState() {
@@ -103,35 +130,5 @@ Widget Searchbar(controller) {
     maxLines: 1,
     controller: controller,
     hint: 'Profile name...',
-  );
-}
-
-Widget SelectedContacts(recipients, removeRecipient) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    alignment: Alignment.topLeft,
-    child: Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: List<Widget>.generate(recipients.length, (index) {
-        return CustomButton(recipients[index].name, 'ghost md enabled hug close', () {
-          removeRecipient(recipients[index]);
-        });
-      }),
-    ),
-  );
-}
-
-Widget ListContacts(filteredContacts, addRecipient) {
-  return Expanded(
-    child: ListView.builder(
-      itemCount: filteredContacts.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ContactItem(context, filteredContacts[index], () {
-          HapticFeedback.heavyImpact();
-          addRecipient(filteredContacts[index]);
-        });
-      },
-    ),
   );
 }

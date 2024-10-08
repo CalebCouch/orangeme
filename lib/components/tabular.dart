@@ -106,7 +106,7 @@ Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
       if (tx.sentAddress != null)
         SingleTab(
           title: "USD Value Sent",
-          subtitle: "\$${tx.usd.abs() - tx.fee.abs()}",
+          subtitle: "\$${tx.usd.abs()}",
         ),
       if (tx.sentAddress != null)
         SingleTab(

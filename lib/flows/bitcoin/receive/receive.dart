@@ -42,6 +42,7 @@ class ReceiveState extends State<Receive> {
         CustomButton('Share', 'primary lg enabled expand none', onShare),
       ]),
       Alignment.center,
+      false,
     );
   }
 }

@@ -36,7 +36,14 @@ class ScanQRState extends State<ScanQR> {
 
   Widget buildScreen(BuildContext context, DartState state) {
     return Root_Takeover(
-      Header_Stack(context, "Scan QR code"),
+      Header_Stack(
+        context,
+        "Scan QR code",
+        null,
+        iconButton(() {
+          switchPageTo(context, Send(widget.globalState));
+        }, 'wallet lg'),
+      ),
       Expanded(
         child: Stack(children: [
           qrScanner(),

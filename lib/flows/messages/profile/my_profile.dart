@@ -84,7 +84,7 @@ class MyProfileState extends State<MyProfile> {
     Widget EditDesc() {
       return CustomTextInput(
         title: 'About Me',
-        hint: 'A little bit about me...',
+        hint: 'About me...',
         onChanged: (String str) => {enableButton()},
         controller: _aboutMe,
       );
@@ -94,6 +94,7 @@ class MyProfileState extends State<MyProfile> {
       if (save) saveInfo();
     }
 
+    String enabled = save ? 'enabled' : 'disabled';
     return Stack_Default(
       Header_Stack(context, "My profile"),
       [
@@ -103,7 +104,7 @@ class MyProfileState extends State<MyProfile> {
         didItem(context, state.personal.did),
         addressItem(context, widget.address),
       ],
-      Bumper(context, [CustomButton('Save', 'primary lg $save expand none', onSave)]),
+      Bumper(context, [CustomButton('Save', 'primary lg $enabled expand none', onSave, key: UniqueKey())]),
     );
   }
 }

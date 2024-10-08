@@ -13,7 +13,7 @@ Widget bubble(Message message) {
     ),
     constraints: const BoxConstraints(maxWidth: 300),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    child: CustomText('text md ${message.isIncoming ? 'text' : 'heading'}', message.message),
+    child: CustomText('text md ${message.isIncoming ? 'text' : 'heading'}', message.message, alignment: TextAlign.left),
   );
 }
 
@@ -62,18 +62,16 @@ Widget textMessage(GlobalState globalState, BuildContext context, Message m, boo
             children: [
               showDetails
                   ? InkWell(
-                      onTap: () {
-                        () async {
-                          var address = (await globalState.invoke("get_new_address", "")).data;
-                          navigateTo(
-                            context,
-                            UserProfile(
-                              globalState,
-                              address,
-                              userInfo: m.sender,
-                            ),
-                          );
-                        };
+                      onTap: () async {
+                        var address = (await globalState.invoke("get_new_address", "")).data;
+                        navigateTo(
+                          context,
+                          UserProfile(
+                            globalState,
+                            address,
+                            userInfo: m.sender,
+                          ),
+                        );
                       },
                       child: Container(
                         alignment: Alignment.bottomCenter,
@@ -97,6 +95,7 @@ Widget textMessage(GlobalState globalState, BuildContext context, Message m, boo
             crossAxisAlignment: m.isIncoming ? CrossAxisAlignment.start : CrossAxisAlignment.end,
             children: [
               bubble(m),
+              const Spacing(8),
               showTime ? details(m, true) : Container(),
             ],
           ),
