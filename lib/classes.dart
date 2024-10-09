@@ -63,21 +63,21 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
     void unpack_state(Map<String, dynamic> json);
 
+    void getState() async {
+        String state = await getstate(name: stateName(), path: global.dataDir!);
+        unpack_state(jsonDecode(state));
+    }
+
     @override
     void initState() {
         super.initState();
+        getState();
         var interval = refreshInterval();
         if (interval > 0) {
-            widget.timer = Timer.periodic(Duration(milliseconds: interval), (Timer t) async {
-                String state = await global.invoke("get_state", stateName());
-                unpack_state(jsonDecode(state));
+            widget.timer = Timer.periodic(Duration(milliseconds: interval), (Timer t) {
+                getState();
             });
-        } else {_asyncInitState();}
-    }
-
-    _asyncInitState() async {
-        String state = await global.invoke("get_state", stateName());
-        unpack_state(jsonDecode(state));
+        }
     }
 
     @override

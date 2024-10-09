@@ -2,9 +2,9 @@ use super::Error;
 
 use super::structs::{Platform, DartCommand, Storage, DartCallback};
 use super::wallet::{Wallet, DescriptorSet, Seed};
-use super::callback::RustCallback;
-use super::state_manager::StateManager;
+//use super::callback::RustCallback;
 use super::price::PriceGetter;
+use super::state::{StateManager, State, Field};
 
 use web5_rust::common::SqliteStore;
 use web5_rust::common::traits::KeyValueStore;
@@ -517,6 +517,23 @@ use std::path::{Path, PathBuf};
 //      }
 //  }
 
+//  fn handle(handle: JoinHandle) -> Result<(), Error> {
+//      match handle.block_on() {
+//          Ok(Ok(o)) => Ok(o),
+//          Ok(Err(err)) => Err(err),
+//          Err(e) => match e.try_into_panic() {
+//              Ok(panic) => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Debug>>() {
+//                  Some(p) => Err(Error::Exited(format!("{:?}", p))),
+//                  None => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Display>>() {
+//                      Some(p) => Err(Error::Exited(p.to_string())),
+//                      None => Err(Error::Exited(format!("Cannot convert panic with type id {:?} to string via Debug or Display", panic.type_id()))),
+//                  }
+//              },
+//              Err(e) => Err(Error::Exited(e.to_string()))
+//          }
+//      }
+//  }
+
 async fn spawn<T>(task: T) -> Result<(), Error>
     where
         T: std::future::Future<Output = Result<(), Error>> + Send + 'static
@@ -537,78 +554,164 @@ async fn spawn<T>(task: T) -> Result<(), Error>
     }
 }
 
-pub async fn ruststart (
-    path: String,
-    platform: String,
-    thread1: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-    thread2: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-    thread3: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-    thread4: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-    thread5: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-) -> String {
-    let result: Result<(), Error> = async move {
-        let mut dart_callback = DartCallback::new();
-        dart_callback.add_thread(thread1);
-        dart_callback.add_thread(thread2);
-        dart_callback.add_thread(thread3);
-        dart_callback.add_thread(thread4);
-        dart_callback.add_thread(thread5);
-        let path = PathBuf::from(&path);
-        let platform = Platform::from_str(&platform)?;
-        let storage = Storage::new(dart_callback.clone());
-        if platform.is_desktop() {todo!();}
-        let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
-            serde_json::from_str(&seed)?
-        } else {
-            let seed = Seed::new();
-            storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
-            seed
-        };
-        let descriptors = DescriptorSet::from_seed(&seed)?;
-        dart_callback.call("print", &descriptors.internal).await?;
-        let mut price_getter = PriceGetter::new::<SqliteStore>(path.join("Price"))?;
-        let mut wallet = Wallet::new::<SqliteStore>(
-            descriptors,
-            price_getter.clone(),
-            path.join("Wallet")
-        )?;
-        let mut state_manager = StateManager::new::<SqliteStore>(
-            wallet.clone(),
-            path.join("StateManager")
-        )?;
-        let mut rust_callback = RustCallback::new::<SqliteStore>(
-            wallet.clone(),
-            state_manager.clone(),
-            dart_callback.clone(),
-            path.join("RustCallback")
-        ).await?;
+//  pub fn ruststart (
+//      path: String,
+//      platform: String,
+//      thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
+//  ) -> String {
+//      let runtime = tokio::runtime::Builder::new_multi_thread()
+//          .worker_threads(1)
+//          .enable_all()
+//          .build()
+//          .unwrap();
+//     let handle = runtime.spawn(async move {
+//          let result: Result<(), Error> = async move {
+//              let mut dart_callback = DartCallback::new();
+//              dart_callback.add_thread(thread);
+//              let path = PathBuf::from(&path);
+//              let platform = Platform::from_str(&platform)?;
 
-        tokio::try_join!(
-            spawn(async move {loop {
-                let connected = reqwest::get("https://google.com").await.is_ok();
-                dart_callback.call("internet", if connected {"true"} else {"false"}).await?;
-                thread::sleep(time::Duration::from_millis(1000));
-            }; Err::<(), Error>(Error::Exited("Internet Check".to_string()))}),
-            spawn(async move {loop {
-                price_getter.update_current_price().await?;
-                thread::sleep(time::Duration::from_millis(600_000));
-            }; Err::<(), Error>(Error::Exited("Price Update".to_string()))}),
-            spawn(async move {loop {
-                wallet.sync().await?;
-                thread::sleep(time::Duration::from_millis(250));
-            }; Err::<(), Error>(Error::Exited("Wallet Sync".to_string()))}),
-            spawn(async move {loop {
-                rust_callback.handle().await?;
-            }; Err::<(), Error>(Error::Exited("Rust Callback".to_string()))}),
-        ).map_err(|e: Error| Error::Exited(e.to_string()))?;
-        Ok(())
-    }.await;
-    match result {
-        Ok(()) => "OK".to_string(),
-        Err(e) => e.to_string()
+//              //SETUP
+//              let storage = Storage::new(dart_callback.clone());
+//              if platform.is_desktop() {todo!();}
+//              let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
+//                  serde_json::from_str(&seed)?
+//              } else {
+//                  let seed = Seed::new();
+//                  storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+//                  seed
+//              };
+//              let descriptors = DescriptorSet::from_seed(&seed)?;
+//              dart_callback.call("print", &descriptors.internal).await?;
+//              //SETUP
+
+//              let mut state = State::new::<SqliteStore>(path.clone())?;
+//              let mut wallet = Wallet::new(
+//                  descriptors,
+//                  state.clone(),
+//                  path
+//              )?;
+//            //let mut rust_callback = RustCallback::new::<SqliteStore>(
+//            //    wallet.clone(),
+//            //    dart_callback.clone(),
+//            //    path.join("RustCallback")
+//            //).await?;
+
+//              let mut state_thread1 = state.clone();
+//              let mut state_thread2 = state.clone();
+
+//              tokio::try_join!(
+//                  spawn(async move {loop {
+//                      let connected = reqwest::get("https://google.com").await.is_ok();
+//                      state_thread1.set(Field::Internet, &connected)?;
+//                      thread::sleep(time::Duration::from_millis(1000));
+//                  }; Err::<(), Error>(Error::Exited("Internet Check".to_string()))}),
+//                  spawn(async move {loop {
+//                      let p = state_thread2.get::<f64>(Field::Price)?;
+//                      state_thread2.set(Field::Price, &(p+1.0))?;
+//                      //state_thread2.set(Field::Price, &PriceGetter::get(None).await?)?;
+//                      thread::sleep(time::Duration::from_millis(100));
+//                  }; Err::<(), Error>(Error::Exited("Price Update".to_string()))}),
+//                  spawn(async move {loop {
+//                      wallet.sync().await?;
+//                      thread::sleep(time::Duration::from_millis(250));
+//                  }; Err::<(), Error>(Error::Exited("Wallet Sync".to_string()))}),
+//                //spawn(async move {loop {
+//                //    rust_callback.handle().await?;
+//                //}; Err::<(), Error>(Error::Exited("Rust Callback".to_string()))}),
+//              ).map_err(|e: Error| Error::Exited(e.to_string()))?;
+//              Ok(())
+//          }.await;
+//          match result {
+//              Ok(()) => "OK".to_string(),
+//              Err(e) => e.to_string()
+//          }
+//      });
+//      "OK".to_string()
+//  //  tokio::runtime::Builder::new_multi_thread()
+//  //  .enable_all()
+//  //  .build()
+//  //  .unwrap()
+//  //  .block_on(async {
+//  //      let result: Result<(), Error> = async move {
+//  //          let mut dart_callback = DartCallback::new();
+//  //          dart_callback.add_thread(thread);
+//  //          let path = PathBuf::from(&path);
+//  //          let platform = Platform::from_str(&platform)?;
+
+//  //          //SETUP
+//  //          let storage = Storage::new(dart_callback.clone());
+//  //          if platform.is_desktop() {todo!();}
+//  //          let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
+//  //              serde_json::from_str(&seed)?
+//  //          } else {
+//  //              let seed = Seed::new();
+//  //              storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+//  //              seed
+//  //          };
+//  //          let descriptors = DescriptorSet::from_seed(&seed)?;
+//  //          dart_callback.call("print", &descriptors.internal).await?;
+//  //          //SETUP
+
+//  //          let mut state = State::new::<SqliteStore>(path.clone())?;
+//  //          let mut wallet = Wallet::new(
+//  //              descriptors,
+//  //              state.clone(),
+//  //              path
+//  //          )?;
+//  //        //let mut rust_callback = RustCallback::new::<SqliteStore>(
+//  //        //    wallet.clone(),
+//  //        //    dart_callback.clone(),
+//  //        //    path.join("RustCallback")
+//  //        //).await?;
+
+//  //          let mut state_thread1 = state.clone();
+//  //          let mut state_thread2 = state.clone();
+
+//  //          tokio::try_join!(
+//  //              spawn(async move {loop {
+//  //                  let connected = reqwest::get("https://google.com").await.is_ok();
+//  //                  state_thread1.set(Field::Internet, &connected)?;
+//  //                  thread::sleep(time::Duration::from_millis(1000));
+//  //              }; Err::<(), Error>(Error::Exited("Internet Check".to_string()))}),
+//  //              spawn(async move {loop {
+//  //                  state_thread2.set(Field::Price, &PriceGetter::get(None).await?)?;
+//  //                  thread::sleep(time::Duration::from_millis(600_000));
+//  //              }; Err::<(), Error>(Error::Exited("Price Update".to_string()))}),
+//  //              spawn(async move {loop {
+//  //                  wallet.sync().await?;
+//  //                  thread::sleep(time::Duration::from_millis(250));
+//  //              }; Err::<(), Error>(Error::Exited("Wallet Sync".to_string()))}),
+//  //            //spawn(async move {loop {
+//  //            //    rust_callback.handle().await?;
+//  //            //}; Err::<(), Error>(Error::Exited("Rust Callback".to_string()))}),
+//  //          ).map_err(|e: Error| Error::Exited(e.to_string()))?;
+//  //          Ok(())
+//  //      }.await;
+//  //      match result {
+//  //          Ok(()) => "OK".to_string(),
+//  //          Err(e) => e.to_string()
+//  //      }
+//  //  })
+//  }
+
+pub fn testasync(path: String) -> String {
+    let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).unwrap();
+    let barrier = state.get::<f64>(Field::Price).unwrap()+10000.0;
+    loop {
+        let p = state.get::<f64>(Field::Price).unwrap();
+        if p > barrier {return "Hi".to_string();}
+        state.set(Field::Price, &(p+1.0)).unwrap();
+        thread::sleep(time::Duration::from_millis(100));
     }
 }
 
-fn say_hi(t: String) -> String {
-    format!("hi {}", t)
+pub fn getstate(name: String, path: String) -> String {
+    let result: Result<String, Error> = (move || {
+        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path))?).get(&name)
+    })();
+    match result {
+        Ok(s) => s,
+        Err(e) => format!("Error: {}", e)
+    }
 }

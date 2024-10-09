@@ -30,17 +30,17 @@ class Receive extends StatefulWidget {
 }
 
 class ReceiveState extends State<Receive> {
-    @override
-    void initState() {
-        super.initState();
-        _asyncInitState();
-    }
-    _asyncInitState() async {
-        var address = await global.invoke("get_new_address", "");
-        setState(() {
-            widget.address = address;
-        });
-    }
+//  @override
+//  void initState() {
+//      super.initState();
+//      _asyncInitState();
+//  }
+//  _asyncInitState() async {
+//      var address = await global.invoke("get_new_address", "");
+//      setState(() {
+//          widget.address = address;
+//      });
+//  }
 
     @override
     Widget build(BuildContext context) {

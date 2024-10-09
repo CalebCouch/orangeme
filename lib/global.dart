@@ -8,11 +8,16 @@ import 'package:orange/storage.dart';
 
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
-Directory appDocDirectory = await getApplicationDocumentsDirectory();
-Directory dataDir = await Directory('${appDocDirectory.path}/').create(recursive: true);
+String? dataDir;
+
+getAppData() async {
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    dataDir = (await Directory('${appDocDirectory.path}/orangeme/').create(recursive: true)).path.toString();
+}
 
 //Platform
 Platform platform = Platform.Mac.init();//Use Mac to call INIT and get the actual platform

@@ -23,7 +23,7 @@ import 'package:orange/flows/bitcoin/receive/receive.dart';
 class BitcoinHome extends GenericWidget {
     BitcoinHome({super.key});
 
-    String usd = "";
+    String usd = "";//formated dollar string, //
     String btc = "";
     List<BitcoinHomeTransaction> transactions = [];
 
@@ -39,7 +39,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState((){
+        setState(() {
             widget.usd = json["usd"];
             widget.btc = json["btc"];
             widget.transactions = List<BitcoinHomeTransaction>.from(json['transactions'].map((json) => BitcoinHomeTransaction.fromJson(json)));

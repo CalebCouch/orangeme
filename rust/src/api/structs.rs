@@ -23,9 +23,11 @@ impl Request {
     }
 }
 
+pub type Thread = Arc<Mutex<dyn Fn(String) -> DartFnFuture<String> + 'static + Sync + Send>>;
+
 #[derive(Clone, Default)]
 pub struct DartCallback {
-    threads: Vec<Arc<Mutex<dyn Fn(String) -> DartFnFuture<String> + 'static + Sync + Send>>>
+    threads: Vec<Thread>
 }
 
 impl DartCallback {
@@ -175,4 +177,3 @@ impl Storage {
 //      pub users: Vec<Contact>,
 //      pub personal: Contact,
 //  }
-

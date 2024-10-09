@@ -1,6 +1,7 @@
 use super::Error;
 
 use super::price::PriceGetter;
+use super::state::{State, Field};
 
 use web5_rust::common::traits::KeyValueStore;
 use web5_rust::common::structs::DateTime;
@@ -78,32 +79,6 @@ impl DescriptorSet {
     }
 }
 
-//  fn from_details(details: TransactionDetails, price: f64, isMine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
-//      let p = serde_json::to_string(&details)?;
-//      let error = || Error::parse("Transaction", &p);
-//      let is_send = details.sent > 0;
-//      let transaction = details.transaction.ok_or(error())?;
-//      let datetime = details.confirmation_time.map(|ct| Ok::<DateTime<Utc>, Error>(DateTime::from_timestamp(ct.timestamp as i64, 0).ok_or(error())?)).transpose()?;
-//      let net = ((details.received as f64)-(details.sent as f64)) / SATS;
-//      Ok(Transaction{
-//          isReceive: !is_send,
-//          sentAddress: if is_send {Some(Address::from_script(
-//              transaction.output.iter().map(
-//                      |out| out.script_pubkey.as_script()
-//                  ).find(
-//                      |s| isMine(*s)
-//                  ).ok_or(error())?,
-//              Network::Bitcoin
-//          )?.to_string())} else {None},
-//          txid: details.txid.to_string(),
-//          btc: net,
-//          usd: price * net,
-//          fee: price * (details.fee.ok_or(error())? as f64 / SATS),
-//          price,
-//          date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
-//          time: datetime.map(|dt| dt.format("%l:%M %p").to_string())
-//      })
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Transaction {
     pub btc: f64,
@@ -124,7 +99,7 @@ impl Transaction {
         let confirmation_time = details.confirmation_time.map(|ct|
             Ok::<(u32, DateTime), Error>((ct.height, DateTime::from_timestamp(ct.timestamp)?))
         ).transpose()?;
-        let usd = if let Some(ref ct) = confirmation_time.as_ref() {
+        let usd = if let Some(ct) = confirmation_time.as_ref() {
             PriceGetter::get(Some(&ct.1)).await?
         } else {0.0};
         let fee = details.fee.map(|f| f as f64 / SATS);
@@ -136,24 +111,22 @@ impl Transaction {
 #[derive(Clone)]
 pub struct Wallet{
     inner: Arc<Mutex<BDKWallet<SqliteDatabase>>>,
-    store: Box<dyn KeyValueStore>,
-    price_getter: PriceGetter,
     descriptors: DescriptorSet,
+    state: State,
     path: PathBuf
 }
 
 impl Wallet {
-    pub fn new<KVS: KeyValueStore + 'static>(
+    pub fn new(
         descriptors: DescriptorSet,
-        price_getter: PriceGetter,
+        state: State,
         path: PathBuf
     ) -> Result<Self, Error> {
         let inner = Self::inner_wallet(&descriptors, path.clone())?;
         Ok(Wallet{
             inner: Arc::new(Mutex::new(inner)),
-            store: Box::new(KVS::new(path.clone())?),
-            price_getter,
             descriptors,
+            state,
             path
         })
     }
@@ -175,28 +148,6 @@ impl Wallet {
         Ok(self.inner.lock().await.get_address(AddressIndex::New)?.address.to_string())
     }
 
-    pub fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
-        Ok(self.get_txs()?.into_iter().map(|(_, tx)| tx).collect())
-    }
-
-    pub fn get_balance(&self) -> Result<(f64, f64), Error> {
-        let btc = self.get_bal()?;
-        let price = self.price_getter.get_current_price()?;
-        Ok((btc, btc*price))
-    }
-
-    fn get_txs(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
-        Ok(self.store.get(b"transactions")?.map(|b|
-            serde_json::from_slice(&b)
-        ).transpose()?.unwrap_or_default())
-    }
-
-    fn get_bal(&self) -> Result<f64, Error> {
-        Ok(self.store.get(b"balanace")?.map(|b|
-            serde_json::from_slice(&b)
-        ).transpose()?.unwrap_or_default())
-    }
-
     pub async fn sync(&mut self) -> Result<(), Error> {
         let client = Builder::new(CLIENT_URI).build_blocking()?;
         let bc = EsploraBlockchain::from_client(client, 100);
@@ -211,7 +162,7 @@ impl Wallet {
 
     async fn post_sync(&mut self) -> Result<(), Error> {
         let wallet = self.inner.lock().await;
-        let mut txs = self.get_txs()?;
+        let mut txs = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions)?;
         for tx in wallet.list_transactions(true)? {
             if let Some(transaction) = txs.get(&tx.txid) {
                 if transaction.confirmation_time.is_some() {continue;}
@@ -219,11 +170,11 @@ impl Wallet {
             }
             txs.insert(tx.txid, Transaction::from_details(tx).await?);
         }
-        self.store.set(b"transactions", &serde_json::to_vec(&txs)?)?;
-        let balance = self.get_bal()?;
+        self.state.set(Field::Transactions, &txs)?;
+        let balance = self.state.get::<f64>(Field::Balance)?;
         let btc = wallet.get_balance()?.get_total() as f64 / SATS;
         if balance != btc {
-            self.store.set(b"balance", &serde_json::to_vec(&btc)?)?;
+            self.state.set(Field::Balance, &btc)?;
         }
         Ok(())
     }

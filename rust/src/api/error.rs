@@ -35,7 +35,7 @@ pub enum Error {
     #[error(transparent)]
     TokioJoin(#[from] tokio::task::JoinError),
     #[error(transparent)]
-    EsploraError(#[from] bdk::esplora_client::Error),
+    EsploraError(#[from] Box<bdk::esplora_client::Error>),
 
 
 
@@ -76,4 +76,10 @@ impl Error {
     }
     pub fn parse(rtype: &str, data: &str) -> Self {Error::Parse(rtype.to_string(), data.to_string())}
     pub fn err(ctx: &str, err: &str) -> Self {Error::Error(ctx.to_string(), err.to_string())}
+}
+
+impl From<bdk::esplora_client::Error> for Error {
+    fn from(ece: bdk::esplora_client::Error) -> Error {
+        Error::EsploraError(Box::new(ece))
+    }
 }

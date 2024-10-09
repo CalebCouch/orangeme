@@ -6,21 +6,10 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `say_hi`, `spawn`
+// These functions are ignored because they are not marked as `pub`: `spawn`
 
-Future<String> ruststart(
-        {required String path,
-        required String platform,
-        required FutureOr<String> Function(String) thread1,
-        required FutureOr<String> Function(String) thread2,
-        required FutureOr<String> Function(String) thread3,
-        required FutureOr<String> Function(String) thread4,
-        required FutureOr<String> Function(String) thread5}) =>
-    RustLib.instance.api.crateApiSimpleRuststart(
-        path: path,
-        platform: platform,
-        thread1: thread1,
-        thread2: thread2,
-        thread3: thread3,
-        thread4: thread4,
-        thread5: thread5);
+Future<String> testasync({required String path}) =>
+    RustLib.instance.api.crateApiSimpleTestasync(path: path);
+
+Future<String> getstate({required String name, required String path}) =>
+    RustLib.instance.api.crateApiSimpleGetstate(name: name, path: path);
