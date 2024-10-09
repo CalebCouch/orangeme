@@ -98,7 +98,7 @@ class MessagesHomeState extends State<MessagesHome> {
     bool isGroup = contact.length > 1;
     return ListItem(
       onTap: onTap,
-      visual: ProfilePhoto(context, contact[0].pfp, ProfileSize.lg, isGroup),
+      visual: ProfilePhoto(context, contact[0].pfp, ProfileSize.lg, false, isGroup),
       title: isGroup ? 'Group Message' : contact[0].name,
       desc: lastText,
     );

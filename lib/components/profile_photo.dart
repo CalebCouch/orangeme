@@ -20,13 +20,7 @@ _getIconSize(double profileSize) {
 }
 
 /* Displays a profile photo with optional border, size, and fallback icon. */
-Widget ProfilePhoto(
-  BuildContext context, [
-  String? pfp,
-  double size = ProfileSize.md,
-  bool outline = false,
-  bool isGroup = false,
-]) {
+Widget ProfilePhoto(BuildContext context, [String? pfp, double size = ProfileSize.md, bool outline = false, bool isGroup = false]) {
   return Container(
     alignment: Alignment.center,
     height: size,
@@ -35,14 +29,14 @@ Widget ProfilePhoto(
       border: outline ? Border.all(color: ThemeColor.bg) : null,
       color: ThemeColor.bgSecondary,
       shape: BoxShape.circle,
-      image: pfp != null
+      image: pfp != null && !isGroup
           ? DecorationImage(
               image: AssetImage(pfp),
               fit: BoxFit.cover,
             )
           : null,
     ),
-    child: pfp == null
+    child: pfp == null || isGroup
         ? SvgPicture.asset(
             height: _getIconSize(size),
             width: _getIconSize(size),

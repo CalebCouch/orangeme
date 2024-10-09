@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange/screens/error.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/classes.dart';

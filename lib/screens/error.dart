@@ -43,7 +43,7 @@ class ErrorPageState extends State<ErrorPage> {
             shape: BoxShape.circle,
             color: ThemeColor.bgSecondary,
           ),
-          child: SvgPicture.asset('assets/images/error.svg'),
+          child: SvgPicture.asset('assets/images/dodo.svg'),
         ),
         const CustomText('heading h3 heading', 'Oops! Something  went wrong.'),
         Container(height: 1, width: 400, color: ThemeColor.bgSecondary),
