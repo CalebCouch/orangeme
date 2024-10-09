@@ -15,6 +15,7 @@ import 'package:orange/global.dart' as global;
 
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 
+
 // This page serves as the main screen for Bitcoin transactions.
 // It displays the user's balance in both USD and BTC, a list of recent transactions,
 // and provides buttons for sending and receiving Bitcoin. The screen also shows
@@ -35,15 +36,15 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     @override
     String stateName() {return "BitcoinHome";}
     @override
-    int refreshInterval() {return 3000;}
+    int refreshInterval() {return 1;}
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.usd = json["usd"];
-            widget.btc = json["btc"];
-            widget.transactions = List<BitcoinHomeTransaction>.from(json['transactions'].map((json) => BitcoinHomeTransaction.fromJson(json)));
-        });
+      //setState(() {
+      //    widget.usd = json["usd"];
+      //    widget.btc = json["btc"];
+      //    widget.transactions = List<BitcoinHomeTransaction>.from(json['transactions'].map((json) => BitcoinHomeTransaction.fromJson(json)));
+      //});
     }
 
     @override
@@ -107,7 +108,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
             "Receive",
             "Send",
             () async {
-                global.navigation.switchPageTo(Receive());
+                global.navigation.navigateTo(Receive());
             },
             () {
               //navigateTo(context, Send());

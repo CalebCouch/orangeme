@@ -10,6 +10,7 @@ import 'dart:io' as DartIO;
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
+import 'package:async/async.dart';
 
 enum Platform { Windows, Linux, Mac, IOS, Android, Fuchsia;
 
@@ -53,6 +54,7 @@ class ShakeController extends ChangeNotifier {
 
 abstract class GenericWidget extends StatefulWidget {
     Timer? timer;
+    CancelableOperation? gettingState;
 
     GenericWidget({super.key});
 }
@@ -64,8 +66,12 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
     void unpack_state(Map<String, dynamic> json);
 
     void getState() async {
-        String state = await getstate(name: stateName(), path: global.dataDir!);
-        unpack_state(jsonDecode(state));
+        widget.gettingState = CancelableOperation.fromFuture(
+            getstate(name: stateName(), path: global.dataDir!)
+        ).then((String state) {
+            print("UPACKING");
+            unpack_state(jsonDecode(state));
+        });
     }
 
     @override
@@ -82,8 +88,11 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
     @override
     void dispose() {
-      widget.timer?.cancel();
-      super.dispose();
+        widget.gettingState!.cancel();
+        widget.timer?.cancel();
+        print("DISPOSING");
+        super.dispose();
+        print("DISPOSED");
     }
 }
 

@@ -702,7 +702,7 @@ pub fn testasync(path: String) -> String {
         let p = state.get::<f64>(Field::Price).unwrap();
         if p > barrier {return "Hi".to_string();}
         state.set(Field::Price, &(p+1.0)).unwrap();
-        thread::sleep(time::Duration::from_millis(100));
+        thread::sleep(time::Duration::from_millis(10));
     }
 }
 
