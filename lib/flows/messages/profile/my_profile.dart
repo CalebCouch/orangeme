@@ -1,47 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/data_item.dart';
-import 'package:orange/components/text_input.dart';
-import 'package:orange/components/bumper.dart';
-
 import 'package:orange/classes.dart';
-
 import 'package:image_picker/image_picker.dart';
-import 'dart:io' show Platform;
-import 'package:orange/global.dart' as global;
+import 'package:orange/components/profile_photo.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+//import 'package:orange/global.dart' as global;
 
-// rovides a user interface for viewing and editing personal profile details,
-// including updating profile photo, name, and about me section.
+class MyProfile extends GenericWidget {
+  MyProfile({super.key});
 
-class MyProfile extends StatefulWidget {
-  final String? profilePhoto;
-  final GlobalState globalState;
-  const MyProfile(this.globalState, {super.key, this.profilePhoto});
+  Contact personal = [] as Contact; //Users personal information
 
   @override
   MyProfileState createState() => MyProfileState();
 }
 
-class MyProfileState extends State<MyProfile> {
+class MyProfileState extends GenericState<MyProfile> {
+  @override
+  String stateName() {
+    return "MyProfile";
+  }
+
+  @override
+  int refreshInterval() {
+    return 0;
+  }
+
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {
+      widget.personal;
+    });
+  }
+
   final ImagePicker _picker = ImagePicker();
   late TextEditingController _profileName = TextEditingController();
   late TextEditingController _aboutMe = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return build_screen(context, state);
-      },
-    );
-  }
-
   @override
   void dispose() {
     _profileName.dispose();
@@ -51,12 +46,25 @@ class MyProfileState extends State<MyProfile> {
 
   bool save = false;
 
-  Widget build_screen(BuildContext context, DartState state) {
+  @override
+  Widget build(BuildContext context) {
+    _profileName = TextEditingController(text: widget.personal.name);
+    _aboutMe = TextEditingController(text: widget.personal.abtme);
+    onEdit() {
+      () async {
+        HapticFeedback.heavyImpact();
+        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          setState(() => widget.personal.pfp = image.path);
+        }
+      };
+    }
+
     saveInfo() {
       setState(() {
         save = false;
-        state.personal.name = _profileName.text;
-        state.personal.abtme = _aboutMe.text;
+        widget.personal.name = _profileName.text;
+        widget.personal.abtme = _aboutMe.text;
       });
       FocusScope.of(context).requestFocus(FocusNode());
     }
@@ -67,66 +75,40 @@ class MyProfileState extends State<MyProfile> {
       });
     }
 
-    _profileName = TextEditingController(text: state.personal.name);
-    _aboutMe = TextEditingController(text: state.personal.abtme);
+    Widget EditName() {
+      return CustomTextInput(
+        title: 'Profile Name',
+        hint: 'Profile name...',
+        onChanged: (String str) => {enableButton()},
+        controller: _profileName,
+      );
+    }
 
-    return Interface(
-      widget.globalState,
-      header: global.platform_isDesktop
-          ? homeDesktopHeader(context, "My profile")
-          : stackHeader(context, "My profile"),
-      content: Content(
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              editPhoto(
-                context,
-                () async {
-                  HapticFeedback.heavyImpact();
-                  final XFile? image =
-                      await _picker.pickImage(source: ImageSource.gallery);
-                  if (image != null) {
-                    setState(() => state.personal.pfp = image.path);
-                  }
-                },
-                state.personal.pfp,
-              ),
-              const Spacing(height: AppPadding.profile),
-              CustomTextInput(
-                title: 'Profile Name',
-                hint: 'Profile name...',
-                onChanged: (String str) => {enableButton()},
-                controller: _profileName,
-              ),
-              const Spacing(height: AppPadding.profile),
-              CustomTextInput(
-                title: 'About Me',
-                hint: 'A little bit about me...',
-                onChanged: (String str) => {enableButton()},
-                controller: _aboutMe,
-              ),
-              const Spacing(height: AppPadding.profile),
-              didItem(context, state.personal.did),
-              const Spacing(height: AppPadding.profile),
-              addressItem(context, 'VZDrYz39XxuPadsBN8BklsgEhPsr5zKQGjTA'),
-            ],
-          ),
-        ),
-      ),
-      bumper: singleButtonBumper(
-        context,
-        'Save',
-        save
-            ? () {
-                saveInfo();
-              }
-            : () {},
-        save,
-      ),
-      desktopOnly: true,
-      navigationIndex: 2,
+    Widget EditDesc() {
+      return CustomTextInput(
+        title: 'About Me',
+        hint: 'About me...',
+        onChanged: (String str) => {enableButton()},
+        controller: _aboutMe,
+      );
+    }
+
+    onSave() {
+      if (save) saveInfo();
+    }
+
+    String enabled = save ? 'enabled' : 'disabled';
+    String address = ''; //Need to generate an address
+    return Stack_Default(
+      Header_Stack(context, "My profile"),
+      [
+        EditPhoto(context, onEdit, widget.personal.pfp),
+        EditName(),
+        EditDesc(),
+        didItem(context, widget.personal.did),
+        addressItem(context, address),
+      ],
+      Bumper(context, [CustomButton('Save', 'primary lg $enabled expand none', onSave, key: UniqueKey())]),
     );
   }
 }

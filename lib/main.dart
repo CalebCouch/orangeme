@@ -4,6 +4,7 @@ import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 import 'dart:io';
 import 'package:window_manager/window_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';

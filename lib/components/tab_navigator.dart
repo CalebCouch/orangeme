@@ -1,38 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
-import 'package:orange/flows/bitcoin/home.dart';
+class TabInfo {
+  final Widget page;
+  final String icon;
 
-import 'package:orange/global.dart' as global;
+  const TabInfo(this.page, this.icon);
+}
 
-// Creates a tab navigation bar with icons for switching between the different
-// tabs, providing visual feedback and navigation functionality.
-//TODO: Components cannot import flow pages, (Where used provide a list of components/icons and current index) Automatically assemble navigator from inputs
-
-class TabNav extends StatelessWidget {
+class TabNav extends StatefulWidget {
   final int index;
-  const TabNav({super.key, required this.index});
+  final List<TabInfo> tabs;
+  const TabNav(this.index, this.tabs, {super.key});
+  @override
+  State<TabNav> createState() => TabNavState();
+}
 
+class TabNavState extends State<TabNav> {
   @override
   Widget build(BuildContext context) {
-    void openMessages() {
-      print("switching to messages");
+    void openTabZero() {
       HapticFeedback.heavyImpact();
-      //switchPageTo(context, MessagesHome(globalState));
+      switchPageTo(context, widget.tabs[0].page);
     }
 
-    void openBitcoin() {
-      print("switching to bitcoin");
+    void openTabOne() {
       HapticFeedback.heavyImpact();
-      global.navigation.switchPageTo(BitcoinHome());
+      switchPageTo(context, widget.tabs[1].page);
     }
 
-    return Container(
-      //color: const Color.fromARGB(255, 21, 48, 61),
-      width: MediaQuery.sizeOf(context).width,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
       height: 64,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -40,38 +41,24 @@ class TabNav extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
-                if (index == 1) openBitcoin();
+                if (widget.index != 0) openTabZero();
               },
               child: Container(
-                //color: const Color.fromARGB(255, 134, 175, 195),
                 padding: const EdgeInsets.only(right: AppPadding.navBar),
                 alignment: Alignment.centerRight,
-                child: CustomIcon(
-                  icon: ThemeIcon.wallet,
-                  iconSize: IconSize.md,
-                  iconColor: (index == 0)
-                      ? ThemeColor.secondary
-                      : ThemeColor.textSecondary,
-                ),
+                child: CustomIcon('${widget.tabs[0].icon} lg ${(widget.index == 0) ? 'secondary' : 'text_secondary'}'),
               ),
             ),
           ),
           Expanded(
             child: InkWell(
               onTap: () {
-                if (index == 0) openMessages();
+                if (widget.index != 1) openTabOne();
               },
               child: Container(
-                //color: const Color.fromARGB(255, 55, 75, 85),
                 padding: const EdgeInsets.only(left: AppPadding.navBar),
                 alignment: Alignment.centerLeft,
-                child: CustomIcon(
-                  icon: ThemeIcon.chat,
-                  iconSize: IconSize.md,
-                  iconColor: (index == 1)
-                      ? ThemeColor.secondary
-                      : ThemeColor.textSecondary,
-                ),
+                child: CustomIcon('${widget.tabs[1].icon} lg ${(widget.index == 1) ? 'secondary' : 'text_secondary'}'),
               ),
             ),
           ),

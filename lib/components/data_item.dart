@@ -1,36 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
-import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/tip_buttons.dart';
-import 'package:orange/components/tabular.dart';
-
-import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
-
-// This code defines a DataItem widget for displaying content with optional
-// labels and buttons, and includes functions for creating specific DataItem
-// variations like aboutMeItem and addressItem.
-
-/* A versatile widget for displaying a title, content, and optional buttons. Supports dynamic button actions and icons. */
 class DataItem extends StatelessWidget {
   final String title;
-  final int? listNum;
-  final Widget content;
-  final List<String>? buttonNames;
-  final List<VoidCallback>? buttonActions;
-  final List<String>? buttonIcons;
+  final Widget? content;
+  final int? number;
+  final String? subtitle;
+  final String? helperText;
+  final List<CustomButton>? buttons;
 
   const DataItem({
     super.key,
     required this.title,
-    this.listNum,
-    required this.content,
-    this.buttonNames,
-    this.buttonActions,
-    this.buttonIcons,
+    this.number,
+    this.subtitle,
+    this.helperText,
+    this.content,
+    this.buttons,
   });
 
   @override
@@ -41,27 +28,8 @@ class DataItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          listNum != null
-              ? Row(
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      height: 32,
-                      width: 32,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: ThemeColor.bgSecondary,
-                      ),
-                      child: CustomText(
-                        textType: 'heading',
-                        textSize: TextSize.h6,
-                        text: listNum.toString(),
-                      ),
-                    ),
-                    const Spacing(width: AppPadding.bumper),
-                  ],
-                )
-              : Container(),
+          if (number != null) ListNumber(number),
+          if (number != null) const Spacing(16),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 6),
@@ -69,45 +37,15 @@ class DataItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomText(
-                    alignment: TextAlign.left,
-                    text: title,
-                    textSize: TextSize.h5,
-                    textType: 'heading',
-                  ),
-                  content,
-                  buttonNames != null &&
-                          buttonActions != null &&
-                          buttonNames!.length == 1
-                      ? editButtons([
-                          ButtonTip(
-                            buttonNames![0],
-                            buttonIcons == null
-                                ? ThemeIcon.edit
-                                : buttonIcons![0],
-                            buttonActions![0],
-                          ),
-                        ])
-                      : buttonNames != null &&
-                              buttonActions != null &&
-                              buttonNames!.length == 2
-                          ? editButtons([
-                              ButtonTip(
-                                buttonNames![0],
-                                buttonIcons == null
-                                    ? ThemeIcon.edit
-                                    : buttonIcons![0],
-                                buttonActions![0],
-                              ),
-                              ButtonTip(
-                                buttonNames![1],
-                                buttonIcons == null
-                                    ? ThemeIcon.edit
-                                    : buttonIcons![1],
-                                buttonActions![1],
-                              ),
-                            ])
-                          : Container(),
+                  CustomText('heading h5', title, alignment: TextAlign.left),
+                  const Spacing(16),
+                  if (subtitle != null) CustomText('text md', subtitle!, alignment: TextAlign.left),
+                  if (subtitle != null) const Spacing(16),
+                  if (helperText != null) CustomText('text sm text_secondary', helperText!, alignment: TextAlign.left),
+                  if (helperText != null) const Spacing(16),
+                  if (content != null) content!,
+                  if (content != null) const Spacing(16),
+                  if (buttons != null) CustomRow(buttons!, 10),
                 ],
               ),
             ),
@@ -116,121 +54,54 @@ class DataItem extends StatelessWidget {
       ),
     );
   }
+
+  Widget ListNumber(number) {
+    return Container(
+      alignment: Alignment.center,
+      height: 32,
+      width: 32,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: ThemeColor.bgSecondary,
+      ),
+      child: CustomText('heading h6', number.toString()),
+    );
+  }
 }
 
-/* A function that arranges ButtonTip widgets based on the number of provided buttons (1 or 2). */
-Widget editButtons(List<ButtonTip> tipButtons) {
-  if (tipButtons.length == 1) return one(tipButtons);
-  if (tipButtons.length == 2) return two(tipButtons);
-  return Container();
-}
-
-/* Returns a single ButtonTip widget. */
-Widget one(List<ButtonTip> tipButtons) {
-  return ButtonTip(tipButtons[0].text, tipButtons[0].icon, tipButtons[0].onTap);
-}
-
-/* Returns a row of two ButtonTip widgets. */
-Widget two(List<ButtonTip> tipButtons) {
-  return Row(
-    children: [
-      ButtonTip(tipButtons[0].text, tipButtons[0].icon, tipButtons[0].onTap),
-      const Spacing(width: AppPadding.tips),
-      ButtonTip(tipButtons[1].text, tipButtons[1].icon, tipButtons[1].onTap),
-    ],
-  );
-}
-
-/* Creates a DataItem displaying an "About Me" section with the provided text. */
 Widget aboutMeItem(BuildContext context, String aboutMe) {
   return DataItem(
-    title: 'About Me',
-    content: Container(
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.dataItem),
-      child: CustomText(
-        alignment: TextAlign.left,
-        text: aboutMe,
-        textSize: TextSize.h5,
-      ),
-    ),
+    title: 'About me',
+    content: CustomText('text md secondary', aboutMe, alignment: TextAlign.start),
   );
 }
 
-/* Creates a DataItem for displaying a Bitcoin address with a "Copy" button to copy the address to the clipboard. */
 Widget addressItem(BuildContext context, String address) {
+  copyAddress() async {
+    HapticFeedback.heavyImpact();
+    await Clipboard.setData(ClipboardData(text: address));
+  }
+
   return DataItem(
     title: 'Bitcoin address',
-    content: Container(
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.dataItem),
-      child: CustomText(
-        alignment: TextAlign.left,
-        text: address,
-        textSize: TextSize.h5,
-      ),
-    ),
-    buttonNames: const ['Copy'],
-    buttonIcons: const [ThemeIcon.copy],
-    buttonActions: [
-      () async {
-        HapticFeedback.heavyImpact();
-        await Clipboard.setData(ClipboardData(text: address));
-      },
+    content: CustomText('text md secondary', address, alignment: TextAlign.start),
+    buttons: [
+      CustomButton('Copy', 'secondary md enabled hug copy', () => copyAddress()),
     ],
   );
 }
 
-/* Creates a DataItem for displaying a Digital ID with a "Copy" button to copy the ID to the clipboard. */
 Widget didItem(BuildContext context, String did) {
+  copyAddress() async {
+    HapticFeedback.heavyImpact();
+    await Clipboard.setData(ClipboardData(text: did));
+  }
+
   return DataItem(
     title: 'Digital ID',
-    content: Container(
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.dataItem),
-      child: CustomText(
-        alignment: TextAlign.left,
-        text: did,
-        textSize: TextSize.h5,
-      ),
-    ),
-    buttonNames: const ['Copy'],
-    buttonIcons: const [ThemeIcon.copy],
-    buttonActions: [
-      () async {
-        HapticFeedback.heavyImpact();
-        await Clipboard.setData(ClipboardData(text: did));
-      },
-    ],
-  );
-}
-
-/*  Creates a DataItem for confirming a recipient's details before sending Bitcoin, with a button to navigate to a send screen. */
-Widget confirmRecipientItem(GlobalState globalState, BuildContext context,
-    String recipient, String did) {
-  return DataItem(
-    title: "Confirm contact",
-    listNum: 1,
-    content: Column(
-      children: [
-        const Spacing(height: AppPadding.bumper),
-        contactTabular(
-          context,
-          recipient,
-          did,
-        ),
-        const Spacing(height: AppPadding.bumper),
-        const CustomText(
-          textSize: TextSize.sm,
-          color: ThemeColor.textSecondary,
-          alignment: TextAlign.left,
-          text: "Bitcoin sent to the wrong address can never be recovered.",
-        ),
-        const Spacing(height: AppPadding.bumper),
-      ],
-    ),
-    buttonNames: const ["Recipient"],
-    buttonActions: [
-      () {
-        navigateTo(context, Send(globalState));
-      }
+    content: CustomText('text md secondary', did, alignment: TextAlign.start),
+    buttons: [
+      CustomButton('Copy', 'secondary md enabled hug copy', () => copyAddress()),
     ],
   );
 }

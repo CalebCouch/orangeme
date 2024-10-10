@@ -1,69 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
-
 import 'package:orange/components/tabular.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/amount_display.dart';
-
+import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/global.dart' as global;
 
-// This page displays detailed information about a specific Bitcoin transaction.
-// It shows whether the transaction was received or sent, and provides a breakdown
-// of the transaction amount and associated details.
+class TransactionDetails extends GenericWidget {
+  TransactionDetails({super.key});
 
-class TransactionDetailsWidget extends StatefulWidget {
-  final Transaction transaction;
-  const TransactionDetailsWidget(this.transaction,
-      {super.key});
+  BitcoinHomeTransaction transaction = [] as BitcoinHomeTransaction;
+
+  double usdUnFormmatted = 0; // (tx.usd.abs() - tx.fee.abs());
+
+  String usd = ""; //formatValue(usd);
+  String btc = ""; //formatBTC((tx.btc).abs(), 8)
 
   @override
-  TransactionDetailsWidgetState createState() =>
-      TransactionDetailsWidgetState();
+  TransactionDetailsState createState() => TransactionDetailsState();
 }
 
-class TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
+class TransactionDetailsState extends GenericState<TransactionDetails> {
+  @override
+  String stateName() {
+    return "TransactionDetails";
+  }
+
+  @override
+  int refreshInterval() {
+    return 1;
+  }
+
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {
+      widget.usd;
+      widget.btc;
+      widget.transaction; //Need to know if transaction was sent or received
+    });
+  }
+
+  onDone() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
+    String direction = widget.transaction.isReceive ? "Received" : "Sent";
+    return Stack_Default(
+      Header_Stack(context, "Confirm $direction"),
+      [
+        AmountDisplay(widget.transaction),
+        transactionTabular(context, widget.transaction),
+      ],
+      Bumper(context, [CustomButton('Done', 'secondary lg enabled expand none', () => onDone())]),
     );
   }
 
-  Widget buildScreen(BuildContext context, DartState state) {
-    String direction = widget.transaction.isReceive ? "Received" : "Sent";
+  //The following widgets can ONLY be used in this file
 
-    return Interface(
-      header: stackHeader(context, "$direction bitcoin"),
-      content: Content(
-        content: Column(
-          children: [
-            amountDisplay(
-              (widget.transaction.usd.abs() - widget.transaction.fee.abs()),
-              (widget.transaction.btc).abs(),
-            ),
-            const Spacing(height: AppPadding.content),
-            transactionTabular(context, widget.transaction),
-          ],
-        ),
-      ),
-      bumper: singleButtonBumper(
-        context,
-        "Done",
-        () {
-          Navigator.pop(context);
-        },
-        true,
-        ButtonVariant.secondary,
-      ),
-      desktopOnly: true,
-      navigationIndex: 0,
+  Widget AmountDisplay(tx) {
+    dynamic_size(x) {
+      if (x <= 4) return 'title';
+      if (x <= 7) return 'h1';
+      return 'h2';
+    }
+
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
+      child: CustomColumn([
+        CustomText('heading ${dynamic_size(widget.usd.length)}', '$widget.usdUnformmated USD'),
+        CustomText('text lg text_secondary', '${widget.btc} BTC')
+      ], AppPadding.valueDisplaySep),
     );
   }
 }

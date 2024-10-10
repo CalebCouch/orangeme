@@ -1,86 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/header.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/custom/custom_text.dart';
-
 import 'package:orange/flows/messages/profile/user_profile.dart';
-
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
-// Displays a list of group members with the option to view individual profiles.
-
-class MessageInfo extends StatefulWidget {
-  final GlobalState globalState;
+class MessageInfo extends GenericWidget {
   final List<Contact> contacts;
-  const MessageInfo(
-    this.globalState, {
-    super.key,
-    required this.contacts,
-  });
+  MessageInfo(this.contacts, {super.key});
 
   @override
   MessageInfoState createState() => MessageInfoState();
 }
 
-class MessageInfoState extends State<MessageInfo> {
+class MessageInfoState extends GenericState<MessageInfo> {
+  @override
+  String stateName() {
+    return "MessageInfo";
+  }
+
+  @override
+  int refreshInterval() {
+    return 0;
+  }
+
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return build_screen(context, state);
-      },
+    return Stack_Scroll(
+      Header_Stack(context, "Group members"),
+      [
+        Information(widget.contacts),
+        ListMembers(context, widget.contacts),
+      ],
+    );
+  }
+}
+
+//The following widgets can ONLY be used in this file
+
+Widget Information(List<Contact> contacts) {
+  return CustomText('text md text_secondary', 'This group has ${contacts.length} members');
+}
+
+Widget ListMembers(BuildContext context, contacts) {
+  onPressed(index) async {
+    //Generate an address
+    navigateTo(
+      context,
+      UserProfile(contacts[index]),
     );
   }
 
-  Widget build_screen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      resizeToAvoidBottomInset: false,
-      header: stackHeader(context, "Group members"),
-      content: Content(
-        content: Column(
-          children: [
-            CustomText(
-              text: 'This group has ${widget.contacts.length} members',
-              textSize: TextSize.md,
-              color: ThemeColor.textSecondary,
-            ),
-            const Spacing(height: AppPadding.content),
-            Expanded(
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: widget.contacts.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return contactListItem(
-                      context,
-                      widget.contacts[index],
-                      () {
-                        navigateTo(
-                          context,
-                          UserProfile(
-                            widget.globalState,
-                            userInfo: widget.contacts[index],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      desktopOnly: true,
-      navigationIndex: 1,
-    );
-  }
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: const ScrollPhysics(),
+    itemCount: contacts.length,
+    itemBuilder: (BuildContext context, int index) {
+      return ContactItem(context, contacts[index], () => onPressed(index));
+    },
+  );
 }
