@@ -8,6 +8,7 @@ import 'package:orange/storage.dart';
 
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -23,7 +24,6 @@ getAppData() async {
 Platform platform = Platform.Mac.init();//Use Mac to call INIT and get the actual platform
 bool platform_isDesktop = platform.isDesktop();
 bool platform_isMobile = !platform_isDesktop;
-
 bool internet_connected = true;
 
 Storage storage = Storage.init(platform);
@@ -69,7 +69,6 @@ Future<String> dartCallback(String dartCommand) async {
         case "print":
             print(command.data);
         case "get_commands":
-            print("get_commands");
             var json = jsonEncode(rustCommands);
             rustCommands = [];
             return json;
@@ -83,9 +82,3 @@ Future<String> dartCallback(String dartCommand) async {
     }
     return "Ok";
 }
-
-//  ValueNotifier<BitcoinHomeState> bitcoinHomeState = ValueNotifier(
-//      BitcoinHomeState("\$1.20", "0.003 BTC", <BitcoinHomeTransaction>[
-//          BitcoinHomeTransaction("\$1.20", "12:20 PM", true)
-//      ])
-//  );

@@ -10,13 +10,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
 import 'package:path_provider/path_provider.dart';
 import 'package:orange/src/rust/api/simple.dart';
-import 'dart:isolate';
+import 'package:thread/thread.dart';
+import 'dart:convert';
+import 'package:orange/storage.dart';
+import 'package:uuid/uuid.dart';
 
 Future<void> startRust(String path) async {
-    global.navigation.throwError(await testasync(
+    global.navigation.throwError(await ruststart(
         path: path,
-        //platform: global.platform.toString(),
-        //thread: global.dartCallback,
+        platform: global.platform.toString(),
+        thread: global.dartCallback,
     ));
 }
 
@@ -24,8 +27,7 @@ Future<void> main() async {
     await RustLib.init();
     WidgetsFlutterBinding.ensureInitialized();
     await global.getAppData();
-    print(global.dataDir!);
-    startRust(global.dataDir!.toString());
+    startRust(global.dataDir!);
     var sp = await SharedPreferences.getInstance();
     if (global.platform_isDesktop) {
         WindowManager.instance.setMinimumSize(const Size(1280, 832));

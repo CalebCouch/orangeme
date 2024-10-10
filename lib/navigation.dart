@@ -10,7 +10,7 @@ class Navigation {
         return Navigation(GlobalKey<NavigatorState>());
     }
 
-    void throwError(String err) {
+    throwError(String err) {
         Navigator.pushReplacement(
             this.navkey.currentContext!,
             MaterialPageRoute(builder: (context) => ErrorPage(message: err)),
@@ -18,7 +18,7 @@ class Navigation {
     }
 
     Future<void> navigateTo(Widget widget) async {
-      Navigator.push(
+      await Navigator.push(
         this.navkey.currentContext!,
         PageRouteBuilder(
           pageBuilder: (context, animation1, animation2) => widget,
@@ -28,13 +28,11 @@ class Navigation {
       );
     }
 
-    Future<void> navPop() async {
+    navPop() {
       Navigator.pop(this.navkey.currentContext!);
     }
 
-    Future<void> switchPageTo(
-      Widget widget,
-    ) async {
+    switchPageTo(Widget widget) {
       var context = this.navkey.currentContext!;
       Navigator.pushReplacement(
         context,
@@ -46,7 +44,7 @@ class Navigation {
       );
     }
 
-    Future<void> resetNavTo(Widget widget) async {
+    resetNavTo(Widget widget) {
       var context = this.navkey.currentContext!;
       Navigator.pushAndRemoveUntil(
           context,

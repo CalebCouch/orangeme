@@ -13,7 +13,13 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 #[derive(Debug)]
-pub enum Field {Transactions, Internet, Balance, Price}
+pub enum Field {
+    Transactions(BTreeMap<Txid, Transactions>),
+    Internet(bool),
+    Balance(f64),
+    Price(f64),
+    NewAddress(String)
+}
 impl Field {
     pub fn into_bytes(&self) -> Vec<u8> {
         format!("{:?}", self).into_bytes()
@@ -58,6 +64,7 @@ impl StateManager {
     pub fn get(&self, state_name: &str) -> Result<String, Error> {
         match state_name {
             "BitcoinHome" => self.bitcoin_home(),
+            "Receive" => self.receive(),
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
     }
@@ -70,7 +77,6 @@ impl StateManager {
 
     pub fn bitcoin_home(&self) -> Result<String, Error> {
         let btc = self.state.get::<f64>(Field::Balance)?;
-        //let usd = btc*self.state.get::<f64>(Field::Price)?;
         let usd = 1.0*self.state.get::<f64>(Field::Price)?;
         Ok(serde_json::to_string(&BitcoinHome{
             usd: usd.to_string(),
@@ -84,6 +90,11 @@ impl StateManager {
                     is_withdraw: tx.is_withdraw,
                 }
             ).collect()
+        })?)
+    }
+    pub fn receive(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&Receive{
+            address: self.state.get(Field::Address)?
         })?)
     }
 }
@@ -100,4 +111,9 @@ struct BitcoinHome {
     pub usd: String,
     pub btc: String,
     pub transactions: Vec<BitcoinHomeTransaction>
+}
+
+#[derive(Serialize)]
+struct Receive {
+    pub address: String
 }

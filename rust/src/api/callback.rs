@@ -2,7 +2,7 @@ use super::Error;
 
 use super::structs::{DartCallback, RustCommand, RustResponse};
 use super::wallet::Wallet;
-use super::state_manager::StateManager;
+use super::state::{State, Field};
 
 use web5_rust::common::traits::KeyValueStore;
 
@@ -13,46 +13,34 @@ use std::path::PathBuf;
 #[derive(Clone)]
 pub struct RustCallback {
     wallet: Wallet,
-    state_manager: StateManager,
     dart_callback: DartCallback,
-    store: Box<dyn KeyValueStore>
+    state: State
 }
 
 impl RustCallback {
     pub async fn new<KVS: KeyValueStore + 'static>(
         wallet: Wallet,
-        state_manager: StateManager,
         dart_callback: DartCallback,
-        path: PathBuf,
+        state: State,
     ) -> Result<Self, Error> {
-        let mut store = Box::new(KVS::new(path)?);
-         store.set(
-            b"new_address",
-            &wallet.get_new_address().await?.as_bytes()
-        )?;
         Ok(RustCallback{
             wallet,
-            state_manager,
             dart_callback,
-            store,
+            state,
         })
     }
 
     pub async fn handle(&mut self) -> Result<(), Error> {
         let ec = "RustCallback.handle";
+        let ok = || Ok("Ok".to_string());
         let res = self.dart_callback.call("get_commands", "").await?;
         let commands = serde_json::from_str::<Vec<RustCommand>>(&res)?;
         for command in commands {
             let result: Result<String, Error> = match command.method.as_str() {
                 "get_new_address" => {
-                    Ok(String::from_utf8(
-                        self.store.get(b"new_address")?
-                        .ok_or(Error::err(ec, "No new address"))?
-                    )?)
+                    self.state.set(Field::Address, &self.wallet.get_new_address().await?.to_string())?;
+                    ok()
                 },
-                "get_state" => {
-                    Ok(self.state_manager.get(&command.data).await?)
-                }
               //"check_address" => {
               //    Ok(Address::from_str(&command.data).map(|a|
               //        a.require_network(Network::Bitcoin).is_ok()
@@ -109,17 +97,6 @@ impl RustCallback {
             };
             let resp = RustResponse{uid: command.uid.to_string(), data: result?};
             self.dart_callback.call("post_response", &serde_json::to_string(&resp)?).await?;
-
-            //POST PROCESSES
-            match command.method.as_str() {
-                "get_new_address" => {
-                    self.store.set(
-                        b"new_address",
-                        &self.wallet.get_new_address().await?.as_bytes()
-                    )?;
-                },
-                _ => {}
-            }
         }
         Ok(())
     }

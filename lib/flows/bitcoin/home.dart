@@ -40,11 +40,11 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-      //setState(() {
-      //    widget.usd = json["usd"];
-      //    widget.btc = json["btc"];
-      //    widget.transactions = List<BitcoinHomeTransaction>.from(json['transactions'].map((json) => BitcoinHomeTransaction.fromJson(json)));
-      //});
+        setState(() {
+            widget.usd = json["usd"];
+            widget.btc = json["btc"];
+            widget.transactions = List<BitcoinHomeTransaction>.from(json['transactions'].map((json) => BitcoinHomeTransaction.fromJson(json)));
+        });
     }
 
     @override
@@ -108,7 +108,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
             "Receive",
             "Send",
             () async {
-                global.navigation.navigateTo(Receive());
+                navigateTo(Receive());
             },
             () {
               //navigateTo(context, Send());

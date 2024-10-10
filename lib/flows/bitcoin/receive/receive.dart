@@ -20,32 +20,38 @@ import 'package:orange/flows/bitcoin/home.dart';
 // displaying a QR code and address. It supports both desktop and mobile 
 // platforms, allowing users to either copy the address or share it via different
 // methods depending on the platform.
-class Receive extends StatefulWidget {
+class Receive extends GenericWidget {
     Receive({super.key});
 
-    String address = "";
+    String address = "8475729859832898587463636536474388384";
 
     @override
     ReceiveState createState() => ReceiveState();
 }
 
-class ReceiveState extends State<Receive> {
-//  @override
-//  void initState() {
-//      super.initState();
-//      _asyncInitState();
-//  }
-//  _asyncInitState() async {
-//      var address = await global.invoke("get_new_address", "");
-//      setState(() {
-//          widget.address = address;
-//      });
-//  }
+class ReceiveState extends GenericState<Receive> {
+    @override
+    String stateName() {return "Receive";}
+    @override
+    int refreshInterval() {return 0;}
+
+    @override
+    void unpack_state(Map<String, dynamic> json) {
+        setState(() {
+            widget.address = json["address"];
+        });
+    }
+
+    @override
+    void initState() {
+        super.initState();
+        global.invoke("get_new_address", "");
+    }
 
     @override
     Widget build(BuildContext context) {
         return Interface(
-            header: stackHeader(BitcoinHome(), "Receive bitcoin"),
+            header: stackHeader(context, "Receive bitcoin"),
             content: Content(
               content: Column(
                 mainAxisAlignment:
@@ -73,7 +79,7 @@ class ReceiveState extends State<Receive> {
                 : singleButtonBumper(
                     context,
                     "Share",
-                    () => {Share.share(widget.address)},
+                    () => {global.navigation.resetNavTo(BitcoinHome())},//Share.share(widget.address)},
                   ),
             desktopOnly: true,
             navigationIndex: 0,

@@ -10,7 +10,6 @@ import 'dart:io' as DartIO;
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
-import 'package:async/async.dart';
 
 enum Platform { Windows, Linux, Mac, IOS, Android, Fuchsia;
 
@@ -54,7 +53,6 @@ class ShakeController extends ChangeNotifier {
 
 abstract class GenericWidget extends StatefulWidget {
     Timer? timer;
-    CancelableOperation? gettingState;
 
     GenericWidget({super.key});
 }
@@ -65,19 +63,18 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
     void unpack_state(Map<String, dynamic> json);
 
-    void getState() async {
-        widget.gettingState = CancelableOperation.fromFuture(
-            getstate(name: stateName(), path: global.dataDir!)
-        ).then((String state) {
-            print("UPACKING");
-            unpack_state(jsonDecode(state));
-        });
+    void getState() {
+        String state = getstate(name: stateName(), path: global.dataDir!);
+        unpack_state(jsonDecode(state));
     }
 
-    @override
-    void initState() {
-        super.initState();
-        getState();
+    navigateTo(Widget next) async {
+        widget.timer?.cancel();
+        await global.navigation.navigateTo(next);
+        await _initTimer();
+    }
+
+    _initTimer() async {
         var interval = refreshInterval();
         if (interval > 0) {
             widget.timer = Timer.periodic(Duration(milliseconds: interval), (Timer t) {
@@ -87,12 +84,17 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
     }
 
     @override
+    void initState() {
+        getState();
+        _initTimer();
+        super.initState();
+    }
+
+    @override
     void dispose() {
-        widget.gettingState!.cancel();
+        //widget.gettingState!.cancel();
         widget.timer?.cancel();
-        print("DISPOSING");
         super.dispose();
-        print("DISPOSED");
     }
 }
 

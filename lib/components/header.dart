@@ -125,9 +125,9 @@ Widget stackButtonHeader(
 }
 
 /* A basic header with optional back button and centered text. */
-Widget stackHeader(Widget back, String text, [iconButton]) {
+Widget stackHeader(BuildContext context, String text, [iconButton]) {
   return DefaultHeader(
-    left: iconButton == null ? global.navigation.switchPageTo(back) : iconButton!,
+    left: iconButton == null ? backButton(context) : iconButton!,
     center: CustomText(
       textType: "heading",
       text: text,
