@@ -102,9 +102,10 @@ impl Transaction {
         let confirmation_time = details.confirmation_time.map(|ct|
             Ok::<(u32, DateTime), Error>((ct.height, DateTime::from_timestamp(ct.timestamp)?))
         ).transpose()?;
-        let usd = if let Some(ct) = confirmation_time.as_ref() {
+        let price = if let Some(ct) = confirmation_time.as_ref() {
             PriceGetter::get(Some(&ct.1)).await?
         } else {0.0};
+        let usd =   btc*price;
         let fee = details.fee.map(|f| f as f64 / SATS);
         let error = || Error::bad_request("Transaction::from_details", "Missing Sent Address");
         Ok(Transaction{btc, usd, is_withdraw, confirmation_time, fee})
@@ -162,10 +163,10 @@ impl Wallet {
         ).transpose()?.unwrap_or_default())
     }
 
-    pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
-        let client = Builder::new(CLIENT_URI).build_blocking()?;
-        Ok(EsploraBlockchain::from_client(client, 100))
-    }
+  //pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
+  //    let client = Builder::new(CLIENT_URI).build_blocking()?;
+  //    Ok(EsploraBlockchain::from_client(client, 100))
+  //}
 
     pub async fn sync(&mut self) -> Result<(), Error> {
         let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
