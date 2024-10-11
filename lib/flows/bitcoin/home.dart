@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:flutter/services.dart';
@@ -119,20 +120,20 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
         : Container();
   }
 
-  Widget TransactionList(GlobalState globalState, state) {
+  Widget TransactionList() {
     return ListView.builder(
       shrinkWrap: true,
       reverse: true,
       physics: const ScrollPhysics(),
-      itemCount: state.transactions.length,
+      itemCount: widget.transactions.length,
       itemBuilder: (BuildContext context, int index) {
         return TransactionItem(widget.transactions[index]);
       },
     );
   }
 
-  Widget TransactionItem( BitcoinHomeTransaction transaction) {
-    return ListItem(
+  Widget TransactionItem(BitcoinHomeTransaction transaction) {
+    return Container(); /*ListItem(
       onTap: () {
         HapticFeedback.mediumImpact();
         navigateTo(context, TransactionDetails(transaction));
@@ -141,6 +142,6 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
       sub: formatDate(transaction.date, transaction.time),
       titleR: "\$${transaction.usd}",
       subR: "Details",
-    );
+    );*/
   }
 }

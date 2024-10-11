@@ -3,17 +3,17 @@ import 'package:orange/components/tabular.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/global.dart' as global;
+//import 'package:orange/global.dart' as global;
 
 class TransactionDetails extends GenericWidget {
-  TransactionDetails({super.key});
+  final Transaction transaction;
+  TransactionDetails(this.transaction, {super.key});
 
-  BitcoinHomeTransaction transaction = [] as BitcoinHomeTransaction;
-
-  double usdUnFormmatted = 0; // (tx.usd.abs() - tx.fee.abs());
+  double usdUnformatted = 0; // (tx.usd.abs() - tx.fee.abs());
 
   String usd = ""; //formatValue(usd);
   String btc = ""; //formatBTC((tx.btc).abs(), 8)
+  bool isReceive = true;
 
   @override
   TransactionDetailsState createState() => TransactionDetailsState();
@@ -36,6 +36,7 @@ class TransactionDetailsState extends GenericState<TransactionDetails> {
       widget.usd;
       widget.btc;
       widget.transaction; //Need to know if transaction was sent or received
+      widget.isReceive;
     });
   }
 
@@ -45,7 +46,7 @@ class TransactionDetailsState extends GenericState<TransactionDetails> {
 
   @override
   Widget build(BuildContext context) {
-    String direction = widget.transaction.isReceive ? "Received" : "Sent";
+    String direction = widget.isReceive ? "Received" : "Sent";
     return Stack_Default(
       Header_Stack(context, "Confirm $direction"),
       [
@@ -69,7 +70,7 @@ class TransactionDetailsState extends GenericState<TransactionDetails> {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
       child: CustomColumn([
-        CustomText('heading ${dynamic_size(widget.usd.length)}', '$widget.usdUnformmated USD'),
+        CustomText('heading ${dynamic_size(widget.usd.length)}', '${widget.usdUnformatted} USD'),
         CustomText('text lg text_secondary', '${widget.btc} BTC')
       ], AppPadding.valueDisplaySep),
     );
