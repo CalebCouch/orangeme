@@ -5,6 +5,7 @@ use super::wallet::{Wallet, DescriptorSet, Seed};
 //use super::callback::RustCallback;
 use super::price::PriceGetter;
 use super::state::{StateManager, State, Field};
+use super::usb::UsbInfo;
 
 use web5_rust::common::SqliteStore;
 use web5_rust::common::traits::KeyValueStore;
@@ -601,25 +602,25 @@ async fn async_rust (
     state.set(Field::Path, &path)?;
     let platform = Platform::from_str(&platform)?;
 
-    //SETUP
     let storage = Storage::new(dart_callback.clone());
-    if platform.is_desktop() {todo!();}
-    let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
-        serde_json::from_str(&seed)?
-    } else {
-        let seed = Seed::new();
-        storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
-        seed
-    };
-    let descriptors = DescriptorSet::from_seed(&seed)?;
-    dart_callback.call("print", &descriptors.internal).await?;
-    state.set(Field::DescriptorSet, &descriptors)?;
-    //SETUP
 
-    let mut wallet = Wallet::new(
-        descriptors,
-        path.clone()
-    )?;
+    let mut wallet = if !platform.is_desktop() {
+         let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
+            serde_json::from_str(&seed)?
+        } else {
+            let seed = Seed::new();
+            storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+            seed
+        };
+        let descriptors = DescriptorSet::from_seed(&seed)?;
+        dart_callback.call("print", &descriptors.internal).await?;
+        state.set(Field::DescriptorSet, &descriptors)?;
+
+        Some(Wallet::new(
+            descriptors,
+            path.clone()
+        )?)
+    } else {None};
 
     let mut state_thread1 = state.clone();
     let mut state_thread2 = state.clone();
@@ -635,11 +636,29 @@ async fn async_rust (
             thread::sleep(time::Duration::from_millis(600_000));
         }; Err::<(), Error>(Error::Exited("Price Update".to_string()))}),
         spawn(async move {
-            loop {
-                wallet.sync().await?;
-                thread::sleep(time::Duration::from_millis(1000));
-            }
-            Err::<(), Error>(Error::Exited("Wallet Sync".to_string()))
+            if platform.is_desktop() {
+                let mut usb_info: UsbInfo = UsbInfo::new(&platform)?;
+                loop {
+                    if let Some(device_path) = usb_info.detect_new_device_path(&platform)? {
+                        // Convert Option<PathBuf> to String safely, TODO update state here
+                        let device_path_str = device_path.to_string_lossy().into_owned();
+                        // Pass the string to the invoke function
+                        dart_callback.call("print", &device_path_str).await?;
+                    }
+                    thread::sleep(time::Duration::from_millis(1_000));
+                };
+                Err::<(), Error>(Error::Exited("Usb Detection".to_string()))
+            } else {Ok(())}
+        }),
+
+        spawn(async move {
+            if let Some(mut wallet) = wallet {
+                loop {
+                    wallet.sync().await?;
+                    thread::sleep(time::Duration::from_millis(1000));
+                }
+                Err::<(), Error>(Error::Exited("Wallet Sync".to_string()))
+            } else {Ok(())}
         }),
     )?;
     Ok(())

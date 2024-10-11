@@ -18,6 +18,11 @@ pub mod wallet;
 /// flutter_rust_bridge:ignore
 pub mod state;
 
+/// flutter_rust_bridge:ignore
+pub mod usb;
+
+
+
 
 
 pub mod simple;
