@@ -1,147 +1,119 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:orange/theme/stylesheet.dart';
-
+import 'package:orange/components/tabular.dart';
+import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/send/success.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
-import 'package:orange/flows/bitcoin/send/send.dart';
-
-import 'package:orange/components/interface.dart';
-
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/tabular.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
 import 'package:orange/components/data_item.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+//import 'package:orange/global.dart' as global;
 
-/* BITCOIN SEND STEP FOUR */
+class Confirm extends GenericWidget {
+  Confirm({super.key});
 
-// The ConfirmSend class provides a confirmation screen for a Bitcoin transaction. 
-// It allows users to review the transaction details, such as the recipient address
-// and amount, and provides options to confirm and send the transaction or adjust 
-// the amount or speed settings.
-
-class ConfirmSend extends StatefulWidget {
-  final GlobalState globalState;
-  final Transaction tx;
-  const ConfirmSend(this.globalState, this.tx, {super.key});
+  Transaction tx = [] as Transaction; // the transaction being built
 
   @override
   ConfirmState createState() => ConfirmState();
 }
 
-class ConfirmState extends State<ConfirmSend> {
-  final TextEditingController recipientAddressController =
-      TextEditingController();
+class ConfirmState extends GenericState<Confirm> {
+  @override
+  String stateName() {
+    return "Confirm";
+  }
+
+  @override
+  int refreshInterval() {
+    return 0;
+  }
+
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {
+      widget.tx;
+    });
+  }
+
+  bool isLoading = false;
+  final TextEditingController recipientAddressController = TextEditingController();
+
+  Future<void> onContinue() async {
+    setState(() {
+      isLoading = true;
+    });
+    //await widget.globalState.invoke("broadcast_transaction", widget.tx.txid);
+    navigateTo(context, Success());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
+    return Stack_Default(
+      isLoading ? Container() : Header_Stack(context, "Confirm send"),
+      [
+        isLoading ? loadingCircle() : Container(),
+        isLoading ? Container() : ConfirmAddress(context, widget.tx),
+        isLoading ? Container() : ConfirmAmount(context, widget.tx),
+      ],
+      isLoading ? Container() : Bumper(context, [CustomButton('Confirm & Send', 'primary lg enabled expand none', () => onContinue())]),
+      isLoading ? Alignment.center : Alignment.topCenter,
+      !isLoading,
+    );
+  }
+}
+
+//The following widgets can ONLY be used in this file
+
+Widget loadingCircle() {
+  return const Center(
+    child: CircularProgressIndicator(
+      strokeCap: StrokeCap.round,
+      backgroundColor: ThemeColor.bgSecondary,
+    ),
+  );
+}
+
+ConfirmAddress(BuildContext context, tx) {
+  changeAddress() {
+    Send();
+  }
+
+  return DataItem(
+    title: "Confirm Address",
+    number: 1,
+    subtitle: tx.address,
+    helperText: "Bitcoin sent to the wrong address can never be recovered.",
+    buttons: [
+      CustomButton('Address', 'secondary md enabled hug edit', changeAddress),
+    ],
+  );
+}
+
+ConfirmAmount(BuildContext context, tx) {
+  changeAmount() {
+    resetNavTo(
+      context,
+      Amount(),
     );
   }
 
-  Future<void> next() async {
-    await widget.globalState.invoke("broadcast_transaction", widget.tx.txid);
-    navigateTo(context, Confirmation(widget.globalState, widget.tx.usd));
-  }
-
-  Widget buildScreen(BuildContext context, DartState state) {
-    print(widget.tx.usd);
-    return Interface(
-      widget.globalState,
-      header: stackHeader(
-        context,
-        'Confirm send',
-      ),
-      content: Content(
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              widget.tx.sentAddress != null
-                  ? DataItem(
-                      title: "Confirm Address",
-                      listNum: 1,
-                      content: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Spacing(height: AppPadding.bumper),
-                          CustomText(
-                            textSize: TextSize.md,
-                            alignment: TextAlign.left,
-                            text: widget.tx.sentAddress!,
-                          ),
-                          const Spacing(height: AppPadding.bumper),
-                          const CustomText(
-                            textSize: TextSize.sm,
-                            color: ThemeColor.textSecondary,
-                            alignment: TextAlign.left,
-                            text:
-                                "Bitcoin sent to the wrong address can never be recovered.",
-                          ),
-                          const Spacing(height: AppPadding.bumper),
-                        ],
-                      ),
-                      buttonNames: const ["Address"],
-                      buttonActions: [
-                        () {
-                          resetNavTo(
-                            context,
-                            Send(
-                              widget.globalState,
-                              address: widget.tx.sentAddress!,
-                            ),
-                          );
-                        }
-                      ],
-                    )
-                  : Container(),
-              const Spacing(height: AppPadding.bumper),
-              DataItem(
-                title: "Confirm Amount",
-                listNum: 2,
-                content: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AppPadding.bumper),
-                  child: confirmationTabular(context, widget.tx),
-                ),
-                buttonNames: const ["Amount", "Speed"],
-                buttonActions: [
-                  () {
-                    resetNavTo(
-                      context,
-                      SendAmount(widget.globalState, widget.tx.sentAddress!),
-                    );
-                  },
-                  () {
-                    resetNavTo(
-                      context,
-                      TransactionSpeed(
-                        widget.globalState,
-                        widget.tx.sentAddress!,
-                        widget.tx.btc.abs(),
-                      ),
-                    );
-                  }
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      bumper: singleButtonBumper(context, "Confirm & Send", next),
-      desktopOnly: true,
-      navigationIndex: 0,
+  changeSpeed() {
+    resetNavTo(
+      context,
+      TransactionSpeed(),
     );
   }
+
+  return DataItem(
+    title: "Confirm Amount",
+    number: 2,
+    content: confirmationTabular(context, tx),
+    buttons: [
+      CustomButton('Amount', 'secondary md enabled hug edit', changeAmount),
+      CustomButton('Speed', 'secondary md enabled hug edit', changeSpeed),
+    ],
+  );
 }

@@ -1,109 +1,191 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import "package:intl/intl.dart";
-
-import 'dart:math';
-import 'dart:io' show Platform;
-
-import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/custom/custom_text.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-
+import 'package:intl/intl.dart';
+import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
-
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/global.dart' as global;
+import 'package:orangeme_material/orangeme_material.dart';
+//import 'package:orange/global.dart' as global;
 
+class Amount extends GenericWidget {
+  Amount({super.key});
 
-/* BITCOIN SEND STEP TWO */
-
-// This code defines a page for sending Bitcoin. It includes
-// components for entering an amount, validating it, and transitioning to the
-// next step in the transaction process. The interface features custom
-// animations, keyboard handling, and conditional content based on the platform.
-
-/* Applies a shake animation to its child widget, controlled by a ShakeController. 
-Useful for indicating errors or important actions. */
-class ShakeWidget extends StatefulWidget {
-  const ShakeWidget({
-    super.key,
-    required this.child,
-    required this.controller,
-    this.duration = const Duration(milliseconds: 500),
-    this.deltaX = 4,
-    this.oscillations = 6,
-    this.curve = Curves.linear,
-  });
-
-  final Duration duration;
-  final double deltaX;
-  final int oscillations;
-  final Widget child;
-  final Curve curve;
-  final ShakeController controller;
+  String min = ''; //formatValue(min)
+  String max = ''; //formatValue(max)
+  int minUnformatted = 0; //min amount to send
+  int maxUnformatted = 0; // max amount to send
+  double btc = 0; //btc //double parsed = double.parse(amount); return parsed > 0 ? (parsed / widget.globalState.state.value.currentPrice) : 0.0;
 
   @override
-  ShakeWidgetState createState() => ShakeWidgetState();
+  AmountState createState() => AmountState();
 }
 
-class ShakeWidgetState extends State<ShakeWidget>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+class AmountState extends GenericState<Amount> {
+  @override
+  String stateName() {
+    return "Amount";
+  }
 
   @override
-  void initState() {
-    super.initState();
+  int refreshInterval() {
+    return 0;
+  }
 
-    _animationController = AnimationController(
-      vsync: this,
-      duration: widget.duration,
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {
+      widget.min;
+      widget.max;
+      widget.minUnformatted;
+      widget.maxUnformatted;
+      widget.btc;
+    });
+  }
+
+  String amount = "0";
+  String error = "";
+  onContinue(double btc) {
+    navigateTo(
+      context,
+      TransactionSpeed(),
     );
-
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animationController, curve: widget.curve),
-    );
-
-    widget.controller.addListener(_startShaking);
   }
+
+  isValid(String input) {} //This needs to be a backend function that checks if the input is valid.
+
+  void updateAmount(String input) {
+    var buzz = FeedbackType.warning;
+    var err = "";
+
+    HapticFeedback.heavyImpact();
+
+    var updatedAmount = "0";
+    if (isValid(input)) {
+      updatedAmount = amount;
+    } else {
+      Vibrate.feedback(buzz);
+      _shakeController.shake();
+    }
+
+    if (double.parse(updatedAmount) != 0) {
+      if (double.parse(updatedAmount) <= widget.minUnformatted) err = "\$${widget.min} minimum.";
+      if (double.parse(updatedAmount) > widget.maxUnformatted) err = "\$${widget.max} maximum.";
+      if (err == "\$0.00 maximum.") err = "You have no bitcoin.";
+    } else {
+      err = '';
+    }
+    setState(() {
+      amount = updatedAmount;
+      error = err;
+    });
+  }
+
+  final ShakeController _shakeController = ShakeController();
 
   @override
-  void dispose() {
-    widget.controller.removeListener(_startShaking);
-    _animationController.dispose();
-    super.dispose();
-  }
+  Widget build(BuildContext context) {
+    String enabled = amount != "0" && error == "" ? 'enabled' : 'disabled';
 
-  void _startShaking() {
-    _animationController.forward(from: 0);
-  }
-
-  double _wave(double t) =>
-      sin(widget.oscillations * 2 * pi * t) * (1 - (2 * t - 1).abs());
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) => Transform.translate(
-          offset: Offset(
-            widget.deltaX * _wave(_animation.value),
-            0,
+    return Stack_Default(
+      Header_Stack(context, "Send bitcoin"),
+      [
+        Expanded(
+          child: Center(
+            child: ShakeWidget(
+              controller: _shakeController,
+              child: keyboardAmountDisplay(context, amount, widget.btc, error),
+            ),
           ),
-          child: widget.child,
         ),
-        child: widget.child,
-      );
+      ],
+      Bumper(
+        context,
+        [
+          NumericKeypad(
+            onNumberPressed: updateAmount,
+          ),
+          CustomButton('Continue', 'primary lg $enabled expand none', () => onContinue(widget.btc), key: UniqueKey())
+        ],
+        true,
+      ),
+      Alignment.topCenter,
+      false,
+    );
+  }
+
+  Widget keyboardAmountDisplay(BuildContext context, String amt, double btc, String error) {
+    String usd = amt.toString();
+
+    Widget subText(String error) {
+      if (error.isNotEmpty) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [const CustomIcon('error md danger'), const SizedBox(width: 8), CustomText('text lg danger', error)],
+        );
+      } else {
+        return CustomText('text lg text_secondary', "${formatBTC(btc, 8)} BTC");
+      }
+    }
+
+    displayDecimals(amt) {
+      int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
+      if (decimals == 0 && amt.contains(".")) {
+        return '00';
+      } else if (decimals == 1) {
+        return '0';
+      } else {
+        return '';
+      }
+    }
+
+    String valueUSD = '0';
+    String x = '';
+    if (usd.contains('.')) x = usd.split(".")[1];
+    if (usd.contains('.') && x.isEmpty) {
+      valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
+      valueUSD += '.';
+    } else if (usd.contains('.') && x.isNotEmpty) {
+      valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd.split('.')[0]));
+      valueUSD += '.$x';
+    } else {
+      valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
+    }
+
+    var length = usd.length;
+    if (usd.contains('.')) length - 1;
+    length = usd.length + displayDecimals(usd).length;
+
+    dynamic_size() {
+      if (length <= 4) return 'title';
+      if (length <= 7) return 'h1';
+      return 'h2';
+    }
+
+    String size = dynamic_size();
+    return FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomText('heading $size', "\$$valueUSD"),
+                CustomText('heading $size text_secondary', displayDecimals(usd)),
+              ],
+            ),
+            subText(error)
+          ],
+        ));
+  }
 }
 
-/* Listens for keyboard events and processes numeric inputs, backspace, 
-and period key presses for computer keyboards. */
+class ShakeController extends ChangeNotifier {
+  void shake() => notifyListeners();
+}
+
 class SimpleKeyboardListener extends StatefulWidget {
   final void Function(String) onPressed;
   final Widget child;
@@ -157,260 +239,4 @@ class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
   Widget build(BuildContext context) {
     return widget.child;
   }
-}
-
-/* Allows users to input and validate the amount of Bitcoin to send. Handles numeric 
-input, error display, and transitions to the next step based on the input and validation. */
-class SendAmount extends StatefulWidget {
-  final GlobalState globalState;
-  final String address;
-  const SendAmount(
-    this.globalState,
-    this.address, {
-    super.key,
-  });
-
-  @override
-  SendAmountState createState() => SendAmountState();
-}
-
-class SendAmountState extends State<SendAmount> {
-  String amount = "$10.4";
-  String error = "";
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
-    );
-  }
-
-  Future<void> next(double btc) async {
-    navigateTo(
-      context,
-      TransactionSpeed(
-        widget.globalState,
-        widget.address,
-        btc,
-      ),
-    );
-  }
-
-  /* Updates the input amount based on keyboard input, handles backspace, 
-  decimal point, and numeric values. Validates the amount against minimum and maximum limits. */
-  void updateAmount(String input) {
-    var buzz = FeedbackType.warning;
-    HapticFeedback.heavyImpact();
-    var updatedAmount = "0";
-    if (input == "backspace") {
-      if (amount.length == 1) {
-        updatedAmount = "0";
-      } else if (amount.isNotEmpty) {
-        updatedAmount = amount.substring(0, amount.length - 1);
-      } else {
-        Vibrate.feedback(buzz);
-        _shakeController.shake();
-        updatedAmount = amount;
-      }
-    } else if (input == ".") {
-      if (!amount.contains(".") && amount.length <= 7) {
-        updatedAmount = amount += ".";
-      } else {
-        Vibrate.feedback(buzz);
-        _shakeController.shake();
-        updatedAmount = amount;
-      }
-    } else {
-      if (amount == "0") {
-        updatedAmount = input;
-      } else if (amount.contains(".")) {
-        if (amount.length < 11 && amount.split(".")[1].length < 2) {
-          updatedAmount = amount + input;
-        } else {
-          Vibrate.feedback(buzz);
-          _shakeController.shake();
-          updatedAmount = amount;
-        }
-      } else {
-        if (amount.length < 10) {
-          updatedAmount = amount + input;
-        } else {
-          Vibrate.feedback(buzz);
-          _shakeController.shake();
-          updatedAmount = amount;
-        }
-      }
-    }
-
-    double min = widget.globalState.state.value.fees[0] + 0.10;
-    var max = widget.globalState.state.value.usdBalance - min;
-    max = max > 0 ? max : 0;
-    var err = "";
-    if (double.parse(updatedAmount) != 0) {
-      if (double.parse(updatedAmount) <= min) {
-        err = "\$${formatValue(min)} minimum.";
-      } else if (double.parse(updatedAmount) > max) {
-        err = "\$${formatValue(max)} maximum.";
-        if (err == "\$0 maximum.") {
-          err = "You have no bitcoin.";
-        }
-      }
-    }
-    setState(() {
-      amount = updatedAmount;
-      error = err;
-    });
-  }
-
-  double getBTC(amount) {
-    double parsed = double.parse(amount);
-    return parsed > 0
-        ? (parsed / widget.globalState.state.value.currentPrice)
-        : 0.0;
-  }
-
-  final ShakeController _shakeController = ShakeController();
-  Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      resizeToAvoidBottomInset: false,
-      header: stackHeader(
-        context,
-        "Send bitcoin",
-      ),
-      content: SimpleKeyboardListener(
-        onPressed: updateAmount,
-        child: Content(
-          content: ShakeWidget(
-            controller: _shakeController,
-            child: Center(
-              child: keyboardAmountDisplay(
-                  widget.globalState, context, amount, getBTC(amount), error),
-            ),
-          ),
-        ),
-      ),
-      bumper: global.platform_isDesktop
-          ? singleButtonBumper(
-              context,
-              'Send',
-              () => next(getBTC(amount)),
-              (amount != "0" && error == "") ? true : false,
-            )
-          : keypadBumper(
-              context,
-              'Send',
-              () => next(getBTC(amount)),
-              (amount != "0" && error == "") ? true : false,
-              updateAmount,
-              _shakeController,
-            ),
-      desktopOnly: true,
-      navigationIndex: 0,
-    );
-  }
-}
-
-/*  Displays the formatted amount in USD and BTC, along with any validation errors. 
-Adjusts text size based on the amount length. */
-Widget keyboardAmountDisplay(GlobalState globalState, BuildContext context,
-    String amt, double btc, String error) {
-  String usd = amt.toString();
-
-  Widget subText(String error) {
-    if (error.isNotEmpty) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const CustomIcon(
-            icon: ThemeIcon.error,
-            iconSize: IconSize.md,
-            iconColor: ThemeColor.danger,
-          ),
-          const SizedBox(width: 8),
-          CustomText(
-            text: error,
-            color: ThemeColor.danger,
-          ),
-        ],
-      );
-    } else if (global.platform_isDesktop && amt == "0") {
-      return const CustomText(
-        text: "Type dollar amount.",
-        color: ThemeColor.textSecondary,
-      );
-    } else {
-      return CustomText(
-        text: "${formatBTC(btc, 8)} BTC",
-        color: ThemeColor.textSecondary,
-      );
-    }
-  }
-
-  displayDecimals(amt) {
-    int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
-    if (decimals == 0 && amt.contains(".")) {
-      return '00';
-    } else if (decimals == 1) {
-      return '0';
-    } else {
-      return '';
-    }
-  }
-
-  String valueUSD = '0';
-  String x = '';
-  if (usd.contains('.')) x = usd.split(".")[1];
-  if (usd.contains('.') && x.isEmpty) {
-    valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
-    valueUSD += '.';
-  } else if (usd.contains('.') && x.isNotEmpty) {
-    valueUSD =
-        NumberFormat("#,###", "en_US").format(double.parse(usd.split('.')[0]));
-    valueUSD += '.$x';
-  } else {
-    valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
-  }
-
-  var length = usd.length;
-  if (usd.contains('.')) length - 1;
-  length = usd.length + displayDecimals(usd).length;
-
-  var textSize = length <= 5
-      ? TextSize.title
-      : length <= 7
-          ? TextSize.subtitle
-          : TextSize.h1;
-
-  return FittedBox(
-    fit: BoxFit.scaleDown,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomText(
-              textType: 'heading',
-              textSize: textSize,
-              text: "\$$valueUSD",
-            ),
-            CustomText(
-              textType: 'heading',
-              color: ThemeColor.textSecondary,
-              textSize: textSize,
-              text: displayDecimals(usd),
-            ),
-          ],
-        ),
-        subText(error)
-      ],
-    ),
-  );
 }

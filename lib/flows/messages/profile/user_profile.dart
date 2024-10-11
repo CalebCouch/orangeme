@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:orange/components/profile_photo.dart';
 
@@ -12,75 +7,64 @@ import 'package:orange/flows/messages/conversation/exchange.dart';
 
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+//import 'package:orange/global.dart' as global;
 
-// Displays detailed information about a user, including their profile photo,
-// about me section, DID, and address, with an option to start a conversation.
-
-class UserProfile extends StatefulWidget {
-  final GlobalState globalState;
-  final Contact userInfo;
-
-  const UserProfile(this.globalState, {super.key, required this.userInfo});
+class UserProfile extends GenericWidget {
+  final Contact user;
+  UserProfile(this.user, {super.key});
 
   @override
   UserProfileState createState() => UserProfileState();
 }
 
-class UserProfileState extends State<UserProfile> {
+class UserProfileState extends GenericState<UserProfile> {
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return build_screen(context, state);
-      },
+  String stateName() {
+    return "MyProfile";
+  }
+
+  @override
+  int refreshInterval() {
+    return 0;
+  }
+
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {});
+  }
+
+  onMessage() {
+    navigateTo(
+      context,
+      Exchange(
+        //needs to check if a conversation has already been created with this person
+        Conversation(
+          [Contact(widget.user.name, widget.user.did, widget.user.pfp, widget.user.abtme)],
+          [],
+        ),
+      ),
     );
   }
 
-  Widget build_screen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackHeader(
-        context,
-        widget.userInfo.name,
-      ),
-      content: Content(
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              profilePhoto(context, widget.userInfo.pfp, ProfileSize.xxl),
-              const Spacing(height: AppPadding.profile),
-              aboutMeItem(
-                  context, widget.userInfo.abtme ?? "There's nothing here..."),
-              const Spacing(height: AppPadding.profile),
-              didItem(context, widget.userInfo.did),
-              const Spacing(height: AppPadding.profile),
-              addressItem(context, "GENERATED ADDRESS"),
-            ],
-          ),
-        ),
-      ),
-      bumper: singleButtonBumper(
-        context,
-        'Message',
-        () => navigateTo(
-          context,
-          Exchange(
-            widget.globalState,
-            conversation: Conversation(
-              [
-                Contact(widget.userInfo.name, widget.userInfo.did,
-                    widget.userInfo.pfp, widget.userInfo.abtme)
-              ],
-              [],
-            ),
-          ),
-        ),
-      ),
-      desktopOnly: true,
-      navigationIndex: 1,
+  onBitcoin() {}
+
+  String address = ''; //Need to generate an address
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack_Default(
+      Header_Stack(context, widget.user.name),
+      [
+        ProfilePhoto(context, widget.user.pfp, ProfileSize.xxl),
+        aboutMeItem(context, widget.user.abtme ?? "This profile is still a mystery."),
+        didItem(context, widget.user.did),
+        addressItem(context, address),
+      ],
+      Bumper(context, [
+        CustomButton('Message', 'primary lg enabled expand none', onMessage),
+        CustomButton('Send Bitcoin', 'primary lg enabled expand none', onBitcoin),
+      ]),
     );
   }
 }

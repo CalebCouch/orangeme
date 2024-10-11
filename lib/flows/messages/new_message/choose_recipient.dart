@@ -1,41 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-
 import 'package:orange/components/list_item.dart';
-import 'package:orange/components/tip_buttons.dart';
-import 'package:orange/components/text_input.dart';
-
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
-
 import 'package:orange/flows/messages/conversation/exchange.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
-// Allows users to search for and select contacts to start a new message conversation.
+//import 'package:orange/global.dart' as global;
 
-class ChooseRecipient extends StatefulWidget {
-  final GlobalState globalState;
-  const ChooseRecipient(
-    this.globalState, {
-    super.key,
-  });
+class ChooseRecipient extends GenericWidget {
+  ChooseRecipient({super.key});
+
+  List<Contact> users = []; //list of all orangeme users
 
   @override
   ChooseRecipientState createState() => ChooseRecipientState();
 }
 
-class ChooseRecipientState extends State<ChooseRecipient> {
+class ChooseRecipientState extends GenericState<ChooseRecipient> {
+  @override
+  String stateName() {
+    return "ChooseRecipient";
+  }
+
+  @override
+  int refreshInterval() {
+    return 0;
+  }
+
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {
+      widget.users;
+    });
+  }
+
   List<Contact> recipients = [];
   List<Contact> filteredContacts = [];
   TextEditingController searchController = TextEditingController();
 
   @override
+  Widget build(BuildContext context) {
+    String enabled = recipients.isEmpty ? 'disabled' : 'enabled';
+    return Stack_Default(
+      Header_Button(context, "Confirm send", CustomButton('Next', 'ghost md $enabled hug none', onNext, key: UniqueKey())),
+      [
+        Searchbar(searchController),
+        recipients.isEmpty ? Container() : SelectedContacts(recipients),
+        ListContacts(filteredContacts),
+      ],
+      Bumper(context, [Container()]),
+    );
+  }
+
+  //The following widgets can ONLY be used in this file
+
+  Widget SelectedContacts(recipients) {
+    return Container(
+      alignment: Alignment.topLeft,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: List<Widget>.generate(recipients.length, (index) {
+          return CustomButton(recipients[index].name, 'secondary md enabled hug close', () {
+            removeRecipient(recipients[index]);
+          });
+        }),
+      ),
+    );
+  }
+
+  Widget ListContacts(filteredContacts) {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: filteredContacts.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ContactItem(context, filteredContacts[index], () {
+          HapticFeedback.heavyImpact();
+          addRecipient(filteredContacts[index]);
+        });
+      },
+    );
+  }
+
+  onNext() {
+    navigateTo(
+      context,
+      Exchange(Conversation(recipients, [])),
+    );
+  }
+
+  @override
   void initState() {
     super.initState();
-    filteredContacts = widget.globalState.state.value.users;
+    filteredContacts = widget.users;
     searchController.addListener(_filterContacts);
   }
 
@@ -50,12 +109,10 @@ class ChooseRecipientState extends State<ChooseRecipient> {
     setState(() {
       String searchTerm = searchController.text.toLowerCase();
       if (searchTerm.isEmpty) {
-        filteredContacts = widget.globalState.state.value.users;
+        filteredContacts = widget.users;
       } else {
-        filteredContacts = widget.globalState.state.value.users
-            .where((contact) =>
-                contact.name.toLowerCase().startsWith(searchTerm) ||
-                contact.did.toLowerCase().startsWith(searchTerm))
+        filteredContacts = widget.users
+            .where((contact) => contact.name.toLowerCase().startsWith(searchTerm) || contact.did.toLowerCase().startsWith(searchTerm))
             .toList();
       }
     });
@@ -74,73 +131,12 @@ class ChooseRecipientState extends State<ChooseRecipient> {
       recipients.remove(selected);
     });
   }
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
-    );
-  }
-
-  Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackButtonHeader(
-        context,
-        'New message',
-        recipients.isNotEmpty,
-        'Next',
-        () {
-          navigateTo(
-            context,
-            Exchange(
-              widget.globalState,
-              conversation: Conversation(recipients, []),
-            ),
-          );
-        },
-      ),
-      content: Content(
-        content: Column(
-          children: [
-            CustomTextInput(
-              maxLines: 1,
-              controller: searchController,
-              hint: 'Profile name...',
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              alignment: Alignment.topLeft,
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: List<Widget>.generate(recipients.length, (index) {
-                  return ButtonTip(recipients[index].name, ThemeIcon.close, () {
-                    HapticFeedback.heavyImpact();
-                    removeRecipient(recipients[index]);
-                  });
-                }),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredContacts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return contactListItem(context, filteredContacts[index], () {
-                    HapticFeedback.heavyImpact();
-                    addRecipient(filteredContacts[index]);
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      desktopOnly: true,
-      navigationIndex: 1,
-    );
-  }
+Widget Searchbar(controller) {
+  return CustomTextInput(
+    maxLines: 1,
+    controller: controller,
+    hint: 'Profile name...',
+  );
 }

@@ -675,6 +675,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  orangeme_material:
+    dependency: "direct main"
+    description:
+      name: orangeme_material
+      sha256: "94fa51cfd5c95c3543ace8510439aa290da354544458f95766bb95eead1608dd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.5"
   package_config:
     dependency: transitive
     description:

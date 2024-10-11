@@ -1,68 +1,58 @@
 import 'package:flutter/material.dart';
-
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/interface.dart';
-import 'package:orange/components/content.dart';
-import 'package:orange/components/header.dart';
-import 'package:orange/components/bumper.dart';
 import 'package:orange/components/result.dart';
 
 import 'package:orange/flows/bitcoin/home.dart';
 
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
+import 'package:orangeme_material/orangeme_material.dart';
 
-// This page displays a confirmation screen after a Bitcoin transaction has been sent.
-// It shows the transaction amount and provides a button to return to the home screen.
+//import 'package:orange/global.dart' as global;
 
-class Confirmation extends StatefulWidget {
-  final double amount;
-  final GlobalState globalState;
-  const Confirmation(this.globalState, this.amount, {super.key});
+class Success extends GenericWidget {
+  Success({super.key});
+
+  double amount = 0; //transaction total
 
   @override
-  ConfirmationState createState() => ConfirmationState();
+  SuccessState createState() => SuccessState();
 }
 
-class ConfirmationState extends State<Confirmation> {
-  final TextEditingController recipientAddressController =
-      TextEditingController();
+class SuccessState extends GenericState<Success> {
+  @override
+  String stateName() {
+    return "Success";
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.globalState.state,
-      builder: (BuildContext context, DartState state, Widget? child) {
-        return buildScreen(context, state);
-      },
+  int refreshInterval() {
+    return 0;
+  }
+
+  @override
+  void unpack_state(Map<String, dynamic> json) {
+    setState(() {
+      widget.amount;
+    });
+  }
+
+  onDone() {
+    resetNavTo(
+      context,
+      BitcoinHome(),
     );
   }
 
-  Widget buildScreen(BuildContext context, DartState state) {
-    return Interface(
-      widget.globalState,
-      header: stackHeader(
-        context,
-        "Confirm send",
-        exitButton(context, BitcoinHome(widget.globalState)),
-      ),
-      content: Content(
-        content: result('You sent \$${formatValue(widget.amount.abs())}'),
-      ),
-      bumper: singleButtonBumper(
-        context,
-        "Done",
-        () => {
-          resetNavTo(
-            context,
-            BitcoinHome(widget.globalState),
-          ),
-        },
-        true,
-        ButtonVariant.secondary,
-      ),
-      desktopOnly: true,
-      navigationIndex: 0,
+  @override
+  Widget build(BuildContext context) {
+    return Stack_Default(
+      Header_Stack(context, "Confirm send", exitButton(context, BitcoinHome())),
+      [
+        Result('You sent \$${formatValue(widget.amount)}'),
+      ],
+      Bumper(context, [CustomButton('Done', 'secondary lg enabled expand none', onDone)]),
+      Alignment.center,
+      false,
     );
   }
 }

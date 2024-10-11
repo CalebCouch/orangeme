@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/components/custom/custom_icon.dart';
-import 'package:orange/components/custom/custom_button.dart';
-import 'package:orange/components/custom/custom_text.dart';
-
-// A customizable banner that shows a message with optional error styling and a
-// close button, adjusting display based on the message content and banner type.
+import 'package:orangeme_material/orangeme_material.dart';
 
 class CustomBanner extends StatefulWidget {
   final String message;
   final bool isError;
 
-  const CustomBanner({
+  const CustomBanner(
+    this.message, {
     super.key,
-    required this.message,
     this.isError = false,
   });
 
@@ -26,9 +21,7 @@ class CustomBannerState extends State<CustomBanner> {
 
   @override
   Widget build(BuildContext context) {
-    final parts = widget.message.contains("orange.me")
-        ? widget.message.split('orange.me')
-        : null;
+    final parts = widget.message.contains("orange.me") ? widget.message.split('orange.me') : null;
 
     return Visibility(
       visible: _isVisible,
@@ -48,9 +41,8 @@ class CustomBannerState extends State<CustomBanner> {
               const SizedBox(height: AppPadding.banner),
               parts == null
                   ? CustomText(
-                      text: widget.message,
-                      color: ThemeColor.heading,
-                      textSize: TextSize.sm,
+                      'text sm heading',
+                      widget.message,
                     )
                   : _buildTextWithBrandMark(parts),
             ],
@@ -67,24 +59,17 @@ class CustomBannerState extends State<CustomBanner> {
           Positioned(
             left: 0,
             child: iconButton(
-              context,
               () {
                 setState(() {
                   _isVisible = false;
                 });
               },
-              const CustomIcon(
-                iconSize: IconSize.md,
-                icon: ThemeIcon.close,
-              ),
+              'close md',
             ),
           ),
         Positioned(
           right: 0,
-          child: CustomIcon(
-            iconSize: IconSize.lg,
-            icon: widget.isError ? ThemeIcon.error : ThemeIcon.info,
-          ),
+          child: CustomIcon('${widget.isError ? 'error' : 'info'} lg'),
         ),
       ],
     );
