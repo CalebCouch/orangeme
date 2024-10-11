@@ -2,12 +2,15 @@ use super::Error;
 
 use super::structs::{Platform, DartCommand, Storage, DartCallback};
 use super::wallet::{Wallet, DescriptorSet, Seed};
-use super::callback::RustCallback;
+//use super::callback::RustCallback;
 use super::price::PriceGetter;
 use super::state::{StateManager, State, Field};
 
 use web5_rust::common::SqliteStore;
 use web5_rust::common::traits::KeyValueStore;
+
+use bdk::blockchain::Progress;
+use bdk::SyncOptions;
 
 use tokio::task::JoinHandle;
 
@@ -564,6 +567,28 @@ async fn spawn<T>(task: T) -> Result<(), Error>
     }
 }
 
+struct ProgressMsg {
+    test: Box<dyn Fn(f32, Option<String>, PathBuf) -> () + 'static + Sync + Send>,
+    path: PathBuf,
+}
+
+impl std::fmt::Debug for ProgressMsg {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "did")
+    }
+}
+
+impl Progress for ProgressMsg {
+    fn update(
+        &self,
+        progress: f32,
+        message: Option<String>
+    ) -> Result<(), bdk::Error> {
+        (self.test)(progress, message, self.path.clone());
+        Ok(())
+    }
+}
+
 async fn async_rust (
     path: String,
     platform: String,
@@ -572,6 +597,8 @@ async fn async_rust (
     let mut dart_callback = DartCallback::new();
     dart_callback.add_thread(thread);
     let path = PathBuf::from(&path);
+    let mut state = State::new::<SqliteStore>(path.clone())?;
+    state.set(Field::Path, &path)?;
     let platform = Platform::from_str(&platform)?;
 
     //SETUP
@@ -586,19 +613,13 @@ async fn async_rust (
     };
     let descriptors = DescriptorSet::from_seed(&seed)?;
     dart_callback.call("print", &descriptors.internal).await?;
+    state.set(Field::DescriptorSet, &descriptors)?;
     //SETUP
 
-    let mut state = State::new::<SqliteStore>(path.clone())?;
     let mut wallet = Wallet::new(
         descriptors,
-        state.clone(),
         path.clone()
     )?;
-    let mut rust_callback = RustCallback::new::<SqliteStore>(
-        wallet.clone(),
-        dart_callback.clone(),
-        state.clone()
-    ).await?;
 
     let mut state_thread1 = state.clone();
     let mut state_thread2 = state.clone();
@@ -613,23 +634,13 @@ async fn async_rust (
             state_thread2.set(Field::Price, &PriceGetter::get(None).await?)?;
             thread::sleep(time::Duration::from_millis(600_000));
         }; Err::<(), Error>(Error::Exited("Price Update".to_string()))}),
-        spawn(async move {loop {
-            wallet.sync().await?;
-            thread::sleep(time::Duration::from_millis(250));
-        }; Err::<(), Error>(Error::Exited("Wallet Sync".to_string()))}),
-        spawn(async move {loop {
-            rust_callback.handle().await?;
-        }; Err::<(), Error>(Error::Exited("Rust Callback".to_string()))}),
-        spawn(async move {loop {
-            let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).unwrap();
-            let barrier = state.get::<f64>(Field::Price).unwrap()+10000.0;
+        spawn(async move {
             loop {
-                let p = state.get::<f64>(Field::Price).unwrap();
-                if p > barrier {return Err(Error::Exited("fininsed".to_string()));}
-                state.set(Field::Price, &(p+1.0)).unwrap();
-                thread::sleep(time::Duration::from_millis(10));
+                wallet.sync().await?;
+                thread::sleep(time::Duration::from_millis(1000));
             }
-        }; Err::<(), Error>(Error::Exited("Rust Callback".to_string()))}),
+            Err::<(), Error>(Error::Exited("Wallet Sync".to_string()))
+        }),
     )?;
     Ok(())
 }

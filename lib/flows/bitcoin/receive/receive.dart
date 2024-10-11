@@ -23,7 +23,7 @@ import 'package:orange/flows/bitcoin/home.dart';
 class Receive extends GenericWidget {
     Receive({super.key});
 
-    String address = "8475729859832898587463636536474388384";
+    String address = "";
 
     @override
     ReceiveState createState() => ReceiveState();
@@ -40,12 +40,6 @@ class ReceiveState extends GenericState<Receive> {
         setState(() {
             widget.address = json["address"];
         });
-    }
-
-    @override
-    void initState() {
-        super.initState();
-        global.invoke("get_new_address", "");
     }
 
     @override

@@ -13,8 +13,8 @@ pub mod structs;
 pub mod price;
 /// flutter_rust_bridge:ignore
 pub mod wallet;
-/// flutter_rust_bridge:ignore
-pub mod callback;
+//  /// flutter_rust_bridge:ignore
+//  pub mod callback;
 /// flutter_rust_bridge:ignore
 pub mod state;
 

@@ -1,6 +1,6 @@
 use super::Error;
 
-use super::wallet::Transaction;
+use super::wallet::{Wallet, DescriptorSet, Transaction};
 
 use web5_rust::common::traits::KeyValueStore;
 use web5_rust::common::structs::DateTime;
@@ -12,14 +12,17 @@ use bdk::bitcoin::hash_types::Txid;
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
+pub type Internet = bool;
+pub type Price = f64;
+
 #[derive(Debug)]
 pub enum Field {
-    Transactions(BTreeMap<Txid, Transactions>),
-    Internet(bool),
-    Balance(f64),
-    Price(f64),
-    NewAddress(String)
+    DescriptorSet,
+    Internet,
+    Price,
+    Path
 }
+
 impl Field {
     pub fn into_bytes(&self) -> Vec<u8> {
         format!("{:?}", self).into_bytes()
@@ -61,12 +64,10 @@ impl StateManager {
         StateManager{state}
     }
 
-    pub fn get(&self, state_name: &str) -> Result<String, Error> {
-        match state_name {
-            "BitcoinHome" => self.bitcoin_home(),
-            "Receive" => self.receive(),
-            _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
-        }
+    fn get_wallet(&self) -> Result<Wallet, Error> {
+        let descriptors = self.state.get::<DescriptorSet>(Field::DescriptorSet)?;
+        let path = self.state.get::<PathBuf>(Field::Path)?;
+        Wallet::new(descriptors, path)
     }
 
     fn format_datetime(datetime: Option<&DateTime>) -> String {
@@ -75,15 +76,22 @@ impl StateManager {
         .unwrap_or("Pending".to_string())
     }
 
+    pub fn get(&self, state_name: &str) -> Result<String, Error> {
+        match state_name {
+            "BitcoinHome" => self.bitcoin_home(),
+            "Receive" => self.receive(),
+            _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
+        }
+    }
+
     pub fn bitcoin_home(&self) -> Result<String, Error> {
-        let btc = self.state.get::<f64>(Field::Balance)?;
-        let usd = 1.0*self.state.get::<f64>(Field::Price)?;
+        let wallet = self.get_wallet()?;
+        let btc = wallet.get_balance()?;
+        let usd = btc*self.state.get::<Price>(Field::Price)?;
         Ok(serde_json::to_string(&BitcoinHome{
             usd: usd.to_string(),
             btc: btc.to_string(),
-            transactions: self.state
-            .get::<BTreeMap<Txid, Transaction>>(Field::Transactions)?
-            .into_values().map(|tx|
+            transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 BitcoinHomeTransaction{
                     usd: format!("${}", tx.usd),
                     datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
@@ -92,9 +100,11 @@ impl StateManager {
             ).collect()
         })?)
     }
+
     pub fn receive(&self) -> Result<String, Error> {
+        let wallet = self.get_wallet()?;
         Ok(serde_json::to_string(&Receive{
-            address: self.state.get(Field::Address)?
+            address: wallet.get_new_address()?
         })?)
     }
 }

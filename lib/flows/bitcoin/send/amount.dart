@@ -175,7 +175,7 @@ class SendAmount extends StatefulWidget {
 }
 
 class SendAmountState extends State<SendAmount> {
-  String amount = "0";
+  String amount = "$10.4";
   String error = "";
 
   @override

@@ -5,6 +5,7 @@ use super::state::{State, Field};
 
 use web5_rust::common::traits::KeyValueStore;
 use web5_rust::common::structs::DateTime;
+use web5_rust::common::SqliteStore;
 
 use bdk::{TransactionDetails, KeychainKind, SyncOptions, SignOptions};
 use bdk::bitcoin::consensus::{Encodable, Decodable};
@@ -41,6 +42,8 @@ const NO_INTERNET: &str = "failed to lookup address information: No address asso
 const CLIENT_URI: &str = "https://blockstream.info/api/";
 const SATS: f64 = 100_000_000.0;
 
+pub type Transactions = BTreeMap<Txid, Transaction>;
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Seed{
     inner: Vec<u8>
@@ -62,7 +65,7 @@ impl Default for Seed {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct DescriptorSet {
     pub external: String,
     pub internal: String
@@ -108,25 +111,22 @@ impl Transaction {
     }
 }
 
-#[derive(Clone)]
 pub struct Wallet{
-    inner: Arc<Mutex<BDKWallet<SqliteDatabase>>>,
+    inner: BDKWallet<SqliteDatabase>,
     descriptors: DescriptorSet,
-    state: State,
+    store: SqliteStore,
     path: PathBuf
 }
 
 impl Wallet {
     pub fn new(
         descriptors: DescriptorSet,
-        state: State,
-        path: PathBuf
+        path: PathBuf,
     ) -> Result<Self, Error> {
-        let inner = Self::inner_wallet(&descriptors, path.clone())?;
         Ok(Wallet{
-            inner: Arc::new(Mutex::new(inner)),
+            inner: Self::inner_wallet(&descriptors, path.clone())?,
             descriptors,
-            state,
+            store: SqliteStore::new(path.clone())?,
             path
         })
     }
@@ -144,52 +144,58 @@ impl Wallet {
         )?)
     }
 
-    pub async fn get_new_address(&self) -> Result<String, Error> {
-        Ok(self.inner.lock().await.get_address(AddressIndex::New)?.address.to_string())
+    pub fn get_balance(&self) -> Result<f64, Error> {
+        Ok(self.inner.get_balance()?.get_total() as f64 / SATS)
+    }
+
+    pub fn get_new_address(&self) -> Result<String, Error> {
+        Ok(self.inner.get_address(AddressIndex::New)?.address.to_string())
+    }
+
+    pub fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
+        Ok(self.get_transactions()?.into_values().collect())
+    }
+
+    fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
+        Ok(self.store.get(b"transactions")?.map(|b|
+            serde_json::from_slice::<Transactions>(&b)
+        ).transpose()?.unwrap_or_default())
+    }
+
+    pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
+        let client = Builder::new(CLIENT_URI).build_blocking()?;
+        Ok(EsploraBlockchain::from_client(client, 100))
     }
 
     pub async fn sync(&mut self) -> Result<(), Error> {
-        let client = Builder::new(CLIENT_URI).build_blocking()?;
-        let bc = EsploraBlockchain::from_client(client, 100);
-        if let Err(e) = self.inner.lock().await.sync(&bc, SyncOptions::default()) {
+        let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
+        let blockchain = ElectrumBlockchain::from(client);
+        if let Err(e) = self.inner.sync(&blockchain, SyncOptions::default()) {
             if !format!("{:?}", e).contains(NO_INTERNET) {
                 return Err(e.into());
             }
         }
-        self.post_sync().await?;
-        Ok(())
-    }
-
-    async fn post_sync(&mut self) -> Result<(), Error> {
-        let wallet = self.inner.lock().await;
-        let mut txs = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions)?;
-        for tx in wallet.list_transactions(true)? {
+        //Transactions
+        let mut txs = self.get_transactions()?;
+        for tx in self.inner.list_transactions(true)? {
             if let Some(transaction) = txs.get(&tx.txid) {
                 if transaction.confirmation_time.is_some() {continue;}
                 if tx.confirmation_time.is_none() {continue;}
             }
             txs.insert(tx.txid, Transaction::from_details(tx).await?);
         }
-        self.state.set(Field::Transactions, &txs)?;
-        let balance = self.state.get::<f64>(Field::Balance)?;
-        let btc = wallet.get_balance()?.get_total() as f64 / SATS;
-        if balance != btc {
-            self.state.set(Field::Balance, &btc)?;
-        }
+        self.store.set(b"transactions", &serde_json::to_vec(&txs)?)?;
         Ok(())
     }
 }
 
-//  impl Clone for Wallet {
-//      fn clone(&self) -> Self {
-//          let descriptors = self.descriptors.clone();
-//          let inner = Wallet::inner_wallet(&descriptors, self.path.clone()).unwrap();
-//          Wallet{
-//              inner: Arc::new(Mutex::new(inner)),
-//              store: self.store.clone(),
-//              price_getter: self.price_getter.clone(),
-//              descriptors,
-//              path: self.path.clone()
-//          }
-//      }
-//  }
+impl Clone for Wallet {
+    fn clone(&self) -> Self {
+        Wallet{
+            inner: Wallet::inner_wallet(&self.descriptors, self.path.clone()).unwrap(),
+            descriptors: self.descriptors.clone(),
+            store: self.store.clone(),
+            path: self.path.clone()
+        }
+    }
+}
