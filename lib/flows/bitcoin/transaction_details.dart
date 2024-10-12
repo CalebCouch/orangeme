@@ -5,24 +5,18 @@ import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
 
-class TransactionDetails extends GenericWidget {
-  final Transaction transaction;
-  TransactionDetails(this.transaction, {super.key});
-
-  double usdUnformatted = 0; // (tx.usd.abs() - tx.fee.abs());
-
-  String usd = ""; //formatValue(usd);
-  String btc = ""; //formatBTC((tx.btc).abs(), 8)
-  bool isReceive = true;
+class ViewTransaction extends GenericWidget {
+  String txid;
+  ViewTransaction({super.key, required this.txid});
 
   @override
-  TransactionDetailsState createState() => TransactionDetailsState();
+  ViewTransactionState createState() => ViewTransactionState();
 }
 
-class TransactionDetailsState extends GenericState<TransactionDetails> {
+class ViewTransactionState extends GenericState<ViewTransaction> {
   @override
   String stateName() {
-    return "TransactionDetails";
+    return "ViewTransaction";
   }
 
   @override
@@ -31,13 +25,13 @@ class TransactionDetailsState extends GenericState<TransactionDetails> {
   }
 
   @override
+  String options() {
+    return widget.txid;
+  }
+
+  @override
   void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-      widget.usd;
-      widget.btc;
-      widget.transaction; //Need to know if transaction was sent or received
-      widget.isReceive;
-    });
+    setState(() {});
   }
 
   onDone() {
@@ -46,12 +40,12 @@ class TransactionDetailsState extends GenericState<TransactionDetails> {
 
   @override
   Widget build(BuildContext context) {
-    String direction = widget.isReceive ? "Received" : "Sent";
+    String direction = widget.tx.is_withdraw ? "Send" : "Received";
     return Stack_Default(
-      Header_Stack(context, "Confirm $direction"),
+      Header_Stack(context, "$direction bitcoin"),
       [
-        AmountDisplay(widget.transaction),
-        transactionTabular(context, widget.transaction),
+        AmountDisplay(widget.tx.usd),
+        transactionTabular(context, widget.tx),
       ],
       Bumper(context, [CustomButton('Done', 'secondary lg enabled expand none', () => onDone())]),
     );
@@ -70,7 +64,7 @@ class TransactionDetailsState extends GenericState<TransactionDetails> {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
       child: CustomColumn([
-        CustomText('heading ${dynamic_size(widget.usd.length)}', '${widget.usdUnformatted} USD'),
+        CustomText('heading ${dynamic_size(widget.tx.usd.length)}', '${widget.tx.usdUnformatted} USD'),
         CustomText('text lg text_secondary', '${widget.btc} BTC')
       ], AppPadding.valueDisplaySep),
     );

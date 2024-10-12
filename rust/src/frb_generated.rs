@@ -284,10 +284,14 @@ fn wire__crate__api__simple__getstate_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_path = <String>::sse_decode(&mut deserializer);
             let api_name = <String>::sse_decode(&mut deserializer);
+            let api_options = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
-                let output_ok =
-                    Result::<_, ()>::Ok(crate::api::simple::getstate(api_path, api_name))?;
+                let output_ok = Result::<_, ()>::Ok(crate::api::simple::getstate(
+                    api_path,
+                    api_name,
+                    api_options,
+                ))?;
                 Ok(output_ok)
             })())
         },

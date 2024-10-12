@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:intl/intl.dart';
 import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/util.dart';
@@ -10,13 +9,14 @@ import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
 
 class Amount extends GenericWidget {
-  Amount({super.key});
+  final String address;
+  Amount({super.key, required this.address});
 
-  String min = ''; //formatValue(min)
-  String max = ''; //formatValue(max)
-  int minUnformatted = 0; //min amount to send
-  int maxUnformatted = 0; // max amount to send
-  double btc = 0; //btc //double parsed = double.parse(amount); return parsed > 0 ? (parsed / widget.globalState.state.value.currentPrice) : 0.0;
+  String err = ''; //Displays error if input exceeds min or max
+  double btc = 0;
+  double inputAmount = 0; // 10.54
+  String usd = '0'; // '$10.54'
+  String decimals = '0'; // '0' '00' or ''
 
   @override
   AmountState createState() => AmountState();
@@ -36,29 +36,23 @@ class AmountState extends GenericState<Amount> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.min;
-      widget.max;
-      widget.minUnformatted;
-      widget.maxUnformatted;
       widget.btc;
+      widget.usd;
+      widget.inputAmount;
+      widget.decimals;
     });
   }
 
   String amount = "0";
   String error = "";
-  onContinue(double btc) {
-    navigateTo(
-      context,
-      Speed(),
-    );
+  onContinue() {
+    navigateTo(Speed(address: widget.address, btc: widget.btc));
   }
 
   isValid(String input) {} //This needs to be a backend function that checks if the input is valid.
 
   void updateAmount(String input) {
     var buzz = FeedbackType.warning;
-    var err = "";
-
     HapticFeedback.heavyImpact();
 
     var updatedAmount = "0";
@@ -69,16 +63,8 @@ class AmountState extends GenericState<Amount> {
       _shakeController.shake();
     }
 
-    if (double.parse(updatedAmount) != 0) {
-      if (double.parse(updatedAmount) <= widget.minUnformatted) err = "\$${widget.min} minimum.";
-      if (double.parse(updatedAmount) > widget.maxUnformatted) err = "\$${widget.max} maximum.";
-      if (err == "\$0.00 maximum.") err = "You have no bitcoin.";
-    } else {
-      err = '';
-    }
     setState(() {
       amount = updatedAmount;
-      error = err;
     });
   }
 
@@ -90,28 +76,28 @@ class AmountState extends GenericState<Amount> {
 
     return Stack_Default(
       Header_Stack(context, "Send bitcoin"),
-      [
-        Expanded(
-          child: Center(
-            child: ShakeWidget(
-              controller: _shakeController,
-              child: keyboardAmountDisplay(context, amount, widget.btc, error),
-            ),
-          ),
-        ),
-      ],
+      [display()],
       Bumper(
         context,
         [
-          NumericKeypad(
-            onNumberPressed: updateAmount,
-          ),
-          CustomButton('Continue', 'primary lg $enabled expand none', () => onContinue(widget.btc), key: UniqueKey())
+          NumericKeypad(onNumberPressed: updateAmount),
+          CustomButton('Continue', 'primary lg $enabled expand none', () => onContinue(), key: UniqueKey())
         ],
         true,
       ),
       Alignment.topCenter,
       false,
+    );
+  }
+
+  Widget display() {
+    return Expanded(
+      child: Center(
+        child: ShakeWidget(
+          controller: _shakeController,
+          child: keyboardAmountDisplay(context, amount, widget.btc, error),
+        ),
+      ),
     );
   }
 
@@ -129,33 +115,8 @@ class AmountState extends GenericState<Amount> {
       }
     }
 
-    displayDecimals(amt) {
-      int decimals = amt.contains(".") ? amt.split(".")[1].length : 0;
-      if (decimals == 0 && amt.contains(".")) {
-        return '00';
-      } else if (decimals == 1) {
-        return '0';
-      } else {
-        return '';
-      }
-    }
-
-    String valueUSD = '0';
-    String x = '';
-    if (usd.contains('.')) x = usd.split(".")[1];
-    if (usd.contains('.') && x.isEmpty) {
-      valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
-      valueUSD += '.';
-    } else if (usd.contains('.') && x.isNotEmpty) {
-      valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd.split('.')[0]));
-      valueUSD += '.$x';
-    } else {
-      valueUSD = NumberFormat("#,###", "en_US").format(double.parse(usd));
-    }
-
-    var length = usd.length;
+    var length = widget.usd.length;
     if (usd.contains('.')) length - 1;
-    length = usd.length + displayDecimals(usd).length;
 
     dynamic_size() {
       if (length <= 4) return 'title';
@@ -172,8 +133,8 @@ class AmountState extends GenericState<Amount> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CustomText('heading $size', "\$$valueUSD"),
-                CustomText('heading $size text_secondary', displayDecimals(usd)),
+                CustomText('heading $size', widget.usd),
+                CustomText('heading $size text_secondary', widget.decimals),
               ],
             ),
             subText(error)

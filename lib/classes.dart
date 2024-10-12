@@ -11,39 +11,52 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
 
-enum Platform { Windows, Linux, Mac, IOS, Android, Fuchsia;
+enum Platform {
+  Windows,
+  Linux,
+  Mac,
+  IOS,
+  Android,
+  Fuchsia;
 
-    const Platform();
+  const Platform();
 
-    Platform init() {
-        if (DartIO.Platform.isWindows) {return Platform.Windows;}
-        if (DartIO.Platform.isLinux) {return Platform.Linux;}
-        if (DartIO.Platform.isMacOS) {return Platform.Mac;}
-        if (DartIO.Platform.isIOS) {return Platform.IOS;}
-        if (DartIO.Platform.isAndroid) {return Platform.Android;}
-        if (DartIO.Platform.isFuchsia) {return Platform.Fuchsia;}
-        throw 'Unsupported Platform';
+  Platform init() {
+    if (DartIO.Platform.isWindows) {
+      return Platform.Windows;
     }
-
-    bool isDesktop() {
-        return switch(this) {
-            Platform.Mac => true,
-            Platform.Linux => true,
-            Platform.Windows => true,
-            _ => false
-        };
+    if (DartIO.Platform.isLinux) {
+      return Platform.Linux;
     }
-
-    String toString() {
-        return switch(this) {
-            Platform.Mac => "Mac",
-            Platform.Linux => "Linux",
-            Platform.Windows => "Windows",
-            Platform.IOS => "IOS",
-            Platform.Android => "Android",
-            Platform.Fuchsia => "Fuchsia"
-        };
+    if (DartIO.Platform.isMacOS) {
+      return Platform.Mac;
     }
+    if (DartIO.Platform.isIOS) {
+      return Platform.IOS;
+    }
+    if (DartIO.Platform.isAndroid) {
+      return Platform.Android;
+    }
+    if (DartIO.Platform.isFuchsia) {
+      return Platform.Fuchsia;
+    }
+    throw 'Unsupported Platform';
+  }
+
+  bool isDesktop() {
+    return switch (this) { Platform.Mac => true, Platform.Linux => true, Platform.Windows => true, _ => false };
+  }
+
+  String toString() {
+    return switch (this) {
+      Platform.Mac => "Mac",
+      Platform.Linux => "Linux",
+      Platform.Windows => "Windows",
+      Platform.IOS => "IOS",
+      Platform.Android => "Android",
+      Platform.Fuchsia => "Fuchsia"
+    };
+  }
 }
 
 /* Manages and triggers shake animations by notifying listeners. */
@@ -52,67 +65,106 @@ class ShakeController extends ChangeNotifier {
 }
 
 abstract class GenericWidget extends StatefulWidget {
-    Timer? timer;
+  Timer? timer;
 
-    GenericWidget({super.key});
+  GenericWidget({super.key});
 }
 
 abstract class GenericState<T extends GenericWidget> extends State<T> {
-    String stateName();
-    int refreshInterval();
+  String stateName();
+  int refreshInterval();
+  String options() {
+    return "";
+  }
 
-    void unpack_state(Map<String, dynamic> json);
+  void unpack_state(Map<String, dynamic> json);
 
-    void getState() {
-        String state = getstate(name: stateName(), path: global.dataDir!);
-        unpack_state(jsonDecode(state));
-    }
+  void getState() {
+    String state = getstate(name: stateName(), path: global.dataDir!, options: options());
+    unpack_state(jsonDecode(state));
+  }
 
-    navigateTo(Widget next) async {
-        widget.timer?.cancel();
-        await global.navigation.navigateTo(next);
-        await _initTimer();
-    }
+  navigateTo(Widget next) async {
+    widget.timer?.cancel();
+    await global.navigation.navigateTo(next);
+    await _initTimer();
+  }
 
-    _initTimer() async {
-        var interval = refreshInterval();
-        if (interval > 0) {
-            widget.timer = Timer.periodic(Duration(milliseconds: interval), (Timer t) {
-                getState();
-            });
-        }
-    }
-
-    @override
-    void initState() {
+  _initTimer() async {
+    var interval = refreshInterval();
+    if (interval > 0) {
+      widget.timer = Timer.periodic(Duration(milliseconds: interval), (Timer t) {
         getState();
-        _initTimer();
-        super.initState();
+      });
     }
+  }
 
-    @override
-    void dispose() {
-        //widget.gettingState!.cancel();
-        widget.timer?.cancel();
-        super.dispose();
-    }
+  @override
+  void initState() {
+    getState();
+    _initTimer();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    //widget.gettingState!.cancel();
+    widget.timer?.cancel();
+    super.dispose();
+  }
 }
 
-class BitcoinHomeTransaction {
-    String usd;
-    String datetime;
-    bool is_withdraw;
+class ShorthandTransaction {
+  String usd;
+  String btc;
+  String datetime;
+  bool is_withdraw;
 
-    BitcoinHomeTransaction(this.usd, this.datetime, this.is_withdraw);
+  ShorthandTransaction(this.usd, this.btc, this.datetime, this.is_withdraw);
 
-    @override
-    factory BitcoinHomeTransaction.fromJson(Map<String, dynamic> json) {
-        return BitcoinHomeTransaction(
-            json['usd'] as String,
-            json['datetime'] as String,
-            json['is_withdraw'] as bool,
-        );
-    }
+  @override
+  factory ShorthandTransaction.fromJson(Map<String, dynamic> json) {
+    return ShorthandTransaction(
+      json['usd'] as String,
+      json['btc'] as String,
+      json['datetime'] as String,
+      json['is_withdraw'] as bool,
+    );
+  }
+}
+
+class ExtTransaction {
+  BasicTransaction tx;
+  String fee;
+  String total;
+
+  ExtTransaction(this.fee, this.total, this.tx);
+
+  @override
+  factory ExtTransaction.fromJson(Map<String, dynamic> json) {
+    return ExtTransaction(
+      json['fee'] as String,
+      json['total'] as String,
+      json['tx'] as BasicTransaction,
+    );
+  }
+}
+
+class BasicTransaction {
+  ShorthandTransaction tx;
+  String address;
+  String price;
+
+  BasicTransaction(this.address, this.price, this.tx);
+
+  @override
+  factory BasicTransaction.fromJson(Map<String, dynamic> json) {
+    return BasicTransaction(
+      json['address'] as String,
+      json['price'] as String,
+      json['tx'] as ShorthandTransaction,
+    );
+  }
 }
 
 class Transaction {
@@ -127,8 +179,7 @@ class Transaction {
   String? time;
   String? raw;
 
-  Transaction(this.isReceive, this.sentAddress, this.txid, this.usd, this.btc,
-      this.price, this.fee, this.date, this.time, this.raw);
+  Transaction(this.isReceive, this.sentAddress, this.txid, this.usd, this.btc, this.price, this.fee, this.date, this.time, this.raw);
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
@@ -191,8 +242,7 @@ class Conversation {
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
       List<Contact>.from(json['members'].map((json) => Contact.fromJson(json))),
-      List<Message>.from(
-          json['messages'].map((json) => Message.fromJson(json))),
+      List<Message>.from(json['messages'].map((json) => Message.fromJson(json))),
     );
   }
 }
@@ -227,11 +277,9 @@ class DartState {
       json['currentPrice'] as double,
       json['usdBalance'] as double,
       json['btcBalance'] as double,
-      List<Transaction>.from(
-          json['transactions'].map((tx) => Transaction.fromJson(tx))),
+      List<Transaction>.from(json['transactions'].map((tx) => Transaction.fromJson(tx))),
       List<double>.from(json['fees'].map((fee) => fee as double)),
-      List<Conversation>.from(
-          json["conversations"].map((y) => Conversation.fromJson(y))),
+      List<Conversation>.from(json["conversations"].map((y) => Conversation.fromJson(y))),
       List<Contact>.from(json["users"].map((i) => Contact.fromJson(i))),
       Contact.fromJson(json["personal"]),
     );
@@ -253,9 +301,9 @@ class GlobalState {
 
   factory GlobalState.init(sp) {
     var state = GlobalState(GlobalKey<NavigatorState>(), sp);
-  //if (Platform.isWindows && Platform.isLinux && Platform.isMacOS && Platform.isAndroid && Platform.isIOS && Platform.isFuchsia) {
-  //    state.error("Platform is unknown");
-  //}
+    //if (Platform.isWindows && Platform.isLinux && Platform.isMacOS && Platform.isAndroid && Platform.isIOS && Platform.isFuchsia) {
+    //    state.error("Platform is unknown");
+    //}
     //state.startRust();
     return state;
   }
@@ -349,15 +397,14 @@ class GlobalState {
     String key = split[0];
     String value = split[1];
     // Obtain SharedPreferences instance
-    final SharedPreferences prefs = await SharedPreferences
-        .getInstance(); // Write the data to SharedPreferences
+    final SharedPreferences prefs = await SharedPreferences.getInstance(); // Write the data to SharedPreferences
     await prefs.setString(key, value);
   }
 
   Future<String> androidRead(String key) async {
     // Obtain SharedPreferences instance
-    final SharedPreferences prefs = await SharedPreferences
-        .getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
+    final SharedPreferences prefs =
+        await SharedPreferences.getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
     return prefs.getString(key) ?? "";
   }
 
@@ -419,8 +466,7 @@ class RustC {
   RustC(this.uid, this.method, this.data);
 
   factory RustC.fromJson(Map<String, dynamic> json) {
-    return RustC(json['uid'] as String, json['method'] as String,
-        json['data'] as String);
+    return RustC(json['uid'] as String, json['method'] as String, json['data'] as String);
   }
 
   Map<String, dynamic> toJson() => {
