@@ -76,16 +76,13 @@ impl StateManager {
         .unwrap_or("Pending".to_string())
     }
 
+    
+
     pub fn get(&self, state_name: &str) -> Result<String, Error> {
         match state_name {
             "BitcoinHome" => self.bitcoin_home(),
             "Receive" => self.receive(),
-            "Send" => self.send(),
-            "ScanQR" => self.scan_qr(),
-            "Amount" => self.amount(),
-            "Speed" => self.speed(),
-            "Confirm" => self.confirm(),
-            "Success" => self.success(),
+            "ViewTransaction" => self.view_transaction(),
             "MessagesHome" => self.messages_home(),
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
@@ -95,26 +92,38 @@ impl StateManager {
         let wallet = self.get_wallet()?;
         let btc = wallet.get_balance()?;
         let usd = btc*self.state.get::<Price>(Field::Price)?;
+        let personal_data = self.get_personal_data()?; // Assuming a method that fetches user's personal data
         Ok(serde_json::to_string(&BitcoinHome{
             usd: usd.to_string(),
             btc: btc.to_string(),
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 if tx.is_withdraw {
-                    SentTransaction {
-                        transaction: Transaction{}, // I don't know how to get this data
-                        fee: format!("${}", tx.fee), // Assuming tx.fee contains the fee amount
-                        total: format!("${}", tx.usd + tx.fee), // Add tx.usd to the fee amount
-                    }
+                    TransactionType::Ext(ExtTransaction {
+                        transaction: BasicTransaction {
+                            transaction: ShorthandTransaction {
+                                datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                                btc: tx.btc,
+                                usd: format!("${}", tx.usd),
+                            },
+                            address: tx.address,
+                            price: format!("${}", tx.price),
+                        },
+                        fee: format!("${}", tx.fee),
+                        total: format!("${}", tx.usd + tx.fee),
+                    })
                 } else {
-                    Transaction {
-                        datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                        address: tx.address, // Assuming tx.address contains the recipient address
-                        btc: tx.btc,
-                        btc_price: format!("${}", tx.btc_price), // Assuming tx.btc_price stores the price at transaction time
-                        usd: format!("${}", tx.usd),
-                    }
+                    TransactionType::Basic(BasicTransaction {
+                        transaction: ShorthandTransaction {
+                            datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                            btc: tx.btc,
+                            usd: format!("${}", tx.usd),
+                        },
+                        address: tx.address,
+                        price: format!("${}", tx.price),
+                    })
                 }
-            ).collect()
+            ).collect(),
+            personal_data: personal_data, // Assuming 'personal_data' is of type 'Contact'
         })?)
     }
 
@@ -125,48 +134,40 @@ impl StateManager {
         })?)
     }
 
-    pub fn send(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&Send{})?)
-    }
-
-    pub fn scan_qr(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&ScanQR{})?)
-    }
-
-    pub fn amount(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&Amount{})?)
-    }
-
-    pub fn speed(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&Speed{})?)
-    }
-
-    pub fn confirm(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&Confirm{})?)
-    }
-
-    pub fn success(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&Success{})?)
-    }
-
     pub fn view_transaction(&self) -> Result<String, Error> {
+        let tx = Transaction {
+            btc: 0.00004567,
+            usd: 9.34,
+            btc_price: 63408.02,
+            fee: 0.32,
+        };        
         Ok(serde_json::to_string(&ViewTransaction{
-            transaction:
-                if tx.is_withdraw {
-                    SentTransaction {
-                        transaction: Transaction {}, // I don't know how to get this data
-                        fee: format!("${}", tx.fee_usd),
-                        total: format!("${}", tx.usd + tx.fee_usd),
-                    }
-                } else {
-                    ReceivedTransaction {
+            transaction: 
+            if tx.is_withdraw {
+                TransactionType::Ext(ExtTransaction {
+                    transaction: BasicTransaction {
+                        transaction: ShorthandTransaction {
+                            datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                            btc: tx.btc,
+                            usd: format!("${}", tx.usd),
+                        },
+                        address: tx.address,
+                        price: format!("${}", tx.price),
+                    },
+                    fee: format!("${}", tx.fee),
+                    total: format!("${}", tx.usd + tx.fee),
+                })
+            } else {
+                TransactionType::Basic(BasicTransaction {
+                    transaction: ShorthandTransaction {
                         datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                        address: tx.address, // Assuming tx.address contains the recipient address
                         btc: tx.btc,
-                        btc_price: format!("${}", tx.btc_price), // Assuming tx.btc_price stores the price at transaction time
                         usd: format!("${}", tx.usd),
-                    }
-                }
+                    },
+                    address: tx.address,
+                    price: format!("${}", tx.price),
+                })
+            }
         })?)
     }
 
@@ -180,9 +181,14 @@ impl StateManager {
     }
 }
 
+enum TransactionType {
+    Ext(ExtTransaction),
+    Basic(BasicTransaction),
+}
+
 #[derive(Serialize)]
-struct SentTransaction {
-    pub transaction: Transaction
+struct ExtTransaction {
+    pub transaction: BasicTransaction,
     pub fee: String,
     pub total: String,
 }
@@ -190,15 +196,15 @@ struct SentTransaction {
 
 #[derive(Serialize)]
 struct BasicTransaction {
-    pub transaction: ShorthandTransaction
+    pub transaction: ShorthandTransaction,
     pub address: String,
-    pub btc_price: String,
+    pub price: String,
 }
 
 #[derive(Serialize)]
 struct ShorthandTransaction {
     pub datetime: String,
-    pub btc: String,
+    pub btc: f64,
     pub usd: String,
 }
 
@@ -229,7 +235,7 @@ struct Message {
 struct BitcoinHome {
     pub usd: String,
     pub btc: String,
-    pub transactions: Vec<ShorthandTransaction>
+    pub transactions: Vec<ShorthandTransaction>,
     pub personal_data: Contact,
 }
 
@@ -263,6 +269,6 @@ struct ViewTransaction {
 
 #[derive(Serialize)]
 struct MessagesHome {
-    pub conversations: Vec<Conversation>
+    pub conversations: Vec<Conversation>,
     pub personal_data: Contact,
 }
