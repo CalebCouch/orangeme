@@ -175,9 +175,9 @@ impl StateManager {
     }
 
     pub fn amount(&self) -> Result<String, Error> {
-        let err = ''; // Error message if input_amount exceeds the min or max 
-        let usd = ''; // Formatted input amonut
-        let decimals = ''; // Decimals required at the end
+        let err = ""; // Error message if input_amount exceeds the min or max 
+        let usd = ""; // Formatted input amonut
+        let decimals = ""; // Decimals required at the end
         let input_amount = 0; // Unformatted input amount
         let btc = 0.0; // Input amount to btc
         Ok(serde_json::to_string(&Amount{
@@ -189,12 +189,13 @@ impl StateManager {
         })?)
     }
 
-    pub fn amount(&self) -> Result<String, Error> {
-        let fees = [0.0, 0.0]; 
+    pub fn speed(&self) -> Result<String, Error> {
+        let fees = (0.0, 0.0); 
         Ok(serde_json::to_string(&Speed{
            fees: fees,
         })?)
     }
+
 
     pub fn receive(&self) -> Result<String, Error> {
         let wallet = self.get_wallet()?;
@@ -320,7 +321,7 @@ struct Amount {
 
 #[derive(Serialize)]
 struct Speed {
-    pub fees: Vec<f64>,
+    pub fees: (f64, f64)
 }
 
 #[derive(Serialize)]

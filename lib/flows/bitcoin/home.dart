@@ -19,7 +19,7 @@ class BitcoinHome extends GenericWidget {
   String usdUnformatted = "";
   String usd = ""; // usdUnformatted == "0" ? "\$0.00" : "\$formatValue(widget.usdUnformatted)"
   String btc = ""; //formatBTC(state.btcBalance, 8)
-  List<BitcoinHomeTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
+  List<ShorthandTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
   Contact personal = Contact('', '', '', ''); //Users personal information
 
   @override
@@ -42,7 +42,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     setState(() {
       widget.usd = json["usd"];
       widget.btc = json["btc"];
-      widget.transactions = List<BitcoinHomeTransaction>.from(json['transactions'].map((json) => BitcoinHomeTransaction.fromJson(json)));
+      widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map((json) => ShorthandTransaction.fromJson(json)));
       //widget.personal
     });
   }
