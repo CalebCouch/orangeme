@@ -4,7 +4,6 @@ use super::price::PriceGetter;
 use super::state::{State, Field};
 
 use web5_rust::common::traits::KeyValueStore;
-use web5_rust::common::structs::DateTime;
 use web5_rust::common::SqliteStore;
 
 use bdk::{TransactionDetails, KeychainKind, SyncOptions, SignOptions};
