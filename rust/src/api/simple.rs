@@ -568,28 +568,6 @@ async fn spawn<T>(task: T) -> Result<(), Error>
     }
 }
 
-struct ProgressMsg {
-    test: Box<dyn Fn(f32, Option<String>, PathBuf) -> () + 'static + Sync + Send>,
-    path: PathBuf,
-}
-
-impl std::fmt::Debug for ProgressMsg {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "did")
-    }
-}
-
-impl Progress for ProgressMsg {
-    fn update(
-        &self,
-        progress: f32,
-        message: Option<String>
-    ) -> Result<(), bdk::Error> {
-        (self.test)(progress, message, self.path.clone());
-        Ok(())
-    }
-}
-
 async fn async_rust (
     path: String,
     platform: String,

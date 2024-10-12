@@ -155,8 +155,8 @@ impl StateManager {
                 if tx.is_withdraw {
                     SentTransaction {
                         transaction: Transaction {}, // I don't know how to get this data
-                        fee: format!("${}", tx.fee), // Assuming tx.fee contains the fee amount
-                        total: format!("${}", tx.usd + tx.fee), // Add tx.usd to the fee amount
+                        fee: format!("${}", tx.fee_usd),
+                        total: format!("${}", tx.usd + tx.fee_usd),
                     }
                 } else {
                     ReceivedTransaction {
@@ -189,7 +189,7 @@ struct SentTransaction {
 
 
 #[derive(Serialize)]
-struct Transaction {
+struct BasicTransaction {
     pub transaction: ShorthandTransaction
     pub address: String,
     pub btc_price: String,
