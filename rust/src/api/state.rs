@@ -165,7 +165,8 @@ impl StateManager {
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 ShorthandTransaction {
                     is_withdraw: tx.is_withdraw,
-                    datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                    date: "date", //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                    time: "time",
                     btc: tx.btc,
                     usd: format!("${}", tx.usd),
                 },
@@ -213,7 +214,8 @@ impl StateManager {
                     tx: BasicTransaction {
                         tx: ShorthandTransaction {
                             is_withdraw: tx.is_withdraw,
-                            datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                            date: "date", //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                            time: "time",
                             btc: tx.btc,
                             usd: format!("${}", tx.usd),
                         },
@@ -222,6 +224,7 @@ impl StateManager {
                     },
                     fee: format!("${}", tx.fee),
                     total: format!("${}", tx.usd + tx.fee),
+                    txid: tx.txid.to_string(),
                 })
             } else {
                 None
@@ -232,7 +235,8 @@ impl StateManager {
                 Some(BasicTransaction {
                     tx: ShorthandTransaction {
                         is_withdraw: tx.is_withdraw,
-                        datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                        date: "date", //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                        time: "time",
                         btc: tx.btc,
                         usd: format!("${}", tx.usd),
                     },
@@ -258,6 +262,7 @@ struct ExtTransaction {
     pub tx: BasicTransaction,
     pub fee: String,
     pub total: String,
+    pub txid: String,
 }
 
 #[derive(Serialize)]
@@ -270,7 +275,8 @@ struct BasicTransaction {
 #[derive(Serialize)]
 struct ShorthandTransaction {
     pub is_withdraw: bool,
-    pub datetime: String,
+    pub date: String,
+    pub time: String
     pub btc: f64,
     pub usd: String,
 }

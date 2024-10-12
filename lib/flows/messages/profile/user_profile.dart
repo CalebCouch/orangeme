@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:orange/components/profile_photo.dart';
-
 import 'package:orange/flows/messages/conversation/exchange.dart';
-
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
@@ -36,7 +33,6 @@ class UserProfileState extends GenericState<UserProfile> {
 
   onMessage() {
     navigateTo(
-      context,
       Exchange(
         //needs to check if a conversation has already been created with this person
         Conversation(

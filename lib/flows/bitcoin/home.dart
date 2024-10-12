@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orange/flows/bitcoin/transaction_details.dart';
+// import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
-import 'package:flutter/services.dart';
-import 'package:orange/components/list_item.dart';
+// import 'package:flutter/services.dart';
+// import 'package:orange/components/list_item.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
@@ -12,7 +12,7 @@ import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-//import 'package:orange/global.dart' as global;
+// import 'package:orange/global.dart' as global;
 
 class BitcoinHome extends GenericWidget {
   BitcoinHome({super.key});

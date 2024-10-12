@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
+import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 Widget bubble(Message message) {

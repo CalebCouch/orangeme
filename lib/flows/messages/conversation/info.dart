@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
+import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class MessageInfo extends GenericWidget {
@@ -50,10 +50,7 @@ Widget Information(List<Contact> contacts) {
 Widget ListMembers(BuildContext context, contacts) {
   onPressed(index) async {
     //Generate an address
-    navigateTo(
-      context,
-      UserProfile(contacts[index]),
-    );
+    navigateTo(context, UserProfile(contacts[index]));
   }
 
   return ListView.builder(

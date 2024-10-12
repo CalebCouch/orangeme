@@ -117,17 +117,19 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 class ShorthandTransaction {
   String usd;
   String btc;
-  String datetime;
+  String date;
+  String time;
   bool is_withdraw;
 
-  ShorthandTransaction(this.usd, this.btc, this.datetime, this.is_withdraw);
+  ShorthandTransaction(this.usd, this.btc, this.date, this.time, this.is_withdraw);
 
   @override
   factory ShorthandTransaction.fromJson(Map<String, dynamic> json) {
     return ShorthandTransaction(
       json['usd'] as String,
       json['btc'] as String,
-      json['datetime'] as String,
+      json['date'] as String,
+      json['time'] as String,
       json['is_withdraw'] as bool,
     );
   }
@@ -137,8 +139,9 @@ class ExtTransaction {
   BasicTransaction tx;
   String fee;
   String total;
+  String txid;
 
-  ExtTransaction(this.fee, this.total, this.tx);
+  ExtTransaction(this.fee, this.total, this.tx, this.txid);
 
   @override
   factory ExtTransaction.fromJson(Map<String, dynamic> json) {
@@ -146,6 +149,7 @@ class ExtTransaction {
       json['fee'] as String,
       json['total'] as String,
       json['tx'] as BasicTransaction,
+      json['txid'] as String,
     );
   }
 }
