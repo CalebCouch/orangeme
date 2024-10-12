@@ -89,7 +89,8 @@ pub struct Transaction {
     pub price: f64,
     pub is_withdraw: bool,
     pub confirmation_time: Option<(u32, DateTime)>,
-    pub fee: Option<f64>,
+    pub fee: f64,
+    pub fee_usd: f64,
 }
 
 impl Transaction {
@@ -106,10 +107,11 @@ impl Transaction {
         let price = if let Some(ct) = confirmation_time.as_ref() {
             PriceGetter::get(Some(&ct.1)).await?
         } else {0.0};
-        let usd =   btc*price;
-        let fee = details.fee.map(|f| f as f64 / SATS);
+        let usd = btc*price;
+        let fee = details.fee.ok_or(Error::bad_request("Transaction::from_details", "Missing Fee"))? as f64 / SATS;
+        let fee_usd = fee*price;
         let error = || Error::bad_request("Transaction::from_details", "Missing Sent Address");
-        Ok(Transaction{btc, usd, price, is_withdraw, confirmation_time, fee})
+        Ok(Transaction{btc, usd, price, is_withdraw, confirmation_time, fee, fee_usd})
     }
 }
 
