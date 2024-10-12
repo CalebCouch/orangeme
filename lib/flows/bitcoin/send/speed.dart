@@ -5,16 +5,16 @@ import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
 
-class TransactionSpeed extends GenericWidget {
-  TransactionSpeed({super.key});
+class Speed extends GenericWidget {
+  Speed({super.key});
 
   dynamic fees = ''; //var fees = widget.globalState.state.value.fees;
 
   @override
-  TransactionSpeedState createState() => TransactionSpeedState();
+  SpeedState createState() => SpeedState();
 }
 
-class TransactionSpeedState extends GenericState<TransactionSpeed> {
+class SpeedState extends GenericState<Speed> {
   @override
   String stateName() {
     return "TransactionSpeed";

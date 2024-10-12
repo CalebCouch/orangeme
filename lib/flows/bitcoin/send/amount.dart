@@ -49,7 +49,7 @@ class AmountState extends GenericState<Amount> {
   onContinue(double btc) {
     navigateTo(
       context,
-      TransactionSpeed(),
+      Speed(),
     );
   }
 

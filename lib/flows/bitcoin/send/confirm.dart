@@ -94,17 +94,11 @@ ConfirmAddress(BuildContext context, tx) {
 
 ConfirmAmount(BuildContext context, tx) {
   changeAmount() {
-    resetNavTo(
-      context,
-      Amount(),
-    );
+    resetNavTo(context, Amount());
   }
 
   changeSpeed() {
-    resetNavTo(
-      context,
-      TransactionSpeed(),
-    );
+    resetNavTo(context, Speed());
   }
 
   return DataItem(

@@ -17,8 +17,7 @@ class MessagesHome extends GenericWidget {
   MessagesHome({super.key});
 
   List<Conversation> conversations = []; //List of all conversations
-  Contact personal = [] as Contact;
-
+  Contact personal = Contact('', '', '', '');
   @override
   MessagesHomeState createState() => MessagesHomeState();
 }

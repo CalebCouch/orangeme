@@ -21,7 +21,7 @@ class BitcoinHome extends GenericWidget {
   String usd = ""; // usdUnformatted == "0" ? "\$0.00" : "\$formatValue(widget.usdUnformatted)"
   String btc = ""; //formatBTC(state.btcBalance, 8)
   List<BitcoinHomeTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
-  Contact personal = [] as Contact; //Users personal information
+  Contact personal = Contact('', '', '', ''); //Users personal information
 
   @override
   BitcoinHomeState createState() => BitcoinHomeState();
