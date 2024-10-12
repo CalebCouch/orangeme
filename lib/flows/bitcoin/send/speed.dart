@@ -1,14 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/send/confirm.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-//import 'package:orange/global.dart' as global;
+import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
-  Speed({super.key});
+  final String address;
+  final double btc;
+  Speed({super.key, required this.address, required this.btc});
 
-  dynamic fees = ''; //var fees = widget.globalState.state.value.fees;
+  dynamic fees = '';
 
   @override
   SpeedState createState() => SpeedState();
@@ -17,7 +21,7 @@ class Speed extends GenericWidget {
 class SpeedState extends GenericState<Speed> {
   @override
   String stateName() {
-    return "TransactionSpeed";
+    return "Speed";
   }
 
   @override
@@ -47,9 +51,9 @@ class SpeedState extends GenericState<Speed> {
       isLoading = true;
     });
 
-    // Transaction tx = Transaction.fromJson(
-    //    jsonDecode((await widget.globalState.invoke("create_legacy_transaction", "${widget.address}|${widget.btc}|$index")).data));
-    navigateTo(context, Confirm());
+    ExtTransaction tx =
+        ExtTransaction.fromJson(jsonDecode((await global.invoke("create_legacy_transaction", "${widget.address}|${widget.btc}|$index"))));
+    navigateTo(Confirm(tx: tx));
     setState(() {
       isLoading = false;
     });

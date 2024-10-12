@@ -666,9 +666,9 @@ pub async fn ruststart (
 
 
 #[frb(sync)]
-pub fn getstate(path: String, name: String) -> String {
+pub fn getstate(path: String, name: String, options: String) -> String {
     let result: Result<String, Error> = (move || {
-        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path))?).get(&name)
+        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path))?).get(&name, &options)
     })();
     match result {
         Ok(s) => s,

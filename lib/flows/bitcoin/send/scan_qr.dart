@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
+import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:orange/global.dart' as global;

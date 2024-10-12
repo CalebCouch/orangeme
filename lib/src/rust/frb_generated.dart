@@ -86,7 +86,8 @@ abstract class RustLibApi extends BaseApi {
   Future<Error> crateApiErrorErrorParse(
       {required String rtype, required String data});
 
-  String crateApiSimpleGetstate({required String path, required String name});
+  String crateApiSimpleGetstate(
+      {required String path, required String name, required String options});
 
   Future<String> crateApiSimpleRuststart(
       {required String path,
@@ -273,12 +274,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleGetstate({required String path, required String name}) {
+  String crateApiSimpleGetstate(
+      {required String path, required String name, required String options}) {
     return handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_String(name, serializer);
+        sse_encode_String(options, serializer);
         return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
       },
       codec: SseCodec(
@@ -286,14 +289,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiSimpleGetstateConstMeta,
-      argValues: [path, name],
+      argValues: [path, name, options],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiSimpleGetstateConstMeta => const TaskConstMeta(
         debugName: "getstate",
-        argNames: ["path", "name"],
+        argNames: ["path", "name", "options"],
       );
 
   @override

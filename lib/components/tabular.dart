@@ -30,52 +30,31 @@ class SingleTab extends StatelessWidget {
   }
 }
 
-Widget transactionTabular(BuildContext context, Transaction tx) {
-  late String formattedDate;
-  if (tx.date != null) {
-    formattedDate = DateFormat.yMd().format(DateFormat('yyyy-MM-dd').parse(tx.date!)).toString();
-  }
+Widget sendTransactioTabular(BuildContext context, ExtTransaction tx) {
   return Column(
     children: [
-      SingleTab(title: "Date", subtitle: tx.date != null ? formattedDate : "Pending"),
-      SingleTab(title: "Time", subtitle: tx.time ?? "Pending"),
-      if (tx.sentAddress != null) SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
-      if (tx.sentAddress == null) SingleTab(title: "Received From Address", subtitle: transactionCut(tx.txid)),
-      if (tx.sentAddress == null)
-        SingleTab(
-          title: "Amount Received",
-          subtitle: "${(tx.btc).abs()} BTC",
-        ),
-      if (tx.sentAddress != null)
-        SingleTab(
-          title: "Amount Sent",
-          subtitle: "${(tx.btc).abs()} BTC",
-        ),
-      SingleTab(
-        title: "Bitcoin Price",
-        subtitle: "\$${NumberFormat('#,##,000.00').format(tx.price)}",
-      ),
-      if (tx.sentAddress == null)
-        SingleTab(
-          title: "USD Value Received",
-          subtitle: "\$${formatValue(tx.usd)}",
-        ),
-      if (tx.sentAddress != null)
-        SingleTab(
-          title: "USD Value Sent",
-          subtitle: "\$${formatValue(tx.usd.abs() - tx.fee.abs())}",
-        ),
-      if (tx.sentAddress != null) const Spacing(AppPadding.content),
-      if (tx.sentAddress != null)
-        SingleTab(
-          title: "Fee",
-          subtitle: "\$${formatValue(tx.fee)}",
-        ),
-      if (tx.sentAddress != null)
-        SingleTab(
-          title: "Total Amount",
-          subtitle: "\$${formatValue(tx.usd.abs())}",
-        ),
+      SingleTab(title: "Date", subtitle: tx.date),
+      SingleTab(title: "Time", subtitle: tx.time),
+      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
+      SingleTab(title: "Amount Sent", subtitle: tx.btc),
+      SingleTab(title: "Bitcoin Price", subtitle: tx.price),
+      SingleTab(title: "USD Value Sent", subtitle: tx.usd),
+      const Spacing(AppPadding.content),
+      SingleTab(title: "Fee", subtitle: tx.fee),
+      SingleTab(title: "Total Amount", subtitle: tx.total),
+    ],
+  );
+}
+
+Widget transactionTabular(BuildContext context, BasicTransaction tx) {
+  return Column(
+    children: [
+      SingleTab(title: "Date", subtitle: tx.date),
+      SingleTab(title: "Time", subtitle: tx.time),
+      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
+      SingleTab(title: "Amount Sent", subtitle: tx.btc),
+      SingleTab(title: "Bitcoin Price", subtitle: tx.price),
+      SingleTab(title: "USD Value Sent", subtitle: tx.usd),
     ],
   );
 }
@@ -89,30 +68,13 @@ Widget contactTabular(BuildContext context, String name, String did) {
   );
 }
 
-Widget confirmationTabular(BuildContext context, Transaction tx, [recipient]) {
+Widget confirmationTabular(BuildContext context, String address, String fee, String usd, String btc) {
   return Column(
     children: [
-      if (recipient != null)
-        SingleTab(
-          title: "Contact",
-          subtitle: "${recipient.name}",
-        ),
-      if (tx.sentAddress != null) SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
-      if (tx.sentAddress != null)
-        SingleTab(
-          title: "Amount Sent",
-          subtitle: "${tx.btc.abs()} BTC",
-        ),
-      if (tx.sentAddress != null)
-        SingleTab(
-          title: "USD Value Sent",
-          subtitle: "\$${tx.usd.abs()}",
-        ),
-      if (tx.sentAddress != null)
-        SingleTab(
-          title: "Fee",
-          subtitle: "\$${formatValue(tx.fee)} USD",
-        ),
+      SingleTab(title: "Sent to Address", subtitle: transactionCut(address)),
+      SingleTab(title: "Amount Sent", subtitle: btc),
+      SingleTab(title: "USD Value Sent", subtitle: usd),
+      SingleTab(title: "Fee", subtitle: fee),
     ],
   );
 }

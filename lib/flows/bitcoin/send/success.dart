@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/result.dart';
-
 import 'package:orange/flows/bitcoin/home.dart';
-
 import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
+import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 //import 'package:orange/global.dart' as global;
 
 class Success extends GenericWidget {
-  Success({super.key});
+  final ExtTransaction tx;
+  Success({super.key, required this.tx});
 
   double amount = 0; //transaction total
 
@@ -48,7 +47,7 @@ class SuccessState extends GenericState<Success> {
     return Stack_Default(
       Header_Stack(context, "Confirm send", exitButton(context, BitcoinHome())),
       [
-        Result('You sent \$${formatValue(widget.amount)}'),
+        Result('You sent ${widget.tx.tx.tx.usd}'),
       ],
       Bumper(context, [CustomButton('Done', 'secondary lg enabled expand none', onDone)]),
       Alignment.center,

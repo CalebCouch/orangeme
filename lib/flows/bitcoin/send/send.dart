@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
-import 'package:orange/util.dart';
+import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-//import 'package:orange/global.dart' as global;
+import 'package:orange/global.dart' as global;
 
 class Send extends GenericWidget {
   final String? address;
@@ -41,9 +42,8 @@ class SendState extends GenericState<Send> {
     });
   }
 
-  //This function only checks the address validity
   Future<void> checkAddress(String address) async {
-    var valid = true; // (await widget.globalState.invoke("check_address", address)).data == "true";
+    var valid = (await global.invoke("check_address", address)) == "true";
     setState(() {
       addressValid = valid;
     });
@@ -52,12 +52,12 @@ class SendState extends GenericState<Send> {
   onContinue() {
     checkAddress(controller.text);
     if (addressValid) {
-      navigateTo(context, Amount());
+      navigateTo(context, Amount(address: controller.text));
     }
   }
 
   onPaste() {
-    String data = ''; // Need to get clipboard data
+    String data = Clipboard.getData('text/plain').toString();
     if (data != "null") {
       setAddress(data);
     }

@@ -11,7 +11,6 @@ import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
-import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
 
@@ -49,15 +48,15 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
   }
 
   onReceive() {
-    navigateTo(context, Receive());
+    navigateTo(Receive());
   }
 
   onSend() {
-    navigateTo(context, Send());
+    navigateTo(Send());
   }
 
   toProfile() {
-    navigateTo(context, MyProfile());
+    navigateTo(MyProfile());
   }
 
   @override
@@ -132,7 +131,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     );
   }
 
-  Widget TransactionItem(BitcoinHomeTransaction transaction) {
+  Widget TransactionItem(ShorthandTransaction transaction) {
     return Container(); /*ListItem(
       onTap: () {
         HapticFeedback.mediumImpact();

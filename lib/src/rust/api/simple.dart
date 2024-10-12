@@ -15,5 +15,9 @@ Future<String> ruststart(
     RustLib.instance.api.crateApiSimpleRuststart(
         path: path, platform: platform, thread: thread);
 
-String getstate({required String path, required String name}) =>
-    RustLib.instance.api.crateApiSimpleGetstate(path: path, name: name);
+String getstate(
+        {required String path,
+        required String name,
+        required String options}) =>
+    RustLib.instance.api
+        .crateApiSimpleGetstate(path: path, name: name, options: options);
