@@ -86,6 +86,7 @@ impl DescriptorSet {
 pub struct Transaction {
     pub btc: f64,
     pub usd: f64,
+    pub price: f64,
     pub is_withdraw: bool,
     pub confirmation_time: Option<(u32, DateTime)>,
     pub fee: Option<f64>,
@@ -108,7 +109,7 @@ impl Transaction {
         let usd =   btc*price;
         let fee = details.fee.map(|f| f as f64 / SATS);
         let error = || Error::bad_request("Transaction::from_details", "Missing Sent Address");
-        Ok(Transaction{btc, usd, is_withdraw, confirmation_time, fee})
+        Ok(Transaction{btc, usd, price, is_withdraw, confirmation_time, fee})
     }
 }
 

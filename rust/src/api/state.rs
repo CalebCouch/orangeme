@@ -101,16 +101,12 @@ impl StateManager {
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 if tx.is_withdraw {
                     SentTransaction {
-                        datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                        address: tx.address, // Assuming tx.address contains the recipient address
-                        btc: tx.btc,
-                        btc_price: format!("${}", tx.btc_price), // Assuming tx.btc_price stores the price at transaction time
-                        usd: format!("${}", tx.usd),
+                        transaction: Transaction{}, // I don't know how to get this data
                         fee: format!("${}", tx.fee), // Assuming tx.fee contains the fee amount
                         total: format!("${}", tx.usd + tx.fee), // Add tx.usd to the fee amount
                     }
                 } else {
-                    ReceivedTransaction {
+                    Transaction {
                         datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
                         address: tx.address, // Assuming tx.address contains the recipient address
                         btc: tx.btc,
@@ -153,6 +149,27 @@ impl StateManager {
         Ok(serde_json::to_string(&Success{})?)
     }
 
+    pub fn view_transaction(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&ViewTransaction{
+            transaction:
+                if tx.is_withdraw {
+                    SentTransaction {
+                        transaction: Transaction {}, // I don't know how to get this data
+                        fee: format!("${}", tx.fee), // Assuming tx.fee contains the fee amount
+                        total: format!("${}", tx.usd + tx.fee), // Add tx.usd to the fee amount
+                    }
+                } else {
+                    ReceivedTransaction {
+                        datetime: Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                        address: tx.address, // Assuming tx.address contains the recipient address
+                        btc: tx.btc,
+                        btc_price: format!("${}", tx.btc_price), // Assuming tx.btc_price stores the price at transaction time
+                        usd: format!("${}", tx.usd),
+                    }
+                }
+        })?)
+    }
+
     pub fn messages_home(&self) -> Result<String, Error> {
         let personal_data = self.get_personal_data()?; // Assuming a method that fetches user's personal data
         let conversations = self.get_conversations()?; // Assuming a method that fetches user's conversations
@@ -165,28 +182,30 @@ impl StateManager {
 
 #[derive(Serialize)]
 struct SentTransaction {
-    pub datetime: String,
-    pub address: String,
-    pub btc: String,
-    pub btc_price: String,
-    pub usd: String,
+    pub transaction: Transaction
     pub fee: String,
     pub total: String,
 }
 
+
 #[derive(Serialize)]
-struct ReceivedTransaction {
-    pub datetime: String,
+struct Transaction {
+    pub transaction: ShorthandTransaction
     pub address: String,
-    pub btc: String,
     pub btc_price: String,
+}
+
+#[derive(Serialize)]
+struct ShorthandTransaction {
+    pub datetime: String,
+    pub btc: String,
     pub usd: String,
 }
 
 #[derive(Serialize)]
 struct Conversation {
-    pub members: List<Contact>,
-    pub messages: List<Message>,
+    pub members: Vec<Contact>,
+    pub messages: Vec<Message>,
 }
 
 #[derive(Serialize)]
@@ -210,7 +229,7 @@ struct Message {
 struct BitcoinHome {
     pub usd: String,
     pub btc: String,
-    pub transactions: Vec<BitcoinHomeTransaction>
+    pub transactions: Vec<ShorthandTransaction>
     pub personal_data: Contact,
 }
 
@@ -236,6 +255,11 @@ struct Confirm {}
 
 #[derive(Serialize)]
 struct Success {}
+
+#[derive(Serialize)]
+struct ViewTransaction {
+    pub transaction: Vec<ShorthandTransaction> //Either a transaction or a sent transaction
+}
 
 #[derive(Serialize)]
 struct MessagesHome {
