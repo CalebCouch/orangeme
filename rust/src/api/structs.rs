@@ -119,6 +119,10 @@ impl Platform {
     }
 }
 
+impl Default for Platform {
+    fn default() -> Self {Platform::Mac}
+}
+
 impl std::str::FromStr for Platform {
     type Err = Error;
 

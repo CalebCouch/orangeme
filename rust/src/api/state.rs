@@ -20,6 +20,7 @@ pub type Price = f64;
 pub enum Field {
     DescriptorSet,
     Internet,
+    Platform,
     Price,
     Path
 }

@@ -97,7 +97,7 @@ pub struct Transaction {
 }
 
 impl Transaction {
-    pub async fn from_details(details: TransactionDetails, is_mine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
+    pub fn from_details(details: TransactionDetails, price: f64, is_mine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
         let ec = "Transaction::from_details";
         let btc = if details.sent >= details.received {
             details.sent as i64 - details.received as i64
@@ -124,9 +124,6 @@ impl Transaction {
         let confirmation_time = details.confirmation_time.map(|ct|
             Ok::<(u32, DateTime), Error>((ct.height, DateTime::from_timestamp(ct.timestamp)?))
         ).transpose()?;
-        let price = if let Some(ct) = confirmation_time.as_ref() {
-            PriceGetter::get(Some(&ct.1)).await?
-        } else {0.0};
         let usd = btc*price;
         let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))? as f64 / SATS;
         let fee_usd = fee*price;
@@ -192,13 +189,13 @@ impl Wallet {
   //}
 
     pub async fn sync(&mut self) -> Result<(), Error> {
-        let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
-        let blockchain = ElectrumBlockchain::from(client);
-        if let Err(e) = self.inner.sync(&blockchain, SyncOptions::default()) {
-            if !format!("{:?}", e).contains(NO_INTERNET) {
-                return Err(e.into());
-            }
-        }
+      //let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
+      //let blockchain = ElectrumBlockchain::from(client);
+      //if let Err(e) = self.inner.sync(&blockchain, SyncOptions::default()) {
+      //    if !format!("{:?}", e).contains(NO_INTERNET) {
+      //        return Err(e.into());
+      //    }
+      //}
         //Transactions
         let mut txs = self.get_transactions()?;
         for tx in self.inner.list_transactions(true)? {
@@ -206,7 +203,11 @@ impl Wallet {
                 if transaction.confirmation_time.is_some() {continue;}
                 if tx.confirmation_time.is_none() {continue;}
             }
-            txs.insert(tx.txid, Transaction::from_details(tx, |s: &Script| -> bool {self.inner.is_mine(s).unwrap_or_default()}).await?);
+            let price = if let Some(ct) = tx.confirmation_time.as_ref() {
+                PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
+            } else {0.0};
+
+            txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {self.inner.is_mine(s).unwrap_or_default()})?);
         }
         self.store.set(b"transactions", &serde_json::to_vec(&txs)?)?;
         Ok(())
