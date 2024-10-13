@@ -54,10 +54,10 @@ class AmountState extends GenericState<Amount> {
   void updateAmount(String input) {
     var buzz = FeedbackType.warning;
     HapticFeedback.heavyImpact();
+    String updatedAmount = amount;
 
-    var updatedAmount = "0";
     if (isValid(input)) {
-      updatedAmount = amount;
+      updatedAmount += input;
     } else {
       Vibrate.feedback(buzz);
       _shakeController.shake();
@@ -90,114 +90,57 @@ class AmountState extends GenericState<Amount> {
     );
   }
 
+  toBitcoin(String amt) {
+    return amt; //to bitcoin
+  }
+
   Widget display() {
     return Expanded(
       child: Center(
         child: ShakeWidget(
           controller: _shakeController,
-          child: keyboardAmountDisplay(context, amount, widget.btc, error),
+          child: keyboardAmountDisplay(context, amount, toBitcoin(amount), error),
         ),
       ),
     );
   }
 
   Widget keyboardAmountDisplay(BuildContext context, String amt, double btc, String error) {
-    String usd = amt.toString();
-
     Widget subText(String error) {
-      if (error.isNotEmpty) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [const CustomIcon('error md danger'), const SizedBox(width: 8), CustomText('text lg danger', error)],
-        );
-      } else {
-        return CustomText('text lg text_secondary', "${formatBTC(btc, 8)} BTC");
-      }
+      return Row(children: [
+        if (error.isNotEmpty) ...[
+          const CustomIcon('error md danger'),
+          const SizedBox(width: 8),
+          CustomText('text lg danger', error),
+        ] else
+          CustomText('text lg text_secondary', "${formatBTC(btc, 8)} BTC"),
+      ]);
     }
 
-    var length = widget.usd.length;
-    if (usd.contains('.')) length - 1;
-
     dynamic_size() {
+      var length = amt.contains('.') ? amt.length - 1 : amt.length;
       if (length <= 4) return 'title';
       if (length <= 7) return 'h1';
       return 'h2';
     }
 
-    String size = dynamic_size();
     return FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Column(
+      fit: BoxFit.scaleDown,
+      child: Column(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CustomText('heading $size', widget.usd),
-                CustomText('heading $size text_secondary', widget.decimals),
-              ],
-            ),
-            subText(error)
+            CustomText('heading ${dynamic_size()}', widget.usd),
+            CustomText('heading ${dynamic_size()} text_secondary', widget.decimals),
           ],
-        ));
+        ),
+        subText(error)
+      ]),
+    );
   }
 }
 
 class ShakeController extends ChangeNotifier {
   void shake() => notifyListeners();
-}
-
-class SimpleKeyboardListener extends StatefulWidget {
-  final void Function(String) onPressed;
-  final Widget child;
-
-  const SimpleKeyboardListener({
-    super.key,
-    required this.onPressed,
-    required this.child,
-  });
-
-  @override
-  State<SimpleKeyboardListener> createState() => _SimpleKeyboardListenerState();
-}
-
-class _SimpleKeyboardListenerState extends State<SimpleKeyboardListener> {
-  bool _onKey(KeyEvent event) {
-    final key = event.logicalKey.keyLabel;
-
-    if (event is KeyDownEvent) {
-      if (isNumeric(key)) {
-        widget.onPressed(key);
-      }
-      if (event.logicalKey == LogicalKeyboardKey.backspace) {
-        widget.onPressed('backspace');
-      }
-      if (event.logicalKey == LogicalKeyboardKey.period) {
-        widget.onPressed('.');
-      }
-    }
-
-    return false;
-  }
-
-  bool isNumeric(String s) {
-    return double.tryParse(s) != null;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    ServicesBinding.instance.keyboard.addHandler(_onKey);
-  }
-
-  @override
-  void dispose() {
-    ServicesBinding.instance.keyboard.removeHandler(_onKey);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
 }

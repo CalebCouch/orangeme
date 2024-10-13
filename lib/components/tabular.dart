@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
-import 'package:intl/intl.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class SingleTab extends StatelessWidget {
@@ -33,12 +32,12 @@ class SingleTab extends StatelessWidget {
 Widget sendTransactioTabular(BuildContext context, ExtTransaction tx) {
   return Column(
     children: [
-      SingleTab(title: "Date", subtitle: tx.date),
-      SingleTab(title: "Time", subtitle: tx.time),
-      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
-      SingleTab(title: "Amount Sent", subtitle: tx.btc),
-      SingleTab(title: "Bitcoin Price", subtitle: tx.price),
-      SingleTab(title: "USD Value Sent", subtitle: tx.usd),
+      SingleTab(title: "Date", subtitle: tx.tx.tx.date),
+      SingleTab(title: "Time", subtitle: tx.tx.tx.time),
+      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.tx.address)),
+      SingleTab(title: "Amount Sent", subtitle: tx.tx.tx.btc),
+      SingleTab(title: "Bitcoin Price", subtitle: tx.tx.price),
+      SingleTab(title: "USD Value Sent", subtitle: tx.tx.tx.usd),
       const Spacing(AppPadding.content),
       SingleTab(title: "Fee", subtitle: tx.fee),
       SingleTab(title: "Total Amount", subtitle: tx.total),
@@ -49,12 +48,12 @@ Widget sendTransactioTabular(BuildContext context, ExtTransaction tx) {
 Widget transactionTabular(BuildContext context, BasicTransaction tx) {
   return Column(
     children: [
-      SingleTab(title: "Date", subtitle: tx.date),
-      SingleTab(title: "Time", subtitle: tx.time),
-      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.sentAddress!)),
-      SingleTab(title: "Amount Sent", subtitle: tx.btc),
+      SingleTab(title: "Date", subtitle: tx.tx.date),
+      SingleTab(title: "Time", subtitle: tx.tx.time),
+      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.address)),
+      SingleTab(title: "Amount Sent", subtitle: tx.tx.btc),
       SingleTab(title: "Bitcoin Price", subtitle: tx.price),
-      SingleTab(title: "USD Value Sent", subtitle: tx.usd),
+      SingleTab(title: "USD Value Sent", subtitle: tx.tx.usd),
     ],
   );
 }

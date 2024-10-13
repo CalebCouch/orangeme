@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orange/flows/bitcoin/transaction_details.dart';
+// import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
-import 'package:flutter/services.dart';
-import 'package:orange/components/list_item.dart';
+// import 'package:flutter/services.dart';
+// import 'package:orange/components/list_item.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
@@ -12,14 +12,14 @@ import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-//import 'package:orange/global.dart' as global;
+// import 'package:orange/global.dart' as global;
 
 class BitcoinHome extends GenericWidget {
   BitcoinHome({super.key});
   String usdUnformatted = "";
   String usd = ""; // usdUnformatted == "0" ? "\$0.00" : "\$formatValue(widget.usdUnformatted)"
   String btc = ""; //formatBTC(state.btcBalance, 8)
-  List<BitcoinHomeTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
+  List<ShorthandTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
   Contact personal = Contact('', '', '', ''); //Users personal information
 
   @override
@@ -42,7 +42,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     setState(() {
       widget.usd = json["usd"];
       widget.btc = json["btc"];
-      widget.transactions = List<BitcoinHomeTransaction>.from(json['transactions'].map((json) => BitcoinHomeTransaction.fromJson(json)));
+      widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map((json) => ShorthandTransaction.fromJson(json)));
       //widget.personal
     });
   }

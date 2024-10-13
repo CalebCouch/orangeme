@@ -5,9 +5,8 @@ import 'package:orange/components/profile_photo.dart';
 import 'package:orange/flows/messages/conversation/info.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/global.dart' as global;
+// import 'package:orange/global.dart' as global;
 
 class Exchange extends GenericWidget {
   final Conversation conversation;
@@ -48,10 +47,7 @@ class ExchangeState extends GenericState<Exchange> {
   }
 
   directProfile() {
-    navigateTo(
-      context,
-      UserProfile(widget.conversation.members[0]),
-    );
+    navigateTo(UserProfile(widget.conversation.members[0]));
   }
 
   @override

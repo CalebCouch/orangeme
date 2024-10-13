@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/screens/error.dart';
+// import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/error.dart';
 import 'package:orange/classes.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -29,8 +29,7 @@ class GlobalState {
 
   Future<void> startRust() async {
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    Directory mydir =
-        await Directory('${appDocDirectory.path}/').create(recursive: true);
+    Directory mydir = await Directory('${appDocDirectory.path}/').create(recursive: true);
     error(await rustStart(
         path: mydir.path,
         callback: dartCallback,
@@ -116,15 +115,14 @@ class GlobalState {
     String key = split[0];
     String value = split[1];
     // Obtain SharedPreferences instance
-    final SharedPreferences prefs = await SharedPreferences
-        .getInstance(); // Write the data to SharedPreferences
+    final SharedPreferences prefs = await SharedPreferences.getInstance(); // Write the data to SharedPreferences
     await prefs.setString(key, value);
   }
 
   Future<String> androidRead(String key) async {
     // Obtain SharedPreferences instance
-    final SharedPreferences prefs = await SharedPreferences
-        .getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
+    final SharedPreferences prefs =
+        await SharedPreferences.getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
     return prefs.getString(key) ?? "";
   }
 

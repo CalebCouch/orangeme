@@ -8,7 +8,6 @@ import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
 
 import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
@@ -41,14 +40,11 @@ class MessagesHomeState extends GenericState<MessagesHome> {
   }
 
   createNewMessage() {
-    navigateTo(
-      context,
-      ChooseRecipient(),
-    );
+    navigateTo(ChooseRecipient());
   }
 
   toProfile() {
-    navigateTo(context, MyProfile());
+    navigateTo(MyProfile());
   }
 
   @override
@@ -83,10 +79,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
           conversations[index].members,
           conversations[index].messages[0].message,
           () {
-            navigateTo(
-              context,
-              Exchange(conversations[index]),
-            );
+            navigateTo(Exchange(conversations[index]));
           },
         );
       },

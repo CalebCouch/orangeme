@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orangeme_material/orangeme_material.dart';
@@ -85,10 +84,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   }
 
   onNext() {
-    navigateTo(
-      context,
-      Exchange(Conversation(recipients, [])),
-    );
+    navigateTo(Exchange(Conversation(recipients, [])));
   }
 
   @override
