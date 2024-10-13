@@ -104,14 +104,16 @@ impl StateManager {
         let message1 = Message {
             sender: alice.clone(),  
             message: "Hello, Bob!".to_string(),
-            datetime: "2024-10-12T08:23:00Z".to_string(),
+            date: "08:23:00".to_string(),
+            time: "2024-10-12".to_string(),
             is_incoming: false,
         };
     
         let message2 = Message {
             sender: bob.clone(),  
             message: "Hi Alice, how are you?".to_string(),
-            datetime: "2024-10-12T08:24:00Z".to_string(),
+            date: "08:23:00".to_string(),
+            time: "2024-10-12".to_string(),
             is_incoming: true,
         };
     
@@ -126,13 +128,15 @@ impl StateManager {
                 Message {
                     sender: bob.clone(),
                     message: "Are you free for a meeting tomorrow?".to_string(),
-                    datetime: "2024-10-12T09:00:00Z".to_string(),
+                    date: "08:23:00".to_string(),
+                    time: "2024-10-12".to_string(),
                     is_incoming: false,
                 },
                 Message {
                     sender: alice.clone(),
                     message: "Yes, I am available!".to_string(),
-                    datetime: "2024-10-12T09:05:00Z".to_string(),
+                    date: "08:23:00".to_string(),
+                    time: "2024-10-12".to_string(),
                     is_incoming: true,
                 },
             ],
@@ -165,8 +169,8 @@ impl StateManager {
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 ShorthandTransaction {
                     is_withdraw: tx.is_withdraw,
-                    date: "date", //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                    time: "time",
+                    date: "date".to_string(), //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                    time: "time".to_string(),
                     btc: tx.btc,
                     usd: format!("${}", tx.usd),
                 },
@@ -176,10 +180,10 @@ impl StateManager {
     }
 
     pub fn amount(&self) -> Result<String, Error> {
-        let err = ""; // Error message if input_amount exceeds the min or max 
-        let usd = ""; // Formatted input amonut
-        let decimals = ""; // Decimals required at the end
-        let input_amount = 0; // Unformatted input amount
+        let err = "".to_string(); // Error message if input_amount exceeds the min or max 
+        let usd = "".to_string(); // Formatted input amonut
+        let decimals = "".to_string(); // Decimals required at the end
+        let input_amount = 0.0; // Unformatted input amount
         let btc = 0.0; // Input amount to btc
         Ok(serde_json::to_string(&Amount{
             err: err,
@@ -206,16 +210,25 @@ impl StateManager {
     }
 
     pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
-        let txid = Txid::from_str(options)?;
-        let tx = wallet.get_tx(&txid)?;  
+        //let txid = Txid::from_str(options)?;
+        //let tx = wallet.get_tx(&txid)?;  
+        let tx = Transaction {
+            is_withdraw: true,
+            btc: 0.00123456,
+            usd: 30.45,
+            address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa".to_string(),
+            price: 63500.00,
+            fee: 3.00,
+            txid: "abc123txid456".to_string(),
+        };
         Ok(serde_json::to_string(&ViewTransaction{
-            ext_transaction: if tx.is_withdraw {
+            ext_transaction: if tx.tx.tx.is_withdraw {
                 Some(ExtTransaction {
                     tx: BasicTransaction {
                         tx: ShorthandTransaction {
                             is_withdraw: tx.is_withdraw,
-                            date: "date", //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                            time: "time",
+                            date: "date".to_string(), //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                            time: "time".to_string(),
                             btc: tx.btc,
                             usd: format!("${}", tx.usd),
                         },
@@ -229,14 +242,14 @@ impl StateManager {
             } else {
                 None
             },
-            basic_transaction: if tx.is_withdraw {
+            basic_transaction: if tx.tx.tx.is_withdraw {
                 None
             } else {
                 Some(BasicTransaction {
                     tx: ShorthandTransaction {
                         is_withdraw: tx.is_withdraw,
-                        date: "date", //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                        time: "time",
+                        date: "date".to_string(), //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                        time: "time".to_string(),
                         btc: tx.btc,
                         usd: format!("${}", tx.usd),
                     },
@@ -244,7 +257,7 @@ impl StateManager {
                     price: format!("${}", tx.price),
                 })
             }
-        })?)
+        })?);
     }
 
     pub fn messages_home(&self) -> Result<String, Error> {
@@ -276,7 +289,7 @@ struct BasicTransaction {
 struct ShorthandTransaction {
     pub is_withdraw: bool,
     pub date: String,
-    pub time: String
+    pub time: String,
     pub btc: f64,
     pub usd: String,
 }
@@ -299,7 +312,8 @@ struct Contact {
 struct Message {
     pub sender: Contact,
     pub message: String,
-    pub datetime: String,
+    pub date: String,
+    pub time: String,
     pub is_incoming: bool,
 }
 
