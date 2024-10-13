@@ -50,6 +50,7 @@ class SendState extends GenericState<Send> {
   }
 
   onContinue() {
+    navigateTo(context, Amount(address: controller.text));
     checkAddress(controller.text);
     if (addressValid) {
       navigateTo(context, Amount(address: controller.text));
@@ -71,6 +72,7 @@ class SendState extends GenericState<Send> {
 
   @override
   Widget build(BuildContext context) {
+    String isEnabled = controller.text.isEmpty || !addressValid ? 'disabled' : 'enabled';
     return Stack_Default(
       Header_Stack(context, "Bitcoin address"),
       [

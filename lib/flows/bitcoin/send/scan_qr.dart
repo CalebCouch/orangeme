@@ -6,47 +6,9 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:orange/global.dart' as global;
 
-class ScanQR extends GenericWidget {
-  ScanQR({super.key});
-
-  //String address = "8475729859832898587463636536474388384";
-
-  @override
-  ScanQRState createState() => ScanQRState();
-}
-
-class ScanQRState extends GenericState<ScanQR> {
-  @override
-  String stateName() {
-    return "ScanQR";
-  }
-
-  @override
-  int refreshInterval() {
-    return 0;
-  }
-
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-      //widget.address = json["address"];
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    global.invoke("get_new_address", "");
-  }
-
+class ScanQR extends StatelessWidget {
   late QRViewController controller;
   GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +23,7 @@ class ScanQRState extends GenericState<ScanQR> {
       ),
       Expanded(
         child: Stack(children: [
-          qrScanner(),
+          qrScanner(context),
           Guide(),
         ]),
       ),
@@ -87,7 +49,7 @@ class ScanQRState extends GenericState<ScanQR> {
   }
 
   /* Initializes the QR view controller and handles scanned data. */
-  _onQRViewCreated(QRViewController controller) {
+  _onQRViewCreated(BuildContext context, QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       switchPageTo(context, Send(address: scanData.code));
@@ -105,10 +67,10 @@ class ScanQRState extends GenericState<ScanQR> {
     );
   }
 
-  qrScanner() {
+  qrScanner(BuildContext context) {
     return QRView(
       key: qrKey,
-      onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(controller)},
+      onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(context, controller)},
     );
   }
 }

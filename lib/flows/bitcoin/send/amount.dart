@@ -45,11 +45,18 @@ class AmountState extends GenericState<Amount> {
 
   String amount = "0";
   String error = "";
+
   onContinue() {
-    navigateTo(Speed(address: widget.address, btc: widget.btc));
+    navigateTo(Speed(address: widget.address, btc: toBitcoin(amount)));
   }
 
-  isValid(String input) {} //This needs to be a backend function that checks if the input is valid.
+  isValid(String input) {
+    return true;
+  } //This needs to be a backend function that checks if the input is valid.
+
+  update(String input) {
+    return '0.01'; //This needs to be a backend function that updates the input.
+  }
 
   void updateAmount(String input) {
     var buzz = FeedbackType.warning;
@@ -57,7 +64,7 @@ class AmountState extends GenericState<Amount> {
     String updatedAmount = amount;
 
     if (isValid(input)) {
-      updatedAmount += input;
+      updatedAmount = update(input);
     } else {
       Vibrate.feedback(buzz);
       _shakeController.shake();
@@ -79,10 +86,7 @@ class AmountState extends GenericState<Amount> {
       [display()],
       Bumper(
         context,
-        [
-          NumericKeypad(onNumberPressed: updateAmount),
-          CustomButton('Continue', 'primary lg $enabled expand none', () => onContinue(), key: UniqueKey())
-        ],
+        [NumericKeypad(onNumberPressed: updateAmount), CustomButton('Continue', 'primary lg $enabled expand none', onContinue, key: UniqueKey())],
         true,
       ),
       Alignment.topCenter,
@@ -91,7 +95,7 @@ class AmountState extends GenericState<Amount> {
   }
 
   toBitcoin(String amt) {
-    return amt; //to bitcoin
+    return 0.000005; //to bitcoin
   }
 
   Widget display() {
@@ -113,7 +117,7 @@ class AmountState extends GenericState<Amount> {
           const SizedBox(width: 8),
           CustomText('text lg danger', error),
         ] else
-          CustomText('text lg text_secondary', "${formatBTC(btc, 8)} BTC"),
+          CustomText('text lg text_secondary', "$btc BTC"),
       ]);
     }
 
@@ -131,8 +135,8 @@ class AmountState extends GenericState<Amount> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CustomText('heading ${dynamic_size()}', widget.usd),
-            CustomText('heading ${dynamic_size()} text_secondary', widget.decimals),
+            CustomText('heading ${dynamic_size()}', amt),
+            //CustomText('heading ${dynamic_size()} text_secondary', widget.decimals),
           ],
         ),
         subText(error)

@@ -12,7 +12,7 @@ class Speed extends GenericWidget {
   final double btc;
   Speed({super.key, required this.address, required this.btc});
 
-  dynamic fees = '';
+  dynamic fees = (0.0, 0.0);
 
   @override
   SpeedState createState() => SpeedState();
@@ -76,7 +76,7 @@ class SpeedState extends GenericState<Speed> {
     return CustomColumn([
       radioButton(
         "Standard",
-        "Arrives in ~2 hours\n\$${formatValue(fees[0])} bitcoin network fee",
+        "Arrives in ~2 hours\n\$${fees.$1} bitcoin network fee",
         index == 0,
         () {
           setState(() {
@@ -86,7 +86,7 @@ class SpeedState extends GenericState<Speed> {
       ),
       radioButton(
         "Priority",
-        "Arrives in ~30 minutes\n\$${formatValue(fees[1])} bitcoin network fee",
+        "Arrives in ~30 minutes\n\$${fees.$2} bitcoin network fee",
         index == 1,
         () {
           setState(() {
