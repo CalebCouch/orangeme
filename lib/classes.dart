@@ -1,11 +1,13 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/error.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
-import 'dart:io';
+// import 'dart:io';
 import 'dart:io' as DartIO;
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,6 +49,7 @@ enum Platform {
     return switch (this) { Platform.Mac => true, Platform.Linux => true, Platform.Windows => true, _ => false };
   }
 
+  @override
   String toString() {
     return switch (this) {
       Platform.Mac => "Mac",
