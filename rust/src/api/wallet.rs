@@ -2,6 +2,7 @@ use super::Error;
 
 use super::price::PriceGetter;
 use super::state::{State, Field};
+use super::structs::DateTime;
 
 use web5_rust::common::traits::KeyValueStore;
 use web5_rust::common::SqliteStore;

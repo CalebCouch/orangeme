@@ -1,11 +1,10 @@
 use super::Error;
 
-use super::structs::Request;
+use super::structs::{DateTime, Request};
 
 use serde::Deserialize;
 use serde_json::Value;
 
-use web5_rust::common::structs::DateTime;
 
 #[derive(Deserialize)]
 struct PriceRes {data: Price}

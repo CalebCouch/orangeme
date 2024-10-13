@@ -33,6 +33,9 @@ impl DateTime {
     pub fn timestamp(&self) -> u64 {
         Some(self.date.timestamp()).filter(|t| *t >= 0).expect("timestamp was negative") as u64
     }
+    pub fn format(&self, fmt: &str) -> String {
+        self.date.format(fmt).to_string()
+    }
 }
 
 pub struct Request {}
