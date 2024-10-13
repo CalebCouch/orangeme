@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `async_rust`, `spawn`
+// These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `price_thread`, `spawn`, `usb_thread`, `wallet_thread`
 
 Future<String> ruststart(
         {required String path,

@@ -151,6 +151,7 @@ impl StateManager {
         match state_name {
             "BitcoinHome" => self.bitcoin_home(),
             "Receive" => self.receive(),
+            "Send" => self.send(),
             "Amount" => self.amount(),
             "Speed" => self.speed(),
             "ViewTransaction" => self.view_transaction(options),
@@ -199,6 +200,11 @@ impl StateManager {
         let fees = (0.0, 0.0); 
         Ok(serde_json::to_string(&Speed{
            fees: fees,
+        })?)
+    }
+
+    pub fn send(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&Send{
         })?)
     }
 
@@ -330,5 +336,9 @@ struct ViewTransaction {
 struct MessagesHome {
     pub conversations: Vec<Conversation>,
     pub personal_data: Contact,
+}
+
+#[derive(Serialize)]
+struct Send {
 }
 

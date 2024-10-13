@@ -56,10 +56,10 @@ class SendState extends GenericState<Send> {
     }
   }
 
-  onPaste() {
-    String data = Clipboard.getData('text/plain').toString();
-    if (data != "null") {
-      setAddress(data);
+  onPaste() async {
+    ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+    if (data != null) {
+      setAddress(data.text!);
     }
   }
 
