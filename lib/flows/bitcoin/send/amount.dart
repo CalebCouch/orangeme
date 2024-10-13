@@ -90,12 +90,16 @@ class AmountState extends GenericState<Amount> {
     );
   }
 
+  toBitcoin(String amt) {
+    return amt; //to bitcoin
+  }
+
   Widget display() {
     return Expanded(
       child: Center(
         child: ShakeWidget(
           controller: _shakeController,
-          child: keyboardAmountDisplay(context, amount, widget.btc, error),
+          child: keyboardAmountDisplay(context, amount, toBitcoin(amount), error),
         ),
       ),
     );
