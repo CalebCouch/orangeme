@@ -210,54 +210,29 @@ impl StateManager {
     }
 
     pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
-        //let txid = Txid::from_str(options)?;
-        //let tx = wallet.get_tx(&txid)?;  
-        let tx = Transaction {
-            is_withdraw: true,
-            btc: 0.00123456,
-            usd: 30.45,
-            address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa".to_string(),
-            price: 63500.00,
-            fee: 3.00,
-            txid: "abc123txid456".to_string(),
-        };
-        Ok(serde_json::to_string(&ViewTransaction{
-            ext_transaction: if tx.tx.tx.is_withdraw {
-                Some(ExtTransaction {
-                    tx: BasicTransaction {
-                        tx: ShorthandTransaction {
-                            is_withdraw: tx.is_withdraw,
-                            date: "date".to_string(), //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                            time: "time".to_string(),
-                            btc: tx.btc,
-                            usd: format!("${}", tx.usd),
-                        },
-                        address: tx.address,
-                        price: format!("${}", tx.price),
-                    },
-                    fee: format!("${}", tx.fee),
-                    total: format!("${}", tx.usd + tx.fee),
-                    txid: tx.txid.to_string(),
-                })
-            } else {
-                None
-            },
-            basic_transaction: if tx.tx.tx.is_withdraw {
-                None
-            } else {
-                Some(BasicTransaction {
+        // let txid = Txid::from_str(options)?;
+        // let tx = wallet.get_tx(&txid)?;  
+    
+    
+        Ok(serde_json::to_string(&ViewTransaction {
+            ext_transaction: Some(ExtTransaction {
+                tx: BasicTransaction {
                     tx: ShorthandTransaction {
-                        is_withdraw: tx.is_withdraw,
-                        date: "date".to_string(), //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
-                        time: "time".to_string(),
-                        btc: tx.btc,
-                        usd: format!("${}", tx.usd),
+                        is_withdraw: true,
+                        date: "2024-10-13".to_string(),
+                        time: "14:30:00".to_string(),
+                        btc: 0.005,
+                        usd: "$135.50".to_string(),
                     },
-                    address: tx.address,
-                    price: format!("${}", tx.price),
-                })
-            }
-        })?);
+                    address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa".to_string(),
+                    price: "$27,100.00".to_string(), 
+                },
+                fee: "$1.00".to_string(),
+                total: "$136.50".to_string(),
+                txid: "b6f6991e1e0a9b497b1d7b0d6c0e1b3d57dff2c8e4b05a6b1b86dfed2f00e37".to_string(),
+            }),
+            basic_transaction: None, 
+        })?)
     }
 
     pub fn messages_home(&self) -> Result<String, Error> {
