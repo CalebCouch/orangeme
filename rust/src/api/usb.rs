@@ -22,6 +22,8 @@ impl UsbInfo {
         })
     }
     // Method to query devices and return a vector of PathBufs
+    //TODO: combine the query_devices and the new constructor into one method
+    //Youll have to change your detect new usb device path below to build a new USBInfo by calling USBInfo::new(platform) before comparing
     pub fn query_devices(os: &Platform) -> Result<Vec<PathBuf>, Error> {
         let mut device_paths: Vec<PathBuf> = Vec::new();
         match os {
