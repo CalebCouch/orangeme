@@ -10,6 +10,7 @@ use super::usb::UsbInfo;
 use web5_rust::common::SqliteStore;
 use web5_rust::common::traits::KeyValueStore;
 
+use bdk::bitcoin::{Network, Address};
 use bdk::blockchain::Progress;
 use bdk::SyncOptions;
 
@@ -149,3 +150,95 @@ pub fn getstate(path: String, name: String, options: String) -> String {
         Err(e) => format!("Error: {}", e)
     }
 }
+
+#[frb(sync)]
+pub fn check_address_valid(address: String) -> bool {
+    Address::from_str(&address)
+        .map(|a| a.require_network(Network::Bitcoin).is_ok())
+        .unwrap_or(false)
+}
+
+#[frb(sync)]
+pub fn updateDisplayAmount(path: String, input: &str) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        let amount = state.get::<String>(Field::Amount)?;
+        let usd_balance: f64 = 120.30;
+        let fees: Vec<f64> = vec![0.15, 0.34];
+        let min: f64 = fees[0] + 0.10;
+        let max: f64 = usd_balance - min;
+        let mut decimals = String::new();
+        let mut updated_amount = amount.clone();
+        let mut validation = true;
+        if input == "reset" {
+            updated_amount = "0".to_string();
+        } else if input == "backspace" {
+            if amount == "0" {
+                validation = false;
+            } if amount.len() == 1 {
+                updated_amount = "0".to_string();
+            } else if !amount.is_empty() {
+                updated_amount = amount[..amount.len() - 1].to_string();
+            }
+        } else if input == "." {
+            if !amount.contains('.') && amount.len() <= 7 {
+                updated_amount = format!("{}{}", amount, ".");
+            } else {
+                validation = false;
+            }
+        } else {
+            if amount == "0" {
+                updated_amount = input.to_string();
+            } else if amount.contains('.') {
+                let split: Vec<&str> = amount.split('.').collect();
+                if amount.len() < 11 && split[1].len() < 2 {
+                    updated_amount = format!("{}{}", amount, input);
+                } else {
+                    validation = false;
+                }
+            } else {
+                if amount.len() < 10 {
+                    updated_amount = format!("{}{}", amount, input);
+                } else {
+                    validation = false;
+                }
+            }
+        }
+
+        if updated_amount.contains('.') {
+            let split: Vec<&str> = updated_amount.split('.').collect();
+            let decimals_len = split.get(1).unwrap_or(&"").len();
+
+            if decimals_len < 2 {
+                decimals = "0".repeat(2 - decimals_len);  
+            }
+        }
+
+        let mut err = String::new();
+        let updated_amount_f64 = updated_amount.parse::<f64>().unwrap_or(0.0);
+        
+        if updated_amount_f64 != 0.0 {
+            if updated_amount_f64 <= min {
+                err = format!("${:.2} minimum", min);
+            } else if updated_amount_f64 > max {
+                err = format!("${:.2} maximum", max);
+                if err == "$0.00 maximum." {
+                    err = "You have no bitcoin".to_string();
+                }
+            }
+        }
+        
+        state.set(Field::InputValidation, &validation)?;
+        state.set(Field::Amount, &updated_amount)?;
+        state.set(Field::AmountErr, &err)?;
+        state.set(Field::Decimals, &decimals)?;
+        Ok("Ok".to_string())
+    })();
+    match result {
+        Ok(s) => s,
+        Err(e) => format!("Error: {}", e)
+    }
+}
+
+
+

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
-import 'package:orange/classes.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:orange/global.dart' as global;
 
 class ScanQR extends StatelessWidget {
-  late QRViewController controller;
   GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  ScanQR({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +28,8 @@ class ScanQR extends StatelessWidget {
       ),
     );
   }
+
+  late QRViewController controller;
 
   //The following widgets can ONLY be used in this file
 

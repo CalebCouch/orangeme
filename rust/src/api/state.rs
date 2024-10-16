@@ -21,6 +21,10 @@ pub enum Field {
     DescriptorSet,
     Internet,
     Platform,
+    Amount,
+    AmountErr,
+    Decimals,
+    InputValidation,
     Price,
     Path
 }
@@ -165,8 +169,15 @@ impl StateManager {
         let btc = wallet.get_balance()?;
         let usd = btc*self.state.get::<Price>(Field::Price)?;
         let personal_data = self.get_personal_data()?; // Assuming a method that fetches user's personal data
+
+        let formatted_usd = if usd == 0.0 {
+            "$0.00".to_string()
+        } else {
+            format!("{:.2}", usd)
+        };
+
         Ok(serde_json::to_string(&BitcoinHome{
-            usd: usd.to_string(),
+            usd: formatted_usd,
             btc: btc.to_string(),
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 ShorthandTransaction {
@@ -182,17 +193,17 @@ impl StateManager {
     }
 
     pub fn amount(&self) -> Result<String, Error> {
-        let err = "".to_string(); // Error message if input_amount exceeds the min or max 
-        let usd = "".to_string(); // Formatted input amonut
-        let decimals = "".to_string(); // Decimals required at the end
-        let input_amount = 0.0; // Unformatted input amount
-        let btc = 0.0; // Input amount to btc
+        let amount = self.state.get::<String>(Field::Amount)?;
+        let err = self.state.get::<String>(Field::AmountErr)?; 
+        let decimals = self.state.get::<String>(Field::Decimals)?; 
+        let validation = self.state.get::<bool>(Field::InputValidation)?; 
+        let btc = 0.0;
         Ok(serde_json::to_string(&Amount{
-            err: err,
-            usd: usd,
+            err: Some(err),
+            amount: amount,
             decimals: decimals,
-            input_amount: input_amount,
             btc: btc,
+            validation: validation,
         })?)
     }
 
@@ -314,12 +325,13 @@ struct Receive {
 
 #[derive(Serialize)]
 struct Amount {
-    pub err: String,
-    pub usd: String,
+    pub err: Option<String>,
+    pub amount: String,
     pub decimals: String,
     pub btc: f64,
-    pub input_amount: f64,
+    pub validation: bool,
 }
+
 
 #[derive(Serialize)]
 struct Speed {

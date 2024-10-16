@@ -21,3 +21,10 @@ String getstate(
         required String options}) =>
     RustLib.instance.api
         .crateApiSimpleGetstate(path: path, name: name, options: options);
+
+bool checkAddressValid({required String address}) =>
+    RustLib.instance.api.crateApiSimpleCheckAddressValid(address: address);
+
+String updateDisplayAmount({required String path, required String input}) =>
+    RustLib.instance.api
+        .crateApiSimpleUpdateDisplayAmount(path: path, input: input);

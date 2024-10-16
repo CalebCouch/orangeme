@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
+import 'package:orange/src/rust/api/simple.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
@@ -34,7 +35,7 @@ class SendState extends GenericState<Send> {
   String addressStr = '';
   bool addressValid = false;
 
-  Future<void> setAddress(String address) async {
+  void setAddress(String address) {
     checkAddress(address);
     setState(() {
       addressStr = address;
@@ -42,15 +43,13 @@ class SendState extends GenericState<Send> {
     });
   }
 
-  Future<void> checkAddress(String address) async {
-    var valid = (await global.invoke("check_address", address)) == "true";
+  void checkAddress(String address) {
     setState(() {
-      addressValid = valid;
+      addressValid = checkAddressValid(address: address);
     });
   }
 
   onContinue() {
-    navigateTo(context, Amount(address: controller.text));
     checkAddress(controller.text);
     if (addressValid) {
       navigateTo(context, Amount(address: controller.text));
@@ -72,7 +71,8 @@ class SendState extends GenericState<Send> {
 
   @override
   Widget build(BuildContext context) {
-    String isEnabled = controller.text.isEmpty || !addressValid ? 'disabled' : 'enabled';
+    String isEnabled = addressValid ? 'enabled' : 'disabled';
+    print(isEnabled);
     return Stack_Default(
       Header_Stack(context, "Bitcoin address"),
       [
@@ -80,7 +80,7 @@ class SendState extends GenericState<Send> {
         ButtonTips(),
       ],
       Bumper(context, [
-        CustomButton('Continue', 'primary lg enabled expand none', onContinue),
+        CustomButton('Continue', 'primary lg $isEnabled expand none', onContinue, key: UniqueKey()),
       ]),
     );
   }
