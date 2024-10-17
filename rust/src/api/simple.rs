@@ -11,6 +11,11 @@ use web5_rust::common::SqliteStore;
 use web5_rust::common::traits::KeyValueStore;
 
 use bdk::bitcoin::{Network, Address};
+use bdk::database::SqliteDatabase;
+use bdk::blockchain::ElectrumBlockchain;
+use web5_rust::dwn::traits::Client;
+use bdk::FeeRate;
+use bdk::SignOptions;
 use bdk::blockchain::Progress;
 use bdk::SyncOptions;
 
@@ -158,6 +163,103 @@ pub fn check_address_valid(address: String) -> bool {
         .unwrap_or(false)
 }
 
+/*
+#[frb(sync)]
+pub fn build_transaction(address: String) -> String {
+    let ec = "Main.create_transaction";
+    let error = || Error::bad_request(ec, "Invalid parameters");
+
+    invoke(&callback, "print", &format!("split {}", command.data.clone())).await?;
+    let split: Vec<&str> = command.data.split("|").collect();
+    let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
+    let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
+    let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
+    let price_error = || Error::not_found(ec, "Cannot get price");
+    let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
+    let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+    invoke(&callback, "print", &format!("amount: {}", amount)).await?;
+    let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
+    let (mut psbt, mut tx_details) = {
+        let mut builder = wallet.build_tx();
+        builder.add_recipient(address.script_pubkey(), amount);
+        builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
+        builder.finish()?
+    };
+    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+    if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
+
+    let tx = psbt.clone().extract_tx();
+    let mut stream: Vec<u8> = Vec::new();
+    tx.consensus_encode(&mut stream)?;
+    store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
+
+    tx_details.transaction = Some(tx);
+    let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
+
+    Ok(serde_json::to_string(&tx)?)
+                
+}*/
+#[frb(sync)]
+pub fn build_transaction(address_str: String, amount_str: String, priority_str: String) -> Result<String, Error> {
+    let ec = "Main.create_transaction";
+    
+    let error = || Error::bad_request(ec, "Invalid parameters");
+
+    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
+    let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
+    let mut store = SqliteStore::new(store_path.clone())?;
+    let price = SqliteStore::new(price_path.clone())?;
+    let client = Client::new(&client_uri)?;
+
+    let address = Address::from_str(&address_str).map_err(|_| error())?;
+    address.require_network(Network::Bitcoin).map_err(|_| error())?;
+
+    let amount = f64::from_str(&amount_str).map_err(|_| error())?;
+    const SATS: f64 = 100_000_000.0;
+    let amount_sats = (amount * SATS) as u64;
+
+    let priority = u8::from_str(&priority_str).map_err(|_| error())?;
+
+    let price_error = || Error::not_found(ec, "Cannot get price");
+    let current_price = price.get(b"price")
+        .ok_or_else(price_error)?
+        .try_into()
+        .map_err(|_| price_error())?;
+
+    let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+
+    let fees = vec![
+        blockchain.estimate_fee(3)?,
+        blockchain.estimate_fee(1)?
+    ];
+    
+
+    let (mut psbt, mut tx_details) = {
+        let mut builder = wallet.build_tx();
+        builder.add_recipient(address.script_pubkey(), amount_sats);
+        builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
+        builder.finish()?
+    };
+
+
+    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+    if !finalized {
+        return Err(Error::err(ec, "Could not sign transaction"));
+    }
+
+    let tx = psbt.clone().extract_tx();
+    let mut stream: Vec<u8> = Vec::new();
+    tx.consensus_encode(&mut stream)?;
+    store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
+    
+    tx_details.transaction = Some(tx.clone());
+    let tx = Transaction::from_details(tx_details, current_price, is_mine)?;
+
+    Ok(serde_json::to_string(&tx)?)
+}
+
+
+
 #[frb(sync)]
 pub fn updateDisplayAmount(path: String, input: &str) -> String {
     let result: Result<String, Error> = (move || {
@@ -167,37 +269,38 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         let fees: Vec<f64> = vec![0.15, 0.34];
         let min: f64 = fees[0] + 0.10;
         let max: f64 = usd_balance - min;
-        let mut decimals = String::new();
         let mut updated_amount = amount.clone();
         let mut validation = true;
-        if input == "reset" {
-            updated_amount = "0".to_string();
-        } else if input == "backspace" {
-            if amount == "0" {
-                validation = false;
-            } if amount.len() == 1 {
-                updated_amount = "0".to_string();
-            } else if !amount.is_empty() {
-                updated_amount = amount[..amount.len() - 1].to_string();
-            }
-        } else if input == "." {
-            if !amount.contains('.') && amount.len() <= 7 {
-                updated_amount = format!("{}{}", amount, ".");
-            } else {
-                validation = false;
-            }
-        } else {
-            if amount == "0" {
-                updated_amount = input.to_string();
-            } else if amount.contains('.') {
-                let split: Vec<&str> = amount.split('.').collect();
-                if amount.len() < 11 && split[1].len() < 2 {
-                    updated_amount = format!("{}{}", amount, input);
+
+        match input {
+            "reset" => updated_amount = "0".to_string(),
+            "backspace" => {
+                if amount == "0" {
+                    validation = false;
+                } else if amount.len() == 1 {
+                    updated_amount = "0".to_string();
+                } else {
+                    updated_amount = amount[..amount.len() - 1].to_string();
+                }
+            },
+            "." => {
+                if !amount.contains('.') && amount.len() <= 7 {
+                    updated_amount = format!("{}{}", amount, ".");
                 } else {
                     validation = false;
                 }
-            } else {
-                if amount.len() < 10 {
+            },
+            _ => {
+                if amount == "0" {
+                    updated_amount = input.to_string();
+                } else if amount.contains('.') {
+                    let split: Vec<&str> = amount.split('.').collect();
+                    if amount.len() < 11 && split[1].len() < 2 {
+                        updated_amount = format!("{}{}", amount, input);
+                    } else {
+                        validation = false;
+                    }
+                } else if amount.len() < 10 {
                     updated_amount = format!("{}{}", amount, input);
                 } else {
                     validation = false;
@@ -205,40 +308,37 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
             }
         }
 
+        let mut decimals = String::new();
         if updated_amount.contains('.') {
             let split: Vec<&str> = updated_amount.split('.').collect();
             let decimals_len = split.get(1).unwrap_or(&"").len();
-
             if decimals_len < 2 {
-                decimals = "0".repeat(2 - decimals_len);  
+                decimals = "0".repeat(2 - decimals_len);
             }
         }
 
         let mut err = String::new();
         let updated_amount_f64 = updated_amount.parse::<f64>().unwrap_or(0.0);
-        
+
         if updated_amount_f64 != 0.0 {
             if updated_amount_f64 <= min {
                 err = format!("${:.2} minimum", min);
             } else if updated_amount_f64 > max {
                 err = format!("${:.2} maximum", max);
-                if err == "$0.00 maximum." {
+                if err == "$0.00 maximum" {
                     err = "You have no bitcoin".to_string();
                 }
             }
         }
-        
-        state.set(Field::InputValidation, &validation)?;
+
         state.set(Field::Amount, &updated_amount)?;
         state.set(Field::AmountErr, &err)?;
         state.set(Field::Decimals, &decimals)?;
-        Ok("Ok".to_string())
+        Ok(if validation { "true".to_string() } else { "false".to_string() })
     })();
+
     match result {
-        Ok(s) => s,
-        Err(e) => format!("Error: {}", e)
+        Ok(validation_str) => validation_str,
+        Err(e) => format!("Error: {}", e),
     }
 }
-
-
-

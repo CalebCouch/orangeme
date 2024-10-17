@@ -196,14 +196,12 @@ impl StateManager {
         let amount = self.state.get::<String>(Field::Amount)?;
         let err = self.state.get::<String>(Field::AmountErr)?; 
         let decimals = self.state.get::<String>(Field::Decimals)?; 
-        let validation = self.state.get::<bool>(Field::InputValidation)?; 
         let btc = 0.0;
         Ok(serde_json::to_string(&Amount{
             err: Some(err),
             amount: amount,
             decimals: decimals,
             btc: btc,
-            validation: validation,
         })?)
     }
 
@@ -329,7 +327,6 @@ struct Amount {
     pub amount: String,
     pub decimals: String,
     pub btc: f64,
-    pub validation: bool,
 }
 
 

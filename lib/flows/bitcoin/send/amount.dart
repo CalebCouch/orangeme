@@ -19,7 +19,6 @@ class Amount extends GenericWidget {
   double btc = 0;
   String amount = '0';
   String decimals = '0';
-  bool validation = false;
 
   @override
   AmountState createState() => AmountState();
@@ -44,7 +43,6 @@ class AmountState extends GenericState<Amount> {
       widget.err = json["err"];
       widget.amount = json["amount"];
       widget.decimals = json["decimals"];
-      widget.validation = json["validation"] as bool;
     });
   }
 
@@ -57,20 +55,19 @@ class AmountState extends GenericState<Amount> {
   final ShakeController _shakeController = ShakeController();
 
   onContinue() {
-    navigateTo(Speed(address: widget.address, btc: toBitcoin(widget.amount)));
+    navigateTo(Speed(address: widget.address, btc: 000004));
   }
 
   void update(String input) {
     HapticFeedback.heavyImpact();
-    updateDisplayAmount(path: global.dataDir!, input: input);
+    var valid = updateDisplayAmount(path: global.dataDir!, input: input);
     print(widget.amount);
-    print(widget.validation);
-    if (!widget.validation) _shakeController.shake();
+    if (valid == "false") _shakeController.shake();
   }
 
   @override
   Widget build(BuildContext context) {
-    String enabled = widget.validation && widget.err == "" && widget.amount != '0' ? 'enabled' : 'disabled';
+    String enabled = widget.err == "" && widget.amount != '0' ? 'enabled' : 'disabled';
     return Stack_Default(
       Header_Stack(context, "Send bitcoin"),
       [display()],
@@ -78,7 +75,7 @@ class AmountState extends GenericState<Amount> {
         context,
         [
           NumericKeypad(onNumberPressed: update),
-          CustomButton('Continue', 'primary lg $enabled expand none', onContinue, key: UniqueKey()),
+          CustomButton('Continue', 'primary lg $enabled expand none', onContinue),
         ],
         true,
       ),
@@ -104,32 +101,34 @@ class AmountState extends GenericState<Amount> {
 
   Widget keyboardAmountDisplay(BuildContext context, String amt, double btc, String error) {
     Widget subText() {
-      return Row(children: [
-        if (error.isNotEmpty) ...[
+      if (error == '') {
+        return CustomText('text lg text_secondary', "$btc BTC");
+      } else {
+        return Row(children: [
           const CustomIcon('error md danger'),
           const Spacing(8),
           CustomText('text lg danger', error),
-        ] else
-          CustomText('text lg text_secondary', "$btc BTC"),
-      ]);
+        ]);
+      }
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Column(children: [
-          Row(
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const CustomText('heading title', '\$'),
               CustomText('heading title', amt),
               CustomText('heading title text_secondary', widget.decimals),
             ],
           ),
-          subText()
-        ]),
-      ),
+        ),
+        subText()
+      ]),
     );
   }
 }

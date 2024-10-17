@@ -5,6 +5,7 @@ import 'package:orange/flows/bitcoin/send/confirm.dart';
 import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
@@ -51,12 +52,13 @@ class SpeedState extends GenericState<Speed> {
       isLoading = true;
     });
 
-    ExtTransaction tx =
-        ExtTransaction.fromJson(jsonDecode((await global.invoke("create_legacy_transaction", "${widget.address}|${widget.btc}|$index"))));
-    navigateTo(Confirm(tx: tx));
-    setState(() {
-      isLoading = false;
-    });
+    var tx = await buildTransaction(addressStr: widget.address, amountStr: '${widget.btc}', priorityStr: '$index');
+
+    //tx string to ExtTransaction
+    //navigateTo(Confirm(tx: tx));
+    //setState(() {
+    //  isLoading = false;
+    //});
   }
 
   @override
