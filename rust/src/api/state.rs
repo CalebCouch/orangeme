@@ -11,6 +11,9 @@ use bdk::bitcoin::hash_types::Txid;
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
+use std::str::FromStr;
+
+use bdk::bitcoin::{Network, Address};
 
 
 pub type Internet = bool;
@@ -21,7 +24,10 @@ pub enum Field {
     DescriptorSet,
     Internet,
     Platform,
+    Address,
     Amount,
+    Btc,
+    Priority,
     AmountErr,
     Decimals,
     InputValidation,
@@ -192,6 +198,16 @@ impl StateManager {
         })?)
     }
 
+    pub fn send(&self) -> Result<String, Error> {
+        let address = self.state.get::<String>(Field::Address)?;
+        let valid = Address::from_str(&address)
+        .map(|a| a.require_network(Network::Bitcoin).is_ok())
+        .unwrap_or(false);
+        Ok(serde_json::to_string(&Send{
+           valid: valid
+        })?)
+    }
+
     pub fn amount(&self) -> Result<String, Error> {
         let amount = self.state.get::<String>(Field::Amount)?;
         let err = self.state.get::<String>(Field::AmountErr)?; 
@@ -209,11 +225,6 @@ impl StateManager {
         let fees = (0.0, 0.0); 
         Ok(serde_json::to_string(&Speed{
            fees: fees,
-        })?)
-    }
-
-    pub fn send(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&Send{
         })?)
     }
 
@@ -322,6 +333,11 @@ struct Receive {
 }
 
 #[derive(Serialize)]
+struct Send {
+    pub valid: bool
+}
+
+#[derive(Serialize)]
 struct Amount {
     pub err: Option<String>,
     pub amount: String,
@@ -347,7 +363,5 @@ struct MessagesHome {
     pub personal_data: Contact,
 }
 
-#[derive(Serialize)]
-struct Send {
-}
+
 

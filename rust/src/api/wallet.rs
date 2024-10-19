@@ -183,6 +183,42 @@ impl Wallet {
         ).transpose()?.unwrap_or_default())
     }
 
+    pub fn build_transaction(&self) -> Result<String, Error> {
+        let ec = "Main.create_transaction";
+        let error = || Error::bad_request(ec, "Invalid parameters");
+
+        let address = self.state.get::<String>(Field::Address)?;
+        let amount = (f64::from_str(self.state.get::<String>(Field::Btc)?)? * SATS) as u64;
+        let priority = u8::from_str(self.state.get::<String>(Field::Priority)?)? as u8;
+        let price = if let Some(ct) = tx.confirmation_time.as_ref() {
+            PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
+        } else {0.0};
+        
+        let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
+        
+        let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
+
+        let (mut psbt, mut tx_details) = {
+            let mut builder = wallet.build_tx();
+            builder.add_recipient(address.script_pubkey(), amount);
+            builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
+            builder.finish()?
+        };
+        
+        let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+        if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
+
+        let tx = psbt.clone().extract_tx();
+        let mut stream: Vec<u8> = Vec::new();
+        tx.consensus_encode(&mut stream)?;
+        store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
+
+        tx_details.transaction = Some(tx);
+        let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
+
+        Ok(serde_json::to_string(&tx)?)
+    }
+
   //pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
   //    let client = Builder::new(CLIENT_URI).build_blocking()?;
   //    Ok(EsploraBlockchain::from_client(client, 100))

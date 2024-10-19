@@ -93,14 +93,11 @@ ConfirmAddress(BuildContext context, String address) {
 
 ConfirmAmount(BuildContext context, String address, String fee, String usd, String btc) {
   changeAmount() {
-    resetNavTo(context, Amount(address: address));
+    resetNavTo(context, Amount());
   }
 
   changeSpeed() {
-    resetNavTo(
-      context,
-      Speed(address: address, btc: double.parse(btc.split(' ')[0])),
-    );
+    resetNavTo(context, Speed());
   }
 
   return DataItem(

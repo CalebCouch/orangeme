@@ -9,9 +9,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
-  final String address;
-  final double btc;
-  Speed({super.key, required this.address, required this.btc});
+  Speed({super.key});
 
   dynamic fees = (0.0, 0.0);
 
@@ -52,7 +50,7 @@ class SpeedState extends GenericState<Speed> {
       isLoading = true;
     });
 
-    var tx = await buildTransaction(addressStr: widget.address, amountStr: '${widget.btc}', priorityStr: '$index');
+    //var tx = await buildTransaction(addressStr: widget.address, amountStr: '${widget.btc}', priorityStr: '$index');
 
     //tx string to ExtTransaction
     //navigateTo(Confirm(tx: tx));
@@ -64,11 +62,12 @@ class SpeedState extends GenericState<Speed> {
   @override
   Widget build(BuildContext context) {
     return Stack_Default(
-      isLoading ? Container() : Header_Stack(context, "Transaction speed"),
-      [isLoading ? loadingCircle() : SpeedSelector(widget.fees)],
-      isLoading ? Container() : Bumper(context, [CustomButton('Continue', 'primary lg enabled expand none', onContinue)]),
-      isLoading ? Alignment.center : Alignment.topCenter,
-      !isLoading,
+      Header_Stack(context, "Transaction speed"),
+      [SpeedSelector(widget.fees)],
+      Bumper(context, [CustomButton('Continue', 'primary lg enabled expand none', onContinue)]),
+      Alignment.topCenter,
+      true,
+      isLoading,
     );
   }
 
@@ -97,15 +96,6 @@ class SpeedState extends GenericState<Speed> {
         },
       )
     ]);
-  }
-
-  Widget loadingCircle() {
-    return const Center(
-      child: CircularProgressIndicator(
-        strokeCap: StrokeCap.round,
-        backgroundColor: ThemeColor.bgSecondary,
-      ),
-    );
   }
 }
 

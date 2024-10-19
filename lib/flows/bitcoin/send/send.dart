@@ -9,8 +9,8 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
 
 class Send extends GenericWidget {
-  final String? address;
-  Send({super.key, this.address});
+  Send({super.key});
+  bool valid = true;
 
   @override
   SendState createState() => SendState();
@@ -24,35 +24,24 @@ class SendState extends GenericState<Send> {
 
   @override
   int refreshInterval() {
-    return 0;
+    return 100;
   }
 
   @override
   void unpack_state(Map<String, dynamic> json) {
-    setState(() {});
-  }
-
-  String addressStr = '';
-  bool addressValid = false;
-
-  void setAddress(String address) {
-    checkAddress(address);
     setState(() {
-      addressStr = address;
-      controller.text = addressStr;
+      widget.valid = json["valid"];
     });
   }
 
-  void checkAddress(String address) {
-    setState(() {
-      addressValid = checkAddressValid(address: address);
-    });
-  }
+  bool isLoading = false;
+  String status = 'disabled';
 
   onContinue() {
-    checkAddress(controller.text);
-    if (addressValid) {
-      navigateTo(context, Amount(address: controller.text));
+    print('continuing');
+    if (widget.valid) {
+      setAddress(controller.text);
+      navigateTo(context, Amount());
     }
   }
 
@@ -60,7 +49,16 @@ class SendState extends GenericState<Send> {
     ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
     if (data != null) {
       setAddress(data.text!);
+      controller.text = data.text!;
     }
+  }
+
+  setAddress(String a) {
+    setStateAddress(path: global.dataDir!, address: a);
+    setState(() {
+      status = widget.valid ? 'enabled' : 'disabled';
+      print(status);
+    });
   }
 
   onScan() {
@@ -71,8 +69,6 @@ class SendState extends GenericState<Send> {
 
   @override
   Widget build(BuildContext context) {
-    String isEnabled = addressValid ? 'enabled' : 'disabled';
-    print(isEnabled);
     return Stack_Default(
       Header_Stack(context, "Bitcoin address"),
       [
@@ -80,7 +76,7 @@ class SendState extends GenericState<Send> {
         ButtonTips(),
       ],
       Bumper(context, [
-        CustomButton('Continue', 'primary lg $isEnabled expand none', onContinue, key: UniqueKey()),
+        CustomButton('Continue', 'primary lg $status expand none', onContinue, key: UniqueKey()),
       ]),
     );
   }
@@ -91,8 +87,7 @@ class SendState extends GenericState<Send> {
     return CustomTextInput(
       controller: controller,
       onSubmitted: (String address) => {setAddress(address)},
-      onChanged: (String address) => {checkAddress(address)},
-      error: addressValid || addressStr.isEmpty ? "" : "Not a valid address",
+      error: widget.valid || controller.text.isEmpty ? "" : "Not a valid address",
       hint: 'Bitcoin address...',
     );
   }

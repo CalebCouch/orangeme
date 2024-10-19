@@ -157,107 +157,17 @@ pub fn getstate(path: String, name: String, options: String) -> String {
 }
 
 #[frb(sync)]
-pub fn check_address_valid(address: String) -> bool {
-    Address::from_str(&address)
-        .map(|a| a.require_network(Network::Bitcoin).is_ok())
-        .unwrap_or(false)
-}
-
-/*
-#[frb(sync)]
-pub fn build_transaction(address: String) -> String {
-    let ec = "Main.create_transaction";
-    let error = || Error::bad_request(ec, "Invalid parameters");
-
-    invoke(&callback, "print", &format!("split {}", command.data.clone())).await?;
-    let split: Vec<&str> = command.data.split("|").collect();
-    let address = Address::from_str(split.first().ok_or(error())?)?.require_network(Network::Bitcoin)?;
-    let amount = (f64::from_str(split.get(1).ok_or(error())?)? * SATS) as u64;
-    let priority = u8::from_str(split.get(2).ok_or(error())?)? as u8;
-    let price_error = || Error::not_found(ec, "Cannot get price");
-    let current_price = f64::from_le_bytes(price.get(b"price")?.ok_or(price_error())?.try_into().or(Err(price_error()))?);
-    let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-    invoke(&callback, "print", &format!("amount: {}", amount)).await?;
-    let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
-    let (mut psbt, mut tx_details) = {
-        let mut builder = wallet.build_tx();
-        builder.add_recipient(address.script_pubkey(), amount);
-        builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
-        builder.finish()?
-    };
-    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-    if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
-
-    let tx = psbt.clone().extract_tx();
-    let mut stream: Vec<u8> = Vec::new();
-    tx.consensus_encode(&mut stream)?;
-    store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
-
-    tx_details.transaction = Some(tx);
-    let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
-
-    Ok(serde_json::to_string(&tx)?)
-                
-}*/
-#[frb(sync)]
-pub fn build_transaction(address_str: String, amount_str: String, priority_str: String) -> Result<String, Error> {
-    let ec = "Main.create_transaction";
-    
-    let error = || Error::bad_request(ec, "Invalid parameters");
-
-    let wallet = Wallet::new(&descriptors.external, Some(&descriptors.internal), Network::Bitcoin, SqliteDatabase::new(wallet_path.join("bdk.db")))?;
-    let blockchain = ElectrumBlockchain::from(Client::new(&client_uri)?);
-    let mut store = SqliteStore::new(store_path.clone())?;
-    let price = SqliteStore::new(price_path.clone())?;
-    let client = Client::new(&client_uri)?;
-
-    let address = Address::from_str(&address_str).map_err(|_| error())?;
-    address.require_network(Network::Bitcoin).map_err(|_| error())?;
-
-    let amount = f64::from_str(&amount_str).map_err(|_| error())?;
-    const SATS: f64 = 100_000_000.0;
-    let amount_sats = (amount * SATS) as u64;
-
-    let priority = u8::from_str(&priority_str).map_err(|_| error())?;
-
-    let price_error = || Error::not_found(ec, "Cannot get price");
-    let current_price = price.get(b"price")
-        .ok_or_else(price_error)?
-        .try_into()
-        .map_err(|_| price_error())?;
-
-    let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-
-    let fees = vec![
-        blockchain.estimate_fee(3)?,
-        blockchain.estimate_fee(1)?
-    ];
-    
-
-    let (mut psbt, mut tx_details) = {
-        let mut builder = wallet.build_tx();
-        builder.add_recipient(address.script_pubkey(), amount_sats);
-        builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
-        builder.finish()?
-    };
-
-
-    let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
-    if !finalized {
-        return Err(Error::err(ec, "Could not sign transaction"));
+pub fn setStateAddress(path: String, address: String) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        state.set::<String>(Field::Address, &address)?;
+        Ok("Address set successfully".to_string())
+    })();
+    match result {
+        Ok(s) => s,
+        Err(e) => format!("Error: {}", e),
     }
-
-    let tx = psbt.clone().extract_tx();
-    let mut stream: Vec<u8> = Vec::new();
-    tx.consensus_encode(&mut stream)?;
-    store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
-    
-    tx_details.transaction = Some(tx.clone());
-    let tx = Transaction::from_details(tx_details, current_price, is_mine)?;
-
-    Ok(serde_json::to_string(&tx)?)
 }
-
 
 
 #[frb(sync)]
@@ -342,3 +252,39 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         Err(e) => format!("Error: {}", e),
     }
 }
+
+/*
+impl ExtTransaction {
+    fn from_details(details: TransactionDetails, price: f64, isMine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
+        let p = serde_json::to_string(&details)?;
+        let error = || Error::parse("Transaction", &p);
+        let is_send = details.sent > 0;
+        let transaction = details.transaction.ok_or(error())?;
+        let datetime = details.confirmation_time.map(|ct| Ok::<DateTime<Utc>, Error>(DateTime::from_timestamp(ct.timestamp as i64, 0).ok_or(error())?)).transpose()?;
+        let net = ((details.received as f64)-(details.sent as f64)) / SATS;
+        Ok(ExtTransaction{
+            tx: BasicTransaction {
+                tx: ShorthandTransaction {
+                   is_withdraw: is_send,
+                   date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
+                   time: datetime.map(|dt| dt.format("%l:%M %p").to_string())
+                   btc: net,
+                   usd: price * net,
+                },
+                address: Some(Address::from_script(
+                    transaction.output.iter().map(
+                            |out| out.script_pubkey.as_script()
+                        ).find(
+                            |s| isMine(*s)
+                        ).ok_or(error())?,
+                    Network::Bitcoin
+                )?.to_string()),
+                price: price,
+            }
+            fee: price * (details.fee.ok_or(error())? as f64 / SATS),
+            total: (price * next) + (price * (details.fee.ok_or(error())? as f64 / SATS)),
+            txid: details.txid.to_string(),
+        })
+    }
+}
+*/

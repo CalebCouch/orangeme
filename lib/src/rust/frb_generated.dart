@@ -57,7 +57,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => 1741782055;
+  int get rustContentHash => -1749199814;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -86,13 +86,6 @@ abstract class RustLibApi extends BaseApi {
   Future<Error> crateApiErrorErrorParse(
       {required String rtype, required String data});
 
-  String crateApiSimpleBuildTransaction(
-      {required String addressStr,
-      required String amountStr,
-      required String priorityStr});
-
-  bool crateApiSimpleCheckAddressValid({required String address});
-
   String crateApiSimpleGetstate(
       {required String path, required String name, required String options});
 
@@ -100,6 +93,9 @@ abstract class RustLibApi extends BaseApi {
       {required String path,
       required String platform,
       required FutureOr<String> Function(String) thread});
+
+  String crateApiSimpleSetStateAddress(
+      {required String path, required String address});
 
   String crateApiSimpleUpdateDisplayAmount(
       {required String path, required String input});
@@ -284,59 +280,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleBuildTransaction(
-      {required String addressStr,
-      required String amountStr,
-      required String priorityStr}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(addressStr, serializer);
-        sse_encode_String(amountStr, serializer);
-        sse_encode_String(priorityStr, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: sse_decode_AnyhowException,
-      ),
-      constMeta: kCrateApiSimpleBuildTransactionConstMeta,
-      argValues: [addressStr, amountStr, priorityStr],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleBuildTransactionConstMeta =>
-      const TaskConstMeta(
-        debugName: "build_transaction",
-        argNames: ["addressStr", "amountStr", "priorityStr"],
-      );
-
-  @override
-  bool crateApiSimpleCheckAddressValid({required String address}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(address, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiSimpleCheckAddressValidConstMeta,
-      argValues: [address],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleCheckAddressValidConstMeta =>
-      const TaskConstMeta(
-        debugName: "check_address_valid",
-        argNames: ["address"],
-      );
-
-  @override
   String crateApiSimpleGetstate(
       {required String path, required String name, required String options}) {
     return handler.executeSync(SyncTask(
@@ -345,7 +288,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(path, serializer);
         sse_encode_String(name, serializer);
         sse_encode_String(options, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -375,7 +318,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
             thread, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
+            funcId: 8, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -393,6 +336,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  String crateApiSimpleSetStateAddress(
+      {required String path, required String address}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(path, serializer);
+        sse_encode_String(address, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_String,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSimpleSetStateAddressConstMeta,
+      argValues: [path, address],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleSetStateAddressConstMeta =>
+      const TaskConstMeta(
+        debugName: "setStateAddress",
+        argNames: ["path", "address"],
+      );
+
+  @override
   String crateApiSimpleUpdateDisplayAmount(
       {required String path, required String input}) {
     return handler.executeSync(SyncTask(
@@ -400,7 +369,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_String(input, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -500,12 +469,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  bool dco_decode_bool(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as bool;
-  }
-
-  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
@@ -569,12 +532,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  bool sse_decode_bool(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8() != 0;
-  }
-
-  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
@@ -602,6 +559,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   int sse_decode_i_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getInt32();
+  }
+
+  @protected
+  bool sse_decode_bool(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint8() != 0;
   }
 
   @protected
@@ -655,12 +618,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_bool(bool self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self ? 1 : 0);
-  }
-
-  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -689,6 +646,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_i_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putInt32(self);
+  }
+
+  @protected
+  void sse_encode_bool(bool self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint8(self ? 1 : 0);
   }
 }
 

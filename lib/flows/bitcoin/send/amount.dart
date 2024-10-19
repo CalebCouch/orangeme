@@ -6,14 +6,12 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
 
 class Amount extends GenericWidget {
-  final String address;
-  Amount({super.key, required this.address});
+  Amount({super.key});
 
   String err = '';
   double btc = 0;
@@ -55,14 +53,13 @@ class AmountState extends GenericState<Amount> {
   final ShakeController _shakeController = ShakeController();
 
   onContinue() {
-    navigateTo(Speed(address: widget.address, btc: 000004));
+    navigateTo(Speed());
   }
 
   void update(String input) {
     HapticFeedback.heavyImpact();
     var valid = updateDisplayAmount(path: global.dataDir!, input: input);
-    print(widget.amount);
-    if (valid == "false") _shakeController.shake();
+    if (valid == 'false') _shakeController.shake();
   }
 
   @override
@@ -75,7 +72,7 @@ class AmountState extends GenericState<Amount> {
         context,
         [
           NumericKeypad(onNumberPressed: update),
-          CustomButton('Continue', 'primary lg $enabled expand none', onContinue),
+          CustomButton('Continue', 'primary lg $enabled expand none', onContinue, key: UniqueKey()),
         ],
         true,
       ),

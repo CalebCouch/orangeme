@@ -22,15 +22,9 @@ String getstate(
     RustLib.instance.api
         .crateApiSimpleGetstate(path: path, name: name, options: options);
 
-bool checkAddressValid({required String address}) =>
-    RustLib.instance.api.crateApiSimpleCheckAddressValid(address: address);
-
-String buildTransaction(
-        {required String addressStr,
-        required String amountStr,
-        required String priorityStr}) =>
-    RustLib.instance.api.crateApiSimpleBuildTransaction(
-        addressStr: addressStr, amountStr: amountStr, priorityStr: priorityStr);
+String setStateAddress({required String path, required String address}) =>
+    RustLib.instance.api
+        .crateApiSimpleSetStateAddress(path: path, address: address);
 
 String updateDisplayAmount({required String path, required String input}) =>
     RustLib.instance.api
