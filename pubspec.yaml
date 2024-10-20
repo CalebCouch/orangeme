@@ -57,7 +57,9 @@ dependencies:
   flutter_vibrate: ^1.3.0
   thread: ^0.2.2
   uuid: ^3.0.7
-  orangeme_material: ^0.1.8
+  # orangeme_material: ^0.2.3
+  orangeme_material:
+    path: ../orangeme_material
   
 
 flutter_native_splash:

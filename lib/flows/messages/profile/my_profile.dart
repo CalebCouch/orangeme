@@ -108,7 +108,7 @@ class MyProfileState extends GenericState<MyProfile> {
         didItem(context, widget.personal.did),
         addressItem(context, address),
       ],
-      Bumper(context, [CustomButton('Save', 'primary lg $enabled expand none', onSave, key: UniqueKey())]),
+      Bumper(context, [CustomButton('Save', 'primary lg expand none', onSave, enabled)]),
     );
   }
 }

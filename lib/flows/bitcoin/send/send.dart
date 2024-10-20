@@ -57,7 +57,6 @@ class SendState extends GenericState<Send> {
     setStateAddress(path: global.dataDir!, address: a);
     setState(() {
       status = widget.valid ? 'enabled' : 'disabled';
-      print(status);
     });
   }
 
@@ -76,7 +75,7 @@ class SendState extends GenericState<Send> {
         ButtonTips(),
       ],
       Bumper(context, [
-        CustomButton('Continue', 'primary lg $status expand none', onContinue, key: UniqueKey()),
+        CustomButton('Continue', 'primary lg expand none', onContinue, status),
       ]),
     );
   }
@@ -96,9 +95,9 @@ class SendState extends GenericState<Send> {
     return Container(
       padding: const EdgeInsets.all(8),
       child: CustomColumn([
-        CustomButton('Paste Clipboard', 'secondary md enabled hug paste', onPaste),
+        CustomButton('Paste Clipboard', 'secondary md hug paste', onPaste, 'enabled'),
         const CustomText('text sm text_secondary', 'or'),
-        CustomButton('Scan QR Code', 'secondary md enabled hug qrcode', onScan),
+        CustomButton('Scan QR Code', 'secondary md hug qrcode', onScan, 'enabled'),
       ], 8),
     );
   }

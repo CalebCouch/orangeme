@@ -30,6 +30,10 @@ use std::{thread, time};
 use std::convert::TryInto;
 use std::path::{Path, PathBuf};
 
+const SATS: u64 = 100_000_000;
+
+
+
 async fn spawn<T>(task: T) -> Result<(), Error>
     where
         T: std::future::Future<Output = Result<(), Error>> + Send + 'static
@@ -169,16 +173,14 @@ pub fn setStateAddress(path: String, address: String) -> String {
     }
 }
 
-
 #[frb(sync)]
 pub fn updateDisplayAmount(path: String, input: &str) -> String {
     let result: Result<String, Error> = (move || {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
         let amount = state.get::<String>(Field::Amount)?;
-        let usd_balance: f64 = 120.30;
-        let fees: Vec<f64> = vec![0.15, 0.34];
-        let min: f64 = fees[0] + 0.10;
-        let max: f64 = usd_balance - min;
+        let usd_balance: f64 = state.get::<f64>(Field::Balance)?;
+        let min: f64 = 0.30;
+        let max: f64 = (usd_balance as f64) - min;
         let mut updated_amount = amount.clone();
         let mut validation = true;
 
@@ -231,13 +233,12 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         let updated_amount_f64 = updated_amount.parse::<f64>().unwrap_or(0.0);
 
         if updated_amount_f64 != 0.0 {
-            if updated_amount_f64 <= min {
+            if max <= 0.0 {
+                err = "$0.00 maximum".to_string();
+            } else if updated_amount_f64 <= min {
                 err = format!("${:.2} minimum", min);
             } else if updated_amount_f64 > max {
                 err = format!("${:.2} maximum", max);
-                if err == "$0.00 maximum" {
-                    err = "You have no bitcoin".to_string();
-                }
             }
         }
 
@@ -252,39 +253,3 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         Err(e) => format!("Error: {}", e),
     }
 }
-
-/*
-impl ExtTransaction {
-    fn from_details(details: TransactionDetails, price: f64, isMine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
-        let p = serde_json::to_string(&details)?;
-        let error = || Error::parse("Transaction", &p);
-        let is_send = details.sent > 0;
-        let transaction = details.transaction.ok_or(error())?;
-        let datetime = details.confirmation_time.map(|ct| Ok::<DateTime<Utc>, Error>(DateTime::from_timestamp(ct.timestamp as i64, 0).ok_or(error())?)).transpose()?;
-        let net = ((details.received as f64)-(details.sent as f64)) / SATS;
-        Ok(ExtTransaction{
-            tx: BasicTransaction {
-                tx: ShorthandTransaction {
-                   is_withdraw: is_send,
-                   date: datetime.map(|dt| dt.format("%Y-%m-%d").to_string()),
-                   time: datetime.map(|dt| dt.format("%l:%M %p").to_string())
-                   btc: net,
-                   usd: price * net,
-                },
-                address: Some(Address::from_script(
-                    transaction.output.iter().map(
-                            |out| out.script_pubkey.as_script()
-                        ).find(
-                            |s| isMine(*s)
-                        ).ok_or(error())?,
-                    Network::Bitcoin
-                )?.to_string()),
-                price: price,
-            }
-            fee: price * (details.fee.ok_or(error())? as f64 / SATS),
-            total: (price * next) + (price * (details.fee.ok_or(error())? as f64 / SATS)),
-            txid: details.txid.to_string(),
-        })
-    }
-}
-*/

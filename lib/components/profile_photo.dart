@@ -74,7 +74,7 @@ Widget EditPhoto(BuildContext context, onTap, [pfp]) {
   return CustomColumn(
     [
       ProfilePhoto(context, pfp, ProfileSize.xxl),
-      CustomButton('Photo', 'secondary md enabled hug edit', onTap),
+      CustomButton('Photo', 'secondary md hug edit', onTap, 'enabled'),
     ],
     AppPadding.header,
   );

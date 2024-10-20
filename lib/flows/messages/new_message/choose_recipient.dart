@@ -37,12 +37,19 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   List<Contact> recipients = [];
   List<Contact> filteredContacts = [];
   TextEditingController searchController = TextEditingController();
+  String enabled = 'enabled';
+
+  void checkList() {
+    setState(() {
+      enabled = recipients.isEmpty ? 'disabled' : 'enabled';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    String enabled = recipients.isEmpty ? 'disabled' : 'enabled';
+    checkList();
     return Stack_Default(
-      Header_Button(context, "Confirm send", CustomButton('Next', 'ghost md $enabled hug none', onNext, key: UniqueKey())),
+      Header_Button(context, "Confirm send", CustomButton('Next', 'ghost md hug none', onNext, enabled)),
       [
         Searchbar(searchController),
         recipients.isEmpty ? Container() : SelectedContacts(recipients),
@@ -61,9 +68,9 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
         spacing: 8,
         runSpacing: 8,
         children: List<Widget>.generate(recipients.length, (index) {
-          return CustomButton(recipients[index].name, 'secondary md enabled hug close', () {
+          return CustomButton(recipients[index].name, 'secondary md hug close', () {
             removeRecipient(recipients[index]);
-          });
+          }, 'enabled');
         }),
       ),
     );

@@ -57,7 +57,7 @@ class ConfirmState extends GenericState<Confirm> {
         isLoading ? Container() : ConfirmAddress(context, widget.tx.tx.address),
         isLoading ? Container() : ConfirmAmount(context, widget.tx.tx.address, widget.tx.fee, widget.tx.tx.tx.usd, widget.tx.tx.tx.btc),
       ],
-      isLoading ? Container() : Bumper(context, [CustomButton('Confirm & Send', 'primary lg enabled expand none', () => onContinue())]),
+      isLoading ? Container() : Bumper(context, [CustomButton('Confirm & Send', 'primary lg expand none', () => onContinue(), 'enabled')]),
       isLoading ? Alignment.center : Alignment.topCenter,
       !isLoading,
     );
@@ -86,7 +86,7 @@ ConfirmAddress(BuildContext context, String address) {
     subtitle: address,
     helperText: "Bitcoin sent to the wrong address can never be recovered.",
     buttons: [
-      CustomButton('Address', 'secondary md enabled hug edit', changeAddress),
+      CustomButton('Address', 'secondary md hug edit', changeAddress, 'enabled'),
     ],
   );
 }
@@ -105,8 +105,8 @@ ConfirmAmount(BuildContext context, String address, String fee, String usd, Stri
     number: 2,
     content: confirmationTabular(context, address, fee, usd, btc),
     buttons: [
-      CustomButton('Amount', 'secondary md enabled hug edit', changeAmount),
-      CustomButton('Speed', 'secondary md enabled hug edit', changeSpeed),
+      CustomButton('Amount', 'secondary md hug edit', changeAmount, 'enabled'),
+      CustomButton('Speed', 'secondary md hug edit', changeSpeed, 'enabled'),
     ],
   );
 }

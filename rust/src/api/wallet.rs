@@ -39,6 +39,7 @@ use secp256k1::rand;
 use std::path::PathBuf;
 use std::convert::TryInto;
 use std::collections::BTreeMap;
+use std::str::FromStr;
 
 const NO_INTERNET: &str = "failed to lookup address information: No address associated with hostname";
 const CLIENT_URI: &str = "https://blockstream.info/api/";
@@ -182,7 +183,38 @@ impl Wallet {
             serde_json::from_slice::<Transactions>(&b)
         ).transpose()?.unwrap_or_default())
     }
+    
 
+    pub fn get_fees(&self, address: String, amount: f64) -> Result<(f64, f64), Error> {
+        let address = Address::from_str(&address)?.require_network(Network::Bitcoin);
+
+        let (mut psbt, mut tx_details) = {
+            let mut builder = self.inner.build_tx();
+            builder.add_recipient(address?.script_pubkey(), (amount * SATS) as u64);
+            //builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
+            builder.finish()?
+        };
+        
+        let tx = psbt.clone().extract_tx();
+        tx_details.transaction = Some(tx.clone());
+
+        let tx_size = tx.vsize();
+
+        let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
+        let blockchain = ElectrumBlockchain::from(client);
+
+        let fee_standard = blockchain.estimate_fee(1)?; 
+        let fee_priority = blockchain.estimate_fee(3)?;
+
+        let fees = (
+            fee_standard * (tx_size as f64) / SATS,
+            fee_priority * (tx_size as f64) / SATS,
+        );
+
+        Ok(fees)
+    }
+
+    /*
     pub fn build_transaction(&self) -> Result<String, Error> {
         let ec = "Main.create_transaction";
         let error = || Error::bad_request(ec, "Invalid parameters");
@@ -190,18 +222,16 @@ impl Wallet {
         let address = self.state.get::<String>(Field::Address)?;
         let amount = (f64::from_str(self.state.get::<String>(Field::Btc)?)? * SATS) as u64;
         let priority = u8::from_str(self.state.get::<String>(Field::Priority)?)? as u8;
-        let price = if let Some(ct) = tx.confirmation_time.as_ref() {
-            PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
-        } else {0.0};
-        
+
+        let price = self.state.get::<f64>(Field::Price)?;
+
         let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-        
         let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
 
         let (mut psbt, mut tx_details) = {
             let mut builder = wallet.build_tx();
             builder.add_recipient(address.script_pubkey(), amount);
-            builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
+            //builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
             builder.finish()?
         };
         
@@ -217,7 +247,7 @@ impl Wallet {
         let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
 
         Ok(serde_json::to_string(&tx)?)
-    }
+    } */
 
   //pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
   //    let client = Builder::new(CLIENT_URI).build_blocking()?;

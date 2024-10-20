@@ -19,6 +19,8 @@ use bdk::bitcoin::{Network, Address};
 pub type Internet = bool;
 pub type Price = f64;
 
+const SATS: u64 = 100_000_000;
+
 #[derive(Debug)]
 pub enum Field {
     DescriptorSet,
@@ -32,7 +34,8 @@ pub enum Field {
     Decimals,
     InputValidation,
     Price,
-    Path
+    Path,
+    Balance,
 }
 
 impl Field {
@@ -175,7 +178,7 @@ impl StateManager {
         let btc = wallet.get_balance()?;
         let usd = btc*self.state.get::<Price>(Field::Price)?;
         let personal_data = self.get_personal_data()?; // Assuming a method that fetches user's personal data
-
+        let internet_status = self.state.get::<bool>(Field::Internet)?;
         let formatted_usd = if usd == 0.0 {
             "$0.00".to_string()
         } else {
@@ -183,6 +186,7 @@ impl StateManager {
         };
 
         Ok(serde_json::to_string(&BitcoinHome{
+            internet: internet_status,
             usd: formatted_usd,
             btc: btc.to_string(),
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
@@ -212,7 +216,7 @@ impl StateManager {
         let amount = self.state.get::<String>(Field::Amount)?;
         let err = self.state.get::<String>(Field::AmountErr)?; 
         let decimals = self.state.get::<String>(Field::Decimals)?; 
-        let btc = 0.0;
+        let btc = self.usd_to_btc(amount.clone())?;
         Ok(serde_json::to_string(&Amount{
             err: Some(err),
             amount: amount,
@@ -222,7 +226,10 @@ impl StateManager {
     }
 
     pub fn speed(&self) -> Result<String, Error> {
-        let fees = (0.0, 0.0); 
+        let address = self.state.get::<String>(Field::Address)?;
+        let amount = self.state.get::<f64>(Field::Btc)?;
+        let wallet = self.get_wallet()?;
+        let fees: (f64, f64) = wallet.get_fees(address, amount)?;
         Ok(serde_json::to_string(&Speed{
            fees: fees,
         })?)
@@ -234,6 +241,15 @@ impl StateManager {
         Ok(serde_json::to_string(&Receive{
             address: wallet.get_new_address()?
         })?)
+    }
+
+
+
+    pub fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
+        let amt: f64 = amount.parse()?; // Amount "25.50" = 25.50
+        let price = self.state.get::<f64>(Field::Price)?;
+        let btc_amount = amt / price;
+        Ok(btc_amount)
     }
 
     pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
@@ -325,6 +341,7 @@ struct BitcoinHome {
     pub btc: String,
     pub transactions: Vec<ShorthandTransaction>,
     pub personal_data: Contact,
+    pub internet: bool,
 }
 
 #[derive(Serialize)]
@@ -344,7 +361,6 @@ struct Amount {
     pub decimals: String,
     pub btc: f64,
 }
-
 
 #[derive(Serialize)]
 struct Speed {

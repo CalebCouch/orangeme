@@ -1,12 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:orange/flows/bitcoin/send/confirm.dart';
-import 'package:orange/util.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
   Speed({super.key});
@@ -31,7 +25,7 @@ class SpeedState extends GenericState<Speed> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.fees;
+      widget.fees = json["fees"];
     });
   }
 
@@ -64,7 +58,7 @@ class SpeedState extends GenericState<Speed> {
     return Stack_Default(
       Header_Stack(context, "Transaction speed"),
       [SpeedSelector(widget.fees)],
-      Bumper(context, [CustomButton('Continue', 'primary lg enabled expand none', onContinue)]),
+      Bumper(context, [CustomButton('Continue', 'primary lg expand none', onContinue, 'enabled')]),
       Alignment.topCenter,
       true,
       isLoading,

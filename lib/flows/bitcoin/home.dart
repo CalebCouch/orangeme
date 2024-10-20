@@ -21,6 +21,7 @@ class BitcoinHome extends GenericWidget {
   String btc = ""; //formatBTC(state.btcBalance, 8)
   List<ShorthandTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
   Contact personal = Contact('', '', '', ''); //Users personal information
+  bool internet = false;
 
   @override
   BitcoinHomeState createState() => BitcoinHomeState();
@@ -43,6 +44,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
       widget.usd = json["usd"];
       widget.btc = json["btc"];
       widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map((json) => ShorthandTransaction.fromJson(json)));
+      widget.internet = json["internet"];
       //widget.personal
     });
   }
@@ -59,26 +61,35 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     navigateTo(MyProfile());
   }
 
+  String status = 'disabled';
+
+  void checkStatus() {
+    print("The internet is connected: ${widget.internet}");
+    if (!widget.internet) status = 'disabled';
+    if (widget.internet) status = 'enabled';
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkStatus();
     bool noTransactions = widget.transactions.isEmpty;
     return Root_Home(
       Header_Home(ProfileButton(context, widget.personal.pfp, toProfile), "Wallet"),
       [
         BalanceDisplay(),
         //  BackupReminder(false),
-        //  NoInternet(false),
+        NoInternet(widget.internet),
         TransactionList(),
       ],
       Bumper(context, [
-        CustomButton('Receive', 'primary lg enabled expand none', onReceive),
-        CustomButton('Send', 'primary lg enabled expand none', onSend),
+        CustomButton('Receive', 'primary lg expand none', onReceive, status),
+        CustomButton('Send', 'primary lg expand none', onSend, status),
       ]),
       TabNav(0, [
         TabInfo(BitcoinHome(), 'wallet'),
         TabInfo(MessagesHome(), 'message'),
       ]),
-      noTransactions ? Alignment.center : Alignment.topCenter,
+      noTransactions && widget.internet ? Alignment.center : Alignment.topCenter,
       !noTransactions,
     );
   }
@@ -104,19 +115,18 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
   Widget BackupReminder(bool display) {
     return display
-        ? const CustomBanner(
-            'orange.me recommends that you back\n your phone up to the cloud.',
+        ? CustomBanner(
+            'orange recommends that you back\n your phone up to the cloud.',
           )
         : Container();
   }
 
-  Widget NoInternet(bool display) {
-    return display
-        ? const CustomBanner(
-            'You are not connected to the internet.\norange.me requires an internet connection.',
-            isError: true,
-          )
-        : Container();
+  Widget NoInternet(bool internet) {
+    return internet
+        ? Container()
+        : CustomBanner(
+            'You are not connected to the internet.\norange requires an internet connection.',
+          );
   }
 
   Widget TransactionList() {

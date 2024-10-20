@@ -52,7 +52,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     return Root_Home(
       Header_Home(ProfileButton(context, widget.personal.pfp, toProfile), "Messages"),
       [listConversations()],
-      Bumper(context, [CustomButton('New Message', 'primary lg enabled expand none', createNewMessage)]),
+      Bumper(context, [CustomButton('New Message', 'primary lg expand none', createNewMessage, 'enabled')]),
       TabNav(1, [
         TabInfo(BitcoinHome(), 'wallet'),
         TabInfo(MessagesHome(), 'message'),

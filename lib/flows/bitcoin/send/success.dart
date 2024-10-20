@@ -49,7 +49,7 @@ class SuccessState extends GenericState<Success> {
       [
         Result('You sent ${widget.tx.tx.tx.usd}'),
       ],
-      Bumper(context, [CustomButton('Done', 'secondary lg enabled expand none', onDone)]),
+      Bumper(context, [CustomButton('Done', 'secondary lg expand none', onDone, 'enabled')]),
       Alignment.center,
       false,
     );

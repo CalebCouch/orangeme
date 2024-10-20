@@ -58,8 +58,8 @@ class UserProfileState extends GenericState<UserProfile> {
         addressItem(context, address),
       ],
       Bumper(context, [
-        CustomButton('Message', 'primary lg enabled expand none', onMessage),
-        CustomButton('Send Bitcoin', 'primary lg enabled expand none', onBitcoin),
+        CustomButton('Message', 'primary lg expand none', onMessage, 'enabled'),
+        CustomButton('Send Bitcoin', 'primary lg expand none', onBitcoin, 'enabled'),
       ]),
     );
   }
