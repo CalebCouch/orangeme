@@ -6,6 +6,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
+import 'package:vibration/vibration.dart';
 
 class Amount extends GenericWidget {
   Amount({super.key});
@@ -57,12 +58,16 @@ class AmountState extends GenericState<Amount> {
 
   onDisabled() {
     _shakeController.shake();
+    Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
   }
 
   void update(String input) {
     HapticFeedback.heavyImpact();
     var valid = updateDisplayAmount(path: global.dataDir!, input: input);
-    if (valid == 'false') _shakeController.shake();
+    if (valid == 'false') {
+      _shakeController.shake();
+      Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
+    }
   }
 
   updateButton() {

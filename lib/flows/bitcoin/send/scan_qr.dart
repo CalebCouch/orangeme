@@ -22,7 +22,7 @@ class ScanQRState extends GenericState<ScanQR> {
 
   @override
   int refreshInterval() {
-    return 100;
+    return 0;
   }
 
   @override

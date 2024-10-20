@@ -64,7 +64,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
   String status = 'disabled';
 
   void checkStatus() {
-    print("The internet is connected: ${widget.internet}");
+    //print("The internet is connected: ${widget.internet}");
     if (!widget.internet) status = 'disabled';
     if (widget.internet) status = 'enabled';
   }

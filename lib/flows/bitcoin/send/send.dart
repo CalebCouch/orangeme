@@ -11,6 +11,7 @@ import 'package:orange/global.dart' as global;
 class Send extends GenericWidget {
   Send({super.key});
   bool valid = true;
+  String address = '';
 
   @override
   SendState createState() => SendState();
@@ -31,6 +32,7 @@ class SendState extends GenericState<Send> {
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
       widget.valid = json["valid"];
+      widget.address = json["address"];
     });
   }
 

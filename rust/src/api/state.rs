@@ -165,6 +165,7 @@ impl StateManager {
             "BitcoinHome" => self.bitcoin_home(),
             "Receive" => self.receive(),
             "Send" => self.send(),
+            "ScanQR" => self.scan_qr(),
             "Amount" => self.amount(),
             "Speed" => self.speed(),
             "ViewTransaction" => self.view_transaction(options),
@@ -208,7 +209,13 @@ impl StateManager {
         .map(|a| a.require_network(Network::Bitcoin).is_ok())
         .unwrap_or(false);
         Ok(serde_json::to_string(&Send{
-           valid: valid
+           valid: valid,
+           address: address
+        })?)
+    }
+
+    pub fn scan_qr(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&ScanQR{
         })?)
     }
 
@@ -351,7 +358,12 @@ struct Receive {
 
 #[derive(Serialize)]
 struct Send {
-    pub valid: bool
+    pub valid: bool,
+    pub address: String
+}
+
+#[derive(Serialize)]
+struct ScanQR {
 }
 
 #[derive(Serialize)]
