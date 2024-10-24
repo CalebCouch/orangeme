@@ -90,29 +90,20 @@ impl StateManager {
         .map(|dt| dt.format("%Y-%m-%d %l:%M %p").to_string())
         .unwrap_or("Pending".to_string())
     }
-
-    pub fn get_personal_data(&self) -> Result<Contact, Error> {
-        Ok(Contact {
-            abt_me: "About me info".to_string(),
-            did: "user-did-string".to_string(), 
-            name: "User Name".to_string(),      
-            pfp: "users/profile/picture.png".to_string(),
-        })
-    }
     
     pub fn get_conversations(&self) -> Result<Vec<Conversation>, Error> {
         let alice = Contact {
-            abt_me: "Software Developer".to_string(),
+            abt_me: Some("Software Developer".to_string()),
             did: "did:example:alice".to_string(),
             name: "Alice".to_string(),
-            pfp: "cat/on/a/box.png".to_string(),
+            pfp: Some("cat/on/a/box.png".to_string()),
         };
     
         let bob = Contact {
-            abt_me: "Graphic Designer".to_string(),
+            abt_me: Some("Graphic Designer".to_string()),
             did: "did:example:bob".to_string(),
             name: "Bob".to_string(),
-            pfp: "chicken/on/a/horse.png".to_string(),
+            pfp: Some("chicken/on/a/horse.png".to_string()),
         };
     
         let message1 = Message {
@@ -170,15 +161,46 @@ impl StateManager {
             "Speed" => self.speed(),
             "ViewTransaction" => self.view_transaction(options),
             "MessagesHome" => self.messages_home(),
+            "MyProfile" => self.my_profile(),
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
     }
 
+
     pub fn bitcoin_home(&self) -> Result<String, Error> {
+        let shorthandtransactions: Vec<ShorthandTransaction> = vec![
+            ShorthandTransaction {
+                is_withdraw: true,
+                date: "September 30R".to_string(),
+                time: "10:00 AM".to_string(),
+                btc: 0.01,
+                usd: "$300".to_string(),
+            },
+            ShorthandTransaction {
+                is_withdraw: false,
+                date: "October 4".to_string(),
+                time: "2:30 PM".to_string(),
+                btc: 0.05,
+                usd: "$150.78".to_string(),
+            },
+            ShorthandTransaction {
+                is_withdraw: true,
+                date: "October 9".to_string(),
+                time: "5:15 PM".to_string(),
+                btc: 0.001,
+                usd: "$32.45".to_string(),
+            },
+            ShorthandTransaction {
+                is_withdraw: false,
+                date: "Yesterday".to_string(),
+                time: "11:45 AM".to_string(),
+                btc: 0.02,
+                usd: "$58.34".to_string(),
+            },
+        ];
         let wallet = self.get_wallet()?;
         let btc = wallet.get_balance()?;
         let usd = btc*self.state.get::<Price>(Field::Price)?;
-        let personal_data = self.get_personal_data()?; // Assuming a method that fetches user's personal data
         let internet_status = self.state.get::<bool>(Field::Internet)?;
         let formatted_usd = if usd == 0.0 {
             "$0.00".to_string()
@@ -199,7 +221,13 @@ impl StateManager {
                     usd: format!("${}", tx.usd),
                 },
             ).collect(),
-            personal_data: personal_data, // Assuming 'personal_data' is of type 'Contact'
+            //transactions: shorthandtransactions,
+            personal: Contact {
+                abt_me: Some("About me info".to_string()),
+                did: "user-did-string".to_string(), 
+                name: "User Name".to_string(),      
+                pfp: Some("users/profile/picture.png".to_string()),
+            },
         })?)
     }
 
@@ -250,7 +278,16 @@ impl StateManager {
         })?)
     }
 
-
+    pub fn my_profile(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&MyProfile{
+            personal: Contact {
+                abt_me: Some("About me info".to_string()),
+                did: "user-did-string".to_string(), 
+                name: "User Name".to_string(),      
+                pfp: Some("users/profile/picture.png".to_string()),
+            },
+        })?)
+    }
 
     pub fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
         let amt: f64 = amount.parse()?; // Amount "25.50" = 25.50
@@ -286,11 +323,15 @@ impl StateManager {
     }
 
     pub fn messages_home(&self) -> Result<String, Error> {
-        let personal_data = self.get_personal_data()?; // Assuming a method that fetches user's personal data
         let conversations = self.get_conversations()?; // Assuming a method that fetches user's conversations
         Ok(serde_json::to_string(&MessagesHome{
-            personal_data: personal_data, // Assuming 'personal_data' is of type 'Contact'
-            conversations: conversations, // Assuming 'conversations' is a list of conversation data
+            personal: Contact {
+                abt_me: Some("About me info".to_string()),
+                did: "user-did-string".to_string(), 
+                name: "User Name".to_string(),      
+                pfp: Some("users/profile/picture.png".to_string()),
+            },
+            conversations: conversations, 
         })?)
     }
 }
@@ -329,8 +370,8 @@ struct Conversation {
 struct Contact {
     pub name: String,
     pub did: String,
-    pub pfp: String,
-    pub abt_me: String,
+    pub pfp: Option<String>,
+    pub abt_me: Option<String>,
 }
 
 #[derive(Serialize, Clone)]
@@ -347,7 +388,7 @@ struct BitcoinHome {
     pub usd: String,
     pub btc: String,
     pub transactions: Vec<ShorthandTransaction>,
-    pub personal_data: Contact,
+    pub personal: Contact,
     pub internet: bool,
 }
 
@@ -388,8 +429,10 @@ struct ViewTransaction {
 #[derive(Serialize)]
 struct MessagesHome {
     pub conversations: Vec<Conversation>,
-    pub personal_data: Contact,
+    pub personal: Contact,
 }
 
-
-
+#[derive(Serialize)]
+struct MyProfile {
+    pub personal: Contact
+}

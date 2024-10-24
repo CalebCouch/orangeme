@@ -175,8 +175,11 @@ impl Wallet {
     }
 
     pub fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
+       // panic!("{}", self.get_transactions()?.into_values().collect::<Vec<Transaction>>().len());
         Ok(self.get_transactions()?.into_values().collect())
     }
+
+    // After: #u77vattn
 
     fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
         Ok(self.store.get(b"transactions")?.map(|b|
@@ -226,7 +229,7 @@ impl Wallet {
         let price = self.state.get::<f64>(Field::Price)?;
 
         let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-        let fees = vec![blockchain.estimate_fee(3)?, blockchain.estimate_fee(1)?];
+        let fees = get_fees(address, amount)?;
 
         let (mut psbt, mut tx_details) = {
             let mut builder = wallet.build_tx();
@@ -255,13 +258,13 @@ impl Wallet {
   //}
 
     pub async fn sync(&mut self) -> Result<(), Error> {
-      //let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
-      //let blockchain = ElectrumBlockchain::from(client);
-      //if let Err(e) = self.inner.sync(&blockchain, SyncOptions::default()) {
-      //    if !format!("{:?}", e).contains(NO_INTERNET) {
-      //        return Err(e.into());
-      //    }
-      //}
+      let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
+      let blockchain = ElectrumBlockchain::from(client);
+      if let Err(e) = self.inner.sync(&blockchain, SyncOptions::default()) {
+         if !format!("{:?}", e).contains(NO_INTERNET) {
+             return Err(e.into());
+          }
+      }
         //Transactions
         let mut txs = self.get_transactions()?;
         for tx in self.inner.list_transactions(true)? {

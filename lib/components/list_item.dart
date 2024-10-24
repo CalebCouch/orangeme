@@ -35,21 +35,21 @@ class ListItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             if (visual != null) visual!,
-            const Spacing(16),
+            if (visual != null) const Spacing(16),
             Expanded(
               child: Container(
                 alignment: Alignment.centerLeft,
                 child: CustomColumn([
                   if (title != null) CustomText('heading h5', title!),
-                  if (sub != null) CustomText('text xs', sub!),
-                  if (desc != null) CustomText('text xs text_secondary', desc!, alignment: TextAlign.left),
+                  if (sub != null) CustomText('text sm', sub!),
+                  if (desc != null) CustomText('text sm text_secondary', desc!, alignment: TextAlign.left),
                 ], 4, true, false),
               ),
             ),
             if (titleR != null) const Spacing(16),
             CustomColumn([
               if (titleR != null) CustomText('heading h5', titleR!),
-              if (subR != null) CustomText('text xs', subR!, underline: true),
+              if (subR != null) CustomText('text sm', subR!, underline: true),
             ], 4),
             const Spacing(16),
             const CustomIcon('forward md'),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:orange/components/list_item.dart';
+import 'package:orange/flows/bitcoin/transaction_details.dart';
 // import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
@@ -44,8 +47,8 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
       widget.usd = json["usd"];
       widget.btc = json["btc"];
       widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map((json) => ShorthandTransaction.fromJson(json)));
-      widget.internet = json["internet"];
-      //widget.personal
+      widget.internet = json["internet"] as bool;
+      widget.personal = Contact.fromJson(json["personal"]);
     });
   }
 
@@ -65,12 +68,15 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
   void checkStatus() {
     //print("The internet is connected: ${widget.internet}");
-    if (!widget.internet) status = 'disabled';
-    if (widget.internet) status = 'enabled';
+    setState(() {
+      if (!widget.internet) status = 'disabled';
+      if (widget.internet) status = 'enabled';
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    //print(widget.transactions);
     checkStatus();
     bool noTransactions = widget.transactions.isEmpty;
     return Root_Home(
@@ -142,15 +148,16 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
   }
 
   Widget TransactionItem(ShorthandTransaction transaction) {
-    return Container(); /*ListItem(
+    // print(transaction.date);
+    return ListItem(
       onTap: () {
         HapticFeedback.mediumImpact();
-        navigateTo(context, TransactionDetails(transaction));
+        //navigateTo(ViewTransaction(transaction));
       },
-      title: transaction.isReceive ? "Received bitcoin" : "Sent bitcoin",
-      sub: formatDate(transaction.date, transaction.time),
-      titleR: "\$${transaction.usd}",
+      title: transaction.is_withdraw ? "Received bitcoin" : "Sent bitcoin",
+      sub: transaction.date,
+      titleR: transaction.usd,
       subR: "Details",
-    );*/
+    );
   }
 }

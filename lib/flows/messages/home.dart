@@ -29,13 +29,14 @@ class MessagesHomeState extends GenericState<MessagesHome> {
 
   @override
   int refreshInterval() {
-    return 0;
+    return 100;
   }
 
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.conversations;
+      widget.personal = Contact.fromJson(json["personal"]);
+      widget.conversations = List<Conversation>.from(json['conversations'].map((json) => Conversation.fromJson(json)));
     });
   }
 

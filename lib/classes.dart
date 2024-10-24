@@ -119,7 +119,7 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
 class ShorthandTransaction {
   String usd;
-  String btc;
+  double btc;
   String date;
   String time;
   bool is_withdraw;
@@ -130,7 +130,7 @@ class ShorthandTransaction {
   factory ShorthandTransaction.fromJson(Map<String, dynamic> json) {
     return ShorthandTransaction(
       json['usd'] as String,
-      json['btc'] as String,
+      json['btc'] as double,
       json['date'] as String,
       json['time'] as String,
       json['is_withdraw'] as bool,
