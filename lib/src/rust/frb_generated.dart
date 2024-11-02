@@ -57,7 +57,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => -1749199814;
+  int get rustContentHash => -537715844;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -96,6 +96,9 @@ abstract class RustLibApi extends BaseApi {
 
   String crateApiSimpleSetStateAddress(
       {required String path, required String address});
+
+  String crateApiSimpleSetStateConversation(
+      {required String path, required BigInt index});
 
   String crateApiSimpleUpdateDisplayAmount(
       {required String path, required String input});
@@ -362,6 +365,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  String crateApiSimpleSetStateConversation(
+      {required String path, required BigInt index}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(path, serializer);
+        sse_encode_usize(index, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_String,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSimpleSetStateConversationConstMeta,
+      argValues: [path, index],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleSetStateConversationConstMeta =>
+      const TaskConstMeta(
+        debugName: "setStateConversation",
+        argNames: ["path", "index"],
+      );
+
+  @override
   String crateApiSimpleUpdateDisplayAmount(
       {required String path, required String input}) {
     return handler.executeSync(SyncTask(
@@ -369,7 +398,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_String(input, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,

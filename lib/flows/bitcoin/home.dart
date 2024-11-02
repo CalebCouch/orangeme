@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/flows/bitcoin/transaction_details.dart';
+// import 'package:orange/flows/bitcoin/transaction_details.dart';
 // import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';

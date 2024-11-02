@@ -30,6 +30,10 @@ use std::{thread, time};
 use std::convert::TryInto;
 use std::path::{Path, PathBuf};
 
+use serde::{Serialize, Deserialize};
+
+use crate::api::state::Conversation;
+
 const SATS: u64 = 100_000_000;
 
 
@@ -173,6 +177,25 @@ pub fn setStateAddress(path: String, address: String) -> String {
     }
 }
 
+
+#[frb(sync)]
+pub fn setStateConversation(path: String, index: usize) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        let conversations = state.get::<Vec<Conversation>>(Field::Conversations)?;
+        let conversation = &conversations[index];
+        state.set(Field::CurrentConversation, conversation)?;
+        
+        Ok("Current conversation set successfully".to_string())
+    })();
+
+    match result {
+        Ok(message) => message,
+        Err(error) => format!("Error: {}", error),
+    }
+}
+
+
 #[frb(sync)]
 pub fn updateDisplayAmount(path: String, input: &str) -> String {
     let result: Result<String, Error> = (move || {
@@ -253,3 +276,5 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         Err(e) => format!("Error: {}", e),
     }
 }
+
+

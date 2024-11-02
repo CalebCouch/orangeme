@@ -678,7 +678,7 @@ packages:
   orangeme_material:
     dependency: "direct main"
     description:
-      path: "../orangeme_material"
+      path: orangeme_material
       relative: true
     source: path
     version: "0.2.4"

@@ -59,7 +59,7 @@ dependencies:
   uuid: ^3.0.7
   # orangeme_material: ^0.2.3
   orangeme_material:
-    path: ../orangeme_material
+    path: ./orangeme_material
   
 
 flutter_native_splash:

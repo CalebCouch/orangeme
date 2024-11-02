@@ -36,6 +36,8 @@ pub enum Field {
     Price,
     Path,
     Balance,
+    CurrentConversation,
+    Conversations
 }
 
 impl Field {
@@ -90,7 +92,18 @@ impl StateManager {
         .map(|dt| dt.format("%Y-%m-%d %l:%M %p").to_string())
         .unwrap_or("Pending".to_string())
     }
-    
+
+    pub fn get_exchange_contacts(&self) -> Result<Vec<Contact>, Error> {
+        let alice = Contact {
+            abt_me: Some("Software Developer".to_string()),
+            did: "did:example:alice".to_string(),
+            name: "Alice".to_string(),
+            pfp: Some("cat/on/a/box.png".to_string()),
+        };
+        
+        Ok(vec![alice])
+    }
+
     pub fn get_conversations(&self) -> Result<Vec<Conversation>, Error> {
         let alice = Contact {
             abt_me: Some("Software Developer".to_string()),
@@ -146,12 +159,11 @@ impl StateManager {
                 },
             ],
         };
-    
-        // Return a vector of dummy conversations
+
         Ok(vec![conversation1, conversation2])
     }
 
-    pub fn get(&self, state_name: &str, options: &str) -> Result<String, Error> {
+    pub fn get(&mut self, state_name: &str, options: &str) -> Result<String, Error> {
         match state_name {
             "BitcoinHome" => self.bitcoin_home(),
             "Receive" => self.receive(),
@@ -161,6 +173,7 @@ impl StateManager {
             "Speed" => self.speed(),
             "ViewTransaction" => self.view_transaction(options),
             "MessagesHome" => self.messages_home(),
+            "Exchange" => self.exchange(),
             "MyProfile" => self.my_profile(),
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
@@ -215,7 +228,7 @@ impl StateManager {
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 ShorthandTransaction {
                     is_withdraw: tx.is_withdraw,
-                    date: "date".to_string(), //Self::format_datetime(tx.confirmation_time.as_ref().map(|t| &t.1)),
+                    date: "date".to_string(),
                     time: "time".to_string(),
                     btc: tx.btc,
                     usd: format!("${}", tx.usd),
@@ -322,8 +335,10 @@ impl StateManager {
         })?)
     }
 
-    pub fn messages_home(&self) -> Result<String, Error> {
-        let conversations = self.get_conversations()?; // Assuming a method that fetches user's conversations
+    pub fn messages_home(&mut self) -> Result<String, Error> {
+        let conversations = self.get_conversations()?; 
+        self.state.set(Field::Conversations, &conversations)?;
+
         Ok(serde_json::to_string(&MessagesHome{
             personal: Contact {
                 abt_me: Some("About me info".to_string()),
@@ -332,6 +347,13 @@ impl StateManager {
                 pfp: Some("users/profile/picture.png".to_string()),
             },
             conversations: conversations, 
+        })?)
+    }
+
+    pub fn exchange(&self) -> Result<String, Error> {
+        let conversation = self.state.get::<Conversation>(Field::CurrentConversation)?;
+        Ok(serde_json::to_string(&Exchange{
+            conversation: conversation,
         })?)
     }
 }
@@ -360,22 +382,22 @@ struct ShorthandTransaction {
     pub usd: String,
 }
 
-#[derive(Serialize, Clone)]
-struct Conversation {
+#[derive(Serialize, Deserialize, Clone, Default)]
+pub struct Conversation {
     pub members: Vec<Contact>,
     pub messages: Vec<Message>,
 }
 
-#[derive(Serialize, Clone)]
-struct Contact {
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Contact {
     pub name: String,
     pub did: String,
     pub pfp: Option<String>,
     pub abt_me: Option<String>,
 }
 
-#[derive(Serialize, Clone)]
-struct Message {
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Message {
     pub sender: Contact,
     pub message: String,
     pub date: String,
@@ -435,4 +457,9 @@ struct MessagesHome {
 #[derive(Serialize)]
 struct MyProfile {
     pub personal: Contact
+}
+
+#[derive(Serialize)]
+struct Exchange {
+    pub conversation: Conversation,
 }

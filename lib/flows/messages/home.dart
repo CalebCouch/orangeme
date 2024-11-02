@@ -6,11 +6,12 @@ import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
+import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orange/classes.dart';
 
 import 'package:orangeme_material/orangeme_material.dart';
-//import 'package:orange/global.dart' as global;
+import 'package:orange/global.dart' as global;
 
 class MessagesHome extends GenericWidget {
   MessagesHome({super.key});
@@ -48,6 +49,11 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     navigateTo(MyProfile());
   }
 
+  setConversation(int i) {
+    BigInt bigIntValue = BigInt.from(i);
+    setStateConversation(path: global.dataDir!, index: bigIntValue);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Root_Home(
@@ -80,7 +86,8 @@ class MessagesHomeState extends GenericState<MessagesHome> {
           conversations[index].members,
           conversations[index].messages[0].message,
           () {
-            navigateTo(Exchange(conversations[index]));
+            setConversation(index);
+            navigateTo(Exchange());
           },
         );
       },

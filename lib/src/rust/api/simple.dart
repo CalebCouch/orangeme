@@ -26,6 +26,10 @@ String setStateAddress({required String path, required String address}) =>
     RustLib.instance.api
         .crateApiSimpleSetStateAddress(path: path, address: address);
 
+String setStateConversation({required String path, required BigInt index}) =>
+    RustLib.instance.api
+        .crateApiSimpleSetStateConversation(path: path, index: index);
+
 String updateDisplayAmount({required String path, required String input}) =>
     RustLib.instance.api
         .crateApiSimpleUpdateDisplayAmount(path: path, input: input);

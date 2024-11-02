@@ -9,8 +9,9 @@ import 'package:orangeme_material/orangeme_material.dart';
 // import 'package:orange/global.dart' as global;
 
 class Exchange extends GenericWidget {
-  final Conversation conversation;
-  Exchange(this.conversation, {super.key});
+  Exchange({super.key});
+
+  Conversation conversation = Conversation([], []);
 
   @override
   ExchangeState createState() => ExchangeState();
@@ -30,7 +31,7 @@ class ExchangeState extends GenericState<Exchange> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.conversation;
+      widget.conversation = Conversation.fromJson(json["conversation"]);
     });
   }
 
