@@ -59,7 +59,7 @@ class ExchangeState extends GenericState<Exchange> {
       Header_Message(
         context,
         ChatRecipients(context, members),
-        members.length > 1 ? infoButton(context, MessageInfo(members)) : iconButton(directProfile, 'info lg'),
+        members.length > 1 ? infoButton(context, MessageInfo()) : iconButton(directProfile, 'info lg'),
       ),
       [
         widget.conversation.messages.isNotEmpty,
@@ -73,7 +73,7 @@ class ExchangeState extends GenericState<Exchange> {
 Widget ChatRecipients(BuildContext context, List<Contact> contacts) {
   bool isGroup = contacts.length > 1;
   return CustomColumn([
-    isGroup ? profilePhotoStack(context, contacts) : ProfilePhoto(context, contacts[0].pfp, ProfileSize.lg, true, true),
+    isGroup ? profilePhotoStack(context, contacts) : ProfilePhoto(context, contacts[0].pfp, ProfileSize.lg, false, false),
     CustomText('heading h5', isGroup ? 'Group Message' : contacts[0].name),
   ], 8);
 }

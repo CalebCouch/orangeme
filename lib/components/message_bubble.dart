@@ -11,9 +11,8 @@ Widget bubble(Message message) {
       color: message.isIncoming ? ThemeColor.bgSecondary : ThemeColor.primary,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
     ),
-    constraints: const BoxConstraints(maxWidth: 300),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    child: CustomText('text md ${message.isIncoming ? 'text' : 'heading'}', message.message, alignment: TextAlign.left),
+    child: CustomText('text md heading', message.message, alignment: TextAlign.left),
   );
 }
 
@@ -23,7 +22,7 @@ Widget details(Message m, [bool showTimeOnly = false]) {
       mainAxisAlignment: m.isIncoming ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
         CustomText('text sm text_secondary', m.sender.name),
-        CustomText('text sm text_secondary', '${String.fromCharCodes([0x0020])}· ${String.fromCharCodes([0x0020])}'),
+        CustomText('text sm text_secondary', '${String.fromCharCodes([0x0020])}·${String.fromCharCodes([0x0020])}'),
         CustomText('text sm text_secondary', m.time),
       ],
     );
@@ -53,6 +52,7 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
   bool showTime = _showTime(m, isGroup, pM, nM);
   bool showName = _showName(m, isGroup, pM, nM);
   bool showDetails = showTime || showName;
+
   return Container(
     alignment: m.isIncoming ? Alignment.bottomLeft : Alignment.bottomRight,
     padding: EdgeInsets.only(bottom: showDetails ? 24 : 8),
@@ -71,24 +71,25 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
                         child: ProfilePhoto(context, m.sender.pfp),
                       ),
                     )
-                  : Container(width: 40),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  bubble(m),
-                  Container(
-                    child: showDetails ? details(m) : Container(),
-                  ),
-                ],
-              )
+                  : SizedBox(width: 40), // Placeholder space
+              // Use Flexible to allow the bubble to shrink-wrap and wrap text
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    bubble(m), // This will now properly wrap
+                    if (showDetails) details(m), // Show details if needed
+                  ],
+                ),
+              ),
             ],
           )
         : Column(
             crossAxisAlignment: m.isIncoming ? CrossAxisAlignment.start : CrossAxisAlignment.end,
             children: [
-              bubble(m),
-              const Spacing(8),
-              showTime ? details(m, true) : Container(),
+              bubble(m), // Consistent bubble for outgoing messages
+              const SizedBox(height: 8), // Use SizedBox for spacing
+              if (showTime) details(m, true), // Show time details if needed
             ],
           ),
   );

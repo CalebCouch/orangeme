@@ -6,8 +6,9 @@ import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class MessageInfo extends GenericWidget {
-  final List<Contact> contacts;
-  MessageInfo(this.contacts, {super.key});
+  MessageInfo({super.key});
+
+  List<Contact> contacts = [];
 
   @override
   MessageInfoState createState() => MessageInfoState();
@@ -16,7 +17,7 @@ class MessageInfo extends GenericWidget {
 class MessageInfoState extends GenericState<MessageInfo> {
   @override
   String stateName() {
-    return "MessageInfo";
+    return "ConvInfo";
   }
 
   @override
@@ -26,7 +27,9 @@ class MessageInfoState extends GenericState<MessageInfo> {
 
   @override
   void unpack_state(Map<String, dynamic> json) {
-    setState(() {});
+    setState(() {
+      widget.contacts = List<Contact>.from(json['contacts'].map((json) => Contact.fromJson(json)));
+    });
   }
 
   @override

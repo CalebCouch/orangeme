@@ -93,17 +93,6 @@ impl StateManager {
         .unwrap_or("Pending".to_string())
     }
 
-    pub fn get_exchange_contacts(&self) -> Result<Vec<Contact>, Error> {
-        let alice = Contact {
-            abt_me: Some("Software Developer".to_string()),
-            did: "did:example:alice".to_string(),
-            name: "Alice".to_string(),
-            pfp: Some("cat/on/a/box.png".to_string()),
-        };
-        
-        Ok(vec![alice])
-    }
-
     pub fn get_conversations(&self) -> Result<Vec<Conversation>, Error> {
         let alice = Contact {
             abt_me: Some("Software Developer".to_string()),
@@ -122,16 +111,16 @@ impl StateManager {
         let message1 = Message {
             sender: alice.clone(),  
             message: "Hello, Bob!".to_string(),
-            date: "08:23:00".to_string(),
-            time: "2024-10-12".to_string(),
+            date: "2024-8-14".to_string(),
+            time: "2:32 AM".to_string(),
             is_incoming: false,
         };
     
         let message2 = Message {
             sender: bob.clone(),  
             message: "Hi Alice, how are you?".to_string(),
-            date: "08:23:00".to_string(),
-            time: "2024-10-12".to_string(),
+            date: "2024-8-14".to_string(),
+            time: "2:32 AM".to_string(),
             is_incoming: true,
         };
     
@@ -141,20 +130,20 @@ impl StateManager {
         };
     
         let conversation2 = Conversation {
-            members: vec![bob.clone(), alice.clone()],
+            members: vec![alice.clone()],
             messages: vec![
                 Message {
                     sender: bob.clone(),
                     message: "Are you free for a meeting tomorrow?".to_string(),
-                    date: "08:23:00".to_string(),
-                    time: "2024-10-12".to_string(),
+                    date: "2024-8-14".to_string(),
+                    time: "12:34 PM".to_string(),
                     is_incoming: false,
                 },
                 Message {
                     sender: alice.clone(),
                     message: "Yes, I am available!".to_string(),
-                    date: "08:23:00".to_string(),
-                    time: "2024-10-12".to_string(),
+                    date: "2024-8-14".to_string(),
+                    time: "12:34 PM".to_string(),
                     is_incoming: true,
                 },
             ],
@@ -175,6 +164,7 @@ impl StateManager {
             "MessagesHome" => self.messages_home(),
             "Exchange" => self.exchange(),
             "MyProfile" => self.my_profile(),
+            "ConvInfo" => self.conv_info(),
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
     }
@@ -356,6 +346,14 @@ impl StateManager {
             conversation: conversation,
         })?)
     }
+
+    pub fn conv_info(&self) -> Result<String, Error> {
+        let conversation = self.state.get::<Conversation>(Field::CurrentConversation)?;
+        let contacts = conversation.members;
+        Ok(serde_json::to_string(&ConvInfo{
+            contacts: contacts,
+        })?)
+    }
 }
 
 #[derive(Serialize)]
@@ -462,4 +460,9 @@ struct MyProfile {
 #[derive(Serialize)]
 struct Exchange {
     pub conversation: Conversation,
+}
+
+#[derive(Serialize)]
+struct ConvInfo {
+    pub contacts: Vec<Contact>,
 }
