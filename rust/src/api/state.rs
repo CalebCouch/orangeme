@@ -293,28 +293,29 @@ impl StateManager {
     }
 
     pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
-        // let txid = Txid::from_str(options)?;
-        // let tx = wallet.get_tx(&txid)?;  
+        let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()));
+        let wallet = self.get_wallet()?;
+        let tx = wallet.get_tx(&txid?)?;  
     
     
         Ok(serde_json::to_string(&ViewTransaction {
             ext_transaction: Some(ExtTransaction {
                 tx: BasicTransaction {
                     tx: ShorthandTransaction {
-                        is_withdraw: true,
-                        date: "2024-10-13".to_string(),
-                        time: "14:30:00".to_string(),
-                        btc: 0.005,
-                        usd: "$135.50".to_string(),
+                        is_withdraw: tx.is_withdraw,
+                        date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                        time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+                        btc: tx.btc,
+                        usd: format!("${}", tx.usd),
                     },
-                    address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa".to_string(),
-                    price: "$27,100.00".to_string(), 
+                    address: tx.address,
+                    price: format!("${}",  tx.price),
                 },
-                fee: "$1.00".to_string(),
-                total: "$136.50".to_string(),
-                txid: "b6f6991e1e0a9b497b1d7b0d6c0e1b3d57dff2c8e4b05a6b1b86dfed2f00e37".to_string(),
+                fee: format!("${}",  tx.fee_usd),
+                total: format!("${}", tx.fee_usd + tx.usd),
+                txid: "".to_string(),
             }),
-            basic_transaction: None, 
+            basic_transaction: None,
         })?)
     }
 

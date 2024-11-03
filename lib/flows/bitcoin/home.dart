@@ -136,7 +136,6 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
   }
 
   Widget TransactionItem(ShorthandTransaction transaction) {
-    // print(transaction.date);
     return ListItem(
       onTap: () {
         HapticFeedback.mediumImpact();

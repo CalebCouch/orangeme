@@ -174,12 +174,15 @@ impl Wallet {
         Ok(self.inner.get_address(AddressIndex::New)?.address.to_string())
     }
 
+    pub fn get_tx(&self, txid: &Txid) -> Result<Transaction, Error> {
+        Ok(self.get_transactions()?.remove(txid).expect("Get_tx has error"))
+    }
+
+
     pub fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
         //panic!("test {}", self.get_transactions()?.into_values().collect::<Vec<Transaction>>().len());
         Ok(self.get_transactions()?.into_values().collect())
     }
-
-    // After: #u77vattn
 
     fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
         Ok(self.store.get(b"transactions")?.map(|b|
