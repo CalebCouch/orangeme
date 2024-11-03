@@ -13,6 +13,7 @@ class ListItem extends StatelessWidget {
   final String? titleR;
   final String? subR;
   final VoidCallback? onTap;
+  final bool caret;
 
   const ListItem({
     super.key,
@@ -23,6 +24,7 @@ class ListItem extends StatelessWidget {
     this.titleR,
     this.subR,
     this.onTap,
+    this.caret = true,
   });
 
   @override
@@ -52,7 +54,7 @@ class ListItem extends StatelessWidget {
               if (subR != null) CustomText('text sm', subR!, underline: true),
             ], 4),
             const Spacing(16),
-            const CustomIcon('forward md'),
+            if (caret) const CustomIcon('forward md'),
           ],
         ),
       ),
@@ -66,5 +68,6 @@ Widget ContactItem(BuildContext context, Contact contact, onTap) {
     visual: ProfilePhoto(context, contact.pfp, ProfileSize.lg),
     title: contact.name,
     sub: middleCut(contact.did, 30),
+    caret: false,
   );
 }

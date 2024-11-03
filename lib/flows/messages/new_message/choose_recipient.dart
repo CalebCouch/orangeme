@@ -49,7 +49,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   Widget build(BuildContext context) {
     checkList();
     return Stack_Default(
-      Header_Button(context, "Confirm send", CustomButton('Next', 'ghost md hug none', onNext, enabled)),
+      Header_Button(context, "Choose recipient", CustomButton('Next', 'ghost md hug none', onNext, enabled)),
       [
         Searchbar(searchController),
         recipients.isEmpty ? Container() : SelectedContacts(recipients),

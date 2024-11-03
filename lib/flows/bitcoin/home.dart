@@ -20,10 +20,10 @@ import 'package:orangeme_material/orangeme_material.dart';
 class BitcoinHome extends GenericWidget {
   BitcoinHome({super.key});
   String usdUnformatted = "";
-  String usd = ""; // usdUnformatted == "0" ? "\$0.00" : "\$formatValue(widget.usdUnformatted)"
-  String btc = ""; //formatBTC(state.btcBalance, 8)
-  List<ShorthandTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
-  Contact personal = Contact('', '', '', ''); //Users personal information
+  String usd = "";
+  String btc = "";
+  List<ShorthandTransaction> transactions = [];
+  String profile_picture = "";
   bool internet = true;
 
   @override
@@ -48,7 +48,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
       widget.btc = json["btc"];
       widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map((json) => ShorthandTransaction.fromJson(json)));
       widget.internet = json["internet"] as bool;
-      widget.personal = Contact.fromJson(json["personal"]);
+      widget.profile_picture = json["profile_picture"];
     });
   }
 
@@ -69,7 +69,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     //print(widget.transactions);
     bool noTransactions = widget.transactions.isEmpty;
     return Root_Home(
-      Header_Home(ProfileButton(context, widget.personal.pfp, toProfile), "Wallet"),
+      Header_Home(ProfileButton(context, widget.profile_picture, toProfile), "Wallet"),
       [
         BalanceDisplay(),
         //  BackupReminder(false),

@@ -67,12 +67,13 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
             .await
             .map(|response| response.status().is_success())
             .unwrap_or(false);
-            
+
+        if !connected { panic!("Internet connection failed") };
+        
         state.set(Field::Internet, &connected)?;
+        
         thread::sleep(time::Duration::from_millis(1000));
     }
-
-    Err::<(), Error>(Error::Exited("Internet Check".to_string()))
 }
 
 async fn price_thread(mut state: State) -> Result<(), Error> {
