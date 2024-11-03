@@ -65,8 +65,8 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: AppPadding.valueDisplay),
       child: CustomColumn([
-       // CustomText('heading ${dynamic_size(widget.tx.usd.length)}', '${widget.tx.usdUnformatted} USD'),
-       //CustomText('text lg text_secondary', '${widget.btc} BTC')
+        // CustomText('heading ${dynamic_size(widget.tx.usd.length)}', '${widget.tx.usdUnformatted} USD'),
+        //CustomText('text lg text_secondary', '${widget.btc} BTC')
       ], AppPadding.valueDisplaySep),
     );
   }

@@ -53,7 +53,7 @@ class ListItem extends StatelessWidget {
               if (titleR != null) CustomText('heading h5', titleR!),
               if (subR != null) CustomText('text sm', subR!, underline: true),
             ], 4),
-            const Spacing(16),
+            if (caret) const Spacing(16),
             if (caret) const CustomIcon('forward md'),
           ],
         ),

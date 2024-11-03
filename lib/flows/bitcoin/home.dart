@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
-// import 'package:orange/flows/bitcoin/transaction_details.dart';
-// import 'package:orange/flows/bitcoin/transaction_details.dart';
+import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 // import 'package:flutter/services.dart';
@@ -141,12 +140,13 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     return ListItem(
       onTap: () {
         HapticFeedback.mediumImpact();
-        //navigateTo(ViewTransaction(transaction));
+        navigateTo(ViewTransaction(transaction));
       },
       title: transaction.is_withdraw ? "Received bitcoin" : "Sent bitcoin",
       sub: transaction.date,
       titleR: transaction.usd,
       subR: "Details",
+      caret: false,
     );
   }
 }

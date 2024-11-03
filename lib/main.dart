@@ -18,24 +18,24 @@ import 'package:orange/src/rust/api/simple.dart';
 // import 'package:uuid/uuid.dart';
 
 Future<void> startRust(String path) async {
-    global.navigation.throwError(await ruststart(
-        path: path,
-        platform: global.platform.toString(),
-        thread: global.dartCallback,
-    ));
+  global.navigation.throwError(await ruststart(
+    path: path,
+    platform: global.platform.toString(),
+    thread: global.dartCallback,
+  ));
 }
 
 Future<void> main() async {
-    await RustLib.init();
-    WidgetsFlutterBinding.ensureInitialized();
-    await global.getAppData();
-    startRust(global.dataDir!);
-    // var sp = await SharedPreferences.getInstance();
-    if (global.platform_isDesktop) {
-        WindowManager.instance.setMinimumSize(const Size(1280, 832));
-    }
-    runApp(const MyApp());
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  await RustLib.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  await global.getAppData();
+  startRust(global.dataDir!);
+  // var sp = await SharedPreferences.getInstance();
+  if (global.platform_isDesktop) {
+    WindowManager.instance.setMinimumSize(const Size(1280, 832));
+  }
+  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
 class MyApp extends StatelessWidget {
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: global.navigation.navkey,
       title: 'orange.me',
       theme: theme(),
-      home: MessagesHome(),
+      home: BitcoinHome(),
     );
   }
 }
