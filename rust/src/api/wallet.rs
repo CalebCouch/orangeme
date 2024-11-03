@@ -49,7 +49,7 @@ pub type Transactions = BTreeMap<Txid, Transaction>;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Seed{
-    inner: Vec<u8>
+    pub inner: Vec<u8>
 }
 
 impl Seed {
