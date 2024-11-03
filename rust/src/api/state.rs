@@ -100,7 +100,7 @@ impl StateManager {
         .unwrap_or("Pending".to_string())
     }
 
-    pux fn get_users(&self) -> Result<Vec<Contact>, Error> {
+    pub fn get_users(&self) -> Result<Vec<Contact>, Error> {
         let alice = Contact {
             abt_me: Some("Software Developer".to_string()),
             did: "did:example:alice".to_string(),
