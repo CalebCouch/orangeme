@@ -122,11 +122,18 @@ async fn async_rust (
     let storage = Storage::new(dart_callback.clone());
 
    if !platform.is_desktop() {
-         let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
-            serde_json::from_str(&seed)?
-        } else {
+      // let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
+      //    serde_json::from_str(&seed)?
+      //} else {
+      //    let seed = Seed::new();
+      //    storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+      //    seed
+      //};
+        let seed: Seed = if let Some(seed) = state.get_raw(Field::LegacySeed)?.map(|b|
+            serde_json::from_slice(&b)
+        ).transpose()? {seed} else {
             let seed = Seed::new();
-            storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+            state.set(Field::LegacySeed, &seed)?;
             seed
         };
         dart_callback.call("print", &format!("{:?}", seed)).await?;

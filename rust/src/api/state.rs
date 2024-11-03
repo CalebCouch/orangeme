@@ -23,6 +23,7 @@ const SATS: u64 = 100_000_000;
 
 #[derive(Debug)]
 pub enum Field {
+    LegacySeed,
     DescriptorSet,
     Internet,
     Platform,
@@ -64,6 +65,11 @@ impl State {
         self.store.set(&field.into_bytes(), &serde_json::to_vec(data)?)?;
         Ok(())
     }
+
+    pub fn get_raw(&self, field: Field) -> Result<Option<Vec<u8>>, Error> {
+        Ok(self.store.get(&field.into_bytes())?)
+    }
+
     pub fn get<T: for <'a> Deserialize<'a> + Default>(&self, field: Field) -> Result<T, Error> {
         Ok(self.store.get(&field.into_bytes())?.map(|b|
             serde_json::from_slice(&b)
@@ -98,14 +104,14 @@ impl StateManager {
             abt_me: Some("Software Developer".to_string()),
             did: "did:example:alice".to_string(),
             name: "Alice".to_string(),
-            pfp: Some("cat/on/a/box.png".to_string()),
+            pfp: None,
         };
     
         let bob = Contact {
             abt_me: Some("Graphic Designer".to_string()),
             did: "did:example:bob".to_string(),
             name: "Bob".to_string(),
-            pfp: Some("chicken/on/a/horse.png".to_string()),
+            pfp: None,
         };
     
         let message1 = Message {
@@ -229,7 +235,7 @@ impl StateManager {
                 abt_me: Some("About me info".to_string()),
                 did: "user-did-string".to_string(), 
                 name: "User Name".to_string(),      
-                pfp: Some("users/profile/picture.png".to_string()),
+                pfp: None,
             },
         })?)
     }
