@@ -29,6 +29,8 @@ pub enum Error {
     #[error(transparent)]
     Web5(#[from] web5_rust::Error),
     #[error(transparent)]
+    SimpleDatabase(#[from] simple_database::Error),
+    #[error(transparent)]
     Utf8Str(#[from] std::str::Utf8Error),
     #[error(transparent)]
     Utf8String(#[from] std::string::FromUtf8Error),

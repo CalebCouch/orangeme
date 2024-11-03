@@ -3,7 +3,7 @@ use super::Error;
 use super::wallet::{Wallet, DescriptorSet, Transaction};
 use super::structs::DateTime;
 
-use web5_rust::common::traits::KeyValueStore;
+use simple_database::KeyValueStore;
 
 use serde::{Serialize, Deserialize};
 

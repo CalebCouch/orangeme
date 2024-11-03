@@ -7,13 +7,12 @@ use super::price::PriceGetter;
 use super::state::{StateManager, State, Field};
 use super::usb::UsbInfo;
 
-use web5_rust::common::SqliteStore;
-use web5_rust::common::traits::KeyValueStore;
+use simple_database::KeyValueStore;
+use simple_database::SqliteStore;
 
 use bdk::bitcoin::{Network, Address};
 use bdk::database::SqliteDatabase;
 use bdk::blockchain::ElectrumBlockchain;
-use web5_rust::dwn::traits::Client;
 use bdk::FeeRate;
 use bdk::SignOptions;
 use bdk::blockchain::Progress;
@@ -76,7 +75,7 @@ async fn price_thread(mut state: State) -> Result<(), Error> {
 }
 
 async fn wallet_thread(mut state: State) -> Result<(), Error> {
-    if state.get::<Platform>(Field::Platform)?.is_desktop() {
+    if !state.get::<Platform>(Field::Platform)?.is_desktop() {
         let descriptors = state.get::<DescriptorSet>(Field::DescriptorSet)?;
         let path = state.get::<PathBuf>(Field::Path)?;
         let mut wallet = Wallet::new(descriptors.clone(), path.clone())?;
@@ -112,9 +111,11 @@ async fn async_rust (
 ) -> Result<(), Error> {
     let mut dart_callback = DartCallback::new();
     dart_callback.add_thread(thread);
+
     let path = PathBuf::from(&path);
     let mut state = State::new::<SqliteStore>(path.clone())?;
     state.set(Field::Path, &path)?;
+
     let platform = Platform::from_str(&platform)?;
     state.set(Field::Platform, &platform)?;
 
@@ -128,6 +129,7 @@ async fn async_rust (
             storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
             seed
         };
+        dart_callback.call("print", &format!("{:?}", seed)).await?;
         let descriptors = DescriptorSet::from_seed(&seed)?;
         dart_callback.call("print", &descriptors.internal).await?;
         state.set(Field::DescriptorSet, &descriptors)?;

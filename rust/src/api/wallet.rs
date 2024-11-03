@@ -4,8 +4,8 @@ use super::price::PriceGetter;
 use super::state::{State, Field};
 use super::structs::DateTime;
 
-use web5_rust::common::traits::KeyValueStore;
-use web5_rust::common::SqliteStore;
+use simple_database::KeyValueStore;
+use simple_database::SqliteStore;
 
 use bdk::{TransactionDetails, KeychainKind, SyncOptions, SignOptions};
 use bdk::bitcoin::consensus::{Encodable, Decodable};
@@ -175,7 +175,7 @@ impl Wallet {
     }
 
     pub fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
-       // panic!("{}", self.get_transactions()?.into_values().collect::<Vec<Transaction>>().len());
+        //panic!("test {}", self.get_transactions()?.into_values().collect::<Vec<Transaction>>().len());
         Ok(self.get_transactions()?.into_values().collect())
     }
 
@@ -258,13 +258,13 @@ impl Wallet {
   //}
 
     pub async fn sync(&mut self) -> Result<(), Error> {
-      let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
-      let blockchain = ElectrumBlockchain::from(client);
-      if let Err(e) = self.inner.sync(&blockchain, SyncOptions::default()) {
-         if !format!("{:?}", e).contains(NO_INTERNET) {
-             return Err(e.into());
-          }
-      }
+        let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
+        let blockchain = ElectrumBlockchain::from(client);
+        if let Err(e) = self.inner.sync(&blockchain, SyncOptions::default()) {
+           if !format!("{:?}", e).contains(NO_INTERNET) {
+               return Err(e.into());
+            }
+        }
         //Transactions
         let mut txs = self.get_transactions()?;
         for tx in self.inner.list_transactions(true)? {
