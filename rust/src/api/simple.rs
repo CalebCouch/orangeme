@@ -35,6 +35,7 @@ use crate::api::state::Conversation;
 
 const SATS: u64 = 100_000_000;
 
+use reqwest::Client;
 
 
 async fn spawn<T>(task: T) -> Result<(), Error>
@@ -58,11 +59,19 @@ async fn spawn<T>(task: T) -> Result<(), Error>
 }
 
 async fn internet_thread(mut state: State) -> Result<(), Error> {
+    let client = Client::new();
+    
     loop {
-        let connected = reqwest::get("https://google.com").await.is_ok();
+        let connected = client.get("https://google.com")
+            .send()
+            .await
+            .map(|response| response.status().is_success())
+            .unwrap_or(false);
+            
         state.set(Field::Internet, &connected)?;
         thread::sleep(time::Duration::from_millis(1000));
     }
+
     Err::<(), Error>(Error::Exited("Internet Check".to_string()))
 }
 
@@ -113,6 +122,8 @@ async fn async_rust (
     dart_callback.add_thread(thread);
 
     let path = PathBuf::from(&path);
+    dart_callback.call("print", &format!("{:?}", path)).await?;
+
     let mut state = State::new::<SqliteStore>(path.clone())?;
     state.set(Field::Path, &path)?;
 
@@ -293,3 +304,4 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
 }
 
 
+// kxw3rwax

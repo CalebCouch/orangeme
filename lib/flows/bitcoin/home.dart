@@ -24,7 +24,7 @@ class BitcoinHome extends GenericWidget {
   String btc = ""; //formatBTC(state.btcBalance, 8)
   List<ShorthandTransaction> transactions = []; // Need date (11/3/24) and time (9:53 PM) // Need to know if the transaction was sent or received
   Contact personal = Contact('', '', '', ''); //Users personal information
-  bool internet = false;
+  bool internet = true;
 
   @override
   BitcoinHomeState createState() => BitcoinHomeState();
@@ -64,20 +64,9 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     navigateTo(MyProfile());
   }
 
-  String status = 'disabled';
-
-  void checkStatus() {
-    //print("The internet is connected: ${widget.internet}");
-    setState(() {
-      if (!widget.internet) status = 'disabled';
-      if (widget.internet) status = 'enabled';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     //print(widget.transactions);
-    checkStatus();
     bool noTransactions = widget.transactions.isEmpty;
     return Root_Home(
       Header_Home(ProfileButton(context, widget.personal.pfp, toProfile), "Wallet"),
@@ -88,8 +77,8 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
         TransactionList(),
       ],
       Bumper(context, [
-        CustomButton('Receive', 'primary lg expand none', onReceive, status),
-        CustomButton('Send', 'primary lg expand none', onSend, status),
+        CustomButton('Receive', 'primary lg expand none', onReceive, !widget.internet ? "disabled" : "enabled"),
+        CustomButton('Send', 'primary lg expand none', onSend, !widget.internet ? "disabled" : "enabled"),
       ]),
       TabNav(0, [
         TabInfo(BitcoinHome(), 'wallet'),
