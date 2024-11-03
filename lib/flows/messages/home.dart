@@ -17,7 +17,7 @@ class MessagesHome extends GenericWidget {
   MessagesHome({super.key});
 
   List<Conversation> conversations = []; //List of all conversations
-  Contact personal = Contact('', '', '', '');
+  String profile_picture = "";
   @override
   MessagesHomeState createState() => MessagesHomeState();
 }
@@ -36,7 +36,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.personal = Contact.fromJson(json["personal"]);
+      widget.profile_picture = json["profile_picture"];
       widget.conversations = List<Conversation>.from(json['conversations'].map((json) => Conversation.fromJson(json)));
     });
   }
@@ -57,7 +57,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
   @override
   Widget build(BuildContext context) {
     return Root_Home(
-      Header_Home(ProfileButton(context, widget.personal.pfp, toProfile), "Messages"),
+      Header_Home(ProfileButton(context, widget.profile_picture, toProfile), "Messages"),
       [listConversations()],
       Bumper(context, [CustomButton('New Message', 'primary lg expand none', createNewMessage, 'enabled')]),
       TabNav(1, [

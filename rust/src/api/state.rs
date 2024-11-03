@@ -94,10 +94,13 @@ impl StateManager {
         Wallet::new(descriptors, path)
     }
 
-    fn format_datetime(datetime: Option<&DateTime>) -> String {
+    fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
         datetime
-        .map(|dt| dt.format("%Y-%m-%d %l:%M %p").to_string())
-        .unwrap_or("Pending".to_string())
+            .map(|dt| (
+                dt.format("%Y-%m-%d").to_string(),  // Date part
+                dt.format("%l:%M %p").to_string()   // Time part
+            ))
+            .unwrap_or(("Pending".to_string(), "Pending".to_string()))
     }
 
     pub fn get_users(&self) -> Result<Vec<Contact>, Error> {
@@ -197,36 +200,6 @@ impl StateManager {
 
 
     pub fn bitcoin_home(&self) -> Result<String, Error> {
-        let shorthandtransactions: Vec<ShorthandTransaction> = vec![
-            ShorthandTransaction {
-                is_withdraw: true,
-                date: "September 30R".to_string(),
-                time: "10:00 AM".to_string(),
-                btc: 0.01,
-                usd: "$300".to_string(),
-            },
-            ShorthandTransaction {
-                is_withdraw: false,
-                date: "October 4".to_string(),
-                time: "2:30 PM".to_string(),
-                btc: 0.05,
-                usd: "$150.78".to_string(),
-            },
-            ShorthandTransaction {
-                is_withdraw: true,
-                date: "October 9".to_string(),
-                time: "5:15 PM".to_string(),
-                btc: 0.001,
-                usd: "$32.45".to_string(),
-            },
-            ShorthandTransaction {
-                is_withdraw: false,
-                date: "Yesterday".to_string(),
-                time: "11:45 AM".to_string(),
-                btc: 0.02,
-                usd: "$58.34".to_string(),
-            },
-        ];
         let wallet = self.get_wallet()?;
         let btc = wallet.get_balance()?;
         let usd = btc*self.state.get::<Price>(Field::Price)?;
@@ -244,19 +217,13 @@ impl StateManager {
             transactions: wallet.list_unspent()?.into_iter().map(|tx|
                 ShorthandTransaction {
                     is_withdraw: tx.is_withdraw,
-                    date: "date".to_string(),
-                    time: "time".to_string(),
+                    date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                    time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
                     btc: tx.btc,
                     usd: format!("${}", tx.usd),
                 },
             ).collect(),
-            //transactions: shorthandtransactions,
-            personal: Contact {
-                abt_me: Some("About me info".to_string()),
-                did: "user-did-string".to_string(), 
-                name: "User Name".to_string(),      
-                pfp: None,
-            },
+            profile_picture: "".to_string(),
         })?)
     }
 
@@ -356,12 +323,7 @@ impl StateManager {
         self.state.set(Field::Conversations, &conversations)?;
 
         Ok(serde_json::to_string(&MessagesHome{
-            personal: Contact {
-                abt_me: Some("About me info".to_string()),
-                did: "user-did-string".to_string(), 
-                name: "User Name".to_string(),      
-                pfp: Some("users/profile/picture.png".to_string()),
-            },
+            profile_picture: "".to_string(),
             conversations: conversations, 
         })?)
     }
@@ -441,7 +403,7 @@ struct BitcoinHome {
     pub usd: String,
     pub btc: String,
     pub transactions: Vec<ShorthandTransaction>,
-    pub personal: Contact,
+    pub profile_picture: String,
     pub internet: bool,
 }
 
@@ -482,7 +444,7 @@ struct ViewTransaction {
 #[derive(Serialize)]
 struct MessagesHome {
     pub conversations: Vec<Conversation>,
-    pub personal: Contact,
+    pub profile_picture: String,
 }
 
 #[derive(Serialize)]
