@@ -37,7 +37,8 @@ pub enum Field {
     Path,
     Balance,
     CurrentConversation,
-    Conversations
+    Conversations,
+    Users
 }
 
 impl Field {
@@ -91,6 +92,24 @@ impl StateManager {
         datetime
         .map(|dt| dt.format("%Y-%m-%d %l:%M %p").to_string())
         .unwrap_or("Pending".to_string())
+    }
+
+    pux fn get_users(&self) -> Result<Vec<Contact>, Error> {
+        let alice = Contact {
+            abt_me: Some("Software Developer".to_string()),
+            did: "did:example:alice".to_string(),
+            name: "Alice".to_string(),
+            pfp: Some("cat/on/a/box.png".to_string()),
+        };
+    
+        let bob = Contact {
+            abt_me: Some("Graphic Designer".to_string()),
+            did: "did:example:bob".to_string(),
+            name: "Bob".to_string(),
+            pfp: Some("chicken/on/a/horse.png".to_string()),
+        };
+
+        Ok(vec![alice, bob])
     }
 
     pub fn get_conversations(&self) -> Result<Vec<Conversation>, Error> {
@@ -165,6 +184,7 @@ impl StateManager {
             "Exchange" => self.exchange(),
             "MyProfile" => self.my_profile(),
             "ConvInfo" => self.conv_info(),
+            "ChooseRecipient" => self.choose_recipient(),
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
     }
@@ -347,6 +367,13 @@ impl StateManager {
         })?)
     }
 
+    pub fn choose_recipient(&self) -> Result<String, Error> {
+        let users = self.get_users()?;
+        Ok(serde_json::to_string(&ChooseRecipient{
+            users: users,
+        })?)
+    }
+
     pub fn conv_info(&self) -> Result<String, Error> {
         let conversation = self.state.get::<Conversation>(Field::CurrentConversation)?;
         let contacts = conversation.members;
@@ -460,6 +487,11 @@ struct MyProfile {
 #[derive(Serialize)]
 struct Exchange {
     pub conversation: Conversation,
+}
+
+#[derive(Serialize)]
+struct ChooseRecipient {
+    pub users: Vec<Contact>,
 }
 
 #[derive(Serialize)]

@@ -30,7 +30,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.users;
+      widget.users = List<Contact>.from(json['users'].map((json) => Contact.fromJson(json)));
     });
   }
 
@@ -91,7 +91,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   }
 
   onNext() {
-    // navigateTo(Exchange(Conversation(recipients, [])));
+    //navigateTo(Exchange(Conversation(recipients, [])));
   }
 
   @override
