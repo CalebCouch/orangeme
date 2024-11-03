@@ -204,66 +204,72 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         let usd_balance: f64 = state.get::<f64>(Field::Balance)?;
         let min: f64 = 0.30;
         let max: f64 = (usd_balance as f64) - min;
-        let mut updated_amount = amount.clone();
-        let mut validation = true;
-
-        match input {
-            "reset" => updated_amount = "0".to_string(),
+        
+        let (updated_amount, validation) = match input {
+            "reset" => ("0".to_string(), true),
             "backspace" => {
                 if amount == "0" {
-                    validation = false;
+                    (amount.clone(), false)
                 } else if amount.len() == 1 {
-                    updated_amount = "0".to_string();
+                    ("0".to_string(), true)
                 } else {
-                    updated_amount = amount[..amount.len() - 1].to_string();
+                    (amount[..amount.len() - 1].to_string(), true)
                 }
             },
             "." => {
                 if !amount.contains('.') && amount.len() <= 7 {
-                    updated_amount = format!("{}{}", amount, ".");
+                    (format!("{}{}", amount, "."), true)
                 } else {
-                    validation = false;
+                    (amount.clone(), false)
                 }
             },
             _ => {
                 if amount == "0" {
-                    updated_amount = input.to_string();
+                    (input.to_string(), true)
                 } else if amount.contains('.') {
                     let split: Vec<&str> = amount.split('.').collect();
                     if amount.len() < 11 && split[1].len() < 2 {
-                        updated_amount = format!("{}{}", amount, input);
+                        (format!("{}{}", amount, input), true)
                     } else {
-                        validation = false;
+                        (amount.clone(), false)
                     }
                 } else if amount.len() < 10 {
-                    updated_amount = format!("{}{}", amount, input);
+                    (format!("{}{}", amount, input), true)
                 } else {
-                    validation = false;
+                    (amount.clone(), false)
                 }
             }
-        }
+        };        
 
-        let mut decimals = String::new();
-        if updated_amount.contains('.') {
+        let decimals = if updated_amount.contains('.') {
             let split: Vec<&str> = updated_amount.split('.').collect();
             let decimals_len = split.get(1).unwrap_or(&"").len();
             if decimals_len < 2 {
-                decimals = "0".repeat(2 - decimals_len);
+                "0".repeat(2 - decimals_len)
+            } else {
+                String::new()
             }
-        }
+        } else {
+            String::new()
+        };
+        
 
-        let mut err = String::new();
         let updated_amount_f64 = updated_amount.parse::<f64>().unwrap_or(0.0);
 
-        if updated_amount_f64 != 0.0 {
+        let err = if updated_amount_f64 != 0.0 {
             if max <= 0.0 {
-                err = "$0.00 maximum".to_string();
+                "$0.00 maximum".to_string()
             } else if updated_amount_f64 <= min {
-                err = format!("${:.2} minimum", min);
+                format!("${:.2} minimum", min)
             } else if updated_amount_f64 > max {
-                err = format!("${:.2} maximum", max);
+                format!("${:.2} maximum", max)
+            } else {
+                String::new()
             }
-        }
+        } else {
+            String::new()
+        };
+        
 
         state.set(Field::Amount, &updated_amount)?;
         state.set(Field::AmountErr, &err)?;
