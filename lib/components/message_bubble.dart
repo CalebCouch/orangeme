@@ -71,14 +71,13 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
                         child: ProfilePhoto(context, m.sender.pfp),
                       ),
                     )
-                  : SizedBox(width: 40), // Placeholder space
-              // Use Flexible to allow the bubble to shrink-wrap and wrap text
+                  : const SizedBox(width: 40),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    bubble(m), // This will now properly wrap
-                    if (showDetails) details(m), // Show details if needed
+                    bubble(m),
+                    if (showDetails) details(m),
                   ],
                 ),
               ),
@@ -87,9 +86,9 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
         : Column(
             crossAxisAlignment: m.isIncoming ? CrossAxisAlignment.start : CrossAxisAlignment.end,
             children: [
-              bubble(m), // Consistent bubble for outgoing messages
-              const SizedBox(height: 8), // Use SizedBox for spacing
-              if (showTime) details(m, true), // Show time details if needed
+              bubble(m),
+              const SizedBox(height: 8),
+              if (showTime) details(m, true),
             ],
           ),
   );
