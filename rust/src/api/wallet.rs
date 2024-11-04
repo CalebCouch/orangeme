@@ -42,7 +42,7 @@ use std::collections::BTreeMap;
 use std::str::FromStr;
 
 const NO_INTERNET: &str = "failed to lookup address information: No address associated with hostname";
-const CLIENT_URI: &str = "https://blockstream.info/api/";
+const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
 const SATS: f64 = 100_000_000.0;
 
 pub type Transactions = BTreeMap<Txid, Transaction>;
@@ -95,7 +95,7 @@ pub struct Transaction {
     pub confirmation_time: Option<(u32, DateTime)>,
     pub fee: f64,
     pub fee_usd: f64,
-    pub txid: Txid,
+//    pub txid: Txid,
 }
 
 impl Transaction {
@@ -109,7 +109,7 @@ impl Transaction {
         let is_withdraw = details.sent > 0;
         let details_tx = details.transaction.ok_or(Error::bad_request(ec, "Missing Transaction"))?;
         let address = if is_withdraw {
-            let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
+            let client = Client::new(CLIENT_URI)?;
             let blockchain = ElectrumBlockchain::from(client);
             details_tx.input.clone().into_iter().map(|input| {
                 let prev_tx = blockchain.get_tx(&input.previous_output.txid)?.ok_or(Error::bad_request(ec, "Missing Prev Transaction"))?;
@@ -130,15 +130,14 @@ impl Transaction {
         let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))? as f64 / SATS;
         let fee_usd = fee*price;
         let error = || Error::bad_request(ec, "Missing Sent Address");
-        let txid = details_tx.txid();
-        Ok(Transaction{btc, usd, price, address, is_withdraw, confirmation_time, fee, fee_usd, txid})
+        Ok(Transaction{btc, usd, price, address, is_withdraw, confirmation_time, fee, fee_usd})
     }
 }
 
 pub struct Wallet{
     inner: BDKWallet<SqliteDatabase>,
     descriptors: DescriptorSet,
-    store: SqliteStore,
+    state: State,
     path: PathBuf
 }
 
@@ -146,11 +145,12 @@ impl Wallet {
     pub fn new(
         descriptors: DescriptorSet,
         path: PathBuf,
+        state: State
     ) -> Result<Self, Error> {
         Ok(Wallet{
             inner: Self::inner_wallet(&descriptors, path.clone())?,
             descriptors,
-            store: SqliteStore::new(path.clone())?,
+            state,
             path
         })
     }
@@ -189,40 +189,25 @@ impl Wallet {
     }
 
     fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
-        Ok(self.store.get(b"transactions")?.map(|b|
-            serde_json::from_slice::<Transactions>(&b)
-        ).transpose()?.unwrap_or_default())
+        self.state.get::<Transactions>(Field::Transactions)
     }
     
 
     pub fn get_fees(&self, address: String, amount: f64) -> Result<(f64, f64), Error> {
         let address = Address::from_str(&address)?.require_network(Network::Bitcoin);
+    
+        let mut builder = self.inner.build_tx();
+        builder.add_recipient(address?.script_pubkey(), (amount * SATS) as u64);
+        let size = builder.finish()?.0.extract_tx().vsize() as f64;
+    
+        let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
+    
+        let priority_fee = (blockchain.estimate_fee(1)? * size) / SATS; 
+        let standard_fee = (blockchain.estimate_fee(3)? * size) / SATS; 
 
-        let (mut psbt, mut tx_details) = {
-            let mut builder = self.inner.build_tx();
-            builder.add_recipient(address?.script_pubkey(), (amount * SATS) as u64);
-            //builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
-            builder.finish()?
-        };
-        
-        let tx = psbt.clone().extract_tx();
-        tx_details.transaction = Some(tx.clone());
-
-        let tx_size = tx.vsize();
-
-        let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
-        let blockchain = ElectrumBlockchain::from(client);
-
-        let fee_standard = blockchain.estimate_fee(1)?; 
-        let fee_priority = blockchain.estimate_fee(3)?;
-
-        let fees = (
-            fee_standard * (tx_size as f64) / SATS,
-            fee_priority * (tx_size as f64) / SATS,
-        );
-
-        Ok(fees)
+        Ok((priority_fee, standard_fee))
     }
+    
 
     /*
     pub fn build_transaction(&self) -> Result<String, Error> {
@@ -285,7 +270,11 @@ impl Wallet {
 
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {self.inner.is_mine(s).unwrap_or_default()})?);
         }
-        self.store.set(b"transactions", &serde_json::to_vec(&txs)?)?;
+        self.state.set(Field::Transactions, &txs)?;
+
+        //Balance
+        let btc = self.get_balance()?;
+        self.state.set(Field::Balance, &btc)?;
         Ok(())
     }
 }
@@ -295,7 +284,7 @@ impl Clone for Wallet {
         Wallet{
             inner: Wallet::inner_wallet(&self.descriptors, self.path.clone()).unwrap(),
             descriptors: self.descriptors.clone(),
-            store: self.store.clone(),
+            state: self.state.clone(),
             path: self.path.clone()
         }
     }

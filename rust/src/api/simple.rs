@@ -93,7 +93,7 @@ async fn wallet_thread(mut state: State) -> Result<(), Error> {
     if !state.get::<Platform>(Field::Platform)?.is_desktop() {
         let descriptors = state.get::<DescriptorSet>(Field::DescriptorSet)?;
         let path = state.get::<PathBuf>(Field::Path)?;
-        let mut wallet = Wallet::new(descriptors.clone(), path.clone())?;
+        let mut wallet = Wallet::new(descriptors.clone(), path.clone(), state)?;
         loop {
             wallet.sync().await?;
             thread::sleep(time::Duration::from_millis(1_000));
@@ -222,9 +222,10 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
     let result: Result<String, Error> = (move || {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
         let amount = state.get::<String>(Field::Amount)?;
-        let usd_balance: f64 = state.get::<f64>(Field::Balance)?;
+        let btc = state.get::<f64>(Field::Balance)?;
+        let usd_balance = btc*state.get::<f64>(Field::Price)?;
         let min: f64 = 0.30;
-        let max: f64 = (usd_balance as f64) - min;
+        let max = usd_balance - min;
         
         let (updated_amount, validation) = match input {
             "reset" => ("0".to_string(), true),
@@ -277,21 +278,20 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
 
         let updated_amount_f64 = updated_amount.parse::<f64>().unwrap_or(0.0);
 
-        let err = if updated_amount_f64 != 0.0 {
+        let err: Option<String> = if updated_amount_f64 != 0.0 {
             if max <= 0.0 {
-                "$0.00 maximum".to_string()
-            } else if updated_amount_f64 <= min {
-                format!("${:.2} minimum", min)
+                Some("You have no bitcoin".to_string())
+            } else if updated_amount_f64 < min {
+                Some(format!("${:.2} minimum", min))
             } else if updated_amount_f64 > max {
-                format!("${:.2} maximum", max)
+                Some(format!("${:.2} maximum", max))
             } else {
-                String::new()
+                None
             }
         } else {
-            String::new()
+            None
         };
         
-
         state.set(Field::Amount, &updated_amount)?;
         state.set(Field::AmountErr, &err)?;
         state.set(Field::Decimals, &decimals)?;

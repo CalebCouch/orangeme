@@ -58,6 +58,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
   }
 
   onSend() {
+    setStateAddress(path: global.dataDir!, address: "");
     navigateTo(Send());
   }
 

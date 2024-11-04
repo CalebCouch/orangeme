@@ -25,14 +25,15 @@ class SendState extends GenericState<Send> {
 
   @override
   int refreshInterval() {
-    return 100;
+    return 10;
   }
 
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.valid = json["valid"];
+      widget.valid = json["valid"] as bool;
       widget.address = json["address"];
+      status = widget.valid ? 'enabled' : 'disabled';
     });
   }
 
@@ -40,26 +41,33 @@ class SendState extends GenericState<Send> {
   String status = 'disabled';
 
   onContinue() {
-    print('continuing');
     if (widget.valid) {
       setAddress(controller.text);
       navigateTo(context, Amount());
     }
   }
 
+  void initState() {
+    super.initState();
+    controller.text = widget.address;
+    setState(() {
+      status = widget.valid ? 'enabled' : 'disabled';
+    });
+  }
+
   onPaste() async {
     ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
     if (data != null) {
-      setAddress(data.text!);
       controller.text = data.text!;
+      if (controller.text.startsWith("bitcoin:")) {
+        controller.text = controller.text.replaceFirst("bitcoin:", "");
+      }
+      setAddress(controller.text);
     }
   }
 
   setAddress(String a) {
     setStateAddress(path: global.dataDir!, address: a);
-    setState(() {
-      status = widget.valid ? 'enabled' : 'disabled';
-    });
   }
 
   onScan() {

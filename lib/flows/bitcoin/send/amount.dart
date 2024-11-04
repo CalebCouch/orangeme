@@ -34,8 +34,7 @@ class AmountState extends GenericState<Amount> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      //print('setting state');
-      widget.btc = json["btc"];
+      widget.btc = json["btc"] as double;
       widget.err = json["err"];
       widget.amount = json["amount"];
       widget.decimals = json["decimals"];
@@ -44,15 +43,14 @@ class AmountState extends GenericState<Amount> {
 
   @override
   initState() {
-    super.initState();
     updateDisplayAmount(path: global.dataDir!, input: "reset");
+    super.initState();
   }
 
   final ShakeController _shakeController = ShakeController();
   String enabled = 'disabled';
 
   onContinue() {
-    //setStateBitcoin(path: global.dataDir!, amount: widget.amount);
     navigateTo(Speed());
   }
 

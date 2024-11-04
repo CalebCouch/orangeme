@@ -19,7 +19,6 @@ use bdk::bitcoin::{Network, Address};
 
 
 pub type Internet = bool;
-pub type Price = f64;
 
 const SATS: u64 = 100_000_000;
 
@@ -31,9 +30,9 @@ pub enum Field {
     Platform,
     Address,
     Amount,
-    Btc,
     Priority,
     AmountErr,
+    AmountBTC,
     Decimals,
     InputValidation,
     Price,
@@ -41,7 +40,8 @@ pub enum Field {
     Balance,
     CurrentConversation,
     Conversations,
-    Users
+    Users,
+    Transactions
 }
 
 impl Field {
@@ -93,7 +93,7 @@ impl StateManager {
     fn get_wallet(&self) -> Result<Wallet, Error> {
         let descriptors = self.state.get::<DescriptorSet>(Field::DescriptorSet)?;
         let path = self.state.get::<PathBuf>(Field::Path)?;
-        Wallet::new(descriptors, path)
+        Wallet::new(descriptors, path, self.state.clone())
     }
 
     fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
@@ -202,10 +202,11 @@ impl StateManager {
 
 
     pub fn bitcoin_home(&self) -> Result<String, Error> {
-        let wallet = self.get_wallet()?;
-        let btc = wallet.get_balance()?;
-        let usd = btc*self.state.get::<Price>(Field::Price)?;
+        let btc = self.state.get::<f64>(Field::Balance)?;
+        let usd = btc*self.state.get::<f64>(Field::Price)?;
         let internet_status = self.state.get::<bool>(Field::Internet)?;
+        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions)?;
+
         let formatted_usd = if usd == 0.0 {
             "$0.00".to_string()
         } else {
@@ -216,14 +217,14 @@ impl StateManager {
             internet: internet_status,
             usd: formatted_usd,
             btc: btc.to_string(),
-            transactions: wallet.list_unspent()?.into_iter().map(|tx|
+            transactions: transactions.into_iter().map(|(txid, tx)|
                 ShorthandTransaction {
                     is_withdraw: tx.is_withdraw,
                     date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
                     time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
                     btc: tx.btc,
                     usd: format!("${:.2}", tx.usd),
-                    txid: tx.txid.to_string(),
+                    txid: txid.to_string(),
                 },
             ).collect(),
             profile_picture: "".to_string(),
@@ -231,7 +232,7 @@ impl StateManager {
     }
 
     pub fn send(&self) -> Result<String, Error> {
-        let address = self.state.get::<String>(Field::Address)?;
+        let mut address = self.state.get::<String>(Field::Address)?;
         let valid = Address::from_str(&address)
         .map(|a| a.require_network(Network::Bitcoin).is_ok())
         .unwrap_or(false);
@@ -246,26 +247,31 @@ impl StateManager {
         })?)
     }
 
-    pub fn amount(&self) -> Result<String, Error> {
+    pub fn amount(&mut self) -> Result<String, Error> {
         let amount = self.state.get::<String>(Field::Amount)?;
-        let err = self.state.get::<String>(Field::AmountErr)?; 
+        let err = self.state.get::<Option<String>>(Field::AmountErr)?; 
         let decimals = self.state.get::<String>(Field::Decimals)?; 
         let btc = self.usd_to_btc(amount.clone())?;
+        self.state.set(Field::AmountBTC, &btc)?;
+
         Ok(serde_json::to_string(&Amount{
-            err: Some(err),
-            amount: amount,
-            decimals: decimals,
-            btc: btc,
+            err: err.unwrap_or_default(),
+            amount,
+            decimals,
+            btc,
         })?)
     }
 
     pub fn speed(&self) -> Result<String, Error> {
         let address = self.state.get::<String>(Field::Address)?;
-        let amount = self.state.get::<f64>(Field::Btc)?;
+        let amount = self.state.get::<f64>(Field::AmountBTC)?;
         let wallet = self.get_wallet()?;
-        let fees: (f64, f64) = wallet.get_fees(address, amount)?;
+        let btc_fees: (f64, f64) = wallet.get_fees(address, amount)?;
+        let price = self.state.get::<f64>(Field::Price)?;
+        
+        let fees: (f64, f64) = (btc_fees.0 / price, btc_fees.1 / price);
         Ok(serde_json::to_string(&Speed{
-           fees: fees,
+           fees,
         })?)
     }
 
@@ -289,9 +295,10 @@ impl StateManager {
     }
 
     pub fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
-        let amt: f64 = amount.parse()?; // Amount "25.50" = 25.50
+        let amt: f64 = amount.parse().map_err(|_| Error::err("usd_to_btc", "Invalid amount format"))?;
         let price = self.state.get::<f64>(Field::Price)?;
-        let btc_amount = amt / price;
+        let btc_amount = amt / price; 
+    
         Ok(btc_amount)
     }
 
@@ -442,7 +449,7 @@ struct ScanQR {
 
 #[derive(Serialize)]
 struct Amount {
-    pub err: Option<String>,
+    pub err: String,
     pub amount: String,
     pub decimals: String,
     pub btc: f64,

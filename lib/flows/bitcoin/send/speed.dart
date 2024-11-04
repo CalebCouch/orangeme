@@ -68,10 +68,11 @@ class SpeedState extends GenericState<Speed> {
   //The following widgets can ONLY be used in this file
 
   Widget SpeedSelector(fees) {
+    print(fees);
     return CustomColumn([
       radioButton(
         "Standard",
-        "Arrives in ~2 hours\n\$${fees.$1} bitcoin network fee",
+        "Arrives in ~2 hours\n\$${fees[0].toStringAsFixed(2)} bitcoin network fee",
         index == 0,
         () {
           setState(() {
@@ -81,7 +82,7 @@ class SpeedState extends GenericState<Speed> {
       ),
       radioButton(
         "Priority",
-        "Arrives in ~30 minutes\n\$${fees.$2} bitcoin network fee",
+        "Arrives in ~30 minutes\n\$${fees[1].toStringAsFixed(2)} bitcoin network fee",
         index == 1,
         () {
           setState(() {
