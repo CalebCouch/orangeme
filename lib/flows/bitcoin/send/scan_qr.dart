@@ -76,6 +76,7 @@ class ScanQRState extends GenericState<ScanQR> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       setStateAddress(path: global.dataDir!, address: scanData.code!);
+      print(scanData.code!);
       switchPageTo(context, Send());
     });
   }

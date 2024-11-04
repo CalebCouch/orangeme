@@ -31,6 +31,11 @@ use std::path::{Path, PathBuf};
 
 use serde::{Serialize, Deserialize};
 
+use chrono::NaiveDate;
+use chrono::Datelike;
+use chrono::Duration;
+use chrono::Local;
+
 use crate::api::state::Conversation;
 
 const SATS: u64 = 100_000_000;
@@ -300,4 +305,20 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
 }
 
 
-// kxw3rwax
+#[frb(sync)]
+pub fn format_transaction_date(date: String, time: String) -> String {
+    let now = Local::now().date_naive();
+    let transaction_date = NaiveDate::parse_from_str(&date, "%m/%d/%Y").expect("Invalid date format");
+
+    if is_same_date(transaction_date, now) {
+        time
+    } else if is_same_date(transaction_date, now - Duration::days(1)) {
+        "Yesterday".to_string() 
+    } else {
+        format!("{}", transaction_date.format("%B %e")) 
+    }
+}
+
+fn is_same_date(date1: NaiveDate, date2: NaiveDate) -> bool {
+    date1.year() == date2.year() && date1.month() == date2.month() && date1.day() == date2.day()
+}

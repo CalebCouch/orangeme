@@ -29,7 +29,7 @@ class SingleTab extends StatelessWidget {
   }
 }
 
-Widget sendTransactioTabular(BuildContext context, ExtTransaction tx) {
+Widget sendTransactionTabular(BuildContext context, ExtTransaction tx) {
   return Column(
     children: [
       SingleTab(title: "Date", subtitle: tx.tx.tx.date),
@@ -50,8 +50,7 @@ Widget transactionTabular(BuildContext context, BasicTransaction tx) {
     children: [
       SingleTab(title: "Date", subtitle: tx.tx.date),
       SingleTab(title: "Time", subtitle: tx.tx.time),
-      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.address)),
-      SingleTab(title: "Amount Sent", subtitle: tx.tx.btc.toString()),
+      SingleTab(title: "Amount Sent", subtitle: '${tx.tx.btc} BTC'),
       SingleTab(title: "Bitcoin Price", subtitle: tx.price),
       SingleTab(title: "USD Value Sent", subtitle: tx.tx.usd),
     ],

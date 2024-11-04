@@ -49,10 +49,11 @@ class ListItem extends StatelessWidget {
               ),
             ),
             if (titleR != null) const Spacing(16),
-            CustomColumn([
-              if (titleR != null) CustomText('heading h5', titleR!),
-              if (subR != null) CustomText('text sm', subR!, underline: true),
-            ], 4),
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              if (titleR != null) CustomText('heading h5', titleR!, alignment: TextAlign.right),
+              const Spacing(4),
+              if (subR != null) CustomText('text sm', subR!, underline: true, alignment: TextAlign.right),
+            ]),
             if (caret) const Spacing(16),
             if (caret) const CustomIcon('forward md'),
           ],

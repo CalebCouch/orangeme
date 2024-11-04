@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `price_thread`, `spawn`, `usb_thread`, `wallet_thread`
+// These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `is_same_date`, `price_thread`, `spawn`, `usb_thread`, `wallet_thread`
 
 Future<String> ruststart(
         {required String path,
@@ -33,3 +33,7 @@ String setStateConversation({required String path, required BigInt index}) =>
 String updateDisplayAmount({required String path, required String input}) =>
     RustLib.instance.api
         .crateApiSimpleUpdateDisplayAmount(path: path, input: input);
+
+String formatTransactionDate({required String date, required String time}) =>
+    RustLib.instance.api
+        .crateApiSimpleFormatTransactionDate(date: date, time: time);

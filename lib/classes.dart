@@ -152,7 +152,7 @@ class ExtTransaction {
     return ExtTransaction(
       json['fee'] as String,
       json['total'] as String,
-      json['tx'] as BasicTransaction,
+      BasicTransaction.fromJson(json['tx']),
     );
   }
 }
@@ -169,7 +169,7 @@ class BasicTransaction {
     return BasicTransaction(
       json['address'] as String,
       json['price'] as String,
-      json['tx'] as ShorthandTransaction,
+      ShorthandTransaction.fromJson(json['tx']),
     );
   }
 }

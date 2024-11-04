@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/bitcoin/transaction_details.dart';
 import 'package:orange/theme/stylesheet.dart';
@@ -14,7 +15,8 @@ import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-// import 'package:orange/global.dart' as global;
+import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/global.dart' as global;
 
 class BitcoinHome extends GenericWidget {
   BitcoinHome({super.key});
@@ -101,7 +103,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: 64),
       child: CustomColumn([
-        CustomText('heading ${dynamic_size(widget.usdUnformatted.length)}', widget.usd),
+        CustomText('heading ${dynamic_size(widget.usdUnformatted.length)}', "\$${widget.usd}"),
         CustomText('text lg text_secondary', '${widget.btc} BTC')
       ], AppPadding.valueDisplaySep),
     );
@@ -141,8 +143,8 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
         HapticFeedback.mediumImpact();
         navigateTo(ViewTransaction(txid: transaction.txid.toString()));
       },
-      title: transaction.is_withdraw ? "Received bitcoin" : "Sent bitcoin",
-      sub: transaction.date,
+      title: transaction.is_withdraw ? "Sent bitcoin" : "Received bitcoin",
+      sub: formatTransactionDate(date: transaction.date, time: transaction.time),
       titleR: transaction.usd,
       subR: "Details",
       caret: false,

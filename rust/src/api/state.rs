@@ -13,6 +13,8 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
+use num_format::{Locale, ToFormattedString};
+
 use bdk::bitcoin::{Network, Address};
 
 
@@ -97,8 +99,8 @@ impl StateManager {
     fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
         datetime
             .map(|dt| (
-                dt.format("%Y-%m-%d").to_string(),  // Date part
-                dt.format("%l:%M %p").to_string()   // Time part
+                dt.format("%m/%d/%Y").to_string(),
+                dt.format("%l:%M %p").to_string()
             ))
             .unwrap_or(("Pending".to_string(), "Pending".to_string()))
     }
@@ -220,7 +222,7 @@ impl StateManager {
                     date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
                     time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
                     btc: tx.btc,
-                    usd: format!("${}", tx.usd),
+                    usd: format!("${:.2}", tx.usd),
                     txid: tx.txid.to_string(),
                 },
             ).collect(),
@@ -300,39 +302,38 @@ impl StateManager {
         let tx = wallet.get_tx(&txid);  
         let x = tx.unwrap();
 
-        let basicTx = BasicTransaction {
+        let price = x.price;
+        let whole_part = price.trunc() as i64;
+        let decimal_part = (price.fract() * 100.0).round() as i64;
+        let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
+
+        let basic_tx = BasicTransaction {
             tx: ShorthandTransaction {
                 is_withdraw: x.is_withdraw,
                 date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
                 time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
                 btc: x.btc,
-                usd: format!("${}", x.usd),
+                usd: format!("${:.2}", x.usd),
                 txid: txid.to_string(),
             },
-            address: x.address,
-            price: format!("${}", x.price),
+            address: x.address.clone(),
+            price: formatted_price,
         };
     
-        let transaction = if x.is_withdraw {
-            ViewTransaction {
-                basic_transaction: Some(basicTx),
-                ext_transaction: None,
-            }
+        let ext_transaction = if x.is_withdraw {
+            Some(ExtTransaction {
+                tx: basic_tx.clone(),
+                fee: format!("${:.2}", x.fee_usd),
+                total: format!("${:.2}", x.fee_usd + x.usd),
+            })
         } else {
-            ViewTransaction {
-                basic_transaction: None,
-                ext_transaction: Some(ExtTransaction {
-                    tx: basicTx,
-                    fee: format!("${}", x.fee_usd),
-                    total: format!("${}", x.fee_usd + x.usd),
-                }),
-            }
+            None
         };
-        
-        // Serialize the transaction to JSON
-        let json = serde_json::to_string(&transaction)?;
-        Ok(json)
-        
+    
+        Ok(serde_json::to_string(&ViewTransaction {
+            basic_transaction: Some(basic_tx),
+            ext_transaction,
+        })?)
     }
 
     pub fn messages_home(&mut self) -> Result<String, Error> {
@@ -368,21 +369,21 @@ impl StateManager {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 struct ExtTransaction {
     pub tx: BasicTransaction,
     pub fee: String,
     pub total: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 struct BasicTransaction {
     pub tx: ShorthandTransaction,
     pub address: String,
     pub price: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 struct ShorthandTransaction {
     pub is_withdraw: bool,
     pub date: String,
