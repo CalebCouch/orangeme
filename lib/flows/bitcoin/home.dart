@@ -139,7 +139,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     return ListItem(
       onTap: () {
         HapticFeedback.mediumImpact();
-        navigateTo(ViewTransaction(transaction));
+        navigateTo(ViewTransaction(txid: transaction.txid.toString()));
       },
       title: transaction.is_withdraw ? "Received bitcoin" : "Sent bitcoin",
       sub: transaction.date,

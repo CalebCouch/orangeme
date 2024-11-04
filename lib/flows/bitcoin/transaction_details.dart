@@ -9,6 +9,9 @@ class ViewTransaction extends GenericWidget {
   String txid;
   ViewTransaction({super.key, required this.txid});
 
+  BasicTransaction basicTransaction = BasicTransaction('', '', ShorthandTransaction('', 0.0, '', '', false, ''));
+  ExtTransaction extTransaction = ExtTransaction('', '', BasicTransaction('', '', ShorthandTransaction('', 0.0, '', '', false, '')));
+
   @override
   ViewTransactionState createState() => ViewTransactionState();
 }
@@ -31,7 +34,10 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
 
   @override
   void unpack_state(Map<String, dynamic> json) {
-    setState(() {});
+    setState(() {
+      widget.basicTransaction = json["basicTransaction"] as BasicTransaction;
+      widget.extTransaction = json["extTransaction"] as ExtTransaction;
+    });
   }
 
   onDone() {

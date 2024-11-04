@@ -221,6 +221,7 @@ impl StateManager {
                     time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
                     btc: tx.btc,
                     usd: format!("${}", tx.usd),
+                    txid: "0000000000000000000000000000000000000000000000000000000000000000".to_string(),
                 },
             ).collect(),
             profile_picture: "".to_string(),
@@ -293,27 +294,29 @@ impl StateManager {
     }
 
     pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
-        let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()));
+        let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
+
         let wallet = self.get_wallet()?;
-        let tx = wallet.get_tx(&txid?)?;  
+        let tx = wallet.get_tx(&txid);  
+        let x = tx.unwrap();
     
     
         Ok(serde_json::to_string(&ViewTransaction {
             ext_transaction: Some(ExtTransaction {
                 tx: BasicTransaction {
                     tx: ShorthandTransaction {
-                        is_withdraw: tx.is_withdraw,
-                        date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                        time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                        btc: tx.btc,
-                        usd: format!("${}", tx.usd),
+                        is_withdraw: x.is_withdraw,
+                        date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                        time: self.format_datetime( x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+                        btc: x.btc,
+                        usd: format!("${}", x.usd),
+                        txid: txid.to_string(),
                     },
-                    address: tx.address,
-                    price: format!("${}",  tx.price),
+                    address: x.address,
+                    price: format!("${}",  x.price),
                 },
-                fee: format!("${}",  tx.fee_usd),
-                total: format!("${}", tx.fee_usd + tx.usd),
-                txid: "".to_string(),
+                fee: format!("${}",  x.fee_usd),
+                total: format!("${}", x.fee_usd + x.usd),
             }),
             basic_transaction: None,
         })?)
@@ -357,7 +360,6 @@ struct ExtTransaction {
     pub tx: BasicTransaction,
     pub fee: String,
     pub total: String,
-    pub txid: String,
 }
 
 #[derive(Serialize)]
@@ -374,6 +376,7 @@ struct ShorthandTransaction {
     pub time: String,
     pub btc: f64,
     pub usd: String,
+    pub txid: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default)]

@@ -21,6 +21,9 @@ PODS:
     - Flutter
   - share (0.0.1):
     - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - vibration (1.7.5):
     - Flutter
 
@@ -35,6 +38,7 @@ DEPENDENCIES:
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - rust_builder (from `.symlinks/plugins/rust_builder/ios`)
   - share (from `.symlinks/plugins/share/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
 
 SPEC REPOS:
@@ -62,6 +66,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/rust_builder/ios"
   share:
     :path: ".symlinks/plugins/share/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   vibration:
     :path: ".symlinks/plugins/vibration/ios"
 
@@ -77,6 +83,7 @@ SPEC CHECKSUMS:
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   rust_builder: f6978b592ea8050cb7ffe27cba97bdfb8bca8141
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
 
 PODFILE CHECKSUM: 7be2f5f74864d463a8ad433546ed1de7e0f29aef
