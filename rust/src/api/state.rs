@@ -221,7 +221,7 @@ impl StateManager {
                     time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
                     btc: tx.btc,
                     usd: format!("${}", tx.usd),
-                    txid: "0000000000000000000000000000000000000000000000000000000000000000".to_string(),
+                    txid: tx.txid.to_string(),
                 },
             ).collect(),
             profile_picture: "".to_string(),
@@ -299,27 +299,40 @@ impl StateManager {
         let wallet = self.get_wallet()?;
         let tx = wallet.get_tx(&txid);  
         let x = tx.unwrap();
+
+        let basicTx = BasicTransaction {
+            tx: ShorthandTransaction {
+                is_withdraw: x.is_withdraw,
+                date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+                btc: x.btc,
+                usd: format!("${}", x.usd),
+                txid: txid.to_string(),
+            },
+            address: x.address,
+            price: format!("${}", x.price),
+        };
     
-    
-        Ok(serde_json::to_string(&ViewTransaction {
-            ext_transaction: Some(ExtTransaction {
-                tx: BasicTransaction {
-                    tx: ShorthandTransaction {
-                        is_withdraw: x.is_withdraw,
-                        date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                        time: self.format_datetime( x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                        btc: x.btc,
-                        usd: format!("${}", x.usd),
-                        txid: txid.to_string(),
-                    },
-                    address: x.address,
-                    price: format!("${}",  x.price),
-                },
-                fee: format!("${}",  x.fee_usd),
-                total: format!("${}", x.fee_usd + x.usd),
-            }),
-            basic_transaction: None,
-        })?)
+        let transaction = if x.is_withdraw {
+            ViewTransaction {
+                basic_transaction: Some(basicTx),
+                ext_transaction: None,
+            }
+        } else {
+            ViewTransaction {
+                basic_transaction: None,
+                ext_transaction: Some(ExtTransaction {
+                    tx: basicTx,
+                    fee: format!("${}", x.fee_usd),
+                    total: format!("${}", x.fee_usd + x.usd),
+                }),
+            }
+        };
+        
+        // Serialize the transaction to JSON
+        let json = serde_json::to_string(&transaction)?;
+        Ok(json)
+        
     }
 
     pub fn messages_home(&mut self) -> Result<String, Error> {

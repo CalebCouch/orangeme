@@ -40,7 +40,7 @@ class ConfirmState extends GenericState<Confirm> {
     setState(() {
       isLoading = true;
     });
-    await global.invoke("broadcast_transaction", widget.tx.txid);
+    await global.invoke("broadcast_transaction", widget.tx.tx.tx.txid);
     navigateTo(context, Success(tx: widget.tx));
   }
 
@@ -55,7 +55,7 @@ class ConfirmState extends GenericState<Confirm> {
       [
         isLoading ? loadingCircle() : Container(),
         isLoading ? Container() : ConfirmAddress(context, widget.tx.tx.address),
-        isLoading ? Container() : ConfirmAmount(context, widget.tx.tx.address, widget.tx.fee, widget.tx.tx.tx.usd, widget.tx.tx.tx.btc),
+        isLoading ? Container() : ConfirmAmount(context, widget.tx.tx.address, widget.tx.fee, widget.tx.tx.tx.usd, "${widget.tx.tx.tx.btc} BTC"),
       ],
       isLoading ? Container() : Bumper(context, [CustomButton('Confirm & Send', 'primary lg expand none', () => onContinue(), 'enabled')]),
       isLoading ? Alignment.center : Alignment.topCenter,

@@ -95,6 +95,7 @@ pub struct Transaction {
     pub confirmation_time: Option<(u32, DateTime)>,
     pub fee: f64,
     pub fee_usd: f64,
+    pub txid: Txid,
 }
 
 impl Transaction {
@@ -110,7 +111,7 @@ impl Transaction {
         let address = if is_withdraw {
             let client = bdk::electrum_client::Client::new("ssl://electrum.blockstream.info:50002")?;
             let blockchain = ElectrumBlockchain::from(client);
-            details_tx.input.into_iter().map(|input| {
+            details_tx.input.clone().into_iter().map(|input| {
                 let prev_tx = blockchain.get_tx(&input.previous_output.txid)?.ok_or(Error::bad_request(ec, "Missing Prev Transaction"))?;
                 Ok::<Option<TxOut>, Error>(prev_tx.output.into_iter().find(|txout| !is_mine(txout.script_pubkey.as_script())))
             }).collect::<Result<Vec<Option<TxOut>>, Error>>()?
@@ -119,7 +120,7 @@ impl Transaction {
                 Ok::<String, Error>(Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string())
             ).transpose()?.unwrap_or("Redeposit".to_string())
         } else {
-            let txout = details_tx.output.into_iter().find(|txout| is_mine(txout.script_pubkey.as_script())).ok_or(Error::bad_request(ec, "No Output is_mine"))?;
+            let txout = details_tx.output.clone().into_iter().find(|txout| is_mine(txout.script_pubkey.as_script())).ok_or(Error::bad_request(ec, "No Output is_mine"))?;
             Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string()
         };
         let confirmation_time = details.confirmation_time.map(|ct|
@@ -129,7 +130,8 @@ impl Transaction {
         let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))? as f64 / SATS;
         let fee_usd = fee*price;
         let error = || Error::bad_request(ec, "Missing Sent Address");
-        Ok(Transaction{btc, usd, price, address, is_withdraw, confirmation_time, fee, fee_usd})
+        let txid = details_tx.txid();
+        Ok(Transaction{btc, usd, price, address, is_withdraw, confirmation_time, fee, fee_usd, txid})
     }
 }
 
@@ -175,7 +177,9 @@ impl Wallet {
     }
 
     pub fn get_tx(&self, txid: &Txid) -> Result<Transaction, Error> {
-        Ok(self.get_transactions()?.remove(txid).expect("Get_tx has error"))
+        self.get_transactions()?
+            .remove(txid)
+            .ok_or_else(|| Error::err("Transaction not found", &format!("No transaction found for Txid: {}", txid)))
     }
 
 

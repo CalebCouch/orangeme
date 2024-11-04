@@ -227,7 +227,6 @@ class Message {
   String date;
   String time;
   bool isIncoming;
-  //Can we compare the sender's did to our did to figure this out?
 
   Message(this.sender, this.message, this.date, this.time, this.isIncoming);
   factory Message.fromJson(Map<String, dynamic> json) {
