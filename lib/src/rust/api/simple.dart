@@ -30,6 +30,9 @@ String setStateConversation({required String path, required BigInt index}) =>
     RustLib.instance.api
         .crateApiSimpleSetStateConversation(path: path, index: index);
 
+String setStateBtc({required String path, required double btc}) =>
+    RustLib.instance.api.crateApiSimpleSetStateBtc(path: path, btc: btc);
+
 String updateDisplayAmount({required String path, required String input}) =>
     RustLib.instance.api
         .crateApiSimpleUpdateDisplayAmount(path: path, input: input);

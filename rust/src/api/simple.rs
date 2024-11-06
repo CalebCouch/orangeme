@@ -216,6 +216,21 @@ pub fn setStateConversation(path: String, index: usize) -> String {
     }
 }
 
+#[frb(sync)]
+pub fn setStateBtc(path: String, btc: f64) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        state.set(Field::AmountBTC, &btc)?;
+        Ok("BTC set successfully".to_string())
+    })();
+
+    match result {
+        Ok(message) => message,
+        Err(error) => format!("Error: {}", error),
+    }
+}
+
+
 
 #[frb(sync)]
 pub fn updateDisplayAmount(path: String, input: &str) -> String {
@@ -291,7 +306,6 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         } else {
             None
         };
-        
         state.set(Field::Amount, &updated_amount)?;
         state.set(Field::AmountErr, &err)?;
         state.set(Field::Decimals, &decimals)?;

@@ -42,7 +42,7 @@ class SendState extends GenericState<Send> {
 
   onContinue() {
     if (widget.valid) {
-      setAddress(controller.text);
+      setStateAddress(path: global.dataDir!, address: controller.text);
       navigateTo(context, Amount());
     }
   }
@@ -62,12 +62,8 @@ class SendState extends GenericState<Send> {
       if (controller.text.startsWith("bitcoin:")) {
         controller.text = controller.text.replaceFirst("bitcoin:", "");
       }
-      setAddress(controller.text);
+      setStateAddress(path: global.dataDir!, address: controller.text);
     }
-  }
-
-  setAddress(String a) {
-    setStateAddress(path: global.dataDir!, address: a);
   }
 
   onScan() {
@@ -95,7 +91,7 @@ class SendState extends GenericState<Send> {
   Widget AddressInput(controller) {
     return CustomTextInput(
       controller: controller,
-      onSubmitted: (String address) => {setAddress(address)},
+      onSubmitted: (String address) => {setStateAddress(path: global.dataDir!, address: address)},
       error: widget.valid || controller.text.isEmpty ? "" : "Not a valid address",
       hint: 'Bitcoin address...',
     );

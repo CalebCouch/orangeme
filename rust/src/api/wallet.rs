@@ -193,23 +193,21 @@ impl Wallet {
     }
     
 
-    pub fn get_fees(&self, address: String, amount: f64) -> Result<(f64, f64), Error> {
+    pub fn get_fees(&self, address: String, amount: f64, price: f64) -> Result<(f64, f64), Error> {
         let address = Address::from_str(&address)?.require_network(Network::Bitcoin);
     
         let mut builder = self.inner.build_tx();
         builder.add_recipient(address?.script_pubkey(), (amount * SATS) as u64);
         let size = builder.finish()?.0.extract_tx().vsize() as f64;
+
     
         let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
-    
-        let priority_fee = (blockchain.estimate_fee(1)? * size) / SATS; 
-        let standard_fee = (blockchain.estimate_fee(3)? * size) / SATS; 
 
-        Ok((priority_fee, standard_fee))
+        Ok((((blockchain.estimate_fee(3)? / 1000 as f64) * size) * price, ((blockchain.estimate_fee(1)? / 1000 as f64) * size) * price))
     }
     
 
-    /*
+    
     pub fn build_transaction(&self) -> Result<String, Error> {
         let ec = "Main.create_transaction";
         let error = || Error::bad_request(ec, "Invalid parameters");
@@ -242,7 +240,7 @@ impl Wallet {
         let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
 
         Ok(serde_json::to_string(&tx)?)
-    } */
+    } 
 
   //pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
   //    let client = Builder::new(CLIENT_URI).build_blocking()?;

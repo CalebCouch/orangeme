@@ -252,7 +252,6 @@ impl StateManager {
         let err = self.state.get::<Option<String>>(Field::AmountErr)?; 
         let decimals = self.state.get::<String>(Field::Decimals)?; 
         let btc = self.usd_to_btc(amount.clone())?;
-        self.state.set(Field::AmountBTC, &btc)?;
 
         Ok(serde_json::to_string(&Amount{
             err: err.unwrap_or_default(),
@@ -265,13 +264,15 @@ impl StateManager {
     pub fn speed(&self) -> Result<String, Error> {
         let address = self.state.get::<String>(Field::Address)?;
         let amount = self.state.get::<f64>(Field::AmountBTC)?;
-        let wallet = self.get_wallet()?;
-        let btc_fees: (f64, f64) = wallet.get_fees(address, amount)?;
         let price = self.state.get::<f64>(Field::Price)?;
-        
-        let fees: (f64, f64) = (btc_fees.0 / price, btc_fees.1 / price);
+        let wallet = self.get_wallet()?;
+        let fees: (f64, f64) = wallet.get_fees(address, amount, price)?;
+        let fees_str: (String, String) = (
+            format!("${:.2}", fees.0),
+            format!("${:.2}", fees.1)
+        );
         Ok(serde_json::to_string(&Speed{
-           fees,
+           fees: fees_str,
         })?)
     }
 
@@ -298,8 +299,9 @@ impl StateManager {
         let amt: f64 = amount.parse().map_err(|_| Error::err("usd_to_btc", "Invalid amount format"))?;
         let price = self.state.get::<f64>(Field::Price)?;
         let btc_amount = amt / price; 
+        let rounded_btc_amount = (btc_amount * 1e8).round() / 1e8;
     
-        Ok(btc_amount)
+        Ok(rounded_btc_amount)
     }
 
     pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
@@ -457,7 +459,7 @@ struct Amount {
 
 #[derive(Serialize)]
 struct Speed {
-    pub fees: (f64, f64)
+    pub fees: (String, String)
 }
 
 #[derive(Serialize)]

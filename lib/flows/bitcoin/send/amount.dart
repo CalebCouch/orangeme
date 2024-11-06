@@ -51,6 +51,7 @@ class AmountState extends GenericState<Amount> {
   String enabled = 'disabled';
 
   onContinue() {
+    setStateBtc(path: global.dataDir!, btc: widget.btc);
     navigateTo(Speed());
   }
 
