@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/result.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/navigation.dart';
@@ -8,10 +7,9 @@ import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
 
 class Success extends GenericWidget {
-  final ExtTransaction tx;
-  Success({super.key, required this.tx});
+  Success({super.key});
 
-  double amount = 0; //transaction total
+  late String usd;
 
   @override
   SuccessState createState() => SuccessState();
@@ -31,27 +29,36 @@ class SuccessState extends GenericState<Success> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.amount;
+      widget.usd = json['usd'];
     });
   }
 
   onDone() {
-    resetNavTo(
-      context,
-      BitcoinHome(),
-    );
+    resetNavTo(context, BitcoinHome());
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack_Default(
-      Header_Stack(context, "Confirm send", exitButton(context, BitcoinHome())),
+      Header_Stack(context, "Confirm send", Container(), exitButton(context, BitcoinHome())),
       [
-        Result('You sent ${widget.tx.tx.tx.usd}'),
+        Result('You sent ${widget.usd}'),
       ],
       Bumper(context, [CustomButton('Done', 'secondary lg expand none', onDone, 'enabled')]),
       Alignment.center,
       false,
     );
   }
+}
+
+Widget Result(String resultMessage, [String icon = 'bitcoin']) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      CustomIcon('$icon xxl'),
+      const Spacing(16),
+      CustomText('heading h3', resultMessage),
+    ],
+  );
 }

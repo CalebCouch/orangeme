@@ -85,7 +85,7 @@ impl DescriptorSet {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct Transaction {
     pub btc: f64,
     pub usd: f64,
@@ -202,45 +202,53 @@ impl Wallet {
 
     
         let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
-
         Ok((((blockchain.estimate_fee(3)? / 1000 as f64) * size) * price, ((blockchain.estimate_fee(1)? / 1000 as f64) * size) * price))
     }
     
 
     
-    pub fn build_transaction(&self) -> Result<String, Error> {
+    pub fn build_transaction(&mut self) -> Result<String, Error> {
         let ec = "Main.create_transaction";
-        let error = || Error::bad_request(ec, "Invalid parameters");
+        let error = || Error::bad_request(ec, "Invalid parameters"); 
+        let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
 
-        let address = self.state.get::<String>(Field::Address)?;
-        let amount = (f64::from_str(self.state.get::<String>(Field::Btc)?)? * SATS) as u64;
-        let priority = u8::from_str(self.state.get::<String>(Field::Priority)?)? as u8;
+        let address_str = self.state.get::<String>(Field::Address)?;
+        let address = Address::from_str(&address_str)?.require_network(Network::Bitcoin);
+
+        let amount_btc = self.state.get::<f64>(Field::AmountBTC)?;
+        let priority = self.state.get::<u8>(Field::Priority)?;
 
         let price = self.state.get::<f64>(Field::Price)?;
 
-        let is_mine = |s: &Script| wallet.is_mine(s).unwrap_or(false);
-        let fees = get_fees(address, amount)?;
+        let is_mine = |s: &Script| self.inner.is_mine(s).unwrap_or(false);
+        let amount = (amount_btc * SATS) as u64;
+        let selected_fee = if priority == 0 { 
+            blockchain.estimate_fee(3)? as f64 / 1000.0 
+        } else { 
+            blockchain.estimate_fee(1)? as f64 / 1000.0
+        };
 
         let (mut psbt, mut tx_details) = {
-            let mut builder = wallet.build_tx();
-            builder.add_recipient(address.script_pubkey(), amount);
-            //builder.fee_rate(FeeRate::from_btc_per_kvb(fees[priority as usize] as f32));
+            let mut builder = self.inner.build_tx();
+            builder.add_recipient(address?.script_pubkey(), amount);
+            builder.fee_rate(FeeRate::from_sat_per_vb(selected_fee as f32));
             builder.finish()?
         };
         
-        let finalized = wallet.sign(&mut psbt, SignOptions::default())?;
+        let finalized = self.inner.sign(&mut psbt, SignOptions::default())?;
         if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
 
         let tx = psbt.clone().extract_tx();
-        let mut stream: Vec<u8> = Vec::new();
-        tx.consensus_encode(&mut stream)?;
-        store.set(&tx_details.txid.to_string().as_bytes(), &stream)?;
+        self.state.set(Field::CurrentRawTx, &tx)?;
+
 
         tx_details.transaction = Some(tx);
-        let tx = Transaction::from_details(tx_details, current_price, |s: &Script| {wallet.is_mine(s).unwrap_or(false)})?;
 
+        let tx = Transaction::from_details(tx_details, price, |s: &Script| {self.inner.is_mine(s).unwrap_or(false)})?;
+        self.state.set(Field::CurrentTx, &tx)?;
         Ok(serde_json::to_string(&tx)?)
     } 
+
 
   //pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
   //    let client = Builder::new(CLIENT_URI).build_blocking()?;

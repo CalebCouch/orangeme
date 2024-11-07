@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
 import 'package:orange/src/rust/api/simple.dart';
@@ -67,7 +68,13 @@ class SendState extends GenericState<Send> {
   }
 
   onScan() {
-    switchPageTo(context, ScanQR());
+    navigateTo(context, ScanQR());
+  }
+
+  backButton() {
+    return iconButton(() {
+      navigateTo(context, BitcoinHome());
+    }, 'left lg');
   }
 
   final TextEditingController controller = TextEditingController();
@@ -75,7 +82,7 @@ class SendState extends GenericState<Send> {
   @override
   Widget build(BuildContext context) {
     return Stack_Default(
-      Header_Stack(context, "Bitcoin address"),
+      Header_Stack(context, "Bitcoin address", null, backButton()),
       [
         AddressInput(controller),
         ButtonTips(),

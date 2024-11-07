@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/send/confirm.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
   Speed({super.key});
@@ -44,13 +46,11 @@ class SpeedState extends GenericState<Speed> {
     setState(() {
       isLoading = true;
     });
-
-    //var tx = await buildTransaction(addressStr: widget.address, amountStr: '${widget.btc}', priorityStr: '$index');
-
+    setStatePriority(path: global.dataDir!, index: index);
     setState(() {
       isLoading = false;
     });
-    //navigateTo(Confirm(tx: tx));
+    navigateTo(Confirm());
   }
 
   @override

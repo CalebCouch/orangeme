@@ -1,7 +1,7 @@
 use super::Error;
 
 use super::structs::{Platform, DartCommand, Storage, DartCallback};
-use super::wallet::{Wallet, DescriptorSet, Seed};
+use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 //use super::callback::RustCallback;
 use super::price::PriceGetter;
 use super::state::{StateManager, State, Field};
@@ -12,7 +12,8 @@ use simple_database::SqliteStore;
 
 use bdk::bitcoin::{Network, Address};
 use bdk::database::SqliteDatabase;
-use bdk::blockchain::ElectrumBlockchain;
+use bdk::blockchain::electrum::ElectrumBlockchain;
+use bdk::electrum_client::ElectrumApi;
 use bdk::FeeRate;
 use bdk::SignOptions;
 use bdk::blockchain::Progress;
@@ -39,6 +40,7 @@ use chrono::Local;
 use crate::api::state::Conversation;
 
 const SATS: u64 = 100_000_000;
+const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
 
 use reqwest::Client;
 
@@ -186,7 +188,7 @@ pub fn getstate(path: String, name: String, options: String) -> String {
 }
 
 #[frb(sync)]
-pub fn setStateAddress(path: String, address: String) -> String {
+pub fn setStateAddress(path: String, mut address: String) -> String {
     let result: Result<String, Error> = (move || {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
         state.set::<String>(Field::Address, &address)?;
@@ -222,6 +224,21 @@ pub fn setStateBtc(path: String, btc: f64) -> String {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
         state.set(Field::AmountBTC, &btc)?;
         Ok("BTC set successfully".to_string())
+    })();
+
+    match result {
+        Ok(message) => message,
+        Err(error) => format!("Error: {}", error),
+    }
+}
+
+
+#[frb(sync)]
+pub fn setStatePriority(path: String, index: u8) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        state.set(Field::Priority, &index)?;
+        Ok("Priority set successfully".to_string())
     })();
 
     match result {
@@ -335,4 +352,22 @@ pub fn format_transaction_date(date: String, time: String) -> String {
 
 fn is_same_date(date1: NaiveDate, date2: NaiveDate) -> bool {
     date1.year() == date2.year() && date1.month() == date2.month() && date1.day() == date2.day()
+}
+
+
+#[frb(sync)]
+pub fn broadcastTx(path: String) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        let client = bdk::electrum_client::Client::new(CLIENT_URI)?;
+        let blockchain = ElectrumBlockchain::from(client);
+        let tx = state.get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)?;
+        blockchain.transaction_broadcast(&tx.unwrap());
+        Ok("Transaction successfully broadcast".to_string())
+    })();
+
+    match result {
+        Ok(x) => x,
+        Err(error) => format!("Error: {}", error),
+    }
 }

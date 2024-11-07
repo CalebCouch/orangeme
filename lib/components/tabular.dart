@@ -65,14 +65,3 @@ Widget contactTabular(BuildContext context, String name, String did) {
     ],
   );
 }
-
-Widget confirmationTabular(BuildContext context, String address, String fee, String usd, String btc) {
-  return Column(
-    children: [
-      SingleTab(title: "Sent to Address", subtitle: transactionCut(address)),
-      SingleTab(title: "Amount Sent", subtitle: btc),
-      SingleTab(title: "USD Value Sent", subtitle: usd),
-      SingleTab(title: "Fee", subtitle: fee),
-    ],
-  );
-}

@@ -33,6 +33,10 @@ String setStateConversation({required String path, required BigInt index}) =>
 String setStateBtc({required String path, required double btc}) =>
     RustLib.instance.api.crateApiSimpleSetStateBtc(path: path, btc: btc);
 
+String setStatePriority({required String path, required int index}) =>
+    RustLib.instance.api
+        .crateApiSimpleSetStatePriority(path: path, index: index);
+
 String updateDisplayAmount({required String path, required String input}) =>
     RustLib.instance.api
         .crateApiSimpleUpdateDisplayAmount(path: path, input: input);
@@ -40,3 +44,6 @@ String updateDisplayAmount({required String path, required String input}) =>
 String formatTransactionDate({required String date, required String time}) =>
     RustLib.instance.api
         .crateApiSimpleFormatTransactionDate(date: date, time: time);
+
+String broadcastTx({required String path}) =>
+    RustLib.instance.api.crateApiSimpleBroadcastTx(path: path);

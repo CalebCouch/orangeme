@@ -15,6 +15,9 @@ class ScanQR extends GenericWidget {
 }
 
 class ScanQRState extends GenericState<ScanQR> {
+  late QRViewController controller;
+  GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
   @override
   String stateName() {
     return "ScanQR";
@@ -33,14 +36,7 @@ class ScanQRState extends GenericState<ScanQR> {
   @override
   Widget build(BuildContext context) {
     return Root_Takeover(
-      Header_Stack(
-        context,
-        "Scan QR code",
-        null,
-        iconButton(() {
-          switchPageTo(context, Send());
-        }, 'left lg'),
-      ),
+      Header_Stack(context, "Scan QR code"),
       Expanded(
         child: Stack(children: [
           qrScanner(context),
@@ -50,10 +46,19 @@ class ScanQRState extends GenericState<ScanQR> {
     );
   }
 
-  late QRViewController controller;
-  GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
-  //The following widgets can ONLY be used in this file
+  _onQRViewCreated(BuildContext context, QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setStateAddress(path: global.dataDir!, address: scanData.code!);
+      switchPageTo(context, Send());
+    });
+  }
 
   Widget Guide() {
     return Expanded(
@@ -69,17 +74,6 @@ class ScanQRState extends GenericState<ScanQR> {
         ),
       ),
     );
-  }
-
-  /* Initializes the QR view controller and handles scanned data. */
-  _onQRViewCreated(BuildContext context, QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      setStateAddress(path: global.dataDir!, address: scanData.code!);
-      print('setting address');
-      print(scanData.code!);
-      switchPageTo(context, Send());
-    });
   }
 
   scanBox() {
