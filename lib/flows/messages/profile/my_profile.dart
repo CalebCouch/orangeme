@@ -30,7 +30,7 @@ class MyProfileState extends GenericState<MyProfile> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.personal = Contact.fromJson(json["personal"]);
+      widget.personal = Contact.fromJson(json);
     });
   }
 
@@ -63,8 +63,8 @@ class MyProfileState extends GenericState<MyProfile> {
     saveInfo() {
       setState(() {
         save = false;
-        widget.personal.name = _profileName.text;
-        widget.personal.abtme = _aboutMe.text;
+        //widget.personal.name = _profileName.text;
+        //widget.personal.abtme = _aboutMe.text;
       });
       FocusScope.of(context).requestFocus(FocusNode());
     }

@@ -1,14 +1,14 @@
 use super::Error;
 
-use super::structs::{Platform, DartCommand, Storage, DartCallback};
+use super::structs::{Platform, DartCommand, Storage, DartCallback, Profile};
 use super::wallet::{Wallet, DescriptorSet, Seed};
-//use super::callback::RustCallback;
 use super::price::PriceGetter;
 use super::state::{StateManager, State, Field};
 use super::usb::UsbInfo;
 
 use simple_database::KeyValueStore;
 use simple_database::SqliteStore;
+use simple_database::database::{FiltersBuilder, IndexBuilder, Filter};
 
 use bdk::bitcoin::{Network, Address};
 use bdk::database::SqliteDatabase;
@@ -38,6 +38,12 @@ use chrono::Local;
 
 use crate::api::state::Conversation;
 
+use web5_rust::dids::{DhtDocument, Identity};
+use web5_rust::{Record};
+use super::protocols::Protocols;
+
+use log::{warn, info, error, debug, trace};
+
 const SATS: u64 = 100_000_000;
 
 use reqwest::Client;
@@ -65,7 +71,7 @@ async fn spawn<T>(task: T) -> Result<(), Error>
 
 async fn internet_thread(mut state: State) -> Result<(), Error> {
     let client = Client::new();
-    
+
     loop {
         let connected = client.get("https://google.com")
             .send()
@@ -74,9 +80,9 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
             .unwrap_or(false);
 
         if !connected { panic!("Internet connection failed") };
-        
+
         state.set(Field::Internet, &connected)?;
-        
+
         thread::sleep(time::Duration::from_millis(1000));
     }
 }
@@ -102,6 +108,38 @@ async fn wallet_thread(mut state: State) -> Result<(), Error> {
     } else {Ok(())}
 }
 
+async fn web5_thread(mut state: State, id: Identity) -> Result<(), Error> {
+    info!("Start Web5 init");
+    if !state.get::<Platform>(Field::Platform)?.is_desktop() {
+        let mut wallet = web5_rust::Wallet::new(id, None, None);
+        let agent_key = wallet.get_agent_key(&Protocols::rooms_protocol()).await?;
+        let agent = web5_rust::Agent::new(agent_key, Protocols::get(), None, None);
+        let tenant = agent.tenant().clone();
+        let profile = if let Some(p) = agent.public_read(FiltersBuilder::build(vec![
+            ("author", Filter::equal(tenant.to_string())),
+            ("type", Filter::equal("profile"))]
+        ), None, None).await?.first() {
+            let profile = serde_json::from_slice::<Profile>(&p.1.payload)?;
+            state.set(Field::Profile, &profile)?;
+            profile
+        } else {
+            let index = IndexBuilder::build(vec![("type", "profile")]);
+            let profile = Profile::new("Default Name".to_string(), tenant, None, None);
+            let record = Record::new(None, &Protocols::profile(), serde_json::to_vec(&profile)?);
+            agent.public_create(record, index, None).await?;
+            state.set(Field::Profile, &profile)?;
+            profile
+        };
+        info!("Finished Web5 init");
+        loop {
+            info!("Web5 scan");
+          //agent.scan().await?;
+          //thread::sleep(time::Duration::from_millis(1_000));
+        }
+        Err(Error::Exited("Agent Scan".to_string()))
+    } else {Ok(())}
+}
+
 async fn usb_thread(mut state: State) -> Result<(), Error> {
     let platform: Platform = state.get(Field::Platform)?;
     if platform.is_desktop() {
@@ -124,6 +162,15 @@ async fn async_rust (
     platform: String,
     thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
 ) -> Result<(), Error> {
+
+    #[cfg(target_os = "android")]
+    android_logger::init_once(
+        android_logger::Config::default().with_max_level(log::LevelFilter::Info),
+    );
+    #[cfg(any(target_os = "ios", target_os = "macos"))]
+    oslog::OsLogger::new("frb_user").level_filter(log::LevelFilter::Info).init();
+    thread::sleep(time::Duration::from_millis(500));//TODO: loggers need time to initialize maybe find an async solution
+
     let mut dart_callback = DartCallback::new();
     dart_callback.add_thread(thread);
 
@@ -137,6 +184,16 @@ async fn async_rust (
     state.set(Field::Platform, &platform)?;
 
     let storage = Storage::new(dart_callback.clone());
+
+    let (doc, id) = if let Some(i) = storage.get("identity").await? {
+        serde_json::from_str::<(DhtDocument, Identity)>(&i)?
+    } else {
+        let tup = DhtDocument::default(vec!["did:dht:fxaigdryri3os713aaepighxf6sm9h5xouwqfpinh9izwro3mbky".to_string()])?;
+        storage.set("identity", &serde_json::to_string(&tup)?).await?;
+        tup
+    };
+
+    doc.publish(&id.did_key).await?;
 
    if !platform.is_desktop() {
       //let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
@@ -155,12 +212,14 @@ async fn async_rust (
     }
 
     tokio::try_join!(
-        spawn(price_thread(state.clone())),
-        spawn(internet_thread(state.clone())),
-        spawn(wallet_thread(state.clone())),
-        spawn(usb_thread(state)),
+      //spawn(price_thread(state.clone())),
+      //spawn(internet_thread(state.clone())),
+      //spawn(wallet_thread(state.clone())),
+        spawn(web5_thread(state.clone(), id)),
+      //spawn(usb_thread(state)),
     )?;
-    Ok(())
+
+    Err(Error::Exited("Main Thread".to_string()))
 }
 
 pub async fn ruststart (
@@ -206,7 +265,6 @@ pub fn setStateConversation(path: String, index: usize) -> String {
         let conversations = state.get::<Vec<Conversation>>(Field::Conversations)?;
         let conversation = &conversations[index];
         state.set(Field::CurrentConversation, conversation)?;
-        
         Ok("Current conversation set successfully".to_string())
     })();
 
@@ -226,7 +284,7 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         let usd_balance = btc*state.get::<f64>(Field::Price)?;
         let min: f64 = 0.30;
         let max = usd_balance - min;
-        
+
         let (updated_amount, validation) = match input {
             "reset" => ("0".to_string(), true),
             "backspace" => {
@@ -261,7 +319,7 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
                     (amount.clone(), false)
                 }
             }
-        };        
+        };
 
         let decimals = if updated_amount.contains('.') {
             let split: Vec<&str> = updated_amount.split('.').collect();
@@ -274,7 +332,6 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         } else {
             String::new()
         };
-        
 
         let updated_amount_f64 = updated_amount.parse::<f64>().unwrap_or(0.0);
 
@@ -291,7 +348,7 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         } else {
             None
         };
-        
+
         state.set(Field::Amount, &updated_amount)?;
         state.set(Field::AmountErr, &err)?;
         state.set(Field::Decimals, &decimals)?;
@@ -313,9 +370,9 @@ pub fn format_transaction_date(date: String, time: String) -> String {
     if is_same_date(transaction_date, now) {
         time
     } else if is_same_date(transaction_date, now - Duration::days(1)) {
-        "Yesterday".to_string() 
+        "Yesterday".to_string()
     } else {
-        format!("{}", transaction_date.format("%B %e")) 
+        format!("{}", transaction_date.format("%B %e"))
     }
 }
 

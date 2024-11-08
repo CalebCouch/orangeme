@@ -6,7 +6,7 @@ pub mod error;
 use error::Error;
 
 /// flutter_rust_bridge:ignore
-//pub mod protocols;
+pub mod protocols;
 /// flutter_rust_bridge:ignore
 pub mod structs;
 /// flutter_rust_bridge:ignore

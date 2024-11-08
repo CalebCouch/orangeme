@@ -1,7 +1,7 @@
 use super::Error;
 
 use super::wallet::{Wallet, DescriptorSet, Transaction};
-use super::structs::DateTime;
+use super::structs::{DateTime, Profile};
 
 use simple_database::KeyValueStore;
 
@@ -24,10 +24,12 @@ const SATS: u64 = 100_000_000;
 
 #[derive(Debug)]
 pub enum Field {
+    Identity,
     LegacySeed,
     DescriptorSet,
     Internet,
     Platform,
+    Profile,
     Address,
     Amount,
     Priority,
@@ -71,6 +73,12 @@ impl State {
 
     pub fn get_raw(&self, field: Field) -> Result<Option<Vec<u8>>, Error> {
         Ok(self.store.get(&field.into_bytes())?)
+    }
+
+    pub fn get_o<T: for <'a> Deserialize<'a>>(&self, field: Field) -> Result<Option<T>, Error> {
+        Ok(self.store.get(&field.into_bytes())?.map(|b|
+            serde_json::from_slice(&b)
+        ).transpose()?)
     }
 
     pub fn get<T: for <'a> Deserialize<'a> + Default>(&self, field: Field) -> Result<T, Error> {
@@ -130,35 +138,35 @@ impl StateManager {
             name: "Alice".to_string(),
             pfp: None,
         };
-    
+
         let bob = Contact {
             abt_me: Some("Graphic Designer".to_string()),
             did: "did:example:bob".to_string(),
             name: "Bob".to_string(),
             pfp: None,
         };
-    
+
         let message1 = Message {
-            sender: alice.clone(),  
+            sender: alice.clone(),
             message: "Hello, Bob!".to_string(),
             date: "2024-8-14".to_string(),
             time: "2:32 AM".to_string(),
             is_incoming: false,
         };
-    
+
         let message2 = Message {
-            sender: bob.clone(),  
+            sender: bob.clone(),
             message: "Hi Alice, how are you?".to_string(),
             date: "2024-8-14".to_string(),
             time: "2:32 AM".to_string(),
             is_incoming: true,
         };
-    
+
         let conversation1 = Conversation {
             members: vec![alice.clone(), bob.clone()], 
             messages: vec![message1, message2],  
         };
-    
+
         let conversation2 = Conversation {
             members: vec![alice.clone()],
             messages: vec![
@@ -268,7 +276,6 @@ impl StateManager {
         let wallet = self.get_wallet()?;
         let btc_fees: (f64, f64) = wallet.get_fees(address, amount)?;
         let price = self.state.get::<f64>(Field::Price)?;
-        
         let fees: (f64, f64) = (btc_fees.0 / price, btc_fees.1 / price);
         Ok(serde_json::to_string(&Speed{
            fees,
@@ -284,21 +291,15 @@ impl StateManager {
     }
 
     pub fn my_profile(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&MyProfile{
-            personal: Contact {
-                abt_me: Some("About me info".to_string()),
-                did: "user-did-string".to_string(), 
-                name: "User Name".to_string(),      
-                pfp: Some("users/profile/picture.png".to_string()),
-            },
-        })?)
+        let profile = self.state.get_o::<Profile>(Field::Profile)?.ok_or(Error::err("my_profile", "Profile not found"))?;
+        Ok(serde_json::to_string(&profile)?)
     }
 
     pub fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
         let amt: f64 = amount.parse().map_err(|_| Error::err("usd_to_btc", "Invalid amount format"))?;
         let price = self.state.get::<f64>(Field::Price)?;
-        let btc_amount = amt / price; 
-    
+        let btc_amount = amt / price;
+
         Ok(btc_amount)
     }
 
@@ -306,7 +307,7 @@ impl StateManager {
         let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
 
         let wallet = self.get_wallet()?;
-        let tx = wallet.get_tx(&txid);  
+        let tx = wallet.get_tx(&txid);
         let x = tx.unwrap();
 
         let price = x.price;
@@ -326,7 +327,7 @@ impl StateManager {
             address: x.address.clone(),
             price: formatted_price,
         };
-    
+
         let ext_transaction = if x.is_withdraw {
             Some(ExtTransaction {
                 tx: basic_tx.clone(),
@@ -336,7 +337,7 @@ impl StateManager {
         } else {
             None
         };
-    
+
         Ok(serde_json::to_string(&ViewTransaction {
             basic_transaction: Some(basic_tx),
             ext_transaction,
