@@ -43,7 +43,9 @@ pub enum Field {
     CurrentConversation,
     Conversations,
     Users,
-    Transactions
+    Transactions,
+    CurrentTx,
+    CurrentRawTx,
 }
 
 impl Field {
@@ -198,6 +200,8 @@ impl StateManager {
             "ScanQR" => self.scan_qr(),
             "Amount" => self.amount(),
             "Speed" => self.speed(),
+            "ConfirmTransaction" => self.confirm_transaction(),
+            "Success" => self.send_success(),
             "ViewTransaction" => self.view_transaction(options),
             "MessagesHome" => self.messages_home(),
             "Exchange" => self.exchange(),
@@ -241,6 +245,7 @@ impl StateManager {
 
     pub fn send(&self) -> Result<String, Error> {
         let mut address = self.state.get::<String>(Field::Address)?;
+        if let Some(stripped) = address.strip_prefix("bitcoin:") { address = stripped.to_string(); }
         let valid = Address::from_str(&address)
         .map(|a| a.require_network(Network::Bitcoin).is_ok())
         .unwrap_or(false);
@@ -259,9 +264,7 @@ impl StateManager {
         let amount = self.state.get::<String>(Field::Amount)?;
         let err = self.state.get::<Option<String>>(Field::AmountErr)?; 
         let decimals = self.state.get::<String>(Field::Decimals)?; 
-        let btc = self.usd_to_btc(amount.clone())?;
-        self.state.set(Field::AmountBTC, &btc)?;
-
+        let btc = self.state.get::<f64>(Field::AmountBTC)?;
         Ok(serde_json::to_string(&Amount{
             err: err.unwrap_or_default(),
             amount,
@@ -273,12 +276,52 @@ impl StateManager {
     pub fn speed(&self) -> Result<String, Error> {
         let address = self.state.get::<String>(Field::Address)?;
         let amount = self.state.get::<f64>(Field::AmountBTC)?;
-        let wallet = self.get_wallet()?;
-        let btc_fees: (f64, f64) = wallet.get_fees(address, amount)?;
         let price = self.state.get::<f64>(Field::Price)?;
-        let fees: (f64, f64) = (btc_fees.0 / price, btc_fees.1 / price);
+        let wallet = self.get_wallet()?;
+        let fees: (f64, f64) = wallet.get_fees(address, amount, price)?;
+        let fees_str: (String, String) = (
+            format!("${:.2}", fees.0),
+            format!("${:.2}", fees.1)
+        );
         Ok(serde_json::to_string(&Speed{
-           fees,
+           fees: fees_str,
+        })?)
+    }
+
+    pub fn confirm_transaction(&self) -> Result<String, Error> {
+        let mut wallet = self.get_wallet()?;
+        let x = self.state.get::<Transaction>(Field::CurrentTx)?;
+        let raw_tx = self.state.get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)?;
+        let price = self.state.get::<f64>(Field::Price)?;
+        wallet.build_transaction()?;
+        let txid = raw_tx.ok_or(Error::err("Failed to get transaction", "raw_tx is None or Err"))?.txid();
+        let transaction = ExtTransaction {
+            tx: BasicTransaction {
+                tx: ShorthandTransaction {
+                    is_withdraw: x.is_withdraw,
+                    date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                    time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+                    btc: x.btc,
+                    usd: format!("${:.2}", x.usd),
+                    txid: txid.to_string(),
+                },
+                address: x.address.clone(),
+                price: format!("${:.2}", x.price),
+            },
+            fee: format!("${:.2}", x.fee_usd),
+            total: format!("${:.2}", x.fee_usd + x.usd),
+        };
+        
+        Ok(serde_json::to_string(&ConfirmTransaction {
+            transaction: transaction
+        })?)
+    }
+
+    pub fn send_success(&self) -> Result<String, Error> {
+        let tx = self.state.get::<Transaction>(Field::CurrentTx)?;
+
+        Ok(serde_json::to_string(&SendSuccess{
+            usd:  format!("${:.2}", tx.usd)
         })?)
     }
 
@@ -377,21 +420,21 @@ impl StateManager {
     }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 struct ExtTransaction {
     pub tx: BasicTransaction,
     pub fee: String,
     pub total: String,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 struct BasicTransaction {
     pub tx: ShorthandTransaction,
     pub address: String,
     pub price: String,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 struct ShorthandTransaction {
     pub is_withdraw: bool,
     pub date: String,
@@ -458,7 +501,17 @@ struct Amount {
 
 #[derive(Serialize)]
 struct Speed {
-    pub fees: (f64, f64)
+    pub fees: (String, String)
+}
+
+#[derive(Serialize)]
+struct ConfirmTransaction {
+    pub transaction: ExtTransaction,
+}
+
+#[derive(Serialize)]
+struct SendSuccess {
+    pub usd: String,
 }
 
 #[derive(Serialize)]

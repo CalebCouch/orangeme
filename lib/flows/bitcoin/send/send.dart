@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
 import 'package:orange/src/rust/api/simple.dart';
@@ -42,7 +43,7 @@ class SendState extends GenericState<Send> {
 
   onContinue() {
     if (widget.valid) {
-      setAddress(controller.text);
+      setStateAddress(path: global.dataDir!, address: controller.text);
       navigateTo(context, Amount());
     }
   }
@@ -62,16 +63,18 @@ class SendState extends GenericState<Send> {
       if (controller.text.startsWith("bitcoin:")) {
         controller.text = controller.text.replaceFirst("bitcoin:", "");
       }
-      setAddress(controller.text);
+      setStateAddress(path: global.dataDir!, address: controller.text);
     }
   }
 
-  setAddress(String a) {
-    setStateAddress(path: global.dataDir!, address: a);
+  onScan() {
+    navigateTo(context, ScanQR());
   }
 
-  onScan() {
-    switchPageTo(context, ScanQR());
+  backButton() {
+    return iconButton(() {
+      navigateTo(context, BitcoinHome());
+    }, 'left lg');
   }
 
   final TextEditingController controller = TextEditingController();
@@ -79,7 +82,7 @@ class SendState extends GenericState<Send> {
   @override
   Widget build(BuildContext context) {
     return Stack_Default(
-      Header_Stack(context, "Bitcoin address"),
+      Header_Stack(context, "Bitcoin address", null, backButton()),
       [
         AddressInput(controller),
         ButtonTips(),
@@ -95,7 +98,7 @@ class SendState extends GenericState<Send> {
   Widget AddressInput(controller) {
     return CustomTextInput(
       controller: controller,
-      onSubmitted: (String address) => {setAddress(address)},
+      onSubmitted: (String address) => {setStateAddress(path: global.dataDir!, address: address)},
       error: widget.valid || controller.text.isEmpty ? "" : "Not a valid address",
       hint: 'Bitcoin address...',
     );

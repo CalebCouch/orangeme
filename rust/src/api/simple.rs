@@ -1,7 +1,7 @@
 use super::Error;
 
 use super::structs::{Platform, DartCommand, Storage, DartCallback, Profile};
-use super::wallet::{Wallet, DescriptorSet, Seed};
+use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 use super::price::PriceGetter;
 use super::state::{StateManager, State, Field};
 use super::usb::UsbInfo;
@@ -12,10 +12,12 @@ use simple_database::database::{FiltersBuilder, IndexBuilder, Filter};
 
 use bdk::bitcoin::{Network, Address};
 use bdk::database::SqliteDatabase;
-use bdk::blockchain::ElectrumBlockchain;
+use bdk::blockchain::electrum::ElectrumBlockchain;
+use bdk::electrum_client::ElectrumApi;
 use bdk::FeeRate;
 use bdk::SignOptions;
 use bdk::blockchain::Progress;
+use bdk::blockchain::Blockchain;
 use bdk::SyncOptions;
 
 use tokio::task::JoinHandle;
@@ -45,6 +47,7 @@ use super::protocols::Protocols;
 use log::{warn, info, error, debug, trace};
 
 const SATS: u64 = 100_000_000;
+const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
 
 use reqwest::Client;
 
@@ -245,7 +248,7 @@ pub fn getstate(path: String, name: String, options: String) -> String {
 }
 
 #[frb(sync)]
-pub fn setStateAddress(path: String, address: String) -> String {
+pub fn setStateAddress(path: String, mut address: String) -> String {
     let result: Result<String, Error> = (move || {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
         state.set::<String>(Field::Address, &address)?;
@@ -274,6 +277,36 @@ pub fn setStateConversation(path: String, index: usize) -> String {
     }
 }
 
+#[frb(sync)]
+pub fn setStateBtc(path: String, btc: f64) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        state.set(Field::AmountBTC, &btc)?;
+        Ok("BTC set successfully".to_string())
+    })();
+
+    match result {
+        Ok(message) => message,
+        Err(error) => format!("Error: {}", error),
+    }
+}
+
+
+#[frb(sync)]
+pub fn setStatePriority(path: String, index: u8) -> String {
+    let result: Result<String, Error> = (move || {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
+        state.set(Field::Priority, &index)?;
+        Ok("Priority set successfully".to_string())
+    })();
+
+    match result {
+        Ok(message) => message,
+        Err(error) => format!("Error: {}", error),
+    }
+}
+
+
 
 #[frb(sync)]
 pub fn updateDisplayAmount(path: String, input: &str) -> String {
@@ -281,7 +314,8 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
         let amount = state.get::<String>(Field::Amount)?;
         let btc = state.get::<f64>(Field::Balance)?;
-        let usd_balance = btc*state.get::<f64>(Field::Price)?;
+        let price = state.get::<f64>(Field::Price)?;
+        let usd_balance = btc*price;
         let min: f64 = 0.30;
         let max = usd_balance - min;
 
@@ -350,6 +384,7 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         };
 
         state.set(Field::Amount, &updated_amount)?;
+        state.set(Field::AmountBTC, &(updated_amount_f64 / price))?;
         state.set(Field::AmountErr, &err)?;
         state.set(Field::Decimals, &decimals)?;
         Ok(if validation { "true".to_string() } else { "false".to_string() })
@@ -378,4 +413,25 @@ pub fn format_transaction_date(date: String, time: String) -> String {
 
 fn is_same_date(date1: NaiveDate, date2: NaiveDate) -> bool {
     date1.year() == date2.year() && date1.month() == date2.month() && date1.day() == date2.day()
+}
+
+#[frb(sync)]
+pub fn broadcastTx(path: String) -> String {
+    let state = State::new::<SqliteStore>(PathBuf::from(&path))
+        .expect("Failed to initialize state with the provided path");
+
+    let client = bdk::electrum_client::Client::new(CLIENT_URI)
+        .expect("Failed to connect to the Electrum client with the given URI");
+
+    let blockchain = ElectrumBlockchain::from(client);
+
+    let tx = state
+        .get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)
+        .expect("Failed to retrieve transaction from state")
+        .expect("No transaction found in state to broadcast");
+
+    blockchain.broadcast(&tx)
+        .expect("Failed to broadcast transaction to the blockchain");
+
+    "Transaction successfully broadcast".to_string()
 }

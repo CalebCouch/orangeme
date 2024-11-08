@@ -52,7 +52,7 @@ Widget transactionTabular(BuildContext context, BasicTransaction tx) {
       SingleTab(title: "Time", subtitle: tx.tx.time),
       SingleTab(title: "Amount Sent", subtitle: '${tx.tx.btc} BTC'),
       SingleTab(title: "Bitcoin Price", subtitle: tx.price),
-      SingleTab(title: "USD Value Sent", subtitle: tx.tx.usd),
+      SingleTab(title: "USD Value Received", subtitle: tx.tx.usd),
     ],
   );
 }
@@ -62,17 +62,6 @@ Widget contactTabular(BuildContext context, String name, String did) {
     children: [
       SingleTab(title: "Profile name", subtitle: name),
       SingleTab(title: "Digital ID", subtitle: middleCut(did, 20)),
-    ],
-  );
-}
-
-Widget confirmationTabular(BuildContext context, String address, String fee, String usd, String btc) {
-  return Column(
-    children: [
-      SingleTab(title: "Sent to Address", subtitle: transactionCut(address)),
-      SingleTab(title: "Amount Sent", subtitle: btc),
-      SingleTab(title: "USD Value Sent", subtitle: usd),
-      SingleTab(title: "Fee", subtitle: fee),
     ],
   );
 }

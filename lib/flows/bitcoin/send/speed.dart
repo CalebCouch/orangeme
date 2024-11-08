@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/flows/bitcoin/send/confirm.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
   Speed({super.key});
 
-  dynamic fees = (0.0, 0.0);
+  dynamic fees;
 
   @override
   SpeedState createState() => SpeedState();
@@ -25,7 +28,7 @@ class SpeedState extends GenericState<Speed> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.fees = json["fees"];
+      widget.fees = (json["fees"] as List<dynamic>).map((e) => e as String).toList();
     });
   }
 
@@ -43,14 +46,11 @@ class SpeedState extends GenericState<Speed> {
     setState(() {
       isLoading = true;
     });
-
-    //var tx = await buildTransaction(addressStr: widget.address, amountStr: '${widget.btc}', priorityStr: '$index');
-
-    //tx string to ExtTransaction
-    //navigateTo(Confirm(tx: tx));
-    //setState(() {
-    //  isLoading = false;
-    //});
+    setStatePriority(path: global.dataDir!, index: index);
+    setState(() {
+      isLoading = false;
+    });
+    navigateTo(Confirm());
   }
 
   @override
@@ -68,11 +68,10 @@ class SpeedState extends GenericState<Speed> {
   //The following widgets can ONLY be used in this file
 
   Widget SpeedSelector(fees) {
-    print(fees);
     return CustomColumn([
       radioButton(
         "Standard",
-        "Arrives in ~2 hours\n\$${fees[0].toStringAsFixed(2)} bitcoin network fee",
+        "Arrives in ~2 hours\n${fees[0]} bitcoin network fee",
         index == 0,
         () {
           setState(() {
@@ -82,7 +81,7 @@ class SpeedState extends GenericState<Speed> {
       ),
       radioButton(
         "Priority",
-        "Arrives in ~30 minutes\n\$${fees[1].toStringAsFixed(2)} bitcoin network fee",
+        "Arrives in ~30 minutes\n${fees[1]} bitcoin network fee",
         index == 1,
         () {
           setState(() {

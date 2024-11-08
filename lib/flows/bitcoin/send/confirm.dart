@@ -5,57 +5,63 @@ import 'package:orange/flows/bitcoin/send/success.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/components/data_item.dart';
+import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/util.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
 
 class Confirm extends GenericWidget {
-  final ExtTransaction tx;
-  Confirm({super.key, required this.tx});
-  @override
+  Confirm({super.key});
+
+  late ExtTransaction tx;
+
   ConfirmState createState() => ConfirmState();
 }
 
 class ConfirmState extends GenericState<Confirm> {
   @override
   String stateName() {
-    return "Confirm";
+    return "ConfirmTransaction";
   }
 
   @override
   int refreshInterval() {
-    return 0;
+    return 10;
   }
 
   @override
   void unpack_state(Map<String, dynamic> json) {
-    setState(() {});
+    setState(() {
+      widget.tx = ExtTransaction.fromJson(json['transaction']);
+    });
   }
 
   bool isLoading = false;
-  final TextEditingController recipientAddressController = TextEditingController();
 
   Future<void> onContinue() async {
     setState(() {
       isLoading = true;
     });
-    await global.invoke("broadcast_transaction", widget.tx.tx.tx.txid);
-    navigateTo(context, Success(tx: widget.tx));
-  }
-
-  toBTC(double usd) {
-    return usd; //to btc
+    broadcastTx(path: global.dataDir!);
+    setState(() {
+      isLoading = false;
+    });
+    navigateTo(context, Success());
   }
 
   @override
   Widget build(BuildContext context) {
+    BasicTransaction basicTx = widget.tx.tx;
+    ShorthandTransaction shTx = basicTx.tx;
+
     return Stack_Default(
       isLoading ? Container() : Header_Stack(context, "Confirm send"),
       [
         isLoading ? loadingCircle() : Container(),
-        isLoading ? Container() : ConfirmAddress(context, widget.tx.tx.address),
-        isLoading ? Container() : ConfirmAmount(context, widget.tx.tx.address, widget.tx.fee, widget.tx.tx.tx.usd, "${widget.tx.tx.tx.btc} BTC"),
+        isLoading ? Container() : ConfirmAddress(context, basicTx.address),
+        isLoading ? Container() : ConfirmAmount(context, widget.tx, basicTx, shTx),
       ],
       isLoading ? Container() : Bumper(context, [CustomButton('Confirm & Send', 'primary lg expand none', () => onContinue(), 'enabled')]),
       isLoading ? Alignment.center : Alignment.topCenter,
@@ -91,7 +97,7 @@ ConfirmAddress(BuildContext context, String address) {
   );
 }
 
-ConfirmAmount(BuildContext context, String address, String fee, String usd, String btc) {
+ConfirmAmount(BuildContext context, ExtTransaction tx, BasicTransaction basicTx, ShorthandTransaction shTx) {
   changeAmount() {
     resetNavTo(context, Amount());
   }
@@ -103,7 +109,14 @@ ConfirmAmount(BuildContext context, String address, String fee, String usd, Stri
   return DataItem(
     title: "Confirm Amount",
     number: 2,
-    content: confirmationTabular(context, address, fee, usd, btc),
+    content: Column(
+      children: [
+        SingleTab(title: "Send to Address", subtitle: transactionCut(basicTx.address)),
+        SingleTab(title: "Amount Sent", subtitle: "${shTx.btc} BTC"),
+        SingleTab(title: "USD Value Sent", subtitle: shTx.usd),
+        SingleTab(title: "Fee", subtitle: tx.fee),
+      ],
+    ),
     buttons: [
       CustomButton('Amount', 'secondary md hug edit', changeAmount, 'enabled'),
       CustomButton('Speed', 'secondary md hug edit', changeSpeed, 'enabled'),

@@ -51,6 +51,7 @@ class AmountState extends GenericState<Amount> {
   String enabled = 'disabled';
 
   onContinue() {
+    setStateBtc(path: global.dataDir!, btc: widget.btc);
     navigateTo(Speed());
   }
 
@@ -107,7 +108,7 @@ class AmountState extends GenericState<Amount> {
   Widget keyboardAmountDisplay(BuildContext context, String amt, double btc, String error) {
     Widget subText() {
       if (error == '') {
-        return CustomText('text lg text_secondary', "$btc BTC");
+        return CustomText('text lg text_secondary', "${btc.toStringAsFixed(8)} BTC");
       } else {
         return Row(children: [
           const CustomIcon('error md danger'),
