@@ -17,6 +17,7 @@ use bdk::electrum_client::ElectrumApi;
 use bdk::FeeRate;
 use bdk::SignOptions;
 use bdk::blockchain::Progress;
+use bdk::blockchain::Blockchain;
 use bdk::SyncOptions;
 
 use tokio::task::JoinHandle;
@@ -255,7 +256,8 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
         let amount = state.get::<String>(Field::Amount)?;
         let btc = state.get::<f64>(Field::Balance)?;
-        let usd_balance = btc*state.get::<f64>(Field::Price)?;
+        let price = state.get::<f64>(Field::Price)?;
+        let usd_balance = btc*price;
         let min: f64 = 0.30;
         let max = usd_balance - min;
         
@@ -324,6 +326,7 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
             None
         };
         state.set(Field::Amount, &updated_amount)?;
+        state.set(Field::AmountBTC, &(updated_amount_f64 / price))?;
         state.set(Field::AmountErr, &err)?;
         state.set(Field::Decimals, &decimals)?;
         Ok(if validation { "true".to_string() } else { "false".to_string() })
@@ -357,17 +360,21 @@ fn is_same_date(date1: NaiveDate, date2: NaiveDate) -> bool {
 
 #[frb(sync)]
 pub fn broadcastTx(path: String) -> String {
-    let result: Result<String, Error> = (move || {
-        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
-        let client = bdk::electrum_client::Client::new(CLIENT_URI)?;
-        let blockchain = ElectrumBlockchain::from(client);
-        let tx = state.get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)?;
-        blockchain.transaction_broadcast(&tx.unwrap());
-        Ok("Transaction successfully broadcast".to_string())
-    })();
+    let state = State::new::<SqliteStore>(PathBuf::from(&path))
+        .expect("Failed to initialize state with the provided path");
 
-    match result {
-        Ok(x) => x,
-        Err(error) => format!("Error: {}", error),
-    }
+    let client = bdk::electrum_client::Client::new(CLIENT_URI)
+        .expect("Failed to connect to the Electrum client with the given URI");
+
+    let blockchain = ElectrumBlockchain::from(client);
+
+    let tx = state
+        .get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)
+        .expect("Failed to retrieve transaction from state")
+        .expect("No transaction found in state to broadcast");
+
+    blockchain.broadcast(&tx)
+        .expect("Failed to broadcast transaction to the blockchain");
+
+    "Transaction successfully broadcast".to_string()
 }

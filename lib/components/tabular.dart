@@ -52,7 +52,7 @@ Widget transactionTabular(BuildContext context, BasicTransaction tx) {
       SingleTab(title: "Time", subtitle: tx.tx.time),
       SingleTab(title: "Amount Sent", subtitle: '${tx.tx.btc} BTC'),
       SingleTab(title: "Bitcoin Price", subtitle: tx.price),
-      SingleTab(title: "USD Value Sent", subtitle: tx.tx.usd),
+      SingleTab(title: "USD Value Received", subtitle: tx.tx.usd),
     ],
   );
 }

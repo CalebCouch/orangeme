@@ -28,7 +28,7 @@ class ConfirmState extends GenericState<Confirm> {
 
   @override
   int refreshInterval() {
-    return 0;
+    return 10;
   }
 
   @override

@@ -109,20 +109,30 @@ impl Transaction {
         let is_withdraw = details.sent > 0;
         let details_tx = details.transaction.ok_or(Error::bad_request(ec, "Missing Transaction"))?;
         let address = if is_withdraw {
-            let client = Client::new(CLIENT_URI)?;
-            let blockchain = ElectrumBlockchain::from(client);
-            details_tx.input.clone().into_iter().map(|input| {
-                let prev_tx = blockchain.get_tx(&input.previous_output.txid)?.ok_or(Error::bad_request(ec, "Missing Prev Transaction"))?;
-                Ok::<Option<TxOut>, Error>(prev_tx.output.into_iter().find(|txout| !is_mine(txout.script_pubkey.as_script())))
-            }).collect::<Result<Vec<Option<TxOut>>, Error>>()?
-            .into_iter().flatten().collect::<Vec<TxOut>>()
-            .first().map(|txout|
-                Ok::<String, Error>(Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string())
-            ).transpose()?.unwrap_or("Redeposit".to_string())
+            details_tx.output.clone().into_iter().find_map(|txout| {
+                if !is_mine(txout.script_pubkey.as_script()) {
+                    Some(Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin).ok()?.to_string())
+                } else {None}
+            }).unwrap_or("Redoposit".to_string())
         } else {
             let txout = details_tx.output.clone().into_iter().find(|txout| is_mine(txout.script_pubkey.as_script())).ok_or(Error::bad_request(ec, "No Output is_mine"))?;
             Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string()
         };
+        // let address = if is_withdraw {
+        //     let client = Client::new(CLIENT_URI)?;
+        //     let blockchain = ElectrumBlockchain::from(client);
+        //     details_tx.input.clone().into_iter().map(|input| {
+        //         let prev_tx = blockchain.get_tx(&input.previous_output.txid)?.ok_or(Error::bad_request(ec, "Missing Prev Transaction"))?;
+        //         Ok::<Option<TxOut>, Error>(prev_tx.output.into_iter().find(|txout| !is_mine(txout.script_pubkey.as_script())))
+        //     }).collect::<Result<Vec<Option<TxOut>>, Error>>()?
+        //     .into_iter().flatten().collect::<Vec<TxOut>>()
+        //     .first().map(|txout|
+        //         Ok::<String, Error>(Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string())
+        //     ).transpose()?.unwrap_or("Redeposit".to_string())
+        // } else {
+        //     let txout = details_tx.output.clone().into_iter().find(|txout| is_mine(txout.script_pubkey.as_script())).ok_or(Error::bad_request(ec, "No Output is_mine"))?;
+        //     Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string()
+        // };
         let confirmation_time = details.confirmation_time.map(|ct|
             Ok::<(u32, DateTime), Error>((ct.height, DateTime::from_timestamp(ct.timestamp)?))
         ).transpose()?;
@@ -199,8 +209,7 @@ impl Wallet {
         let mut builder = self.inner.build_tx();
         builder.add_recipient(address?.script_pubkey(), (amount * SATS) as u64);
         let size = builder.finish()?.0.extract_tx().vsize() as f64;
-
-    
+        
         let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
         Ok((((blockchain.estimate_fee(3)? / 1000 as f64) * size) * price, ((blockchain.estimate_fee(1)? / 1000 as f64) * size) * price))
     }
@@ -222,9 +231,10 @@ impl Wallet {
 
         let is_mine = |s: &Script| self.inner.is_mine(s).unwrap_or(false);
         let amount = (amount_btc * SATS) as u64;
+
         let selected_fee = if priority == 0 { 
             blockchain.estimate_fee(3)? as f64 / 1000.0 
-        } else { 
+        } else {
             blockchain.estimate_fee(1)? as f64 / 1000.0
         };
 
@@ -241,10 +251,9 @@ impl Wallet {
         let tx = psbt.clone().extract_tx();
         self.state.set(Field::CurrentRawTx, &tx)?;
 
-
         tx_details.transaction = Some(tx);
 
-        let tx = Transaction::from_details(tx_details, price, |s: &Script| {self.inner.is_mine(s).unwrap_or(false)})?;
+        let tx = Transaction::from_details(tx_details.clone(), price, |s: &Script| {self.inner.is_mine(s).unwrap_or(false)})?;
         self.state.set(Field::CurrentTx, &tx)?;
         Ok(serde_json::to_string(&tx)?)
     } 

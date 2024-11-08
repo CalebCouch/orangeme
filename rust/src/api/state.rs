@@ -262,8 +262,7 @@ impl StateManager {
         let amount = self.state.get::<String>(Field::Amount)?;
         let err = self.state.get::<Option<String>>(Field::AmountErr)?; 
         let decimals = self.state.get::<String>(Field::Decimals)?; 
-        let btc = self.usd_to_btc(amount.clone())?;
-
+        let btc = self.state.get::<f64>(Field::AmountBTC)?;
         Ok(serde_json::to_string(&Amount{
             err: err.unwrap_or_default(),
             amount,
@@ -289,9 +288,11 @@ impl StateManager {
 
     pub fn confirm_transaction(&self) -> Result<String, Error> {
         let mut wallet = self.get_wallet()?;
-        let txid = wallet.build_transaction()?;
         let x = self.state.get::<Transaction>(Field::CurrentTx)?;
+        let raw_tx = self.state.get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)?;
         let price = self.state.get::<f64>(Field::Price)?;
+        wallet.build_transaction()?;
+        let txid = raw_tx.ok_or(Error::err("Failed to get transaction", "raw_tx is None or Err"))?.txid();
         let transaction = ExtTransaction {
             tx: BasicTransaction {
                 tx: ShorthandTransaction {
@@ -339,15 +340,6 @@ impl StateManager {
                 pfp: Some("users/profile/picture.png".to_string()),
             },
         })?)
-    }
-
-    pub fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
-        let amt: f64 = amount.parse().map_err(|_| Error::err("usd_to_btc", "Invalid amount format"))?;
-        let price = self.state.get::<f64>(Field::Price)?;
-        let btc_amount = amt / price; 
-        let rounded_btc_amount = (btc_amount * 1e8).round() / 1e8;
-    
-        Ok(rounded_btc_amount)
     }
 
     pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
