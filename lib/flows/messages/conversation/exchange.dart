@@ -53,7 +53,7 @@ class ExchangeState extends GenericState<Exchange> {
 
   @override
   Widget build(BuildContext context) {
-    List<Contact> members = widget.conversation.members;
+    List<Profile> members = widget.conversation.members;
 
     return Stack_Chat(
       Header_Message(
@@ -70,7 +70,7 @@ class ExchangeState extends GenericState<Exchange> {
   }
 }
 
-Widget ChatRecipients(BuildContext context, List<Contact> contacts) {
+Widget ChatRecipients(BuildContext context, List<Profile> contacts) {
   bool isGroup = contacts.length > 1;
   return CustomColumn([
     isGroup ? profilePhotoStack(context, contacts) : ProfilePhoto(context, contacts[0].pfp, ProfileSize.lg, false, false),

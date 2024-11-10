@@ -10,7 +10,7 @@ import 'package:orangeme_material/orangeme_material.dart';
 class MyProfile extends GenericWidget {
   MyProfile({super.key});
 
-  Contact personal = Contact('', '', '', '');
+  Profile personal = Profile('', '', '', '');
 
   @override
   MyProfileState createState() => MyProfileState();
@@ -30,7 +30,7 @@ class MyProfileState extends GenericState<MyProfile> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.personal = Contact.fromJson(json);
+      widget.personal = Profile.fromJson(json);
     });
   }
 

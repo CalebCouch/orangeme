@@ -10,7 +10,7 @@ import 'package:orangeme_material/orangeme_material.dart';
 class ChooseRecipient extends GenericWidget {
   ChooseRecipient({super.key});
 
-  List<Contact> users = []; //list of all orangeme users
+  List<Profile> users = []; //list of all orangeme users
 
   @override
   ChooseRecipientState createState() => ChooseRecipientState();
@@ -30,12 +30,12 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.users = List<Contact>.from(json['users'].map((json) => Contact.fromJson(json)));
+      widget.users = List<Profile>.from(json['users'].map((json) => Profile.fromJson(json)));
     });
   }
 
-  List<Contact> recipients = [];
-  List<Contact> filteredContacts = [];
+  List<Profile> recipients = [];
+  List<Profile> filteredContacts = [];
   TextEditingController searchController = TextEditingController();
   String enabled = 'enabled';
 
@@ -121,7 +121,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
     });
   }
 
-  void addRecipient(Contact selected) {
+  void addRecipient(Profile selected) {
     setState(() {
       if (!recipients.contains(selected)) {
         recipients.add(selected);
@@ -129,7 +129,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
     });
   }
 
-  void removeRecipient(Contact selected) {
+  void removeRecipient(Profile selected) {
     setState(() {
       recipients.remove(selected);
     });

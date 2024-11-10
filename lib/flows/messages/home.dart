@@ -94,7 +94,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     );
   }
 
-  Widget ConversationItem(BuildContext context, List<Contact> contact, String lastText, onTap) {
+  Widget ConversationItem(BuildContext context, List<Profile> contact, String lastText, onTap) {
     bool isGroup = contact.length > 1;
     return ListItem(
       onTap: onTap,

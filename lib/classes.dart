@@ -209,15 +209,15 @@ class Transaction {
   }
 }
 
-class Contact {
+class Profile {
   String name;
   String did;
   String? pfp;
   String? abtme;
-  Contact(this.name, this.did, this.pfp, this.abtme);
+  Profile(this.name, this.did, this.pfp, this.abtme);
 
-  factory Contact.fromJson(Map<String, dynamic> json) {
-    return Contact(
+  factory Profile.fromJson(Map<String, dynamic> json) {
+    return Profile(
       json['name'] as String,
       json['did'] as String,
       json['pfp'] as String?,
@@ -227,7 +227,7 @@ class Contact {
 }
 
 class Message {
-  Contact sender;
+  Profile sender;
   String message;
   String date;
   String time;
@@ -236,7 +236,7 @@ class Message {
   Message(this.sender, this.message, this.date, this.time, this.isIncoming);
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      Contact.fromJson(json['sender']),
+      Profile.fromJson(json['sender']),
       json['message'] as String,
       json['date'] as String,
       json['time'] as String,
@@ -246,13 +246,13 @@ class Message {
 }
 
 class Conversation {
-  List<Contact> members;
+  List<Profile> members;
   List<Message> messages;
 
   Conversation(this.members, this.messages);
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
-      List<Contact>.from(json['members'].map((json) => Contact.fromJson(json))),
+      List<Profile>.from(json['members'].map((json) => Profile.fromJson(json))),
       List<Message>.from(json['messages'].map((json) => Message.fromJson(json))),
     );
   }
@@ -265,8 +265,8 @@ class DartState {
   List<Transaction> transactions;
   List<double> fees;
   List<Conversation> conversations;
-  List<Contact> users;
-  Contact personal;
+  List<Profile> users;
+  Profile personal;
 
   DartState(
     this.currentPrice,
@@ -280,7 +280,7 @@ class DartState {
   );
 
   factory DartState.init() {
-    return DartState(0.0, 0.0, 0.0, [], [], [], [], Contact('', '', '', ''));
+    return DartState(0.0, 0.0, 0.0, [], [], [], [], Profile('', '', '', ''));
   }
 
   factory DartState.fromJson(Map<String, dynamic> json) {
@@ -291,8 +291,8 @@ class DartState {
       List<Transaction>.from(json['transactions'].map((tx) => Transaction.fromJson(tx))),
       List<double>.from(json['fees'].map((fee) => fee as double)),
       List<Conversation>.from(json["conversations"].map((y) => Conversation.fromJson(y))),
-      List<Contact>.from(json["users"].map((i) => Contact.fromJson(i))),
-      Contact.fromJson(json["personal"]),
+      List<Profile>.from(json["users"].map((i) => Profile.fromJson(i))),
+      Profile.fromJson(json["personal"]),
     );
   }
 }

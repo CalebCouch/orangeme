@@ -94,7 +94,7 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
   );
 }
 
-Widget messageStack(BuildContext context, ScrollController controller, List<Contact> contacts, List<Message> messages) {
+Widget messageStack(BuildContext context, ScrollController controller, List<Profile> contacts, List<Message> messages) {
   var isGroup = false;
   if (contacts.length > 1) isGroup = true;
   return SizedBox(
