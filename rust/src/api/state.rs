@@ -3,6 +3,7 @@ use super::Error;
 use super::wallet::{Wallet, DescriptorSet, Transaction};
 use super::structs::{DateTime, Profile};
 
+use log::info;
 use simple_database::KeyValueStore;
 
 use serde::{Serialize, Deserialize};
@@ -207,37 +208,53 @@ impl StateManager {
             "MyProfile" => self.my_profile().await,
             "ConvInfo" => self.conv_info().await,
             "ChooseRecipient" => self.choose_recipient().await,
+            "Test" => self.test().await,
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
     }
 
+    pub async fn test(&self) -> Result<String, Error> {
+      //let state = SqliteStore::new(PathBuf::from(&path).join("TEST")).await.unwrap();
+      //let count = state.get(b"test").await.unwrap().map(|b| u32::from_le_bytes(b.try_into().unwrap())).unwrap_or_default();
+        //state.set(b"test", &(count+1).to_le_bytes()).await.unwrap();
+        Ok(format!("{{\"count\": {}}}", 0))
+    }
+
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
-        let btc = self.state.get::<f64>(Field::Balance).await?;
-        let usd = btc*self.state.get::<f64>(Field::Price).await?;
-        let internet_status = self.state.get::<bool>(Field::Internet).await?;
-        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions).await?;
+      //let btc = self.state.get::<f64>(Field::Balance).await?;
+      //let usd = btc*self.state.get::<f64>(Field::Price).await?;
+      //let internet_status = self.state.get::<bool>(Field::Internet).await?;
+      //let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions).await?;
 
-        let formatted_usd = if usd == 0.0 {
-            "$0.00".to_string()
-        } else {
-            format!("{:.2}", usd)
-        };
+      //let formatted_usd = if usd == 0.0 {
+      //    "$0.00".to_string()
+      //} else {
+      //    format!("{:.2}", usd)
+      //};
+
+      //Ok(serde_json::to_string(&BitcoinHome{
+      //    internet: internet_status,
+      //    usd: formatted_usd,
+      //    btc: btc.to_string(),
+      //    transactions: transactions.into_iter().map(|(txid, tx)|
+      //        ShorthandTransaction {
+      //            is_withdraw: tx.is_withdraw,
+      //            date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+      //            time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+      //            btc: tx.btc,
+      //            usd: format!("${:.2}", tx.usd),
+      //            txid: txid.to_string(),
+      //        },
+      //    ).collect(),
+      //    profile_picture: "".to_string(),
+      //})?)
 
         Ok(serde_json::to_string(&BitcoinHome{
-            internet: internet_status,
-            usd: formatted_usd,
-            btc: btc.to_string(),
-            transactions: transactions.into_iter().map(|(txid, tx)|
-                ShorthandTransaction {
-                    is_withdraw: tx.is_withdraw,
-                    date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                    time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                    btc: tx.btc,
-                    usd: format!("${:.2}", tx.usd),
-                    txid: txid.to_string(),
-                },
-            ).collect(),
+            internet: true,
+            usd: "0.1".to_string(),
+            btc: "0.00003".to_string(),
+            transactions: vec![],
             profile_picture: "".to_string(),
         })?)
     }
@@ -325,6 +342,7 @@ impl StateManager {
     }
 
     pub async fn receive(&self) -> Result<String, Error> {
+        info!("ELLO");
         let wallet = self.get_wallet().await?;
         Ok(serde_json::to_string(&Receive{
             address: wallet.get_new_address()?

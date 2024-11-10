@@ -69,6 +69,7 @@ class ShakeController extends ChangeNotifier {
 
 abstract class GenericWidget extends StatefulWidget {
   Timer? timer;
+  bool pause_refresh = false;
 
   GenericWidget({super.key});
 }
@@ -80,14 +81,20 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
   void unpack_state(Map<String, dynamic> json);
 
   void getState() async {
-    String state = await getstate(name: stateName(), path: global.dataDir!);
-    unpack_state(jsonDecode(state));
-    _createTimer();
+    int time = DateTime.now().millisecondsSinceEpoch;
+    String state = await getstate(path: global.dataDir!, name: stateName());
+    print("gotstate in ${DateTime.now().millisecondsSinceEpoch-time}");
+    if (!widget.pause_refresh) {
+        unpack_state(jsonDecode(state));
+        _createTimer();
+    }
   }
 
   navigateTo(Widget next) async {
+    widget.pause_refresh = true;
     widget.timer?.cancel();
     await global.navigation.navigateTo(next);
+    widget.pause_refresh = false;
     await _createTimer();
   }
 

@@ -60,7 +60,7 @@ use web5_rust::dids::{DhtDocument, Identity};
 use web5_rust::{Record};
 use super::protocols::Protocols;
 
-use log::{warn, info, error, debug, trace};
+use log::info;
 
 const SATS: u64 = 100_000_000;
 const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
@@ -92,15 +92,15 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
     let client = Client::new();
 
     loop {
-        let connected = client.get("https://google.com")
-            .send()
-            .await
-            .map(|response| response.status().is_success())
-            .unwrap_or(false);
+      //let connected = client.get("https://google.com")
+      //    .send()
+      //    .await
+      //    .map(|response| response.status().is_success())
+      //    .unwrap_or(false);
 
-        if !connected { panic!("Internet connection failed") };
+      //if !connected { panic!("Internet connection failed") };
 
-        state.set(Field::Internet, &connected).await?;
+      //state.set(Field::Internet, &connected).await?;
 
         thread::sleep(time::Duration::from_millis(1000));
     }
@@ -109,7 +109,7 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
 async fn price_thread(mut state: State) -> Result<(), Error> {
     loop {
         state.set(Field::Price, &PriceGetter::get(None).await?).await?;
-        thread::sleep(time::Duration::from_millis(600_000));
+        thread::sleep(time::Duration::from_millis(2_000));
     }
     Err::<(), Error>(Error::Exited("Price Update".to_string()))
 }
@@ -227,7 +227,7 @@ async fn async_rust (
         dart_callback.call("print", &descriptors.internal).await?;
         state.set(Field::DescriptorSet, &descriptors).await?;
     }
-
+    info!("HELLO");
     tokio::try_join!(
         spawn(price_thread(state.clone())),
         spawn(internet_thread(state.clone())),

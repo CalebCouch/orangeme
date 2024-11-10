@@ -30,6 +30,7 @@ class ReceiveState extends GenericState<Receive> {
 
   @override
   void unpack_state(Map<String, dynamic> json) {
+    print("Unpacking");
     setState(() {
       widget.address = json["address"];
     });
@@ -37,8 +38,8 @@ class ReceiveState extends GenericState<Receive> {
 
   @override
   void initState() {
+    print("Init");
     super.initState();
-    global.invoke("get_new_address", "");
   }
 
   onShare() {
@@ -47,6 +48,7 @@ class ReceiveState extends GenericState<Receive> {
 
   @override
   Widget build(BuildContext context) {
+    print("build");
     return Stack_Default(
       Header_Stack(context, "Receive bitcoin"),
       [

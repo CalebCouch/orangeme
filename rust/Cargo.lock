@@ -2984,6 +2984,7 @@ dependencies = [
  "flutter_rust_bridge",
  "futures",
  "hex",
+ "lazy_static",
  "log",
  "num-format",
  "openssl",
@@ -2995,6 +2996,7 @@ dependencies = [
  "serde_json",
  "simple-database",
  "thiserror",
+ "threadpool",
  "tokio",
  "web5-rust",
 ]
