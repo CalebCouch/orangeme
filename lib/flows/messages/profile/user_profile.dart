@@ -8,7 +8,7 @@ import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
 
 class UserProfile extends GenericWidget {
-  final Contact user;
+  final Profile user;
   UserProfile(this.user, {super.key});
 
   @override

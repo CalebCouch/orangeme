@@ -63,7 +63,7 @@ class ListItem extends StatelessWidget {
   }
 }
 
-Widget ContactItem(BuildContext context, Contact contact, onTap) {
+Widget ContactItem(BuildContext context, Profile contact, onTap) {
   return ListItem(
     onTap: onTap,
     visual: ProfilePhoto(context, contact.pfp, ProfileSize.lg),

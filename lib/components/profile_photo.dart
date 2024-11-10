@@ -51,7 +51,7 @@ Widget ProfileButton(BuildContext context, pfp, onTap) {
   return InkWell(onTap: onTap, child: ProfilePhoto(context));
 }
 
-Widget profilePhotoStack(BuildContext context, List<Contact> contacts) {
+Widget profilePhotoStack(BuildContext context, List<Profile> contacts) {
   return Container(
     width: 128,
     height: 32,

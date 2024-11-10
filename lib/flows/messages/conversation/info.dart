@@ -8,7 +8,7 @@ import 'package:orangeme_material/orangeme_material.dart';
 class MessageInfo extends GenericWidget {
   MessageInfo({super.key});
 
-  List<Contact> contacts = [];
+  List<Profile> contacts = [];
 
   @override
   MessageInfoState createState() => MessageInfoState();
@@ -28,7 +28,7 @@ class MessageInfoState extends GenericState<MessageInfo> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.contacts = List<Contact>.from(json['contacts'].map((json) => Contact.fromJson(json)));
+      widget.contacts = List<Profile>.from(json['contacts'].map((json) => Profile.fromJson(json)));
     });
   }
 
@@ -46,7 +46,7 @@ class MessageInfoState extends GenericState<MessageInfo> {
 
 //The following widgets can ONLY be used in this file
 
-Widget Information(List<Contact> contacts) {
+Widget Information(List<Profile> contacts) {
   return CustomText('text md text_secondary', 'This group has ${contacts.length} members');
 }
 

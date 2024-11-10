@@ -114,83 +114,6 @@ impl StateManager {
             .unwrap_or(("Pending".to_string(), "Pending".to_string()))
     }
 
-    pub fn get_users(&self) -> Result<Vec<Contact>, Error> {
-        let alice = Contact {
-            abt_me: Some("Software Developer".to_string()),
-            did: "did:example:alice".to_string(),
-            name: "Alice".to_string(),
-            pfp: Some("cat/on/a/box.png".to_string()),
-        };
-    
-        let bob = Contact {
-            abt_me: Some("Graphic Designer".to_string()),
-            did: "did:example:bob".to_string(),
-            name: "Bob".to_string(),
-            pfp: Some("chicken/on/a/horse.png".to_string()),
-        };
-
-        Ok(vec![alice, bob])
-    }
-
-    pub fn get_conversations(&self) -> Result<Vec<Conversation>, Error> {
-        let alice = Contact {
-            abt_me: Some("Software Developer".to_string()),
-            did: "did:example:alice".to_string(),
-            name: "Alice".to_string(),
-            pfp: None,
-        };
-
-        let bob = Contact {
-            abt_me: Some("Graphic Designer".to_string()),
-            did: "did:example:bob".to_string(),
-            name: "Bob".to_string(),
-            pfp: None,
-        };
-
-        let message1 = Message {
-            sender: alice.clone(),
-            message: "Hello, Bob!".to_string(),
-            date: "2024-8-14".to_string(),
-            time: "2:32 AM".to_string(),
-            is_incoming: false,
-        };
-
-        let message2 = Message {
-            sender: bob.clone(),
-            message: "Hi Alice, how are you?".to_string(),
-            date: "2024-8-14".to_string(),
-            time: "2:32 AM".to_string(),
-            is_incoming: true,
-        };
-
-        let conversation1 = Conversation {
-            members: vec![alice.clone(), bob.clone()], 
-            messages: vec![message1, message2],  
-        };
-
-        let conversation2 = Conversation {
-            members: vec![alice.clone()],
-            messages: vec![
-                Message {
-                    sender: bob.clone(),
-                    message: "Are you free for a meeting tomorrow?".to_string(),
-                    date: "2024-8-14".to_string(),
-                    time: "12:34 PM".to_string(),
-                    is_incoming: false,
-                },
-                Message {
-                    sender: alice.clone(),
-                    message: "Yes, I am available!".to_string(),
-                    date: "2024-8-14".to_string(),
-                    time: "12:34 PM".to_string(),
-                    is_incoming: true,
-                },
-            ],
-        };
-
-        Ok(vec![conversation1, conversation2])
-    }
-
     pub async fn get(&mut self, state_name: &str) -> Result<String, Error> {
         match state_name {
             "BitcoinHome" => self.bitcoin_home().await,
@@ -332,17 +255,12 @@ impl StateManager {
     }
 
     pub async fn my_profile(&self) -> Result<String, Error> {
-        let profile = self.state.get_o::<Profile>(Field::Profile).await?.ok_or(Error::err("my_profile", "Profile not found"))?;
-        Ok(serde_json::to_string(&profile)?)
+        let profile = self.state.get_o::<Profile>(Field::Profile).await?;
+        Ok(serde_json::to_string(&MyProfile{
+            profile: Some(profile),
+        })?)
     }
 
-    pub async fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
-        let amt: f64 = amount.parse().map_err(|_| Error::err("usd_to_btc", "Invalid amount format"))?;
-        let price = self.state.get::<f64>(Field::Price).await?;
-        let btc_amount = amt / price;
-
-        Ok(btc_amount)
-    }
 
     pub async fn view_transaction(&self) -> Result<String, Error> {
         todo!()
@@ -387,12 +305,11 @@ impl StateManager {
     }
 
     pub async fn messages_home(&mut self) -> Result<String, Error> {
-        let conversations = self.get_conversations()?; 
-        self.state.set(Field::Conversations, &conversations).await?;
+        //self.state.set(Field::Conversations, &conversations).await?;
 
         Ok(serde_json::to_string(&MessagesHome{
             profile_picture: "".to_string(),
-            conversations: conversations, 
+            conversations: None, 
         })?)
     }
 
@@ -445,21 +362,13 @@ struct ShorthandTransaction {
 
 #[derive(Serialize, Deserialize, Clone, Default)]
 pub struct Conversation {
-    pub members: Vec<Contact>,
+    pub members: Vec<Profile>,
     pub messages: Vec<Message>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct Contact {
-    pub name: String,
-    pub did: String,
-    pub pfp: Option<String>,
-    pub abt_me: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
 pub struct Message {
-    pub sender: Contact,
+    pub sender: Profile,
     pub message: String,
     pub date: String,
     pub time: String,
@@ -521,13 +430,13 @@ struct ViewTransaction {
 
 #[derive(Serialize)]
 struct MessagesHome {
-    pub conversations: Vec<Conversation>,
+    pub conversations: Option<Vec<Conversation>>,
     pub profile_picture: String,
 }
 
 #[derive(Serialize)]
 struct MyProfile {
-    pub personal: Contact
+    pub profile: Option<Profile>
 }
 
 #[derive(Serialize)]
@@ -537,10 +446,10 @@ struct Exchange {
 
 #[derive(Serialize)]
 struct ChooseRecipient {
-    pub users: Vec<Contact>,
+    pub users: Vec<Profile>,
 }
 
 #[derive(Serialize)]
 struct ConvInfo {
-    pub contacts: Vec<Contact>,
+    pub contacts: Vec<Profile>,
 }
