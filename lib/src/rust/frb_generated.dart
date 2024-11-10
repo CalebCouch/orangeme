@@ -96,31 +96,32 @@ abstract class RustLibApi extends BaseApi {
   Future<Error> crateApiErrorErrorParse(
       {required String rtype, required String data});
 
-  String crateApiSimpleBroadcastTx({required String path});
+  Future<String> crateApiSimpleBroadcastTx({required String path});
 
   String crateApiSimpleFormatTransactionDate(
       {required String date, required String time});
 
-  String crateApiSimpleGetstate(
-      {required String path, required String name, required String options});
+  Future<String> crateApiSimpleGetstate(
+      {required String path, required String name});
 
   Future<String> crateApiSimpleRuststart(
       {required String path,
       required String platform,
       required FutureOr<String> Function(String) thread});
 
-  String crateApiSimpleSetStateAddress(
+  Future<String> crateApiSimpleSetStateAddress(
       {required String path, required String address});
 
-  String crateApiSimpleSetStateBtc({required String path, required double btc});
+  Future<String> crateApiSimpleSetStateBtc(
+      {required String path, required double btc});
 
-  String crateApiSimpleSetStateConversation(
+  Future<String> crateApiSimpleSetStateConversation(
       {required String path, required BigInt index});
 
-  String crateApiSimpleSetStatePriority(
+  Future<String> crateApiSimpleSetStatePriority(
       {required String path, required int index});
 
-  String crateApiSimpleUpdateDisplayAmount(
+  Future<String> crateApiSimpleUpdateDisplayAmount(
       {required String path, required String input});
 
   RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error;
@@ -303,12 +304,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleBroadcastTx({required String path}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+  Future<String> crateApiSimpleBroadcastTx({required String path}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -352,29 +354,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleGetstate(
-      {required String path, required String name, required String options}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+  Future<String> crateApiSimpleGetstate(
+      {required String path, required String name}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_String(name, serializer);
-        sse_encode_String(options, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 9, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
         decodeErrorData: null,
       ),
       constMeta: kCrateApiSimpleGetstateConstMeta,
-      argValues: [path, name, options],
+      argValues: [path, name],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiSimpleGetstateConstMeta => const TaskConstMeta(
         debugName: "getstate",
-        argNames: ["path", "name", "options"],
+        argNames: ["path", "name"],
       );
 
   @override
@@ -408,14 +410,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleSetStateAddress(
+  Future<String> crateApiSimpleSetStateAddress(
       {required String path, required String address}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_String(address, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 11, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -434,14 +437,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleSetStateBtc(
+  Future<String> crateApiSimpleSetStateBtc(
       {required String path, required double btc}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_f_64(btc, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 12, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -459,14 +463,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleSetStateConversation(
+  Future<String> crateApiSimpleSetStateConversation(
       {required String path, required BigInt index}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_usize(index, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 13, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -485,14 +490,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleSetStatePriority(
+  Future<String> crateApiSimpleSetStatePriority(
       {required String path, required int index}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_u_8(index, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 14, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -511,14 +517,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleUpdateDisplayAmount(
+  Future<String> crateApiSimpleUpdateDisplayAmount(
       {required String path, required String input}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_String(input, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 15, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,

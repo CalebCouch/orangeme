@@ -199,7 +199,7 @@ impl Wallet {
     }
 
     async fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
-        self.state.get::<Transactions>(Field::Transactions)
+        self.state.get::<Transactions>(Field::Transactions).await
     }
 
     pub fn get_fees(&self, address: String, amount: f64, price: f64) -> Result<(f64, f64), Error> {

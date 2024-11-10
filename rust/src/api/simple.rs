@@ -100,7 +100,7 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
 
         if !connected { panic!("Internet connection failed") };
 
-        state.set(Field::Internet, &connected)?;
+        state.set(Field::Internet, &connected).await?;
 
         thread::sleep(time::Duration::from_millis(1000));
     }
@@ -108,17 +108,15 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
 
 async fn price_thread(mut state: State) -> Result<(), Error> {
     loop {
-        state.set(Field::Price, &PriceGetter::get(None).await?)?;
+        state.set(Field::Price, &PriceGetter::get(None).await?).await?;
         thread::sleep(time::Duration::from_millis(600_000));
     }
     Err::<(), Error>(Error::Exited("Price Update".to_string()))
 }
 
-async fn wallet_thread(mut state: State) -> Result<(), Error> {
-    if !state.get::<Platform>(Field::Platform)?.is_desktop() {
-        let descriptors = state.get::<DescriptorSet>(Field::DescriptorSet)?;
-        let path = state.get::<PathBuf>(Field::Path)?;
-        let mut wallet = Wallet::new(descriptors.clone(), path.clone(), state)?;
+async fn wallet_thread(mut state: State, platform: Platform, descriptors: DescriptorSet, path: PathBuf) -> Result<(), Error> {
+    if !platform.is_desktop() {
+        let mut wallet = Wallet::new(descriptors, path, state)?;
         loop {
             wallet.sync().await?;
             thread::sleep(time::Duration::from_millis(1_000));
@@ -127,54 +125,54 @@ async fn wallet_thread(mut state: State) -> Result<(), Error> {
     } else {Ok(())}
 }
 
-async fn web5_thread(mut state: State, id: Identity) -> Result<(), Error> {
-    info!("Start Web5 init");
-    if !state.get::<Platform>(Field::Platform)?.is_desktop() {
-        let mut wallet = web5_rust::Wallet::new(id, None, None);
-        let agent_key = wallet.get_agent_key(&Protocols::rooms_protocol()).await?;
-        let agent = web5_rust::Agent::new(agent_key, Protocols::get(), None, None);
-        let tenant = agent.tenant().clone();
-        let profile = if let Some(p) = agent.public_read(FiltersBuilder::build(vec![
-            ("author", Filter::equal(tenant.to_string())),
-            ("type", Filter::equal("profile"))]
-        ), None, None).await?.first() {
-            let profile = serde_json::from_slice::<Profile>(&p.1.payload)?;
-            state.set(Field::Profile, &profile)?;
-            profile
-        } else {
-            let index = IndexBuilder::build(vec![("type", "profile")]);
-            let profile = Profile::new("Default Name".to_string(), tenant, None, None);
-            let record = Record::new(None, &Protocols::profile(), serde_json::to_vec(&profile)?);
-            agent.public_create(record, index, None).await?;
-            state.set(Field::Profile, &profile)?;
-            profile
-        };
-        info!("Finished Web5 init");
-        loop {
-            info!("Web5 scan");
-          //agent.scan().await?;
-          //thread::sleep(time::Duration::from_millis(1_000));
-        }
-        Err(Error::Exited("Agent Scan".to_string()))
-    } else {Ok(())}
-}
+//  async fn web5_thread(mut state: State, platform: Platform, id: Identity) -> Result<(), Error> {
+//      info!("Start Web5 init");
+//      if !platform.is_desktop() {
+//          let mut wallet = web5_rust::Wallet::new(id, None, None);
+//          let agent_key = wallet.get_agent_key(&Protocols::rooms_protocol()).await?;
+//          let agent = web5_rust::Agent::new(agent_key, Protocols::get(), None, None);
+//          let tenant = agent.tenant().clone();
+//          let profile = if let Some(p) = agent.public_read(FiltersBuilder::build(vec![
+//              ("author", Filter::equal(tenant.to_string())),
+//              ("type", Filter::equal("profile"))]
+//          ), None, None).await?.first() {
+//              let profile = serde_json::from_slice::<Profile>(&p.1.payload)?;
+//              state.set(Field::Profile, &profile)?;
+//              profile
+//          } else {
+//              let index = IndexBuilder::build(vec![("type", "profile")]);
+//              let profile = Profile::new("Default Name".to_string(), tenant, None, None);
+//              let record = Record::new(None, &Protocols::profile(), serde_json::to_vec(&profile)?);
+//              agent.public_create(record, index, None).await?;
+//              state.set(Field::Profile, &profile).await?;
+//              profile
+//          };
+//          info!("Finished Web5 init");
+//          loop {
+//              info!("Web5 scan");
+//            //agent.scan().await?;
+//            //thread::sleep(time::Duration::from_millis(1_000));
+//          }
+//          Err(Error::Exited("Agent Scan".to_string()))
+//      } else {Ok(())}
+//  }
 
-async fn usb_thread(mut state: State) -> Result<(), Error> {
-    let platform: Platform = state.get(Field::Platform)?;
-    if platform.is_desktop() {
-        let mut usb_info: UsbInfo = UsbInfo::new(&platform)?;
-        loop {
-            if let Some(device_path) = usb_info.detect_new_device_path(&platform)? {
-                // Convert Option<PathBuf> to String safely, TODO update state here
-                let device_path_str = device_path.to_string_lossy().into_owned();
-                // Pass the string to the invoke function
-                //dart_callback.call("print", &device_path_str).await?;
-            }
-            thread::sleep(time::Duration::from_millis(1_000));
-        }
-        Err::<(), Error>(Error::Exited("Usb Detection".to_string()))
-    } else {Ok(())}
-}
+//  async fn usb_thread(mut state: State) -> Result<(), Error> {
+//      let platform: Platform = state.get(Field::Platform).await?;
+//      if platform.is_desktop() {
+//          let mut usb_info: UsbInfo = UsbInfo::new(&platform)?;
+//          loop {
+//              if let Some(device_path) = usb_info.detect_new_device_path(&platform)? {
+//                  // Convert Option<PathBuf> to String safely, TODO update state here
+//                  let device_path_str = device_path.to_string_lossy().into_owned();
+//                  // Pass the string to the invoke function
+//                  //dart_callback.call("print", &device_path_str).await?;
+//              }
+//              thread::sleep(time::Duration::from_millis(1_000));
+//          }
+//          Err::<(), Error>(Error::Exited("Usb Detection".to_string()))
+//      } else {Ok(())}
+//  }
 
 async fn async_rust (
     path: String,
@@ -196,11 +194,11 @@ async fn async_rust (
     let path = PathBuf::from(&path);
     dart_callback.call("print", &format!("{:?}", path)).await?;
 
-    let mut state = State::new::<SqliteStore>(path.clone())?;
-    state.set(Field::Path, &path)?;
+    let mut state = State::new::<SqliteStore>(path.clone()).await?;
+    state.set(Field::Path, &path).await?;
 
     let platform = Platform::from_str(&platform)?;
-    state.set(Field::Platform, &platform)?;
+    state.set(Field::Platform, &platform).await?;
 
     let storage = Storage::new(dart_callback.clone());
 
@@ -227,14 +225,14 @@ async fn async_rust (
         dart_callback.call("print", &format!("{:?}", seed)).await?;
         let descriptors = DescriptorSet::from_seed(&seed)?;
         dart_callback.call("print", &descriptors.internal).await?;
-        state.set(Field::DescriptorSet, &descriptors)?;
+        state.set(Field::DescriptorSet, &descriptors).await?;
     }
 
     tokio::try_join!(
-      //spawn(price_thread(state.clone())),
-      //spawn(internet_thread(state.clone())),
-      //spawn(wallet_thread(state.clone())),
-        spawn(web5_thread(state.clone(), id)),
+        spawn(price_thread(state.clone())),
+        spawn(internet_thread(state.clone())),
+      //spawn(wallet_thread(state.clone(), platform, descriptors, path)),
+      //spawn(web5_thread(state.clone(), platfrom, id, path)),
       //spawn(usb_thread(state)),
     )?;
 
@@ -253,8 +251,8 @@ pub async fn ruststart (
 }
 
 pub async fn getstate(path: String, name: String) -> String {
-    let result: Result<String, Error> = (move || async {
-        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(&name)
+    let result: Result<String, Error> = (|| async {
+        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(&name).await
     })().await;
     match result {
         Ok(s) => s,
@@ -263,7 +261,7 @@ pub async fn getstate(path: String, name: String) -> String {
 }
 
 pub async fn setStateAddress(path: String, mut address: String) -> String {
-    let result: Result<String, Error> = (move || async {
+    let result: Result<String, Error> = (|| async {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
         state.set::<String>(Field::Address, &address).await?;
         Ok("Address set successfully".to_string())
@@ -276,7 +274,7 @@ pub async fn setStateAddress(path: String, mut address: String) -> String {
 
 
 pub async fn setStateConversation(path: String, index: usize) -> String {
-    let result: Result<String, Error> = (move || async {
+    let result: Result<String, Error> = (|| async {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
         let conversations = state.get::<Vec<Conversation>>(Field::Conversations).await?;
         let conversation = &conversations[index];
@@ -291,7 +289,7 @@ pub async fn setStateConversation(path: String, index: usize) -> String {
 }
 
 pub async fn setStateBtc(path: String, btc: f64) -> String {
-    let result: Result<String, Error> = (move || async {
+    let result: Result<String, Error> = (|| async {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
         state.set(Field::AmountBTC, &btc).await?;
         Ok("BTC set successfully".to_string())
@@ -305,7 +303,7 @@ pub async fn setStateBtc(path: String, btc: f64) -> String {
 
 
 pub async fn setStatePriority(path: String, index: u8) -> String {
-    let result: Result<String, Error> = (move || async {
+    let result: Result<String, Error> = (|| async {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
         state.set(Field::Priority, &index).await?;
         Ok("Priority set successfully".to_string())
@@ -318,7 +316,7 @@ pub async fn setStatePriority(path: String, index: u8) -> String {
 }
 
 pub async fn updateDisplayAmount(path: String, input: &str) -> String {
-    let result: Result<String, Error> = (move || async {
+    let result: Result<String, Error> = (|| async {
         let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
         let amount = state.get::<String>(Field::Amount).await?;
         let btc = state.get::<f64>(Field::Balance).await?;

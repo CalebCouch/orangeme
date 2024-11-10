@@ -99,9 +99,9 @@ impl StateManager {
         StateManager{state}
     }
 
-    fn get_wallet(&self) -> Result<Wallet, Error> {
-        let descriptors = self.state.get::<DescriptorSet>(Field::DescriptorSet)?;
-        let path = self.state.get::<PathBuf>(Field::Path)?;
+    async fn get_wallet(&self) -> Result<Wallet, Error> {
+        let descriptors = self.state.get::<DescriptorSet>(Field::DescriptorSet).await?;
+        let path = self.state.get::<PathBuf>(Field::Path).await?;
         Wallet::new(descriptors, path, self.state.clone())
     }
 
@@ -191,32 +191,32 @@ impl StateManager {
         Ok(vec![conversation1, conversation2])
     }
 
-    pub fn get(&mut self, state_name: &str) -> Result<String, Error> {
+    pub async fn get(&mut self, state_name: &str) -> Result<String, Error> {
         match state_name {
-            "BitcoinHome" => self.bitcoin_home(),
-            "Receive" => self.receive(),
-            "Send" => self.send(),
-            "ScanQR" => self.scan_qr(),
-            "Amount" => self.amount(),
-            "Speed" => self.speed(),
-            "ConfirmTransaction" => self.confirm_transaction(),
-            "Success" => self.send_success(),
-            "ViewTransaction" => self.view_transaction(),
-            "MessagesHome" => self.messages_home(),
-            "Exchange" => self.exchange(),
-            "MyProfile" => self.my_profile(),
-            "ConvInfo" => self.conv_info(),
-            "ChooseRecipient" => self.choose_recipient(),
+            "BitcoinHome" => self.bitcoin_home().await,
+            "Receive" => self.receive().await,
+            "Send" => self.send().await,
+            "ScanQR" => self.scan_qr().await,
+            "Amount" => self.amount().await,
+            "Speed" => self.speed().await,
+            "ConfirmTransaction" => self.confirm_transaction().await,
+            "Success" => self.send_success().await,
+            "ViewTransaction" => self.view_transaction().await,
+            "MessagesHome" => self.messages_home().await,
+            "Exchange" => self.exchange().await,
+            "MyProfile" => self.my_profile().await,
+            "ConvInfo" => self.conv_info().await,
+            "ChooseRecipient" => self.choose_recipient().await,
             _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
         }
     }
 
 
-    pub fn bitcoin_home(&self) -> Result<String, Error> {
-        let btc = self.state.get::<f64>(Field::Balance)?;
-        let usd = btc*self.state.get::<f64>(Field::Price)?;
-        let internet_status = self.state.get::<bool>(Field::Internet)?;
-        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions)?;
+    pub async fn bitcoin_home(&self) -> Result<String, Error> {
+        let btc = self.state.get::<f64>(Field::Balance).await?;
+        let usd = btc*self.state.get::<f64>(Field::Price).await?;
+        let internet_status = self.state.get::<bool>(Field::Internet).await?;
+        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions).await?;
 
         let formatted_usd = if usd == 0.0 {
             "$0.00".to_string()
@@ -242,8 +242,8 @@ impl StateManager {
         })?)
     }
 
-    pub fn send(&self) -> Result<String, Error> {
-        let mut address = self.state.get::<String>(Field::Address)?;
+    pub async fn send(&self) -> Result<String, Error> {
+        let mut address = self.state.get::<String>(Field::Address).await?;
         if let Some(stripped) = address.strip_prefix("bitcoin:") { address = stripped.to_string(); }
         let valid = Address::from_str(&address)
         .map(|a| a.require_network(Network::Bitcoin).is_ok())
@@ -254,16 +254,16 @@ impl StateManager {
         })?)
     }
 
-    pub fn scan_qr(&self) -> Result<String, Error> {
+    pub async fn scan_qr(&self) -> Result<String, Error> {
         Ok(serde_json::to_string(&ScanQR{
         })?)
     }
 
-    pub fn amount(&mut self) -> Result<String, Error> {
-        let amount = self.state.get::<String>(Field::Amount)?;
-        let err = self.state.get::<Option<String>>(Field::AmountErr)?; 
-        let decimals = self.state.get::<String>(Field::Decimals)?; 
-        let btc = self.state.get::<f64>(Field::AmountBTC)?;
+    pub async fn amount(&mut self) -> Result<String, Error> {
+        let amount = self.state.get::<String>(Field::Amount).await?;
+        let err = self.state.get::<Option<String>>(Field::AmountErr).await?;
+        let decimals = self.state.get::<String>(Field::Decimals).await?;
+        let btc = self.state.get::<f64>(Field::AmountBTC).await?;
         Ok(serde_json::to_string(&Amount{
             err: err.unwrap_or_default(),
             amount,
@@ -272,11 +272,11 @@ impl StateManager {
         })?)
     }
 
-    pub fn speed(&self) -> Result<String, Error> {
-        let address = self.state.get::<String>(Field::Address)?;
-        let amount = self.state.get::<f64>(Field::AmountBTC)?;
-        let price = self.state.get::<f64>(Field::Price)?;
-        let wallet = self.get_wallet()?;
+    pub async fn speed(&self) -> Result<String, Error> {
+        let address = self.state.get::<String>(Field::Address).await?;
+        let amount = self.state.get::<f64>(Field::AmountBTC).await?;
+        let price = self.state.get::<f64>(Field::Price).await?;
+        let wallet = self.get_wallet().await?;
         let fees: (f64, f64) = wallet.get_fees(address, amount, price)?;
         let fees_str: (String, String) = (
             format!("${:.2}", fees.0),
@@ -287,12 +287,12 @@ impl StateManager {
         })?)
     }
 
-    pub fn confirm_transaction(&self) -> Result<String, Error> {
-        let mut wallet = self.get_wallet()?;
-        let x = self.state.get::<Transaction>(Field::CurrentTx)?;
-        let raw_tx = self.state.get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)?;
-        let price = self.state.get::<f64>(Field::Price)?;
-        wallet.build_transaction()?;
+    pub async fn confirm_transaction(&self) -> Result<String, Error> {
+        let mut wallet = self.get_wallet().await?;
+        let x = self.state.get::<Transaction>(Field::CurrentTx).await?;
+        let raw_tx = self.state.get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx).await?;
+        let price = self.state.get::<f64>(Field::Price).await?;
+        wallet.build_transaction().await?;
         let txid = raw_tx.ok_or(Error::err("Failed to get transaction", "raw_tx is None or Err"))?.txid();
         let transaction = ExtTransaction {
             tx: BasicTransaction {
@@ -310,42 +310,41 @@ impl StateManager {
             fee: format!("${:.2}", x.fee_usd),
             total: format!("${:.2}", x.fee_usd + x.usd),
         };
-        
+
         Ok(serde_json::to_string(&ConfirmTransaction {
             transaction: transaction
         })?)
     }
 
-    pub fn send_success(&self) -> Result<String, Error> {
-        let tx = self.state.get::<Transaction>(Field::CurrentTx)?;
+    pub async fn send_success(&self) -> Result<String, Error> {
+        let tx = self.state.get::<Transaction>(Field::CurrentTx).await?;
 
         Ok(serde_json::to_string(&SendSuccess{
             usd:  format!("${:.2}", tx.usd)
         })?)
     }
 
-
-    pub fn receive(&self) -> Result<String, Error> {
-        let wallet = self.get_wallet()?;
+    pub async fn receive(&self) -> Result<String, Error> {
+        let wallet = self.get_wallet().await?;
         Ok(serde_json::to_string(&Receive{
             address: wallet.get_new_address()?
         })?)
     }
 
-    pub fn my_profile(&self) -> Result<String, Error> {
-        let profile = self.state.get_o::<Profile>(Field::Profile)?.ok_or(Error::err("my_profile", "Profile not found"))?;
+    pub async fn my_profile(&self) -> Result<String, Error> {
+        let profile = self.state.get_o::<Profile>(Field::Profile).await?.ok_or(Error::err("my_profile", "Profile not found"))?;
         Ok(serde_json::to_string(&profile)?)
     }
 
-    pub fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
+    pub async fn usd_to_btc(&self, amount: String) -> Result<f64, Error> {
         let amt: f64 = amount.parse().map_err(|_| Error::err("usd_to_btc", "Invalid amount format"))?;
-        let price = self.state.get::<f64>(Field::Price)?;
+        let price = self.state.get::<f64>(Field::Price).await?;
         let btc_amount = amt / price;
 
         Ok(btc_amount)
     }
 
-    pub fn view_transaction(&self) -> Result<String, Error> {
+    pub async fn view_transaction(&self) -> Result<String, Error> {
         todo!()
       //let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
 
@@ -387,9 +386,9 @@ impl StateManager {
       //})?)
     }
 
-    pub fn messages_home(&mut self) -> Result<String, Error> {
+    pub async fn messages_home(&mut self) -> Result<String, Error> {
         let conversations = self.get_conversations()?; 
-        self.state.set(Field::Conversations, &conversations)?;
+        self.state.set(Field::Conversations, &conversations).await?;
 
         Ok(serde_json::to_string(&MessagesHome{
             profile_picture: "".to_string(),
@@ -397,22 +396,22 @@ impl StateManager {
         })?)
     }
 
-    pub fn exchange(&self) -> Result<String, Error> {
-        let conversation = self.state.get::<Conversation>(Field::CurrentConversation)?;
+    pub async fn exchange(&self) -> Result<String, Error> {
+        let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;
         Ok(serde_json::to_string(&Exchange{
             conversation: conversation,
         })?)
     }
 
-    pub fn choose_recipient(&self) -> Result<String, Error> {
+    pub async fn choose_recipient(&self) -> Result<String, Error> {
         let users = self.get_users()?;
         Ok(serde_json::to_string(&ChooseRecipient{
             users: users,
         })?)
     }
 
-    pub fn conv_info(&self) -> Result<String, Error> {
-        let conversation = self.state.get::<Conversation>(Field::CurrentConversation)?;
+    pub async fn conv_info(&self) -> Result<String, Error> {
+        let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;
         let contacts = conversation.members;
         Ok(serde_json::to_string(&ConvInfo{
             contacts: contacts,
