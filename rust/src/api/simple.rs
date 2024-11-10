@@ -1,5 +1,21 @@
 use super::Error;
 
+
+//Test
+//  use simple_database::{KeyValueStore, SqliteStore};
+//  use flutter_rust_bridge::frb;
+//  use std::convert::TryInto;
+//  use std::path::PathBuf;
+
+//  pub async fn getstate(name: String, path: String) -> String {
+//      let state = SqliteStore::new(PathBuf::from(&path).join("TEST")).await.unwrap();
+//      let count = state.get(b"test").await.unwrap().map(|b| u32::from_le_bytes(b.try_into().unwrap())).unwrap_or_default();
+//      //state.set(b"test", &(count+1).to_le_bytes()).await.unwrap();
+//      format!("{{\"count\": {}}}", count)
+//  }
+
+
+
 use super::structs::{Platform, DartCommand, Storage, DartCallback, Profile};
 use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 use super::price::PriceGetter;
@@ -236,24 +252,22 @@ pub async fn ruststart (
     }
 }
 
-#[frb(sync)]
-pub fn getstate(path: String, name: String, options: String) -> String {
-    let result: Result<String, Error> = (move || {
-        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path))?).get(&name, &options)
-    })();
+pub async fn getstate(path: String, name: String) -> String {
+    let result: Result<String, Error> = (move || async {
+        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(&name)
+    })().await;
     match result {
         Ok(s) => s,
         Err(e) => format!("Error: {}", e)
     }
 }
 
-#[frb(sync)]
-pub fn setStateAddress(path: String, mut address: String) -> String {
-    let result: Result<String, Error> = (move || {
-        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
-        state.set::<String>(Field::Address, &address)?;
+pub async fn setStateAddress(path: String, mut address: String) -> String {
+    let result: Result<String, Error> = (move || async {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+        state.set::<String>(Field::Address, &address).await?;
         Ok("Address set successfully".to_string())
-    })();
+    })().await;
     match result {
         Ok(s) => s,
         Err(e) => format!("Error: {}", e),
@@ -261,15 +275,14 @@ pub fn setStateAddress(path: String, mut address: String) -> String {
 }
 
 
-#[frb(sync)]
-pub fn setStateConversation(path: String, index: usize) -> String {
-    let result: Result<String, Error> = (move || {
-        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
-        let conversations = state.get::<Vec<Conversation>>(Field::Conversations)?;
+pub async fn setStateConversation(path: String, index: usize) -> String {
+    let result: Result<String, Error> = (move || async {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+        let conversations = state.get::<Vec<Conversation>>(Field::Conversations).await?;
         let conversation = &conversations[index];
-        state.set(Field::CurrentConversation, conversation)?;
+        state.set(Field::CurrentConversation, conversation).await?;
         Ok("Current conversation set successfully".to_string())
-    })();
+    })().await;
 
     match result {
         Ok(message) => message,
@@ -277,13 +290,12 @@ pub fn setStateConversation(path: String, index: usize) -> String {
     }
 }
 
-#[frb(sync)]
-pub fn setStateBtc(path: String, btc: f64) -> String {
-    let result: Result<String, Error> = (move || {
-        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
-        state.set(Field::AmountBTC, &btc)?;
+pub async fn setStateBtc(path: String, btc: f64) -> String {
+    let result: Result<String, Error> = (move || async {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+        state.set(Field::AmountBTC, &btc).await?;
         Ok("BTC set successfully".to_string())
-    })();
+    })().await;
 
     match result {
         Ok(message) => message,
@@ -292,13 +304,12 @@ pub fn setStateBtc(path: String, btc: f64) -> String {
 }
 
 
-#[frb(sync)]
-pub fn setStatePriority(path: String, index: u8) -> String {
-    let result: Result<String, Error> = (move || {
-        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
-        state.set(Field::Priority, &index)?;
+pub async fn setStatePriority(path: String, index: u8) -> String {
+    let result: Result<String, Error> = (move || async {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+        state.set(Field::Priority, &index).await?;
         Ok("Priority set successfully".to_string())
-    })();
+    })().await;
 
     match result {
         Ok(message) => message,
@@ -306,15 +317,12 @@ pub fn setStatePriority(path: String, index: u8) -> String {
     }
 }
 
-
-
-#[frb(sync)]
-pub fn updateDisplayAmount(path: String, input: &str) -> String {
-    let result: Result<String, Error> = (move || {
-        let mut state = State::new::<SqliteStore>(PathBuf::from(&path))?;
-        let amount = state.get::<String>(Field::Amount)?;
-        let btc = state.get::<f64>(Field::Balance)?;
-        let price = state.get::<f64>(Field::Price)?;
+pub async fn updateDisplayAmount(path: String, input: &str) -> String {
+    let result: Result<String, Error> = (move || async {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+        let amount = state.get::<String>(Field::Amount).await?;
+        let btc = state.get::<f64>(Field::Balance).await?;
+        let price = state.get::<f64>(Field::Price).await?;
         let usd_balance = btc*price;
         let min: f64 = 0.30;
         let max = usd_balance - min;
@@ -383,12 +391,12 @@ pub fn updateDisplayAmount(path: String, input: &str) -> String {
             None
         };
 
-        state.set(Field::Amount, &updated_amount)?;
-        state.set(Field::AmountBTC, &(updated_amount_f64 / price))?;
-        state.set(Field::AmountErr, &err)?;
-        state.set(Field::Decimals, &decimals)?;
+        state.set(Field::Amount, &updated_amount).await?;
+        state.set(Field::AmountBTC, &(updated_amount_f64 / price)).await?;
+        state.set(Field::AmountErr, &err).await?;
+        state.set(Field::Decimals, &decimals).await?;
         Ok(if validation { "true".to_string() } else { "false".to_string() })
-    })();
+    })().await;
 
     match result {
         Ok(validation_str) => validation_str,
@@ -415,9 +423,8 @@ fn is_same_date(date1: NaiveDate, date2: NaiveDate) -> bool {
     date1.year() == date2.year() && date1.month() == date2.month() && date1.day() == date2.day()
 }
 
-#[frb(sync)]
-pub fn broadcastTx(path: String) -> String {
-    let state = State::new::<SqliteStore>(PathBuf::from(&path))
+pub async fn broadcastTx(path: String) -> String {
+    let state = State::new::<SqliteStore>(PathBuf::from(&path)).await
         .expect("Failed to initialize state with the provided path");
 
     let client = bdk::electrum_client::Client::new(CLIENT_URI)
@@ -426,7 +433,7 @@ pub fn broadcastTx(path: String) -> String {
     let blockchain = ElectrumBlockchain::from(client);
 
     let tx = state
-        .get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx)
+        .get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx).await
         .expect("Failed to retrieve transaction from state")
         .expect("No transaction found in state to broadcast");
 

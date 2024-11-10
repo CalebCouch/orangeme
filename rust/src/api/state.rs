@@ -16,6 +16,7 @@ use std::str::FromStr;
 use num_format::{Locale, ToFormattedString};
 
 use bdk::bitcoin::{Network, Address};
+use web5_rust::dids::Identity;
 
 
 pub type Internet = bool;
@@ -24,7 +25,7 @@ const SATS: u64 = 100_000_000;
 
 #[derive(Debug)]
 pub enum Field {
-    Identity,
+    Identity,//(Option<Identity>),
     LegacySeed,
     DescriptorSet,
     Internet,
@@ -60,33 +61,31 @@ pub struct State {
 }
 
 impl State {
-    pub fn new<KVS: KeyValueStore + 'static>(
+    pub async fn new<KVS: KeyValueStore + 'static>(
         path: PathBuf,
     ) -> Result<Self, Error> {
         Ok(State{
-            store: Box::new(KVS::new(path)?)
+            store: Box::new(KVS::new(path).await?)
         })
     }
 
-    pub fn set<T: Serialize>(&mut self, field: Field, data: &T) -> Result<(), Error> {
-        self.store.set(&field.into_bytes(), &serde_json::to_vec(data)?)?;
+    pub async fn set<T: Serialize>(&mut self, field: Field, data: &T) -> Result<(), Error> {
+        self.store.set(&field.into_bytes(), &serde_json::to_vec(data)?).await?;
         Ok(())
     }
 
-    pub fn get_raw(&self, field: Field) -> Result<Option<Vec<u8>>, Error> {
-        Ok(self.store.get(&field.into_bytes())?)
+    pub async fn get_raw(&self, field: Field) -> Result<Option<Vec<u8>>, Error> {
+        Ok(self.store.get(&field.into_bytes()).await?)
     }
 
-    pub fn get_o<T: for <'a> Deserialize<'a>>(&self, field: Field) -> Result<Option<T>, Error> {
-        Ok(self.store.get(&field.into_bytes())?.map(|b|
+    pub async fn get_o<T: for <'a> Deserialize<'a>>(&self, field: Field) -> Result<Option<T>, Error> {
+        Ok(self.get_raw(field).await?.map(|b|
             serde_json::from_slice(&b)
         ).transpose()?)
     }
 
-    pub fn get<T: for <'a> Deserialize<'a> + Default>(&self, field: Field) -> Result<T, Error> {
-        Ok(self.store.get(&field.into_bytes())?.map(|b|
-            serde_json::from_slice(&b)
-        ).transpose()?.unwrap_or_default())
+    pub async fn get<T: for <'a> Deserialize<'a> + Default>(&self, field: Field) -> Result<T, Error> {
+        Ok(self.get_o(field).await?.unwrap_or_default())
     }
 }
 
@@ -192,7 +191,7 @@ impl StateManager {
         Ok(vec![conversation1, conversation2])
     }
 
-    pub fn get(&mut self, state_name: &str, options: &str) -> Result<String, Error> {
+    pub fn get(&mut self, state_name: &str) -> Result<String, Error> {
         match state_name {
             "BitcoinHome" => self.bitcoin_home(),
             "Receive" => self.receive(),
@@ -202,7 +201,7 @@ impl StateManager {
             "Speed" => self.speed(),
             "ConfirmTransaction" => self.confirm_transaction(),
             "Success" => self.send_success(),
-            "ViewTransaction" => self.view_transaction(options),
+            "ViewTransaction" => self.view_transaction(),
             "MessagesHome" => self.messages_home(),
             "Exchange" => self.exchange(),
             "MyProfile" => self.my_profile(),
@@ -346,45 +345,46 @@ impl StateManager {
         Ok(btc_amount)
     }
 
-    pub fn view_transaction(&self, options: &str) -> Result<String, Error> {
-        let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
+    pub fn view_transaction(&self) -> Result<String, Error> {
+        todo!()
+      //let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
 
-        let wallet = self.get_wallet()?;
-        let tx = wallet.get_tx(&txid);
-        let x = tx.unwrap();
+      //let wallet = self.get_wallet()?;
+      //let tx = wallet.get_tx(&txid);
+      //let x = tx.unwrap();
 
-        let price = x.price;
-        let whole_part = price.trunc() as i64;
-        let decimal_part = (price.fract() * 100.0).round() as i64;
-        let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
+      //let price = x.price;
+      //let whole_part = price.trunc() as i64;
+      //let decimal_part = (price.fract() * 100.0).round() as i64;
+      //let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
 
-        let basic_tx = BasicTransaction {
-            tx: ShorthandTransaction {
-                is_withdraw: x.is_withdraw,
-                date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                btc: x.btc,
-                usd: format!("${:.2}", x.usd),
-                txid: txid.to_string(),
-            },
-            address: x.address.clone(),
-            price: formatted_price,
-        };
+      //let basic_tx = BasicTransaction {
+      //    tx: ShorthandTransaction {
+      //        is_withdraw: x.is_withdraw,
+      //        date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+      //        time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+      //        btc: x.btc,
+      //        usd: format!("${:.2}", x.usd),
+      //        txid: txid.to_string(),
+      //    },
+      //    address: x.address.clone(),
+      //    price: formatted_price,
+      //};
 
-        let ext_transaction = if x.is_withdraw {
-            Some(ExtTransaction {
-                tx: basic_tx.clone(),
-                fee: format!("${:.2}", x.fee_usd),
-                total: format!("${:.2}", x.fee_usd + x.usd),
-            })
-        } else {
-            None
-        };
+      //let ext_transaction = if x.is_withdraw {
+      //    Some(ExtTransaction {
+      //        tx: basic_tx.clone(),
+      //        fee: format!("${:.2}", x.fee_usd),
+      //        total: format!("${:.2}", x.fee_usd + x.usd),
+      //    })
+      //} else {
+      //    None
+      //};
 
-        Ok(serde_json::to_string(&ViewTransaction {
-            basic_transaction: Some(basic_tx),
-            ext_transaction,
-        })?)
+      //Ok(serde_json::to_string(&ViewTransaction {
+      //    basic_transaction: Some(basic_tx),
+      //    ext_transaction,
+      //})?)
     }
 
     pub fn messages_home(&mut self) -> Result<String, Error> {

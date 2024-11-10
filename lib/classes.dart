@@ -76,27 +76,26 @@ abstract class GenericWidget extends StatefulWidget {
 abstract class GenericState<T extends GenericWidget> extends State<T> {
   String stateName();
   int refreshInterval();
-  String options() {
-    return "";
-  }
 
   void unpack_state(Map<String, dynamic> json);
 
-  void getState() {
-    String state = getstate(name: stateName(), path: global.dataDir!, options: options());
+  void getState() async {
+    String state = await getstate(name: stateName(), path: global.dataDir!);
     unpack_state(jsonDecode(state));
+    _createTimer();
   }
 
   navigateTo(Widget next) async {
     widget.timer?.cancel();
     await global.navigation.navigateTo(next);
-    await _initTimer();
+    await _createTimer();
   }
 
-  _initTimer() async {
+  _createTimer() {
+    widget.timer?.cancel();
     var interval = refreshInterval();
     if (interval > 0) {
-      widget.timer = Timer.periodic(Duration(milliseconds: interval), (Timer t) {
+      widget.timer = Timer(Duration(milliseconds: interval), () {
         getState();
       });
     }
@@ -105,7 +104,6 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
   @override
   void initState() {
     getState();
-    _initTimer();
     super.initState();
   }
 

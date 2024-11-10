@@ -186,54 +186,51 @@ impl Wallet {
         Ok(self.inner.get_address(AddressIndex::New)?.address.to_string())
     }
 
-    pub fn get_tx(&self, txid: &Txid) -> Result<Transaction, Error> {
-        self.get_transactions()?
+    pub async fn get_tx(&self, txid: &Txid) -> Result<Transaction, Error> {
+        self.get_transactions().await?
             .remove(txid)
             .ok_or_else(|| Error::err("Transaction not found", &format!("No transaction found for Txid: {}", txid)))
     }
 
 
-    pub fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
+    pub async fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
         //panic!("test {}", self.get_transactions()?.into_values().collect::<Vec<Transaction>>().len());
-        Ok(self.get_transactions()?.into_values().collect())
+        Ok(self.get_transactions().await?.into_values().collect())
     }
 
-    fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
+    async fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
         self.state.get::<Transactions>(Field::Transactions)
     }
-    
 
     pub fn get_fees(&self, address: String, amount: f64, price: f64) -> Result<(f64, f64), Error> {
         let address = Address::from_str(&address)?.require_network(Network::Bitcoin);
-    
+
         let mut builder = self.inner.build_tx();
         builder.add_recipient(address?.script_pubkey(), (amount * SATS) as u64);
         let size = builder.finish()?.0.extract_tx().vsize() as f64;
-        
+
         let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
         Ok((((blockchain.estimate_fee(3)? / 1000 as f64) * size) * price, ((blockchain.estimate_fee(1)? / 1000 as f64) * size) * price))
     }
-    
 
-    
-    pub fn build_transaction(&mut self) -> Result<String, Error> {
+    pub async fn build_transaction(&mut self) -> Result<String, Error> {
         let ec = "Main.create_transaction";
-        let error = || Error::bad_request(ec, "Invalid parameters"); 
+        let error = || Error::bad_request(ec, "Invalid parameters");
         let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
 
-        let address_str = self.state.get::<String>(Field::Address)?;
+        let address_str = self.state.get::<String>(Field::Address).await?;
         let address = Address::from_str(&address_str)?.require_network(Network::Bitcoin);
 
-        let amount_btc = self.state.get::<f64>(Field::AmountBTC)?;
-        let priority = self.state.get::<u8>(Field::Priority)?;
+        let amount_btc = self.state.get::<f64>(Field::AmountBTC).await?;
+        let priority = self.state.get::<u8>(Field::Priority).await?;
 
-        let price = self.state.get::<f64>(Field::Price)?;
+        let price = self.state.get::<f64>(Field::Price).await?;
 
         let is_mine = |s: &Script| self.inner.is_mine(s).unwrap_or(false);
         let amount = (amount_btc * SATS) as u64;
 
-        let selected_fee = if priority == 0 { 
-            blockchain.estimate_fee(3)? as f64 / 1000.0 
+        let selected_fee = if priority == 0 {
+            blockchain.estimate_fee(3)? as f64 / 1000.0
         } else {
             blockchain.estimate_fee(1)? as f64 / 1000.0
         };
@@ -244,19 +241,19 @@ impl Wallet {
             builder.fee_rate(FeeRate::from_sat_per_vb(selected_fee as f32));
             builder.finish()?
         };
-        
+
         let finalized = self.inner.sign(&mut psbt, SignOptions::default())?;
         if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
 
         let tx = psbt.clone().extract_tx();
-        self.state.set(Field::CurrentRawTx, &tx)?;
+        self.state.set(Field::CurrentRawTx, &tx).await?;
 
         tx_details.transaction = Some(tx);
 
         let tx = Transaction::from_details(tx_details.clone(), price, |s: &Script| {self.inner.is_mine(s).unwrap_or(false)})?;
-        self.state.set(Field::CurrentTx, &tx)?;
+        self.state.set(Field::CurrentTx, &tx).await?;
         Ok(serde_json::to_string(&tx)?)
-    } 
+    }
 
 
   //pub fn get_blockchain() -> Result<EsploraBlockchain, Error> {
@@ -273,7 +270,7 @@ impl Wallet {
             }
         }
         //Transactions
-        let mut txs = self.get_transactions()?;
+        let mut txs = self.get_transactions().await?;
         for tx in self.inner.list_transactions(true)? {
             if let Some(transaction) = txs.get(&tx.txid) {
                 if transaction.confirmation_time.is_some() {continue;}
@@ -285,11 +282,11 @@ impl Wallet {
 
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {self.inner.is_mine(s).unwrap_or_default()})?);
         }
-        self.state.set(Field::Transactions, &txs)?;
+        self.state.set(Field::Transactions, &txs).await?;
 
         //Balance
         let btc = self.get_balance()?;
-        self.state.set(Field::Balance, &btc)?;
+        self.state.set(Field::Balance, &btc).await?;
         Ok(())
     }
 }

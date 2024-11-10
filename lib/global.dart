@@ -13,6 +13,8 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+import 'package:orange/src/rust/api/simple.dart';
+
 String? dataDir;
 
 getAppData() async {
