@@ -1,6 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/global.dart' as global;
 
 class Storage {
@@ -12,24 +13,24 @@ class Storage {
 
     factory Storage.init(Platform platform) {
         return switch(platform) {
-            Platform.IOS => Storage(platform, null, FlutterSecureStorage()),
-            Platform.Android => Storage(platform, SharedPreferencesAsync(), null),
+            Platform.ios => Storage(platform, null, FlutterSecureStorage()),
+            Platform.android => Storage(platform, SharedPreferencesAsync(), null),
             _ => Storage(platform, null, null),
         };
     }
 
     Future<void> write(String key, String value) async {
         switch(platform) {
-            case Platform.IOS: await this.ios_storage!.write(key: key, value: value);
-            case Platform.Android: await this.android_storage!.setString(key, value);
+            case Platform.ios: await this.ios_storage!.write(key: key, value: value);
+            case Platform.android: await this.android_storage!.setString(key, value);
             default:  throw 'Unsupported Storage Platform';
         }
     }
 
     Future<String?> read(String key) async {
         switch(platform) {
-            case Platform.IOS: return await this.ios_storage!.read(key: key);
-            case Platform.Android: return await this.android_storage!.getString(key);
+            case Platform.ios: return await this.ios_storage!.read(key: key);
+            case Platform.android: return await this.android_storage!.getString(key);
             default:  throw 'Unsupported Storage Platform';
         }
     }

@@ -41,6 +41,7 @@ class TestState extends GenericState<Test> {
   Widget build_with_state(BuildContext context) {
     return Column(children: <Widget>[
       Text("count: ${widget.val}"),
+      Text("test: ${testfn(test: TestEnum.value(10))}"),
       //TextButton(
       //  onPressed: test,
       //  child: Text('TextButton')

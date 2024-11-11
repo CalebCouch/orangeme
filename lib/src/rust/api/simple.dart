@@ -11,7 +11,7 @@ import 'pub_structs.dart';
 
 Future<String> ruststart(
         {required String path,
-        required String platform,
+        required Platform platform,
         required FutureOr<String> Function(String) thread}) =>
     RustLib.instance.api.crateApiSimpleRuststart(
         path: path, platform: platform, thread: thread);

@@ -5,8 +5,13 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+part 'pub_structs.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`, `fmt`
+
+String testfn({required TestEnum test}) =>
+    RustLib.instance.api.crateApiPubStructsTestfn(test: test);
 
 enum Field {
   identity,
@@ -56,4 +61,35 @@ enum PageName {
   chooseRecipient,
   test,
   ;
+}
+
+enum Platform {
+  mac,
+  linux,
+  windows,
+  ios,
+  android,
+  fuchsia,
+  ;
+
+  static Future<Platform> default_() =>
+      RustLib.instance.api.crateApiPubStructsPlatformDefault();
+
+  bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
+        that: this,
+      );
+}
+
+@freezed
+sealed class TestEnum with _$TestEnum {
+  const TestEnum._();
+
+  const factory TestEnum.value([
+    int? field0,
+  ]) = TestEnum_Value;
+
+  Future<Uint8List> intoBytes() =>
+      RustLib.instance.api.crateApiPubStructsTestEnumIntoBytes(
+        that: this,
+      );
 }

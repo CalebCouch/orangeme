@@ -12,7 +12,7 @@ import 'package:orange/test.dart';
 Future<void> startRust(String path) async {
   global.navigation.throwError(await ruststart(
     path: path,
-    platform: global.platform.toString(),
+    platform: global.platform,
     thread: global.dartCallback,
   ));
 }

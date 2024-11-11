@@ -14,9 +14,9 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-use super::pub_structs::{PageName, Field};
+use super::pub_structs::{Platform, PageName, Field};
 
-use super::structs::{Platform, DartCommand, Storage, DartCallback, Profile};
+use super::structs::{DartCommand, Storage, DartCallback, Profile};
 use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 use super::price::PriceGetter;
 use super::state::{StateManager, State};
@@ -173,7 +173,7 @@ async fn wallet_thread(mut state: State, platform: Platform, descriptors: Descri
 
 async fn async_rust (
     path: String,
-    platform: String,
+    platform: Platform,
     thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
 ) -> Result<(), Error> {
 
@@ -194,7 +194,6 @@ async fn async_rust (
     let mut state = State::new::<SqliteStore>(path.clone()).await?;
     state.set(Field::Path, &path).await?;
 
-    let platform = Platform::from_str(&platform)?;
     state.set(Field::Platform, &platform).await?;
 
     let storage = Storage::new(dart_callback.clone());
@@ -238,7 +237,7 @@ async fn async_rust (
 
 pub async fn ruststart (
     path: String,
-    platform: String,
+    platform: Platform,
     thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
 ) -> String {
     match async_rust(path, platform, thread).await {

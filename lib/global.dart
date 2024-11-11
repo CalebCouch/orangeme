@@ -1,15 +1,14 @@
 library orangeme.global;
 
-// import 'package:flutter/material.dart';
 import 'package:orange/classes.dart';
-// import 'package:orange/error.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/navigation.dart';
 import 'package:orange/storage.dart';
 
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' as DartIO;
 
 import 'package:path_provider/path_provider.dart';
 
@@ -18,12 +17,34 @@ import 'package:orange/src/rust/api/simple.dart';
 String? dataDir;
 
 getAppData() async {
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    dataDir = (await Directory('${appDocDirectory.path}/orangeme/').create(recursive: true)).path.toString();
+    DartIO.Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    dataDir = (await DartIO.Directory('${appDocDirectory.path}/orangeme/').create(recursive: true)).path.toString();
 }
 
 //Platform
-Platform platform = Platform.Mac.init();//Use Mac to call INIT and get the actual platform
+Platform getPlatform() {
+    if (DartIO.Platform.isWindows) {
+      return Platform.windows;
+    }
+    if (DartIO.Platform.isLinux) {
+      return Platform.linux;
+    }
+    if (DartIO.Platform.isMacOS) {
+      return Platform.mac;
+    }
+    if (DartIO.Platform.isIOS) {
+      return Platform.ios;
+    }
+    if (DartIO.Platform.isAndroid) {
+      return Platform.android;
+    }
+    if (DartIO.Platform.isFuchsia) {
+      return Platform.fuchsia;
+    }
+    throw 'Unsupported Platform';
+}
+
+Platform platform = getPlatform();
 bool platform_isDesktop = platform.isDesktop();
 bool platform_isMobile = !platform_isDesktop;
 bool internet_connected = true;

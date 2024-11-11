@@ -8,54 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 // import 'dart:io';
-import 'dart:io' as DartIO;
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
 
 import 'package:orange/src/rust/api/pub_structs.dart';
 
-enum Platform {
-  Windows,
-  Linux,
-  Mac,
-  IOS,
-  Android,
-  Fuchsia;
 
-  const Platform();
-
-  Platform init() {
-    if (DartIO.Platform.isWindows) {
-      return Platform.Windows;
-    }
-    if (DartIO.Platform.isLinux) {
-      return Platform.Linux;
-    }
-    if (DartIO.Platform.isMacOS) {
-      return Platform.Mac;
-    }
-    if (DartIO.Platform.isIOS) {
-      return Platform.IOS;
-    }
-    if (DartIO.Platform.isAndroid) {
-      return Platform.Android;
-    }
-    if (DartIO.Platform.isFuchsia) {
-      return Platform.Fuchsia;
-    }
-    throw 'Unsupported Platform';
-  }
-
-  bool isDesktop() {
-    return switch (this) { Platform.Mac => true, Platform.Linux => true, Platform.Windows => true, _ => false };
-  }
-
-  @override
-  String toString() {
-    return switch (this) { Platform.Mac => "Mac", Platform.Linux => "Linux", Platform.Windows => "Windows", Platform.IOS => "IOS", Platform.Android => "Android", Platform.Fuchsia => "Fuchsia" };
-  }
-}
 
 /* Manages and triggers shake animations by notifying listeners. */
 class ShakeController extends ChangeNotifier {

@@ -1,6 +1,6 @@
 use super::Error;
 
-use super::pub_structs::{PageName, Field};
+use super::pub_structs::{PageName, Field, TestEnum};
 use super::wallet::{Wallet, DescriptorSet, Transaction};
 use super::structs::{DateTime, Profile};
 
@@ -24,6 +24,40 @@ use web5_rust::dids::Identity;
 pub type Internet = bool;
 
 const SATS: u64 = 100_000_000;
+
+#[derive(Clone)]
+pub struct TestState {
+    store: Box<dyn KeyValueStore>,
+}
+
+impl TestState {
+    pub async fn new<KVS: KeyValueStore + 'static>(
+        path: PathBuf,
+    ) -> Result<Self, Error> {
+        Ok(TestState{
+            store: Box::new(KVS::new(path).await?)
+        })
+    }
+
+    pub async fn set(&mut self, field: TestEnum) -> Result<(), Error> {
+        self.store.set(&field.into_bytes(), &serde_json::to_vec(&field)?).await?;
+        Ok(())
+    }
+
+    pub async fn get_raw(&self, field: TestEnum) -> Result<Option<Vec<u8>>, Error> {
+        Ok(self.store.get(&field.into_bytes()).await?)
+    }
+
+    pub async fn get_o<T: for <'a> Deserialize<'a>>(&self, field: TestEnum) -> Result<Option<T>, Error> {
+        Ok(self.get_raw(field).await?.map(|b|
+            serde_json::from_slice(&b)
+        ).transpose()?)
+    }
+
+    pub async fn get<T: for <'a> Deserialize<'a> + Default>(&self, field: TestEnum) -> Result<T, Error> {
+        Ok(self.get_o(field).await?.unwrap_or_default())
+    }
+}
 
 #[derive(Clone)]
 pub struct State {
@@ -101,7 +135,6 @@ impl StateManager {
             PageName::ConvoInfo => self.conv_info().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
             PageName::Test => self.test().await,
-            _ => Err(Error::bad_request("StateManager::get", &format!("No page with name {:?}", page)))
         }
     }
 
