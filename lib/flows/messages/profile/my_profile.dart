@@ -66,7 +66,7 @@ class MyProfileState extends GenericState<MyProfile> {
   bool save = false;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     _profileName = TextEditingController(text: name);
     _aboutMe = TextEditingController(text: aboutMe);
 

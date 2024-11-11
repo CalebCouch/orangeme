@@ -80,7 +80,7 @@ class SendState extends GenericState<Send> {
   final TextEditingController controller = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Stack_Default(
       Header_Stack(context, "Bitcoin address", null, backButton()),
       [

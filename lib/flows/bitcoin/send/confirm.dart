@@ -52,7 +52,7 @@ class ConfirmState extends GenericState<Confirm> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     BasicTransaction basicTx = widget.tx.tx;
     ShorthandTransaction shTx = basicTx.tx;
 

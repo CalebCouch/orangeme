@@ -57,7 +57,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Root_Home(
       Header_Home(ProfileButton(context, widget.profile_picture, toProfile), "Messages"),
       [

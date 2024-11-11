@@ -48,7 +48,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     checkList();
     return Stack_Default(
       Header_Button(context, "Choose recipient", CustomButton('Next', 'ghost md hug none', onNext, enabled)),

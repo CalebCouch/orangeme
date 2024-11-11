@@ -38,7 +38,7 @@ class SuccessState extends GenericState<Success> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Stack_Default(
       Header_Stack(context, "Confirm send", Container(), exitButton(context, BitcoinHome())),
       [

@@ -54,7 +54,7 @@ class SpeedState extends GenericState<Speed> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Stack_Default(
       Header_Stack(context, "Transaction speed"),
       [SpeedSelector(widget.fees)],

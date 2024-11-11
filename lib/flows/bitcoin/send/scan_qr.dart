@@ -34,7 +34,7 @@ class ScanQRState extends GenericState<ScanQR> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Root_Takeover(
       Header_Stack(context, "Scan QR code"),
       Expanded(

@@ -33,7 +33,7 @@ class MessageInfoState extends GenericState<MessageInfo> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Stack_Scroll(
       Header_Stack(context, "Group members"),
       [

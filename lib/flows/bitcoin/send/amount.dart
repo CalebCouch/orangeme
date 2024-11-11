@@ -76,7 +76,7 @@ class AmountState extends GenericState<Amount> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     updateButton();
     return Stack_Default(
       Header_Stack(context, "Send bitcoin"),

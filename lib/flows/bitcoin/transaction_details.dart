@@ -44,7 +44,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
     Navigator.pop(context);
   }
 
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     BasicTransaction tx;
     if (widget.basic_transaction != null) {
       tx = widget.basic_transaction!;

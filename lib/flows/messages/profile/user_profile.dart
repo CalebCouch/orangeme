@@ -48,7 +48,7 @@ class UserProfileState extends GenericState<UserProfile> {
   String address = ''; //Need to generate an address
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Stack_Default(
       Header_Stack(context, widget.user.name),
       [

@@ -52,7 +52,7 @@ class ExchangeState extends GenericState<Exchange> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     List<Profile> members = widget.conversation.members;
 
     return Stack_Chat(

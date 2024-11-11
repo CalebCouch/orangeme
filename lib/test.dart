@@ -36,9 +36,9 @@ class TestState extends GenericState<Test> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     return Column(children: <Widget>[
-        Text("count: ${widget.val}"),
+      Text("count: ${widget.val}"),
       //TextButton(
       //  onPressed: test,
       //  child: Text('TextButton')
