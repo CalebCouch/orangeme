@@ -13,6 +13,8 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
 
+import 'package:orange/src/rust/api/pub_structs.dart';
+
 enum Platform {
   Windows,
   Linux,
@@ -69,7 +71,7 @@ abstract class GenericWidget extends StatefulWidget {
 }
 
 abstract class GenericState<T extends GenericWidget> extends State<T> {
-  Page getPage();
+  PageName getPageName();
   int refreshInterval();
   Widget build_with_state(BuildContext context);
 
@@ -77,7 +79,7 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
   void getState() async {
     int time = DateTime.now().millisecondsSinceEpoch;
-    widget.async_state = getpage(path: global.dataDir!, page: getPage());
+    widget.async_state = getpage(path: global.dataDir!, page: getPageName());
     String state = await widget.async_state!;
     //print("gotstate in ${DateTime.now().millisecondsSinceEpoch - time}");
     if (!widget.pause_refresh) {

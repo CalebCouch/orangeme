@@ -1,5 +1,6 @@
 use super::Error;
 
+use super::pub_structs::{PageName, Field};
 use super::wallet::{Wallet, DescriptorSet, Transaction};
 use super::structs::{DateTime, Profile};
 
@@ -23,38 +24,6 @@ use web5_rust::dids::Identity;
 pub type Internet = bool;
 
 const SATS: u64 = 100_000_000;
-
-#[derive(Debug)]
-pub enum Field {
-    Identity,
-    LegacySeed,
-    DescriptorSet,
-    Internet,
-    Platform,
-    Profile,
-    Address,
-    Amount,
-    Priority,
-    AmountErr,
-    AmountBTC,
-    Decimals,
-    InputValidation,
-    Price,
-    Path,
-    Balance,
-    CurrentConversation,
-    Conversations,
-    Users,
-    Transactions,
-    CurrentTx,
-    CurrentRawTx,
-}
-
-impl Field {
-    pub fn into_bytes(&self) -> Vec<u8> {
-        format!("{:?}", self).into_bytes()
-    }
-}
 
 #[derive(Clone)]
 pub struct State {
@@ -90,25 +59,6 @@ impl State {
     }
 }
 
-#[derive(Debug)]
-pub enum Page {
-    BitcoinHome,
-    Receive,
-    Send,
-    ScanQr,
-    Amount,
-    Speed,
-    ConfirmTransaction,
-    Success,
-    ViewTransaction,
-    MessagesHome,
-    Exchange,
-    MyProfile,
-    ConvoInfo,
-    ChooseRecipient,
-    Test
-}
-
 #[derive(Clone)]
 pub struct StateManager {
     state: State,
@@ -134,23 +84,23 @@ impl StateManager {
             .unwrap_or(("Pending".to_string(), "Pending".to_string()))
     }
 
-    pub async fn get(&mut self, page: Page) -> Result<String, Error> {
+    pub async fn get(&mut self, page: &PageName) -> Result<String, Error> {
         match page {
-            Page::BitcoinHome => self.bitcoin_home().await,
-            Page::Receive => self.receive().await,
-            Page::Send => self.send().await,
-            Page::ScanQR => self.scan_qr().await,
-            Page::Amount => self.amount().await,
-            Page::Speed => self.speed().await,
-            Page::ConfirmTransaction => self.confirm_transaction().await,
-            Page::Success => self.send_success().await,
-            Page::ViewTransaction => self.view_transaction().await,
-            Page::MessagesHome => self.messages_home().await,
-            Page::Exchange => self.exchange().await,
-            Page::MyProfile => self.my_profile().await,
-            Page::ConvInfo => self.conv_info().await,
-            Page::ChooseRecipient => self.choose_recipient().await,
-            Page::Test => self.test().await,
+            PageName::BitcoinHome => self.bitcoin_home().await,
+            PageName::Receive => self.receive().await,
+            PageName::Send => self.send().await,
+            PageName::ScanQR => self.scan_qr().await,
+            PageName::Amount => self.amount().await,
+            PageName::Speed => self.speed().await,
+            PageName::ConfirmTransaction => self.confirm_transaction().await,
+            PageName::Success => self.send_success().await,
+            PageName::ViewTransaction => self.view_transaction().await,
+            PageName::MessagesHome => self.messages_home().await,
+            PageName::Exchange => self.exchange().await,
+            PageName::MyProfile => self.my_profile().await,
+            PageName::ConvoInfo => self.conv_info().await,
+            PageName::ChooseRecipient => self.choose_recipient().await,
+            PageName::Test => self.test().await,
             _ => Err(Error::bad_request("StateManager::get", &format!("No page with name {:?}", page)))
         }
     }

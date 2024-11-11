@@ -8,6 +8,8 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/global.dart' as global;
 
+import 'package:orange/src/rust/api/pub_structs.dart';
+
 class Test extends GenericWidget {
   Test({super.key});
 
@@ -19,8 +21,8 @@ class Test extends GenericWidget {
 
 class TestState extends GenericState<Test> {
   @override
-  String stateName() {
-    return "Test";
+  PageName getPageName() {
+    return PageName.test;
   }
 
   @override

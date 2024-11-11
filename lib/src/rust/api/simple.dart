@@ -5,6 +5,7 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'pub_structs.dart';
 
 // These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `is_same_date`, `price_thread`, `spawn`, `wallet_thread`
 
@@ -15,7 +16,7 @@ Future<String> ruststart(
     RustLib.instance.api.crateApiSimpleRuststart(
         path: path, platform: platform, thread: thread);
 
-Future<String> getpage({required String path, required Page page}) =>
+Future<String> getpage({required String path, required PageName page}) =>
     RustLib.instance.api.crateApiSimpleGetpage(path: path, page: page);
 
 Future<String> setstate(
@@ -51,9 +52,3 @@ String formatTransactionDate({required String date, required String time}) =>
 
 Future<String> broadcastTx({required String path}) =>
     RustLib.instance.api.crateApiSimpleBroadcastTx(path: path);
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>>
-abstract class Field implements RustOpaqueInterface {}
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>>
-abstract class Page implements RustOpaqueInterface {}

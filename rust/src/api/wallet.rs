@@ -1,8 +1,9 @@
 use super::Error;
 
 use super::price::PriceGetter;
-use super::state::{State, Field};
+use super::state::{State};
 use super::structs::DateTime;
+use super::pub_structs::Field;
 
 use simple_database::KeyValueStore;
 use simple_database::SqliteStore;

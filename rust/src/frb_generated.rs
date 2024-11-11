@@ -27,7 +27,6 @@
 
 use crate::api::custom_handler::*;
 use crate::api::error::*;
-use crate::api::simple::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
 use flutter_rust_bridge::{Handler, IntoIntoDart};
@@ -40,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.6.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1060667796;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 209611553;
 
 // Section: executor
 
@@ -334,6 +333,40 @@ fn wire__crate__api__simple__broadcastTx_impl(
         },
     )
 }
+fn wire__crate__api__pub_structs__field_into_bytes_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "field_into_bytes",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <crate::api::pub_structs::Field>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::pub_structs::Field::into_bytes(&api_that))?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__simple__format_transaction_date_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -390,7 +423,7 @@ fn wire__crate__api__simple__getpage_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_path = <String>::sse_decode(&mut deserializer);
-            let api_page = <Page>::sse_decode(&mut deserializer);
+            let api_page = <crate::api::pub_structs::PageName>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, ()>(
@@ -627,7 +660,7 @@ fn wire__crate__api__simple__setstate_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_path = <String>::sse_decode(&mut deserializer);
-            let api_field = <Field>::sse_decode(&mut deserializer);
+            let api_field = <crate::api::pub_structs::Field>::sse_decode(&mut deserializer);
             let api_data = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
@@ -722,13 +755,7 @@ flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Error>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
-    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>
-);
-flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MyCustomAsyncRuntime>
-);
-flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
-    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>
 );
 
 // Section: dart2rust
@@ -751,31 +778,11 @@ impl SseDecode for Error {
     }
 }
 
-impl SseDecode for Field {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner = <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>,
-        >>::sse_decode(deserializer);
-        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
-    }
-}
-
 impl SseDecode for MyCustomAsyncRuntime {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <RustOpaqueMoi<
             flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MyCustomAsyncRuntime>,
-        >>::sse_decode(deserializer);
-        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
-    }
-}
-
-impl SseDecode for Page {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner = <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
@@ -797,25 +804,9 @@ impl SseDecode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpa
     }
 }
 
-impl SseDecode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner = <usize>::sse_decode(deserializer);
-        return decode_rust_opaque_moi(inner);
-    }
-}
-
 impl SseDecode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MyCustomAsyncRuntime>>
 {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner = <usize>::sse_decode(deserializer);
-        return decode_rust_opaque_moi(inner);
-    }
-}
-
-impl SseDecode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <usize>::sse_decode(deserializer);
@@ -838,6 +829,45 @@ impl SseDecode for f64 {
     }
 }
 
+impl SseDecode for crate::api::pub_structs::Field {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::pub_structs::Field::Identity,
+            1 => crate::api::pub_structs::Field::LegacySeed,
+            2 => crate::api::pub_structs::Field::DescriptorSet,
+            3 => crate::api::pub_structs::Field::Internet,
+            4 => crate::api::pub_structs::Field::Platform,
+            5 => crate::api::pub_structs::Field::Profile,
+            6 => crate::api::pub_structs::Field::Address,
+            7 => crate::api::pub_structs::Field::Amount,
+            8 => crate::api::pub_structs::Field::Priority,
+            9 => crate::api::pub_structs::Field::AmountErr,
+            10 => crate::api::pub_structs::Field::AmountBTC,
+            11 => crate::api::pub_structs::Field::Decimals,
+            12 => crate::api::pub_structs::Field::InputValidation,
+            13 => crate::api::pub_structs::Field::Price,
+            14 => crate::api::pub_structs::Field::Path,
+            15 => crate::api::pub_structs::Field::Balance,
+            16 => crate::api::pub_structs::Field::CurrentConversation,
+            17 => crate::api::pub_structs::Field::Conversations,
+            18 => crate::api::pub_structs::Field::Users,
+            19 => crate::api::pub_structs::Field::Transactions,
+            20 => crate::api::pub_structs::Field::CurrentTx,
+            21 => crate::api::pub_structs::Field::CurrentRawTx,
+            _ => unreachable!("Invalid variant for Field: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for i32 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_i32::<NativeEndian>().unwrap()
+    }
+}
+
 impl SseDecode for isize {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -857,6 +887,31 @@ impl SseDecode for Vec<u8> {
     }
 }
 
+impl SseDecode for crate::api::pub_structs::PageName {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::pub_structs::PageName::BitcoinHome,
+            1 => crate::api::pub_structs::PageName::Receive,
+            2 => crate::api::pub_structs::PageName::Send,
+            3 => crate::api::pub_structs::PageName::ScanQR,
+            4 => crate::api::pub_structs::PageName::Amount,
+            5 => crate::api::pub_structs::PageName::Speed,
+            6 => crate::api::pub_structs::PageName::ConfirmTransaction,
+            7 => crate::api::pub_structs::PageName::Success,
+            8 => crate::api::pub_structs::PageName::ViewTransaction,
+            9 => crate::api::pub_structs::PageName::MessagesHome,
+            10 => crate::api::pub_structs::PageName::Exchange,
+            11 => crate::api::pub_structs::PageName::MyProfile,
+            12 => crate::api::pub_structs::PageName::ConvoInfo,
+            13 => crate::api::pub_structs::PageName::ChooseRecipient,
+            14 => crate::api::pub_structs::PageName::Test,
+            _ => unreachable!("Invalid variant for PageName: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -873,13 +928,6 @@ impl SseDecode for usize {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_u64::<NativeEndian>().unwrap() as _
-    }
-}
-
-impl SseDecode for i32 {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        deserializer.cursor.read_i32::<NativeEndian>().unwrap()
     }
 }
 
@@ -912,16 +960,19 @@ fn pde_ffi_dispatcher_primary_impl(
             data_len,
         ),
         8 => wire__crate__api__simple__broadcastTx_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__simple__getpage_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__simple__ruststart_impl(port, ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__simple__setStateAddress_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__simple__setStateBtc_impl(port, ptr, rust_vec_len, data_len),
-        14 => {
+        9 => {
+            wire__crate__api__pub_structs__field_into_bytes_impl(port, ptr, rust_vec_len, data_len)
+        }
+        11 => wire__crate__api__simple__getpage_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__simple__ruststart_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__simple__setStateAddress_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__simple__setStateBtc_impl(port, ptr, rust_vec_len, data_len),
+        15 => {
             wire__crate__api__simple__setStateConversation_impl(port, ptr, rust_vec_len, data_len)
         }
-        15 => wire__crate__api__simple__setStatePriority_impl(port, ptr, rust_vec_len, data_len),
-        16 => wire__crate__api__simple__setstate_impl(port, ptr, rust_vec_len, data_len),
-        17 => wire__crate__api__simple__updateDisplayAmount_impl(port, ptr, rust_vec_len, data_len),
+        16 => wire__crate__api__simple__setStatePriority_impl(port, ptr, rust_vec_len, data_len),
+        17 => wire__crate__api__simple__setstate_impl(port, ptr, rust_vec_len, data_len),
+        18 => wire__crate__api__simple__updateDisplayAmount_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -934,7 +985,7 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        9 => wire__crate__api__simple__format_transaction_date_impl(ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__simple__format_transaction_date_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -952,21 +1003,6 @@ impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<
 
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Error>> for Error {
     fn into_into_dart(self) -> FrbWrapper<Error> {
-        self.into()
-    }
-}
-
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<Field> {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
-            .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<Field> {}
-
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Field>> for Field {
-    fn into_into_dart(self) -> FrbWrapper<Field> {
         self.into()
     }
 }
@@ -990,17 +1026,78 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<MyCustomAsyncRuntime>> for MyC
 }
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<Page> {
+impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::Field {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
-            .into_dart()
+        match self {
+            Self::Identity => 0.into_dart(),
+            Self::LegacySeed => 1.into_dart(),
+            Self::DescriptorSet => 2.into_dart(),
+            Self::Internet => 3.into_dart(),
+            Self::Platform => 4.into_dart(),
+            Self::Profile => 5.into_dart(),
+            Self::Address => 6.into_dart(),
+            Self::Amount => 7.into_dart(),
+            Self::Priority => 8.into_dart(),
+            Self::AmountErr => 9.into_dart(),
+            Self::AmountBTC => 10.into_dart(),
+            Self::Decimals => 11.into_dart(),
+            Self::InputValidation => 12.into_dart(),
+            Self::Price => 13.into_dart(),
+            Self::Path => 14.into_dart(),
+            Self::Balance => 15.into_dart(),
+            Self::CurrentConversation => 16.into_dart(),
+            Self::Conversations => 17.into_dart(),
+            Self::Users => 18.into_dart(),
+            Self::Transactions => 19.into_dart(),
+            Self::CurrentTx => 20.into_dart(),
+            Self::CurrentRawTx => 21.into_dart(),
+            _ => unreachable!(),
+        }
     }
 }
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<Page> {}
-
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Page>> for Page {
-    fn into_into_dart(self) -> FrbWrapper<Page> {
-        self.into()
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pub_structs::Field
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pub_structs::Field>
+    for crate::api::pub_structs::Field
+{
+    fn into_into_dart(self) -> crate::api::pub_structs::Field {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::PageName {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::BitcoinHome => 0.into_dart(),
+            Self::Receive => 1.into_dart(),
+            Self::Send => 2.into_dart(),
+            Self::ScanQR => 3.into_dart(),
+            Self::Amount => 4.into_dart(),
+            Self::Speed => 5.into_dart(),
+            Self::ConfirmTransaction => 6.into_dart(),
+            Self::Success => 7.into_dart(),
+            Self::ViewTransaction => 8.into_dart(),
+            Self::MessagesHome => 9.into_dart(),
+            Self::Exchange => 10.into_dart(),
+            Self::MyProfile => 11.into_dart(),
+            Self::ConvoInfo => 12.into_dart(),
+            Self::ChooseRecipient => 13.into_dart(),
+            Self::Test => 14.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pub_structs::PageName
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pub_structs::PageName>
+    for crate::api::pub_structs::PageName
+{
+    fn into_into_dart(self) -> crate::api::pub_structs::PageName {
+        self
     }
 }
 
@@ -1021,32 +1118,12 @@ impl SseEncode for Error {
     }
 }
 
-impl SseEncode for Field {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>>>::sse_encode(
-            flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self),
-            serializer,
-        );
-    }
-}
-
 impl SseEncode for MyCustomAsyncRuntime {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <RustOpaqueMoi<
             flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MyCustomAsyncRuntime>,
         >>::sse_encode(
-            flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self),
-            serializer,
-        );
-    }
-}
-
-impl SseEncode for Page {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>>>::sse_encode(
             flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self),
             serializer,
         );
@@ -1069,27 +1146,9 @@ impl SseEncode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpa
     }
 }
 
-impl SseEncode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        let (ptr, size) = self.sse_encode_raw();
-        <usize>::sse_encode(ptr, serializer);
-        <i32>::sse_encode(size, serializer);
-    }
-}
-
 impl SseEncode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MyCustomAsyncRuntime>>
 {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        let (ptr, size) = self.sse_encode_raw();
-        <usize>::sse_encode(ptr, serializer);
-        <i32>::sse_encode(size, serializer);
-    }
-}
-
-impl SseEncode for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         let (ptr, size) = self.sse_encode_raw();
@@ -1112,6 +1171,49 @@ impl SseEncode for f64 {
     }
 }
 
+impl SseEncode for crate::api::pub_structs::Field {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::pub_structs::Field::Identity => 0,
+                crate::api::pub_structs::Field::LegacySeed => 1,
+                crate::api::pub_structs::Field::DescriptorSet => 2,
+                crate::api::pub_structs::Field::Internet => 3,
+                crate::api::pub_structs::Field::Platform => 4,
+                crate::api::pub_structs::Field::Profile => 5,
+                crate::api::pub_structs::Field::Address => 6,
+                crate::api::pub_structs::Field::Amount => 7,
+                crate::api::pub_structs::Field::Priority => 8,
+                crate::api::pub_structs::Field::AmountErr => 9,
+                crate::api::pub_structs::Field::AmountBTC => 10,
+                crate::api::pub_structs::Field::Decimals => 11,
+                crate::api::pub_structs::Field::InputValidation => 12,
+                crate::api::pub_structs::Field::Price => 13,
+                crate::api::pub_structs::Field::Path => 14,
+                crate::api::pub_structs::Field::Balance => 15,
+                crate::api::pub_structs::Field::CurrentConversation => 16,
+                crate::api::pub_structs::Field::Conversations => 17,
+                crate::api::pub_structs::Field::Users => 18,
+                crate::api::pub_structs::Field::Transactions => 19,
+                crate::api::pub_structs::Field::CurrentTx => 20,
+                crate::api::pub_structs::Field::CurrentRawTx => 21,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for i32 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer.cursor.write_i32::<NativeEndian>(self).unwrap();
+    }
+}
+
 impl SseEncode for isize {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1129,6 +1231,35 @@ impl SseEncode for Vec<u8> {
         for item in self {
             <u8>::sse_encode(item, serializer);
         }
+    }
+}
+
+impl SseEncode for crate::api::pub_structs::PageName {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::pub_structs::PageName::BitcoinHome => 0,
+                crate::api::pub_structs::PageName::Receive => 1,
+                crate::api::pub_structs::PageName::Send => 2,
+                crate::api::pub_structs::PageName::ScanQR => 3,
+                crate::api::pub_structs::PageName::Amount => 4,
+                crate::api::pub_structs::PageName::Speed => 5,
+                crate::api::pub_structs::PageName::ConfirmTransaction => 6,
+                crate::api::pub_structs::PageName::Success => 7,
+                crate::api::pub_structs::PageName::ViewTransaction => 8,
+                crate::api::pub_structs::PageName::MessagesHome => 9,
+                crate::api::pub_structs::PageName::Exchange => 10,
+                crate::api::pub_structs::PageName::MyProfile => 11,
+                crate::api::pub_structs::PageName::ConvoInfo => 12,
+                crate::api::pub_structs::PageName::ChooseRecipient => 13,
+                crate::api::pub_structs::PageName::Test => 14,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 
@@ -1154,13 +1285,6 @@ impl SseEncode for usize {
     }
 }
 
-impl SseEncode for i32 {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        serializer.cursor.write_i32::<NativeEndian>(self).unwrap();
-    }
-}
-
 impl SseEncode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1178,7 +1302,6 @@ mod io {
     use super::*;
     use crate::api::custom_handler::*;
     use crate::api::error::*;
-    use crate::api::simple::*;
     use flutter_rust_bridge::for_generated::byteorder::{
         NativeEndian, ReadBytesExt, WriteBytesExt,
     };
@@ -1204,20 +1327,6 @@ mod io {
     }
 
     #[no_mangle]
-    pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerField(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>>::increment_strong_count(ptr as _);
-    }
-
-    #[no_mangle]
-    pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerField(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>>::decrement_strong_count(ptr as _);
-    }
-
-    #[no_mangle]
     pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
         ptr: *const std::ffi::c_void,
     ) {
@@ -1229,20 +1338,6 @@ mod io {
         ptr: *const std::ffi::c_void,
     ) {
         MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MyCustomAsyncRuntime>>::decrement_strong_count(ptr as _);
-    }
-
-    #[no_mangle]
-    pub extern "C" fn frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPage(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>>::increment_strong_count(ptr as _);
-    }
-
-    #[no_mangle]
-    pub extern "C" fn frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPage(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>>::decrement_strong_count(ptr as _);
     }
 }
 #[cfg(not(target_family = "wasm"))]
@@ -1259,7 +1354,6 @@ mod web {
     use super::*;
     use crate::api::custom_handler::*;
     use crate::api::error::*;
-    use crate::api::simple::*;
     use flutter_rust_bridge::for_generated::byteorder::{
         NativeEndian, ReadBytesExt, WriteBytesExt,
     };
@@ -1287,20 +1381,6 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerField(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>>::increment_strong_count(ptr as _);
-    }
-
-    #[wasm_bindgen]
-    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerField(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>>::decrement_strong_count(ptr as _);
-    }
-
-    #[wasm_bindgen]
     pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
         ptr: *const std::ffi::c_void,
     ) {
@@ -1312,20 +1392,6 @@ mod web {
         ptr: *const std::ffi::c_void,
     ) {
         MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MyCustomAsyncRuntime>>::decrement_strong_count(ptr as _);
-    }
-
-    #[wasm_bindgen]
-    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPage(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>>::increment_strong_count(ptr as _);
-    }
-
-    #[wasm_bindgen]
-    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPage(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>>::decrement_strong_count(ptr as _);
     }
 }
 #[cfg(target_family = "wasm")]

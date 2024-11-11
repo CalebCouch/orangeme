@@ -7,6 +7,8 @@ pub mod custom_handler;
 pub mod error;
 use error::Error;
 
+pub mod pub_structs;
+
 /// flutter_rust_bridge:ignore
 pub mod protocols;
 /// flutter_rust_bridge:ignore

@@ -14,7 +14,7 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-pub use super::state::{Page, Field};
+use super::pub_structs::{PageName, Field};
 
 use super::structs::{Platform, DartCommand, Storage, DartCallback, Profile};
 use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
@@ -247,7 +247,7 @@ pub async fn ruststart (
     }
 }
 
-pub async fn getpage(path: String, page: Page) -> String {
+pub async fn getpage(path: String, page: PageName) -> String {
     let result: Result<String, Error> = (|| async {
         StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(&page).await
     })().await;
@@ -258,13 +258,14 @@ pub async fn getpage(path: String, page: Page) -> String {
 }
 
 pub async fn setstate(path: String, field: Field, data: String) -> String {
-    let result: Result<String, Error> = (|| async {
-        let state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+    let result: Result<(), Error> = (|| async {
+        let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
         let value = serde_json::from_str::<serde_json::Value>(&data)?;
-        state.set::<serde_json::Value>(field, value).await?;
+        state.set::<serde_json::Value>(field, &value).await?;
+        Ok(())
     })().await;
     match result {
-        Ok(s) => s,
+        Ok(()) => "Ok".to_string(),
         Err(e) => format!("Error: {}", e)
     }
 }
@@ -449,3 +450,10 @@ pub async fn broadcastTx(path: String) -> String {
 
     "Transaction successfully broadcast".to_string()
 }
+
+//  #[derive(Debug)]
+//  pub enum TestEnum {HEllo}
+
+//  pub fn testfn(test: TestEnum) -> String {
+//      format!("Hi");
+//  }
