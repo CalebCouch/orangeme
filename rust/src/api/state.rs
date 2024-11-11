@@ -265,7 +265,7 @@ impl StateManager {
     }
 
     pub async fn receive(&self) -> Result<String, Error> {
-        info!("ELLO");
+        //info!("ELLO");
         let wallet = self.get_wallet().await?;
         Ok(serde_json::to_string(&Receive{
             address: wallet.get_new_address()?
@@ -275,7 +275,7 @@ impl StateManager {
     pub async fn my_profile(&self) -> Result<String, Error> {
         let profile = self.state.get_o::<Profile>(Field::Profile).await?;
         Ok(serde_json::to_string(&MyProfile{
-            profile: Some(profile),
+            profile: profile,
         })?)
     }
 
@@ -339,7 +339,7 @@ impl StateManager {
     }
 
     pub async fn choose_recipient(&self) -> Result<String, Error> {
-        let users = self.get_users()?;
+        let users = self.state.get::<Vec<Profile>>(Field::Users).await?;
         Ok(serde_json::to_string(&ChooseRecipient{
             users: users,
         })?)

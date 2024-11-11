@@ -77,9 +77,10 @@ Widget aboutMeItem(BuildContext context, String aboutMe) {
 }
 
 Widget addressItem(BuildContext context, String address) {
+  if (address == '') address = "Unable to generate an address.";
   copyAddress() async {
     HapticFeedback.heavyImpact();
-    await Clipboard.setData(ClipboardData(text: address));
+    await Clipboard.setData(ClipboardData(text: address.isNotEmpty ? address : ''));
   }
 
   return DataItem(
@@ -92,16 +93,17 @@ Widget addressItem(BuildContext context, String address) {
 }
 
 Widget didItem(BuildContext context, String did) {
-  copyAddress() async {
+  if (did == '') did = "Unable to find this users DID.";
+  copyDid() async {
     HapticFeedback.heavyImpact();
-    await Clipboard.setData(ClipboardData(text: did));
+    await Clipboard.setData(ClipboardData(text: did.isNotEmpty ? did : ''));
   }
 
   return DataItem(
     title: 'Digital ID',
     content: CustomText('text md secondary', did, alignment: TextAlign.start),
     buttons: [
-      CustomButton('Copy', 'secondary md hug copy', () => copyAddress(), 'enabled'),
+      CustomButton('Copy', 'secondary md hug copy', () => copyDid(), 'enabled'),
     ],
   );
 }

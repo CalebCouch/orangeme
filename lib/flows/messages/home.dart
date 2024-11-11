@@ -16,13 +16,14 @@ import 'package:orange/global.dart' as global;
 class MessagesHome extends GenericWidget {
   MessagesHome({super.key});
 
-  List<Conversation> conversations = []; //List of all conversations
+  List<Conversation> conversations = []; // List of all conversations
   String profile_picture = "";
   @override
   MessagesHomeState createState() => MessagesHomeState();
 }
 
 class MessagesHomeState extends GenericState<MessagesHome> {
+  bool noConversations = true;
   @override
   String stateName() {
     return "MessagesHome";
@@ -38,6 +39,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     setState(() {
       widget.profile_picture = json["profile_picture"];
       widget.conversations = List<Conversation>.from(json['conversations'].map((json) => Conversation.fromJson(json)));
+      if (widget.conversations.isNotEmpty) noConversations = false;
     });
   }
 
@@ -58,33 +60,32 @@ class MessagesHomeState extends GenericState<MessagesHome> {
   Widget build(BuildContext context) {
     return Root_Home(
       Header_Home(ProfileButton(context, widget.profile_picture, toProfile), "Messages"),
-      [listConversations()],
+      [
+        noConversations ? noMessages() : listConversations(),
+      ],
       Bumper(context, [CustomButton('New Message', 'primary lg expand none', createNewMessage, 'enabled')]),
       TabNav(1, [
         TabInfo(BitcoinHome(), 'wallet'),
         TabInfo(MessagesHome(), 'message'),
       ]),
+      noConversations ? Alignment.center : Alignment.topCenter,
+      !noConversations,
     );
   }
 
   Widget noMessages() {
-    return const Expanded(
-      child: Center(
-        child: CustomText('text md text_secondary', 'No messages yet.\nGet started by messaging a friend.'),
-      ),
-    );
+    return const CustomText('text md text_secondary', 'No messages yet.\nGet started by messaging a friend.');
   }
 
   Widget listConversations() {
-    List<Conversation> conversations = widget.conversations;
     return ListView.builder(
       shrinkWrap: true,
       itemCount: widget.conversations.length,
       itemBuilder: (context, index) {
         return ConversationItem(
           context,
-          conversations[index].members,
-          conversations[index].messages[0].message,
+          widget.conversations[index].members,
+          widget.conversations[index].messages[0].message,
           () {
             setConversation(index);
             navigateTo(Exchange());

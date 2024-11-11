@@ -227,7 +227,7 @@ async fn async_rust (
         dart_callback.call("print", &descriptors.internal).await?;
         state.set(Field::DescriptorSet, &descriptors).await?;
     }
-    info!("HELLO");
+    //info!("HELLO");
     tokio::try_join!(
         spawn(price_thread(state.clone())),
         spawn(internet_thread(state.clone())),

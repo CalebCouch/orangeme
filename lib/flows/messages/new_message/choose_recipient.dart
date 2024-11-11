@@ -17,6 +17,7 @@ class ChooseRecipient extends GenericWidget {
 }
 
 class ChooseRecipientState extends GenericState<ChooseRecipient> {
+  bool noUsers = true;
   @override
   String stateName() {
     return "ChooseRecipient";
@@ -31,6 +32,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
       widget.users = List<Profile>.from(json['users'].map((json) => Profile.fromJson(json)));
+      if (widget.users.isNotEmpty) noUsers = false;
     });
   }
 
@@ -53,7 +55,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
       [
         Searchbar(searchController),
         recipients.isEmpty ? Container() : SelectedContacts(recipients),
-        ListContacts(filteredContacts),
+        noUsers ? const CustomText('text md text_secondary', "There's no one here!") : ListContacts(filteredContacts),
       ],
       Bumper(context, [Container()]),
     );

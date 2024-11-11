@@ -83,10 +83,10 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
   void getState() async {
     int time = DateTime.now().millisecondsSinceEpoch;
     String state = await getstate(path: global.dataDir!, name: stateName());
-    print("gotstate in ${DateTime.now().millisecondsSinceEpoch-time}");
+    //print("gotstate in ${DateTime.now().millisecondsSinceEpoch-time}");
     if (!widget.pause_refresh) {
-        unpack_state(jsonDecode(state));
-        _createTimer();
+      unpack_state(jsonDecode(state));
+      _createTimer();
     }
   }
 
