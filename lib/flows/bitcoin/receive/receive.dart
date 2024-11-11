@@ -19,8 +19,8 @@ class Receive extends GenericWidget {
 
 class ReceiveState extends GenericState<Receive> {
   @override
-  String stateName() {
-    return "Receive";
+  Page getPage() {
+    return Page.Receive;
   }
 
   @override
