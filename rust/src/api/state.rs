@@ -26,7 +26,7 @@ const SATS: u64 = 100_000_000;
 
 #[derive(Debug)]
 pub enum Field {
-    Identity,//(Option<Identity>),
+    Identity,
     LegacySeed,
     DescriptorSet,
     Internet,
@@ -90,6 +90,25 @@ impl State {
     }
 }
 
+#[derive(Debug)]
+pub enum Page {
+    BitcoinHome,
+    Receive,
+    Send,
+    ScanQr,
+    Amount,
+    Speed,
+    ConfirmTransaction,
+    Success,
+    ViewTransaction,
+    MessagesHome,
+    Exchange,
+    MyProfile,
+    ConvoInfo,
+    ChooseRecipient,
+    Test
+}
+
 #[derive(Clone)]
 pub struct StateManager {
     state: State,
@@ -115,24 +134,24 @@ impl StateManager {
             .unwrap_or(("Pending".to_string(), "Pending".to_string()))
     }
 
-    pub async fn get(&mut self, state_name: &str) -> Result<String, Error> {
-        match state_name {
-            "BitcoinHome" => self.bitcoin_home().await,
-            "Receive" => self.receive().await,
-            "Send" => self.send().await,
-            "ScanQR" => self.scan_qr().await,
-            "Amount" => self.amount().await,
-            "Speed" => self.speed().await,
-            "ConfirmTransaction" => self.confirm_transaction().await,
-            "Success" => self.send_success().await,
-            "ViewTransaction" => self.view_transaction().await,
-            "MessagesHome" => self.messages_home().await,
-            "Exchange" => self.exchange().await,
-            "MyProfile" => self.my_profile().await,
-            "ConvInfo" => self.conv_info().await,
-            "ChooseRecipient" => self.choose_recipient().await,
-            "Test" => self.test().await,
-            _ => Err(Error::bad_request("StateManager::get", &format!("No state with name {}", state_name)))
+    pub async fn get(&mut self, page: Page) -> Result<String, Error> {
+        match page {
+            Page::BitcoinHome => self.bitcoin_home().await,
+            Page::Receive => self.receive().await,
+            Page::Send => self.send().await,
+            Page::ScanQR => self.scan_qr().await,
+            Page::Amount => self.amount().await,
+            Page::Speed => self.speed().await,
+            Page::ConfirmTransaction => self.confirm_transaction().await,
+            Page::Success => self.send_success().await,
+            Page::ViewTransaction => self.view_transaction().await,
+            Page::MessagesHome => self.messages_home().await,
+            Page::Exchange => self.exchange().await,
+            Page::MyProfile => self.my_profile().await,
+            Page::ConvInfo => self.conv_info().await,
+            Page::ChooseRecipient => self.choose_recipient().await,
+            Page::Test => self.test().await,
+            _ => Err(Error::bad_request("StateManager::get", &format!("No page with name {:?}", page)))
         }
     }
 

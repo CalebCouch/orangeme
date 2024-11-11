@@ -69,7 +69,7 @@ abstract class GenericWidget extends StatefulWidget {
 }
 
 abstract class GenericState<T extends GenericWidget> extends State<T> {
-  String stateName();
+  Page getPage();
   int refreshInterval();
   Widget build_with_state(BuildContext context);
 
@@ -77,9 +77,9 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
   void getState() async {
     int time = DateTime.now().millisecondsSinceEpoch;
-    widget.async_state = getstate(path: global.dataDir!, name: stateName());
+    widget.async_state = getpage(path: global.dataDir!, page: getPage());
     String state = await widget.async_state!;
-    print("gotstate in ${DateTime.now().millisecondsSinceEpoch - time}");
+    //print("gotstate in ${DateTime.now().millisecondsSinceEpoch - time}");
     if (!widget.pause_refresh) {
       unpack_state(jsonDecode(state));
       _createTimer();

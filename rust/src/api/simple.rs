@@ -14,12 +14,12 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-
+pub use super::state::{Page, Field};
 
 use super::structs::{Platform, DartCommand, Storage, DartCallback, Profile};
 use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 use super::price::PriceGetter;
-use super::state::{StateManager, State, Field};
+use super::state::{StateManager, State};
 use super::usb::UsbInfo;
 
 use simple_database::KeyValueStore;
@@ -92,16 +92,13 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
     let client = Client::new();
 
     loop {
-      //let connected = client.get("https://google.com")
-      //    .send()
-      //    .await
-      //    .map(|response| response.status().is_success())
-      //    .unwrap_or(false);
+        let connected = client.get("https://google.com")
+            .send().await
+            .map(|response| response.status().is_success())
+            .unwrap_or(false);
 
-      //if !connected { panic!("Internet connection failed") };
-
-      //state.set(Field::Internet, &connected).await?;
-
+        if !connected { panic!("Internet connection failed") };
+        state.set(Field::Internet, &connected).await?;
         thread::sleep(time::Duration::from_millis(1000));
     }
 }
@@ -250,9 +247,21 @@ pub async fn ruststart (
     }
 }
 
-pub async fn getstate(path: String, name: String) -> String {
+pub async fn getpage(path: String, page: Page) -> String {
     let result: Result<String, Error> = (|| async {
-        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(&name).await
+        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(&page).await
+    })().await;
+    match result {
+        Ok(s) => s,
+        Err(e) => format!("Error: {}", e)
+    }
+}
+
+pub async fn setstate(path: String, field: Field, data: String) -> String {
+    let result: Result<String, Error> = (|| async {
+        let state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+        let value = serde_json::from_str::<serde_json::Value>(&data)?;
+        state.set::<serde_json::Value>(field, value).await?;
     })().await;
     match result {
         Ok(s) => s,

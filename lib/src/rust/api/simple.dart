@@ -15,8 +15,13 @@ Future<String> ruststart(
     RustLib.instance.api.crateApiSimpleRuststart(
         path: path, platform: platform, thread: thread);
 
-Future<String> getstate({required String path, required String name}) =>
-    RustLib.instance.api.crateApiSimpleGetstate(path: path, name: name);
+Future<String> getpage({required String path, required Page page}) =>
+    RustLib.instance.api.crateApiSimpleGetpage(path: path, page: page);
+
+Future<String> setstate(
+        {required String path, required Field field, required String data}) =>
+    RustLib.instance.api
+        .crateApiSimpleSetstate(path: path, field: field, data: data);
 
 Future<String> setStateAddress(
         {required String path, required String address}) =>
@@ -46,3 +51,9 @@ String formatTransactionDate({required String date, required String time}) =>
 
 Future<String> broadcastTx({required String path}) =>
     RustLib.instance.api.crateApiSimpleBroadcastTx(path: path);
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Field>>
+abstract class Field implements RustOpaqueInterface {}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Page>>
+abstract class Page implements RustOpaqueInterface {}
