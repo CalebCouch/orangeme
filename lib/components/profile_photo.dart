@@ -19,33 +19,64 @@ _getIconSize(double profileSize) {
   }
 }
 
-/* Displays a profile photo with optional border, size, and fallback icon. */
-Widget ProfilePhoto(BuildContext context, [String? pfp, double size = ProfileSize.md, bool outline = false, bool isGroup = false]) {
+Widget ProfilePhoto(
+  BuildContext context, [
+  String? pfp,
+  double size = ProfileSize.md,
+  bool outline = false,
+  bool isGroup = false,
+]) {
   bool isValidPfp = pfp != null && pfp.isNotEmpty && !isGroup;
 
-  return Container(
-    alignment: Alignment.center,
-    height: size,
-    width: size,
-    decoration: BoxDecoration(
-      border: outline ? Border.all(color: ThemeColor.bg) : null,
-      color: ThemeColor.bgSecondary,
-      shape: BoxShape.circle,
-      image: isValidPfp
-          ? DecorationImage(
-              image: AssetImage(pfp),
-              fit: BoxFit.cover,
-            )
-          : null,
-    ),
-    child: !isValidPfp
-        ? SvgPicture.asset(
+  Future<bool> checkIfAssetExists(String assetPath) async {
+    try {
+      final bundle = DefaultAssetBundle.of(context);
+      await bundle.load(assetPath);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  return FutureBuilder<bool>(
+    future: isValidPfp ? checkIfAssetExists(pfp) : Future.value(false),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return loadingCircle();
+      } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!) {
+        return Container(
+          alignment: Alignment.center,
+          height: size,
+          width: size,
+          decoration: BoxDecoration(
+            border: outline ? Border.all(color: ThemeColor.bg) : null,
+            color: ThemeColor.bgSecondary,
+            shape: BoxShape.circle,
+          ),
+          child: SvgPicture.asset(
             height: _getIconSize(size),
             width: _getIconSize(size),
             isGroup ? ThemeIcon.group : ThemeIcon.profile,
             colorFilter: const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
-          )
-        : Container(),
+          ),
+        );
+      } else {
+        return Container(
+          alignment: Alignment.center,
+          height: size,
+          width: size,
+          decoration: BoxDecoration(
+            border: outline ? Border.all(color: ThemeColor.bg) : null,
+            color: ThemeColor.bgSecondary,
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: AssetImage(pfp!),
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      }
+    },
   );
 }
 
@@ -79,5 +110,14 @@ Widget EditPhoto(BuildContext context, onTap, [pfp]) {
       CustomButton('Photo', 'secondary md hug edit', onTap, 'enabled'),
     ],
     AppPadding.header,
+  );
+}
+
+Widget loadingCircle() {
+  return const Center(
+    child: CircularProgressIndicator(
+      strokeCap: StrokeCap.round,
+      backgroundColor: ThemeColor.bgSecondary,
+    ),
   );
 }

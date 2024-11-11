@@ -10,7 +10,7 @@ import 'package:orangeme_material/orangeme_material.dart';
 class MyProfile extends GenericWidget {
   MyProfile({super.key});
 
-  Profile profile = Profile('', '', '', '');
+  Profile? profile = Profile('', '', '', '');
 
   @override
   MyProfileState createState() => MyProfileState();
@@ -30,7 +30,26 @@ class MyProfileState extends GenericState<MyProfile> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.profile = Profile.fromJson(json);
+      widget.profile = Profile.fromJson(json['profile']);
+    });
+  }
+
+  String name = '';
+  String did = '';
+  String? aboutMe = '';
+  String? photo = '';
+
+  void initState() {
+    super.initState();
+    setState(() {
+      if (widget.profile == null) {
+        did = name = aboutMe = photo = '';
+      } else {
+        did = widget.profile!.did;
+        name = widget.profile!.name.isEmpty ? widget.profile!.did : widget.profile!.name;
+        aboutMe = widget.profile!.abtme;
+        photo = widget.profile!.pfp;
+      }
     });
   }
 
@@ -48,16 +67,17 @@ class MyProfileState extends GenericState<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    _profileName = TextEditingController(text: widget.profile.name);
-    _aboutMe = TextEditingController(text: widget.profile.abtme);
-    onEdit() {
-      () async {
-        HapticFeedback.heavyImpact();
-        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-        if (image != null) {
-          setState(() => widget.profile.pfp = image.path);
-        }
-      };
+    _profileName = TextEditingController(text: name);
+    _aboutMe = TextEditingController(text: aboutMe);
+
+    void onEdit() async {
+      HapticFeedback.heavyImpact();
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        setState(() {
+          photo = image.path;
+        });
+      }
     }
 
     saveInfo() {
@@ -76,11 +96,9 @@ class MyProfileState extends GenericState<MyProfile> {
     }
 
     Widget EditName() {
-      final presetText = widget.profile.name.isEmpty ? widget.profile.did : widget.profile.name;
       return CustomTextInput(
         title: 'Profile Name',
         hint: "Profile name...",
-        presetTxt: presetText,
         onChanged: (String str) => enableButton(),
         controller: _profileName,
       );
@@ -90,7 +108,6 @@ class MyProfileState extends GenericState<MyProfile> {
       return CustomTextInput(
         title: 'About Me',
         hint: 'Tell us about yourself...',
-        presetTxt: widget.profile.abtme,
         onChanged: (String str) => {enableButton()},
         controller: _aboutMe,
       );
@@ -105,10 +122,10 @@ class MyProfileState extends GenericState<MyProfile> {
     return Stack_Default(
       Header_Stack(context, "My profile"),
       [
-        EditPhoto(context, onEdit, widget.profile.pfp),
+        EditPhoto(context, onEdit, photo),
         EditName(),
         EditDesc(),
-        didItem(context, widget.profile.did),
+        didItem(context, did),
         addressItem(context, address),
       ],
       Bumper(context, [CustomButton('Save', 'primary lg expand none', onSave, enabled)]),

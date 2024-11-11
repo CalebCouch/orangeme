@@ -142,6 +142,6 @@ Widget Searchbar(controller) {
   return CustomTextInput(
     maxLines: 1,
     controller: controller,
-    hint: 'Profile name...',
+    hint: 'Search by profile name or DID...',
   );
 }
