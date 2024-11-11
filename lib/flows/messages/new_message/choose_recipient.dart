@@ -4,7 +4,7 @@ import 'package:orange/components/list_item.dart';
 import 'package:orange/classes.dart';
 // import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-
+import 'package:orange/src/rust/api/pub_structs.dart';
 //import 'package:orange/global.dart' as global;
 
 class ChooseRecipient extends GenericWidget {
@@ -19,8 +19,8 @@ class ChooseRecipient extends GenericWidget {
 class ChooseRecipientState extends GenericState<ChooseRecipient> {
   bool noUsers = true;
   @override
-  String stateName() {
-    return "ChooseRecipient";
+  PageName getPageName() {
+    return PageName.chooseRecipient;
   }
 
   @override
@@ -116,9 +116,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
       if (searchTerm.isEmpty) {
         filteredContacts = widget.users;
       } else {
-        filteredContacts = widget.users
-            .where((contact) => contact.name.toLowerCase().startsWith(searchTerm) || contact.did.toLowerCase().startsWith(searchTerm))
-            .toList();
+        filteredContacts = widget.users.where((contact) => contact.name.toLowerCase().startsWith(searchTerm) || contact.did.toLowerCase().startsWith(searchTerm)).toList();
       }
     });
   }

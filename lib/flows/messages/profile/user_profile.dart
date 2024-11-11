@@ -3,6 +3,7 @@ import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:orange/components/profile_photo.dart';
 // import 'package:orange/flows/messages/conversation/exchange.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
@@ -17,8 +18,8 @@ class UserProfile extends GenericWidget {
 
 class UserProfileState extends GenericState<UserProfile> {
   @override
-  String stateName() {
-    return "MyProfile";
+  PageName getPageName() {
+    return PageName.userProfile;
   }
 
   @override
@@ -50,7 +51,14 @@ class UserProfileState extends GenericState<UserProfile> {
   @override
   Widget build_with_state(BuildContext context) {
     return Stack_Default(
-      Header_Stack(context, widget.user.name),
+      Header_Stack(
+        context,
+        widget.user.name.isNotEmpty
+            ? widget.user.name
+            : widget.user.did != ''
+                ? widget.user.did
+                : 'Unknown User',
+      ),
       [
         ProfilePhoto(context, widget.user.pfp, ProfileSize.xxl),
         aboutMeItem(context, widget.user.abtme ?? "This profile is still a mystery."),

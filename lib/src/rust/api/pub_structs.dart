@@ -8,88 +8,44 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`, `fmt`
+            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`
 
-String testfn({required TestEnum test}) =>
-    RustLib.instance.api.crateApiPubStructsTestfn(test: test);
 
-enum Field {
-  identity,
-  legacySeed,
-  descriptorSet,
-  internet,
-  platform,
-  profile,
-  address,
-  amount,
-  priority,
-  amountErr,
-  amountBtc,
-  decimals,
-  inputValidation,
-  price,
-  path,
-  balance,
-  currentConversation,
-  conversations,
-  users,
-  transactions,
-  currentTx,
-  currentRawTx,
-  ;
+            
 
-  Future<Uint8List> intoBytes() =>
-      RustLib.instance.api.crateApiPubStructsFieldIntoBytes(
-        that: this,
-      );
-}
+            @freezed
+                sealed class Field with _$Field  {
+                    const Field._();
+
+                     const factory Field.path([  String? field0,]) = Field_Path;
+ const factory Field.price([  double? field0,]) = Field_Price;
+ const factory Field.internet([  bool? field0,]) = Field_Internet;
+ const factory Field.platform([  Platform? field0,]) = Field_Platform;
+
+                     Future<Uint8List>  intoBytes()=>RustLib.instance.api.crateApiPubStructsFieldIntoBytes(that: this, );
+
+
+                }
 
 enum PageName {
-  bitcoinHome,
-  receive,
-  send,
-  scanQr,
-  amount,
-  speed,
-  confirmTransaction,
-  success,
-  viewTransaction,
-  messagesHome,
-  exchange,
-  myProfile,
-  convoInfo,
-  chooseRecipient,
-  test,
-  ;
-}
+                    test,
+                    ;
+                    
+                }
 
 enum Platform {
-  mac,
-  linux,
-  windows,
-  ios,
-  android,
-  fuchsia,
-  ;
+                    mac,
+linux,
+windows,
+ios,
+android,
+fuchsia,
+                    ;
+                    static Future<Platform>  default_()=>RustLib.instance.api.crateApiPubStructsPlatformDefault();
 
-  static Future<Platform> default_() =>
-      RustLib.instance.api.crateApiPubStructsPlatformDefault();
 
-  bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
-        that: this,
-      );
-}
+ bool  isDesktop()=>RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(that: this, );
 
-@freezed
-sealed class TestEnum with _$TestEnum {
-  const TestEnum._();
 
-  const factory TestEnum.value([
-    int? field0,
-  ]) = TestEnum_Value;
-
-  Future<Uint8List> intoBytes() =>
-      RustLib.instance.api.crateApiPubStructsTestEnumIntoBytes(
-        that: this,
-      );
-}
+                }
+            

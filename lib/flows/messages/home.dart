@@ -8,6 +8,7 @@ import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/flows/messages/conversation/exchange.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/classes.dart';
 
 import 'package:orangeme_material/orangeme_material.dart';
@@ -25,8 +26,8 @@ class MessagesHome extends GenericWidget {
 class MessagesHomeState extends GenericState<MessagesHome> {
   bool noConversations = true;
   @override
-  String stateName() {
-    return "MessagesHome";
+  PageName getPageName() {
+    return PageName.messagesHome;
   }
 
   @override

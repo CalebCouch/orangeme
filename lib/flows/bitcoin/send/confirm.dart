@@ -3,6 +3,7 @@ import 'package:orange/components/tabular.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/send/success.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:orange/src/rust/api/simple.dart';
@@ -22,8 +23,8 @@ class Confirm extends GenericWidget {
 
 class ConfirmState extends GenericState<Confirm> {
   @override
-  String stateName() {
-    return "ConfirmTransaction";
+  PageName getPageName() {
+    return PageName.confirmTransaction;
   }
 
   @override

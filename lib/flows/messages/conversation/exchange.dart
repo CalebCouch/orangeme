@@ -6,6 +6,7 @@ import 'package:orange/flows/messages/conversation/info.dart';
 import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 // import 'package:orange/global.dart' as global;
 
 class Exchange extends GenericWidget {
@@ -19,8 +20,8 @@ class Exchange extends GenericWidget {
 
 class ExchangeState extends GenericState<Exchange> {
   @override
-  String stateName() {
-    return "Exchange";
+  PageName getPageName() {
+    return PageName.exchange;
   }
 
   @override

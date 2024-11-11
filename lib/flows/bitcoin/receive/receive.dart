@@ -5,6 +5,7 @@ import 'package:orange/components/qr_code/qr_painter.dart';
 import 'package:orange/components/qr_code/shapes/pixel_shape.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:share/share.dart';
 import 'package:orange/global.dart' as global;
 
@@ -19,8 +20,8 @@ class Receive extends GenericWidget {
 
 class ReceiveState extends GenericState<Receive> {
   @override
-  Page getPage() {
-    return Page.Receive;
+  PageName getPageName() {
+    return PageName.receive;
   }
 
   @override
@@ -46,21 +47,21 @@ class ReceiveState extends GenericState<Receive> {
     Share.share(widget.address);
   }
 
-    @override
-    Widget build_with_state(BuildContext context) {
-        return Stack_Default(
-            Header_Stack(context, "Receive bitcoin"),
-          [
-            QRCode(widget.address),
-            Instructions(),
-          ],
-          Bumper(context, [
-            CustomButton('Share', 'primary lg expand none', onShare, 'enabled'),
-          ]),
-          Alignment.center,
-          false,
-        );
-    }
+  @override
+  Widget build_with_state(BuildContext context) {
+    return Stack_Default(
+      Header_Stack(context, "Receive bitcoin"),
+      [
+        QRCode(widget.address),
+        Instructions(),
+      ],
+      Bumper(context, [
+        CustomButton('Share', 'primary lg expand none', onShare, 'enabled'),
+      ]),
+      Alignment.center,
+      false,
+    );
+  }
 }
 
 //The following widgets can ONLY be used in this file

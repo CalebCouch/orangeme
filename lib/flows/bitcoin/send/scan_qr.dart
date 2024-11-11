@@ -5,6 +5,7 @@ import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/global.dart' as global;
 
 class ScanQR extends GenericWidget {
@@ -18,9 +19,8 @@ class ScanQRState extends GenericState<ScanQR> {
   late QRViewController controller;
   GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  @override
-  String stateName() {
-    return "ScanQR";
+  PageName getPageName() {
+    return PageName.scanQr;
   }
 
   @override

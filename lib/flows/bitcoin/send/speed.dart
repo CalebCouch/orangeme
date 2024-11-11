@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/send/confirm.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/global.dart' as global;
 
@@ -16,8 +17,8 @@ class Speed extends GenericWidget {
 
 class SpeedState extends GenericState<Speed> {
   @override
-  String stateName() {
-    return "Speed";
+  PageName getPageName() {
+    return PageName.speed;
   }
 
   @override

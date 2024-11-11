@@ -5,6 +5,7 @@ import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/global.dart' as global;
 import 'package:vibration/vibration.dart';
 
@@ -22,8 +23,8 @@ class Amount extends GenericWidget {
 
 class AmountState extends GenericState<Amount> {
   @override
-  String stateName() {
-    return "Amount";
+  PageName getPageName() {
+    return PageName.amount;
   }
 
   @override

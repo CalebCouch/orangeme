@@ -4,6 +4,7 @@ import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 
 class MessageInfo extends GenericWidget {
   MessageInfo({super.key});
@@ -16,8 +17,8 @@ class MessageInfo extends GenericWidget {
 
 class MessageInfoState extends GenericState<MessageInfo> {
   @override
-  String stateName() {
-    return "ConvInfo";
+  PageName getPageName() {
+    return PageName.convoInfo;
   }
 
   @override

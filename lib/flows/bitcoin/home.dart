@@ -15,6 +15,7 @@ import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/global.dart' as global;
 
@@ -33,8 +34,8 @@ class BitcoinHome extends GenericWidget {
 
 class BitcoinHomeState extends GenericState<BitcoinHome> {
   @override
-  String stateName() {
-    return "BitcoinHome";
+  PageName getPageName() {
+    return PageName.bitcoinHome;
   }
 
   @override
