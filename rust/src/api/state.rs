@@ -98,6 +98,7 @@ impl StateManager {
             PageName::MessagesHome => self.messages_home().await,
             PageName::Exchange => self.exchange().await,
             PageName::MyProfile => self.my_profile().await,
+            PageName::UserProfile => self.user_profile().await,
             PageName::ConvoInfo => self.conv_info().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
             PageName::Test => self.test().await,
@@ -245,6 +246,12 @@ impl StateManager {
         let profile = self.state.get_o::<Profile>(Field::Profile).await?;
         Ok(serde_json::to_string(&MyProfile{
             profile: profile,
+        })?)
+    }
+
+    pub async fn user_profile(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&UserProfile{
+            profile: None,
         })?)
     }
 
@@ -423,6 +430,11 @@ struct MessagesHome {
 
 #[derive(Serialize)]
 struct MyProfile {
+    pub profile: Option<Profile>
+}
+
+#[derive(Serialize)]
+struct UserProfile {
     pub profile: Option<Profile>
 }
 

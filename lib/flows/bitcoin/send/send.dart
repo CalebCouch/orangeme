@@ -7,6 +7,7 @@ import 'package:orange/flows/bitcoin/send/scan_qr.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/global.dart' as global;
 
 class Send extends GenericWidget {
@@ -20,8 +21,8 @@ class Send extends GenericWidget {
 
 class SendState extends GenericState<Send> {
   @override
-  String stateName() {
-    return "Send";
+  PageName getPageName() {
+    return PageName.send;
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:orange/classes.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 //import 'package:orange/global.dart' as global;
 
 class MyProfile extends GenericWidget {
@@ -18,8 +19,8 @@ class MyProfile extends GenericWidget {
 
 class MyProfileState extends GenericState<MyProfile> {
   @override
-  String stateName() {
-    return "MyProfile";
+  PageName getPageName() {
+    return PageName.myProfile;
   }
 
   @override

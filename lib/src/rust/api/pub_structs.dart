@@ -4,56 +4,66 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import '../lib.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+part 'pub_structs.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`
+            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`
 
-enum Field {
-  identity,
-  legacySeed,
-  descriptorSet,
-  internet,
-  platform,
-  profile,
-  address,
-  amount,
-  priority,
-  amountErr,
-  amountBtc,
-  decimals,
-  inputValidation,
-  price,
-  path,
-  balance,
-  currentConversation,
-  conversations,
-  users,
-  transactions,
-  currentTx,
-  currentRawTx,
-  ;
 
-  Future<Uint8List> intoBytes() =>
-      RustLib.instance.api.crateApiPubStructsFieldIntoBytes(
-        that: this,
-      );
-}
+            
+
+            @freezed
+                sealed class Field with _$Field  {
+                    const Field._();
+
+                     const factory Field.identity() = Field_Identity;
+ const factory Field.legacySeed() = Field_LegacySeed;
+ const factory Field.descriptorSet() = Field_DescriptorSet;
+ const factory Field.internet() = Field_Internet;
+ const factory Field.platform() = Field_Platform;
+ const factory Field.profile([  Profile? field0,]) = Field_Profile;
+ const factory Field.address([  String? field0,]) = Field_Address;
+ const factory Field.amount([  String? field0,]) = Field_Amount;
+ const factory Field.priority([  int? field0,]) = Field_Priority;
+ const factory Field.amountErr([  String? field0,]) = Field_AmountErr;
+ const factory Field.amountBtc([  double? field0,]) = Field_AmountBTC;
+ const factory Field.decimals([  String? field0,]) = Field_Decimals;
+ const factory Field.inputValidation([  bool? field0,]) = Field_InputValidation;
+ const factory Field.price([  double? field0,]) = Field_Price;
+ const factory Field.path() = Field_Path;
+ const factory Field.balance([  double? field0,]) = Field_Balance;
+ const factory Field.currentConversation([  Conversation? field0,]) = Field_CurrentConversation;
+ const factory Field.conversations([  List<Conversation>? field0,]) = Field_Conversations;
+ const factory Field.users([  List<Profile>? field0,]) = Field_Users;
+ const factory Field.transactions([  List<Transaction>? field0,]) = Field_Transactions;
+ const factory Field.currentTx([  Transaction? field0,]) = Field_CurrentTx;
+ const factory Field.currentRawTx([  Transaction? field0,]) = Field_CurrentRawTx;
+
+                     Future<Uint8List>  intoBytes()=>RustLib.instance.api.crateApiPubStructsFieldIntoBytes(that: this, );
+
+
+                }
 
 enum PageName {
-  bitcoinHome,
-  receive,
-  send,
-  scanQr,
-  amount,
-  speed,
-  confirmTransaction,
-  success,
-  viewTransaction,
-  messagesHome,
-  exchange,
-  myProfile,
-  convoInfo,
-  chooseRecipient,
-  test,
-  ;
-}
+                    bitcoinHome,
+receive,
+send,
+scanQr,
+amount,
+speed,
+confirmTransaction,
+success,
+viewTransaction,
+messagesHome,
+exchange,
+myProfile,
+userProfile,
+convoInfo,
+chooseRecipient,
+test,
+                    ;
+                    
+                }
+            

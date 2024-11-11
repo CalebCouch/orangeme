@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/classes.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
@@ -17,8 +18,8 @@ class Success extends GenericWidget {
 
 class SuccessState extends GenericState<Success> {
   @override
-  String stateName() {
-    return "Success";
+  PageName getPageName() {
+    return PageName.success;
   }
 
   @override
