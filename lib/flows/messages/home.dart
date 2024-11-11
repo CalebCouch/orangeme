@@ -16,7 +16,7 @@ import 'package:orange/global.dart' as global;
 class MessagesHome extends GenericWidget {
   MessagesHome({super.key});
 
-  List<Conversation> conversations = []; // List of all conversations
+  List<Conversation>? conversations = []; // List of all conversations
   String profile_picture = "";
   @override
   MessagesHomeState createState() => MessagesHomeState();
@@ -38,8 +38,13 @@ class MessagesHomeState extends GenericState<MessagesHome> {
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
       widget.profile_picture = json["profile_picture"];
-      widget.conversations = List<Conversation>.from(json['conversations'].map((json) => Conversation.fromJson(json)));
-      if (widget.conversations.isNotEmpty) noConversations = false;
+      widget.conversations = json['conversations'] != null
+          ? List<Conversation>.from(
+              (json['conversations'] as List<dynamic>).map((item) => Conversation.fromJson(item as Map<String, dynamic>)),
+            )
+          : null;
+
+      if (widget.conversations != null) noConversations = false;
     });
   }
 
@@ -80,12 +85,12 @@ class MessagesHomeState extends GenericState<MessagesHome> {
   Widget listConversations() {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: widget.conversations.length,
+      itemCount: widget.conversations!.length,
       itemBuilder: (context, index) {
         return ConversationItem(
           context,
-          widget.conversations[index].members,
-          widget.conversations[index].messages[0].message,
+          widget.conversations![index].members,
+          widget.conversations![index].messages[0].message,
           () {
             setConversation(index);
             navigateTo(Exchange());
