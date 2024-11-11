@@ -46,22 +46,21 @@ class ReceiveState extends GenericState<Receive> {
     Share.share(widget.address);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    print("build");
-    return Stack_Default(
-      Header_Stack(context, "Receive bitcoin"),
-      [
-        QRCode(widget.address),
-        Instructions(),
-      ],
-      Bumper(context, [
-        CustomButton('Share', 'primary lg expand none', onShare, 'enabled'),
-      ]),
-      Alignment.center,
-      false,
-    );
-  }
+    @override
+    Widget build_with_state(BuildContext context) {
+        return Stack_Default(
+            Header_Stack(context, "Receive bitcoin"),
+          [
+            QRCode(widget.address),
+            Instructions(),
+          ],
+          Bumper(context, [
+            CustomButton('Share', 'primary lg expand none', onShare, 'enabled'),
+          ]),
+          Alignment.center,
+          false,
+        );
+    }
 }
 
 //The following widgets can ONLY be used in this file

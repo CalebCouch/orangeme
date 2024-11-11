@@ -69,57 +69,74 @@ class ShakeController extends ChangeNotifier {
 
 abstract class GenericWidget extends StatefulWidget {
   Timer? timer;
+  Future<String>? async_state;
   bool pause_refresh = false;
 
   GenericWidget({super.key});
 }
 
 abstract class GenericState<T extends GenericWidget> extends State<T> {
-  String stateName();
-  int refreshInterval();
+    String stateName();
+    int refreshInterval();
+    Widget build_with_state(BuildContext context);
 
-  void unpack_state(Map<String, dynamic> json);
+    void unpack_state(Map<String, dynamic> json);
 
-  void getState() async {
-    int time = DateTime.now().millisecondsSinceEpoch;
-    String state = await getstate(path: global.dataDir!, name: stateName());
-    //print("gotstate in ${DateTime.now().millisecondsSinceEpoch-time}");
-    if (!widget.pause_refresh) {
-      unpack_state(jsonDecode(state));
-      _createTimer();
+    void getState() async {
+      int time = DateTime.now().millisecondsSinceEpoch;
+      widget.async_state = getstate(path: global.dataDir!, name: stateName());
+      String state = await widget.async_state!;
+      print("gotstate in ${DateTime.now().millisecondsSinceEpoch-time}");
+      if (!widget.pause_refresh) {
+        unpack_state(jsonDecode(state));
+        _createTimer();
+      }
     }
-  }
 
-  navigateTo(Widget next) async {
-    widget.pause_refresh = true;
-    widget.timer?.cancel();
-    await global.navigation.navigateTo(next);
-    widget.pause_refresh = false;
-    await _createTimer();
-  }
-
-  _createTimer() {
-    widget.timer?.cancel();
-    var interval = refreshInterval();
-    if (interval > 0) {
-      widget.timer = Timer(Duration(milliseconds: interval), () {
-        getState();
-      });
+    @override
+    Widget build(BuildContext context) {
+        return FutureBuilder<String>(
+            future: widget.async_state,
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                    return build_with_state(context);
+                } else {
+                    return Container();
+                }
+            }
+        );
     }
-  }
 
-  @override
-  void initState() {
-    getState();
-    super.initState();
-  }
+    navigateTo(Widget next) async {
+      widget.pause_refresh = true;
+      widget.timer?.cancel();
+      await global.navigation.navigateTo(next);
+      widget.pause_refresh = false;
+      await _createTimer();
+    }
 
-  @override
-  void dispose() {
-    //widget.gettingState!.cancel();
-    widget.timer?.cancel();
-    super.dispose();
-  }
+    _createTimer() {
+      widget.timer?.cancel();
+      var interval = refreshInterval();
+      if (interval > 0) {
+        widget.timer = Timer(Duration(milliseconds: interval), () {
+          getState();
+        });
+      }
+    }
+
+    @override
+    void initState() {
+      getState();
+      super.initState();
+    }
+
+    @override
+    void dispose() {
+      //widget.gettingState!.cancel();
+      widget.timer?.cancel();
+      super.dispose();
+    }
 }
 
 class ShorthandTransaction {

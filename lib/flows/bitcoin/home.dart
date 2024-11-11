@@ -67,7 +67,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build_with_state(BuildContext context) {
     //print(widget.transactions);
     bool noTransactions = widget.transactions.isEmpty;
     return Root_Home(
