@@ -103,10 +103,8 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: 64),
-      child: CustomColumn([
-        CustomText('heading ${dynamic_size(widget.usdUnformatted.length)}', "\$${widget.usd}"),
-        CustomText('text lg text_secondary', '${widget.btc} BTC')
-      ], AppPadding.valueDisplaySep),
+      child:
+          CustomColumn([CustomText('heading ${dynamic_size(widget.usdUnformatted.length)}', "\$${widget.usd}"), CustomText('text lg text_secondary', '${widget.btc} BTC')], AppPadding.valueDisplaySep),
     );
   }
 

@@ -30,7 +30,7 @@ class MyProfileState extends GenericState<MyProfile> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.profile = Profile.fromJson(json['profile']);
+      widget.profile = json['profile'] != null ? Profile.fromJson(json['profile'] as Map<String, dynamic>) : null;
     });
   }
 

@@ -80,7 +80,7 @@ Widget addressItem(BuildContext context, String address) {
   if (address == '') address = "Unable to generate an address.";
   copyAddress() async {
     HapticFeedback.heavyImpact();
-    await Clipboard.setData(ClipboardData(text: address.isNotEmpty ? address : ''));
+    await Clipboard.setData(ClipboardData(text: address));
   }
 
   return DataItem(
@@ -96,7 +96,7 @@ Widget didItem(BuildContext context, String did) {
   if (did == '') did = "Unable to find this users DID.";
   copyDid() async {
     HapticFeedback.heavyImpact();
-    await Clipboard.setData(ClipboardData(text: did.isNotEmpty ? did : ''));
+    await Clipboard.setData(ClipboardData(text: did));
   }
 
   return DataItem(

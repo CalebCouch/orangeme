@@ -51,14 +51,7 @@ enum Platform {
 
   @override
   String toString() {
-    return switch (this) {
-      Platform.Mac => "Mac",
-      Platform.Linux => "Linux",
-      Platform.Windows => "Windows",
-      Platform.IOS => "IOS",
-      Platform.Android => "Android",
-      Platform.Fuchsia => "Fuchsia"
-    };
+    return switch (this) { Platform.Mac => "Mac", Platform.Linux => "Linux", Platform.Windows => "Windows", Platform.IOS => "IOS", Platform.Android => "Android", Platform.Fuchsia => "Fuchsia" };
   }
 }
 
@@ -76,67 +69,66 @@ abstract class GenericWidget extends StatefulWidget {
 }
 
 abstract class GenericState<T extends GenericWidget> extends State<T> {
-    String stateName();
-    int refreshInterval();
-    Widget build_with_state(BuildContext context);
+  String stateName();
+  int refreshInterval();
+  Widget build_with_state(BuildContext context);
 
-    void unpack_state(Map<String, dynamic> json);
+  void unpack_state(Map<String, dynamic> json);
 
-    void getState() async {
-      int time = DateTime.now().millisecondsSinceEpoch;
-      widget.async_state = getstate(path: global.dataDir!, name: stateName());
-      String state = await widget.async_state!;
-      print("gotstate in ${DateTime.now().millisecondsSinceEpoch-time}");
-      if (!widget.pause_refresh) {
-        unpack_state(jsonDecode(state));
-        _createTimer();
-      }
+  void getState() async {
+    int time = DateTime.now().millisecondsSinceEpoch;
+    widget.async_state = getstate(path: global.dataDir!, name: stateName());
+    String state = await widget.async_state!;
+    //print("gotstate in ${DateTime.now().millisecondsSinceEpoch-time}");
+    if (!widget.pause_refresh) {
+      unpack_state(jsonDecode(state));
+      _createTimer();
     }
+  }
 
-    @override
-    Widget build(BuildContext context) {
-        return FutureBuilder<String>(
-            future: widget.async_state,
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (snapshot.hasData) {
-                    return build_with_state(context);
-                } else {
-                    return Container();
-                }
-            }
-        );
-    }
-
-    navigateTo(Widget next) async {
-      widget.pause_refresh = true;
-      widget.timer?.cancel();
-      await global.navigation.navigateTo(next);
-      widget.pause_refresh = false;
-      await _createTimer();
-    }
-
-    _createTimer() {
-      widget.timer?.cancel();
-      var interval = refreshInterval();
-      if (interval > 0) {
-        widget.timer = Timer(Duration(milliseconds: interval), () {
-          getState();
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+        future: widget.async_state,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return build_with_state(context);
+          } else {
+            return Container();
+          }
         });
-      }
-    }
+  }
 
-    @override
-    void initState() {
-      getState();
-      super.initState();
-    }
+  navigateTo(Widget next) async {
+    widget.pause_refresh = true;
+    widget.timer?.cancel();
+    await global.navigation.navigateTo(next);
+    widget.pause_refresh = false;
+    await _createTimer();
+  }
 
-    @override
-    void dispose() {
-      //widget.gettingState!.cancel();
-      widget.timer?.cancel();
-      super.dispose();
+  _createTimer() {
+    widget.timer?.cancel();
+    var interval = refreshInterval();
+    if (interval > 0) {
+      widget.timer = Timer(Duration(milliseconds: interval), () {
+        getState();
+      });
     }
+  }
+
+  @override
+  void initState() {
+    getState();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    //widget.gettingState!.cancel();
+    widget.timer?.cancel();
+    super.dispose();
+  }
 }
 
 class ShorthandTransaction {
@@ -431,8 +423,7 @@ class GlobalState {
 
   Future<String> androidRead(String key) async {
     // Obtain SharedPreferences instance
-    final SharedPreferences prefs =
-        await SharedPreferences.getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
+    final SharedPreferences prefs = await SharedPreferences.getInstance(); // Read the value associated with the key, returning an empty string if the key doesn't exist
     return prefs.getString(key) ?? "";
   }
 

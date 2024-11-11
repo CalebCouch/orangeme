@@ -42,11 +42,7 @@ class Header extends StatelessWidget {
 }
 
 Widget Header_Home(Widget left, String title, [Widget? right]) {
-  return Header(
-    left,
-    CustomText('heading h3', title),
-    right ?? Container(),
-  );
+  return Header(left, CustomText('heading h3', title), right ?? Container());
 }
 
 Widget Header_Stack(BuildContext context, String title, [Widget? right, Widget? left]) {
