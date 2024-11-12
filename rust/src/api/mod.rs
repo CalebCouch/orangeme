@@ -15,12 +15,12 @@ pub mod protocols;
 pub mod structs;
 /// flutter_rust_bridge:ignore
 pub mod price;
-//  /// flutter_rust_bridge:ignore
-//  pub mod wallet;
+/// flutter_rust_bridge:ignore
+pub mod wallet;
 /// flutter_rust_bridge:ignore
 pub mod state;
-/// flutter_rust_bridge:ignore
-pub mod usb;
+//  /// flutter_rust_bridge:ignore
+//  pub mod usb;
 
 
 

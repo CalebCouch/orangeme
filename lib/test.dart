@@ -41,10 +41,10 @@ class TestState extends GenericState<Test> {
   Widget build_with_state(BuildContext context) {
     return Column(children: <Widget>[
       Text("count: ${widget.val}"),
-      //TextButton(
-      //  onPressed: test,
-      //  child: Text('TextButton')
-      //)
+        TextButton(
+          onPressed: () async {print("run"); await testfunction(); print("ran");},
+          child: Text('TextButton')
+        )
     ]);
   }
 }

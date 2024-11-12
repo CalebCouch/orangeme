@@ -5,47 +5,25 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-part 'pub_structs.freezed.dart';
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`
-
-
-            
-
-            @freezed
-                sealed class Field with _$Field  {
-                    const Field._();
-
-                     const factory Field.path([  String? field0,]) = Field_Path;
- const factory Field.price([  double? field0,]) = Field_Price;
- const factory Field.internet([  bool? field0,]) = Field_Internet;
- const factory Field.platform([  Platform? field0,]) = Field_Platform;
-
-                     Future<Uint8List>  intoBytes()=>RustLib.instance.api.crateApiPubStructsFieldIntoBytes(that: this, );
-
-
-                }
+// These types are ignored because they are not used by any `pub` functions: `WalletMethod`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`
 
 enum PageName {
-                    test,
-                    ;
-                    
-                }
+  test,
+  ;
+}
 
 enum Platform {
-                    mac,
-linux,
-windows,
-ios,
-android,
-fuchsia,
-                    ;
-                    static Future<Platform>  default_()=>RustLib.instance.api.crateApiPubStructsPlatformDefault();
+  mac,
+  linux,
+  windows,
+  ios,
+  android,
+  fuchsia,
+  ;
 
-
- bool  isDesktop()=>RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(that: this, );
-
-
-                }
-            
+  bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
+        that: this,
+      );
+}

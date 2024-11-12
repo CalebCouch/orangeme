@@ -1,7 +1,7 @@
 use super::Error;
 
-use super::pub_structs::{PageName, Field};
-//use super::wallet::{Wallet, DescriptorSet, Transaction};
+use super::pub_structs::{PageName, Platform};
+use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime, Profile};
 
 use log::info;
@@ -25,6 +25,42 @@ pub type Internet = bool;
 
 const SATS: u64 = 100_000_000;
 
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(untagged)]
+pub enum Field {
+    Path(Option<String>),
+    Price(Option<f64>),
+    Internet(Option<bool>),
+    Platform(Option<Platform>),
+
+    Transactions(Option<Transactions>),
+    Balance(Option<f64>),
+
+//  LegacySeed(Option<Seed>),
+//  DescriptorSet(Option<DescriptorSet>),
+//  Profile(Option<Profile>),
+//  Address(Option<String>),
+//  Amount(Option<String>),
+//  Priority(Option<u8>),
+//  AmountErr(Option<String>),
+//  AmountBTC(Option<f64>),
+//  Decimals(Option<String>),
+//  InputValidation(Option<bool>),
+//  CurrentConversation(Option<Conversation>),
+//  Conversations(Option<Vec<Conversation>>),
+//  Users(Option<Vec<Profile>>),
+//  CurrentTx(Option<Transaction>),
+//  CurrentRawTx(Option<bdk::bitcoin::Transaction>),
+}
+
+impl Field {
+    pub fn into_bytes(&self) -> Vec<u8> {
+        format!("{:?}", self).split("(").collect::<Vec<&str>>()[0].as_bytes().to_vec()
+    }
+}
+
+
+
 #[derive(Clone)]
 pub struct State {
     store: Box<dyn KeyValueStore>,
@@ -39,7 +75,7 @@ impl State {
         })
     }
 
-    pub async fn set(&mut self, field: Field) -> Result<(), Error> {
+    pub async fn set(&self, field: Field) -> Result<(), Error> {
         self.store.set(&field.into_bytes(), &serde_json::to_vec(&field)?).await?;
         Ok(())
     }

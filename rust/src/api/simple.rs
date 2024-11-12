@@ -14,15 +14,14 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-use super::pub_structs::{Platform, PageName, Field};
+use super::pub_structs::{Platform, PageName, WalletMethod};
+use super::state::Field;
 
 use super::structs::{DartCommand, Storage, DartCallback, Profile};
-//use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 use super::price::PriceGetter;
 use super::state::{StateManager, State};
-use super::usb::UsbInfo;
+//use super::usb::UsbInfo;
 
-use simple_database::KeyValueStore;
 use simple_database::SqliteStore;
 use simple_database::database::{FiltersBuilder, IndexBuilder, Filter};
 
@@ -37,7 +36,6 @@ use bdk::blockchain::Blockchain;
 use bdk::SyncOptions;
 
 use tokio::task::JoinHandle;
-
 use flutter_rust_bridge::DartFnFuture;
 use flutter_rust_bridge::frb;
 
@@ -61,6 +59,26 @@ use web5_rust::{Record};
 use super::protocols::Protocols;
 
 use log::info;
+
+use std::sync::Arc;
+use tokio::sync::Mutex;
+use std::sync::{LazyLock};
+
+use tokio::sync::mpsc;
+use tokio::sync::mpsc::{Receiver, Sender};
+
+use std::collections::HashMap;
+
+use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
+
+#[derive(PartialEq, Eq, Hash)]
+enum Thread {
+    Price,
+    Internet,
+    Wallet
+}
+
+static THREAD_CHANNELS: LazyLock<Mutex<HashMap<Thread, Sender<Vec<u8>>>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
 const SATS: u64 = 100_000_000;
 const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
@@ -108,19 +126,19 @@ async fn price_thread(mut state: State) -> Result<(), Error> {
         state.set(Field::Price(Some(PriceGetter::get(None).await?))).await?;
         thread::sleep(time::Duration::from_millis(2_000));
     }
-    Err::<(), Error>(Error::Exited("Price Update".to_string()))
 }
 
-//  async fn wallet_thread(mut state: State, platform: Platform, descriptors: DescriptorSet, path: PathBuf) -> Result<(), Error> {
-//      if !platform.is_desktop() {
-//          let mut wallet = Wallet::new(descriptors, path, state)?;
-//          loop {
-//              wallet.sync().await?;
-//              thread::sleep(time::Duration::from_millis(1_000));
-//          }
-//          Err(Error::Exited("Wallet Sync".to_string()))
-//      } else {Ok(())}
-//  }
+async fn wallet_thread(mut state: State, platform: Platform, descriptors: DescriptorSet, path: PathBuf, mut recv: Receiver<Vec<u8>>) -> Result<(), Error> {
+    if !platform.is_desktop() {
+        let mut wallet = Wallet::new(descriptors, path, state)?;
+        loop {
+            info!("Recived: {}", std::str::from_utf8(&recv.recv().await.unwrap()).unwrap());
+          //wallet.sync().await?;
+            //thread::sleep(time::Duration::from_millis(1_000));
+        }
+        Err(Error::Exited("Wallet Sync".to_string()))
+    } else {Ok(())}
+}
 
 //  async fn web5_thread(mut state: State, platform: Platform, id: Identity) -> Result<(), Error> {
 //      info!("Start Web5 init");
@@ -190,48 +208,52 @@ async fn async_rust (
 
     let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
     state.set(Field::Path(Some(path.clone()))).await?;
+    state.set(Field::Platform(Some(platform.clone()))).await?;
 
-    //let path = PathBuf::from(&path);
+    let storage = Storage::new(dart_callback.clone());
 
-//  state.set(Field::Platform, &platform).await?;
+    let (doc, id) = if let Some(i) = storage.get("identity").await? {
+        serde_json::from_str::<(DhtDocument, Identity)>(&i)?
+    } else {
+        let tup = DhtDocument::default(vec!["did:dht:fxaigdryri3os713aaepighxf6sm9h5xouwqfpinh9izwro3mbky".to_string()])?;
+        storage.set("identity", &serde_json::to_string(&tup)?).await?;
+        tup
+    };
 
-//  let storage = Storage::new(dart_callback.clone());
+    doc.publish(&id.did_key).await?;
 
-//  let (doc, id) = if let Some(i) = storage.get("identity").await? {
-//      serde_json::from_str::<(DhtDocument, Identity)>(&i)?
-//  } else {
-//      let tup = DhtDocument::default(vec!["did:dht:fxaigdryri3os713aaepighxf6sm9h5xouwqfpinh9izwro3mbky".to_string()])?;
-//      storage.set("identity", &serde_json::to_string(&tup)?).await?;
-//      tup
-//  };
+    //let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
+    //    serde_json::from_str(&seed)?
+    //} else {
+    //    let seed = Seed::new();
+    //    storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+    //    seed
+    //};
+    //Hard coded for testing
+    let seed: Seed = Seed{inner: vec![175, 178, 194, 229, 165, 10, 1, 80, 224, 239, 231, 107, 145, 96, 212, 195, 10, 78, 64, 17, 241, 77, 229, 246, 109, 226, 14, 83, 139, 28, 232, 220, 5, 150, 79, 185, 67, 31, 247, 41, 150, 36, 77, 199, 67, 47, 157, 15, 61, 142, 5, 244, 245, 137, 198, 34, 174, 221, 63, 134, 129, 165, 25, 7]};
+    let descriptors = DescriptorSet::from_seed(&seed)?;
+    let path = PathBuf::from(&path);
 
-//  doc.publish(&id.did_key).await?;
+    let mut threads = THREAD_CHANNELS.lock().await;
 
-// if !platform.is_desktop() {
-//    //let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
-//    //    serde_json::from_str(&seed)?
-//    //} else {
-//    //    let seed = Seed::new();
-//    //    storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
-//    //    seed
-//    //};
-//      //Hard coded for testing
-//      let seed: Seed = Seed{inner: vec![175, 178, 194, 229, 165, 10, 1, 80, 224, 239, 231, 107, 145, 96, 212, 195, 10, 78, 64, 17, 241, 77, 229, 246, 109, 226, 14, 83, 139, 28, 232, 220, 5, 150, 79, 185, 67, 31, 247, 41, 150, 36, 77, 199, 67, 47, 157, 15, 61, 142, 5, 244, 245, 137, 198, 34, 174, 221, 63, 134, 129, 165, 25, 7]};
-//      dart_callback.call("print", &format!("{:?}", seed)).await?;
-//      let descriptors = DescriptorSet::from_seed(&seed)?;
-//      dart_callback.call("print", &descriptors.internal).await?;
-//      state.set(Field::DescriptorSet, &descriptors).await?;
-//  }
-    //info!("HELLO");
+    let (w_tx, w_rx) = mpsc::channel::<Vec<u8>>(100);
+    threads.insert(Thread::Wallet, w_tx);
+    drop(threads);
+
     tokio::try_join!(
         spawn(price_thread(state.clone())),
         spawn(internet_thread(state.clone())),
-      //spawn(wallet_thread(state.clone(), platform, descriptors, path)),
+        spawn(wallet_thread(state.clone(), platform, descriptors, path, w_rx)),
       //spawn(web5_thread(state.clone(), platfrom, id, path)),
       //spawn(usb_thread(state)),
     )?;
 
     Err(Error::Exited("Main Thread".to_string()))
+}
+
+pub async fn testfunction() {
+    let mut threads = THREAD_CHANNELS.lock().await;
+    threads.get(&Thread::Wallet).unwrap().send(b"HELLo".to_vec()).await.unwrap();
 }
 
 pub async fn ruststart (
@@ -255,17 +277,17 @@ pub async fn getpage(path: String, page: PageName) -> String {
     }
 }
 
-pub async fn setstate(path: String, field: Field) -> String {
-    let result: Result<(), Error> = async {
-        let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
-        state.set(field).await?;
-        Ok(())
-    }.await;
-    match result {
-        Ok(()) => "Ok".to_string(),
-        Err(e) => format!("Error: {}", e)
-    }
-}
+//  pub async fn setstate(path: String, field: Field) -> String {
+//      let result: Result<(), Error> = async {
+//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+//          state.set(field).await?;
+//          Ok(())
+//      }.await;
+//      match result {
+//          Ok(()) => "Ok".to_string(),
+//          Err(e) => format!("Error: {}", e)
+//      }
+//  }
 
 //  pub async fn setStateAddress(path: String, mut address: String) -> String {
 //      let result: Result<String, Error> = (|| async {

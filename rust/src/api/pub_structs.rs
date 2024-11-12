@@ -17,8 +17,9 @@ impl Platform {
     }
 }
 
-impl Default for Platform {
-    fn default() -> Self {Platform::Mac}
+#[derive(Serialize, Deserialize, Debug)]
+pub enum WalletMethod {
+    GetNewAddress
 }
 
 #[derive(Debug)]
@@ -41,34 +42,13 @@ pub enum PageName {
     Test
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(untagged)]
-pub enum Field {
-    Path(Option<String>),
-    Price(Option<f64>),
-    Internet(Option<bool>),
-    Platform(Option<Platform>),
-//  LegacySeed(Option<Seed>),
-//  DescriptorSet(Option<DescriptorSet>),
-//  Profile(Option<Profile>),
-//  Address(Option<String>),
-//  Amount(Option<String>),
-//  Priority(Option<u8>),
-//  AmountErr(Option<String>),
-//  AmountBTC(Option<f64>),
-//  Decimals(Option<String>),
-//  InputValidation(Option<bool>),
-//  Balance(Option<f64>),
-//  CurrentConversation(Option<Conversation>),
-//  Conversations(Option<Vec<Conversation>>),
-//  Users(Option<Vec<Profile>>),
-//  Transactions(Option<Vec<Transaction>>),
-//  CurrentTx(Option<Transaction>),
-//  CurrentRawTx(Option<bdk::bitcoin::Transaction>),
-}
+//  use allo_isolate::ffi::{DartCObject, DartCObjectType, DartCObjectValue};
 
-impl Field {
-    pub fn into_bytes(&self) -> Vec<u8> {
-        format!("{:?}", self).split("(").collect::<Vec<&str>>()[0].as_bytes().to_vec()
-    }
-}
+//  impl flutter_rust_bridge::IntoDart for BTreeMap<Txid, Transaction> {
+//      fn into_dart(self) -> DartCObject {
+//          DartCObject {
+//              ty: DartCObjectType::DartNull,
+//              value: DartCObjectValue { as_bool: false },
+//          }
+//      }
+//  }

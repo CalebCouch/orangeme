@@ -23,6 +23,8 @@ mixin _$Field {
     required TResult Function(double? field0) price,
     required TResult Function(bool? field0) internet,
     required TResult Function(Platform? field0) platform,
+    required TResult Function(BTreeMapTxidTransaction? field0) transactions,
+    required TResult Function(double? field0) balance,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -31,6 +33,8 @@ mixin _$Field {
     TResult? Function(double? field0)? price,
     TResult? Function(bool? field0)? internet,
     TResult? Function(Platform? field0)? platform,
+    TResult? Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult? Function(double? field0)? balance,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -39,6 +43,8 @@ mixin _$Field {
     TResult Function(double? field0)? price,
     TResult Function(bool? field0)? internet,
     TResult Function(Platform? field0)? platform,
+    TResult Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult Function(double? field0)? balance,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -48,6 +54,8 @@ mixin _$Field {
     required TResult Function(Field_Price value) price,
     required TResult Function(Field_Internet value) internet,
     required TResult Function(Field_Platform value) platform,
+    required TResult Function(Field_Transactions value) transactions,
+    required TResult Function(Field_Balance value) balance,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -56,6 +64,8 @@ mixin _$Field {
     TResult? Function(Field_Price value)? price,
     TResult? Function(Field_Internet value)? internet,
     TResult? Function(Field_Platform value)? platform,
+    TResult? Function(Field_Transactions value)? transactions,
+    TResult? Function(Field_Balance value)? balance,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -64,6 +74,8 @@ mixin _$Field {
     TResult Function(Field_Price value)? price,
     TResult Function(Field_Internet value)? internet,
     TResult Function(Field_Platform value)? platform,
+    TResult Function(Field_Transactions value)? transactions,
+    TResult Function(Field_Balance value)? balance,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -161,6 +173,8 @@ class _$Field_PathImpl extends Field_Path {
     required TResult Function(double? field0) price,
     required TResult Function(bool? field0) internet,
     required TResult Function(Platform? field0) platform,
+    required TResult Function(BTreeMapTxidTransaction? field0) transactions,
+    required TResult Function(double? field0) balance,
   }) {
     return path(field0);
   }
@@ -172,6 +186,8 @@ class _$Field_PathImpl extends Field_Path {
     TResult? Function(double? field0)? price,
     TResult? Function(bool? field0)? internet,
     TResult? Function(Platform? field0)? platform,
+    TResult? Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult? Function(double? field0)? balance,
   }) {
     return path?.call(field0);
   }
@@ -183,6 +199,8 @@ class _$Field_PathImpl extends Field_Path {
     TResult Function(double? field0)? price,
     TResult Function(bool? field0)? internet,
     TResult Function(Platform? field0)? platform,
+    TResult Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult Function(double? field0)? balance,
     required TResult orElse(),
   }) {
     if (path != null) {
@@ -198,6 +216,8 @@ class _$Field_PathImpl extends Field_Path {
     required TResult Function(Field_Price value) price,
     required TResult Function(Field_Internet value) internet,
     required TResult Function(Field_Platform value) platform,
+    required TResult Function(Field_Transactions value) transactions,
+    required TResult Function(Field_Balance value) balance,
   }) {
     return path(this);
   }
@@ -209,6 +229,8 @@ class _$Field_PathImpl extends Field_Path {
     TResult? Function(Field_Price value)? price,
     TResult? Function(Field_Internet value)? internet,
     TResult? Function(Field_Platform value)? platform,
+    TResult? Function(Field_Transactions value)? transactions,
+    TResult? Function(Field_Balance value)? balance,
   }) {
     return path?.call(this);
   }
@@ -220,6 +242,8 @@ class _$Field_PathImpl extends Field_Path {
     TResult Function(Field_Price value)? price,
     TResult Function(Field_Internet value)? internet,
     TResult Function(Field_Platform value)? platform,
+    TResult Function(Field_Transactions value)? transactions,
+    TResult Function(Field_Balance value)? balance,
     required TResult orElse(),
   }) {
     if (path != null) {
@@ -315,6 +339,8 @@ class _$Field_PriceImpl extends Field_Price {
     required TResult Function(double? field0) price,
     required TResult Function(bool? field0) internet,
     required TResult Function(Platform? field0) platform,
+    required TResult Function(BTreeMapTxidTransaction? field0) transactions,
+    required TResult Function(double? field0) balance,
   }) {
     return price(field0);
   }
@@ -326,6 +352,8 @@ class _$Field_PriceImpl extends Field_Price {
     TResult? Function(double? field0)? price,
     TResult? Function(bool? field0)? internet,
     TResult? Function(Platform? field0)? platform,
+    TResult? Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult? Function(double? field0)? balance,
   }) {
     return price?.call(field0);
   }
@@ -337,6 +365,8 @@ class _$Field_PriceImpl extends Field_Price {
     TResult Function(double? field0)? price,
     TResult Function(bool? field0)? internet,
     TResult Function(Platform? field0)? platform,
+    TResult Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult Function(double? field0)? balance,
     required TResult orElse(),
   }) {
     if (price != null) {
@@ -352,6 +382,8 @@ class _$Field_PriceImpl extends Field_Price {
     required TResult Function(Field_Price value) price,
     required TResult Function(Field_Internet value) internet,
     required TResult Function(Field_Platform value) platform,
+    required TResult Function(Field_Transactions value) transactions,
+    required TResult Function(Field_Balance value) balance,
   }) {
     return price(this);
   }
@@ -363,6 +395,8 @@ class _$Field_PriceImpl extends Field_Price {
     TResult? Function(Field_Price value)? price,
     TResult? Function(Field_Internet value)? internet,
     TResult? Function(Field_Platform value)? platform,
+    TResult? Function(Field_Transactions value)? transactions,
+    TResult? Function(Field_Balance value)? balance,
   }) {
     return price?.call(this);
   }
@@ -374,6 +408,8 @@ class _$Field_PriceImpl extends Field_Price {
     TResult Function(Field_Price value)? price,
     TResult Function(Field_Internet value)? internet,
     TResult Function(Field_Platform value)? platform,
+    TResult Function(Field_Transactions value)? transactions,
+    TResult Function(Field_Balance value)? balance,
     required TResult orElse(),
   }) {
     if (price != null) {
@@ -470,6 +506,8 @@ class _$Field_InternetImpl extends Field_Internet {
     required TResult Function(double? field0) price,
     required TResult Function(bool? field0) internet,
     required TResult Function(Platform? field0) platform,
+    required TResult Function(BTreeMapTxidTransaction? field0) transactions,
+    required TResult Function(double? field0) balance,
   }) {
     return internet(field0);
   }
@@ -481,6 +519,8 @@ class _$Field_InternetImpl extends Field_Internet {
     TResult? Function(double? field0)? price,
     TResult? Function(bool? field0)? internet,
     TResult? Function(Platform? field0)? platform,
+    TResult? Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult? Function(double? field0)? balance,
   }) {
     return internet?.call(field0);
   }
@@ -492,6 +532,8 @@ class _$Field_InternetImpl extends Field_Internet {
     TResult Function(double? field0)? price,
     TResult Function(bool? field0)? internet,
     TResult Function(Platform? field0)? platform,
+    TResult Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult Function(double? field0)? balance,
     required TResult orElse(),
   }) {
     if (internet != null) {
@@ -507,6 +549,8 @@ class _$Field_InternetImpl extends Field_Internet {
     required TResult Function(Field_Price value) price,
     required TResult Function(Field_Internet value) internet,
     required TResult Function(Field_Platform value) platform,
+    required TResult Function(Field_Transactions value) transactions,
+    required TResult Function(Field_Balance value) balance,
   }) {
     return internet(this);
   }
@@ -518,6 +562,8 @@ class _$Field_InternetImpl extends Field_Internet {
     TResult? Function(Field_Price value)? price,
     TResult? Function(Field_Internet value)? internet,
     TResult? Function(Field_Platform value)? platform,
+    TResult? Function(Field_Transactions value)? transactions,
+    TResult? Function(Field_Balance value)? balance,
   }) {
     return internet?.call(this);
   }
@@ -529,6 +575,8 @@ class _$Field_InternetImpl extends Field_Internet {
     TResult Function(Field_Price value)? price,
     TResult Function(Field_Internet value)? internet,
     TResult Function(Field_Platform value)? platform,
+    TResult Function(Field_Transactions value)? transactions,
+    TResult Function(Field_Balance value)? balance,
     required TResult orElse(),
   }) {
     if (internet != null) {
@@ -625,6 +673,8 @@ class _$Field_PlatformImpl extends Field_Platform {
     required TResult Function(double? field0) price,
     required TResult Function(bool? field0) internet,
     required TResult Function(Platform? field0) platform,
+    required TResult Function(BTreeMapTxidTransaction? field0) transactions,
+    required TResult Function(double? field0) balance,
   }) {
     return platform(field0);
   }
@@ -636,6 +686,8 @@ class _$Field_PlatformImpl extends Field_Platform {
     TResult? Function(double? field0)? price,
     TResult? Function(bool? field0)? internet,
     TResult? Function(Platform? field0)? platform,
+    TResult? Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult? Function(double? field0)? balance,
   }) {
     return platform?.call(field0);
   }
@@ -647,6 +699,8 @@ class _$Field_PlatformImpl extends Field_Platform {
     TResult Function(double? field0)? price,
     TResult Function(bool? field0)? internet,
     TResult Function(Platform? field0)? platform,
+    TResult Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult Function(double? field0)? balance,
     required TResult orElse(),
   }) {
     if (platform != null) {
@@ -662,6 +716,8 @@ class _$Field_PlatformImpl extends Field_Platform {
     required TResult Function(Field_Price value) price,
     required TResult Function(Field_Internet value) internet,
     required TResult Function(Field_Platform value) platform,
+    required TResult Function(Field_Transactions value) transactions,
+    required TResult Function(Field_Balance value) balance,
   }) {
     return platform(this);
   }
@@ -673,6 +729,8 @@ class _$Field_PlatformImpl extends Field_Platform {
     TResult? Function(Field_Price value)? price,
     TResult? Function(Field_Internet value)? internet,
     TResult? Function(Field_Platform value)? platform,
+    TResult? Function(Field_Transactions value)? transactions,
+    TResult? Function(Field_Balance value)? balance,
   }) {
     return platform?.call(this);
   }
@@ -684,6 +742,8 @@ class _$Field_PlatformImpl extends Field_Platform {
     TResult Function(Field_Price value)? price,
     TResult Function(Field_Internet value)? internet,
     TResult Function(Field_Platform value)? platform,
+    TResult Function(Field_Transactions value)? transactions,
+    TResult Function(Field_Balance value)? balance,
     required TResult orElse(),
   }) {
     if (platform != null) {
@@ -704,5 +764,339 @@ abstract class Field_Platform extends Field {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$Field_PlatformImplCopyWith<_$Field_PlatformImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$Field_TransactionsImplCopyWith<$Res> {
+  factory _$$Field_TransactionsImplCopyWith(_$Field_TransactionsImpl value,
+          $Res Function(_$Field_TransactionsImpl) then) =
+      __$$Field_TransactionsImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({BTreeMapTxidTransaction? field0});
+}
+
+/// @nodoc
+class __$$Field_TransactionsImplCopyWithImpl<$Res>
+    extends _$FieldCopyWithImpl<$Res, _$Field_TransactionsImpl>
+    implements _$$Field_TransactionsImplCopyWith<$Res> {
+  __$$Field_TransactionsImplCopyWithImpl(_$Field_TransactionsImpl _value,
+      $Res Function(_$Field_TransactionsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Field
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = freezed,
+  }) {
+    return _then(_$Field_TransactionsImpl(
+      freezed == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as BTreeMapTxidTransaction?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$Field_TransactionsImpl extends Field_Transactions {
+  const _$Field_TransactionsImpl([this.field0]) : super._();
+
+  @override
+  final BTreeMapTxidTransaction? field0;
+
+  @override
+  String toString() {
+    return 'Field.transactions(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$Field_TransactionsImpl &&
+            (identical(other.field0, field0) || other.field0 == field0));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0);
+
+  /// Create a copy of Field
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$Field_TransactionsImplCopyWith<_$Field_TransactionsImpl> get copyWith =>
+      __$$Field_TransactionsImplCopyWithImpl<_$Field_TransactionsImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? field0) path,
+    required TResult Function(double? field0) price,
+    required TResult Function(bool? field0) internet,
+    required TResult Function(Platform? field0) platform,
+    required TResult Function(BTreeMapTxidTransaction? field0) transactions,
+    required TResult Function(double? field0) balance,
+  }) {
+    return transactions(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? field0)? path,
+    TResult? Function(double? field0)? price,
+    TResult? Function(bool? field0)? internet,
+    TResult? Function(Platform? field0)? platform,
+    TResult? Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult? Function(double? field0)? balance,
+  }) {
+    return transactions?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? field0)? path,
+    TResult Function(double? field0)? price,
+    TResult Function(bool? field0)? internet,
+    TResult Function(Platform? field0)? platform,
+    TResult Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult Function(double? field0)? balance,
+    required TResult orElse(),
+  }) {
+    if (transactions != null) {
+      return transactions(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Field_Path value) path,
+    required TResult Function(Field_Price value) price,
+    required TResult Function(Field_Internet value) internet,
+    required TResult Function(Field_Platform value) platform,
+    required TResult Function(Field_Transactions value) transactions,
+    required TResult Function(Field_Balance value) balance,
+  }) {
+    return transactions(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Field_Path value)? path,
+    TResult? Function(Field_Price value)? price,
+    TResult? Function(Field_Internet value)? internet,
+    TResult? Function(Field_Platform value)? platform,
+    TResult? Function(Field_Transactions value)? transactions,
+    TResult? Function(Field_Balance value)? balance,
+  }) {
+    return transactions?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Field_Path value)? path,
+    TResult Function(Field_Price value)? price,
+    TResult Function(Field_Internet value)? internet,
+    TResult Function(Field_Platform value)? platform,
+    TResult Function(Field_Transactions value)? transactions,
+    TResult Function(Field_Balance value)? balance,
+    required TResult orElse(),
+  }) {
+    if (transactions != null) {
+      return transactions(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class Field_Transactions extends Field {
+  const factory Field_Transactions([final BTreeMapTxidTransaction? field0]) =
+      _$Field_TransactionsImpl;
+  const Field_Transactions._() : super._();
+
+  @override
+  BTreeMapTxidTransaction? get field0;
+
+  /// Create a copy of Field
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$Field_TransactionsImplCopyWith<_$Field_TransactionsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$Field_BalanceImplCopyWith<$Res> {
+  factory _$$Field_BalanceImplCopyWith(
+          _$Field_BalanceImpl value, $Res Function(_$Field_BalanceImpl) then) =
+      __$$Field_BalanceImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({double? field0});
+}
+
+/// @nodoc
+class __$$Field_BalanceImplCopyWithImpl<$Res>
+    extends _$FieldCopyWithImpl<$Res, _$Field_BalanceImpl>
+    implements _$$Field_BalanceImplCopyWith<$Res> {
+  __$$Field_BalanceImplCopyWithImpl(
+      _$Field_BalanceImpl _value, $Res Function(_$Field_BalanceImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Field
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = freezed,
+  }) {
+    return _then(_$Field_BalanceImpl(
+      freezed == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$Field_BalanceImpl extends Field_Balance {
+  const _$Field_BalanceImpl([this.field0]) : super._();
+
+  @override
+  final double? field0;
+
+  @override
+  String toString() {
+    return 'Field.balance(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$Field_BalanceImpl &&
+            (identical(other.field0, field0) || other.field0 == field0));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0);
+
+  /// Create a copy of Field
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$Field_BalanceImplCopyWith<_$Field_BalanceImpl> get copyWith =>
+      __$$Field_BalanceImplCopyWithImpl<_$Field_BalanceImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? field0) path,
+    required TResult Function(double? field0) price,
+    required TResult Function(bool? field0) internet,
+    required TResult Function(Platform? field0) platform,
+    required TResult Function(BTreeMapTxidTransaction? field0) transactions,
+    required TResult Function(double? field0) balance,
+  }) {
+    return balance(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? field0)? path,
+    TResult? Function(double? field0)? price,
+    TResult? Function(bool? field0)? internet,
+    TResult? Function(Platform? field0)? platform,
+    TResult? Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult? Function(double? field0)? balance,
+  }) {
+    return balance?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? field0)? path,
+    TResult Function(double? field0)? price,
+    TResult Function(bool? field0)? internet,
+    TResult Function(Platform? field0)? platform,
+    TResult Function(BTreeMapTxidTransaction? field0)? transactions,
+    TResult Function(double? field0)? balance,
+    required TResult orElse(),
+  }) {
+    if (balance != null) {
+      return balance(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Field_Path value) path,
+    required TResult Function(Field_Price value) price,
+    required TResult Function(Field_Internet value) internet,
+    required TResult Function(Field_Platform value) platform,
+    required TResult Function(Field_Transactions value) transactions,
+    required TResult Function(Field_Balance value) balance,
+  }) {
+    return balance(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Field_Path value)? path,
+    TResult? Function(Field_Price value)? price,
+    TResult? Function(Field_Internet value)? internet,
+    TResult? Function(Field_Platform value)? platform,
+    TResult? Function(Field_Transactions value)? transactions,
+    TResult? Function(Field_Balance value)? balance,
+  }) {
+    return balance?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Field_Path value)? path,
+    TResult Function(Field_Price value)? price,
+    TResult Function(Field_Internet value)? internet,
+    TResult Function(Field_Platform value)? platform,
+    TResult Function(Field_Transactions value)? transactions,
+    TResult Function(Field_Balance value)? balance,
+    required TResult orElse(),
+  }) {
+    if (balance != null) {
+      return balance(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class Field_Balance extends Field {
+  const factory Field_Balance([final double? field0]) = _$Field_BalanceImpl;
+  const Field_Balance._() : super._();
+
+  @override
+  double? get field0;
+
+  /// Create a copy of Field
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$Field_BalanceImplCopyWith<_$Field_BalanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -7,15 +7,19 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
+// These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `price_thread`, `spawn`, `wallet_thread`
+// These types are ignored because they are not used by any `pub` functions: `Thread`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `eq`, `hash`
 
-            // These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `price_thread`, `spawn`
+Future<void> testfunction() =>
+    RustLib.instance.api.crateApiSimpleTestfunction();
 
+Future<String> ruststart(
+        {required String path,
+        required Platform platform,
+        required FutureOr<String> Function(String) thread}) =>
+    RustLib.instance.api.crateApiSimpleRuststart(
+        path: path, platform: platform, thread: thread);
 
-            Future<String> ruststart({required String path , required Platform platform , required FutureOr<String> Function(String) thread }) => RustLib.instance.api.crateApiSimpleRuststart(path: path, platform: platform, thread: thread);
-
-Future<String> getpage({required String path , required PageName page }) => RustLib.instance.api.crateApiSimpleGetpage(path: path, page: page);
-
-Future<String> setstate({required String path , required Field field }) => RustLib.instance.api.crateApiSimpleSetstate(path: path, field: field);
-
-            
-            
+Future<String> getpage({required String path, required PageName page}) =>
+    RustLib.instance.api.crateApiSimpleGetpage(path: path, page: page);
