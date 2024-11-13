@@ -15,6 +15,10 @@ sealed class PageName with _$PageName {
   const PageName._();
 
   const factory PageName.bitcoinHome() = PageName_BitcoinHome;
+  const factory PageName.speed(
+    String field0,
+    double field1,
+  ) = PageName_Speed;
   const factory PageName.receive() = PageName_Receive;
   const factory PageName.viewTransaction(
     String field0,
@@ -45,7 +49,14 @@ sealed class Thread with _$Thread {
   ) = Thread_Wallet;
 }
 
-enum WalletMethod {
-  getNewAddress,
-  ;
+@freezed
+sealed class WalletMethod with _$WalletMethod {
+  const WalletMethod._();
+
+  const factory WalletMethod.getNewAddress() = WalletMethod_GetNewAddress;
+  const factory WalletMethod.getFees(
+    String field0,
+    double field1,
+    double field2,
+  ) = WalletMethod_GetFees;
 }

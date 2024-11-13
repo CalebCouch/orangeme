@@ -38,7 +38,7 @@ Widget ProfilePhoto(
       shape: BoxShape.circle,
       image: isValidPfp
           ? DecorationImage(
-              image: AssetImage(pfp!),
+              image: AssetImage(pfp),
               fit: BoxFit.cover,
             )
           : null,

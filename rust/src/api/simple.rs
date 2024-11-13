@@ -127,8 +127,9 @@ async fn wallet_thread(wallet: Wallet, mut recv: Receiver<(oneshot::Sender<Strin
     loop {
         let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
         match method {
-            WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?).map_err(|e| Error::Exited(e))?,
-        };
+            WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?),
+            WalletMethod::GetFees(address, amount, price) => o_tx.send(serde_json::to_string(&wallet.get_fees(address, amount, price).await?)?),
+        }.map_err(|e| Error::Exited(e))?;
     }
 }
 
@@ -325,25 +326,66 @@ pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
 //          Err(e) => format!("Error: {}", e),
 //      }
 //  }
-
-
-//  #[frb(sync)]
-//  pub fn format_transaction_date(date: String, time: String) -> String {
-//      let now = Local::now().date_naive();
-//      let transaction_date = NaiveDate::parse_from_str(&date, "%m/%d/%Y").expect("Invalid date format");
-
-//      if is_same_date(transaction_date, now) {
-//          time
-//      } else if is_same_date(transaction_date, now - Duration::days(1)) {
-//          "Yesterday".to_string()
-//      } else {
-//          format!("{}", transaction_date.format("%B %e"))
+//  pub async fn setStateAddress(path: String, mut address: String) -> String {
+//      let result: Result<String, Error> = (|| async {
+//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+//          state.set::<String>(Field::Address, &address).await?;
+//          Ok("Address set successfully".to_string())
+//      })().await;
+//      match result {
+//          Ok(s) => s,
+//          Err(e) => format!("Error: {}", e),
 //      }
 //  }
 
-//  fn is_same_date(date1: NaiveDate, date2: NaiveDate) -> bool {
-//      date1.year() == date2.year() && date1.month() == date2.month() && date1.day() == date2.day()
+
+//  pub async fn setStateConversation(path: String, index: usize) -> String {
+//      let result: Result<String, Error> = (|| async {
+//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+//          let conversations = state.get::<Vec<Conversation>>(Field::Conversations).await?;
+//          let conversation = &conversations[index];
+//          state.set(Field::CurrentConversation, conversation).await?;
+//          Ok("Current conversation set successfully".to_string())
+//      })().await;
+
+//      match result {
+//          Ok(message) => message,
+//          Err(error) => format!("Error: {}", error),
+//      }
 //  }
+
+//  pub async fn setStateBtc(path: String, btc: f64) -> String {
+//      let result: Result<String, Error> = (|| async {
+//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+//          state.set(Field::AmountBTC, &btc).await?;
+//          Ok("BTC set successfully".to_string())
+//      })().await;
+
+//      match result {
+//          Ok(message) => message,
+//          Err(error) => format!("Error: {}", error),
+//      }
+//  }
+
+
+//  pub async fn setStatePriority(path: String, index: u8) -> String {
+//      let result: Result<String, Error> = (|| async {
+//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+//          state.set(Field::Priority, &index).await?;
+//          Ok("Priority set successfully".to_string())
+//      })().await;
+
+//      match result {
+//          Ok(message) => message,
+//          Err(error) => format!("Error: {}", error),
+//      }
+//  }
+
+ 
+
+
+//  #[frb(sync)]
+
 
 //  pub async fn broadcastTx(path: String) -> String {
 //      let state = State::new::<SqliteStore>(PathBuf::from(&path)).await

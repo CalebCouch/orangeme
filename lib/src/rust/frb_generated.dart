@@ -556,6 +556,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  WalletMethod dco_decode_box_autoadd_wallet_method(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_wallet_method(raw);
+  }
+
+  @protected
+  double dco_decode_f_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as double;
+  }
+
+  @protected
   int dco_decode_i_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -580,12 +592,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 0:
         return const PageName_BitcoinHome();
       case 1:
-        return const PageName_Receive();
+        return PageName_Speed(
+          dco_decode_String(raw[1]),
+          dco_decode_f_64(raw[2]),
+        );
       case 2:
+        return const PageName_Receive();
+      case 3:
         return PageName_ViewTransaction(
           dco_decode_String(raw[1]),
         );
-      case 3:
+      case 4:
         return const PageName_Test();
       default:
         throw Exception("unreachable");
@@ -604,7 +621,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     switch (raw[0]) {
       case 0:
         return Thread_Wallet(
-          dco_decode_wallet_method(raw[1]),
+          dco_decode_box_autoadd_wallet_method(raw[1]),
         );
       default:
         throw Exception("unreachable");
@@ -632,7 +649,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   WalletMethod dco_decode_wallet_method(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return WalletMethod.values[raw as int];
+    switch (raw[0]) {
+      case 0:
+        return const WalletMethod_GetNewAddress();
+      case 1:
+        return WalletMethod_GetFees(
+          dco_decode_String(raw[1]),
+          dco_decode_f_64(raw[2]),
+          dco_decode_f_64(raw[3]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   @protected
@@ -711,6 +739,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  WalletMethod sse_decode_box_autoadd_wallet_method(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_wallet_method(deserializer));
+  }
+
+  @protected
+  double sse_decode_f_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getFloat64();
+  }
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getInt32();
@@ -738,11 +779,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 0:
         return const PageName_BitcoinHome();
       case 1:
-        return const PageName_Receive();
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_f_64(deserializer);
+        return PageName_Speed(var_field0, var_field1);
       case 2:
+        return const PageName_Receive();
+      case 3:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_ViewTransaction(var_field0);
-      case 3:
+      case 4:
         return const PageName_Test();
       default:
         throw UnimplementedError('');
@@ -763,7 +808,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var tag_ = sse_decode_i_32(deserializer);
     switch (tag_) {
       case 0:
-        var var_field0 = sse_decode_wallet_method(deserializer);
+        var var_field0 = sse_decode_box_autoadd_wallet_method(deserializer);
         return Thread_Wallet(var_field0);
       default:
         throw UnimplementedError('');
@@ -790,8 +835,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   WalletMethod sse_decode_wallet_method(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_i_32(deserializer);
-    return WalletMethod.values[inner];
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return const WalletMethod_GetNewAddress();
+      case 1:
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_f_64(deserializer);
+        var var_field2 = sse_decode_f_64(deserializer);
+        return WalletMethod_GetFees(var_field0, var_field1, var_field2);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected
@@ -883,6 +939,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_wallet_method(
+      WalletMethod self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_wallet_method(self, serializer);
+  }
+
+  @protected
+  void sse_encode_f_64(double self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putFloat64(self);
+  }
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putInt32(self);
@@ -908,13 +977,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     switch (self) {
       case PageName_BitcoinHome():
         sse_encode_i_32(0, serializer);
-      case PageName_Receive():
+      case PageName_Speed(field0: final field0, field1: final field1):
         sse_encode_i_32(1, serializer);
-      case PageName_ViewTransaction(field0: final field0):
+        sse_encode_String(field0, serializer);
+        sse_encode_f_64(field1, serializer);
+      case PageName_Receive():
         sse_encode_i_32(2, serializer);
+      case PageName_ViewTransaction(field0: final field0):
+        sse_encode_i_32(3, serializer);
         sse_encode_String(field0, serializer);
       case PageName_Test():
-        sse_encode_i_32(3, serializer);
+        sse_encode_i_32(4, serializer);
       default:
         throw UnimplementedError('');
     }
@@ -932,7 +1005,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     switch (self) {
       case Thread_Wallet(field0: final field0):
         sse_encode_i_32(0, serializer);
-        sse_encode_wallet_method(field0, serializer);
+        sse_encode_box_autoadd_wallet_method(field0, serializer);
       default:
         throw UnimplementedError('');
     }
@@ -958,7 +1031,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_wallet_method(WalletMethod self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.index, serializer);
+    switch (self) {
+      case WalletMethod_GetNewAddress():
+        sse_encode_i_32(0, serializer);
+      case WalletMethod_GetFees(
+          field0: final field0,
+          field1: final field1,
+          field2: final field2
+        ):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(field0, serializer);
+        sse_encode_f_64(field1, serializer);
+        sse_encode_f_64(field2, serializer);
+      default:
+        throw UnimplementedError('');
+    }
   }
 }
 

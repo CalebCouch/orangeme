@@ -7,8 +7,9 @@ import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Send extends StatefulWidget {
-  late String address = '';
-  Send(this.address, {super.key});
+  double balance;
+  double price;
+  Send(this.balance, this.price, {super.key});
 
   @override
   SendState createState() => SendState();
@@ -18,18 +19,19 @@ class SendState extends State<Send> {
   bool addressIsValid = true;
   bool isLoading = false;
   String status = 'disabled';
+  String address = '';
 
   onContinue() {
     if (addressIsValid) {
-      navigateTo(context, Amount());
+      navigateTo(context, Amount(widget.balance, widget.price, address));
     }
   }
 
   @override
   void initState() {
     super.initState();
-    controller.text = widget.address;
-    checkAddressValid(widget.address);
+    controller.text = address;
+    checkAddressValid(address);
   }
 
   onPaste() async {
@@ -50,8 +52,18 @@ class SendState extends State<Send> {
     });
   }
 
-  onScan() {
-    navigateTo(context, const ScanQR());
+  onScan() async {
+    String? scannedCode = await Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => const ScanQR(),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
+    setState(() {
+      address = scannedCode ?? '';
+    });
   }
 
   backButton() {

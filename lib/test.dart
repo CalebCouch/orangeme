@@ -44,7 +44,7 @@ class TestState extends GenericState<Test> {
         TextButton(
           onPressed: () async {
             print("run");
-            print(await rustCall(thread: Thread.wallet(WalletMethod.getNewAddress)));
+            print(await rustCall(thread: Thread.wallet(WalletMethod.getNewAddress())));
             print("ran");
           },
           child: Text('TextButton')

@@ -34,7 +34,7 @@ Widget sendTransactionTabular(BuildContext context, ExtTransaction tx) {
     children: [
       SingleTab(title: "Date", subtitle: tx.tx.tx.date),
       SingleTab(title: "Time", subtitle: tx.tx.tx.time),
-      SingleTab(title: "Sent to Address", subtitle: transactionCut(tx.tx.address)),
+      SingleTab(title: "Sent to Address", subtitle: cutString(tx.tx.address)),
       SingleTab(title: "Amount Sent", subtitle: tx.tx.tx.btc.toString()),
       SingleTab(title: "Bitcoin Price", subtitle: tx.tx.price),
       SingleTab(title: "USD Value Sent", subtitle: tx.tx.tx.usd),
@@ -61,7 +61,7 @@ Widget contactTabular(BuildContext context, String name, String did) {
   return Column(
     children: [
       SingleTab(title: "Profile name", subtitle: name),
-      SingleTab(title: "Digital ID", subtitle: middleCut(did, 20)),
+      SingleTab(title: "Digital ID", subtitle: cutString(did)),
     ],
   );
 }

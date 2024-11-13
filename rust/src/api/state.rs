@@ -115,13 +115,13 @@ impl StateManager {
           //PageName::Send => self.send().await,
           //PageName::ScanQR => self.scan_qr().await,
           //PageName::Amount => self.amount().await,
-          //PageName::Speed => self.speed().await,
           //PageName::ConfirmTransaction => self.confirm_transaction().await,
           //PageName::Success => self.send_success().await,
           //PageName::ViewTransaction => self.view_transaction().await,
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::Receive => self.receive().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
+            PageName::Speed(address, amount) => self.speed(address, amount).await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
@@ -141,7 +141,8 @@ impl StateManager {
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
        let btc = self.state.get::<f64>(Field::Balance(None)).await?;
-       let usd = btc*self.state.get::<f64>(Field::Price(None)).await?;
+       let price = self.state.get::<f64>(Field::Price(None)).await?;
+       let usd = btc*price;
        let internet_status = self.state.get::<bool>(Field::Internet(None)).await?;
        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
 
@@ -151,6 +152,8 @@ impl StateManager {
           internet: internet_status,
           usd: formatted_usd,
           btc: btc.to_string(),
+          balance: usd,
+          price,
           transactions: transactions.into_iter().map(|(txid, tx)|
               ShorthandTransaction {
                   is_withdraw: tx.is_withdraw,
@@ -205,94 +208,20 @@ impl StateManager {
         })?)
     }
 
+    pub async fn speed(&self, address: String, amount: f64) -> Result<String, Error> {
+        let price = self.state.get::<f64>(Field::Price(None)).await?;
+        let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(address, amount, price))).await;
+        info!("{:?}", fees);
+        Ok(serde_json::to_string(&Speed{
+            fees: (0.0, 0.0),
+        })?)
+    }
 
-//      pub async fn send(&self) -> Result<String, Error> {
-//          let mut address = self.state.get::<String>(Field::Address).await?;
-//          if let Some(stripped) = address.strip_prefix("bitcoin:") { address = stripped.to_string(); }
-//          let valid = Address::from_str(&address)
-//          .map(|a| a.require_network(Network::Bitcoin).is_ok())
-//          .unwrap_or(false);
-//          Ok(serde_json::to_string(&Send{
-//             valid: valid,
-//             address: address
-//          })?)
-//      }
-
-//      pub async fn scan_qr(&self) -> Result<String, Error> {
-//          Ok(serde_json::to_string(&ScanQR{
-//          })?)
-//      }
-
-//      pub async fn amount(&mut self) -> Result<String, Error> {
-//          let amount = self.state.get::<String>(Field::Amount).await?;
-//          let err = self.state.get::<Option<String>>(Field::AmountErr).await?;
-//          let decimals = self.state.get::<String>(Field::Decimals).await?;
-//          let btc = self.state.get::<f64>(Field::AmountBTC).await?;
-//          Ok(serde_json::to_string(&Amount{
-//              err: err.unwrap_or_default(),
-//              amount,
-//              decimals,
-//              btc,
-//          })?)
-//      }
-
-//      pub async fn speed(&self) -> Result<String, Error> {
-//          let address = self.state.get::<String>(Field::Address).await?;
-//          let amount = self.state.get::<f64>(Field::AmountBTC).await?;
-//          let price = self.state.get::<f64>(Field::Price).await?;
-//          let wallet = self.get_wallet().await?;
-//          let fees: (f64, f64) = wallet.get_fees(address, amount, price)?;
-//          let fees_str: (String, String) = (
-//              format!("${:.2}", fees.0),
-//              format!("${:.2}", fees.1)
-//          );
-//          Ok(serde_json::to_string(&Speed{
-//             fees: fees_str,
-//          })?)
-//      }
-
-//      pub async fn confirm_transaction(&self) -> Result<String, Error> {
-//          let mut wallet = self.get_wallet().await?;
-//          let x = self.state.get::<Transaction>(Field::CurrentTx).await?;
-//          let raw_tx = self.state.get_o::<bdk::bitcoin::Transaction>(Field::CurrentRawTx).await?;
-//          let price = self.state.get::<f64>(Field::Price).await?;
-//          wallet.build_transaction().await?;
-//          let txid = raw_tx.ok_or(Error::err("Failed to get transaction", "raw_tx is None or Err"))?.txid();
-//          let transaction = ExtTransaction {
-//              tx: BasicTransaction {
-//                  tx: ShorthandTransaction {
-//                      is_withdraw: x.is_withdraw,
-//                      date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-//                      time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-//                      btc: x.btc,
-//                      usd: format!("${:.2}", x.usd),
-//                      txid: txid.to_string(),
-//                  },
-//                  address: x.address.clone(),
-//                  price: format!("${:.2}", x.price),
-//              },
-//              fee: format!("${:.2}", x.fee_usd),
-//              total: format!("${:.2}", x.fee_usd + x.usd),
-//          };
-
-//          Ok(serde_json::to_string(&ConfirmTransaction {
-//              transaction: transaction
-//          })?)
-//      }
-
-//      pub async fn send_success(&self) -> Result<String, Error> {
-//          let tx = self.state.get::<Transaction>(Field::CurrentTx).await?;
-
-//          Ok(serde_json::to_string(&SendSuccess{
-//              usd:  format!("${:.2}", tx.usd)
-//          })?)
-//      }
-
-        pub async fn receive(&self) -> Result<String, Error> {
-            Ok(serde_json::to_string(&Receive{
-                address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
-            })?)
-        }
+    pub async fn receive(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&Receive{
+            address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
+        })?)
+    }
 
 //      pub async fn my_profile(&self) -> Result<String, Error> {
 //          let profile = self.state.get_o::<Profile>(Field::Profile).await?;
@@ -346,14 +275,12 @@ impl StateManager {
 //          Wallet::new(descriptors, path, self.state.clone())
 //      }
 
-        fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
-            datetime
-                .map(|dt| (
-                    dt.format("%m/%d/%Y").to_string(),
-                    dt.format("%l:%M %p").to_string()
-                ))
-                .unwrap_or(("Pending".to_string(), "Pending".to_string()))
-        }
+    fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
+        datetime.map(|dt| (
+            dt.format("%m/%d/%Y").to_string(),
+            dt.format("%l:%M %p").to_string()
+        )).unwrap_or(("Pending".to_string(), "Pending".to_string()))
+    }
 
 
 }
@@ -403,6 +330,8 @@ struct ShorthandTransaction {
 struct BitcoinHome {
     pub usd: String,
     pub btc: String,
+    pub balance: f64,
+    pub price: f64,
     pub transactions: Vec<ShorthandTransaction>,
     pub profile_picture: String,
     pub internet: bool,
@@ -411,6 +340,11 @@ struct BitcoinHome {
 #[derive(Serialize)]
 struct Receive {
     pub address: String
+}
+
+#[derive(Serialize)]
+struct Speed {
+    pub fees: (f64, f64)
 }
 
 #[derive(Serialize)]
