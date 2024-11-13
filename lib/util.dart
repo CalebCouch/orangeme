@@ -2,81 +2,103 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:intl/intl.dart";
 
-String transactionCut(String text) {
-  const numberOfDots = 3;
-  var dotsString = List<String>.filled(numberOfDots, '.').join();
-  var leftSizeLengh = 9;
-  var rightSizeLength = text.length - 3;
-  var leftPart = text.substring(0, leftSizeLengh);
+String cutString(String text, {int leftSizeLength = 9, int rightSizeLengthOffset = 3}) {
+  var dotsString = '...'; // Always use three dots
+  var rightSizeLength = text.length - rightSizeLengthOffset;
+  var leftPart = text.substring(0, leftSizeLength);
   var rightPart = text.substring(rightSizeLength);
   return '$leftPart$dotsString$rightPart';
 }
 
-String transactionCutConfirmation(String text) {
-  const numberOfDots = 3;
-  var dotsString = List<String>.filled(numberOfDots, '.').join();
-  var leftSizeLengh = 12;
-  var rightSizeLength = text.length - 4;
-  var leftPart = text.substring(0, leftSizeLengh);
-  var rightPart = text.substring(rightSizeLength);
-  return '$leftPart$dotsString$rightPart';
-}
+DisplayData updateDisplayAmount(String input, double usdBalance, double price, String amount) {
+  double min = 0.30;
+  double max = usdBalance - min;
 
-String middleCut(String text, int length) {
-  const numberOfDots = 3;
-  var dotsString = List<String>.filled(numberOfDots, '.').join();
+  String updatedAmount;
+  bool validation;
 
-  var leftSizeLengh = ((length - numberOfDots) / 2).floor();
-  var rightSizeLength = text.length - leftSizeLengh;
-  var leftPart = text.substring(0, leftSizeLengh);
-  var rightPart = text.substring(rightSizeLength);
-  return '$leftPart$dotsString$rightPart';
-}
-
-bool isValidAddress(String string) {
-  return true;
-}
-
-Future<String?> getClipBoardData() async {
-  ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
-  if (data != null) return data.text;
-  return 'null';
-}
-
-String formatValue(double val, [int per = 2]) {
-  String val_str = val.toStringAsFixed(per);
-  if ((double.parse(val_str) % 1) > 0) {
-    return val_str;
-  } else {
-    return NumberFormat("#,###.00", "en_US").format(val);
+  switch (input) {
+    case 'reset':
+      updatedAmount = '0';
+      validation = true;
+      break;
+    case 'backspace':
+      if (amount == '0') {
+        updatedAmount = amount;
+        validation = false;
+      } else if (amount.length == 1) {
+        updatedAmount = '0';
+        validation = true;
+      } else {
+        updatedAmount = amount.substring(0, amount.length - 1);
+        validation = true;
+      }
+      break;
+    case '.':
+      if (!amount.contains('.') && amount.length <= 7) {
+        updatedAmount = '$amount.';
+        validation = true;
+      } else {
+        updatedAmount = amount;
+        validation = false;
+      }
+      break;
+    default:
+      if (amount == '0') {
+        updatedAmount = input;
+        validation = true;
+      } else if (amount.contains('.')) {
+        List<String> split = amount.split('.');
+        if (amount.length < 11 && split[1].length < 2) {
+          updatedAmount = '$amount$input';
+          validation = true;
+        } else {
+          updatedAmount = amount;
+          validation = false;
+        }
+      } else if (amount.length < 10) {
+        updatedAmount = '$amount$input';
+        validation = true;
+      } else {
+        updatedAmount = amount;
+        validation = false;
+      }
+      break;
   }
-}
 
-String formatBTC(double val, [int per = 2]) {
-  String val_str = val.toStringAsFixed(per);
-  if ((double.parse(val_str) % 1) > 0) {
-    return val_str;
-  } else {
-    return NumberFormat("#,###", "en_US").format(val);
-  }
-}
-
-formatDate(String? date, String? time) {
-  if (date == null) return 'Pending';
-  if (DateFormat('yMd').format(DateTime.parse(date)) ==
-      DateFormat('yMd').format(DateTime.now())) {
-    if (time != null) {
-      return time;
-    } else {
-      return 'Pending';
+  // Handle decimals
+  String decimals = '';
+  if (updatedAmount.contains('.')) {
+    List<String> split = updatedAmount.split('.');
+    int decimalsLen = split.length > 1 ? split[1].length : 0;
+    if (decimalsLen < 2) {
+      decimals = '0' * (2 - decimalsLen);
     }
   }
-  if (DateFormat('yMd').format(DateTime.parse(date)) ==
-      DateFormat('yMd')
-          .format(DateTime.now().subtract(const Duration(days: 1)))) {
-    return 'Yesterday';
+
+  double updatedAmountF64 = double.tryParse(updatedAmount) ?? 0.0;
+
+  String? err;
+  if (updatedAmountF64 != 0.0) {
+    if (max <= 0.0) {
+      err = 'You have no bitcoin';
+    } else if (updatedAmountF64 < min) {
+      err = '\$${min.toStringAsFixed(2)} minimum';
+    } else if (updatedAmountF64 > max) {
+      err = '\$${max.toStringAsFixed(2)} maximum';
+    }
   }
-  return DateFormat.MMMMd()
-      .format(DateFormat('yyyy-MM-dd').parse(date))
-      .toString();
+
+  // Return the result as a map of set values
+  return DisplayData(updatedAmount, err ?? '', updatedAmountF64 / price, decimals, validation);
+}
+
+class DisplayData {
+  String amount;
+  String err;
+  double btc;
+  String decimals;
+  bool valid;
+
+  DisplayData(this.amount, this.err, this.btc, this.decimals, this.valid);
 }

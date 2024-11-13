@@ -68,7 +68,7 @@ Widget ContactItem(BuildContext context, Profile contact, onTap) {
     onTap: onTap,
     visual: ProfilePhoto(context, contact.pfp, ProfileSize.lg),
     title: contact.name,
-    sub: middleCut(contact.did, 30),
+    sub: cutString(contact.did),
     caret: false,
   );
 }

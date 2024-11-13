@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/flows/messages/profile/user_profile.dart';
+// import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orange/classes.dart';
-import 'package:orangeme_material/navigation.dart';
+// import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 Widget bubble(Message message) {
@@ -63,7 +63,7 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
               showDetails
                   ? InkWell(
                       onTap: () {
-                        navigateTo(context, UserProfile(m.sender));
+                        //navigateTo(context, UserProfile(m.sender));
                       },
                       child: Container(
                         alignment: Alignment.bottomCenter,

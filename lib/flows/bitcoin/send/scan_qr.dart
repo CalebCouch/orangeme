@@ -37,7 +37,14 @@ class ScanQRState extends State<ScanQR> {
   _onQRViewCreated(BuildContext context, QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      switchPageTo(context, Send(scanData.code!));
+      String scannedCode = scanData.code ?? '';
+
+      if (scannedCode.startsWith('bitcoin:')) {
+        scannedCode = scannedCode.substring(8); // Remove the "bitcoin:" part
+      }
+
+      // Pop back and return the scanned QR code
+      Navigator.pop(context, scannedCode);
     });
   }
 

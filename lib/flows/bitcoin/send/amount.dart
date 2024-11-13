@@ -2,24 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
+import 'package:orange/util.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:vibration/vibration.dart';
 
-updateDisplayAmount(String input) {
-  //updateDisplayAmount(path: global.dataDir!, input: "reset"); //return amount, decimals, validity, amount btc, error message
-  return ("", "12.45");
-}
-
 class Amount extends StatefulWidget {
-  Amount({super.key});
+  double balance;
+  double price;
+  Amount(this.balance, this.price, {super.key});
 
   @override
   AmountState createState() => AmountState();
 }
 
 class AmountState extends State<Amount> {
-  dynamic data = ("", "", 0.0, ""); // amount, err, btcAmt, decimals
+  late DisplayData data = DisplayData("0", "", 0.0, "", false);
+
   final ShakeController _shakeController = ShakeController();
   String enabled = 'disabled';
 
@@ -36,7 +35,7 @@ class AmountState extends State<Amount> {
   update(String input) {
     HapticFeedback.heavyImpact();
     var valid = true;
-    data = updateDisplayAmount(input);
+    data = updateDisplayAmount(input, widget.balance, widget.price, data.amount);
     if (valid == 'false') {
       _shakeController.shake();
       Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
@@ -45,7 +44,7 @@ class AmountState extends State<Amount> {
 
   updateButton() {
     setState(() {
-      enabled = data.$1 == '' && data.$0 != '0' ? 'enabled' : 'disabled';
+      enabled = data.err == '' && data.amount != '0' ? 'enabled' : 'disabled';
     });
   }
 
@@ -73,21 +72,21 @@ class AmountState extends State<Amount> {
       child: Center(
         child: ShakeWidget(
           controller: _shakeController,
-          child: keyboardAmountDisplay(context, data.$0, data.$2, data.$1),
+          child: keyboardAmountDisplay(context),
         ),
       ),
     );
   }
 
-  Widget keyboardAmountDisplay(BuildContext context, String amt, double btc, String error) {
+  Widget keyboardAmountDisplay(BuildContext context) {
     Widget subText() {
-      if (error == '') {
-        return CustomText('text lg text_secondary', "${btc.toStringAsFixed(8)} BTC");
+      if (data.err == '') {
+        return CustomText('text lg text_secondary', "${data.btc.toStringAsFixed(8)} BTC");
       } else {
         return Row(children: [
           const CustomIcon('error md danger'),
           const Spacing(8),
-          CustomText('text lg danger', error),
+          CustomText('text lg danger', data.err),
         ]);
       }
     }
@@ -105,8 +104,8 @@ class AmountState extends State<Amount> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const CustomText('heading title', '\$'),
-                CustomText('heading title', amt),
-                CustomText('heading title text_secondary', data.$3),
+                CustomText('heading title', data.amount),
+                CustomText('heading title text_secondary', data.decimals),
               ],
             ),
           ),

@@ -21,6 +21,8 @@ class BitcoinHome extends GenericWidget {
   String usdUnformatted = "";
   String usd = "";
   String btc = "";
+  double price = 0.0;
+  double balance = 0.0;
   List<ShorthandTransaction> transactions = [];
   String profile_picture = "";
   bool internet = true;
@@ -45,6 +47,8 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     setState(() {
       widget.usd = json["usd"];
       widget.btc = json["btc"];
+      widget.price = json["price"] as double;
+      widget.balance = json["balance"] as double;
       widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map((json) => ShorthandTransaction.fromJson(json)));
       widget.internet = json["internet"] as bool;
       widget.profile_picture = json["profile_picture"];
@@ -57,7 +61,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
   onSend() {
     //setStateAddress(path: global.dataDir!, address: "");
-    navigateTo(Send(""));
+    navigateTo(Send(widget.balance, widget.price));
   }
 
   toProfile() {

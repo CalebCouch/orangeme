@@ -12,6 +12,11 @@ ThemeData theme() {
     splashColor: Colors.transparent,
     splashFactory: NoSplash.splashFactory,
     progressIndicatorTheme: const ProgressIndicatorThemeData(color: ThemeColor.primary),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: ThemeColor.secondary,
+      selectionColor: Color.fromARGB(109, 243, 71, 77),
+      selectionHandleColor: ThemeColor.primary,
+    ),
   );
 }
 
