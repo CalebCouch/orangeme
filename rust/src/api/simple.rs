@@ -134,6 +134,7 @@ async fn wallet_thread(wallet: Wallet, mut recv: Receiver<(oneshot::Sender<Strin
         let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
         match method {
             WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?),
+            WalletMethod::GetFees(address, amount, price) => o_tx.send(serde_json::to_string(&wallet.get_fees(address, amount, price).await?)?),
         };
     }
     Err(Error::Exited("Wallet".to_string()))

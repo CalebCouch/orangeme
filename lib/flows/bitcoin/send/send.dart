@@ -23,7 +23,7 @@ class SendState extends State<Send> {
 
   onContinue() {
     if (addressIsValid) {
-      navigateTo(context, Amount(widget.balance, widget.price));
+      navigateTo(context, Amount(widget.balance, widget.price, address));
     }
   }
 

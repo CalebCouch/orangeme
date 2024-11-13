@@ -112,13 +112,13 @@ impl StateManager {
           //PageName::Send => self.send().await,
           //PageName::ScanQR => self.scan_qr().await,
           //PageName::Amount => self.amount().await,
-          //PageName::Speed => self.speed().await,
           //PageName::ConfirmTransaction => self.confirm_transaction().await,
           //PageName::Success => self.send_success().await,
           //PageName::ViewTransaction => self.view_transaction().await,
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::Receive => self.receive().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
+            PageName::Speed(address, amount) => self.speed(address, amount).await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
@@ -202,6 +202,15 @@ impl StateManager {
         Ok(serde_json::to_string(&ViewTransaction {
             basic_transaction: Some(basic_tx),
             ext_transaction,
+        })?)
+    }
+
+    pub async fn speed(&self, address: String, amount: f64) -> Result<String, Error> {
+        let price = self.state.get::<f64>(Field::Price(None)).await?;
+        let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(address, amount, price))).await;
+        info!("{:?}", fees);
+        Ok(serde_json::to_string(&Speed{
+            fees: (0.0, 0.0),
         })?)
     }
 
@@ -328,6 +337,11 @@ struct BitcoinHome {
 #[derive(Serialize)]
 struct Receive {
     pub address: String
+}
+
+#[derive(Serialize)]
+struct Speed {
+    pub fees: (f64, f64)
 }
 
 #[derive(Serialize)]

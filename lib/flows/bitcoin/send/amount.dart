@@ -10,7 +10,8 @@ import 'package:vibration/vibration.dart';
 class Amount extends StatefulWidget {
   double balance;
   double price;
-  Amount(this.balance, this.price, {super.key});
+  String address;
+  Amount(this.balance, this.price, this.address, {super.key});
 
   @override
   AmountState createState() => AmountState();
@@ -22,7 +23,9 @@ class AmountState extends State<Amount> {
   String enabled = 'disabled';
 
   onContinue() {
-    navigateTo(context, const Speed());
+    print(data.amount);
+    double amount = double.tryParse(data.amount.replaceAll('\$', '')) ?? 0.0;
+    navigateTo(context, Speed(widget.address, amount));
   }
 
   onDisabled() {

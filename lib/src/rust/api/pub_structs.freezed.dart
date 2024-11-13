@@ -19,6 +19,7 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0, double field1) speed,
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() test,
@@ -27,6 +28,7 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0, double field1)? speed,
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? test,
@@ -35,6 +37,7 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0, double field1)? speed,
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? test,
@@ -44,6 +47,7 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_Speed value) speed,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
@@ -52,6 +56,7 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_Speed value)? speed,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
@@ -60,6 +65,7 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_Speed value)? speed,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
@@ -131,6 +137,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0, double field1) speed,
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() test,
@@ -142,6 +149,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0, double field1)? speed,
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? test,
@@ -153,6 +161,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0, double field1)? speed,
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? test,
@@ -168,6 +177,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_Speed value) speed,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
@@ -179,6 +189,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_Speed value)? speed,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
@@ -190,6 +201,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_Speed value)? speed,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
@@ -205,6 +217,176 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
 abstract class PageName_BitcoinHome extends PageName {
   const factory PageName_BitcoinHome() = _$PageName_BitcoinHomeImpl;
   const PageName_BitcoinHome._() : super._();
+}
+
+/// @nodoc
+abstract class _$$PageName_SpeedImplCopyWith<$Res> {
+  factory _$$PageName_SpeedImplCopyWith(_$PageName_SpeedImpl value,
+          $Res Function(_$PageName_SpeedImpl) then) =
+      __$$PageName_SpeedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String field0, double field1});
+}
+
+/// @nodoc
+class __$$PageName_SpeedImplCopyWithImpl<$Res>
+    extends _$PageNameCopyWithImpl<$Res, _$PageName_SpeedImpl>
+    implements _$$PageName_SpeedImplCopyWith<$Res> {
+  __$$PageName_SpeedImplCopyWithImpl(
+      _$PageName_SpeedImpl _value, $Res Function(_$PageName_SpeedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+    Object? field1 = null,
+  }) {
+    return _then(_$PageName_SpeedImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == field1
+          ? _value.field1
+          : field1 // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$PageName_SpeedImpl extends PageName_Speed {
+  const _$PageName_SpeedImpl(this.field0, this.field1) : super._();
+
+  @override
+  final String field0;
+  @override
+  final double field1;
+
+  @override
+  String toString() {
+    return 'PageName.speed(field0: $field0, field1: $field1)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PageName_SpeedImpl &&
+            (identical(other.field0, field0) || other.field0 == field0) &&
+            (identical(other.field1, field1) || other.field1 == field1));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0, field1);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PageName_SpeedImplCopyWith<_$PageName_SpeedImpl> get copyWith =>
+      __$$PageName_SpeedImplCopyWithImpl<_$PageName_SpeedImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() bitcoinHome,
+    required TResult Function(String field0, double field1) speed,
+    required TResult Function() receive,
+    required TResult Function(String field0) viewTransaction,
+    required TResult Function() test,
+  }) {
+    return speed(field0, field1);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? bitcoinHome,
+    TResult? Function(String field0, double field1)? speed,
+    TResult? Function()? receive,
+    TResult? Function(String field0)? viewTransaction,
+    TResult? Function()? test,
+  }) {
+    return speed?.call(field0, field1);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? bitcoinHome,
+    TResult Function(String field0, double field1)? speed,
+    TResult Function()? receive,
+    TResult Function(String field0)? viewTransaction,
+    TResult Function()? test,
+    required TResult orElse(),
+  }) {
+    if (speed != null) {
+      return speed(field0, field1);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_Speed value) speed,
+    required TResult Function(PageName_Receive value) receive,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
+    required TResult Function(PageName_Test value) test,
+  }) {
+    return speed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_Speed value)? speed,
+    TResult? Function(PageName_Receive value)? receive,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult? Function(PageName_Test value)? test,
+  }) {
+    return speed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_Speed value)? speed,
+    TResult Function(PageName_Receive value)? receive,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult Function(PageName_Test value)? test,
+    required TResult orElse(),
+  }) {
+    if (speed != null) {
+      return speed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PageName_Speed extends PageName {
+  const factory PageName_Speed(final String field0, final double field1) =
+      _$PageName_SpeedImpl;
+  const PageName_Speed._() : super._();
+
+  String get field0;
+  double get field1;
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PageName_SpeedImplCopyWith<_$PageName_SpeedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -249,6 +431,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0, double field1) speed,
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() test,
@@ -260,6 +443,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0, double field1)? speed,
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? test,
@@ -271,6 +455,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0, double field1)? speed,
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? test,
@@ -286,6 +471,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_Speed value) speed,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
@@ -297,6 +483,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_Speed value)? speed,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
@@ -308,6 +495,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_Speed value)? speed,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
@@ -397,6 +585,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0, double field1) speed,
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() test,
@@ -408,6 +597,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0, double field1)? speed,
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? test,
@@ -419,6 +609,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0, double field1)? speed,
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? test,
@@ -434,6 +625,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_Speed value) speed,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
@@ -445,6 +637,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_Speed value)? speed,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
@@ -456,6 +649,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_Speed value)? speed,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
@@ -524,6 +718,7 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0, double field1) speed,
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() test,
@@ -535,6 +730,7 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0, double field1)? speed,
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? test,
@@ -546,6 +742,7 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0, double field1)? speed,
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? test,
@@ -561,6 +758,7 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_Speed value) speed,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
@@ -572,6 +770,7 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_Speed value)? speed,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
@@ -583,6 +782,7 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_Speed value)? speed,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
@@ -648,6 +848,8 @@ abstract class $ThreadCopyWith<$Res> {
       _$ThreadCopyWithImpl<$Res, Thread>;
   @useResult
   $Res call({WalletMethod field0});
+
+  $WalletMethodCopyWith<$Res> get field0;
 }
 
 /// @nodoc
@@ -674,6 +876,16 @@ class _$ThreadCopyWithImpl<$Res, $Val extends Thread>
               as WalletMethod,
     ) as $Val);
   }
+
+  /// Create a copy of Thread
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WalletMethodCopyWith<$Res> get field0 {
+    return $WalletMethodCopyWith<$Res>(_value.field0, (value) {
+      return _then(_value.copyWith(field0: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -685,6 +897,9 @@ abstract class _$$Thread_WalletImplCopyWith<$Res>
   @override
   @useResult
   $Res call({WalletMethod field0});
+
+  @override
+  $WalletMethodCopyWith<$Res> get field0;
 }
 
 /// @nodoc
@@ -813,4 +1028,343 @@ abstract class Thread_Wallet extends Thread {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$Thread_WalletImplCopyWith<_$Thread_WalletImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$WalletMethod {
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() getNewAddress,
+    required TResult Function(String field0, double field1, double field2)
+        getFees,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? getNewAddress,
+    TResult? Function(String field0, double field1, double field2)? getFees,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? getNewAddress,
+    TResult Function(String field0, double field1, double field2)? getFees,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(WalletMethod_GetNewAddress value) getNewAddress,
+    required TResult Function(WalletMethod_GetFees value) getFees,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(WalletMethod_GetNewAddress value)? getNewAddress,
+    TResult? Function(WalletMethod_GetFees value)? getFees,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(WalletMethod_GetNewAddress value)? getNewAddress,
+    TResult Function(WalletMethod_GetFees value)? getFees,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WalletMethodCopyWith<$Res> {
+  factory $WalletMethodCopyWith(
+          WalletMethod value, $Res Function(WalletMethod) then) =
+      _$WalletMethodCopyWithImpl<$Res, WalletMethod>;
+}
+
+/// @nodoc
+class _$WalletMethodCopyWithImpl<$Res, $Val extends WalletMethod>
+    implements $WalletMethodCopyWith<$Res> {
+  _$WalletMethodCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of WalletMethod
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+abstract class _$$WalletMethod_GetNewAddressImplCopyWith<$Res> {
+  factory _$$WalletMethod_GetNewAddressImplCopyWith(
+          _$WalletMethod_GetNewAddressImpl value,
+          $Res Function(_$WalletMethod_GetNewAddressImpl) then) =
+      __$$WalletMethod_GetNewAddressImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$WalletMethod_GetNewAddressImplCopyWithImpl<$Res>
+    extends _$WalletMethodCopyWithImpl<$Res, _$WalletMethod_GetNewAddressImpl>
+    implements _$$WalletMethod_GetNewAddressImplCopyWith<$Res> {
+  __$$WalletMethod_GetNewAddressImplCopyWithImpl(
+      _$WalletMethod_GetNewAddressImpl _value,
+      $Res Function(_$WalletMethod_GetNewAddressImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of WalletMethod
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$WalletMethod_GetNewAddressImpl extends WalletMethod_GetNewAddress {
+  const _$WalletMethod_GetNewAddressImpl() : super._();
+
+  @override
+  String toString() {
+    return 'WalletMethod.getNewAddress()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WalletMethod_GetNewAddressImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() getNewAddress,
+    required TResult Function(String field0, double field1, double field2)
+        getFees,
+  }) {
+    return getNewAddress();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? getNewAddress,
+    TResult? Function(String field0, double field1, double field2)? getFees,
+  }) {
+    return getNewAddress?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? getNewAddress,
+    TResult Function(String field0, double field1, double field2)? getFees,
+    required TResult orElse(),
+  }) {
+    if (getNewAddress != null) {
+      return getNewAddress();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(WalletMethod_GetNewAddress value) getNewAddress,
+    required TResult Function(WalletMethod_GetFees value) getFees,
+  }) {
+    return getNewAddress(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(WalletMethod_GetNewAddress value)? getNewAddress,
+    TResult? Function(WalletMethod_GetFees value)? getFees,
+  }) {
+    return getNewAddress?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(WalletMethod_GetNewAddress value)? getNewAddress,
+    TResult Function(WalletMethod_GetFees value)? getFees,
+    required TResult orElse(),
+  }) {
+    if (getNewAddress != null) {
+      return getNewAddress(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class WalletMethod_GetNewAddress extends WalletMethod {
+  const factory WalletMethod_GetNewAddress() = _$WalletMethod_GetNewAddressImpl;
+  const WalletMethod_GetNewAddress._() : super._();
+}
+
+/// @nodoc
+abstract class _$$WalletMethod_GetFeesImplCopyWith<$Res> {
+  factory _$$WalletMethod_GetFeesImplCopyWith(_$WalletMethod_GetFeesImpl value,
+          $Res Function(_$WalletMethod_GetFeesImpl) then) =
+      __$$WalletMethod_GetFeesImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String field0, double field1, double field2});
+}
+
+/// @nodoc
+class __$$WalletMethod_GetFeesImplCopyWithImpl<$Res>
+    extends _$WalletMethodCopyWithImpl<$Res, _$WalletMethod_GetFeesImpl>
+    implements _$$WalletMethod_GetFeesImplCopyWith<$Res> {
+  __$$WalletMethod_GetFeesImplCopyWithImpl(_$WalletMethod_GetFeesImpl _value,
+      $Res Function(_$WalletMethod_GetFeesImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of WalletMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+    Object? field1 = null,
+    Object? field2 = null,
+  }) {
+    return _then(_$WalletMethod_GetFeesImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == field1
+          ? _value.field1
+          : field1 // ignore: cast_nullable_to_non_nullable
+              as double,
+      null == field2
+          ? _value.field2
+          : field2 // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$WalletMethod_GetFeesImpl extends WalletMethod_GetFees {
+  const _$WalletMethod_GetFeesImpl(this.field0, this.field1, this.field2)
+      : super._();
+
+  @override
+  final String field0;
+  @override
+  final double field1;
+  @override
+  final double field2;
+
+  @override
+  String toString() {
+    return 'WalletMethod.getFees(field0: $field0, field1: $field1, field2: $field2)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WalletMethod_GetFeesImpl &&
+            (identical(other.field0, field0) || other.field0 == field0) &&
+            (identical(other.field1, field1) || other.field1 == field1) &&
+            (identical(other.field2, field2) || other.field2 == field2));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0, field1, field2);
+
+  /// Create a copy of WalletMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WalletMethod_GetFeesImplCopyWith<_$WalletMethod_GetFeesImpl>
+      get copyWith =>
+          __$$WalletMethod_GetFeesImplCopyWithImpl<_$WalletMethod_GetFeesImpl>(
+              this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() getNewAddress,
+    required TResult Function(String field0, double field1, double field2)
+        getFees,
+  }) {
+    return getFees(field0, field1, field2);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? getNewAddress,
+    TResult? Function(String field0, double field1, double field2)? getFees,
+  }) {
+    return getFees?.call(field0, field1, field2);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? getNewAddress,
+    TResult Function(String field0, double field1, double field2)? getFees,
+    required TResult orElse(),
+  }) {
+    if (getFees != null) {
+      return getFees(field0, field1, field2);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(WalletMethod_GetNewAddress value) getNewAddress,
+    required TResult Function(WalletMethod_GetFees value) getFees,
+  }) {
+    return getFees(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(WalletMethod_GetNewAddress value)? getNewAddress,
+    TResult? Function(WalletMethod_GetFees value)? getFees,
+  }) {
+    return getFees?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(WalletMethod_GetNewAddress value)? getNewAddress,
+    TResult Function(WalletMethod_GetFees value)? getFees,
+    required TResult orElse(),
+  }) {
+    if (getFees != null) {
+      return getFees(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class WalletMethod_GetFees extends WalletMethod {
+  const factory WalletMethod_GetFees(
+          final String field0, final double field1, final double field2) =
+      _$WalletMethod_GetFeesImpl;
+  const WalletMethod_GetFees._() : super._();
+
+  String get field0;
+  double get field1;
+  double get field2;
+
+  /// Create a copy of WalletMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$WalletMethod_GetFeesImplCopyWith<_$WalletMethod_GetFeesImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

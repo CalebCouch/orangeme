@@ -22,12 +22,14 @@ pub enum Thread {
 }
 
 pub enum WalletMethod {
-    GetNewAddress
+    GetNewAddress,
+    GetFees(String, f64, f64),
 }
 
 #[derive(Debug)]
 pub enum PageName {
     BitcoinHome,
+    Speed(String, f64),
     Receive,
     ViewTransaction(String),
 //  Receive,
