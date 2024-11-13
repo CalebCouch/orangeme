@@ -2,58 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/classes.dart';
+import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orange/global.dart' as global;
 import 'package:vibration/vibration.dart';
 
-class Amount extends GenericWidget {
-  Amount({super.key});
+updateDisplayAmount(String input) {
+  //updateDisplayAmount(path: global.dataDir!, input: "reset"); //return amount, decimals, validity, amount btc, error message
+  return ("", "12.45");
+}
 
-  String err = '';
-  double btc = 0;
-  String amount = '0';
-  String decimals = '0';
+class Amount extends StatefulWidget {
+  Amount({super.key});
 
   @override
   AmountState createState() => AmountState();
 }
 
-class AmountState extends GenericState<Amount> {
-  @override
-  PageName getPageName() {
-    return PageName.amount;
-  }
-
-  @override
-  int refreshInterval() {
-    return 100;
-  }
-
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-      widget.btc = json["btc"] as double;
-      widget.err = json["err"];
-      widget.amount = json["amount"];
-      widget.decimals = json["decimals"];
-    });
-  }
-
-  @override
-  initState() {
-    updateDisplayAmount(path: global.dataDir!, input: "reset");
-    super.initState();
-  }
-
+class AmountState extends State<Amount> {
+  dynamic data = ("", "", 0.0, ""); // amount, err, btcAmt, decimals
   final ShakeController _shakeController = ShakeController();
   String enabled = 'disabled';
 
   onContinue() {
-    setStateBtc(path: global.dataDir!, btc: widget.btc);
-    navigateTo(Speed());
+    //setStateBtc(path: global.dataDir!, btc: widget.btc);
+    navigateTo(context, Speed());
   }
 
   onDisabled() {
@@ -61,9 +33,10 @@ class AmountState extends GenericState<Amount> {
     Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
   }
 
-  void update(String input) {
+  update(String input) {
     HapticFeedback.heavyImpact();
-    var valid = updateDisplayAmount(path: global.dataDir!, input: input);
+    var valid = true;
+    data = updateDisplayAmount(input);
     if (valid == 'false') {
       _shakeController.shake();
       Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
@@ -72,12 +45,12 @@ class AmountState extends GenericState<Amount> {
 
   updateButton() {
     setState(() {
-      enabled = widget.err == '' && widget.amount != '0' ? 'enabled' : 'disabled';
+      enabled = data.$1 == '' && data.$0 != '0' ? 'enabled' : 'disabled';
     });
   }
 
   @override
-  Widget build_with_state(BuildContext context) {
+  Widget build(BuildContext context) {
     updateButton();
     return Stack_Default(
       Header_Stack(context, "Send bitcoin"),
@@ -100,7 +73,7 @@ class AmountState extends GenericState<Amount> {
       child: Center(
         child: ShakeWidget(
           controller: _shakeController,
-          child: keyboardAmountDisplay(context, widget.amount, widget.btc, widget.err),
+          child: keyboardAmountDisplay(context, data.$0, data.$2, data.$1),
         ),
       ),
     );
@@ -133,7 +106,7 @@ class AmountState extends GenericState<Amount> {
               children: [
                 const CustomText('heading title', '\$'),
                 CustomText('heading title', amt),
-                CustomText('heading title text_secondary', widget.decimals),
+                CustomText('heading title text_secondary', data.$3),
               ],
             ),
           ),

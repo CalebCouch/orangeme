@@ -24,14 +24,10 @@ pub enum WalletMethod {
 
 #[derive(Debug)]
 pub enum PageName {
-//  BitcoinHome,
+  BitcoinHome,
+  Receive,
+  ViewTransaction,
 //  Receive,
-//  Send,
-//  ScanQR,
-//  Amount,
-//  Speed,
-//  ConfirmTransaction,
-//  Success,
 //  ViewTransaction,
 //  MessagesHome,
 //  Exchange,

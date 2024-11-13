@@ -589,7 +589,10 @@ impl SseDecode for crate::api::pub_structs::PageName {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <i32>::sse_decode(deserializer);
         return match inner {
-            0 => crate::api::pub_structs::PageName::Test,
+            0 => crate::api::pub_structs::PageName::BitcoinHome,
+            1 => crate::api::pub_structs::PageName::Receive,
+            2 => crate::api::pub_structs::PageName::ViewTransaction,
+            3 => crate::api::pub_structs::PageName::Test,
             _ => unreachable!("Invalid variant for PageName: {}", inner),
         };
     }
@@ -710,7 +713,10 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<MyCustomAsyncRuntime>> for MyC
 impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::PageName {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
-            Self::Test => 0.into_dart(),
+            Self::BitcoinHome => 0.into_dart(),
+            Self::Receive => 1.into_dart(),
+            Self::ViewTransaction => 2.into_dart(),
+            Self::Test => 3.into_dart(),
             _ => unreachable!(),
         }
     }
@@ -854,7 +860,10 @@ impl SseEncode for crate::api::pub_structs::PageName {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(
             match self {
-                crate::api::pub_structs::PageName::Test => 0,
+                crate::api::pub_structs::PageName::BitcoinHome => 0,
+                crate::api::pub_structs::PageName::Receive => 1,
+                crate::api::pub_structs::PageName::ViewTransaction => 2,
+                crate::api::pub_structs::PageName::Test => 3,
                 _ => {
                     unimplemented!("");
                 }

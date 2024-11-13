@@ -1,68 +1,68 @@
-import 'package:flutter/material.dart';
-import 'package:orange/components/list_item.dart';
-import 'package:orange/flows/messages/profile/user_profile.dart';
-import 'package:orange/classes.dart';
-import 'package:orangeme_material/navigation.dart';
-import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/src/rust/api/pub_structs.dart';
+// import 'package:flutter/material.dart';
+// import 'package:orange/components/list_item.dart';
+// import 'package:orange/flows/messages/profile/user_profile.dart';
+// import 'package:orange/classes.dart';
+// import 'package:orangeme_material/navigation.dart';
+// import 'package:orangeme_material/orangeme_material.dart';
+// import 'package:orange/src/rust/api/pub_structs.dart';
 
-class MessageInfo extends GenericWidget {
-  MessageInfo({super.key});
+// class MessageInfo extends GenericWidget {
+//   MessageInfo({super.key});
 
-  List<Profile> contacts = [];
+//   List<Profile> contacts = [];
 
-  @override
-  MessageInfoState createState() => MessageInfoState();
-}
+//   @override
+//   MessageInfoState createState() => MessageInfoState();
+// }
 
-class MessageInfoState extends GenericState<MessageInfo> {
-  @override
-  PageName getPageName() {
-    return PageName.convoInfo;
-  }
+// class MessageInfoState extends GenericState<MessageInfo> {
+//   @override
+//   PageName getPageName() {
+//     return PageName.convoInfo;
+//   }
 
-  @override
-  int refreshInterval() {
-    return 0;
-  }
+//   @override
+//   int refreshInterval() {
+//     return 0;
+//   }
 
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-      widget.contacts = List<Profile>.from(json['contacts'].map((json) => Profile.fromJson(json)));
-    });
-  }
+//   @override
+//   void unpack_state(Map<String, dynamic> json) {
+//     setState(() {
+//       widget.contacts = List<Profile>.from(json['contacts'].map((json) => Profile.fromJson(json)));
+//     });
+//   }
 
-  @override
-  Widget build_with_state(BuildContext context) {
-    return Stack_Scroll(
-      Header_Stack(context, "Group members"),
-      [
-        Information(widget.contacts),
-        ListMembers(context, widget.contacts),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build_with_state(BuildContext context) {
+//     return Stack_Scroll(
+//       Header_Stack(context, "Group members"),
+//       [
+//         Information(widget.contacts),
+//         ListMembers(context, widget.contacts),
+//       ],
+//     );
+//   }
+// }
 
-//The following widgets can ONLY be used in this file
+// //The following widgets can ONLY be used in this file
 
-Widget Information(List<Profile> contacts) {
-  return CustomText('text md text_secondary', 'This group has ${contacts.length} members');
-}
+// Widget Information(List<Profile> contacts) {
+//   return CustomText('text md text_secondary', 'This group has ${contacts.length} members');
+// }
 
-Widget ListMembers(BuildContext context, contacts) {
-  onPressed(index) async {
-    //Generate an address
-    navigateTo(context, UserProfile(contacts[index]));
-  }
+// Widget ListMembers(BuildContext context, contacts) {
+//   onPressed(index) async {
+//     //Generate an address
+//     navigateTo(context, UserProfile(contacts[index]));
+//   }
 
-  return ListView.builder(
-    shrinkWrap: true,
-    physics: const ScrollPhysics(),
-    itemCount: contacts.length,
-    itemBuilder: (BuildContext context, int index) {
-      return ContactItem(context, contacts[index], () => onPressed(index));
-    },
-  );
-}
+//   return ListView.builder(
+//     shrinkWrap: true,
+//     physics: const ScrollPhysics(),
+//     itemCount: contacts.length,
+//     itemBuilder: (BuildContext context, int index) {
+//       return ContactItem(context, contacts[index], () => onPressed(index));
+//     },
+//   );
+// }

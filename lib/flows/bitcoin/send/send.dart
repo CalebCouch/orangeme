@@ -1,75 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orange/global.dart' as global;
 
-class Send extends GenericWidget {
-  Send({super.key});
-  bool valid = true;
-  String address = '';
+class Send extends StatefulWidget {
+  late String address = '';
+  Send(this.address, {super.key});
 
   @override
   SendState createState() => SendState();
 }
 
-class SendState extends GenericState<Send> {
-  @override
-  PageName getPageName() {
-    return PageName.send;
-  }
-
-  @override
-  int refreshInterval() {
-    return 10;
-  }
-
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-      widget.valid = json["valid"] as bool;
-      widget.address = json["address"];
-      status = widget.valid ? 'enabled' : 'disabled';
-    });
-  }
-
+class SendState extends State<Send> {
+  bool addressIsValid = true;
   bool isLoading = false;
   String status = 'disabled';
 
   onContinue() {
-    if (widget.valid) {
-      setStateAddress(path: global.dataDir!, address: controller.text);
+    if (addressIsValid) {
       navigateTo(context, Amount());
     }
   }
 
+  @override
   void initState() {
     super.initState();
     controller.text = widget.address;
-    setState(() {
-      status = widget.valid ? 'enabled' : 'disabled';
-    });
+    checkAddressValid(widget.address);
   }
 
   onPaste() async {
     ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
     if (data != null) {
+      checkAddressValid(data.text!);
       controller.text = data.text!;
       if (controller.text.startsWith("bitcoin:")) {
         controller.text = controller.text.replaceFirst("bitcoin:", "");
       }
-      setStateAddress(path: global.dataDir!, address: controller.text);
     }
   }
 
+  checkAddressValid(String address) {
+    setState(() {
+      addressIsValid = true;
+      status = addressIsValid ? 'enabled' : 'disabled';
+    });
+  }
+
   onScan() {
-    navigateTo(context, ScanQR());
+    navigateTo(context, const ScanQR());
   }
 
   backButton() {
@@ -81,7 +63,7 @@ class SendState extends GenericState<Send> {
   final TextEditingController controller = TextEditingController();
 
   @override
-  Widget build_with_state(BuildContext context) {
+  Widget build(BuildContext context) {
     return Stack_Default(
       Header_Stack(context, "Bitcoin address", null, backButton()),
       [
@@ -99,8 +81,8 @@ class SendState extends GenericState<Send> {
   Widget AddressInput(controller) {
     return CustomTextInput(
       controller: controller,
-      onSubmitted: (String address) => {setStateAddress(path: global.dataDir!, address: address)},
-      error: widget.valid || controller.text.isEmpty ? "" : "Not a valid address",
+      onSubmitted: (String address) => {checkAddressValid(address)},
+      error: addressIsValid || controller.text.isEmpty ? "" : "Not a valid address",
       hint: 'Bitcoin address...',
     );
   }

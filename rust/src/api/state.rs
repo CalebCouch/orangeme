@@ -107,15 +107,9 @@ impl StateManager {
 
     pub async fn get(&mut self, page: &PageName) -> Result<String, Error> {
         match page {
-          //PageName::BitcoinHome => self.bitcoin_home().await,
-          //PageName::Receive => self.receive().await,
-          //PageName::Send => self.send().await,
-          //PageName::ScanQR => self.scan_qr().await,
-          //PageName::Amount => self.amount().await,
-          //PageName::Speed => self.speed().await,
-          //PageName::ConfirmTransaction => self.confirm_transaction().await,
-          //PageName::Success => self.send_success().await,
-          //PageName::ViewTransaction => self.view_transaction().await,
+            PageName::BitcoinHome => self.bitcoin_home().await,
+            PageName::Receive => self.receive().await,
+            PageName::ViewTransaction => self.view_transaction().await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
@@ -132,45 +126,82 @@ impl StateManager {
         //state.set(b"test", &(count+1).to_le_bytes()).await.unwrap();
         Ok(format!("{{\"count\": {}}}", 0))
     }
+
+    pub async fn bitcoin_home(&self) -> Result<String, Error> {
+       let btc = self.state.get::<f64>(Field::Balance).await?;
+       let usd = btc*self.state.get::<f64>(Field::Price).await?;
+       let internet_status = self.state.get::<bool>(Field::Internet).await?;
+       let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions).await?;
+
+       let formatted_usd = if usd == 0.0 { "$0.00".to_string() } else { format!("{:.2}", usd) };
+
+       Ok(serde_json::to_string(&BitcoinHome{
+          internet: internet_status,
+          usd: formatted_usd,
+          btc: btc.to_string(),
+          transactions: transactions.into_iter().map(|(txid, tx)|
+              ShorthandTransaction {
+                  is_withdraw: tx.is_withdraw,
+                  date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                  time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+                  btc: tx.btc,
+                  usd: format!("${:.2}", tx.usd),
+                  txid: txid.to_string(),
+              },
+          ).collect(),
+          profile_picture: "".to_string(),
+       })?)
+    }
+
+    pub async fn receive(&self) -> Result<String, Error> {   
+        let wallet = self.get_wallet().await?;
+        Ok(serde_json::to_string(&Receive{
+            address: wallet.get_new_address()?
+        })?)
+    }
+
+    pub async fn view_transaction(&self) -> Result<String, Error> {
+        let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
+
+        let wallet = self.get_wallet()?;
+        let tx = wallet.get_tx(&txid);
+        let x = tx.unwrap();
+
+        let price = x.price;
+        let whole_part = price.trunc() as i64;
+        let decimal_part = (price.fract() * 100.0).round() as i64;
+        let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
+
+        let basic_tx = BasicTransaction {
+            tx: ShorthandTransaction {
+                is_withdraw: x.is_withdraw,
+                date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+                btc: x.btc,
+                usd: format!("${:.2}", x.usd),
+                txid: txid.to_string(),
+            },
+            address: x.address.clone(),
+            price: formatted_price,
+        };
+
+        let ext_transaction = if x.is_withdraw {
+            Some(ExtTransaction {
+                tx: basic_tx.clone(),
+                fee: format!("${:.2}", x.fee_usd),
+                total: format!("${:.2}", x.fee_usd + x.usd),
+            })
+        } else {
+            None
+        };
+
+        Ok(serde_json::to_string(&ViewTransaction {
+            basic_transaction: Some(basic_tx),
+            ext_transaction,
+        })?)
+    }
 }
 
-//      pub async fn bitcoin_home(&self) -> Result<String, Error> {
-//        //let btc = self.state.get::<f64>(Field::Balance).await?;
-//        //let usd = btc*self.state.get::<f64>(Field::Price).await?;
-//        //let internet_status = self.state.get::<bool>(Field::Internet).await?;
-//        //let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions).await?;
-
-//        //let formatted_usd = if usd == 0.0 {
-//        //    "$0.00".to_string()
-//        //} else {
-//        //    format!("{:.2}", usd)
-//        //};
-
-//        //Ok(serde_json::to_string(&BitcoinHome{
-//        //    internet: internet_status,
-//        //    usd: formatted_usd,
-//        //    btc: btc.to_string(),
-//        //    transactions: transactions.into_iter().map(|(txid, tx)|
-//        //        ShorthandTransaction {
-//        //            is_withdraw: tx.is_withdraw,
-//        //            date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-//        //            time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-//        //            btc: tx.btc,
-//        //            usd: format!("${:.2}", tx.usd),
-//        //            txid: txid.to_string(),
-//        //        },
-//        //    ).collect(),
-//        //    profile_picture: "".to_string(),
-//        //})?)
-
-//          Ok(serde_json::to_string(&BitcoinHome{
-//              internet: true,
-//              usd: "0.1".to_string(),
-//              btc: "0.00003".to_string(),
-//              transactions: vec![],
-//              profile_picture: "".to_string(),
-//          })?)
-//      }
 
 //      pub async fn send(&self) -> Result<String, Error> {
 //          let mut address = self.state.get::<String>(Field::Address).await?;
@@ -276,47 +307,6 @@ impl StateManager {
 //      }
 
 
-//      pub async fn view_transaction(&self) -> Result<String, Error> {
-//          todo!()
-//        //let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
-
-//        //let wallet = self.get_wallet()?;
-//        //let tx = wallet.get_tx(&txid);
-//        //let x = tx.unwrap();
-
-//        //let price = x.price;
-//        //let whole_part = price.trunc() as i64;
-//        //let decimal_part = (price.fract() * 100.0).round() as i64;
-//        //let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
-
-//        //let basic_tx = BasicTransaction {
-//        //    tx: ShorthandTransaction {
-//        //        is_withdraw: x.is_withdraw,
-//        //        date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-//        //        time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-//        //        btc: x.btc,
-//        //        usd: format!("${:.2}", x.usd),
-//        //        txid: txid.to_string(),
-//        //    },
-//        //    address: x.address.clone(),
-//        //    price: formatted_price,
-//        //};
-
-//        //let ext_transaction = if x.is_withdraw {
-//        //    Some(ExtTransaction {
-//        //        tx: basic_tx.clone(),
-//        //        fee: format!("${:.2}", x.fee_usd),
-//        //        total: format!("${:.2}", x.fee_usd + x.usd),
-//        //    })
-//        //} else {
-//        //    None
-//        //};
-
-//        //Ok(serde_json::to_string(&ViewTransaction {
-//        //    basic_transaction: Some(basic_tx),
-//        //    ext_transaction,
-//        //})?)
-//      }
 
 //      pub async fn messages_home(&mut self) -> Result<String, Error> {
 //          //self.state.set(Field::Conversations, &conversations).await?;
@@ -367,29 +357,43 @@ impl StateManager {
 
 //  }
 
-//  #[derive(Serialize, Clone, Debug)]
-//  struct ExtTransaction {
-//      pub tx: BasicTransaction,
-//      pub fee: String,
-//      pub total: String,
-//  }
+/*      Transaction Classes     */
 
-//  #[derive(Serialize, Clone, Debug)]
-//  struct BasicTransaction {
-//      pub tx: ShorthandTransaction,
-//      pub address: String,
-//      pub price: String,
-//  }
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
+pub struct Transaction {
+    pub btc: f64,
+    pub usd: f64,
+    pub price: f64,
+    pub address: String,
+    pub is_withdraw: bool,
+    pub confirmation_time: Option<(u32, DateTime)>,
+    pub fee: f64,
+    pub fee_usd: f64,
+}
 
-//  #[derive(Serialize, Clone, Debug)]
-//  struct ShorthandTransaction {
-//      pub is_withdraw: bool,
-//      pub date: String,
-//      pub time: String,
-//      pub btc: f64,
-//      pub usd: String,
-//      pub txid: String,
-//  }
+#[derive(Serialize, Clone, Debug)]
+struct ExtTransaction {
+    pub tx: BasicTransaction,
+    pub fee: String,
+    pub total: String,
+}
+
+#[derive(Serialize, Clone, Debug)]
+struct BasicTransaction {
+    pub tx: ShorthandTransaction,
+    pub address: String,
+    pub price: String,
+}
+
+#[derive(Serialize, Clone, Debug)]
+struct ShorthandTransaction {
+    pub is_withdraw: bool,
+    pub date: String,
+    pub time: String,
+    pub btc: f64,
+    pub usd: String,
+    pub txid: String,
+}
 
 //  #[derive(Serialize, Deserialize, Clone, Default)]
 //  pub struct Conversation {
@@ -406,19 +410,27 @@ impl StateManager {
 //      pub is_incoming: bool,
 //  }
 
-//  #[derive(Serialize)]
-//  struct BitcoinHome {
-//      pub usd: String,
-//      pub btc: String,
-//      pub transactions: Vec<ShorthandTransaction>,
-//      pub profile_picture: String,
-//      pub internet: bool,
-//  }
+/*      Page Structs        */
 
-//  #[derive(Serialize)]
-//  struct Receive {
-//      pub address: String
-//  }
+#[derive(Serialize)]
+struct BitcoinHome {
+    pub usd: String,
+    pub btc: String,
+    pub transactions: Vec<ShorthandTransaction>,
+    pub profile_picture: String,
+    pub internet: bool,
+}
+
+#[derive(Serialize)]
+struct Receive {
+    pub address: String
+}
+
+#[derive(Serialize)]
+struct ViewTransaction {
+    pub ext_transaction: Option<ExtTransaction>,
+    pub basic_transaction: Option<BasicTransaction>,
+}
 
 //  #[derive(Serialize)]
 //  struct Send {

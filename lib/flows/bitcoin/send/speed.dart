@@ -1,39 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:orange/classes.dart';
-import 'package:orange/flows/bitcoin/send/confirm.dart';
+// import 'package:orange/flows/bitcoin/send/confirm.dart';
+// import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/global.dart' as global;
 
-class Speed extends GenericWidget {
-  Speed({super.key});
-
-  dynamic fees;
+class Speed extends StatefulWidget {
+  const Speed({super.key});
 
   @override
   SpeedState createState() => SpeedState();
 }
 
-class SpeedState extends GenericState<Speed> {
-  @override
-  PageName getPageName() {
-    return PageName.speed;
-  }
-
-  @override
-  int refreshInterval() {
-    return 0;
-  }
-
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-      widget.fees = (json["fees"] as List<dynamic>).map((e) => e as String).toList();
-    });
-  }
-
+class SpeedState extends State<Speed> {
   int index = 0;
+  dynamic fees;
   bool isLoading = false;
   @override
   void initState() {
@@ -43,22 +22,21 @@ class SpeedState extends GenericState<Speed> {
     super.initState();
   }
 
-  Future<void> onContinue() async {
+  onContinue() {
+    //navigateTo(context, const Confirm()); //create transaction with all the data (index as priority speed)
+  }
+
+  calculateFees() {
     setState(() {
-      isLoading = true;
+      fees = ("\$0.13", "\$0.14");
     });
-    setStatePriority(path: global.dataDir!, index: index);
-    setState(() {
-      isLoading = false;
-    });
-    navigateTo(Confirm());
   }
 
   @override
-  Widget build_with_state(BuildContext context) {
+  Widget build(BuildContext context) {
     return Stack_Default(
       Header_Stack(context, "Transaction speed"),
-      [SpeedSelector(widget.fees)],
+      [SpeedSelector(fees)],
       Bumper(context, [CustomButton('Continue', 'primary lg expand none', onContinue, 'enabled')]),
       Alignment.topCenter,
       true,
