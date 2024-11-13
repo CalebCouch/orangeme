@@ -8,48 +8,44 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
-
-
-            
-
-            @freezed
-                sealed class PageName with _$PageName  {
-                    const PageName._();
-
-                     const factory PageName.bitcoinHome() = PageName_BitcoinHome;
- const factory PageName.receive() = PageName_Receive;
- const factory PageName.viewTransaction(  String field0,) = PageName_ViewTransaction;
- const factory PageName.test() = PageName_Test;
-
-                    
-                }
-
-enum Platform {
-                    mac,
-linux,
-windows,
-ios,
-android,
-fuchsia,
-                    ;
-                     bool  isDesktop()=>RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(that: this, );
-
-
-                }
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
 
 @freezed
-                sealed class Thread with _$Thread  {
-                    const Thread._();
+sealed class PageName with _$PageName {
+  const PageName._();
 
-                     const factory Thread.wallet(  WalletMethod field0,) = Thread_Wallet;
+  const factory PageName.bitcoinHome() = PageName_BitcoinHome;
+  const factory PageName.receive() = PageName_Receive;
+  const factory PageName.viewTransaction(
+    String field0,
+  ) = PageName_ViewTransaction;
+  const factory PageName.test() = PageName_Test;
+}
 
-                    
-                }
+enum Platform {
+  mac,
+  linux,
+  windows,
+  ios,
+  android,
+  fuchsia,
+  ;
+
+  bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
+        that: this,
+      );
+}
+
+@freezed
+sealed class Thread with _$Thread {
+  const Thread._();
+
+  const factory Thread.wallet(
+    WalletMethod field0,
+  ) = Thread_Wallet;
+}
 
 enum WalletMethod {
-                    getNewAddress,
-                    ;
-                    
-                }
-            
+  getNewAddress,
+  ;
+}

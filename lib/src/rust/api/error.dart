@@ -6,35 +6,25 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `source`
 
-            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `source`
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Error>>
+abstract class Error implements RustOpaqueInterface {
+  static Future<Error> authFailed({required String ctx, required String err}) =>
+      RustLib.instance.api.crateApiErrorErrorAuthFailed(ctx: ctx, err: err);
 
+  static Future<Error> badRequest({required String ctx, required String err}) =>
+      RustLib.instance.api.crateApiErrorErrorBadRequest(ctx: ctx, err: err);
 
-            
+  static Future<Error> conflict({required String ctx, required String err}) =>
+      RustLib.instance.api.crateApiErrorErrorConflict(ctx: ctx, err: err);
 
-            
-                // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Error>>
-                abstract class Error implements RustOpaqueInterface {
-                    static Future<Error>  authFailed({required String ctx , required String err })=>RustLib.instance.api.crateApiErrorErrorAuthFailed(ctx: ctx, err: err);
+  static Future<Error> err({required String ctx, required String err}) =>
+      RustLib.instance.api.crateApiErrorErrorErr(ctx: ctx, err: err);
 
+  static Future<Error> notFound({required String ctx, required String err}) =>
+      RustLib.instance.api.crateApiErrorErrorNotFound(ctx: ctx, err: err);
 
-static Future<Error>  badRequest({required String ctx , required String err })=>RustLib.instance.api.crateApiErrorErrorBadRequest(ctx: ctx, err: err);
-
-
-static Future<Error>  conflict({required String ctx , required String err })=>RustLib.instance.api.crateApiErrorErrorConflict(ctx: ctx, err: err);
-
-
-static Future<Error>  err({required String ctx , required String err })=>RustLib.instance.api.crateApiErrorErrorErr(ctx: ctx, err: err);
-
-
-static Future<Error>  notFound({required String ctx , required String err })=>RustLib.instance.api.crateApiErrorErrorNotFound(ctx: ctx, err: err);
-
-
-static Future<Error>  parse({required String rtype , required String data })=>RustLib.instance.api.crateApiErrorErrorParse(rtype: rtype, data: data);
-
-
-
-                    
-                }
-                
-            
+  static Future<Error> parse({required String rtype, required String data}) =>
+      RustLib.instance.api.crateApiErrorErrorParse(rtype: rtype, data: data);
+}

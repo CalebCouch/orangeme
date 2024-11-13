@@ -18,13 +18,11 @@ class Amount extends StatefulWidget {
 
 class AmountState extends State<Amount> {
   late DisplayData data = DisplayData("0", "", 0.0, "", false);
-
   final ShakeController _shakeController = ShakeController();
   String enabled = 'disabled';
 
   onContinue() {
-    //setStateBtc(path: global.dataDir!, btc: widget.btc);
-    navigateTo(context, Speed());
+    navigateTo(context, const Speed());
   }
 
   onDisabled() {
@@ -34,18 +32,26 @@ class AmountState extends State<Amount> {
 
   update(String input) {
     HapticFeedback.heavyImpact();
-    var valid = true;
-    data = updateDisplayAmount(input, widget.balance, widget.price, data.amount);
-    if (valid == 'false') {
+    DisplayData newData = updateDisplayAmount(input, widget.balance, widget.price, data.amount);
+    setState(() {
+      data = newData;
+    });
+    if (!data.valid) {
       _shakeController.shake();
       Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
     }
   }
 
+  bool isNotZero() {
+    return !['0', '0.00', '0.', '0.0'].contains(data.amount);
+  }
+
   updateButton() {
+    print(enabled);
     setState(() {
-      enabled = data.err == '' && data.amount != '0' ? 'enabled' : 'disabled';
+      enabled = data.err == '' && isNotZero() ? 'enabled' : 'disabled';
     });
+    print(enabled);
   }
 
   @override
