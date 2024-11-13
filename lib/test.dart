@@ -5,9 +5,9 @@ import 'package:orange/components/list_item.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/global.dart' as global;
 
+import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
 class Test extends GenericWidget {
@@ -42,7 +42,11 @@ class TestState extends GenericState<Test> {
     return Column(children: <Widget>[
       Text("count: ${widget.val}"),
         TextButton(
-          onPressed: () async {print("run"); await testfunction(); print("ran");},
+          onPressed: () async {
+            print("run");
+            print(await rustCall(thread: Thread.wallet(WalletMethod.getNewAddress)));
+            print("ran");
+          },
           child: Text('TextButton')
         )
     ]);

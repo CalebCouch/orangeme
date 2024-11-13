@@ -14,7 +14,7 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-use super::pub_structs::{Platform, PageName, WalletMethod};
+use super::pub_structs::{Platform, PageName, Thread, WalletMethod};
 use super::state::Field;
 
 use super::structs::{DartCommand, Storage, DartCallback, Profile};
@@ -64,21 +64,14 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use std::sync::{LazyLock};
 
-use tokio::sync::mpsc;
+use tokio::sync::{oneshot, mpsc};
 use tokio::sync::mpsc::{Receiver, Sender};
 
 use std::collections::HashMap;
 
 use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 
-#[derive(PartialEq, Eq, Hash)]
-enum Thread {
-    Price,
-    Internet,
-    Wallet
-}
-
-static THREAD_CHANNELS: LazyLock<Mutex<HashMap<Thread, Sender<Vec<u8>>>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
+static THREAD_CHANNELS: LazyLock<Mutex<(Option<Sender<(oneshot::Sender<String>, WalletMethod)>>, Option<String>)>> = LazyLock::new(|| Mutex::new((None, None)));
 
 const SATS: u64 = 100_000_000;
 const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
@@ -128,16 +121,22 @@ async fn price_thread(mut state: State) -> Result<(), Error> {
     }
 }
 
-async fn wallet_thread(mut state: State, platform: Platform, descriptors: DescriptorSet, path: PathBuf, mut recv: Receiver<Vec<u8>>) -> Result<(), Error> {
-    if !platform.is_desktop() {
-        let mut wallet = Wallet::new(descriptors, path, state)?;
-        loop {
-            info!("Recived: {}", std::str::from_utf8(&recv.recv().await.unwrap()).unwrap());
-          //wallet.sync().await?;
-            //thread::sleep(time::Duration::from_millis(1_000));
-        }
-        Err(Error::Exited("Wallet Sync".to_string()))
-    } else {Ok(())}
+async fn wallet_sync_thread(wallet: Wallet) -> Result<(), Error> {
+    loop {
+        wallet.sync().await?;
+        thread::sleep(time::Duration::from_millis(1_000));
+    }
+    Err(Error::Exited("Wallet Sync".to_string()))
+}
+
+async fn wallet_thread(wallet: Wallet, mut recv: Receiver<(oneshot::Sender<String>, WalletMethod)>) -> Result<(), Error> {
+    loop {
+        let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
+        match method {
+            WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?),
+        };
+    }
+    Err(Error::Exited("Wallet".to_string()))
 }
 
 //  async fn web5_thread(mut state: State, platform: Platform, id: Identity) -> Result<(), Error> {
@@ -235,15 +234,17 @@ async fn async_rust (
     let path = PathBuf::from(&path);
 
     let mut threads = THREAD_CHANNELS.lock().await;
-
-    let (w_tx, w_rx) = mpsc::channel::<Vec<u8>>(100);
-    threads.insert(Thread::Wallet, w_tx);
+    let (w_tx, w_rx) = mpsc::channel::<(oneshot::Sender<String>, WalletMethod)>(100);
+    threads.0 = Some(w_tx);
     drop(threads);
+
+    let mut wallet = Wallet::new(descriptors, path, state.clone())?;
 
     tokio::try_join!(
         spawn(price_thread(state.clone())),
         spawn(internet_thread(state.clone())),
-        spawn(wallet_thread(state.clone(), platform, descriptors, path, w_rx)),
+        spawn(wallet_sync_thread(wallet.clone())),
+        spawn(wallet_thread(wallet, w_rx)),
       //spawn(web5_thread(state.clone(), platfrom, id, path)),
       //spawn(usb_thread(state)),
     )?;
@@ -251,9 +252,19 @@ async fn async_rust (
     Err(Error::Exited("Main Thread".to_string()))
 }
 
-pub async fn testfunction() {
-    let mut threads = THREAD_CHANNELS.lock().await;
-    threads.get(&Thread::Wallet).unwrap().send(b"HELLo".to_vec()).await.unwrap();
+pub async fn rustCall(thread: Thread) -> String {
+    let result: Result<String, Error> = async {
+        let (o_tx, o_rx) = oneshot::channel::<String>();
+        let threads = THREAD_CHANNELS.lock().await;
+        match thread {
+            Thread::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await.unwrap(),
+        }
+        Ok(o_rx.await.unwrap())
+    }.await;
+    match result {
+        Ok(s) => s,
+        Err(e) => format!("Error: {}", e)
+    }
 }
 
 pub async fn ruststart (

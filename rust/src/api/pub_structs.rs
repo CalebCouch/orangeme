@@ -17,7 +17,10 @@ impl Platform {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+pub enum Thread {
+    Wallet(WalletMethod)
+}
+
 pub enum WalletMethod {
     GetNewAddress
 }

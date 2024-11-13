@@ -7,12 +7,10 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
-// These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `price_thread`, `spawn`, `wallet_thread`
-// These types are ignored because they are not used by any `pub` functions: `Thread`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `eq`, `hash`
+// These functions are ignored because they are not marked as `pub`: `async_rust`, `internet_thread`, `price_thread`, `spawn`, `wallet_sync_thread`, `wallet_thread`
 
-Future<void> testfunction() =>
-    RustLib.instance.api.crateApiSimpleTestfunction();
+Future<String> rustCall({required Thread thread}) =>
+    RustLib.instance.api.crateApiSimpleRustCall(thread: thread);
 
 Future<String> ruststart(
         {required String path,

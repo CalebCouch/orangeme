@@ -1,5 +1,6 @@
 use super::Error;
 
+use super::simple::rustCall;
 use super::pub_structs::{PageName, Platform};
 use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime, Profile};
@@ -108,7 +109,7 @@ impl StateManager {
     pub async fn get(&mut self, page: &PageName) -> Result<String, Error> {
         match page {
           //PageName::BitcoinHome => self.bitcoin_home().await,
-          //PageName::Receive => self.receive().await,
+            PageName::Receive => self.receive().await,
           //PageName::Send => self.send().await,
           //PageName::ScanQR => self.scan_qr().await,
           //PageName::Amount => self.amount().await,
@@ -254,13 +255,11 @@ impl StateManager {
 //          })?)
 //      }
 
-//      pub async fn receive(&self) -> Result<String, Error> {
-//          //info!("ELLO");
-//          let wallet = self.get_wallet().await?;
-//          Ok(serde_json::to_string(&Receive{
-//              address: wallet.get_new_address()?
-//          })?)
-//      }
+        pub async fn receive(&self) -> Result<String, Error> {
+            Ok(serde_json::to_string(&Receive{
+                address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await
+            })?)
+        }
 
 //      pub async fn my_profile(&self) -> Result<String, Error> {
 //          let profile = self.state.get_o::<Profile>(Field::Profile).await?;

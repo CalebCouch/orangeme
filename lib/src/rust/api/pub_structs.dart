@@ -5,9 +5,10 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+part 'pub_structs.freezed.dart';
 
-// These types are ignored because they are not used by any `pub` functions: `WalletMethod`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
 
 enum PageName {
   test,
@@ -26,4 +27,18 @@ enum Platform {
   bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
         that: this,
       );
+}
+
+@freezed
+sealed class Thread with _$Thread {
+  const Thread._();
+
+  const factory Thread.wallet(
+    WalletMethod field0,
+  ) = Thread_Wallet;
+}
+
+enum WalletMethod {
+  getNewAddress,
+  ;
 }
