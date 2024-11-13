@@ -1,3 +1,23 @@
+import 'package:intl/intl.dart';
+
+String formatTransactionDate(String date, String time) {
+  DateTime now = DateTime.now();
+  DateTime transactionDate = DateFormat('MM/dd/yyyy').parse(date);
+
+  bool isSameDate(DateTime date1, DateTime date2) {
+    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+  }
+  
+  if (isSameDate(transactionDate, now)) {
+    return time;
+  } else if (isSameDate(transactionDate, now.subtract(Duration(days: 1)))) {
+    return "Yesterday";
+  } else {
+    return DateFormat('MMMM d').format(transactionDate);
+  }
+}
+
+
 String cutString(String text, {int leftSizeLength = 9, int rightSizeLengthOffset = 3}) {
     var dotsString = '...'; // Always use three dots
     var rightSizeLength = text.length - rightSizeLengthOffset;
