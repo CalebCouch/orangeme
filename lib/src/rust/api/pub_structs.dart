@@ -10,12 +10,16 @@ part 'pub_structs.freezed.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
 
-enum PageName {
-  bitcoinHome,
-  receive,
-  viewTransaction,
-  test,
-  ;
+@freezed
+sealed class PageName with _$PageName {
+  const PageName._();
+
+  const factory PageName.bitcoinHome() = PageName_BitcoinHome;
+  const factory PageName.receive() = PageName_Receive;
+  const factory PageName.viewTransaction(
+    String field0,
+  ) = PageName_ViewTransaction;
+  const factory PageName.test() = PageName_Test;
 }
 
 enum Platform {

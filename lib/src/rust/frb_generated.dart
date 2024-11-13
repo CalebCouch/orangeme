@@ -335,7 +335,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
-        sse_encode_page_name(page, serializer);
+        sse_encode_box_autoadd_page_name(page, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 8, port: port_);
       },
@@ -544,6 +544,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  PageName dco_decode_box_autoadd_page_name(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_page_name(raw);
+  }
+
+  @protected
   Thread dco_decode_box_autoadd_thread(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_thread(raw);
@@ -570,7 +576,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   PageName dco_decode_page_name(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return PageName.values[raw as int];
+    switch (raw[0]) {
+      case 0:
+        return const PageName_BitcoinHome();
+      case 1:
+        return const PageName_Receive();
+      case 2:
+        return PageName_ViewTransaction(
+          dco_decode_String(raw[1]),
+        );
+      case 3:
+        return const PageName_Test();
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   @protected
@@ -680,6 +699,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_page_name(deserializer));
+  }
+
+  @protected
   Thread sse_decode_box_autoadd_thread(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_thread(deserializer));
@@ -707,8 +732,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   PageName sse_decode_page_name(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_i_32(deserializer);
-    return PageName.values[inner];
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return const PageName_BitcoinHome();
+      case 1:
+        return const PageName_Receive();
+      case 2:
+        var var_field0 = sse_decode_String(deserializer);
+        return PageName_ViewTransaction(var_field0);
+      case 3:
+        return const PageName_Test();
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected
@@ -832,6 +870,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_page_name(
+      PageName self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_page_name(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_thread(Thread self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_thread(self, serializer);
@@ -860,7 +905,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_page_name(PageName self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.index, serializer);
+    switch (self) {
+      case PageName_BitcoinHome():
+        sse_encode_i_32(0, serializer);
+      case PageName_Receive():
+        sse_encode_i_32(1, serializer);
+      case PageName_ViewTransaction(field0: final field0):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(field0, serializer);
+      case PageName_Test():
+        sse_encode_i_32(3, serializer);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected

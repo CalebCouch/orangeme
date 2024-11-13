@@ -22,7 +22,7 @@ class Test extends GenericWidget {
 class TestState extends GenericState<Test> {
   @override
   PageName getPageName() {
-    return PageName.test;
+    return PageName.test();
   }
 
   @override

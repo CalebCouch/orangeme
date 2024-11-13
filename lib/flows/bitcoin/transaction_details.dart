@@ -19,7 +19,7 @@ class ViewTransaction extends GenericWidget {
 class ViewTransactionState extends GenericState<ViewTransaction> {
   @override
   PageName getPageName() {
-    return PageName.viewTransaction;
+    return PageName.viewTransaction(widget.txid);
   }
 
   @override

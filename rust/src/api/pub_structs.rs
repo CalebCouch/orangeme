@@ -27,9 +27,9 @@ pub enum WalletMethod {
 
 #[derive(Debug)]
 pub enum PageName {
-  BitcoinHome,
-  Receive,
-  ViewTransaction,
+    BitcoinHome,
+    Receive,
+    ViewTransaction(String),
 //  Receive,
 //  ViewTransaction,
 //  MessagesHome,

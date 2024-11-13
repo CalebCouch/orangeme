@@ -1,7 +1,7 @@
 use super::Error;
 
 use super::simple::rustCall;
-use super::pub_structs::{PageName, Platform};
+use super::pub_structs::{PageName, Platform, Thread, WalletMethod};
 use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime, Profile};
 
@@ -106,7 +106,7 @@ impl StateManager {
         StateManager{state}
     }
 
-    pub async fn get(&mut self, page: &PageName) -> Result<String, Error> {
+    pub async fn get(&mut self, page: PageName) -> Result<String, Error> {
         match page {
           //PageName::BitcoinHome => self.bitcoin_home().await,
           //PageName::Send => self.send().await,
@@ -118,7 +118,7 @@ impl StateManager {
           //PageName::ViewTransaction => self.view_transaction().await,
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::Receive => self.receive().await,
-            PageName::ViewTransaction => self.view_transaction().await,
+            PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
@@ -137,10 +137,10 @@ impl StateManager {
     }
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
-       let btc = self.state.get::<f64>(Field::Balance).await?;
-       let usd = btc*self.state.get::<f64>(Field::Price).await?;
-       let internet_status = self.state.get::<bool>(Field::Internet).await?;
-       let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions).await?;
+       let btc = self.state.get::<f64>(Field::Balance(None)).await?;
+       let usd = btc*self.state.get::<f64>(Field::Price(None)).await?;
+       let internet_status = self.state.get::<bool>(Field::Internet(None)).await?;
+       let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
 
        let formatted_usd = if usd == 0.0 { "$0.00".to_string() } else { format!("{:.2}", usd) };
 
@@ -162,43 +162,35 @@ impl StateManager {
        })?)
     }
 
-    pub async fn receive(&self) -> Result<String, Error> {   
-        let wallet = self.get_wallet().await?;
-        Ok(serde_json::to_string(&Receive{
-            address: wallet.get_new_address()?
-        })?)
-    }
+    pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
+        let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
+        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
+        let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
 
-    pub async fn view_transaction(&self) -> Result<String, Error> {
-        let txid = Txid::from_str(options).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
 
-        let wallet = self.get_wallet()?;
-        let tx = wallet.get_tx(&txid);
-        let x = tx.unwrap();
-
-        let price = x.price;
+        let price = tx.price;
         let whole_part = price.trunc() as i64;
         let decimal_part = (price.fract() * 100.0).round() as i64;
         let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
 
         let basic_tx = BasicTransaction {
             tx: ShorthandTransaction {
-                is_withdraw: x.is_withdraw,
-                date: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                time: self.format_datetime(x.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                btc: x.btc,
-                usd: format!("${:.2}", x.usd),
+                is_withdraw: tx.is_withdraw,
+                date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+                time: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+                btc: tx.btc,
+                usd: format!("${:.2}", tx.usd),
                 txid: txid.to_string(),
             },
-            address: x.address.clone(),
+            address: tx.address.clone(),
             price: formatted_price,
         };
 
-        let ext_transaction = if x.is_withdraw {
+        let ext_transaction = if tx.is_withdraw {
             Some(ExtTransaction {
                 tx: basic_tx.clone(),
-                fee: format!("${:.2}", x.fee_usd),
-                total: format!("${:.2}", x.fee_usd + x.usd),
+                fee: format!("${:.2}", tx.fee_usd),
+                total: format!("${:.2}", tx.fee_usd + tx.usd),
             })
         } else {
             None
@@ -209,7 +201,6 @@ impl StateManager {
             ext_transaction,
         })?)
     }
-}
 
 
 //      pub async fn send(&self) -> Result<String, Error> {
@@ -352,30 +343,16 @@ impl StateManager {
 //          Wallet::new(descriptors, path, self.state.clone())
 //      }
 
-//      fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
-//          datetime
-//              .map(|dt| (
-//                  dt.format("%m/%d/%Y").to_string(),
-//                  dt.format("%l:%M %p").to_string()
-//              ))
-//              .unwrap_or(("Pending".to_string(), "Pending".to_string()))
-//      }
+        fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
+            datetime
+                .map(|dt| (
+                    dt.format("%m/%d/%Y").to_string(),
+                    dt.format("%l:%M %p").to_string()
+                ))
+                .unwrap_or(("Pending".to_string(), "Pending".to_string()))
+        }
 
 
-//  }
-
-/*      Transaction Classes     */
-
-#[derive(Serialize, Deserialize, Clone, Debug, Default)]
-pub struct Transaction {
-    pub btc: f64,
-    pub usd: f64,
-    pub price: f64,
-    pub address: String,
-    pub is_withdraw: bool,
-    pub confirmation_time: Option<(u32, DateTime)>,
-    pub fee: f64,
-    pub fee_usd: f64,
 }
 
 #[derive(Serialize, Clone, Debug)]

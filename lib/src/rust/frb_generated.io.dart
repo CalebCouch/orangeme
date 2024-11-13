@@ -66,6 +66,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  PageName dco_decode_box_autoadd_page_name(dynamic raw);
+
+  @protected
   Thread dco_decode_box_autoadd_thread(dynamic raw);
 
   @protected
@@ -129,6 +132,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer);
 
   @protected
   Thread sse_decode_box_autoadd_thread(SseDeserializer deserializer);
@@ -199,6 +205,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_page_name(
+      PageName self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_thread(Thread self, SseSerializer serializer);

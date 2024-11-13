@@ -32,7 +32,7 @@ class BitcoinHome extends GenericWidget {
 class BitcoinHomeState extends GenericState<BitcoinHome> {
   @override
   PageName getPageName() {
-    return PageName.bitcoinHome;
+    return PageName.bitcoinHome();
   }
 
   @override

@@ -280,7 +280,7 @@ pub async fn ruststart (
 
 pub async fn getpage(path: String, page: PageName) -> String {
     let result: Result<String, Error> = async {
-        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(&page).await
+        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(page).await
     }.await;
     match result {
         Ok(s) => s,

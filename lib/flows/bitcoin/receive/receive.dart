@@ -21,7 +21,7 @@ class Receive extends GenericWidget {
 class ReceiveState extends GenericState<Receive> {
   @override
   PageName getPageName() {
-    return PageName.receive;
+    return PageName.receive();
   }
 
   @override
