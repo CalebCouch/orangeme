@@ -1,40 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:orange/classes.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orange/global.dart' as global;
 
-class ScanQR extends GenericWidget {
-  ScanQR({super.key});
+class ScanQR extends StatefulWidget {
+  const ScanQR({super.key});
 
   @override
   ScanQRState createState() => ScanQRState();
 }
 
-class ScanQRState extends GenericState<ScanQR> {
+class ScanQRState extends State<ScanQR> {
   late QRViewController controller;
   GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  PageName getPageName() {
-    return PageName.scanQr;
-  }
-
   @override
-  int refreshInterval() {
-    return 0;
-  }
-
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {});
-  }
-
-  @override
-  Widget build_with_state(BuildContext context) {
+  Widget build(BuildContext context) {
     return Root_Takeover(
       Header_Stack(context, "Scan QR code"),
       Expanded(
@@ -55,8 +37,7 @@ class ScanQRState extends GenericState<ScanQR> {
   _onQRViewCreated(BuildContext context, QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      setStateAddress(path: global.dataDir!, address: scanData.code!);
-      switchPageTo(context, Send());
+      switchPageTo(context, Send(scanData.code!));
     });
   }
 

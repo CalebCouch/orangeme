@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-//import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:orange/flows/messages/home.dart';
 import 'package:orangeme_material/orangeme_material.dart';
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: global.navigation.navkey,
       title: 'orange.me',
       theme: theme(),
-      home: Test(),
+      home: BitcoinHome(),
     );
   }
 }

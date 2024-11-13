@@ -3,49 +3,29 @@ import 'package:orange/components/tabular.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/send/success.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
-import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/components/data_item.dart';
-import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/classes.dart';
 import 'package:orange/util.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/global.dart' as global;
 
-class Confirm extends GenericWidget {
-  Confirm({super.key});
+class Confirm extends StatefulWidget {
+  final ExtTransaction tx;
+  const Confirm({super.key, required this.tx});
 
-  late ExtTransaction tx;
-
+  @override
   ConfirmState createState() => ConfirmState();
 }
 
-class ConfirmState extends GenericState<Confirm> {
-  @override
-  PageName getPageName() {
-    return PageName.confirmTransaction;
-  }
-
-  @override
-  int refreshInterval() {
-    return 10;
-  }
-
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-      widget.tx = ExtTransaction.fromJson(json['transaction']);
-    });
-  }
-
+class ConfirmState extends State<Confirm> {
   bool isLoading = false;
 
   Future<void> onContinue() async {
     setState(() {
       isLoading = true;
     });
-    broadcastTx(path: global.dataDir!);
+    //broadcastTx(path: global.dataDir!);
     setState(() {
       isLoading = false;
     });
@@ -53,7 +33,7 @@ class ConfirmState extends GenericState<Confirm> {
   }
 
   @override
-  Widget build_with_state(BuildContext context) {
+  Widget build(BuildContext context) {
     BasicTransaction basicTx = widget.tx.tx;
     ShorthandTransaction shTx = basicTx.tx;
 
