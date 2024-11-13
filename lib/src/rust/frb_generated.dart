@@ -69,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.6.0';
 
   @override
-  int get rustContentHash => 1251776953;
+  int get rustContentHash => -1761856666;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -101,14 +101,14 @@ abstract class RustLibApi extends BaseApi {
   Future<MyCustomAsyncRuntime>
       crateApiCustomHandlerMyCustomAsyncRuntimeDefault();
 
-  Future<String> crateApiSimpleGetpage(
+  Future<String> crateApiSimpleGetPage(
       {required String path, required PageName page});
 
   bool crateApiPubStructsPlatformIsDesktop({required Platform that});
 
   Future<String> crateApiSimpleRustCall({required Thread thread});
 
-  Future<String> crateApiSimpleRuststart(
+  Future<String> crateApiSimpleRustStart(
       {required String path,
       required Platform platform,
       required FutureOr<String> Function(String) thread});
@@ -329,7 +329,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
 
   @override
-  Future<String> crateApiSimpleGetpage(
+  Future<String> crateApiSimpleGetPage(
       {required String path, required PageName page}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -341,16 +341,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
-        decodeErrorData: null,
+        decodeErrorData: sse_decode_AnyhowException,
       ),
-      constMeta: kCrateApiSimpleGetpageConstMeta,
+      constMeta: kCrateApiSimpleGetPageConstMeta,
       argValues: [path, page],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateApiSimpleGetpageConstMeta => const TaskConstMeta(
-        debugName: "getpage",
+  TaskConstMeta get kCrateApiSimpleGetPageConstMeta => const TaskConstMeta(
+        debugName: "getPage",
         argNames: ["path", "page"],
       );
 
@@ -389,7 +389,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
-        decodeErrorData: null,
+        decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiSimpleRustCallConstMeta,
       argValues: [thread],
@@ -403,7 +403,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<String> crateApiSimpleRuststart(
+  Future<String> crateApiSimpleRustStart(
       {required String path,
       required Platform platform,
       required FutureOr<String> Function(String) thread}) {
@@ -419,16 +419,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
-        decodeErrorData: null,
+        decodeErrorData: sse_decode_AnyhowException,
       ),
-      constMeta: kCrateApiSimpleRuststartConstMeta,
+      constMeta: kCrateApiSimpleRustStartConstMeta,
       argValues: [path, platform, thread],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateApiSimpleRuststartConstMeta => const TaskConstMeta(
-        debugName: "ruststart",
+  TaskConstMeta get kCrateApiSimpleRustStartConstMeta => const TaskConstMeta(
+        debugName: "rustStart",
         argNames: ["path", "platform", "thread"],
       );
 

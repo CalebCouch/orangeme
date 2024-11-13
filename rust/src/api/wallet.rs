@@ -130,7 +130,6 @@ impl Transaction {
 pub struct Wallet{
     inner: Arc<Mutex<BDKWallet<SqliteDatabase>>>,
     descriptors: DescriptorSet,
-    state: State,
     path: PathBuf
 }
 
@@ -138,12 +137,10 @@ impl Wallet {
     pub fn new(
         descriptors: DescriptorSet,
         path: PathBuf,
-        state: State
     ) -> Result<Self, Error> {
         Ok(Wallet{
             inner: Self::inner_wallet(&descriptors, path.clone())?,
             descriptors,
-            state,
             path
         })
     }
@@ -161,27 +158,8 @@ impl Wallet {
         )?)))
     }
 
-    pub async fn get_balance(&self) -> Result<f64, Error> {
-        Ok(self.inner.lock().await.get_balance()?.get_total() as f64 / SATS)
-    }
-
     pub async fn get_new_address(&self) -> Result<String, Error> {
         Ok(self.inner.lock().await.get_address(AddressIndex::New)?.address.to_string())
-    }
-
-    pub async fn get_tx(&self, txid: &Txid) -> Result<Transaction, Error> {
-        self.get_transactions().await?
-            .remove(txid)
-            .ok_or_else(|| Error::err("Transaction not found", &format!("No transaction found for Txid: {}", txid)))
-    }
-
-
-    pub async fn list_unspent(&self) -> Result<Vec<Transaction>, Error> {
-        Ok(self.get_transactions().await?.into_values().collect())
-    }
-
-    async fn get_transactions(&self) -> Result<BTreeMap<Txid, Transaction>, Error> {
-        self.state.get::<Transactions>(Field::Transactions(None)).await
     }
 
     pub async fn get_fees(&self, address: String, amount: f64, price: f64) -> Result<(f64, f64), Error> {
@@ -253,10 +231,10 @@ impl Wallet {
         Ok(())
     }
 
-    pub async fn refresh_state(&self) -> Result<(), Error> {
+    pub async fn refresh_state(&self, state: &State) -> Result<(), Error> {
         let inner = self.inner.lock().await;
         //Transactions
-        let mut txs = self.get_transactions().await?;
+        let mut txs = state.get::<Transactions>(Field::Transactions(None)).await?;
         for tx in inner.list_transactions(true)? {
             if let Some(transaction) = txs.get(&tx.txid) {
                 if transaction.confirmation_time.is_some() {continue;}
@@ -268,10 +246,10 @@ impl Wallet {
 
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }
-        self.state.set(Field::Transactions(Some(txs))).await?;
+        state.set(Field::Transactions(Some(txs))).await?;
 
         //Balance
-        self.state.set(Field::Balance(Some(self.get_balance().await?))).await?;
+        state.set(Field::Balance(Some(inner.get_balance()?.get_total() as f64 / SATS))).await?;
         Ok(())
     }
 }
@@ -281,7 +259,6 @@ impl Clone for Wallet {
         Wallet{
             inner: Wallet::inner_wallet(&self.descriptors, self.path.clone()).unwrap(),
             descriptors: self.descriptors.clone(),
-            state: self.state.clone(),
             path: self.path.clone()
         }
     }

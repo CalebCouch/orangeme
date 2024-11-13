@@ -213,21 +213,4 @@ impl Storage {
 //      pub personal: Contact,
 //  }
 
-#[derive(JsonSchema, Serialize, Deserialize, Clone)]
-pub struct Profile {
-    pub name: String,
-    pub did: Did,
-    pub pfp: Option<String>,
-    pub abt_me: Option<String>,
-}
 
-impl Profile {
-    pub fn new(
-        name: String,
-        did: Did,
-        pfp: Option<String>,
-        abt_me: Option<String>,
-    ) -> Self {
-        Profile{name, did, pfp, abt_me}
-    }
-}

@@ -8,9 +8,10 @@ import 'package:window_manager/window_manager.dart';
 import 'package:orange/global.dart' as global;
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/test.dart';
+import 'dart:ui';
 
 Future<void> startRust(String path) async {
-  global.navigation.throwError(await ruststart(
+  global.navigation.throwError(await rustStart(
     path: path,
     platform: global.platform,
     thread: global.dartCallback,
@@ -18,15 +19,23 @@ Future<void> startRust(String path) async {
 }
 
 Future<void> main() async {
-  await RustLib.init();
-  WidgetsFlutterBinding.ensureInitialized();
-  await global.getAppData();
-  startRust(global.dataDir!);
-  if (global.platform_isDesktop) {
-    WindowManager.instance.setMinimumSize(const Size(1280, 832));
-  }
-  runApp(MyApp());
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    await RustLib.init();
+    WidgetsFlutterBinding.ensureInitialized();
+    await global.getAppData();
+    startRust(global.dataDir!);
+    if (global.platform_isDesktop) {
+        WindowManager.instance.setMinimumSize(const Size(1280, 832));
+    }
+    FlutterError.onError = (details) {
+        FlutterError.presentError(details);
+        global.navigation.throwError(details.toString());
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+        global.navigation.throwError(error.toString());
+        return true;
+    };
+    runApp(MyApp());
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
 
 class MyApp extends StatelessWidget {

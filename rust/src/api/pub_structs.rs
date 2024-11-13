@@ -40,14 +40,3 @@ pub enum PageName {
 //  ChooseRecipient,
     Test
 }
-
-//  use allo_isolate::ffi::{DartCObject, DartCObjectType, DartCObjectValue};
-
-//  impl flutter_rust_bridge::IntoDart for BTreeMap<Txid, Transaction> {
-//      fn into_dart(self) -> DartCObject {
-//          DartCObject {
-//              ty: DartCObjectType::DartNull,
-//              value: DartCObjectValue { as_bool: false },
-//          }
-//      }
-//  }

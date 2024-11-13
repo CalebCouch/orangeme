@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.6.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1251776953;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1761856666;
 
 // Section: executor
 
@@ -296,7 +296,7 @@ fn wire__crate__api__custom_handler__MyCustomAsyncRuntime_default_impl(
         },
     )
 }
-fn wire__crate__api__simple__getpage_impl(
+fn wire__crate__api__simple__getPage_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -304,7 +304,7 @@ fn wire__crate__api__simple__getpage_impl(
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "getpage",
+            debug_name: "getPage",
             port: Some(port_),
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
@@ -322,11 +322,9 @@ fn wire__crate__api__simple__getpage_impl(
             let api_page = <crate::api::pub_structs::PageName>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, ()>(
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || async move {
-                        let output_ok = Result::<_, ()>::Ok(
-                            crate::api::simple::getpage(api_path, api_page).await,
-                        )?;
+                        let output_ok = crate::api::simple::getPage(api_path, api_page).await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -391,10 +389,9 @@ fn wire__crate__api__simple__rustCall_impl(
             let api_thread = <crate::api::pub_structs::Thread>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, ()>(
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || async move {
-                        let output_ok =
-                            Result::<_, ()>::Ok(crate::api::simple::rustCall(api_thread).await)?;
+                        let output_ok = crate::api::simple::rustCall(api_thread).await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -403,7 +400,7 @@ fn wire__crate__api__simple__rustCall_impl(
         },
     )
 }
-fn wire__crate__api__simple__ruststart_impl(
+fn wire__crate__api__simple__rustStart_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -411,7 +408,7 @@ fn wire__crate__api__simple__ruststart_impl(
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "ruststart",
+            debug_name: "rustStart",
             port: Some(port_),
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
@@ -432,11 +429,11 @@ fn wire__crate__api__simple__ruststart_impl(
             );
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, ()>(
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || async move {
-                        let output_ok = Result::<_, ()>::Ok(
-                            crate::api::simple::ruststart(api_path, api_platform, api_thread).await,
-                        )?;
+                        let output_ok =
+                            crate::api::simple::rustStart(api_path, api_platform, api_thread)
+                                .await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -693,9 +690,9 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        8 => wire__crate__api__simple__getpage_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__simple__getPage_impl(port, ptr, rust_vec_len, data_len),
         10 => wire__crate__api__simple__rustCall_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__simple__ruststart_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__simple__rustStart_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

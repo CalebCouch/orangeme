@@ -70,16 +70,17 @@ Future<String> invoke(String method, String data) async {
     }
 }
 
+Future<String> callRust(Thread thread) async {
+    var result = await rustCall(thread: thread);
+    if (result.contains("Error")) {
+        navigation.throwError(result);
+    }
+    return result;
+}
+
 Future<String> dartCallback(String dartCommand) async {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
-        case "internet": {
-            if (command.data == "true") {
-                internet_connected = true;
-            } else {
-                internet_connected = false;
-            }
-        }
         case "storage_set": {
             var split = command.data.split("\u0000");
             String key = split[0];
@@ -91,15 +92,6 @@ Future<String> dartCallback(String dartCommand) async {
         }
         case "print":
             print(command.data);
-        case "get_commands":
-            var json = jsonEncode(rustCommands);
-            rustCommands = [];
-            return json;
-        case "post_response":
-            print(dartCommand);
-            rustResponses.add(RustR.fromJson(jsonDecode(command.data)));
-        case "error":
-            navigation.throwError(command.data);
         case var unknown:
             return "Error:UnknownMethod:$unknown";
     }

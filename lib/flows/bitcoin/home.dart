@@ -37,7 +37,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
   @override
   int refreshInterval() {
-    return 1;
+    return 100;
   }
 
   @override

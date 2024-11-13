@@ -3,7 +3,8 @@ use super::Error;
 use super::simple::rustCall;
 use super::pub_structs::{PageName, Platform, Thread, WalletMethod};
 use super::wallet::{Transactions, Transaction};
-use super::structs::{DateTime, Profile};
+use super::structs::{DateTime};
+use super::web5::Profile;
 
 use log::info;
 use simple_database::KeyValueStore;
@@ -36,6 +37,8 @@ pub enum Field {
 
     Transactions(Option<Transactions>),
     Balance(Option<f64>),
+
+    Profile(Option<Profile>),
 
 //  LegacySeed(Option<Seed>),
 //  DescriptorSet(Option<DescriptorSet>),
@@ -287,7 +290,7 @@ impl StateManager {
 
         pub async fn receive(&self) -> Result<String, Error> {
             Ok(serde_json::to_string(&Receive{
-                address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await
+                address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
             })?)
         }
 

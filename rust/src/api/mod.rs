@@ -10,13 +10,13 @@ use error::Error;
 pub mod pub_structs;
 
 /// flutter_rust_bridge:ignore
-pub mod protocols;
-/// flutter_rust_bridge:ignore
 pub mod structs;
 /// flutter_rust_bridge:ignore
 pub mod price;
 /// flutter_rust_bridge:ignore
 pub mod wallet;
+/// flutter_rust_bridge:ignore
+pub mod web5;
 /// flutter_rust_bridge:ignore
 pub mod state;
 //  /// flutter_rust_bridge:ignore

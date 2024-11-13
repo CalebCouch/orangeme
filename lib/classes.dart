@@ -1,20 +1,40 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/error.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
-// import 'dart:io';
 import 'dart:async';
+import 'package:async/async.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/global.dart' as global;
 
 import 'package:orange/src/rust/api/pub_structs.dart';
 
-
+import 'dart:io' as DartIO;
+Platform getPlatform() {
+    if (DartIO.Platform.isWindows) {
+      return Platform.windows;
+    }
+    if (DartIO.Platform.isLinux) {
+      return Platform.linux;
+    }
+    if (DartIO.Platform.isMacOS) {
+      return Platform.mac;
+    }
+    if (DartIO.Platform.isIOS) {
+      return Platform.ios;
+    }
+    if (DartIO.Platform.isAndroid) {
+      return Platform.android;
+    }
+    if (DartIO.Platform.isFuchsia) {
+      return Platform.fuchsia;
+    }
+    throw 'Unsupported Platform';
+}
 
 /* Manages and triggers shake animations by notifying listeners. */
 class ShakeController extends ChangeNotifier {
@@ -23,7 +43,7 @@ class ShakeController extends ChangeNotifier {
 
 abstract class GenericWidget extends StatefulWidget {
   Timer? timer;
-  Future<String>? async_state;
+  CancelableOperation<String>? async_state;
   bool pause_refresh = false;
 
   GenericWidget({super.key});
@@ -38,19 +58,23 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
   void getState() async {
     int time = DateTime.now().millisecondsSinceEpoch;
-    widget.async_state = getpage(path: global.dataDir!, page: getPageName());
-    String state = await widget.async_state!;
-    //print("gotstate in ${DateTime.now().millisecondsSinceEpoch - time}");
-    if (!widget.pause_refresh) {
-      unpack_state(jsonDecode(state));
-      _createTimer();
-    }
+    widget.async_state = CancelableOperation.fromFuture(
+        getPage(path: global.dataDir!, page: getPageName()),
+    );
+    widget.async_state!.then((String state) {
+        //print("gotstate in ${DateTime.now().millisecondsSinceEpoch - time}");
+        print("state: $state");
+        if (!widget.pause_refresh) {
+          unpack_state(jsonDecode(state));
+          _createTimer();
+        }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-        future: widget.async_state,
+        future: widget.async_state?.value,
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
             return build_with_state(context);
@@ -87,6 +111,7 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
   @override
   void dispose() {
     //widget.gettingState!.cancel();
+    widget.async_state?.cancel();
     widget.timer?.cancel();
     super.dispose();
   }

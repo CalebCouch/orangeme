@@ -17,13 +17,13 @@ use super::Error;
 use super::pub_structs::{Platform, PageName, Thread, WalletMethod};
 use super::state::Field;
 
-use super::structs::{DartCommand, Storage, DartCallback, Profile};
+use super::web5::MessagingAgent;
+use super::structs::{DartCommand, Storage, DartCallback};
 use super::price::PriceGetter;
 use super::state::{StateManager, State};
 //use super::usb::UsbInfo;
 
 use simple_database::SqliteStore;
-use simple_database::database::{FiltersBuilder, IndexBuilder, Filter};
 
 use bdk::bitcoin::{Network, Address};
 use bdk::database::SqliteDatabase;
@@ -54,11 +54,7 @@ use chrono::Local;
 
 //use crate::api::state::Conversation;
 
-use web5_rust::dids::{DhtDocument, Identity};
-use web5_rust::{Record};
-use super::protocols::Protocols;
-
-use log::info;
+use log::{error, info};
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -70,6 +66,8 @@ use tokio::sync::mpsc::{Receiver, Sender};
 use std::collections::HashMap;
 
 use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
+
+use web5_rust::dids::{DhtDocument, Identity};
 
 static THREAD_CHANNELS: LazyLock<Mutex<(Option<Sender<(oneshot::Sender<String>, WalletMethod)>>, Option<String>)>> = LazyLock::new(|| Mutex::new((None, None)));
 
@@ -86,16 +84,7 @@ async fn spawn<T>(task: T) -> Result<(), Error>
     match tokio::spawn(task).await {
         Ok(Ok(o)) => Ok(o),
         Ok(Err(err)) => Err(err),
-        Err(e) => match e.try_into_panic() {
-            Ok(panic) => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Debug>>() {
-                Some(p) => Err(Error::Exited(format!("{:?}", p))),
-                None => match panic.downcast_ref::<Box<dyn Send + 'static + std::fmt::Display>>() {
-                    Some(p) => Err(Error::Exited(p.to_string())),
-                    None => Err(Error::Exited(format!("Cannot convert panic with type id {:?} to string via Debug or Display", panic.type_id()))),
-                }
-            },
-            Err(e) => Err(Error::Exited(e.to_string()))
-        }
+        Err(e) => Err(Error::TokioJoin(e))
     }
 }
 
@@ -108,7 +97,6 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
             .map(|response| response.status().is_success())
             .unwrap_or(false);
 
-        if !connected { panic!("Internet connection failed") };
         state.set(Field::Internet(Some(connected))).await?;
         thread::sleep(time::Duration::from_millis(1000));
     }
@@ -117,82 +105,52 @@ async fn internet_thread(mut state: State) -> Result<(), Error> {
 async fn price_thread(mut state: State) -> Result<(), Error> {
     loop {
         state.set(Field::Price(Some(PriceGetter::get(None).await?))).await?;
-        thread::sleep(time::Duration::from_millis(2_000));
+        thread::sleep(time::Duration::from_millis(15_000));
     }
 }
 
 async fn wallet_sync_thread(wallet: Wallet) -> Result<(), Error> {
     loop {
         wallet.sync().await?;
+        thread::sleep(time::Duration::from_millis(10_000));
+    }
+}
+
+async fn wallet_refresh_thread(wallet: Wallet, state: State) -> Result<(), Error> {
+    loop {
+        wallet.refresh_state(&state).await?;
         thread::sleep(time::Duration::from_millis(1_000));
     }
-    Err(Error::Exited("Wallet Sync".to_string()))
 }
 
 async fn wallet_thread(wallet: Wallet, mut recv: Receiver<(oneshot::Sender<String>, WalletMethod)>) -> Result<(), Error> {
     loop {
         let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
         match method {
-            WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?),
+            WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?).map_err(|e| Error::Exited(e))?,
         };
     }
-    Err(Error::Exited("Wallet".to_string()))
 }
 
-//  async fn web5_thread(mut state: State, platform: Platform, id: Identity) -> Result<(), Error> {
-//      info!("Start Web5 init");
-//      if !platform.is_desktop() {
-//          let mut wallet = web5_rust::Wallet::new(id, None, None);
-//          let agent_key = wallet.get_agent_key(&Protocols::rooms_protocol()).await?;
-//          let agent = web5_rust::Agent::new(agent_key, Protocols::get(), None, None);
-//          let tenant = agent.tenant().clone();
-//          let profile = if let Some(p) = agent.public_read(FiltersBuilder::build(vec![
-//              ("author", Filter::equal(tenant.to_string())),
-//              ("type", Filter::equal("profile"))]
-//          ), None, None).await?.first() {
-//              let profile = serde_json::from_slice::<Profile>(&p.1.payload)?;
-//              state.set(Field::Profile, &profile)?;
-//              profile
-//          } else {
-//              let index = IndexBuilder::build(vec![("type", "profile")]);
-//              let profile = Profile::new("Default Name".to_string(), tenant, None, None);
-//              let record = Record::new(None, &Protocols::profile(), serde_json::to_vec(&profile)?);
-//              agent.public_create(record, index, None).await?;
-//              state.set(Field::Profile, &profile).await?;
-//              profile
-//          };
-//          info!("Finished Web5 init");
-//          loop {
-//              info!("Web5 scan");
-//            //agent.scan().await?;
-//            //thread::sleep(time::Duration::from_millis(1_000));
-//          }
-//          Err(Error::Exited("Agent Scan".to_string()))
-//      } else {Ok(())}
-//  }
+async fn agent_sync_thread(agent: MessagingAgent) -> Result<(), Error> {
+    loop {
+        agent.sync().await?;
+        thread::sleep(time::Duration::from_millis(10_000));
+    }
+}
 
-//  async fn usb_thread(mut state: State) -> Result<(), Error> {
-//      let platform: Platform = state.get(Field::Platform).await?;
-//      if platform.is_desktop() {
-//          let mut usb_info: UsbInfo = UsbInfo::new(&platform)?;
-//          loop {
-//              if let Some(device_path) = usb_info.detect_new_device_path(&platform)? {
-//                  // Convert Option<PathBuf> to String safely, TODO update state here
-//                  let device_path_str = device_path.to_string_lossy().into_owned();
-//                  // Pass the string to the invoke function
-//                  //dart_callback.call("print", &device_path_str).await?;
-//              }
-//              thread::sleep(time::Duration::from_millis(1_000));
-//          }
-//          Err::<(), Error>(Error::Exited("Usb Detection".to_string()))
-//      } else {Ok(())}
-//  }
+async fn agent_refresh_thread(agent: MessagingAgent, state: State) -> Result<(), Error> {
+    loop {
+        agent.refresh_state(&state).await?;
+        thread::sleep(time::Duration::from_millis(5_000));
+    }
+}
 
-async fn async_rust (
+pub async fn rustStart (
     path: String,
     platform: Platform,
     thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-) -> Result<(), Error> {
+) -> Result<String, Error> {
 
     #[cfg(target_os = "android")]
     android_logger::init_once(
@@ -238,54 +196,35 @@ async fn async_rust (
     threads.0 = Some(w_tx);
     drop(threads);
 
-    let mut wallet = Wallet::new(descriptors, path, state.clone())?;
+    let wallet = Wallet::new(descriptors, path.clone())?;
+
+    let agent = MessagingAgent::new(id, path).await?;
 
     tokio::try_join!(
         spawn(price_thread(state.clone())),
         spawn(internet_thread(state.clone())),
         spawn(wallet_sync_thread(wallet.clone())),
-        spawn(wallet_thread(wallet, w_rx)),
-      //spawn(web5_thread(state.clone(), platfrom, id, path)),
-      //spawn(usb_thread(state)),
+        spawn(wallet_refresh_thread(wallet.clone(), state.clone())),
+        spawn(wallet_thread(wallet.clone(), w_rx)),
+        spawn(agent_sync_thread(agent.clone())),
+        spawn(agent_refresh_thread(agent.clone(), state.clone())),
+      //spawn(agent_thread(agent, state.clone())),
     )?;
 
     Err(Error::Exited("Main Thread".to_string()))
 }
 
-pub async fn rustCall(thread: Thread) -> String {
-    let result: Result<String, Error> = async {
-        let (o_tx, o_rx) = oneshot::channel::<String>();
-        let threads = THREAD_CHANNELS.lock().await;
-        match thread {
-            Thread::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await.unwrap(),
-        }
-        Ok(o_rx.await.unwrap())
-    }.await;
-    match result {
-        Ok(s) => s,
-        Err(e) => format!("Error: {}", e)
+pub async fn rustCall(thread: Thread) -> Result<String, Error> {
+    let (o_tx, o_rx) = oneshot::channel::<String>();
+    let threads = THREAD_CHANNELS.lock().await;
+    match thread {
+        Thread::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await.unwrap(),
     }
+    Ok(o_rx.await.unwrap())
 }
 
-pub async fn ruststart (
-    path: String,
-    platform: Platform,
-    thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
-) -> String {
-    match async_rust(path, platform, thread).await {
-        Ok(()) => "OK".to_string(),
-        Err(e) => e.to_string()
-    }
-}
-
-pub async fn getpage(path: String, page: PageName) -> String {
-    let result: Result<String, Error> = async {
-        StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(page).await
-    }.await;
-    match result {
-        Ok(s) => s,
-        Err(e) => format!("Error: {}", e)
-    }
+pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
+    StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(page).await
 }
 
 //  pub async fn setstate(path: String, field: Field) -> String {
@@ -297,61 +236,6 @@ pub async fn getpage(path: String, page: PageName) -> String {
 //      match result {
 //          Ok(()) => "Ok".to_string(),
 //          Err(e) => format!("Error: {}", e)
-//      }
-//  }
-
-//  pub async fn setStateAddress(path: String, mut address: String) -> String {
-//      let result: Result<String, Error> = (|| async {
-//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
-//          state.set::<String>(Field::Address, &address).await?;
-//          Ok("Address set successfully".to_string())
-//      })().await;
-//      match result {
-//          Ok(s) => s,
-//          Err(e) => format!("Error: {}", e),
-//      }
-//  }
-
-
-//  pub async fn setStateConversation(path: String, index: usize) -> String {
-//      let result: Result<String, Error> = (|| async {
-//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
-//          let conversations = state.get::<Vec<Conversation>>(Field::Conversations).await?;
-//          let conversation = &conversations[index];
-//          state.set(Field::CurrentConversation, conversation).await?;
-//          Ok("Current conversation set successfully".to_string())
-//      })().await;
-
-//      match result {
-//          Ok(message) => message,
-//          Err(error) => format!("Error: {}", error),
-//      }
-//  }
-
-//  pub async fn setStateBtc(path: String, btc: f64) -> String {
-//      let result: Result<String, Error> = (|| async {
-//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
-//          state.set(Field::AmountBTC, &btc).await?;
-//          Ok("BTC set successfully".to_string())
-//      })().await;
-
-//      match result {
-//          Ok(message) => message,
-//          Err(error) => format!("Error: {}", error),
-//      }
-//  }
-
-
-//  pub async fn setStatePriority(path: String, index: u8) -> String {
-//      let result: Result<String, Error> = (|| async {
-//          let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
-//          state.set(Field::Priority, &index).await?;
-//          Ok("Priority set successfully".to_string())
-//      })().await;
-
-//      match result {
-//          Ok(message) => message,
-//          Err(error) => format!("Error: {}", error),
 //      }
 //  }
 
