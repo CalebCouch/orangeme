@@ -232,7 +232,8 @@ impl StateManager {
     pub async fn my_profile(&self) -> Result<String, Error> {
         let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
         Ok(serde_json::to_string(&MyProfile{
-            profile: Some(profile),
+            profile: profile,
+            address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
         })?)
     }
 
@@ -361,7 +362,8 @@ struct ViewTransaction {
 
 #[derive(Serialize)]
 struct MyProfile {
-    pub profile: Option<Profile>
+    pub profile: Profile,
+    pub address: String,
 }
 
 //  #[derive(Serialize)]

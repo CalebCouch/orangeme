@@ -11,13 +11,19 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 class MyProfile extends GenericWidget {
   MyProfile({super.key});
 
-  Profile? profile = Profile('', '', '', '');
+  Profile profile = Profile('null', 'nulla', '', 'nulled');
+  String address = '';
 
   @override
   MyProfileState createState() => MyProfileState();
 }
 
 class MyProfileState extends GenericState<MyProfile> {
+
+  String name = '';
+  String did = '';
+  String? aboutMe = null;
+  String? photo = null;
     
   @override
   PageName getPageName() {
@@ -32,27 +38,18 @@ class MyProfileState extends GenericState<MyProfile> {
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
-      widget.profile = json['profile'] != null ? Profile.fromJson(json['profile'] as Map<String, dynamic>) : null;
+        widget.profile = Profile.fromJson(json['profile']);
+        widget.address = json['address'];
+        did = widget.profile.did;
+        name = widget.profile.name.isEmpty ? widget.profile.did : widget.profile.name;
+        aboutMe = widget.profile.abtme;
+        photo = widget.profile.pfp;
     });
   }
 
-  String name = '';
-  String did = '';
-  String? aboutMe = '';
-  String? photo = '';
 
   void initState() {
     super.initState();
-    setState(() {
-      if (widget.profile == null) {
-        did = name = aboutMe = photo = '';
-      } else {
-        did = widget.profile!.did;
-        name = widget.profile!.name.isEmpty ? widget.profile!.did : widget.profile!.name;
-        aboutMe = widget.profile!.abtme;
-        photo = widget.profile!.pfp;
-      }
-    });
   }
 
   final ImagePicker _picker = ImagePicker();
@@ -120,7 +117,6 @@ class MyProfileState extends GenericState<MyProfile> {
     }
 
     String enabled = save ? 'enabled' : 'disabled';
-    String address = ''; //Need to generate an address
     return Stack_Default(
       Header_Stack(context, "My profile"),
       [
@@ -128,7 +124,7 @@ class MyProfileState extends GenericState<MyProfile> {
         EditName(),
         EditDesc(),
         didItem(context, did),
-        addressItem(context, address),
+        addressItem(context, widget.address),
       ],
       Bumper(context, [CustomButton('Save', 'primary lg expand none', onSave, enabled)]),
     );
