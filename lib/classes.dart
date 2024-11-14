@@ -63,7 +63,6 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
     );
     widget.async_state!.then((String state) {
         //print("gotstate in ${DateTime.now().millisecondsSinceEpoch - time}");
-        print("state: $state");
         if (!widget.pause_refresh) {
           unpack_state(jsonDecode(state));
           _createTimer();

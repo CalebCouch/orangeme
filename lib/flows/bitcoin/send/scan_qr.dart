@@ -12,73 +12,73 @@ class ScanQR extends StatefulWidget {
 }
 
 class ScanQRState extends State<ScanQR> {
-  late QRViewController controller;
-  GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+    late QRViewController controller;
+    GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  @override
-  Widget build(BuildContext context) {
-    return Root_Takeover(
-      Header_Stack(context, "Scan QR code"),
-      Expanded(
-        child: Stack(children: [
-          qrScanner(context),
-          Guide(),
-        ]),
-      ),
-    );
-  }
+    @override
+    Widget build(BuildContext context) {
+        return Root_Takeover(
+            Header_Stack(context, "Scan QR code"),
+            Container(),
+            Expanded(
+                child: Stack(children: [
+                    qrScanner(context),
+                    Guide(),
+                ]),
+            ),
+        );
+    }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+    @override
+    void dispose() {
+        controller.dispose();
+        super.dispose();
+    }
 
-  _onQRViewCreated(BuildContext context, QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      String scannedCode = scanData.code ?? '';
+    _onQRViewCreated(BuildContext context, QRViewController controller) {
+        this.controller = controller;
+        controller.scannedDataStream.listen((scanData) {
+        String scannedCode = scanData.code ?? '';
 
-      if (scannedCode.startsWith('bitcoin:')) {
-        scannedCode = scannedCode.substring(8); // Remove the "bitcoin:" part
-      }
+        if (scannedCode.startsWith('bitcoin:')) {
+            scannedCode = scannedCode.substring(8); // Remove the "bitcoin:" part
+        }
 
-      // Pop back and return the scanned QR code
-      Navigator.pop(context, scannedCode);
-    });
-  }
+        // Pop back and return the scanned QR code
+        });
+    }
 
-  Widget Guide() {
-    return Expanded(
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            scanBox(),
-            const Spacing(12),
-            const CustomText('text md text_secondary', 'Scan a bitcoin QR code'),
-          ],
+    Widget Guide() {
+        return Expanded(
+        child: Center(
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                scanBox(),
+                const Spacing(12),
+                const CustomText('text md text_secondary', 'Scan a bitcoin QR code'),
+            ],
+            ),
         ),
-      ),
-    );
-  }
+        );
+    }
 
-  scanBox() {
-    return Container(
-      height: 300,
-      width: 300,
-      decoration: BoxDecoration(
-        border: Border.all(color: ThemeColor.bg, width: 4),
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
-      ),
-    );
-  }
+    scanBox() {
+        return Container(
+        height: 300,
+        width: 300,
+        decoration: BoxDecoration(
+            border: Border.all(color: ThemeColor.bg, width: 4),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+        ),
+        );
+    }
 
-  qrScanner(BuildContext context) {
-    return QRView(
-      key: qrKey,
-      onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(context, controller)},
-    );
-  }
+    qrScanner(BuildContext context) {
+        return QRView(
+        key: qrKey,
+        onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(context, controller)},
+        );
+    }
 }

@@ -53,17 +53,7 @@ class SendState extends State<Send> {
   }
 
   onScan() async {
-    String? scannedCode = await Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => const ScanQR(),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
-    setState(() {
-      address = scannedCode ?? '';
-    });
+    navigateTo(context, ScanQR());
   }
 
   backButton() {
