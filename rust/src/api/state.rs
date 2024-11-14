@@ -84,18 +84,22 @@ impl State {
         Ok(())
     }
 
-    pub async fn get_raw(&self, field: Field) -> Result<Option<Vec<u8>>, Error> {
-        Ok(self.store.get(&field.into_bytes()).await?)
+    pub async fn get_raw(&self, field: &Field) -> Result<Option<Vec<u8>>, Error> {
+        Ok(self.store.get(field.into_bytes()).await?)
     }
 
-    pub async fn get_o<T: for <'a> Deserialize<'a>>(&self, field: Field) -> Result<Option<T>, Error> {
-        Ok(self.get_raw(field).await?.map(|b|
+    pub async fn get_o<T: for <'a> Deserialize<'a>>(&self, field: &Field) -> Result<Option<T>, Error> {
+        Ok(self.get_raw(&field).await?.map(|b|
             serde_json::from_slice::<Option<T>>(&b)
         ).transpose()?.flatten())
     }
 
-    pub async fn get<T: for <'a> Deserialize<'a> + Default>(&self, field: Field) -> Result<T, Error> {
+    pub async fn get_or_default<T: for <'a> Deserialize<'a> + Default>(&self, field: &Field) -> Result<T, Error> {
         Ok(self.get_o(field).await?.unwrap_or_default())
+    }
+
+    pub async fn get<T: for <'a> Deserialize<'a>>(&self, field: &Field) -> Result<T, Error> {
+        Ok(self.get_o(field).await?.ok_or(Error::not_found("State.get_f", &format!("Value not found for field: {:?}", field)))?)
     }
 }
 
