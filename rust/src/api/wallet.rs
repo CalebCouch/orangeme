@@ -163,14 +163,26 @@ impl Wallet {
     }
 
     pub async fn get_fees(&self, address: String, amount: f64, price: f64) -> Result<(f64, f64), Error> {
-        let address = Address::from_str(&address)?.require_network(Network::Bitcoin);
+        let address = Address::from_str(&address)?.require_network(Network::Bitcoin)?;
         let inner = self.inner.lock().await;
         let mut builder = inner.build_tx();
-        builder.add_recipient(address?.script_pubkey(), (amount * SATS) as u64);
+        builder.add_recipient(address.script_pubkey(), (amount * SATS) as u64);
         let size = builder.finish()?.0.extract_tx().vsize() as f64;
 
         let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
         Ok((((blockchain.estimate_fee(3)? / 1000 as f64) * size) * price, ((blockchain.estimate_fee(1)? / 1000 as f64) * size) * price))
+    }
+
+    pub async fn build_transaction(&self, address: String, amount: f64) -> Result<(PSBT, Transaction)> {
+        let inner = self.inner.lock().await;
+        let mut builder = inner.build_tx();
+        builder.add_recipient(address.script_pubkey(), (amount * SATS) as u64);
+        let (psbt, tx_details) = builder.finish()?;
+        let tx = psbt.clone().extract_tx();
+        tx_details.transaction = Some(tx);
+        let price = Self::get_price(tx.confirmation_time.as_ref()).await?;
+        let transaction = Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?;
+        Ok((psbt, transaction))
     }
 
 //  pub async fn build_transaction(&mut self) -> Result<String, Error> {
@@ -215,6 +227,14 @@ impl Wallet {
 //      Ok(serde_json::to_string(&tx)?)
 //  }
 
+    async fn get_price(confrimation_time: Option<&BlockTime>) -> Result<f64, Error> {
+        Ok(if let Some(ct) = tx.confirmation_time {
+            PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
+        } else {
+            PriceGetter::get(None).await?
+        })
+    }
+
 
     fn get_blockchain() -> Result<ElectrumBlockchain, Error> {
         let client = bdk::electrum_client::Client::new(CLIENT_URI)?;
@@ -234,16 +254,14 @@ impl Wallet {
     pub async fn refresh_state(&self, state: &State) -> Result<(), Error> {
         let inner = self.inner.lock().await;
         //Transactions
-        let mut txs = state.get::<Transactions>(Field::Transactions(None)).await?;
+        let mut txs = state.get_or_default::<Transactions>(&Field::Transactions(None)).await?;
         for tx in inner.list_transactions(true)? {
             if let Some(transaction) = txs.get(&tx.txid) {
                 if transaction.confirmation_time.is_some() {continue;}
                 if tx.confirmation_time.is_none() {continue;}
             }
-            let price = if let Some(ct) = tx.confirmation_time.as_ref() {
-                PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
-            } else {0.0};
 
+            let price = Self::get_price(tx.confirmation_time.as_ref()).await?;
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }
         state.set(Field::Transactions(Some(txs))).await?;
