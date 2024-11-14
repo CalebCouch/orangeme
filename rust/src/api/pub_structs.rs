@@ -33,6 +33,7 @@ pub enum PageName {
     Receive,
     ViewTransaction(String),
     MyProfile,
+    MessagesHome,
 //  Receive,
 //  ViewTransaction,
 //  MessagesHome,

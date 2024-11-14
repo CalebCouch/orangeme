@@ -605,6 +605,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 4:
         return const PageName_MyProfile();
       case 5:
+        return const PageName_MessagesHome();
+      case 6:
         return const PageName_Test();
       default:
         throw Exception("unreachable");
@@ -792,6 +794,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 4:
         return const PageName_MyProfile();
       case 5:
+        return const PageName_MessagesHome();
+      case 6:
         return const PageName_Test();
       default:
         throw UnimplementedError('');
@@ -992,8 +996,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(field0, serializer);
       case PageName_MyProfile():
         sse_encode_i_32(4, serializer);
-      case PageName_Test():
+      case PageName_MessagesHome():
         sse_encode_i_32(5, serializer);
+      case PageName_Test():
+        sse_encode_i_32(6, serializer);
       default:
         throw UnimplementedError('');
     }

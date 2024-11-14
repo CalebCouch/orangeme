@@ -23,6 +23,7 @@ mixin _$PageName {
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() myProfile,
+    required TResult Function() messagesHome,
     required TResult Function() test,
   }) =>
       throw _privateConstructorUsedError;
@@ -33,6 +34,7 @@ mixin _$PageName {
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
     TResult? Function()? test,
   }) =>
       throw _privateConstructorUsedError;
@@ -43,6 +45,7 @@ mixin _$PageName {
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? myProfile,
+    TResult Function()? messagesHome,
     TResult Function()? test,
     required TResult orElse(),
   }) =>
@@ -54,6 +57,7 @@ mixin _$PageName {
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_Test value) test,
   }) =>
       throw _privateConstructorUsedError;
@@ -64,6 +68,7 @@ mixin _$PageName {
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_Test value)? test,
   }) =>
       throw _privateConstructorUsedError;
@@ -74,6 +79,7 @@ mixin _$PageName {
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) =>
@@ -147,6 +153,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() myProfile,
+    required TResult Function() messagesHome,
     required TResult Function() test,
   }) {
     return bitcoinHome();
@@ -160,6 +167,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
     TResult? Function()? test,
   }) {
     return bitcoinHome?.call();
@@ -173,6 +181,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? myProfile,
+    TResult Function()? messagesHome,
     TResult Function()? test,
     required TResult orElse(),
   }) {
@@ -190,6 +199,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_Test value) test,
   }) {
     return bitcoinHome(this);
@@ -203,6 +213,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_Test value)? test,
   }) {
     return bitcoinHome?.call(this);
@@ -216,6 +227,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -313,6 +325,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() myProfile,
+    required TResult Function() messagesHome,
     required TResult Function() test,
   }) {
     return speed(field0, field1);
@@ -326,6 +339,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
     TResult? Function()? test,
   }) {
     return speed?.call(field0, field1);
@@ -339,6 +353,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? myProfile,
+    TResult Function()? messagesHome,
     TResult Function()? test,
     required TResult orElse(),
   }) {
@@ -356,6 +371,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_Test value) test,
   }) {
     return speed(this);
@@ -369,6 +385,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_Test value)? test,
   }) {
     return speed?.call(this);
@@ -382,6 +399,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -453,6 +471,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() myProfile,
+    required TResult Function() messagesHome,
     required TResult Function() test,
   }) {
     return receive();
@@ -466,6 +485,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
     TResult? Function()? test,
   }) {
     return receive?.call();
@@ -479,6 +499,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? myProfile,
+    TResult Function()? messagesHome,
     TResult Function()? test,
     required TResult orElse(),
   }) {
@@ -496,6 +517,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_Test value) test,
   }) {
     return receive(this);
@@ -509,6 +531,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_Test value)? test,
   }) {
     return receive?.call(this);
@@ -522,6 +545,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -613,6 +637,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() myProfile,
+    required TResult Function() messagesHome,
     required TResult Function() test,
   }) {
     return viewTransaction(field0);
@@ -626,6 +651,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
     TResult? Function()? test,
   }) {
     return viewTransaction?.call(field0);
@@ -639,6 +665,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? myProfile,
+    TResult Function()? messagesHome,
     TResult Function()? test,
     required TResult orElse(),
   }) {
@@ -656,6 +683,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_Test value) test,
   }) {
     return viewTransaction(this);
@@ -669,6 +697,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_Test value)? test,
   }) {
     return viewTransaction?.call(this);
@@ -682,6 +711,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -752,6 +782,7 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() myProfile,
+    required TResult Function() messagesHome,
     required TResult Function() test,
   }) {
     return myProfile();
@@ -765,6 +796,7 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
     TResult? Function()? test,
   }) {
     return myProfile?.call();
@@ -778,6 +810,7 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? myProfile,
+    TResult Function()? messagesHome,
     TResult Function()? test,
     required TResult orElse(),
   }) {
@@ -795,6 +828,7 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_Test value) test,
   }) {
     return myProfile(this);
@@ -808,6 +842,7 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_Test value)? test,
   }) {
     return myProfile?.call(this);
@@ -821,6 +856,7 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -834,6 +870,144 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
 abstract class PageName_MyProfile extends PageName {
   const factory PageName_MyProfile() = _$PageName_MyProfileImpl;
   const PageName_MyProfile._() : super._();
+}
+
+/// @nodoc
+abstract class _$$PageName_MessagesHomeImplCopyWith<$Res> {
+  factory _$$PageName_MessagesHomeImplCopyWith(
+          _$PageName_MessagesHomeImpl value,
+          $Res Function(_$PageName_MessagesHomeImpl) then) =
+      __$$PageName_MessagesHomeImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$PageName_MessagesHomeImplCopyWithImpl<$Res>
+    extends _$PageNameCopyWithImpl<$Res, _$PageName_MessagesHomeImpl>
+    implements _$$PageName_MessagesHomeImplCopyWith<$Res> {
+  __$$PageName_MessagesHomeImplCopyWithImpl(_$PageName_MessagesHomeImpl _value,
+      $Res Function(_$PageName_MessagesHomeImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
+  const _$PageName_MessagesHomeImpl() : super._();
+
+  @override
+  String toString() {
+    return 'PageName.messagesHome()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PageName_MessagesHomeImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() bitcoinHome,
+    required TResult Function(String field0, double field1) speed,
+    required TResult Function() receive,
+    required TResult Function(String field0) viewTransaction,
+    required TResult Function() myProfile,
+    required TResult Function() messagesHome,
+    required TResult Function() test,
+  }) {
+    return messagesHome();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? bitcoinHome,
+    TResult? Function(String field0, double field1)? speed,
+    TResult? Function()? receive,
+    TResult? Function(String field0)? viewTransaction,
+    TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
+    TResult? Function()? test,
+  }) {
+    return messagesHome?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? bitcoinHome,
+    TResult Function(String field0, double field1)? speed,
+    TResult Function()? receive,
+    TResult Function(String field0)? viewTransaction,
+    TResult Function()? myProfile,
+    TResult Function()? messagesHome,
+    TResult Function()? test,
+    required TResult orElse(),
+  }) {
+    if (messagesHome != null) {
+      return messagesHome();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_Speed value) speed,
+    required TResult Function(PageName_Receive value) receive,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
+    required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
+    required TResult Function(PageName_Test value) test,
+  }) {
+    return messagesHome(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_Speed value)? speed,
+    TResult? Function(PageName_Receive value)? receive,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
+    TResult? Function(PageName_Test value)? test,
+  }) {
+    return messagesHome?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_Speed value)? speed,
+    TResult Function(PageName_Receive value)? receive,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
+    TResult Function(PageName_Test value)? test,
+    required TResult orElse(),
+  }) {
+    if (messagesHome != null) {
+      return messagesHome(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PageName_MessagesHome extends PageName {
+  const factory PageName_MessagesHome() = _$PageName_MessagesHomeImpl;
+  const PageName_MessagesHome._() : super._();
 }
 
 /// @nodoc
@@ -882,6 +1056,7 @@ class _$PageName_TestImpl extends PageName_Test {
     required TResult Function() receive,
     required TResult Function(String field0) viewTransaction,
     required TResult Function() myProfile,
+    required TResult Function() messagesHome,
     required TResult Function() test,
   }) {
     return test();
@@ -895,6 +1070,7 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult? Function()? receive,
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? myProfile,
+    TResult? Function()? messagesHome,
     TResult? Function()? test,
   }) {
     return test?.call();
@@ -908,6 +1084,7 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult Function()? receive,
     TResult Function(String field0)? viewTransaction,
     TResult Function()? myProfile,
+    TResult Function()? messagesHome,
     TResult Function()? test,
     required TResult orElse(),
   }) {
@@ -925,6 +1102,7 @@ class _$PageName_TestImpl extends PageName_Test {
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_Test value) test,
   }) {
     return test(this);
@@ -938,6 +1116,7 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_Test value)? test,
   }) {
     return test?.call(this);
@@ -951,6 +1130,7 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {

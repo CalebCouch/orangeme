@@ -34,6 +34,16 @@ impl Protocols {
         ).unwrap()
     }
 
+    pub fn message() -> Protocol {
+        Protocol::new(
+            "Message",
+            true,
+            PermissionOptions::new(true, true, false, None),
+            Some(serde_json::to_string(&schema_for!(Message)).unwrap()),
+            None
+        ).unwrap()
+    }
+
     pub fn messages_protocol() -> Protocol {
          Protocol::new(
             "Message",
@@ -82,6 +92,25 @@ impl Profile {
         abt_me: Option<String>,
     ) -> Self {
         Profile{name, did, pfp, abt_me}
+    }
+}
+
+#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
+pub struct Message {
+    pub sender: Profile,
+    pub message: String,
+    pub date: String,
+    pub time: String,
+}
+
+impl Message {
+    pub fn new(
+        sender: Profile,
+        message: String,
+        date: String,
+        time: String,
+    ) -> Self {
+        Message{sender, message, date, time}
     }
 }
 
