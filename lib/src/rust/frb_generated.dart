@@ -594,7 +594,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 1:
         return PageName_Speed(
           dco_decode_String(raw[1]),
-          dco_decode_f_64(raw[2]),
+          dco_decode_u_64(raw[2]),
         );
       case 2:
         return const PageName_Receive();
@@ -603,6 +603,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_String(raw[1]),
         );
       case 4:
+        return const PageName_MyProfile();
+      case 5:
         return const PageName_Test();
       default:
         throw Exception("unreachable");
@@ -626,6 +628,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       default:
         throw Exception("unreachable");
     }
+  }
+
+  @protected
+  BigInt dco_decode_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
   }
 
   @protected
@@ -655,7 +663,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 1:
         return WalletMethod_GetFees(
           dco_decode_String(raw[1]),
-          dco_decode_f_64(raw[2]),
+          dco_decode_u_64(raw[2]),
           dco_decode_f_64(raw[3]),
         );
       default:
@@ -780,7 +788,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return const PageName_BitcoinHome();
       case 1:
         var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_f_64(deserializer);
+        var var_field1 = sse_decode_u_64(deserializer);
         return PageName_Speed(var_field0, var_field1);
       case 2:
         return const PageName_Receive();
@@ -788,6 +796,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_String(deserializer);
         return PageName_ViewTransaction(var_field0);
       case 4:
+        return const PageName_MyProfile();
+      case 5:
         return const PageName_Test();
       default:
         throw UnimplementedError('');
@@ -813,6 +823,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  BigInt sse_decode_u_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getBigUint64();
   }
 
   @protected
@@ -842,7 +858,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return const WalletMethod_GetNewAddress();
       case 1:
         var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_f_64(deserializer);
+        var var_field1 = sse_decode_u_64(deserializer);
         var var_field2 = sse_decode_f_64(deserializer);
         return WalletMethod_GetFees(var_field0, var_field1, var_field2);
       default:
@@ -980,14 +996,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_Speed(field0: final field0, field1: final field1):
         sse_encode_i_32(1, serializer);
         sse_encode_String(field0, serializer);
-        sse_encode_f_64(field1, serializer);
+        sse_encode_u_64(field1, serializer);
       case PageName_Receive():
         sse_encode_i_32(2, serializer);
       case PageName_ViewTransaction(field0: final field0):
         sse_encode_i_32(3, serializer);
         sse_encode_String(field0, serializer);
-      case PageName_Test():
+      case PageName_MyProfile():
         sse_encode_i_32(4, serializer);
+      case PageName_Test():
+        sse_encode_i_32(5, serializer);
       default:
         throw UnimplementedError('');
     }
@@ -1009,6 +1027,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  void sse_encode_u_64(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putBigUint64(self);
   }
 
   @protected
@@ -1041,7 +1065,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         ):
         sse_encode_i_32(1, serializer);
         sse_encode_String(field0, serializer);
-        sse_encode_f_64(field1, serializer);
+        sse_encode_u_64(field1, serializer);
         sse_encode_f_64(field2, serializer);
       default:
         throw UnimplementedError('');

@@ -598,7 +598,7 @@ impl SseDecode for crate::api::pub_structs::PageName {
             }
             1 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
-                let mut var_field1 = <f64>::sse_decode(deserializer);
+                let mut var_field1 = <u64>::sse_decode(deserializer);
                 return crate::api::pub_structs::PageName::Speed(var_field0, var_field1);
             }
             2 => {
@@ -609,6 +609,9 @@ impl SseDecode for crate::api::pub_structs::PageName {
                 return crate::api::pub_structs::PageName::ViewTransaction(var_field0);
             }
             4 => {
+                return crate::api::pub_structs::PageName::MyProfile;
+            }
+            5 => {
                 return crate::api::pub_structs::PageName::Test;
             }
             _ => {
@@ -651,6 +654,13 @@ impl SseDecode for crate::api::pub_structs::Thread {
     }
 }
 
+impl SseDecode for u64 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_u64::<NativeEndian>().unwrap()
+    }
+}
+
 impl SseDecode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -680,7 +690,7 @@ impl SseDecode for crate::api::pub_structs::WalletMethod {
             }
             1 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
-                let mut var_field1 = <f64>::sse_decode(deserializer);
+                let mut var_field1 = <u64>::sse_decode(deserializer);
                 let mut var_field2 = <f64>::sse_decode(deserializer);
                 return crate::api::pub_structs::WalletMethod::GetFees(
                     var_field0, var_field1, var_field2,
@@ -784,7 +794,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::PageName {
             crate::api::pub_structs::PageName::ViewTransaction(field0) => {
                 [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
-            crate::api::pub_structs::PageName::Test => [4.into_dart()].into_dart(),
+            crate::api::pub_structs::PageName::MyProfile => [4.into_dart()].into_dart(),
+            crate::api::pub_structs::PageName::Test => [5.into_dart()].into_dart(),
             _ => {
                 unimplemented!("");
             }
@@ -995,7 +1006,7 @@ impl SseEncode for crate::api::pub_structs::PageName {
             crate::api::pub_structs::PageName::Speed(field0, field1) => {
                 <i32>::sse_encode(1, serializer);
                 <String>::sse_encode(field0, serializer);
-                <f64>::sse_encode(field1, serializer);
+                <u64>::sse_encode(field1, serializer);
             }
             crate::api::pub_structs::PageName::Receive => {
                 <i32>::sse_encode(2, serializer);
@@ -1004,8 +1015,11 @@ impl SseEncode for crate::api::pub_structs::PageName {
                 <i32>::sse_encode(3, serializer);
                 <String>::sse_encode(field0, serializer);
             }
-            crate::api::pub_structs::PageName::Test => {
+            crate::api::pub_structs::PageName::MyProfile => {
                 <i32>::sse_encode(4, serializer);
+            }
+            crate::api::pub_structs::PageName::Test => {
+                <i32>::sse_encode(5, serializer);
             }
             _ => {
                 unimplemented!("");
@@ -1049,6 +1063,13 @@ impl SseEncode for crate::api::pub_structs::Thread {
     }
 }
 
+impl SseEncode for u64 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer.cursor.write_u64::<NativeEndian>(self).unwrap();
+    }
+}
+
 impl SseEncode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1081,7 +1102,7 @@ impl SseEncode for crate::api::pub_structs::WalletMethod {
             crate::api::pub_structs::WalletMethod::GetFees(field0, field1, field2) => {
                 <i32>::sse_encode(1, serializer);
                 <String>::sse_encode(field0, serializer);
-                <f64>::sse_encode(field1, serializer);
+                <u64>::sse_encode(field1, serializer);
                 <f64>::sse_encode(field2, serializer);
             }
             _ => {

@@ -8,6 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
+// These types are ignored because they are not used by any `pub` functions: `KeyPress`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
 
 @freezed
@@ -17,12 +18,13 @@ sealed class PageName with _$PageName {
   const factory PageName.bitcoinHome() = PageName_BitcoinHome;
   const factory PageName.speed(
     String field0,
-    double field1,
+    BigInt field1,
   ) = PageName_Speed;
   const factory PageName.receive() = PageName_Receive;
   const factory PageName.viewTransaction(
     String field0,
   ) = PageName_ViewTransaction;
+  const factory PageName.myProfile() = PageName_MyProfile;
   const factory PageName.test() = PageName_Test;
 }
 
@@ -56,7 +58,7 @@ sealed class WalletMethod with _$WalletMethod {
   const factory WalletMethod.getNewAddress() = WalletMethod_GetNewAddress;
   const factory WalletMethod.getFees(
     String field0,
-    double field1,
+    BigInt field1,
     double field2,
   ) = WalletMethod_GetFees;
 }

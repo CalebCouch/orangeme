@@ -8,6 +8,7 @@ pub mod error;
 use error::Error;
 
 pub mod pub_structs;
+pub mod utils;
 
 /// flutter_rust_bridge:ignore
 pub mod structs;

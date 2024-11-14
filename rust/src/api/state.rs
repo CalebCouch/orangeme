@@ -2,6 +2,7 @@ use super::Error;
 
 use super::simple::rustCall;
 use super::pub_structs::{PageName, Platform, Thread, WalletMethod};
+use super::pub_structs::{SATS, Sats, Usd};
 use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime};
 use super::web5::Profile;
@@ -85,7 +86,7 @@ impl State {
     }
 
     pub async fn get_raw(&self, field: &Field) -> Result<Option<Vec<u8>>, Error> {
-        Ok(self.store.get(field.into_bytes()).await?)
+        Ok(self.store.get(&field.into_bytes()).await?)
     }
 
     pub async fn get_o<T: for <'a> Deserialize<'a>>(&self, field: &Field) -> Result<Option<T>, Error> {
@@ -126,6 +127,7 @@ impl StateManager {
             PageName::Receive => self.receive().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
             PageName::Speed(address, amount) => self.speed(address, amount).await,
+            PageName::MyProfile => self.my_profile().await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
@@ -144,11 +146,12 @@ impl StateManager {
     }
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
-       let btc = self.state.get::<f64>(Field::Balance(None)).await?;
-       let price = self.state.get::<f64>(Field::Price(None)).await?;
+       let btc = self.state.get_or_default::<f64>(&Field::Balance(None)).await?;
+       let price = self.state.get_or_default::<f64>(&Field::Price(None)).await?;
        let usd = btc*price;
-       let internet_status = self.state.get::<bool>(Field::Internet(None)).await?;
-       let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
+       let internet_status = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
+       let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
+       let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
 
        let formatted_usd = if usd == 0.0 { "$0.00".to_string() } else { format!("{:.2}", usd) };
 
@@ -174,7 +177,7 @@ impl StateManager {
 
     pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
         let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
-        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
+        let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
         let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
 
 
@@ -212,8 +215,8 @@ impl StateManager {
         })?)
     }
 
-    pub async fn speed(&self, address: String, amount: f64) -> Result<String, Error> {
-        let price = self.state.get::<f64>(Field::Price(None)).await?;
+    pub async fn speed(&self, address: String, amount: Sats) -> Result<String, Error> {
+        let price = self.state.get_or_default::<USD>(&Field::Price(None)).await?;
         let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(address, amount, price))).await;
         info!("{:?}", fees);
         Ok(serde_json::to_string(&Speed{
@@ -227,18 +230,18 @@ impl StateManager {
         })?)
     }
 
-//      pub async fn my_profile(&self) -> Result<String, Error> {
-//          let profile = self.state.get_o::<Profile>(Field::Profile).await?;
-//          Ok(serde_json::to_string(&MyProfile{
-//              profile: profile,
-//          })?)
-//      }
+    pub async fn my_profile(&self) -> Result<String, Error> {
+        let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+        Ok(serde_json::to_string(&MyProfile{
+            profile: Some(profile),
+        })?)
+    }
 
-//      pub async fn user_profile(&self) -> Result<String, Error> {
-//          Ok(serde_json::to_string(&UserProfile{
-//              profile: None,
-//          })?)
-//      }
+    //  pub async fn user_profile(&self) -> Result<String, Error> {
+    //      Ok(serde_json::to_string(&UserProfile{
+    //          profile: None,
+    //      })?)
+    //  }
 
 
 
@@ -355,6 +358,11 @@ struct Speed {
 struct ViewTransaction {
     pub ext_transaction: Option<ExtTransaction>,
     pub basic_transaction: Option<BasicTransaction>,
+}
+
+#[derive(Serialize)]
+struct MyProfile {
+    pub profile: Option<Profile>
 }
 
 //  #[derive(Serialize)]

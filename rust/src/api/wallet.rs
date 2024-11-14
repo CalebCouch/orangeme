@@ -4,6 +4,7 @@ use super::price::PriceGetter;
 use super::state::{State};
 use super::structs::DateTime;
 use super::state::Field;
+use super::pub_structs::{SATS, Sats, Usd};
 
 use simple_database::SqliteStore;
 
@@ -25,7 +26,8 @@ use bdk::electrum_client::Client;
 use bdk::wallet::{AddressIndex};
 use bdk::template::Bip86;
 use bdk::sled::Tree;
-use bdk::FeeRate;
+use bdk::{BlockTime, FeeRate};
+use bdk::bitcoin::psbt::PartiallySignedTransaction as PSBT;
 use bdk::Wallet as BDKWallet;
 use bdk::blockchain::GetTx;
 
@@ -43,7 +45,6 @@ use std::str::FromStr;
 
 const NO_INTERNET: &str = "failed to lookup address information: No address associated with hostname";
 const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
-const SATS: f64 = 100_000_000.0;
 
 pub type Transactions = BTreeMap<Txid, Transaction>;
 
@@ -162,28 +163,44 @@ impl Wallet {
         Ok(self.inner.lock().await.get_address(AddressIndex::New)?.address.to_string())
     }
 
-    pub async fn get_fees(&self, address: String, amount: f64, price: f64) -> Result<(f64, f64), Error> {
-        let address = Address::from_str(&address)?.require_network(Network::Bitcoin)?;
-        let inner = self.inner.lock().await;
-        let mut builder = inner.build_tx();
-        builder.add_recipient(address.script_pubkey(), (amount * SATS) as u64);
-        let size = builder.finish()?.0.extract_tx().vsize() as f64;
-
-        let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
-        Ok((((blockchain.estimate_fee(3)? / 1000 as f64) * size) * price, ((blockchain.estimate_fee(1)? / 1000 as f64) * size) * price))
+    fn estimate_fee(blocks: usize) -> Result<Sats, Error> {
+        Ok(ElectrumBlockchain::from(Client::new(CLIENT_URI)?).estimate_fee(blocks)? as Sats)
     }
 
-    pub async fn build_transaction(&self, address: String, amount: f64) -> Result<(PSBT, Transaction)> {
+    async fn sats_to_usd(sats: Sats) -> Result<Usd, Error> {
+        let price = PriceGetter::get(None).await?;
+        Ok((sats * SATS) * price)
+    }
+
+    pub async fn get_fees(&self, address: &str, amount: Sats, price: Usd) -> Result<(Usd, Usd), Error> {
+        let one = Self::estimate_fee(1)?;
+        let three = Self::estimate_fee(3)?;
+        let kvb = self.tx_builder(address, amount, three)?.0.extract_tx().vsize() / 1000;
+        Ok((
+            Self::sats_to_usd(one * kvb),
+            Self::sats_to_usd(three * kvb)
+        ))
+    }
+
+    async fn tx_builder(&self, address: &str, amount: Sats, fee: Sats) -> Result<(PSBT, bdk::TransactionDetails), Error> {
         let inner = self.inner.lock().await;
         let mut builder = inner.build_tx();
-        builder.add_recipient(address.script_pubkey(), (amount * SATS) as u64);
-        let (psbt, tx_details) = builder.finish()?;
-        let tx = psbt.clone().extract_tx();
-        tx_details.transaction = Some(tx);
-        let price = Self::get_price(tx.confirmation_time.as_ref()).await?;
-        let transaction = Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?;
-        Ok((psbt, transaction))
+        let address = Address::from_str(address)?.require_network(Network::Bitcoin)?;
+        builder.add_recipient(address.script_pubkey(), amount);
+        builder.fee_rate(FeeRate::from_sat_per_kvb(fee));
+        Ok(builder.finish()?)
     }
+
+
+  //pub async fn build_transaction(&self, address: &str, amount: f64, blocks: usize) -> Result<(PSBT, Transaction), Error> {
+  //    let (psbt, mut tx_details) = self.tx_builder(address, amount, blocks).await?;
+  //    let tx = psbt.clone().extract_tx();
+  //    tx_details.transaction = Some(tx);
+  //    let price = Self::get_price(tx_details.confirmation_time.as_ref()).await?;
+  //    let inner = self.inner.lock().await;
+  //    let transaction = Transaction::from_details(tx_details, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?;
+  //    Ok((psbt, transaction))
+  //}
 
 //  pub async fn build_transaction(&mut self) -> Result<String, Error> {
 //      let ec = "Main.create_transaction";
@@ -227,15 +244,6 @@ impl Wallet {
 //      Ok(serde_json::to_string(&tx)?)
 //  }
 
-    async fn get_price(confrimation_time: Option<&BlockTime>) -> Result<f64, Error> {
-        Ok(if let Some(ct) = tx.confirmation_time {
-            PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
-        } else {
-            PriceGetter::get(None).await?
-        })
-    }
-
-
     fn get_blockchain() -> Result<ElectrumBlockchain, Error> {
         let client = bdk::electrum_client::Client::new(CLIENT_URI)?;
         Ok(ElectrumBlockchain::from(client))
@@ -262,6 +270,11 @@ impl Wallet {
             }
 
             let price = Self::get_price(tx.confirmation_time.as_ref()).await?;
+            let price = if let Some(ct) = confirmation_time {
+                PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
+            } else {
+                state.get_or_default::<f64>(Field::Price(None))?
+            };
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }
         state.set(Field::Transactions(Some(txs))).await?;
