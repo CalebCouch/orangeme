@@ -41,7 +41,7 @@ class MyProfileState extends GenericState<MyProfile> {
         widget.profile = Profile.fromJson(json['profile']);
         widget.address = json['address'];
         did = widget.profile.did;
-        name = widget.profile.name.isEmpty ? widget.profile.did : widget.profile.name;
+        name = widget.profile.name;
         aboutMe = widget.profile.abtme;
         photo = widget.profile.pfp;
     });
