@@ -170,7 +170,7 @@ impl StateManager {
                   txid: txid.to_string(),
               },
           ).collect(),
-          profile_picture: profile.pfp.ok_or(Error::err("profile_picture", "No profile pictuer found for profile.pfp"))?,
+          profile_picture: "".to_string(),
        })?)
     }
 

@@ -7,17 +7,15 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
-// These functions are ignored because they are not marked as `pub`: `agent_refresh_thread`, `agent_sync_thread`, `internet_thread`, `price_thread`, `spawn`, `wallet_refresh_thread`, `wallet_sync_thread`, `wallet_thread`
 
-Future<String> rustStart(
-        {required String path,
-        required Platform platform,
-        required FutureOr<String> Function(String) thread}) =>
-    RustLib.instance.api.crateApiSimpleRustStart(
-        path: path, platform: platform, thread: thread);
+            // These functions are ignored because they are not marked as `pub`: `agent_refresh_thread`, `agent_sync_thread`, `internet_thread`, `price_thread`, `spawn`, `wallet_refresh_thread`, `wallet_sync_thread`, `wallet_thread`
 
-Future<String> rustCall({required Thread thread}) =>
-    RustLib.instance.api.crateApiSimpleRustCall(thread: thread);
 
-Future<String> getPage({required String path, required PageName page}) =>
-    RustLib.instance.api.crateApiSimpleGetPage(path: path, page: page);
+            Future<String> rustStart({required String path , required Platform platform , required FutureOr<String> Function(String) thread }) => RustLib.instance.api.crateApiSimpleRustStart(path: path, platform: platform, thread: thread);
+
+Future<String> rustCall({required Thread thread }) => RustLib.instance.api.crateApiSimpleRustCall(thread: thread);
+
+Future<String> getPage({required String path , required PageName page }) => RustLib.instance.api.crateApiSimpleGetPage(path: path, page: page);
+
+            
+            
