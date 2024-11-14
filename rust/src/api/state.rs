@@ -40,6 +40,7 @@ pub enum Field {
     Balance(Option<f64>),
 
     Profile(Option<Profile>),
+    Conversations(Option<Vec<Conversation>>),
 
 //  LegacySeed(Option<Seed>),
 //  DescriptorSet(Option<DescriptorSet>),
@@ -128,7 +129,7 @@ impl StateManager {
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
             PageName::Speed(address, amount) => self.speed(address, amount).await,
             PageName::MyProfile => self.my_profile().await,
-          //PageName::MessagesHome => self.messages_home().await,
+            PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::UserProfile => self.user_profile().await,
@@ -233,9 +234,20 @@ impl StateManager {
     pub async fn my_profile(&self) -> Result<String, Error> {
         let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
         Ok(serde_json::to_string(&MyProfile{
-            profile: Some(profile),
+            profile: profile,
+            address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
         })?)
     }
+
+    pub async fn messages_home(&mut self) -> Result<String, Error> {
+        let conversations = self.state.get::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+
+        Ok(serde_json::to_string(&MessagesHome{
+            profile_picture: "".to_string(),
+            conversations: conversations, 
+        })?)
+    }
+
 
     //  pub async fn user_profile(&self) -> Result<String, Error> {
     //      Ok(serde_json::to_string(&UserProfile{
@@ -243,16 +255,6 @@ impl StateManager {
     //      })?)
     //  }
 
-
-
-//      pub async fn messages_home(&mut self) -> Result<String, Error> {
-//          //self.state.set(Field::Conversations, &conversations).await?;
-
-//          Ok(serde_json::to_string(&MessagesHome{
-//              profile_picture: "".to_string(),
-//              conversations: None, 
-//          })?)
-//      }
 
 //      pub async fn exchange(&self) -> Result<String, Error> {
 //          let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;
@@ -292,6 +294,8 @@ impl StateManager {
 
 }
 
+/*      Transactions        */
+
 #[derive(Serialize, Clone, Debug)]
 struct ExtTransaction {
     pub tx: BasicTransaction,
@@ -316,22 +320,24 @@ struct ShorthandTransaction {
     pub txid: String,
 }
 
-//  #[derive(Serialize, Deserialize, Clone, Default)]
-//  pub struct Conversation {
-//      pub members: Vec<Profile>,
-//      pub messages: Vec<Message>,
-//  }
+/*      Conversation        */
 
-//  #[derive(Serialize, Deserialize, Clone)]
-//  pub struct Message {
-//      pub sender: Profile,
-//      pub message: String,
-//      pub date: String,
-//      pub time: String,
-//      pub is_incoming: bool,
-//  }
+#[derive(Serialize, Deserialize, Clone, Default, Debug)]
+pub struct Conversation {
+    pub members: Vec<Profile>,
+    pub messages: Vec<Message>,
+}
 
-/*      Page Structs        */
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Message {
+    pub sender: Profile,
+    pub message: String,
+    pub date: String,
+    pub time: String,
+    pub is_incoming: bool,
+}
+
+/*      Bitcoin Flow        */
 
 #[derive(Serialize)]
 struct BitcoinHome {
@@ -360,9 +366,18 @@ struct ViewTransaction {
     pub basic_transaction: Option<BasicTransaction>,
 }
 
+/*      Messages Flow        */
+
 #[derive(Serialize)]
 struct MyProfile {
-    pub profile: Option<Profile>
+    pub profile: Profile,
+    pub address: String,
+}
+
+#[derive(Serialize)]
+struct MessagesHome {
+    pub conversations: Vec<Conversation>,
+    pub profile_picture: String,
 }
 
 //  #[derive(Serialize)]

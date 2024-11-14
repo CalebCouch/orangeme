@@ -12,8 +12,8 @@ import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
-// import 'package:orange/flows/messages/home.dart';
-// import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/flows/messages/home.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
@@ -65,7 +65,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     }
 
     toProfile() {
-        // navigateTo(MyProfile());
+        navigateTo(MyProfile());
     }
 
     @override
@@ -85,7 +85,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
             ]),
             TabNav(0, [
                 TabInfo(BitcoinHome(), 'wallet'),
-                TabInfo(BitcoinHome(), 'message'),
+                TabInfo(MessagesHome(), 'message'),
             ]),
             noTransactions && widget.internet ? Alignment.center : Alignment.topCenter,
             !noTransactions,

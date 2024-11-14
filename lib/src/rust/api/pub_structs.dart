@@ -25,6 +25,7 @@ sealed class PageName with _$PageName {
     String field0,
   ) = PageName_ViewTransaction;
   const factory PageName.myProfile() = PageName_MyProfile;
+  const factory PageName.messagesHome() = PageName_MessagesHome;
   const factory PageName.test() = PageName_Test;
 }
 
