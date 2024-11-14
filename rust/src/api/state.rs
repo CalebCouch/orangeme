@@ -85,7 +85,7 @@ impl State {
     }
 
     pub async fn get_raw(&self, field: &Field) -> Result<Option<Vec<u8>>, Error> {
-        Ok(self.store.get(field.into_bytes()).await?)
+        Ok(self.store.get(&field.into_bytes()).await?)
     }
 
     pub async fn get_o<T: for <'a> Deserialize<'a>>(&self, field: &Field) -> Result<Option<T>, Error> {
@@ -145,12 +145,12 @@ impl StateManager {
     }
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
-       let btc = self.state.get::<f64>(Field::Balance(None)).await?;
-       let price = self.state.get::<f64>(Field::Price(None)).await?;
+       let btc = self.state.get_or_default::<f64>(&Field::Balance(None)).await?;
+       let price = self.state.get_or_default::<f64>(&Field::Price(None)).await?;
        let usd = btc*price;
-       let internet_status = self.state.get::<bool>(Field::Internet(None)).await?;
-       let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
-       let profile = self.state.get_o::<Profile>(Field::Profile(None)).await?;
+       let internet_status = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
+       let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
+       let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
 
        let formatted_usd = if usd == 0.0 { "$0.00".to_string() } else { format!("{:.2}", usd) };
 
@@ -170,13 +170,13 @@ impl StateManager {
                   txid: txid.to_string(),
               },
           ).collect(),
-          profile_picture: profile.pfp.ok_or("Profile picture not found")?;
+          profile_picture: profile.pfp.ok_or(Error::err("profile_picture", "No profile pictuer found for profile.pfp"))?,
        })?)
     }
 
     pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
         let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
-        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
+        let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
         let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
 
 
@@ -215,7 +215,7 @@ impl StateManager {
     }
 
     pub async fn speed(&self, address: String, amount: f64) -> Result<String, Error> {
-        let price = self.state.get::<f64>(Field::Price(None)).await?;
+        let price = self.state.get_or_default::<f64>(&Field::Price(None)).await?;
         let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(address, amount, price))).await;
         info!("{:?}", fees);
         Ok(serde_json::to_string(&Speed{
@@ -230,7 +230,7 @@ impl StateManager {
     }
 
     pub async fn my_profile(&self) -> Result<String, Error> {
-        let profile = self.state.get::<Profile>(Field::Profile(None)).await?;
+        let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
         Ok(serde_json::to_string(&MyProfile{
             profile: Some(profile),
         })?)

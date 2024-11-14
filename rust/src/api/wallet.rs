@@ -234,7 +234,7 @@ impl Wallet {
     pub async fn refresh_state(&self, state: &State) -> Result<(), Error> {
         let inner = self.inner.lock().await;
         //Transactions
-        let mut txs = state.get::<Transactions>(Field::Transactions(None)).await?;
+        let mut txs = state.get::<Transactions>(&Field::Transactions(None)).await?;
         for tx in inner.list_transactions(true)? {
             if let Some(transaction) = txs.get(&tx.txid) {
                 if transaction.confirmation_time.is_some() {continue;}
