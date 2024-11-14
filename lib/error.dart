@@ -47,11 +47,11 @@ class ErrorPageState extends State<ErrorPage> {
         ),
         const CustomText('heading h3 heading', 'Uh-oh!\nSomething went wrong.'),
         Container(height: 1, width: 400, color: ThemeColor.bgSecondary),
-        CustomButton(showError ? 'Hide Error' : 'Show Error', 'secondary md hug error', onTap, 'enabled'),
+        CustomButton(showError ? 'Hide Error' : 'Show Error', 'secondary md hug error', onTap, true),
         showError ? error(widget.message) : Container(),
         const Spacing(12),
       ],
-      Bumper(context, [CustomButton('Try Again', 'secondary lg expand none', back, 'enabled')]),
+      Bumper(context, [CustomButton('Try Again', 'secondary lg expand none', back, true)]),
     );
   }
 }

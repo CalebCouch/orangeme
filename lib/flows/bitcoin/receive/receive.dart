@@ -56,7 +56,7 @@ class ReceiveState extends GenericState<Receive> {
         Instructions(),
       ],
       Bumper(context, [
-        CustomButton('Share', 'primary lg expand none', onShare, 'enabled'),
+        CustomButton('Share', 'primary lg expand none', onShare, true),
       ]),
       Alignment.center,
       false,

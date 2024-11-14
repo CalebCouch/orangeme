@@ -20,11 +20,10 @@ class Amount extends StatefulWidget {
 class AmountState extends State<Amount> {
   late DisplayData data = DisplayData("0", "", 0.0, "", false);
   final ShakeController _shakeController = ShakeController();
-  String enabled = 'disabled';
+  bool enabled = false;
 
   onContinue() {
-    print(data.amount);
-    double amount = double.tryParse(data.amount.replaceAll('\$', '')) ?? 0.0;
+    double amount = data.btc*1000000;
     navigateTo(context, Speed(widget.address, amount));
   }
 
@@ -50,11 +49,9 @@ class AmountState extends State<Amount> {
   }
 
   updateButton() {
-    print(enabled);
     setState(() {
-      enabled = data.err == '' && isNotZero() ? 'enabled' : 'disabled';
+      enabled = data.err == '' && isNotZero();
     });
-    print(enabled);
   }
 
   @override

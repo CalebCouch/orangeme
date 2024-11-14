@@ -63,7 +63,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
         if (direction == 'Received') transactionTabular(context, tx),
         if (direction == 'Sent') sendTransactionTabular(context, widget.ext_transaction!),
       ],
-      Bumper(context, [CustomButton('Done', 'secondary lg expand none', () => onDone(), 'enabled')]),
+      Bumper(context, [CustomButton('Done', 'secondary lg expand none', () => onDone(), true)]),
     );
   }
   //The following widgets can ONLY be used in this file

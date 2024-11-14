@@ -87,7 +87,7 @@ Widget addressItem(BuildContext context, String address) {
     title: 'Bitcoin address',
     content: CustomText('text md secondary', address, alignment: TextAlign.start),
     buttons: [
-      CustomButton('Copy', 'secondary md hug copy', () => copyAddress(), 'enabled'),
+      CustomButton('Copy', 'secondary md hug copy', () => copyAddress(), true),
     ],
   );
 }
@@ -103,7 +103,7 @@ Widget didItem(BuildContext context, String did) {
     title: 'Digital ID',
     content: CustomText('text md secondary', did, alignment: TextAlign.start),
     buttons: [
-      CustomButton('Copy', 'secondary md hug copy', () => copyDid(), 'enabled'),
+      CustomButton('Copy', 'secondary md hug copy', () => copyDid(), true),
     ],
   );
 }

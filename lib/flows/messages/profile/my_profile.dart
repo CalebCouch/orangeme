@@ -116,7 +116,6 @@ class MyProfileState extends GenericState<MyProfile> {
       if (save) saveInfo();
     }
 
-    String enabled = save ? 'enabled' : 'disabled';
     return Stack_Default(
       Header_Stack(context, "My profile"),
       [
@@ -126,7 +125,7 @@ class MyProfileState extends GenericState<MyProfile> {
         didItem(context, did),
         addressItem(context, widget.address),
       ],
-      Bumper(context, [CustomButton('Save', 'primary lg expand none', onSave, enabled)]),
+      Bumper(context, [CustomButton('Save', 'primary lg expand none', onSave, save)]),
     );
   }
 }
