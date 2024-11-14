@@ -32,6 +32,7 @@ pub enum PageName {
     Speed(String, f64),
     Receive,
     ViewTransaction(String),
+    MyProfile,
 //  Receive,
 //  ViewTransaction,
 //  MessagesHome,

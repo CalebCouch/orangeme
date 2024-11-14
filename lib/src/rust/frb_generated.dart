@@ -455,8 +455,32 @@ return AnyhowException(raw as String); }
 @protected Error dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return ErrorImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
+<<<<<<< HEAD
 @protected MyCustomAsyncRuntime dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+=======
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return const PageName_BitcoinHome();
+      case 1:
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_f_64(deserializer);
+        return PageName_Speed(var_field0, var_field1);
+      case 2:
+        return const PageName_Receive();
+      case 3:
+        var var_field0 = sse_decode_String(deserializer);
+        return PageName_ViewTransaction(var_field0);
+      case 4:
+        return const PageName_MyProfile();
+      case 5:
+        return const PageName_Test();
+      default:
+        throw UnimplementedError('');
+    }
+  }
+>>>>>>> 5a743162 (broken pfp puller)
 
 @protected FutureOr<String> Function(String) dco_decode_DartFn_Inputs_String_Output_String_AnyhowException(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 throw UnimplementedError(''); }
@@ -546,8 +570,34 @@ return MyCustomAsyncRuntimeImpl.frbInternalSseDecode(sse_decode_usize(deserializ
 var inner = sse_decode_isize(deserializer);
         return decodeDartOpaque(inner, generalizedFrbRustBinding); }
 
+<<<<<<< HEAD
 @protected Error sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return ErrorImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+=======
+  @protected
+  void sse_encode_page_name(PageName self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case PageName_BitcoinHome():
+        sse_encode_i_32(0, serializer);
+      case PageName_Speed(field0: final field0, field1: final field1):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(field0, serializer);
+        sse_encode_f_64(field1, serializer);
+      case PageName_Receive():
+        sse_encode_i_32(2, serializer);
+      case PageName_ViewTransaction(field0: final field0):
+        sse_encode_i_32(3, serializer);
+        sse_encode_String(field0, serializer);
+      case PageName_MyProfile():
+        sse_encode_i_32(4, serializer);
+      case PageName_Test():
+        sse_encode_i_32(5, serializer);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+>>>>>>> 5a743162 (broken pfp puller)
 
 @protected MyCustomAsyncRuntime sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return MyCustomAsyncRuntimeImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }

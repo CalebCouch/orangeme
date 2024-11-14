@@ -126,6 +126,7 @@ impl StateManager {
             PageName::Receive => self.receive().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
             PageName::Speed(address, amount) => self.speed(address, amount).await,
+            PageName::MyProfile => self.my_profile().await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
@@ -149,6 +150,7 @@ impl StateManager {
        let usd = btc*price;
        let internet_status = self.state.get::<bool>(Field::Internet(None)).await?;
        let transactions = self.state.get::<BTreeMap<Txid, Transaction>>(Field::Transactions(None)).await?;
+       let profile = self.state.get_o::<Profile>(Field::Profile(None)).await?;
 
        let formatted_usd = if usd == 0.0 { "$0.00".to_string() } else { format!("{:.2}", usd) };
 
@@ -168,7 +170,7 @@ impl StateManager {
                   txid: txid.to_string(),
               },
           ).collect(),
-          profile_picture: "".to_string(),
+          profile_picture: profile.pfp.ok_or("Profile picture not found")?;
        })?)
     }
 
@@ -227,18 +229,18 @@ impl StateManager {
         })?)
     }
 
-//      pub async fn my_profile(&self) -> Result<String, Error> {
-//          let profile = self.state.get_o::<Profile>(Field::Profile).await?;
-//          Ok(serde_json::to_string(&MyProfile{
-//              profile: profile,
-//          })?)
-//      }
+    pub async fn my_profile(&self) -> Result<String, Error> {
+        let profile = self.state.get::<Profile>(Field::Profile(None)).await?;
+        Ok(serde_json::to_string(&MyProfile{
+            profile: Some(profile),
+        })?)
+    }
 
-//      pub async fn user_profile(&self) -> Result<String, Error> {
-//          Ok(serde_json::to_string(&UserProfile{
-//              profile: None,
-//          })?)
-//      }
+    //  pub async fn user_profile(&self) -> Result<String, Error> {
+    //      Ok(serde_json::to_string(&UserProfile{
+    //          profile: None,
+    //      })?)
+    //  }
 
 
 
@@ -355,6 +357,11 @@ struct Speed {
 struct ViewTransaction {
     pub ext_transaction: Option<ExtTransaction>,
     pub basic_transaction: Option<BasicTransaction>,
+}
+
+#[derive(Serialize)]
+struct MyProfile {
+    pub profile: Option<Profile>
 }
 
 //  #[derive(Serialize)]
