@@ -92,12 +92,12 @@ pub struct MessagingAgent {
 
 impl MessagingAgent {
     pub async fn new(id: Identity, path: PathBuf) -> Result<Self, Error> {
-        let did_resolver = DefaultDidResolver::new::<SqliteStore>(Some(path.join("DefaultDidResolver"))).await?;
+        let did_resolver = Box::new(DefaultDidResolver::new::<SqliteStore>(Some(path.join("DefaultDidResolver"))).await?);
         Ok(MessagingAgent{
-            agent: Agent::new(
-                Wallet::new(id, Box::new(did_resolver.clone()), None).get_agent_key(&Protocols::rooms_protocol()).await?,
-                Protocols::get(), Box::new(did_resolver), None
-            )
+            agent: Agent::new::<SqliteStore>(
+                Wallet::new(id, did_resolver.clone(), None).get_agent_key(&Protocols::rooms_protocol()).await?,
+                Protocols::get(), Some(path), Some(did_resolver), None
+            ).await?
         })
     }
 

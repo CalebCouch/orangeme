@@ -38,7 +38,13 @@ pub enum Error {
     TokioJoin(#[from] tokio::task::JoinError),
     #[error(transparent)]
     EsploraError(#[from] Box<bdk::esplora_client::Error>),
+    #[error(transparent)]
+    RecvError(#[from] tokio::sync::oneshot::error::RecvError),
 
+
+
+    #[error("SendError: {0}")]
+    SendError(String),
 
 
     #[error(transparent)]
@@ -83,5 +89,11 @@ impl Error {
 impl From<bdk::esplora_client::Error> for Error {
     fn from(ece: bdk::esplora_client::Error) -> Error {
         Error::EsploraError(Box::new(ece))
+    }
+}
+
+impl<T> From<tokio::sync::mpsc::error::SendError<T>> for Error {
+    fn from(e: tokio::sync::mpsc::error::SendError<T>) -> Error {
+        Error::SendError(e.to_string())
     }
 }

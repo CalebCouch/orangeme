@@ -219,9 +219,9 @@ pub async fn rustCall(thread: Thread) -> Result<String, Error> {
     let (o_tx, o_rx) = oneshot::channel::<String>();
     let threads = THREAD_CHANNELS.lock().await;
     match thread {
-        Thread::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await.unwrap(),
+        Thread::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await?,
     }
-    Ok(o_rx.await.unwrap())
+    Ok(o_rx.await?)
 }
 
 pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
