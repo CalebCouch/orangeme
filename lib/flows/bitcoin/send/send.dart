@@ -52,9 +52,17 @@ class SendState extends State<Send> {
     });
   }
 
-  onScan() async {
-    navigateTo(context, ScanQR());
-  }
+  Future<void> onScan() async {
+    String scannedQR = await navigateToReturn(context, ScanQR());
+
+    if (scannedQR != null) {
+        setState(() {
+            address = scannedQR;
+            controller.text = address;
+        });
+    }
+}
+
 
   backButton() {
     return iconButton(() {

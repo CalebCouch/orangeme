@@ -108,13 +108,16 @@ Widget Root_Takeover(Widget header, Widget content) {
         child: Column(
           children: [
             header,
-            content,
+            Expanded(
+              child: content
+            ),
           ],
         ),
       ),
     ),
   );
 }
+
 
 Widget Stack_Default(Widget header, List<Widget> content, Widget bumper,
     [Alignment alignment = Alignment.topCenter, bool scroll = true, bool isLoading = false]) {

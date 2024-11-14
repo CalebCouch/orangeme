@@ -19,13 +19,10 @@ class ScanQRState extends State<ScanQR> {
     Widget build(BuildContext context) {
         return Root_Takeover(
             Header_Stack(context, "Scan QR code"),
-            Container(),
-            Expanded(
-                child: Stack(children: [
-                    qrScanner(context),
-                    Guide(),
-                ]),
-            ),
+            Stack(children: [
+                qrScanner(context),
+                Guide(),
+            ]),
         );
     }
 
@@ -35,32 +32,31 @@ class ScanQRState extends State<ScanQR> {
         super.dispose();
     }
 
-    _onQRViewCreated(BuildContext context, QRViewController controller) {
+    void _onQRViewCreated(BuildContext context, QRViewController controller) {
         this.controller = controller;
         controller.scannedDataStream.listen((scanData) {
-        String scannedCode = scanData.code ?? '';
+            String scannedCode = scanData.code ?? '';
 
-        if (scannedCode.startsWith('bitcoin:')) {
-            scannedCode = scannedCode.substring(8); // Remove the "bitcoin:" part
-        }
-
-        // Pop back and return the scanned QR code
+            if (scannedCode.startsWith('bitcoin:')) {
+                scannedCode = scannedCode.substring(8); 
+            }
+            
+            Navigator.pop(context, scannedCode);
         });
     }
 
+
     Widget Guide() {
-        return Expanded(
-        child: Center(
+        return Center(
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-                scanBox(),
-                const Spacing(12),
-                const CustomText('text md text_secondary', 'Scan a bitcoin QR code'),
-            ],
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                    scanBox(),
+                    const Spacing(12),
+                    const CustomText('text md text_secondary', 'Scan a bitcoin QR code'),
+                ],
             ),
-        ),
         );
     }
 

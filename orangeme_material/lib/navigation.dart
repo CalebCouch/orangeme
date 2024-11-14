@@ -12,6 +12,18 @@ Future<void> navigateTo(BuildContext context, Widget widget) async {
   );
 }
 
+Future navigateToReturn(BuildContext context, Widget widget) async {
+    final leData = await Navigator.of(context).push(
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => widget,
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero, 
+        ),
+    );
+
+    return leData;
+}
+
 Future<void> navPop(BuildContext context) async {
   Navigator.pop(context);
 }
