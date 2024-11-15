@@ -52,23 +52,23 @@ bool internet_connected = true;
 Storage storage = Storage.init(platform);
 Navigation navigation = Navigation.init();
 
-List<RustR> rustResponses = [];
-List<RustC> rustCommands = [];
-Uuid uuid = const Uuid();
+//  List<RustR> rustResponses = [];
+//  List<RustC> rustCommands = [];
+//  Uuid uuid = const Uuid();
 
-Future<String> invoke(String method, String data) async {
-    var uid = uuid.v1();
-    var command = RustC(uid, method, data);
-    print(jsonEncode(command));
-    rustCommands.add(command);
-    while (true) {
-        var index = rustResponses.indexWhere((res) => res.uid == uid);
-        if (index != -1) {
-            return rustResponses.removeAt(index).data;
-        }
-        await Future.delayed(const Duration(milliseconds: 10));
-    }
-}
+//  Future<String> invoke(String method, String data) async {
+//      var uid = uuid.v1();
+//      var command = RustC(uid, method, data);
+//      print(jsonEncode(command));
+//      rustCommands.add(command);
+//      while (true) {
+//          var index = rustResponses.indexWhere((res) => res.uid == uid);
+//          if (index != -1) {
+//              return rustResponses.removeAt(index).data;
+//          }
+//          await Future.delayed(const Duration(milliseconds: 10));
+//      }
+//  }
 
 Future<String> callRust(Thread thread) async {
     var result = await rustCall(thread: thread);
@@ -78,7 +78,7 @@ Future<String> callRust(Thread thread) async {
     return result;
 }
 
-Future<String> dartCallback(String dartCommand) async {
+Future<String> dartCallback(DartCommand dartCommand) async {
     var command = DartCommand.fromJson(jsonDecode(dartCommand));
     switch (command.method) {
         case "storage_set": {
@@ -92,8 +92,6 @@ Future<String> dartCallback(String dartCommand) async {
         }
         case "print":
             print(command.data);
-        case var unknown:
-            return "Error:UnknownMethod:$unknown";
     }
     return "Ok";
 }

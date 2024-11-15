@@ -29,11 +29,11 @@ pub enum WalletMethod {
 #[derive(Debug)]
 pub enum PageName {
     BitcoinHome,
-    Speed(Sats),
     Receive,
-    ViewTransaction(String),
-    MyProfile,
-    MessagesHome,
+  //Speed(Sats),
+  //ViewTransaction(String),
+  //MyProfile,
+  //MessagesHome,
 //  Receive,
 //  ViewTransaction,
 //  MessagesHome,
@@ -42,7 +42,7 @@ pub enum PageName {
 //  UserProfile,
 //  ConvoInfo,
 //  ChooseRecipient,
-    Test
+    Test(String)
 }
 
 pub enum KeyPress {
@@ -66,4 +66,13 @@ pub type Sats = u64;
 pub type Usd = f64;
 pub type Btc = f64;
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ShorthandTransaction {
+    pub is_withdraw: bool,
+    pub date: String,
+    pub time: String,
+    pub usd: String,
+    pub txid: String,
+}
 
+pub fn test(s: ShorthandTransaction) {}

@@ -87,6 +87,30 @@ impl DescriptorSet {
     }
 }
 
+//  #[derive(Serialize, Clone, Debug)]
+//  struct SendTransaction {
+//      pub tx: ReceiveTransaction,
+//      pub fee: String,
+//      pub total: String,
+//  }
+
+//  #[derive(Serialize, Clone, Debug)]
+//  struct ReceiveTransaction {
+//      pub tx: ShorthandTransaction,
+//      pub address: String,
+//      pub price: String,
+//      pub btc: f64,
+//  }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct ShorthandTransaction {
+    pub is_withdraw: bool,
+    pub date: String,
+    pub time: String,
+    pub usd: String,
+    pub txid: String,
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct Transaction {
     pub btc: Btc,
@@ -165,22 +189,14 @@ impl Wallet {
         Ok(self.inner.lock().await.get_address(AddressIndex::New)?.address.to_string())
     }
 
-    fn estimate_fee(blocks: usize) -> Result<Sats, Error> {
-        Ok(ElectrumBlockchain::from(Client::new(CLIENT_URI)?).estimate_fee(blocks)? as Sats)
-    }
-
-    async fn sats_to_usd(sats: Sats) -> Result<Usd, Error> {
-        let price = PriceGetter::get(None).await?;
-        Ok((sats * SATS) as f64 * price)
-    }
-
     pub async fn get_fees(&self, amount: Sats, price: Usd) -> Result<(Usd, Usd), Error> {
-        let one = Self::estimate_fee(1)?;
-        let three = Self::estimate_fee(3)?;
+        let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
+        let one = client.estimate_fee(1)? as Sats;
+        let three = client.estimate_fee(3)? as Sats;
         let kvb = (self.tx_builder(DUMMY_ADDRESS, amount, three).await?.0.extract_tx().vsize() / 1000) as u64;
         Ok((
-            Self::sats_to_usd(one * kvb).await?,
-            Self::sats_to_usd(three * kvb).await?
+            ((one * kvb) * SATS) as f64 * price,
+            ((three * kvb) * SATS) as f64 * price,
         ))
     }
 
@@ -274,7 +290,7 @@ impl Wallet {
             let price = if let Some(ct) = tx.confirmation_time.as_ref() {
                 PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
             } else {
-                state.get_or_default::<f64>(&Field::Price(None)).await?
+                state.get_or_default::<Usd>(&Field::Price(None)).await?
             };
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }

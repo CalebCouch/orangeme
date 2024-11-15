@@ -259,10 +259,6 @@ pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
 
 //      "Transaction successfully broadcast".to_string()
 //  }
-
-//  //  #[derive(Debug)]
-//  //  pub enum TestEnum {HEllo}
-
-//  //  pub fn testfn(test: TestEnum) -> String {
-//  //      format!("Hi");
-//  //  }
+pub fn clearData(path: String) {
+    std::fs::remove_dir_all(PathBuf::from(path));
+}

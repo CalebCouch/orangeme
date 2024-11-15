@@ -22,7 +22,7 @@ class Test extends GenericWidget {
 class TestState extends GenericState<Test> {
   @override
   PageName getPageName() {
-    return PageName.test();
+    return PageName.test("Hi");
   }
 
   @override
@@ -43,11 +43,15 @@ class TestState extends GenericState<Test> {
       Text("count: ${widget.val}"),
         TextButton(
           onPressed: () async {
-            print("run");
             print(await rustCall(thread: Thread.wallet(WalletMethod.getNewAddress())));
-            print("ran");
           },
           child: Text('TextButton')
+        ),
+        TextButton(
+          onPressed: () async {
+            await clearData(path: global.dataDir!);
+          },
+          child: Text('ClearDatabase')
         )
     ]);
   }

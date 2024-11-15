@@ -2,7 +2,7 @@ use super::Error;
 
 use super::simple::rustCall;
 use super::pub_structs::{PageName, Platform, Thread, WalletMethod};
-use super::pub_structs::{SATS, Sats, Usd};
+use super::pub_structs::{SATS, Sats, Btc, Usd};
 use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime};
 use super::web5::Profile;
@@ -11,6 +11,7 @@ use log::info;
 use simple_database::KeyValueStore;
 
 use serde::{Serialize, Deserialize};
+use serde_json::json;
 
 use bdk::bitcoin::hash_types::Txid;
 
@@ -18,10 +19,28 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use num_format::{Locale, ToFormattedString};
-
 use bdk::bitcoin::{Network, Address};
 use web5_rust::dids::Identity;
+
+//  use super::structs::DateTime;
+//  use num_format::{Locale, ToFormattedString};
+//  pub fn format_datetime(datetime: Option<&DateTime>) -> (String, String) {
+//      datetime.map(|dt| (
+//          dt.format("%m/%d/%Y").to_string(),
+//          dt.format("%l:%M %p").to_string()
+//      )).unwrap_or(("Pending".to_string(), "Pending".to_string()))
+//  }
+
+//  pub fn format_usd(usd: Usd) -> String {
+//      if usd == 0.0 {"$0.00".to_string()} else {format!("${:.2}", usd)}
+//  }
+
+//  pub fn format_price(price: Usd) -> String {
+//      let whole_part = price.trunc() as i64;
+//      let decimal_part = (price.fract() * 100.0).round() as i64;
+//      format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() })
+//  }
+
 
 
 pub type Internet = bool;
@@ -38,7 +57,7 @@ pub enum Field {
     Balance(Option<f64>),
 
     Profile(Option<Profile>),
-    Conversations(Option<Vec<Conversation>>),
+  //Conversations(Option<Vec<Conversation>>),
 
 //  LegacySeed(Option<Seed>),
 //  DescriptorSet(Option<DescriptorSet>),
@@ -124,127 +143,134 @@ impl StateManager {
           //PageName::ViewTransaction => self.view_transaction().await,
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::Receive => self.receive().await,
-            PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
-            PageName::Speed(amount) => self.speed(amount).await,
-            PageName::MyProfile => self.my_profile().await,
-            PageName::MessagesHome => self.messages_home().await,
+          //PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
+          //PageName::Speed(amount) => self.speed(amount).await,
+          //PageName::MyProfile => self.my_profile().await,
+          //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::UserProfile => self.user_profile().await,
           //PageName::ConvoInfo => self.conv_info().await,
           //PageName::ChooseRecipient => self.choose_recipient().await,
-            PageName::Test => self.test().await,
+            PageName::Test(_) => self.test().await,
         }
     }
 
     pub async fn test(&self) -> Result<String, Error> {
-      //let state = SqliteStore::new(PathBuf::from(&path).join("TEST")).await.unwrap();
-      //let count = state.get(b"test").await.unwrap().map(|b| u32::from_le_bytes(b.try_into().unwrap())).unwrap_or_default();
-        //state.set(b"test", &(count+1).to_le_bytes()).await.unwrap();
         Ok(format!("{{\"count\": {}}}", 0))
     }
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
-       let btc = self.state.get_or_default::<f64>(&Field::Balance(None)).await?;
-       let price = self.state.get_or_default::<f64>(&Field::Price(None)).await?;
-       let usd = btc*price;
-       let internet_status = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
-       let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
-       let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+      //let internet = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
 
-       let formatted_usd = if usd == 0.0 { "$0.00".to_string() } else { format!("{:.2}", usd) };
+      //let balance = self.state.get_or_default::<Btc>(&Field::Balance(None)).await?;
+      //let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
 
-       Ok(serde_json::to_string(&BitcoinHome{
-          internet: internet_status,
-          usd: formatted_usd,
-          btc: btc.to_string(),
-          balance: usd,
-          price,
-          transactions: transactions.into_iter().map(|(txid, tx)|
-              ShorthandTransaction {
-                  is_withdraw: tx.is_withdraw,
-                  date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                  time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                  btc: tx.btc,
-                  usd: format!("${:.2}", tx.usd),
-                  txid: txid.to_string(),
-              },
-          ).collect(),
-          profile_picture: "".to_string(),
-       })?)
-    }
+      //let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
 
-    pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
-        let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
-        let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
-        let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
+      //let usd = btc*price;
+      //let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+        Ok("to".to_string())
 
+     // Ok(serde_json::to_string(json!({
+     //     "internet": internet,
+     //     "balance_btc": 
+     //     "usd": balance*price
+     // })))
 
-        let price = tx.price;
-        let whole_part = price.trunc() as i64;
-        let decimal_part = (price.fract() * 100.0).round() as i64;
-        let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
-
-        let basic_tx = BasicTransaction {
-            tx: ShorthandTransaction {
-                is_withdraw: tx.is_withdraw,
-                date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                time: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                btc: tx.btc,
-                usd: format!("${:.2}", tx.usd),
-                txid: txid.to_string(),
-            },
-            address: tx.address.clone(),
-            price: formatted_price,
-        };
-
-        let ext_transaction = if tx.is_withdraw {
-            Some(ExtTransaction {
-                tx: basic_tx.clone(),
-                fee: format!("${:.2}", tx.fee_usd),
-                total: format!("${:.2}", tx.fee_usd + tx.usd),
-            })
-        } else {
-            None
-        };
-
-        Ok(serde_json::to_string(&ViewTransaction {
-            basic_transaction: Some(basic_tx),
-            ext_transaction,
-        })?)
-    }
-
-    pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
-        let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-        let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await;
-        info!("{:?}", fees);
-        Ok(serde_json::to_string(&Speed{
-            fees: (0.0, 0.0),
-        })?)
+     //Ok(serde_json::to_string(&BitcoinHome{
+     //   internet: internet_status,
+     //   usd: formatted_usd,
+     //   btc: btc.to_string(),
+     //   balance: usd,
+     //   price,
+     //   transactions: transactions.into_iter().map(|(txid, tx)|
+     //       ShorthandTransaction {
+     //           is_withdraw: tx.is_withdraw,
+     //           date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+     //           time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+     //           btc: tx.btc,
+     //           usd: format!("${:.2}", tx.usd),
+     //           txid: txid.to_string(),
+     //       },
+     //   ).collect(),
+     //   profile_picture: profile.pfp.unwrap_or_default(),
+     //    })?)
     }
 
     pub async fn receive(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&Receive{
-            address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
-        })?)
+        Ok(serde_json::to_string(&json!({
+            "address": rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?,
+        }))?)
     }
 
-    pub async fn my_profile(&self) -> Result<String, Error> {
-        let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
-        Ok(serde_json::to_string(&MyProfile{
-            profile: profile,
-            address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
-        })?)
-    }
+//  pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
+//      let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
+//      let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
+//      let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
 
-    pub async fn messages_home(&mut self) -> Result<String, Error> {
-        let conversations = self.state.get::<Vec<Conversation>>(&Field::Conversations(None)).await?;
 
-        Ok(serde_json::to_string(&MessagesHome{
-            profile_picture: "".to_string(),
-            conversations: conversations, 
-        })?)
-    }
+//      let price = tx.price;
+//      let whole_part = price.trunc() as i64;
+//      let decimal_part = (price.fract() * 100.0).round() as i64;
+//      let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
+
+//      let basic_tx = BasicTransaction {
+//          tx: ShorthandTransaction {
+//              is_withdraw: tx.is_withdraw,
+//              date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+//              time: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+//              btc: tx.btc,
+//              usd: format!("${:.2}", tx.usd),
+//              txid: txid.to_string(),
+//          },
+//          address: tx.address.clone(),
+//          price: formatted_price,
+//      };
+
+//      let ext_transaction = if tx.is_withdraw {
+//          Some(ExtTransaction {
+//              tx: basic_tx.clone(),
+//              fee: format!("${:.2}", tx.fee_usd),
+//              total: format!("${:.2}", tx.fee_usd + tx.usd),
+//          })
+//      } else {
+//          None
+//      };
+
+//      Ok(serde_json::to_string(&ViewTransaction {
+//          basic_transaction: Some(basic_tx),
+//          ext_transaction,
+//      })?)
+//  }
+
+//  pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
+//      let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
+//      let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await;
+//      info!("{:?}", fees);
+//      Ok(serde_json::to_string(&Speed{
+//          fees: (0.0, 0.0),
+//      })?)
+//  }
+
+    
+
+//  pub async fn my_profile(&self) -> Result<String, Error> {
+//      let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+//      Ok(serde_json::to_string(&MyProfile{
+//          profile: profile,
+//          address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
+//      })?)
+//  }
+
+//  pub async fn messages_home(&mut self) -> Result<String, Error> {
+//      let conversations = self.state.get::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+
+//      Ok(serde_json::to_string(&MessagesHome{
+//          profile_picture: "".to_string(),
+//          conversations: conversations, 
+//      })?)
+//  }
 
 
     //  pub async fn user_profile(&self) -> Result<String, Error> {
@@ -281,102 +307,71 @@ impl StateManager {
 //          let path = self.state.get::<PathBuf>(Field::Path).await?;
 //          Wallet::new(descriptors, path, self.state.clone())
 //      }
-
-    fn format_datetime(&self, datetime: Option<&DateTime>) -> (String, String) {
-        datetime.map(|dt| (
-            dt.format("%m/%d/%Y").to_string(),
-            dt.format("%l:%M %p").to_string()
-        )).unwrap_or(("Pending".to_string(), "Pending".to_string()))
-    }
-
-
 }
 
 /*      Transactions        */
 
-#[derive(Serialize, Clone, Debug)]
-struct ExtTransaction {
-    pub tx: BasicTransaction,
-    pub fee: String,
-    pub total: String,
-}
 
-#[derive(Serialize, Clone, Debug)]
-struct BasicTransaction {
-    pub tx: ShorthandTransaction,
-    pub address: String,
-    pub price: String,
-}
-
-#[derive(Serialize, Clone, Debug)]
-struct ShorthandTransaction {
-    pub is_withdraw: bool,
-    pub date: String,
-    pub time: String,
-    pub btc: f64,
-    pub usd: String,
-    pub txid: String,
-}
 
 /*      Conversation        */
 
-#[derive(Serialize, Deserialize, Clone, Default, Debug)]
-pub struct Conversation {
-    pub members: Vec<Profile>,
-    pub messages: Vec<Message>,
-}
+//  #[derive(Serialize, Deserialize, Clone, Default, Debug)]
+//  pub struct Conversation {
+//      pub members: Vec<Profile>,
+//      pub messages: Vec<Message>,
+//  }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Message {
-    pub sender: Profile,
-    pub message: String,
-    pub date: String,
-    pub time: String,
-    pub is_incoming: bool,
-}
+//  #[derive(Serialize, Deserialize, Clone, Debug)]
+//  pub struct Message {
+//      pub sender: Profile,
+//      pub message: String,
+//      pub date: String,
+//      pub time: String,
+//      pub is_incoming: bool,
+//  }
 
 /*      Bitcoin Flow        */
 
-#[derive(Serialize)]
-struct BitcoinHome {
-    pub usd: String,
-    pub btc: String,
-    pub balance: f64,
-    pub price: f64,
-    pub transactions: Vec<ShorthandTransaction>,
-    pub profile_picture: String,
-    pub internet: bool,
-}
+//  #[derive(Serialize)]
+//  struct BitcoinHome {
+//      pub usd: String,
+//      pub btc: String,
+//      pub balance: f64,
+//      pub price: f64,
+//      pub transactions: Vec<ShorthandTransaction>,
+//      pub profile_picture: String,
+//      pub internet: bool,
+//  }
 
-#[derive(Serialize)]
-struct Receive {
-    pub address: String
-}
+//  #[derive(Serialize)]
+//  struct Receive {
+//      pub address: String
+//  }
 
-#[derive(Serialize)]
-struct Speed {
-    pub fees: (f64, f64)
-}
+//  #[derive(Serialize)]
+//  struct Speed {
+//      pub fees: (f64, f64)
+//  }
 
-#[derive(Serialize)]
-struct ViewTransaction {
-    pub ext_transaction: Option<ExtTransaction>,
-    pub basic_transaction: Option<BasicTransaction>,
-}
+//  #[derive(Serialize)]
+//  struct ViewTransaction {
+//      pub ext_transaction: Option<ExtTransaction>,
+//      pub basic_transaction: Option<BasicTransaction>,
+//  }
 
-/*      Messages Flow        */
+//  /*      Messages Flow        */
 
-#[derive(Serialize)]
-struct MyProfile {
-    pub profile: Profile,
-    pub address: String,
-}
+//  #[derive(Serialize)]
+//  struct MyProfile {
+//      pub profile: Profile,
+//      pub address: String,
+//  }
 
-#[derive(Serialize)]
-struct MessagesHome {
-    pub conversations: Vec<Conversation>,
-    pub profile_picture: String,
-}
+//  #[derive(Serialize)]
+//  struct MessagesHome {
+//      pub conversations: Vec<Conversation>,
+//      pub profile_picture: String,
+//  }
 
 //  #[derive(Serialize)]
 //  struct Send {

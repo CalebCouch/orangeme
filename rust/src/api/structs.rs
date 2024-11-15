@@ -72,15 +72,10 @@ impl DartCallback {
         loop {
             for thread in &self.threads {
                 if let Ok(thread) = thread.try_lock() {
-                    let req = serde_json::to_string(&DartCommand{
+                    return Ok(thread(DartCommand{
                         method: method.to_string(),
                         data: data.to_string()
-                    })?;
-                    let res = thread(req).await;
-                    if res.contains("Error") {
-                        return Err(Error::DartError(res.to_string()))
-                    }
-                    return Ok(res)
+                    }).await?);
                 }
             }
         }
@@ -90,19 +85,6 @@ impl DartCallback {
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct DartCommand {
     pub method: String,
-    pub data: String
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
-pub struct RustCommand {
-    pub uid: String,
-    pub method: String,
-    pub data: String
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
-pub struct RustResponse {
-    pub uid: String,
     pub data: String
 }
 

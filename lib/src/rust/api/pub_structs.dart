@@ -8,25 +8,37 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-// These types are ignored because they are not used by any `pub` functions: `KeyPress`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`
+
+Future<void> test({required ShorthandTransaction s}) =>
+    RustLib.instance.api.crateApiPubStructsTest(s: s);
+
+enum KeyPress {
+  zero,
+  one,
+  two,
+  three,
+  four,
+  five,
+  six,
+  seven,
+  eight,
+  nine,
+  reset,
+  decimal,
+  backspace,
+  ;
+}
 
 @freezed
 sealed class PageName with _$PageName {
   const PageName._();
 
   const factory PageName.bitcoinHome() = PageName_BitcoinHome;
-  const factory PageName.speed(
-    String field0,
-    BigInt field1,
-  ) = PageName_Speed;
   const factory PageName.receive() = PageName_Receive;
-  const factory PageName.viewTransaction(
+  const factory PageName.test(
     String field0,
-  ) = PageName_ViewTransaction;
-  const factory PageName.myProfile() = PageName_MyProfile;
-  const factory PageName.messagesHome() = PageName_MessagesHome;
-  const factory PageName.test() = PageName_Test;
+  ) = PageName_Test;
 }
 
 enum Platform {
@@ -41,6 +53,41 @@ enum Platform {
   bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
         that: this,
       );
+}
+
+class ShorthandTransaction {
+  final bool isWithdraw;
+  final String date;
+  final String time;
+  final String usd;
+  final String txid;
+
+  const ShorthandTransaction({
+    required this.isWithdraw,
+    required this.date,
+    required this.time,
+    required this.usd,
+    required this.txid,
+  });
+
+  @override
+  int get hashCode =>
+      isWithdraw.hashCode ^
+      date.hashCode ^
+      time.hashCode ^
+      usd.hashCode ^
+      txid.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ShorthandTransaction &&
+          runtimeType == other.runtimeType &&
+          isWithdraw == other.isWithdraw &&
+          date == other.date &&
+          time == other.time &&
+          usd == other.usd &&
+          txid == other.txid;
 }
 
 @freezed
@@ -58,8 +105,7 @@ sealed class WalletMethod with _$WalletMethod {
 
   const factory WalletMethod.getNewAddress() = WalletMethod_GetNewAddress;
   const factory WalletMethod.getFees(
-    String field0,
-    BigInt field1,
-    double field2,
+    BigInt field0,
+    double field1,
   ) = WalletMethod_GetFees;
 }
