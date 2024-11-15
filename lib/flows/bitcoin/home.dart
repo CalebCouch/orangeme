@@ -80,8 +80,8 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                 TransactionList(),
             ],
             Bumper(context, [
-                CustomButton('Receive', 'primary lg expand none', onReceive, !widget.internet ? "disabled" : "enabled"),
-                CustomButton('Send', 'primary lg expand none', onSend, !widget.internet ? "disabled" : "enabled"),
+                CustomButton('Receive', 'primary lg expand none', onReceive, widget.internet),
+                CustomButton('Send', 'primary lg expand none', onSend, widget.internet),
             ]),
             TabNav(0, [
                 TabInfo(BitcoinHome(), 'wallet'),

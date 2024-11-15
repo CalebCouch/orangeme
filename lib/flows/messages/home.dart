@@ -64,7 +64,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
       [
         noConversations ? noMessages() : listConversations(),
       ],
-      Bumper(context, [CustomButton('New Message', 'primary lg expand none', createNewMessage, 'enabled')]),
+      Bumper(context, [CustomButton('New Message', 'primary lg expand none', createNewMessage, true)]),
       TabNav(1, [
         TabInfo(BitcoinHome(), 'wallet'),
         TabInfo(MessagesHome(), 'message'),

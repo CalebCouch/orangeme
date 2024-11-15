@@ -37,9 +37,9 @@ class CustomButton extends StatefulWidget {
   final String txt;
   final VoidCallback onTap;
   final VoidCallback? onDis;
-  final String status;
+  final bool enabled;
 
-  const CustomButton(this.txt, this.buttonData, this.onTap, this.status, {super.key, this.onDis});
+  const CustomButton(this.txt, this.buttonData, this.onTap, this.enabled, {super.key, this.onDis});
 
   @override
   State<CustomButton> createState() => _ButtonState();
@@ -49,12 +49,13 @@ class _ButtonState extends State<CustomButton> {
   List<String> x = [];
   late Color fill;
   late String text;
+  late String status;
 
   @override
   void initState() {
-    super.initState();
+    status = widget.enabled ? 'enabled' : 'disabled';
     x = widget.buttonData.split(' ');
-    // Initialize the fill color based on the initial status
+    super.initState();
   }
 
   Widget _displayIcon(y) {
@@ -78,8 +79,8 @@ class _ButtonState extends State<CustomButton> {
   }
 
   getColors() {
-    text = buttonColors[x[0]][widget.status].text;
-    fill = customize_color[buttonColors[x[0]][widget.status].fill]!;
+    text = buttonColors[x[0]][status].text;
+    fill = customize_color[buttonColors[x[0]][status].fill]!;
   }
 
   Widget buildButton() {
@@ -89,14 +90,14 @@ class _ButtonState extends State<CustomButton> {
         setState(() {
           if (hovering) {
             // Change fill color when hovering/pressed
-            if (widget.status == 'enabled') fill = customize_color[buttonColors[x[0]]['hovering']!.fill]!;
+            if (widget.enabled) fill = customize_color[buttonColors[x[0]]['hovering']!.fill]!;
           } else {
             // Reset to the original color when not hovering/pressed
-            fill = customize_color[buttonColors[x[0]][widget.status].fill]!;
+            fill = customize_color[buttonColors[x[0]][status].fill]!;
           }
         });
       },
-      onTap: widget.status == 'disabled' ? buzz : action,
+      onTap: status == 'disabled' ? buzz : action,
       child: Container(
         key: UniqueKey(),
         height: button_size[x[1]],

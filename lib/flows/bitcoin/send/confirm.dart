@@ -44,7 +44,7 @@ class ConfirmState extends State<Confirm> {
         isLoading ? Container() : ConfirmAddress(context, basicTx.address),
         isLoading ? Container() : ConfirmAmount(context, widget.tx, basicTx, shTx),
       ],
-      isLoading ? Container() : Bumper(context, [CustomButton('Confirm & Send', 'primary lg expand none', () => onContinue(), 'enabled')]),
+      isLoading ? Container() : Bumper(context, [CustomButton('Confirm & Send', 'primary lg expand none', () => onContinue(), true)]),
       isLoading ? Alignment.center : Alignment.topCenter,
       !isLoading,
     );
@@ -73,7 +73,7 @@ ConfirmAddress(BuildContext context, String address) {
     subtitle: address,
     helperText: "Bitcoin sent to the wrong address can never be recovered.",
     buttons: [
-      CustomButton('Address', 'secondary md hug edit', changeAddress, 'enabled'),
+      CustomButton('Address', 'secondary md hug edit', changeAddress, true),
     ],
   );
 }
@@ -99,8 +99,8 @@ ConfirmAmount(BuildContext context, ExtTransaction tx, BasicTransaction basicTx,
       ],
     ),
     buttons: [
-      CustomButton('Amount', 'secondary md hug edit', changeAmount, 'enabled'),
-      CustomButton('Speed', 'secondary md hug edit', changeSpeed, 'enabled'),
+      CustomButton('Amount', 'secondary md hug edit', changeAmount, true),
+      CustomButton('Speed', 'secondary md hug edit', changeSpeed, true),
     ],
   );
 }

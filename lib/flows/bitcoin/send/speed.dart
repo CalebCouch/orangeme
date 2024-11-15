@@ -58,7 +58,7 @@ class SpeedState extends GenericState<Speed> {
         return Stack_Default(
             Header_Stack(context, "Transaction speed"),
             [SpeedSelector(widget.fees)],
-            Bumper(context, [CustomButton('Continue', 'primary lg expand none', onContinue, 'enabled')]),
+            Bumper(context, [CustomButton('Continue', 'primary lg expand none', onContinue, true)]),
             Alignment.topCenter,
             true,
             isLoading,

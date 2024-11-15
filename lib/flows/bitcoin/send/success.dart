@@ -25,7 +25,7 @@ class SuccessState extends State<Success> {
       [
         Result('You sent ${widget.usd}'),
       ],
-      Bumper(context, [CustomButton('Done', 'secondary lg expand none', onDone, 'enabled')]),
+      Bumper(context, [CustomButton('Done', 'secondary lg expand none', onDone, true)]),
       Alignment.center,
       false,
     );

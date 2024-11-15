@@ -18,7 +18,6 @@ class Send extends StatefulWidget {
 class SendState extends State<Send> {
   bool addressIsValid = true;
   bool isLoading = false;
-  String status = 'disabled';
   String address = '';
 
   onContinue() {
@@ -48,7 +47,6 @@ class SendState extends State<Send> {
   checkAddressValid(String address) {
     setState(() {
       addressIsValid = true;
-      status = addressIsValid ? 'enabled' : 'disabled';
     });
   }
 
@@ -81,7 +79,7 @@ class SendState extends State<Send> {
         ButtonTips(),
       ],
       Bumper(context, [
-        CustomButton('Continue', 'primary lg expand none', onContinue, status),
+        CustomButton('Continue', 'primary lg expand none', onContinue, addressIsValid),
       ]),
     );
   }
@@ -101,9 +99,9 @@ class SendState extends State<Send> {
     return Container(
       padding: const EdgeInsets.all(8),
       child: CustomColumn([
-        CustomButton('Paste Clipboard', 'secondary md hug paste', onPaste, 'enabled'),
+        CustomButton('Paste Clipboard', 'secondary md hug paste', onPaste, true),
         const CustomText('text sm text_secondary', 'or'),
-        CustomButton('Scan QR Code', 'secondary md hug qrcode', onScan, 'enabled'),
+        CustomButton('Scan QR Code', 'secondary md hug qrcode', onScan, true),
       ], 8),
     );
   }
