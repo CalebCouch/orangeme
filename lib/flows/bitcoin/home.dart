@@ -69,46 +69,53 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     Widget build_with_state(BuildContext context) {
         bool noTransactions = widget.transactions.isEmpty;
         return Root_Home(
-            Header_Home(ProfileButton(context, widget.profile_picture, onReceive), "Wallet"),
-            [
+            header: Header_Home(context, "Wallet", null, BitcoinHome()),
+            content: [
                 BalanceDisplay(),
-                //  BackupReminder(false),
                 InternetBanner(widget.internet),
                 TransactionList(),
             ],
-            Bumper(context, [
-                CustomButton('Receive', 'primary lg expand none', onReceive, widget.internet),
-                CustomButton('Send', 'primary lg expand none', onReceive, widget.internet),
+            bumper: Bumper(context, content: [
+                CustomButton(
+                    txt: 'Receive', 
+                    onTap: onReceive, 
+                    enabled: widget.internet
+                ),
+                CustomButton(
+                    txt: 'Send', 
+                    onTap: onReceive, 
+                    enabled: widget.internet
+                ),
             ]),
-            TabNav(0, [
+            tabNav: TabNav(0, [
                 TabInfo(BitcoinHome(), 'wallet'),
                 TabInfo(BitcoinHome(), 'message'),
             ]),
-            noTransactions && widget.internet ? Alignment.center : Alignment.topCenter,
-            !noTransactions,
+            alignment: noTransactions && widget.internet ? Alignment.center : Alignment.topCenter,
+            scroll: !noTransactions,
         );
     }
 
     //The following widgets can ONLY be used in this file
-    String get_size(int usd) {
-        return usd <= 4 ? 'title' : usd <= 7 ? 'h1' : 'h2';
-    }
 
     Widget BalanceDisplay() {
+        int txtL = widget.balance_usd.length;
         return Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(vertical: 64),
             child: CustomColumn([
                 CustomText(
-                    'heading ${get_size(widget.balance_usd.length)}',
-                    widget.balance_usd
+                    variant: 'heading',
+                    font_size: txtL <= 4 ? 'title' : txtL <= 7 ? 'h1' : 'h2',
+                    txt: widget.balance_usd,
                 ),
                 CustomText(
-                    'text lg text_secondary',
-                    widget.balance_btc
-                )],
-                AppPadding.valueDisplaySep
-            ),
+                    variant: 'text',
+                    font_size: 'lg',
+                    text_color: 'text_secondary',
+                    txt: widget.balance_btc,
+                ) 
+            ], AppPadding.valueDisplaySep),
         );
     }
 
@@ -140,7 +147,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
         return ListItem(
             onTap: () {
                 HapticFeedback.mediumImpact();
-              //navigateTo(ViewTransaction(txid: transaction.txid.toString()));
+                //navigateTo(ViewTransaction(txid: transaction.txid.toString()));
             },
             title: transaction.isWithdraw ? "Sent bitcoin" : "Received bitcoin",
             sub: formatTransactionDate(transaction.date, transaction.time),

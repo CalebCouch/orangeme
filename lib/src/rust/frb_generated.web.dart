@@ -115,8 +115,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Profile dco_decode_profile(dynamic raw);
 
   @protected
-  (String, int, bool, String) dco_decode_record_string_u_8_bool_string(
-      dynamic raw);
+  (String, double, int, bool, String)
+      dco_decode_record_string_f_64_u_8_bool_string(dynamic raw);
 
   @protected
   ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw);
@@ -219,8 +219,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Profile sse_decode_profile(SseDeserializer deserializer);
 
   @protected
-  (String, int, bool, String) sse_decode_record_string_u_8_bool_string(
-      SseDeserializer deserializer);
+  (
+    String,
+    double,
+    int,
+    bool,
+    String
+  ) sse_decode_record_string_f_64_u_8_bool_string(SseDeserializer deserializer);
 
   @protected
   ShorthandTransaction sse_decode_shorthand_transaction(
@@ -331,8 +336,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_profile(Profile self, SseSerializer serializer);
 
   @protected
-  void sse_encode_record_string_u_8_bool_string(
-      (String, int, bool, String) self, SseSerializer serializer);
+  void sse_encode_record_string_f_64_u_8_bool_string(
+      (String, double, int, bool, String) self, SseSerializer serializer);
 
   @protected
   void sse_encode_shorthand_transaction(

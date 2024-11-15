@@ -808,14 +808,15 @@ impl SseDecode for crate::api::pub_structs::Profile {
     }
 }
 
-impl SseDecode for (String, u8, bool, String) {
+impl SseDecode for (String, f64, u8, bool, String) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_field0 = <String>::sse_decode(deserializer);
-        let mut var_field1 = <u8>::sse_decode(deserializer);
-        let mut var_field2 = <bool>::sse_decode(deserializer);
-        let mut var_field3 = <String>::sse_decode(deserializer);
-        return (var_field0, var_field1, var_field2, var_field3);
+        let mut var_field1 = <f64>::sse_decode(deserializer);
+        let mut var_field2 = <u8>::sse_decode(deserializer);
+        let mut var_field3 = <bool>::sse_decode(deserializer);
+        let mut var_field4 = <String>::sse_decode(deserializer);
+        return (var_field0, var_field1, var_field2, var_field3, var_field4);
     }
 }
 
@@ -1383,13 +1384,14 @@ impl SseEncode for crate::api::pub_structs::Profile {
     }
 }
 
-impl SseEncode for (String, u8, bool, String) {
+impl SseEncode for (String, f64, u8, bool, String) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.0, serializer);
-        <u8>::sse_encode(self.1, serializer);
-        <bool>::sse_encode(self.2, serializer);
-        <String>::sse_encode(self.3, serializer);
+        <f64>::sse_encode(self.1, serializer);
+        <u8>::sse_encode(self.2, serializer);
+        <bool>::sse_encode(self.3, serializer);
+        <String>::sse_encode(self.4, serializer);
     }
 }
 

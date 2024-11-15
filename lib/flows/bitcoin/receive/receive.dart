@@ -10,87 +10,89 @@ import 'package:share/share.dart';
 import 'package:orange/global.dart' as global;
 
 class Receive extends GenericWidget {
-  Receive({super.key});
+    Receive({super.key});
 
-  String address = "";
-
-  @override
-  ReceiveState createState() => ReceiveState();
+    String address = "";
+    
+    @override
+    ReceiveState createState() => ReceiveState();
 }
 
 class ReceiveState extends GenericState<Receive> {
-  @override
-  PageName getPageName() {
-    return PageName.receive();
-  }
 
-  @override
-  int refreshInterval() {
-    return 0;
-  }
+    @override
+    PageName getPageName() {
+        return PageName.receive();
+    }
 
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    print("Unpacking");
-    setState(() {
-      widget.address = json["address"];
-    });
-  }
+    @override
+    int refreshInterval() {
+        return 0;
+    }
 
-  @override
-  void initState() {
-    print("Init");
-    super.initState();
-  }
+    @override
+    void unpack_state(Map<String, dynamic> json) {
+        setState(() {
+            widget.address = json["address"];
+        });
+    }
 
-  onShare() {
-    Share.share(widget.address);
-  }
+    @override
+    void initState() {
+        super.initState();
+    }
 
-  @override
-  Widget build_with_state(BuildContext context) {
-    return Stack_Default(
-      Header_Stack(context, "Receive bitcoin"),
-      [
-        QRCode(widget.address),
-        Instructions(),
-      ],
-      Bumper(context, [
-        CustomButton('Share', 'primary lg expand none', onShare, true),
-      ]),
-      Alignment.center,
-      false,
-    );
-  }
+    onShare() => Share.share(widget.address);
+
+    @override
+    Widget build_with_state(BuildContext context) {
+        return Stack_Default(
+            header: Header_Stack(context, "Receive bitcoin"),
+            content: [
+                QRCode(widget.address),
+                Instructions(),
+            ],
+            bumper: Bumper(context, 
+                content: [CustomButton(txt: 'Share', variant: 'primary', size: 'lg', onTap: onShare)]
+            ),
+            alignment: Alignment.center,
+            scroll: false,
+        );
+    }
 }
 
 //The following widgets can ONLY be used in this file
 
 Widget QRCode(String address) {
-  return Stack(
-    alignment: Alignment.center,
-    children: [
-      ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: CustomPaint(
-          size: const Size(312, 312),
-          painter: QrPainter(
-            data: address,
-            options: const QrOptions(
-              shapes: QrShapes(
-                darkPixel: QrPixelShapeCircle(),
-              ),
+    return Stack(
+        alignment: Alignment.center,
+        children: [
+            ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CustomPaint(
+                    size: const Size(312, 312),
+                    painter: QrPainter(
+                        data: address,
+                        options: const QrOptions(
+                            shapes: QrShapes(
+                                darkPixel: QrPixelShapeCircle(),
+                            ),
+                        ),
+                    ),
+                ),
             ),
-          ),
-        ),
-      ),
-      Positioned(
-        child: Logo('xxl'),
-      ),
-    ],
-  );
+            Positioned(
+                child: Logo('xxl'),
+            ),
+        ],
+    );
 }
 
 Widget Instructions() {
-  return const CustomText('text md text_secondary', 'Scan to receive bitcoin.');
+    return CustomText(
+        variant: 'text', 
+        font_size: 'md', 
+        text_color: 'text_secondary', 
+        txt: 'Scan to receive bitcoin.'
+    );
 }
