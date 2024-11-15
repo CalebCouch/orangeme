@@ -87,30 +87,6 @@ impl DescriptorSet {
     }
 }
 
-//  #[derive(Serialize, Clone, Debug)]
-//  struct SendTransaction {
-//      pub tx: ReceiveTransaction,
-//      pub fee: String,
-//      pub total: String,
-//  }
-
-//  #[derive(Serialize, Clone, Debug)]
-//  struct ReceiveTransaction {
-//      pub tx: ShorthandTransaction,
-//      pub address: String,
-//      pub price: String,
-//      pub btc: f64,
-//  }
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct ShorthandTransaction {
-    pub is_withdraw: bool,
-    pub date: String,
-    pub time: String,
-    pub usd: String,
-    pub txid: String,
-}
-
 #[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct Transaction {
     pub btc: Btc,
@@ -118,7 +94,7 @@ pub struct Transaction {
     pub price: Usd,
     pub address: String,
     pub is_withdraw: bool,
-    pub confirmation_time: Option<(u32, DateTime)>,
+    pub confirmation_time: Option<DateTime>,
     pub fee: Sats,
     pub fee_usd: Usd,
 }
@@ -145,7 +121,7 @@ impl Transaction {
             Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string()
         };
         let confirmation_time = details.confirmation_time.map(|ct|
-            Ok::<(u32, DateTime), Error>((ct.height, DateTime::from_timestamp(ct.timestamp)?))
+            Ok::<DateTime, Error>(DateTime::from_timestamp(ct.timestamp)?)
         ).transpose()?;
         let usd = btc * price;
         let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))?;

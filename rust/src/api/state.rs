@@ -1,7 +1,7 @@
 use super::Error;
 
 use super::simple::rustCall;
-use super::pub_structs::{PageName, Platform, Thread, WalletMethod};
+use super::pub_structs::{PageName, Platform, Thread, WalletMethod, ShorthandTransaction};
 use super::pub_structs::{SATS, Sats, Btc, Usd};
 use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime};
@@ -22,28 +22,7 @@ use std::str::FromStr;
 use bdk::bitcoin::{Network, Address};
 use web5_rust::dids::Identity;
 
-//  use super::structs::DateTime;
-//  use num_format::{Locale, ToFormattedString};
-//  pub fn format_datetime(datetime: Option<&DateTime>) -> (String, String) {
-//      datetime.map(|dt| (
-//          dt.format("%m/%d/%Y").to_string(),
-//          dt.format("%l:%M %p").to_string()
-//      )).unwrap_or(("Pending".to_string(), "Pending".to_string()))
-//  }
-
-//  pub fn format_usd(usd: Usd) -> String {
-//      if usd == 0.0 {"$0.00".to_string()} else {format!("${:.2}", usd)}
-//  }
-
-//  pub fn format_price(price: Usd) -> String {
-//      let whole_part = price.trunc() as i64;
-//      let decimal_part = (price.fract() * 100.0).round() as i64;
-//      format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() })
-//  }
-
-
-
-pub type Internet = bool;
+use num_format::{Locale, ToFormattedString};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
@@ -81,8 +60,6 @@ impl Field {
         format!("{:?}", self).split("(").collect::<Vec<&str>>()[0].as_bytes().to_vec()
     }
 }
-
-
 
 #[derive(Clone)]
 pub struct State {
@@ -127,6 +104,29 @@ pub struct StateManager {
     state: State,
 }
 
+pub fn format_datetime(datetime: Option<&DateTime>) -> (String, String) {
+    datetime.map(|dt| (
+        dt.format("%m/%d/%Y").to_string(),
+        dt.format("%l:%M %p").to_string()
+    )).unwrap_or(("Pending".to_string(), "Pending".to_string()))
+}
+
+pub fn format_usd(usd: Usd) -> String {
+    if usd == 0.0 {"$0.00".to_string()} else {format!("${:.2}", usd)}
+}
+
+pub fn format_btc(btc: Btc) -> String {
+    format!("{:.8} BTC", btc)
+}
+
+pub fn format_price(price: Usd) -> String {
+    let whole_part = price.trunc() as i64;
+    let decimal_part = (price.fract() * 100.0).round() as i64;
+    format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() })
+}
+
+
+
 impl StateManager {
     pub fn new(state: State) -> Self {
         StateManager{state}
@@ -161,41 +161,28 @@ impl StateManager {
     }
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
-      //let internet = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
+        let internet = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
+        let profile_pfp = self.state.get::<Profile>(&Field::Profile(None)).await?.pfp_path;
+        let balance = self.state.get_or_default::<Btc>(&Field::Balance(None)).await?;
+        let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
+        let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
 
-      //let balance = self.state.get_or_default::<Btc>(&Field::Balance(None)).await?;
-      //let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-
-      //let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
-
-      //let usd = btc*price;
-      //let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
-        Ok("to".to_string())
-
-     // Ok(serde_json::to_string(json!({
-     //     "internet": internet,
-     //     "balance_btc": 
-     //     "usd": balance*price
-     // })))
-
-     //Ok(serde_json::to_string(&BitcoinHome{
-     //   internet: internet_status,
-     //   usd: formatted_usd,
-     //   btc: btc.to_string(),
-     //   balance: usd,
-     //   price,
-     //   transactions: transactions.into_iter().map(|(txid, tx)|
-     //       ShorthandTransaction {
-     //           is_withdraw: tx.is_withdraw,
-     //           date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-     //           time: self.format_datetime( tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-     //           btc: tx.btc,
-     //           usd: format!("${:.2}", tx.usd),
-     //           txid: txid.to_string(),
-     //       },
-     //   ).collect(),
-     //   profile_picture: profile.pfp.unwrap_or_default(),
-     //    })?)
+        Ok(serde_json::to_string(&json!({
+            "internet": internet,
+            "balance_btc": format_btc(balance),
+            "balance_usd": format_usd(balance*price),
+            "profile_picture": profile_pfp,
+            "transactions": transactions.into_iter().map(|(txid, tx)| {
+                let date_time = format_datetime(tx.confirmation_time.as_ref());
+                ShorthandTransaction{
+                    is_withdraw: tx.is_withdraw,
+                    date: date_time.0,
+                    time: date_time.1,
+                    amount: format_usd(tx.usd),
+                    txid: txid.to_string()
+                }
+            }).collect::<Vec<ShorthandTransaction>>()
+        }))?)
     }
 
     pub async fn receive(&self) -> Result<String, Error> {

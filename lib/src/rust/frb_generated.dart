@@ -70,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.6.0';
 
   @override
-  int get rustContentHash => -1133780189;
+  int get rustContentHash => 1535927307;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -107,6 +107,9 @@ abstract class RustLibApi extends BaseApi {
   Future<String> crateApiSimpleGetPage(
       {required String path, required PageName page});
 
+  Future<void> crateApiPubStructsLoadStructs(
+      {required ShorthandTransaction s, required Profile p});
+
   bool crateApiPubStructsPlatformIsDesktop({required Platform that});
 
   Future<String> crateApiSimpleRustCall({required Thread thread});
@@ -114,9 +117,7 @@ abstract class RustLibApi extends BaseApi {
   Future<String> crateApiSimpleRustStart(
       {required String path,
       required Platform platform,
-      required FutureOr<String> Function(String) thread});
-
-  Future<void> crateApiPubStructsTest({required ShorthandTransaction s});
+      required FutureOr<String> Function(DartCommand) thread});
 
   Future<(String, int, bool, String)> crateApiUtilsUpdateDisplayAmount(
       {required String amount,
@@ -390,12 +391,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiPubStructsLoadStructs(
+      {required ShorthandTransaction s, required Profile p}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_shorthand_transaction(s, serializer);
+        sse_encode_box_autoadd_profile(p, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 10, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiPubStructsLoadStructsConstMeta,
+      argValues: [s, p],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiPubStructsLoadStructsConstMeta =>
+      const TaskConstMeta(
+        debugName: "load_structs",
+        argNames: ["s", "p"],
+      );
+
+  @override
   bool crateApiPubStructsPlatformIsDesktop({required Platform that}) {
     return handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_platform(that, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
@@ -420,7 +448,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_thread(thread, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
+            funcId: 12, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -441,16 +469,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Future<String> crateApiSimpleRustStart(
       {required String path,
       required Platform platform,
-      required FutureOr<String> Function(String) thread}) {
+      required FutureOr<String> Function(DartCommand) thread}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         sse_encode_platform(platform, serializer);
-        sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
+        sse_encode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
             thread, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 12, port: port_);
+            funcId: 13, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -465,30 +493,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiSimpleRustStartConstMeta => const TaskConstMeta(
         debugName: "rustStart",
         argNames: ["path", "platform", "thread"],
-      );
-
-  @override
-  Future<void> crateApiPubStructsTest({required ShorthandTransaction s}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_box_autoadd_shorthand_transaction(s, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 13, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiPubStructsTestConstMeta,
-      argValues: [s],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiPubStructsTestConstMeta => const TaskConstMeta(
-        debugName: "test",
-        argNames: ["s"],
       );
 
   @override
@@ -524,10 +528,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   Future<void> Function(int, dynamic)
-      encode_DartFn_Inputs_String_Output_String_AnyhowException(
-          FutureOr<String> Function(String) raw) {
+      encode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
+          FutureOr<String> Function(DartCommand) raw) {
     return (callId, rawArg0) async {
-      final arg0 = dco_decode_String(rawArg0);
+      final arg0 = dco_decode_dart_command(rawArg0);
 
       Box<String>? rawOutput;
       Box<AnyhowException>? rawError;
@@ -593,8 +597,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  FutureOr<String> Function(String)
-      dco_decode_DartFn_Inputs_String_Output_String_AnyhowException(
+  FutureOr<String> Function(DartCommand)
+      dco_decode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     throw UnimplementedError('');
@@ -641,6 +645,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Profile dco_decode_box_autoadd_profile(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_profile(raw);
+  }
+
+  @protected
   ShorthandTransaction dco_decode_box_autoadd_shorthand_transaction(
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -657,6 +667,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   WalletMethod dco_decode_box_autoadd_wallet_method(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_wallet_method(raw);
+  }
+
+  @protected
+  DartCommand dco_decode_dart_command(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return DartCommand(
+      method: dco_decode_String(arr[0]),
+      data: dco_decode_String(arr[1]),
+    );
   }
 
   @protected
@@ -690,6 +712,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
   PageName dco_decode_page_name(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
@@ -710,6 +738,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Platform dco_decode_platform(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return Platform.values[raw as int];
+  }
+
+  @protected
+  Profile dco_decode_profile(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return Profile(
+      name: dco_decode_String(arr[0]),
+      did: dco_decode_String(arr[1]),
+      pfpPath: dco_decode_opt_String(arr[2]),
+      abtMe: dco_decode_opt_String(arr[3]),
+    );
   }
 
   @protected
@@ -738,7 +780,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       isWithdraw: dco_decode_bool(arr[0]),
       date: dco_decode_String(arr[1]),
       time: dco_decode_String(arr[2]),
-      usd: dco_decode_String(arr[3]),
+      amount: dco_decode_String(arr[3]),
       txid: dco_decode_String(arr[4]),
     );
   }
@@ -866,6 +908,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_profile(deserializer));
+  }
+
+  @protected
   ShorthandTransaction sse_decode_box_autoadd_shorthand_transaction(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -883,6 +931,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_wallet_method(deserializer));
+  }
+
+  @protected
+  DartCommand sse_decode_dart_command(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_method = sse_decode_String(deserializer);
+    var var_data = sse_decode_String(deserializer);
+    return DartCommand(method: var_method, data: var_data);
   }
 
   @protected
@@ -918,6 +974,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   PageName sse_decode_page_name(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -943,6 +1010,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Profile sse_decode_profile(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_did = sse_decode_String(deserializer);
+    var var_pfpPath = sse_decode_opt_String(deserializer);
+    var var_abtMe = sse_decode_opt_String(deserializer);
+    return Profile(
+        name: var_name, did: var_did, pfpPath: var_pfpPath, abtMe: var_abtMe);
+  }
+
+  @protected
   (String, int, bool, String) sse_decode_record_string_u_8_bool_string(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -960,13 +1038,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_isWithdraw = sse_decode_bool(deserializer);
     var var_date = sse_decode_String(deserializer);
     var var_time = sse_decode_String(deserializer);
-    var var_usd = sse_decode_String(deserializer);
+    var var_amount = sse_decode_String(deserializer);
     var var_txid = sse_decode_String(deserializer);
     return ShorthandTransaction(
         isWithdraw: var_isWithdraw,
         date: var_date,
         time: var_time,
-        usd: var_usd,
+        amount: var_amount,
         txid: var_txid);
   }
 
@@ -1051,11 +1129,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
-      FutureOr<String> Function(String) self, SseSerializer serializer) {
+  void sse_encode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
+      FutureOr<String> Function(DartCommand) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_DartOpaque(
-        encode_DartFn_Inputs_String_Output_String_AnyhowException(self),
+        encode_DartFn_Inputs_dart_command_Output_String_AnyhowException(self),
         serializer);
   }
 
@@ -1107,6 +1185,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_profile(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_shorthand_transaction(
       ShorthandTransaction self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1124,6 +1208,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       WalletMethod self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_wallet_method(self, serializer);
+  }
+
+  @protected
+  void sse_encode_dart_command(DartCommand self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.method, serializer);
+    sse_encode_String(self.data, serializer);
   }
 
   @protected
@@ -1159,6 +1250,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_page_name(PageName self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -1181,6 +1282,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_profile(Profile self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.did, serializer);
+    sse_encode_opt_String(self.pfpPath, serializer);
+    sse_encode_opt_String(self.abtMe, serializer);
+  }
+
+  @protected
   void sse_encode_record_string_u_8_bool_string(
       (String, int, bool, String) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1197,7 +1307,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self.isWithdraw, serializer);
     sse_encode_String(self.date, serializer);
     sse_encode_String(self.time, serializer);
-    sse_encode_String(self.usd, serializer);
+    sse_encode_String(self.amount, serializer);
     sse_encode_String(self.txid, serializer);
   }
 

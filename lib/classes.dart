@@ -13,29 +13,6 @@ import 'package:orange/global.dart' as global;
 
 import 'package:orange/src/rust/api/pub_structs.dart';
 
-import 'dart:io' as DartIO;
-Platform getPlatform() {
-    if (DartIO.Platform.isWindows) {
-      return Platform.windows;
-    }
-    if (DartIO.Platform.isLinux) {
-      return Platform.linux;
-    }
-    if (DartIO.Platform.isMacOS) {
-      return Platform.mac;
-    }
-    if (DartIO.Platform.isIOS) {
-      return Platform.ios;
-    }
-    if (DartIO.Platform.isAndroid) {
-      return Platform.android;
-    }
-    if (DartIO.Platform.isFuchsia) {
-      return Platform.fuchsia;
-    }
-    throw 'Unsupported Platform';
-}
-
 /* Manages and triggers shake animations by notifying listeners. */
 class ShakeController extends ChangeNotifier {
   void shake() => notifyListeners();
@@ -44,7 +21,6 @@ class ShakeController extends ChangeNotifier {
 abstract class GenericWidget extends StatefulWidget {
   Timer? timer;
   CancelableOperation<String>? async_state;
-  bool pause_refresh = false;
 
   GenericWidget({super.key});
 }
@@ -62,11 +38,8 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
         getPage(path: global.dataDir!, page: getPageName()),
     );
     widget.async_state!.then((String state) {
-        //print("gotstate in ${DateTime.now().millisecondsSinceEpoch - time}");
-        if (!widget.pause_refresh) {
           unpack_state(jsonDecode(state));
           _createTimer();
-        }
     });
   }
 
@@ -84,10 +57,9 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
   }
 
   navigateTo(Widget next) async {
-    widget.pause_refresh = true;
+    widget.async_state?.cancel();
     widget.timer?.cancel();
     await global.navigation.navigateTo(next);
-    widget.pause_refresh = false;
     await _createTimer();
   }
 
@@ -109,7 +81,6 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
   @override
   void dispose() {
-    //widget.gettingState!.cancel();
     widget.async_state?.cancel();
     widget.timer?.cancel();
     super.dispose();

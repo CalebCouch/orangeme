@@ -16,6 +16,8 @@ use schemars::JsonSchema;
 use tokio::sync::Mutex;
 use std::sync::Arc;
 
+use super::pub_structs::DartCommand;
+
 const STORAGE_SPLIT: &str = "\u{0000}";
 
 
@@ -54,7 +56,7 @@ impl Request {
     }
 }
 
-pub type Thread = Arc<Mutex<dyn Fn(String) -> DartFnFuture<String> + 'static + Sync + Send>>;
+pub type Thread = Arc<Mutex<dyn Fn(DartCommand) -> DartFnFuture<String> + 'static + Sync + Send>>;
 
 #[derive(Clone, Default)]
 pub struct DartCallback {
@@ -64,7 +66,7 @@ pub struct DartCallback {
 impl DartCallback {
     pub fn new() -> Self {DartCallback{threads: vec![]}}
 
-    pub fn add_thread(&mut self, thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send) {
+    pub fn add_thread(&mut self, thread: impl Fn(DartCommand) -> DartFnFuture<String> + 'static + Sync + Send) {
         self.threads.push(Arc::new(Mutex::new(thread)));
     }
 
@@ -75,17 +77,11 @@ impl DartCallback {
                     return Ok(thread(DartCommand{
                         method: method.to_string(),
                         data: data.to_string()
-                    }).await?);
+                    }).await);
                 }
             }
         }
     }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
-pub struct DartCommand {
-    pub method: String,
-    pub data: String
 }
 
 pub struct Storage {

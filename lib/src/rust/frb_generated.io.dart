@@ -43,8 +43,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           dynamic raw);
 
   @protected
-  FutureOr<String> Function(String)
-      dco_decode_DartFn_Inputs_String_Output_String_AnyhowException(
+  FutureOr<String> Function(DartCommand)
+      dco_decode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
           dynamic raw);
 
   @protected
@@ -70,6 +70,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PageName dco_decode_box_autoadd_page_name(dynamic raw);
 
   @protected
+  Profile dco_decode_box_autoadd_profile(dynamic raw);
+
+  @protected
   ShorthandTransaction dco_decode_box_autoadd_shorthand_transaction(
       dynamic raw);
 
@@ -78,6 +81,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   WalletMethod dco_decode_box_autoadd_wallet_method(dynamic raw);
+
+  @protected
+  DartCommand dco_decode_dart_command(dynamic raw);
 
   @protected
   double dco_decode_f_64(dynamic raw);
@@ -95,10 +101,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  String? dco_decode_opt_String(dynamic raw);
+
+  @protected
   PageName dco_decode_page_name(dynamic raw);
 
   @protected
   Platform dco_decode_platform(dynamic raw);
+
+  @protected
+  Profile dco_decode_profile(dynamic raw);
 
   @protected
   (String, int, bool, String) dco_decode_record_string_u_8_bool_string(
@@ -161,6 +173,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer);
 
   @protected
+  Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer);
+
+  @protected
   ShorthandTransaction sse_decode_box_autoadd_shorthand_transaction(
       SseDeserializer deserializer);
 
@@ -170,6 +185,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   WalletMethod sse_decode_box_autoadd_wallet_method(
       SseDeserializer deserializer);
+
+  @protected
+  DartCommand sse_decode_dart_command(SseDeserializer deserializer);
 
   @protected
   double sse_decode_f_64(SseDeserializer deserializer);
@@ -187,10 +205,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
   PageName sse_decode_page_name(SseDeserializer deserializer);
 
   @protected
   Platform sse_decode_platform(SseDeserializer deserializer);
+
+  @protected
+  Profile sse_decode_profile(SseDeserializer deserializer);
 
   @protected
   (String, int, bool, String) sse_decode_record_string_u_8_bool_string(
@@ -233,8 +257,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           MyCustomAsyncRuntime self, SseSerializer serializer);
 
   @protected
-  void sse_encode_DartFn_Inputs_String_Output_String_AnyhowException(
-      FutureOr<String> Function(String) self, SseSerializer serializer);
+  void sse_encode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
+      FutureOr<String> Function(DartCommand) self, SseSerializer serializer);
 
   @protected
   void sse_encode_DartOpaque(Object self, SseSerializer serializer);
@@ -260,6 +284,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       PageName self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_shorthand_transaction(
       ShorthandTransaction self, SseSerializer serializer);
 
@@ -269,6 +296,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_wallet_method(
       WalletMethod self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_dart_command(DartCommand self, SseSerializer serializer);
 
   @protected
   void sse_encode_f_64(double self, SseSerializer serializer);
@@ -287,10 +317,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       Uint8List self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_page_name(PageName self, SseSerializer serializer);
 
   @protected
   void sse_encode_platform(Platform self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_profile(Profile self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_u_8_bool_string(

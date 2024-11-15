@@ -77,7 +77,7 @@ impl Protocols {
 pub struct Profile {
     pub name: String,
     pub did: Did,
-    pub pfp: Option<String>,
+    pub pfp_path: Option<String>,
     pub abt_me: Option<String>,
 }
 
@@ -85,10 +85,10 @@ impl Profile {
     pub fn new(
         name: String,
         did: Did,
-        pfp: Option<String>,
+        pfp_path: Option<String>,
         abt_me: Option<String>,
     ) -> Self {
-        Profile{name, did, pfp, abt_me}
+        Profile{name, did, pfp_path, abt_me}
     }
 }
 
@@ -136,7 +136,7 @@ impl MessagingAgent {
 
     pub async fn init_profile(&self, state: &State) -> Result<(), Error> {
         let tenant = self.agent.tenant().clone();
-        if let Some(p) = self.agent.public_read(FiltersBuilder::build(vec![
+        let profile = if let Some(p) = self.agent.public_read(FiltersBuilder::build(vec![
             ("author", Filter::equal(tenant.to_string())),
             ("type", Filter::equal("profile"))]
         ), None, None).await?.first() {
@@ -148,7 +148,7 @@ impl MessagingAgent {
             let record = Record::new(None, &Protocols::profile(), serde_json::to_vec(&profile)?);
             self.agent.public_create(record, index, None).await?;
             state.set(Field::Profile(Some(profile))).await?;
-        }
+        };
         Ok(())
     }
 

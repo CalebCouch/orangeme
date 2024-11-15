@@ -31,6 +31,7 @@ Future<void> main() async {
         global.navigation.throwError(details.toString());
     };
     PlatformDispatcher.instance.onError = (error, stack) {
+        print(stack);
         global.navigation.throwError(error.toString());
         return true;
     };

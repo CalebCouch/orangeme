@@ -66,13 +66,25 @@ pub type Sats = u64;
 pub type Usd = f64;
 pub type Btc = f64;
 
+pub struct DartCommand {
+    pub method: String,
+    pub data: String
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ShorthandTransaction {
     pub is_withdraw: bool,
     pub date: String,
     pub time: String,
-    pub usd: String,
+    pub amount: String,
     pub txid: String,
 }
 
-pub fn test(s: ShorthandTransaction) {}
+pub struct Profile {
+    pub name: String,
+    pub did: String,
+    pub pfp_path: Option<String>,
+    pub abt_me: Option<String>,
+}
+
+pub fn load_structs(_s: ShorthandTransaction, _p: Profile) {}

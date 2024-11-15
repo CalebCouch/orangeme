@@ -78,8 +78,7 @@ Future<String> callRust(Thread thread) async {
     return result;
 }
 
-Future<String> dartCallback(DartCommand dartCommand) async {
-    var command = DartCommand.fromJson(jsonDecode(dartCommand));
+Future<String> dartCallback(DartCommand command) async {
     switch (command.method) {
         case "storage_set": {
             var split = command.data.split("\u0000");

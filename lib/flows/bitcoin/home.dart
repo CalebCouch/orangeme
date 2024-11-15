@@ -46,10 +46,18 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
         setState(() {
             widget.internet = json["internet"] as bool;
             widget.profile_picture = json["profile_picture"] as String?;
-            widget.balance_usd = json["usd"];
-            widget.balance_btc = json["btc"];
+            widget.balance_usd = json["balance_usd"] as String;
+            widget.balance_btc = json["balance_btc"] as String;
 
-            widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map((json) => ShorthandTransaction.fromJson(json)));
+            widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map(
+                (json) => ShorthandTransaction(
+                    isWithdraw: json['is_withdraw'] as bool,
+                    date: json['date'] as String,
+                    time: json['time'] as String,
+                    amount: json['amount'] as String,
+                    txid: json['txid'] as String,
+                )
+            ));
         });
     }
 
@@ -134,9 +142,9 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                 HapticFeedback.mediumImpact();
               //navigateTo(ViewTransaction(txid: transaction.txid.toString()));
             },
-            title: transaction.is_withdraw ? "Sent bitcoin" : "Received bitcoin",
+            title: transaction.isWithdraw ? "Sent bitcoin" : "Received bitcoin",
             sub: formatTransactionDate(transaction.date, transaction.time),
-            titleR: transaction.usd,
+            titleR: transaction.amount,
             subR: "Details",
             caret: false,
         );

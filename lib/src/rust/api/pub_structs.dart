@@ -10,8 +10,30 @@ part 'pub_structs.freezed.dart';
 
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`
 
-Future<void> test({required ShorthandTransaction s}) =>
-    RustLib.instance.api.crateApiPubStructsTest(s: s);
+Future<void> loadStructs(
+        {required ShorthandTransaction s, required Profile p}) =>
+    RustLib.instance.api.crateApiPubStructsLoadStructs(s: s, p: p);
+
+class DartCommand {
+  final String method;
+  final String data;
+
+  const DartCommand({
+    required this.method,
+    required this.data,
+  });
+
+  @override
+  int get hashCode => method.hashCode ^ data.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DartCommand &&
+          runtimeType == other.runtimeType &&
+          method == other.method &&
+          data == other.data;
+}
 
 enum KeyPress {
   zero,
@@ -55,18 +77,46 @@ enum Platform {
       );
 }
 
+class Profile {
+  final String name;
+  final String did;
+  final String? pfpPath;
+  final String? abtMe;
+
+  const Profile({
+    required this.name,
+    required this.did,
+    this.pfpPath,
+    this.abtMe,
+  });
+
+  @override
+  int get hashCode =>
+      name.hashCode ^ did.hashCode ^ pfpPath.hashCode ^ abtMe.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Profile &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          did == other.did &&
+          pfpPath == other.pfpPath &&
+          abtMe == other.abtMe;
+}
+
 class ShorthandTransaction {
   final bool isWithdraw;
   final String date;
   final String time;
-  final String usd;
+  final String amount;
   final String txid;
 
   const ShorthandTransaction({
     required this.isWithdraw,
     required this.date,
     required this.time,
-    required this.usd,
+    required this.amount,
     required this.txid,
   });
 
@@ -75,7 +125,7 @@ class ShorthandTransaction {
       isWithdraw.hashCode ^
       date.hashCode ^
       time.hashCode ^
-      usd.hashCode ^
+      amount.hashCode ^
       txid.hashCode;
 
   @override
@@ -86,7 +136,7 @@ class ShorthandTransaction {
           isWithdraw == other.isWithdraw &&
           date == other.date &&
           time == other.time &&
-          usd == other.usd &&
+          amount == other.amount &&
           txid == other.txid;
 }
 

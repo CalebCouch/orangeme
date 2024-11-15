@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 
 _getIconSize(double profileSize) {
   switch (profileSize) {
@@ -70,7 +71,7 @@ Widget profilePhotoStack(BuildContext context, List<Profile> contacts) {
       itemBuilder: (BuildContext context, int index) {
         return Align(
           widthFactor: 0.75,
-          child: ProfilePhoto(context, contacts[index].pfp, ProfileSize.md, true, false),
+          child: ProfilePhoto(context, contacts[index].pfpPath, ProfileSize.md, true, false),
         );
       },
     ),

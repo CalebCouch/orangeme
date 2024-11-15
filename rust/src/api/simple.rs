@@ -14,11 +14,11 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-use super::pub_structs::{Platform, PageName, Thread, WalletMethod};
+use super::pub_structs::{Platform, PageName, Thread, WalletMethod, DartCommand};
 use super::state::Field;
 
 use super::web5::MessagingAgent;
-use super::structs::{DartCommand, Storage, DartCallback};
+use super::structs::{Storage, DartCallback};
 use super::price::PriceGetter;
 use super::state::{StateManager, State};
 //use super::usb::UsbInfo;
@@ -149,7 +149,7 @@ async fn agent_refresh_thread(agent: MessagingAgent, state: State) -> Result<(),
 pub async fn rustStart (
     path: String,
     platform: Platform,
-    thread: impl Fn(String) -> DartFnFuture<String> + 'static + Sync + Send,
+    thread: impl Fn(DartCommand) -> DartFnFuture<String> + 'static + Sync + Send,
 ) -> Result<String, Error> {
 
     #[cfg(target_os = "android")]
