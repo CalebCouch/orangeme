@@ -18,8 +18,8 @@ class ScanQRState extends State<ScanQR> {
     @override
     Widget build(BuildContext context) {
         return Root_Takeover(
-            Header_Stack(context, "Scan QR code"),
-            Stack(children: [
+            header: Header_Stack(context, "Scan QR code"),
+            content: Stack(children: [
                 qrScanner(context),
                 Guide(),
             ]),
@@ -54,7 +54,12 @@ class ScanQRState extends State<ScanQR> {
                 children: [
                     scanBox(),
                     const Spacing(12),
-                    const CustomText('text md text_secondary', 'Scan a bitcoin QR code'),
+                    const CustomText(
+                        variant: 'text',
+                        font_size: 'md',
+                        text_color: 'text_secondary', 
+                        txt: 'Scan a bitcoin QR code',
+                    ),
                 ],
             ),
         );
@@ -62,19 +67,19 @@ class ScanQRState extends State<ScanQR> {
 
     scanBox() {
         return Container(
-        height: 300,
-        width: 300,
-        decoration: BoxDecoration(
-            border: Border.all(color: ThemeColor.bg, width: 4),
-            borderRadius: const BorderRadius.all(Radius.circular(8)),
-        ),
+            height: 300,
+            width: 300,
+            decoration: BoxDecoration(
+                border: Border.all(color: ThemeColor.bg, width: 4),
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+            ),
         );
     }
 
     qrScanner(BuildContext context) {
         return QRView(
-        key: qrKey,
-        onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(context, controller)},
+            key: qrKey,
+            onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(context, controller)},
         );
     }
 }

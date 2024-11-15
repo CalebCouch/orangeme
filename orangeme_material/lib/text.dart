@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:orangeme_material/color.dart';
 
-// change string typography to separate variables
-
 class CustomText extends StatefulWidget {
-  final String typography;
-  final String text;
-  final bool underline;
+  final String variant;
+  final String? text_color;
+  final String? font_size;
+  final String txt;
+  final TextDecoration text_decoration;
   final TextAlign alignment;
 
-  const CustomText(
-    this.typography,
-    this.text, {
+  const CustomText({
     super.key,
+    required this.txt, 
+    this.variant = 'text',
+    this.font_size = 'lg',
+    this.text_color,
+    this.font_size,
     this.underline = false,
     this.alignment = TextAlign.center,
   });
@@ -22,35 +25,27 @@ class CustomText extends StatefulWidget {
 }
 
 class _CustomTextState extends State<CustomText> {
-  List<String> x = [];
-
-  @override
-  void initState() {
-    super.initState();
-    x = widget.typography.split(' ');
-  }
-
   @override
   Widget build(BuildContext context) {
-    var color = x.length == 3 ? customize_color[x[2]] : text_color[x[0]];
+    var dec_color = widget.text_color != null ? customize_color[widget.text_color] : std_color[widget.variant];
     return Text(
-      widget.text,
+      widget.txt,
       textAlign: widget.alignment,
       maxLines: 5,
       style: TextStyle(
         fontFamily: "Outfit",
-        fontSize: text_size[x[1]],
-        color: color,
-        fontWeight: text_weight[x[0]],
-        decoration: widget.underline ? TextDecoration.underline : TextDecoration.none,
-        decorationColor: color,
+        fontSize: size[font_size],
+        color: dec_color,
+        fontWeight: weight[widget.variant],
+        decoration: widget.text_decoration,
+        decorationColor: dec_color,
         decorationThickness: 1,
       ),
     );
   }
 }
 
-final Map<String, double> text_size = {
+final Map<String, double> size = {
   'title': 72,
   'h1': 48,
   'h2': 32,
@@ -65,13 +60,13 @@ final Map<String, double> text_size = {
   'xs': 12,
 };
 
-final Map<String, Color> text_color = {
+final Map<String, Color> std_color = {
   'heading': ThemeColor.secondary,
   'text': ThemeColor.text,
   'label': ThemeColor.secondary,
 };
 
-final Map<String, FontWeight> text_weight = {
+final Map<String, FontWeight> weight = {
   'heading': FontWeight.w700,
   'text': FontWeight.w400,
   'label': FontWeight.w700,

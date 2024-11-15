@@ -118,7 +118,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiPubStructsTest({required ShorthandTransaction s});
 
-  Future<(String, int, bool, String)> crateApiUtilsUpdateDisplayAmount(
+  Future<(String, double, int, bool, String)> crateApiUtilsUpdateDisplayAmount(
       {required String amount,
       required double balance,
       required double price,
@@ -492,7 +492,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<(String, int, bool, String)> crateApiUtilsUpdateDisplayAmount(
+  Future<(String, double, int, bool, String)> crateApiUtilsUpdateDisplayAmount(
       {required String amount,
       required double balance,
       required double price,
@@ -508,7 +508,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             funcId: 14, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_record_string_u_8_bool_string,
+        decodeSuccessData: sse_decode_record_string_f_64_u_8_bool_string,
         decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiUtilsUpdateDisplayAmountConstMeta,
@@ -713,18 +713,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  (String, int, bool, String) dco_decode_record_string_u_8_bool_string(
-      dynamic raw) {
+  (String, double, int, bool, String)
+      dco_decode_record_string_f_64_u_8_bool_string(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4) {
-      throw Exception('Expected 4 elements, got ${arr.length}');
+    if (arr.length != 5) {
+      throw Exception('Expected 5 elements, got ${arr.length}');
     }
     return (
       dco_decode_String(arr[0]),
-      dco_decode_u_8(arr[1]),
-      dco_decode_bool(arr[2]),
-      dco_decode_String(arr[3]),
+      dco_decode_f_64(arr[1]),
+      dco_decode_u_8(arr[2]),
+      dco_decode_bool(arr[3]),
+      dco_decode_String(arr[4]),
     );
   }
 
@@ -943,14 +944,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  (String, int, bool, String) sse_decode_record_string_u_8_bool_string(
-      SseDeserializer deserializer) {
+  (String, double, int, bool, String)
+      sse_decode_record_string_f_64_u_8_bool_string(
+          SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_field0 = sse_decode_String(deserializer);
-    var var_field1 = sse_decode_u_8(deserializer);
-    var var_field2 = sse_decode_bool(deserializer);
-    var var_field3 = sse_decode_String(deserializer);
-    return (var_field0, var_field1, var_field2, var_field3);
+    var var_field1 = sse_decode_f_64(deserializer);
+    var var_field2 = sse_decode_u_8(deserializer);
+    var var_field3 = sse_decode_bool(deserializer);
+    var var_field4 = sse_decode_String(deserializer);
+    return (var_field0, var_field1, var_field2, var_field3, var_field4);
   }
 
   @protected
@@ -1181,13 +1184,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_record_string_u_8_bool_string(
-      (String, int, bool, String) self, SseSerializer serializer) {
+  void sse_encode_record_string_f_64_u_8_bool_string(
+      (String, double, int, bool, String) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.$1, serializer);
-    sse_encode_u_8(self.$2, serializer);
-    sse_encode_bool(self.$3, serializer);
-    sse_encode_String(self.$4, serializer);
+    sse_encode_f_64(self.$2, serializer);
+    sse_encode_u_8(self.$3, serializer);
+    sse_encode_bool(self.$4, serializer);
+    sse_encode_String(self.$5, serializer);
   }
 
   @protected

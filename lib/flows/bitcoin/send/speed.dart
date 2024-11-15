@@ -31,7 +31,6 @@ class SpeedState extends GenericState<Speed> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        print("Unpacking");
         setState(() {
             widget.fees = (json["fees"] as List<dynamic>).map((e) => e as double).toList();
         });
@@ -49,19 +48,20 @@ class SpeedState extends GenericState<Speed> {
     }
 
     onContinue() {
-        //navigateTo(context, const Confirm()); //create transaction with all the data (index as priority speed)
+        //navigateTo(context, const Confirm());
     }
 
 
     @override
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
-            Header_Stack(context, "Transaction speed"),
-            [SpeedSelector(widget.fees)],
-            Bumper(context, [CustomButton('Continue', 'primary lg expand none', onContinue, true)]),
-            Alignment.topCenter,
-            true,
-            isLoading,
+            header: Header_Stack(context, "Transaction speed"),
+            content: [SpeedSelector(widget.fees)],
+            bumper: Bumper(context, content: [
+                CustomButton( txt: 'Continue', onTap: onContinue,)
+            ]),
+            alignment: Alignment.topCenter,
+            isLoading: isLoading,
         );
     }
 
@@ -69,26 +69,26 @@ class SpeedState extends GenericState<Speed> {
 
     Widget SpeedSelector(fees) {
         return CustomColumn([
-        radioButton(
-            "Standard",
-            "Arrives in ~2 hours\n${fees[0]} bitcoin network fee",
-            index == 0,
-            () {
-            setState(() {
-                index = 0;
-            });
-            },
-        ),
-        radioButton(
-            "Priority",
-            "Arrives in ~30 minutes\n${fees[1]} bitcoin network fee",
-            index == 1,
-            () {
-            setState(() {
-                index = 1;
-            });
-            },
-        )
+            radioButton(
+                "Standard",
+                "Arrives in ~2 hours\n${fees[0]} bitcoin network fee",
+                index == 0,
+                () {
+                    setState(() {
+                        index = 0;
+                    });
+                },
+            ),
+            radioButton(
+                "Priority",
+                "Arrives in ~30 minutes\n${fees[1]} bitcoin network fee",
+                index == 1,
+                () {
+                    setState(() {
+                        index = 1;
+                    });
+                },
+            )
         ]);
     }
 }
@@ -98,23 +98,34 @@ Widget radioButton(String title, String subtitle, bool isEnabled, onTap) {
     return InkWell(
         onTap: onTap,
         child: Container(
-        color: Colors.transparent,
-        width: double.infinity,
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-            CustomIcon('$icon lg', key: UniqueKey()),
-            const Spacing(16),
-            Container(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: CustomColumn([
-                CustomText('heading h5', title, alignment: TextAlign.left),
-                CustomText('text sm text_secondary', subtitle, alignment: TextAlign.left),
-                ], 8, true, false),
+            color: Colors.transparent,
+            width: double.infinity,
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                    CustomIcon(icon: icon, size: 'lg', key: UniqueKey()),
+                    const Spacing(16),
+                    Container(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: CustomColumn([
+                            CustomText(
+                                variant: 'heading', 
+                                font_size: 'h5', 
+                                txt: title, 
+                                alignment: TextAlign.left
+                            ),
+                            CustomText(
+                                variant: 'text',
+                                font_size: 'sm',
+                                text_color: 'text_secondary', 
+                                txt: subtitle, 
+                                alignment: TextAlign.left
+                            ),
+                        ], 8, true, false),
+                    ),
+                ],
             ),
-            ],
-        ),
         ),
     );
 }

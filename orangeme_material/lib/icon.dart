@@ -78,31 +78,25 @@ final Map<String, double> icon_size = {
 };
 
 class CustomIcon extends StatefulWidget {
-  final String iconography;
+  final String size;
+  final String icon;
+  final String? color;
 
-  const CustomIcon(this.iconography, {super.key});
+  const CustomIcon({super.key, required this.icon, required this.size, this.color});
 
   @override
   State<CustomIcon> createState() => CustomIconState();
 }
 
 class CustomIconState extends State<CustomIcon> {
-  List<String> x = [];
-
-  @override
-  void initState() {
-    super.initState();
-    x = widget.iconography.split(' ');
-  }
-
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      icon[x[0]]!,
-      width: icon_size[x[1]],
-      height: icon_size[x[1]],
+      icon[widget.icon],
+      width: icon_size[widget.size],
+      height: icon_size[widget.size],
       colorFilter: ColorFilter.mode(
-        (x.length == 3 ? customize_color[x[2]] : ThemeColor.secondary)!,
+        (widget.color != null ? customize_color[widget.color] : ThemeColor.secondary)!,
         BlendMode.srcIn,
       ),
     );

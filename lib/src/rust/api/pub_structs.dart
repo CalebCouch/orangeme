@@ -8,31 +8,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-<<<<<<< HEAD
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`
 
 Future<void> test({required ShorthandTransaction s}) =>
     RustLib.instance.api.crateApiPubStructsTest(s: s);
-
-enum KeyPress {
-  zero,
-  one,
-  two,
-  three,
-  four,
-  five,
-  six,
-  seven,
-  eight,
-  nine,
-  reset,
-  decimal,
-  backspace,
-  ;
-}
-=======
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
->>>>>>> 57ecde0d (amount page fix)
 
 enum KeyPress {
   zero,
@@ -56,12 +35,6 @@ sealed class PageName with _$PageName {
   const PageName._();
 
   const factory PageName.bitcoinHome() = PageName_BitcoinHome;
-<<<<<<< HEAD
-=======
-  const factory PageName.speed(
-    BigInt field0,
-  ) = PageName_Speed;
->>>>>>> 57ecde0d (amount page fix)
   const factory PageName.receive() = PageName_Receive;
   const factory PageName.test(
     String field0,

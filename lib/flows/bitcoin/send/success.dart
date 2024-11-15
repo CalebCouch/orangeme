@@ -14,32 +14,37 @@ class Success extends StatefulWidget {
 }
 
 class SuccessState extends State<Success> {
-  onDone() {
-    resetNavTo(context, BitcoinHome());
-  }
+    onDone() {
+        resetNavTo(context, BitcoinHome());
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Stack_Default(
-      Header_Stack(context, "Confirm send", Container(), exitButton(context, BitcoinHome())),
-      [
-        Result('You sent ${widget.usd}'),
-      ],
-      Bumper(context, [CustomButton('Done', 'secondary lg expand none', onDone, true)]),
-      Alignment.center,
-      false,
-    );
-  }
+    @override
+    Widget build(BuildContext context) {
+        return Stack_Default(
+            header: Header_Stack(context, "Confirm send", Container(), exitButton(context, BitcoinHome())),
+            content: [Result('You sent ${widget.usd}')],
+            bumper: Bumper(context, content: [
+                CustomButton(
+                    txt: 'Done', 
+                    variant: 'secondary',
+                    size: 'lg',
+                    onTap: onDone,
+                ),
+            ]),
+            alignment: Alignment.center,
+            scroll: false,
+        );
+    }
 }
 
 Widget Result(String resultMessage, [String icon = 'bitcoin']) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      CustomIcon('$icon xxl'),
-      const Spacing(16),
-      CustomText('heading h3', resultMessage),
-    ],
-  );
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+            CustomIcon(icon: icon, size: 'xxl'),
+            const Spacing(16),
+            CustomText(variant:'heading', font_size: 'h3', txt: resultMessage),
+        ],
+    );
 }
