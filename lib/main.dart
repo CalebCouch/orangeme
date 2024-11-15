@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: global.navigation.navkey,
       title: 'orange.me',
       theme: theme(),
-      home: BitcoinHome(),
+      home: Test(),
     );
   }
 }

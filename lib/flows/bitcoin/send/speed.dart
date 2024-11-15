@@ -9,7 +9,7 @@ import 'package:orange/classes.dart';
 
 class Speed extends GenericWidget {
     String address;
-    double amount;
+    BigInt amount;
     Speed(this.address, this.amount, {super.key});
 
     dynamic fees = (0.0, 0.0);
@@ -21,7 +21,7 @@ class Speed extends GenericWidget {
 class SpeedState extends GenericState<Speed> {
     @override
     PageName getPageName() {
-        return PageName.speed(widget.address, widget.amount);
+        return PageName.speed(widget.amount);
     }
 
     @override

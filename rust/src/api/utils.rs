@@ -5,7 +5,7 @@ use super::simple::rustCall;
 
 pub async fn updateDisplayAmount(
     amount: String, balance: Usd, price: Usd, input: KeyPress
-) -> Result<(String, u8, bool, String), Error> {
+) -> Result<(String, f64, u8, bool, String), Error> {
     let is_zero = || amount == "0";
     let zero = "0".to_string();
 
@@ -70,5 +70,5 @@ pub async fn updateDisplayAmount(
         }
     } else {None}.unwrap_or_default();
 
-    Ok((updated_amount, needed_placeholder, validation, err))
+    Ok((updated_amount, amount_btc, needed_placeholder, validation, err))
 }

@@ -21,6 +21,9 @@ Future<String> rustCall({required Thread thread}) =>
 
 Future<String> getPage({required String path, required PageName page}) =>
     RustLib.instance.api.crateApiSimpleGetPage(path: path, page: page);
+<<<<<<< HEAD
 
 Future<void> clearData({required String path}) =>
     RustLib.instance.api.crateApiSimpleClearData(path: path);
+=======
+>>>>>>> 57ecde0d (amount page fix)

@@ -18,41 +18,52 @@ class Amount extends StatefulWidget {
 }
 
 class AmountState extends State<Amount> {
-  late DisplayData data = DisplayData("0", "", 0.0, "", false);
-  final ShakeController _shakeController = ShakeController();
-  bool enabled = false;
+    final ShakeController _shakeController = ShakeController();
+    bool enabled = false;
+    String amount = '';
+    double btc = 0.0;
+    int zeros = 0; 
+    bool validation = true;
+    String err = '';
 
-  onContinue() {
-    double amount = data.btc*1000000;
-    navigateTo(context, Speed(widget.address, amount));
-  }
 
-  onDisabled() {
-    _shakeController.shake();
-    Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
-  }
-
-  update(String input) {
-    HapticFeedback.heavyImpact();
-    DisplayData newData = updateDisplayAmount(input, widget.balance, widget.price, data.amount);
-    setState(() {
-      data = newData;
-    });
-    if (!data.valid) {
-      _shakeController.shake();
-      Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
+    onContinue() {
+        BigInt amount = btc*1000000 as BigInt;
+        navigateTo(context, Speed(widget.address, amount));
     }
-  }
 
-  bool isNotZero() {
-    return !['0', '0.00', '0.', '0.0'].contains(data.amount);
-  }
+    onDisabled() {
+        _shakeController.shake();
+        Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
+    }
 
-  updateButton() {
-    setState(() {
-      enabled = data.err == '' && isNotZero();
-    });
-  }
+    update(String input) {
+
+        HapticFeedback.heavyImpact();
+        final (String a, double b, int z, bool v, String e) =
+            updateDisplayAmount(amount, widget.balance, widget.price, input) as (String, double, int, bool, String);
+        setState((){
+            amount = a;
+            btc = b;
+            zeros = z;
+            validation = v;
+            err = e;
+        });
+        if (validation) {
+            _shakeController.shake();
+            Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
+        }
+    }
+
+    bool isNotZero() {
+        return !['0', '0.00', '0.', '0.0'].contains(amount);
+    }
+
+    updateButton() {
+        setState(() {
+            enabled = err == '' && isNotZero();
+        });
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -86,16 +97,18 @@ class AmountState extends State<Amount> {
 
   Widget keyboardAmountDisplay(BuildContext context) {
     Widget subText() {
-      if (data.err == '') {
-        return CustomText('text lg text_secondary', "${data.btc.toStringAsFixed(8)} BTC");
+      if (err == '') {
+        return CustomText('text lg text_secondary', "${btc.toStringAsFixed(8)} BTC");
       } else {
         return Row(children: [
           const CustomIcon('error md danger'),
           const Spacing(8),
-          CustomText('text lg danger', data.err),
+          CustomText('text lg danger', err),
         ]);
       }
     }
+
+    String convert(int x) => x == 1 ? "0" : x == 2 ? "00" : "";
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -110,8 +123,8 @@ class AmountState extends State<Amount> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const CustomText('heading title', '\$'),
-                CustomText('heading title', data.amount),
-                CustomText('heading title text_secondary', data.decimals),
+                CustomText('heading title', amount),
+                CustomText('heading title text_secondary', convert(zeros)),
               ],
             ),
           ),

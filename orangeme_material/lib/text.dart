@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orangeme_material/color.dart';
 
+// change string typography to separate variables
+
 class CustomText extends StatefulWidget {
   final String typography;
   final String text;

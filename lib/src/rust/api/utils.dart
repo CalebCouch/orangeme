@@ -7,7 +7,11 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
+<<<<<<< HEAD
 Future<(String, int, bool, String)> updateDisplayAmount(
+=======
+Future<(String, double, int, bool, String)> updateDisplayAmount(
+>>>>>>> 57ecde0d (amount page fix)
         {required String amount,
         required double balance,
         required double price,
