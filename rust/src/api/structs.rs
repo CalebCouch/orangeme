@@ -106,43 +106,6 @@ pub struct RustResponse {
     pub data: String
 }
 
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum Platform {
-    Mac,
-    Linux,
-    Windows,
-    IOS,
-    Android,
-    Fuchsia
-}
-
-impl Platform {
-    pub fn is_desktop(&self) -> bool {
-        matches!(self, Platform::Mac | Platform::Linux | Platform::Windows)
-    }
-}
-
-impl Default for Platform {
-    fn default() -> Self {Platform::Mac}
-}
-
-impl std::str::FromStr for Platform {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(match s {
-            "Mac" => Platform::Mac,
-            "Linux" => Platform::Linux,
-            "Windows" => Platform::Windows,
-            "IOS" => Platform::IOS,
-            "Android" => Platform::Android,
-            "Fuchsia" => Platform::Fuchsia,
-            _ => return Err(Error::parse("Platform", s))
-        })
-    }
-}
-
 pub struct Storage {
     dart_callback: DartCallback
 }
@@ -162,55 +125,3 @@ impl Storage {
         Ok(Some(self.dart_callback.call("storage_get", key).await?).filter(|s: &String| !s.is_empty()))
     }
 }
-
-
-
-//  #[derive(Serialize, Deserialize, Debug, Clone, Default)]
-//  pub struct Transaction {
-//      pub isReceive: bool,
-//      pub sentAddress: Option<String>,
-//      pub txid: String,
-//      pub usd: f64,
-//      pub btc: f64,
-//      pub price: f64,
-//      pub fee: f64,
-//      pub date: Option<String>,
-//      pub time: Option<String>
-//  }
-
-//  #[derive(Serialize, Deserialize, Debug, Clone, Default)]
-//  pub struct Contact {
-//      pub name: String,
-//      pub did: String,
-//      pub pfp: Option<String>,
-//      pub abtme: Option<String>,
-//  }
-
-//  #[derive(Serialize, Deserialize, Debug, Clone, Default)]
-//  pub struct Conversation {
-//      pub messages: Vec<Message>,
-//      pub members: Vec<Contact>,
-//  }
-
-//  #[derive(Serialize, Deserialize, Debug, Clone, Default)]
-//  pub struct Message {
-//      pub sender: Contact,
-//      pub message: String,
-//      pub date: String,
-//      pub time: String,
-//      pub is_incoming: bool,
-//  }
-
-//  #[derive(Serialize, Deserialize, Debug, Clone, Default)]
-//  pub struct DartState {
-//      pub currentPrice: f64,
-//      pub usdBalance: f64,
-//      pub btcBalance: f64,
-//      pub transactions: Vec<Transaction>,
-//      pub fees: Vec<f64>,
-//      pub conversations: Vec<Conversation>,
-//      pub users: Vec<Contact>,
-//      pub personal: Contact,
-//  }
-
-

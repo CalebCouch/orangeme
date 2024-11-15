@@ -4,7 +4,7 @@ use super::price::PriceGetter;
 use super::state::{State};
 use super::structs::DateTime;
 use super::state::Field;
-use super::pub_structs::{SATS, Sats, Usd};
+use super::pub_structs::{SATS, Btc, Sats, Usd};
 
 use simple_database::SqliteStore;
 
@@ -45,6 +45,7 @@ use std::str::FromStr;
 
 const NO_INTERNET: &str = "failed to lookup address information: No address associated with hostname";
 const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
+const DUMMY_ADDRESS: &str = "bc1qxma2dwmutht4vxyl6u395slew5ectfpn35ug9l";
 
 pub type Transactions = BTreeMap<Txid, Transaction>;
 
@@ -88,24 +89,25 @@ impl DescriptorSet {
 
 #[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct Transaction {
-    pub btc: f64,
-    pub usd: f64,
-    pub price: f64,
+    pub btc: Btc,
+    pub usd: Usd,
+    pub price: Usd,
     pub address: String,
     pub is_withdraw: bool,
     pub confirmation_time: Option<(u32, DateTime)>,
-    pub fee: f64,
-    pub fee_usd: f64,
+    pub fee: Sats,
+    pub fee_usd: Usd,
 }
 
 impl Transaction {
-    pub fn from_details(details: TransactionDetails, price: f64, is_mine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
+    pub fn from_details(details: TransactionDetails, price: Usd, is_mine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
         let ec = "Transaction::from_details";
-        let btc = if details.sent >= details.received {
-            details.sent as i64 - details.received as i64
+        let sats = if details.sent >= details.received {
+            details.sent - details.received
         } else {
-            details.received as i64 - details.sent as i64
-        } as f64 / SATS;
+            details.received - details.sent
+        };
+        let btc = sats as Btc / SATS as Btc;
         let is_withdraw = details.sent > 0;
         let details_tx = details.transaction.ok_or(Error::bad_request(ec, "Missing Transaction"))?;
         let address = if is_withdraw {
@@ -121,9 +123,9 @@ impl Transaction {
         let confirmation_time = details.confirmation_time.map(|ct|
             Ok::<(u32, DateTime), Error>((ct.height, DateTime::from_timestamp(ct.timestamp)?))
         ).transpose()?;
-        let usd = btc*price;
-        let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))? as f64 / SATS;
-        let fee_usd = fee*price;
+        let usd = btc * price;
+        let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))?;
+        let fee_usd = (fee as Btc / SATS as Btc) * price;
         Ok(Transaction{btc, usd, price, address, is_withdraw, confirmation_time, fee, fee_usd})
     }
 }
@@ -169,16 +171,16 @@ impl Wallet {
 
     async fn sats_to_usd(sats: Sats) -> Result<Usd, Error> {
         let price = PriceGetter::get(None).await?;
-        Ok((sats * SATS) * price)
+        Ok((sats * SATS) as f64 * price)
     }
 
-    pub async fn get_fees(&self, address: &str, amount: Sats, price: Usd) -> Result<(Usd, Usd), Error> {
+    pub async fn get_fees(&self, amount: Sats, price: Usd) -> Result<(Usd, Usd), Error> {
         let one = Self::estimate_fee(1)?;
         let three = Self::estimate_fee(3)?;
-        let kvb = self.tx_builder(address, amount, three)?.0.extract_tx().vsize() / 1000;
+        let kvb = (self.tx_builder(DUMMY_ADDRESS, amount, three).await?.0.extract_tx().vsize() / 1000) as u64;
         Ok((
-            Self::sats_to_usd(one * kvb),
-            Self::sats_to_usd(three * kvb)
+            Self::sats_to_usd(one * kvb).await?,
+            Self::sats_to_usd(three * kvb).await?
         ))
     }
 
@@ -187,7 +189,7 @@ impl Wallet {
         let mut builder = inner.build_tx();
         let address = Address::from_str(address)?.require_network(Network::Bitcoin)?;
         builder.add_recipient(address.script_pubkey(), amount);
-        builder.fee_rate(FeeRate::from_sat_per_kvb(fee));
+        builder.fee_rate(FeeRate::from_sat_per_kvb(fee as f32));
         Ok(builder.finish()?)
     }
 
@@ -269,18 +271,17 @@ impl Wallet {
                 if tx.confirmation_time.is_none() {continue;}
             }
 
-            let price = Self::get_price(tx.confirmation_time.as_ref()).await?;
-            let price = if let Some(ct) = confirmation_time {
+            let price = if let Some(ct) = tx.confirmation_time.as_ref() {
                 PriceGetter::get(Some(&DateTime::from_timestamp(ct.timestamp)?)).await?
             } else {
-                state.get_or_default::<f64>(Field::Price(None))?
+                state.get_or_default::<f64>(&Field::Price(None)).await?
             };
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }
         state.set(Field::Transactions(Some(txs))).await?;
 
         //Balance
-        state.set(Field::Balance(Some(inner.get_balance()?.get_total() as f64 / SATS))).await?;
+        state.set(Field::Balance(Some(inner.get_balance()?.get_total() as Btc / SATS as Btc))).await?;
         Ok(())
     }
 }

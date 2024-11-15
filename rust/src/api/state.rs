@@ -26,8 +26,6 @@ use web5_rust::dids::Identity;
 
 pub type Internet = bool;
 
-const SATS: u64 = 100_000_000;
-
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum Field {
@@ -91,7 +89,7 @@ impl State {
     }
 
     pub async fn get_o<T: for <'a> Deserialize<'a>>(&self, field: &Field) -> Result<Option<T>, Error> {
-        Ok(self.get_raw(&field).await?.map(|b|
+        Ok(self.get_raw(field).await?.map(|b|
             serde_json::from_slice::<Option<T>>(&b)
         ).transpose()?.flatten())
     }
@@ -101,7 +99,7 @@ impl State {
     }
 
     pub async fn get<T: for <'a> Deserialize<'a>>(&self, field: &Field) -> Result<T, Error> {
-        Ok(self.get_o(field).await?.ok_or(Error::not_found("State.get_f", &format!("Value not found for field: {:?}", field)))?)
+        self.get_o(field).await?.ok_or(Error::not_found("State.get_f", &format!("Value not found for field: {:?}", field)))
     }
 }
 
@@ -127,7 +125,7 @@ impl StateManager {
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::Receive => self.receive().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
-            PageName::Speed(address, amount) => self.speed(address, amount).await,
+            PageName::Speed(amount) => self.speed(amount).await,
             PageName::MyProfile => self.my_profile().await,
             PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
@@ -216,9 +214,9 @@ impl StateManager {
         })?)
     }
 
-    pub async fn speed(&self, address: String, amount: Sats) -> Result<String, Error> {
-        let price = self.state.get_or_default::<USD>(&Field::Price(None)).await?;
-        let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(address, amount, price))).await;
+    pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
+        let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
+        let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await;
         info!("{:?}", fees);
         Ok(serde_json::to_string(&Speed{
             fees: (0.0, 0.0),

@@ -23,13 +23,13 @@ pub enum Thread {
 
 pub enum WalletMethod {
     GetNewAddress,
-    GetFees(String, Sats, Usd),
+    GetFees(Sats, Usd),
 }
 
 #[derive(Debug)]
 pub enum PageName {
     BitcoinHome,
-    Speed(String, Sats),
+    Speed(Sats),
     Receive,
     ViewTransaction(String),
     MyProfile,
@@ -56,12 +56,14 @@ pub enum KeyPress {
     Seven = 7,
     Eight = 8,
     Nine = 9,
+    Reset,
     Decimal,
-    Backspace
+    Backspace,
 }
 
-pub const SATS: f64 = 100_000_000.0;
+pub const SATS: u64 = 100_000_000;
 pub type Sats = u64;
 pub type Usd = f64;
+pub type Btc = f64;
 
 

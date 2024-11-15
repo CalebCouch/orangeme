@@ -69,10 +69,9 @@ use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 
 use web5_rust::dids::{DhtDocument, Identity};
 
-static THREAD_CHANNELS: LazyLock<Mutex<(Option<Sender<(oneshot::Sender<String>, WalletMethod)>>, Option<String>)>> = LazyLock::new(|| Mutex::new((None, None)));
+pub type WalletSender = Sender<(oneshot::Sender<String>, WalletMethod)>;
 
-const SATS: u64 = 100_000_000;
-const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
+static THREAD_CHANNELS: LazyLock<Mutex<(Option<WalletSender>, Option<String>)>> = LazyLock::new(|| Mutex::new((None, None)));
 
 use reqwest::Client;
 
@@ -128,8 +127,8 @@ async fn wallet_thread(wallet: Wallet, mut recv: Receiver<(oneshot::Sender<Strin
         let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
         match method {
             WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?),
-            WalletMethod::GetFees(address, amount, price) => o_tx.send(serde_json::to_string(&wallet.get_fees(&address, amount, price).await?)?),
-        }.map_err(|e| Error::Exited(e))?;
+            WalletMethod::GetFees(amount, price) => o_tx.send(serde_json::to_string(&wallet.get_fees(amount, price).await?)?),
+        }.map_err(Error::Exited)?;
     }
 }
 
