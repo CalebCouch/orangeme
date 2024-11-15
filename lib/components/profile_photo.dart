@@ -57,7 +57,7 @@ Widget profilePhotoStack(BuildContext context, List<Profile> contacts) {
             itemBuilder: (BuildContext context, int index) {
                 return Align(
                     widthFactor: 0.75,
-                    child: ProfilePhoto(context, contacts[index].pfp, ProfileSize.md, true, false),
+                    child: ProfilePhoto(context, contacts[index].pfp, ProfileSize.md, true),
                 );
             },
         ),
@@ -68,9 +68,9 @@ Widget EditPhoto(BuildContext context, onTap, [pfp]) {
     return CustomColumn([
             ProfilePhoto(context, pfp, ProfileSize.xxl),
             CustomButton(
-                txt:'Photo', 
+                txt: 'Photo', 
                 variant: 'secondary', 
-                size: md, 
+                size: 'md', 
                 expand: false, 
                 icon: 'edit', 
                 onTap: onTap

@@ -67,7 +67,7 @@ final Map<String, String> icon = {
   'monitor': ThemeIcon.monitor,
   'google-play': ThemeIcon.googleplay,
   'app-store': ThemeIcon.appstore,
-  'door': ThemeIcon.door,
+  'door': ThemeIcon.door
 };
 
 final Map<String, double> icon_size = {
@@ -92,7 +92,7 @@ class CustomIconState extends State<CustomIcon> {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      icon[widget.icon],
+      icon[widget.icon!]!,
       width: icon_size[widget.size],
       height: icon_size[widget.size],
       colorFilter: ColorFilter.mode(

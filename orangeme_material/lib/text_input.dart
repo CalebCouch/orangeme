@@ -87,7 +87,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                 widget.title != null
                     ? Container(
                         padding: const EdgeInsets.only(bottom: 16),
-                        child: CustomText('heading h5', widget.title!),
+                        child: CustomText(variant: 'heading', font_size: 'h5', txt: widget.title!),
                     )
                     : Container(),
                 Container(
@@ -133,9 +133,9 @@ class CustomTextInputState extends State<CustomTextInput> {
                         ),
                     ),
                 ),
-                widget.error == '' Container () ? Padding(
+                widget.error == '' ? Container () : Padding(
                     padding: const EdgeInsets.only(left: 20.0),
-                    child: CustomText(variant:'text', font_size: 'sm',  text:color: 'danger', txt: widget.error),
+                    child: CustomText(variant:'text', font_size: 'sm',  text_color: 'danger', txt: widget.error),
                 )
             ],
         );

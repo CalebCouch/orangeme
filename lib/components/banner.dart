@@ -18,7 +18,7 @@ Widget CustomBanner(String message) {
                 children: [
                     const CustomIcon(icon: 'error', size: 'xl'),
                     const Spacing(8),
-                    CustomText(variant: 'text', font_size: 'sm',  text_color: 'heading', txt: message);
+                    CustomText(variant: 'text', font_size: 'sm',  text_color: 'heading', txt: message),
                 ],
             ),
         ),

@@ -8,8 +8,8 @@ class CustomButton extends StatefulWidget {
     final String txt;
     final String variant;
     final String size;
-    final bool expand = true;
-    final String icon;
+    final bool expand;
+    final String? icon;
     final VoidCallback onTap;
     final VoidCallback? onDis;
     final bool enabled;
@@ -20,6 +20,7 @@ class CustomButton extends StatefulWidget {
             this.size = 'lg',
             this.onDis,
             this.icon,
+            this.expand = true,
             required this.txt,
             required this.onTap, 
             this.enabled = true, 
@@ -44,7 +45,7 @@ class _ButtonState extends State<CustomButton> {
     Widget _displayIcon() {
         return Container(
             padding: EdgeInsets.only(right: widget.size == 'md' ? 8 : 12),
-            child: CustomIcon(icon: widget.icon, size: widget.size),
+            child: CustomIcon(icon: widget.icon!, size: widget.size),
         );
     }
 

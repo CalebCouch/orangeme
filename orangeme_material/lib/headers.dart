@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/components/profile_photo.dart';
 
 class Header extends StatelessWidget {
     final Widget center;
@@ -41,10 +42,10 @@ class Header extends StatelessWidget {
     }
 }
 
-Widget Header_Home(Widget profile, String title, [Widget? right]) {
+Widget Header_Home(BuildContext context, String title, String? profile_picture, Widget profile, [Widget? right]) {
     return Header(
-        ProfileButton(context, widget.profile_picture, profile), 
-        CustomText('heading h3', title), 
+        ProfileButton(context, profile_picture, profile), 
+        CustomText(variant: 'heading', size: 'h3', txt: title), 
         right ?? Container()
     );
 }

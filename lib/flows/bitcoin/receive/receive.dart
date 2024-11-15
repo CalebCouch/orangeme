@@ -89,10 +89,10 @@ Widget QRCode(String address) {
 }
 
 Widget Instructions() {
-    return const CustomText(
+    return CustomText(
         variant: 'text', 
         font_size: 'md', 
         text_color: 'text_secondary', 
-        txt; 'Scan to receive bitcoin.'
+        txt: 'Scan to receive bitcoin.'
     );
 }

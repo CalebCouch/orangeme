@@ -46,7 +46,7 @@ Widget infoButton(BuildContext context, Widget page) {
 }
 
 Widget numberButton(BuildContext context, String number) {
-    return CustomText(variant: 'label', font_size: 'lg', text_color 'secondary', txt: number);
+    return CustomText(variant: 'label', font_size: 'lg', text_color: 'secondary', txt: number);
 }
 
 Widget deleteButton(BuildContext context) {

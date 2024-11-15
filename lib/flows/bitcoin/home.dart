@@ -61,7 +61,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     Widget build_with_state(BuildContext context) {
         bool noTransactions = widget.transactions.isEmpty;
         return Root_Home(
-            header: Header_Home(BitcoinHome(), "Wallet"),
+            header: Header_Home(context, "Wallet", null, BitcoinHome()),
             content: [
                 BalanceDisplay(),
                 InternetBanner(widget.internet),
@@ -98,14 +98,14 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
             child: CustomColumn([
                 CustomText(
                     variant: 'heading',
-                    font_size: txtL <= 4 ? 'title' : txtL <= 7 ? 'h1' : 'h2';
-                    txt: widget.balance_usd
+                    font_size: txtL <= 4 ? 'title' : txtL <= 7 ? 'h1' : 'h2',
+                    txt: widget.balance_usd,
                 ),
                 CustomText(
                     variant: 'text',
                     font_size: 'lg',
                     text_color: 'text_secondary',
-                    txt: widget.balance_btc
+                    txt: widget.balance_btc,
                 ) 
             ], AppPadding.valueDisplaySep),
         );
@@ -141,7 +141,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                 HapticFeedback.mediumImpact();
                 //navigateTo(ViewTransaction(txid: transaction.txid.toString()));
             },
-            title: transaction.is_withdraw ? "Sent bitcoin" : "Received bitcoin",
+            title: "Unknown Direction", //transaction.is_withdraw ? "Sent bitcoin" : "Received bitcoin",
             sub: formatTransactionDate(transaction.date, transaction.time),
             titleR: transaction.usd,
             subR: "Details",

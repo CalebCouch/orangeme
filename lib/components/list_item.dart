@@ -72,10 +72,10 @@ class ListItem extends StatelessWidget {
                             ),
                             const Spacing(4),
                             if (subR != null) CustomText(
-                                variant: 'text'
+                                variant: 'text',
                                 font_size: 'sm', 
                                 txt: subR!, 
-                                text_decoration: underline,
+                                text_decoration: TextDecoration.underline,
                                 alignment: TextAlign.right
                             ),
                         ]),
