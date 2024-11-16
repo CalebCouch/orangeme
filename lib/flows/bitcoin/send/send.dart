@@ -28,7 +28,7 @@ class SendState extends GenericState<Send> {
 
     @override
     int refreshInterval() {
-        return 80;
+        return 1;
     }
 
     @override
