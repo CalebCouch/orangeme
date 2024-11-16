@@ -95,7 +95,7 @@ class SpeedState extends GenericState<Speed> {
     }
 }
 
-Widget RadioButton {required String title, required String subtitle, required bool isEnabled, required onTap} {
+Widget RadioButton({required String title, required String subtitle, required bool isEnabled, required onTap}) {
     return InkWell(
         onTap: onTap,
         child: Container(

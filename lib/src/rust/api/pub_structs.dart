@@ -8,8 +8,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-            // These types are ignored because they are not used by any `pub` functions: `ReceivedTransaction`, `SentTransaction`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+            // These types are ignored because they are not used by any `pub` functions: `BuildingTransaction`, `ReceivedTransaction`, `SentTransaction`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 
             Future<void> loadStructs({required ShorthandTransaction s , required Profile p }) => RustLib.instance.api.crateApiPubStructsLoadStructs(s: s, p: p);

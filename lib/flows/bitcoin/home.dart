@@ -19,11 +19,11 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 
 class BitcoinHome extends GenericWidget {
     BitcoinHome({super.key});
+
     bool internet = true;
     String? profile_picture;
     String balance_usd = "";
     String balance_btc = "";
-
     List<ShorthandTransaction> transactions = [];
 
     @override

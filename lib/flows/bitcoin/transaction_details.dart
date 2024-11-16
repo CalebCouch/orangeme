@@ -37,11 +37,6 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
     }
 
     @override
-    String options() {
-        return widget.txid;
-    }
-
-    @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
             // is it possible to only give this page one transaction, if so, i won't need the boolean
