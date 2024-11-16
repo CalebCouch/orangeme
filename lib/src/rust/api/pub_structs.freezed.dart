@@ -19,30 +19,33 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
     required TResult Function(BigInt field0) speed,
-    required TResult Function(String field0) viewTransaction,
     required TResult Function(String field0) test,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
     TResult? Function(BigInt field0)? speed,
-    TResult? Function(String field0)? viewTransaction,
     TResult? Function(String field0)? test,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
     TResult Function(BigInt field0)? speed,
-    TResult Function(String field0)? viewTransaction,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) =>
@@ -50,30 +53,33 @@ mixin _$PageName {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
     required TResult Function(PageName_Speed value) speed,
-    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
     TResult? Function(PageName_Speed value)? speed,
-    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
     TResult Function(PageName_Speed value)? speed,
-    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) =>
@@ -143,10 +149,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
     required TResult Function(BigInt field0) speed,
-    required TResult Function(String field0) viewTransaction,
     required TResult Function(String field0) test,
   }) {
     return bitcoinHome();
@@ -156,10 +163,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
     TResult? Function(BigInt field0)? speed,
-    TResult? Function(String field0)? viewTransaction,
     TResult? Function(String field0)? test,
   }) {
     return bitcoinHome?.call();
@@ -169,10 +177,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
     TResult Function(BigInt field0)? speed,
-    TResult Function(String field0)? viewTransaction,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -186,10 +195,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
     required TResult Function(PageName_Speed value) speed,
-    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
   }) {
     return bitcoinHome(this);
@@ -199,10 +209,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
     TResult? Function(PageName_Speed value)? speed,
-    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
   }) {
     return bitcoinHome?.call(this);
@@ -212,10 +223,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
     TResult Function(PageName_Speed value)? speed,
-    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -229,6 +241,181 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
 abstract class PageName_BitcoinHome extends PageName {
   const factory PageName_BitcoinHome() = _$PageName_BitcoinHomeImpl;
   const PageName_BitcoinHome._() : super._();
+}
+
+/// @nodoc
+abstract class _$$PageName_ViewTransactionImplCopyWith<$Res> {
+  factory _$$PageName_ViewTransactionImplCopyWith(
+          _$PageName_ViewTransactionImpl value,
+          $Res Function(_$PageName_ViewTransactionImpl) then) =
+      __$$PageName_ViewTransactionImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String field0});
+}
+
+/// @nodoc
+class __$$PageName_ViewTransactionImplCopyWithImpl<$Res>
+    extends _$PageNameCopyWithImpl<$Res, _$PageName_ViewTransactionImpl>
+    implements _$$PageName_ViewTransactionImplCopyWith<$Res> {
+  __$$PageName_ViewTransactionImplCopyWithImpl(
+      _$PageName_ViewTransactionImpl _value,
+      $Res Function(_$PageName_ViewTransactionImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_$PageName_ViewTransactionImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
+  const _$PageName_ViewTransactionImpl(this.field0) : super._();
+
+  @override
+  final String field0;
+
+  @override
+  String toString() {
+    return 'PageName.viewTransaction(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PageName_ViewTransactionImpl &&
+            (identical(other.field0, field0) || other.field0 == field0));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PageName_ViewTransactionImplCopyWith<_$PageName_ViewTransactionImpl>
+      get copyWith => __$$PageName_ViewTransactionImplCopyWithImpl<
+          _$PageName_ViewTransactionImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
+    required TResult Function() receive,
+    required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(BigInt field0) speed,
+    required TResult Function(String field0) test,
+  }) {
+    return viewTransaction(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
+    TResult? Function()? receive,
+    TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(BigInt field0)? speed,
+    TResult? Function(String field0)? test,
+  }) {
+    return viewTransaction?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
+    TResult Function()? receive,
+    TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(BigInt field0)? speed,
+    TResult Function(String field0)? test,
+    required TResult orElse(),
+  }) {
+    if (viewTransaction != null) {
+      return viewTransaction(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
+    required TResult Function(PageName_Receive value) receive,
+    required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
+    required TResult Function(PageName_Speed value) speed,
+    required TResult Function(PageName_Test value) test,
+  }) {
+    return viewTransaction(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult? Function(PageName_Receive value)? receive,
+    TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
+    TResult? Function(PageName_Speed value)? speed,
+    TResult? Function(PageName_Test value)? test,
+  }) {
+    return viewTransaction?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult Function(PageName_Receive value)? receive,
+    TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
+    TResult Function(PageName_Speed value)? speed,
+    TResult Function(PageName_Test value)? test,
+    required TResult orElse(),
+  }) {
+    if (viewTransaction != null) {
+      return viewTransaction(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PageName_ViewTransaction extends PageName {
+  const factory PageName_ViewTransaction(final String field0) =
+      _$PageName_ViewTransactionImpl;
+  const PageName_ViewTransaction._() : super._();
+
+  String get field0;
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PageName_ViewTransactionImplCopyWith<_$PageName_ViewTransactionImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -273,10 +460,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
     required TResult Function(BigInt field0) speed,
-    required TResult Function(String field0) viewTransaction,
     required TResult Function(String field0) test,
   }) {
     return receive();
@@ -286,10 +474,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
     TResult? Function(BigInt field0)? speed,
-    TResult? Function(String field0)? viewTransaction,
     TResult? Function(String field0)? test,
   }) {
     return receive?.call();
@@ -299,10 +488,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
     TResult Function(BigInt field0)? speed,
-    TResult Function(String field0)? viewTransaction,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -316,10 +506,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
     required TResult Function(PageName_Speed value) speed,
-    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
   }) {
     return receive(this);
@@ -329,10 +520,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
     TResult? Function(PageName_Speed value)? speed,
-    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
   }) {
     return receive?.call(this);
@@ -342,10 +534,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
     TResult Function(PageName_Speed value)? speed,
-    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -430,10 +623,11 @@ class _$PageName_SendImpl extends PageName_Send {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
     required TResult Function(BigInt field0) speed,
-    required TResult Function(String field0) viewTransaction,
     required TResult Function(String field0) test,
   }) {
     return send(field0);
@@ -443,10 +637,11 @@ class _$PageName_SendImpl extends PageName_Send {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
     TResult? Function(BigInt field0)? speed,
-    TResult? Function(String field0)? viewTransaction,
     TResult? Function(String field0)? test,
   }) {
     return send?.call(field0);
@@ -456,10 +651,11 @@ class _$PageName_SendImpl extends PageName_Send {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
     TResult Function(BigInt field0)? speed,
-    TResult Function(String field0)? viewTransaction,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -473,10 +669,11 @@ class _$PageName_SendImpl extends PageName_Send {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
     required TResult Function(PageName_Speed value) speed,
-    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
   }) {
     return send(this);
@@ -486,10 +683,11 @@ class _$PageName_SendImpl extends PageName_Send {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
     TResult? Function(PageName_Speed value)? speed,
-    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
   }) {
     return send?.call(this);
@@ -499,10 +697,11 @@ class _$PageName_SendImpl extends PageName_Send {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
     TResult Function(PageName_Speed value)? speed,
-    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -523,6 +722,188 @@ abstract class PageName_Send extends PageName {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PageName_SendImplCopyWith<_$PageName_SendImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$PageName_AmountImplCopyWith<$Res> {
+  factory _$$PageName_AmountImplCopyWith(_$PageName_AmountImpl value,
+          $Res Function(_$PageName_AmountImpl) then) =
+      __$$PageName_AmountImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String field0, KeyPress? field1});
+}
+
+/// @nodoc
+class __$$PageName_AmountImplCopyWithImpl<$Res>
+    extends _$PageNameCopyWithImpl<$Res, _$PageName_AmountImpl>
+    implements _$$PageName_AmountImplCopyWith<$Res> {
+  __$$PageName_AmountImplCopyWithImpl(
+      _$PageName_AmountImpl _value, $Res Function(_$PageName_AmountImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+    Object? field1 = freezed,
+  }) {
+    return _then(_$PageName_AmountImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+      freezed == field1
+          ? _value.field1
+          : field1 // ignore: cast_nullable_to_non_nullable
+              as KeyPress?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$PageName_AmountImpl extends PageName_Amount {
+  const _$PageName_AmountImpl(this.field0, [this.field1]) : super._();
+
+  @override
+  final String field0;
+  @override
+  final KeyPress? field1;
+
+  @override
+  String toString() {
+    return 'PageName.amount(field0: $field0, field1: $field1)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PageName_AmountImpl &&
+            (identical(other.field0, field0) || other.field0 == field0) &&
+            (identical(other.field1, field1) || other.field1 == field1));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0, field1);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PageName_AmountImplCopyWith<_$PageName_AmountImpl> get copyWith =>
+      __$$PageName_AmountImplCopyWithImpl<_$PageName_AmountImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
+    required TResult Function() receive,
+    required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(BigInt field0) speed,
+    required TResult Function(String field0) test,
+  }) {
+    return amount(field0, field1);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
+    TResult? Function()? receive,
+    TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(BigInt field0)? speed,
+    TResult? Function(String field0)? test,
+  }) {
+    return amount?.call(field0, field1);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
+    TResult Function()? receive,
+    TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(BigInt field0)? speed,
+    TResult Function(String field0)? test,
+    required TResult orElse(),
+  }) {
+    if (amount != null) {
+      return amount(field0, field1);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
+    required TResult Function(PageName_Receive value) receive,
+    required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
+    required TResult Function(PageName_Speed value) speed,
+    required TResult Function(PageName_Test value) test,
+  }) {
+    return amount(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult? Function(PageName_Receive value)? receive,
+    TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
+    TResult? Function(PageName_Speed value)? speed,
+    TResult? Function(PageName_Test value)? test,
+  }) {
+    return amount?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult Function(PageName_Receive value)? receive,
+    TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
+    TResult Function(PageName_Speed value)? speed,
+    TResult Function(PageName_Test value)? test,
+    required TResult orElse(),
+  }) {
+    if (amount != null) {
+      return amount(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PageName_Amount extends PageName {
+  const factory PageName_Amount(final String field0, [final KeyPress? field1]) =
+      _$PageName_AmountImpl;
+  const PageName_Amount._() : super._();
+
+  String get field0;
+  KeyPress? get field1;
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PageName_AmountImplCopyWith<_$PageName_AmountImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -596,10 +977,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
     required TResult Function(BigInt field0) speed,
-    required TResult Function(String field0) viewTransaction,
     required TResult Function(String field0) test,
   }) {
     return speed(field0);
@@ -609,10 +991,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
     TResult? Function(BigInt field0)? speed,
-    TResult? Function(String field0)? viewTransaction,
     TResult? Function(String field0)? test,
   }) {
     return speed?.call(field0);
@@ -622,10 +1005,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
     TResult Function(BigInt field0)? speed,
-    TResult Function(String field0)? viewTransaction,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -639,10 +1023,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
     required TResult Function(PageName_Speed value) speed,
-    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
   }) {
     return speed(this);
@@ -652,10 +1037,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
     TResult? Function(PageName_Speed value)? speed,
-    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
   }) {
     return speed?.call(this);
@@ -665,10 +1051,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
     TResult Function(PageName_Speed value)? speed,
-    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {
@@ -690,175 +1077,6 @@ abstract class PageName_Speed extends PageName {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PageName_SpeedImplCopyWith<_$PageName_SpeedImpl> get copyWith =>
       throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$PageName_ViewTransactionImplCopyWith<$Res> {
-  factory _$$PageName_ViewTransactionImplCopyWith(
-          _$PageName_ViewTransactionImpl value,
-          $Res Function(_$PageName_ViewTransactionImpl) then) =
-      __$$PageName_ViewTransactionImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String field0});
-}
-
-/// @nodoc
-class __$$PageName_ViewTransactionImplCopyWithImpl<$Res>
-    extends _$PageNameCopyWithImpl<$Res, _$PageName_ViewTransactionImpl>
-    implements _$$PageName_ViewTransactionImplCopyWith<$Res> {
-  __$$PageName_ViewTransactionImplCopyWithImpl(
-      _$PageName_ViewTransactionImpl _value,
-      $Res Function(_$PageName_ViewTransactionImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of PageName
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? field0 = null,
-  }) {
-    return _then(_$PageName_ViewTransactionImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
-  const _$PageName_ViewTransactionImpl(this.field0) : super._();
-
-  @override
-  final String field0;
-
-  @override
-  String toString() {
-    return 'PageName.viewTransaction(field0: $field0)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$PageName_ViewTransactionImpl &&
-            (identical(other.field0, field0) || other.field0 == field0));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0);
-
-  /// Create a copy of PageName
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$PageName_ViewTransactionImplCopyWith<_$PageName_ViewTransactionImpl>
-      get copyWith => __$$PageName_ViewTransactionImplCopyWithImpl<
-          _$PageName_ViewTransactionImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() bitcoinHome,
-    required TResult Function() receive,
-    required TResult Function(String field0) send,
-    required TResult Function(BigInt field0) speed,
-    required TResult Function(String field0) viewTransaction,
-    required TResult Function(String field0) test,
-  }) {
-    return viewTransaction(field0);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? bitcoinHome,
-    TResult? Function()? receive,
-    TResult? Function(String field0)? send,
-    TResult? Function(BigInt field0)? speed,
-    TResult? Function(String field0)? viewTransaction,
-    TResult? Function(String field0)? test,
-  }) {
-    return viewTransaction?.call(field0);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? bitcoinHome,
-    TResult Function()? receive,
-    TResult Function(String field0)? send,
-    TResult Function(BigInt field0)? speed,
-    TResult Function(String field0)? viewTransaction,
-    TResult Function(String field0)? test,
-    required TResult orElse(),
-  }) {
-    if (viewTransaction != null) {
-      return viewTransaction(field0);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(PageName_BitcoinHome value) bitcoinHome,
-    required TResult Function(PageName_Receive value) receive,
-    required TResult Function(PageName_Send value) send,
-    required TResult Function(PageName_Speed value) speed,
-    required TResult Function(PageName_ViewTransaction value) viewTransaction,
-    required TResult Function(PageName_Test value) test,
-  }) {
-    return viewTransaction(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
-    TResult? Function(PageName_Receive value)? receive,
-    TResult? Function(PageName_Send value)? send,
-    TResult? Function(PageName_Speed value)? speed,
-    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
-    TResult? Function(PageName_Test value)? test,
-  }) {
-    return viewTransaction?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(PageName_BitcoinHome value)? bitcoinHome,
-    TResult Function(PageName_Receive value)? receive,
-    TResult Function(PageName_Send value)? send,
-    TResult Function(PageName_Speed value)? speed,
-    TResult Function(PageName_ViewTransaction value)? viewTransaction,
-    TResult Function(PageName_Test value)? test,
-    required TResult orElse(),
-  }) {
-    if (viewTransaction != null) {
-      return viewTransaction(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class PageName_ViewTransaction extends PageName {
-  const factory PageName_ViewTransaction(final String field0) =
-      _$PageName_ViewTransactionImpl;
-  const PageName_ViewTransaction._() : super._();
-
-  String get field0;
-
-  /// Create a copy of PageName
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PageName_ViewTransactionImplCopyWith<_$PageName_ViewTransactionImpl>
-      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -930,10 +1148,11 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
+    required TResult Function(String field0, KeyPress? field1) amount,
     required TResult Function(BigInt field0) speed,
-    required TResult Function(String field0) viewTransaction,
     required TResult Function(String field0) test,
   }) {
     return test(field0);
@@ -943,10 +1162,11 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
+    TResult? Function(String field0, KeyPress? field1)? amount,
     TResult? Function(BigInt field0)? speed,
-    TResult? Function(String field0)? viewTransaction,
     TResult? Function(String field0)? test,
   }) {
     return test?.call(field0);
@@ -956,10 +1176,11 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
+    TResult Function(String field0, KeyPress? field1)? amount,
     TResult Function(BigInt field0)? speed,
-    TResult Function(String field0)? viewTransaction,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -973,10 +1194,11 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Receive value) receive,
     required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
     required TResult Function(PageName_Speed value) speed,
-    required TResult Function(PageName_ViewTransaction value) viewTransaction,
     required TResult Function(PageName_Test value) test,
   }) {
     return test(this);
@@ -986,10 +1208,11 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Receive value)? receive,
     TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
     TResult? Function(PageName_Speed value)? speed,
-    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
     TResult? Function(PageName_Test value)? test,
   }) {
     return test?.call(this);
@@ -999,10 +1222,11 @@ class _$PageName_TestImpl extends PageName_Test {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Receive value)? receive,
     TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
     TResult Function(PageName_Speed value)? speed,
-    TResult Function(PageName_ViewTransaction value)? viewTransaction,
     TResult Function(PageName_Test value)? test,
     required TResult orElse(),
   }) {

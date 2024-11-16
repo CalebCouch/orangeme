@@ -11,6 +11,7 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 class Send extends GenericWidget {
     Send({super.key});
 
+    String address = '';
     bool addressValid = true;
 
     @override
@@ -19,16 +20,15 @@ class Send extends GenericWidget {
 
 class SendState extends GenericState<Send> {
     TextEditingController controller = TextEditingController();
-    String address = '';
 
     @override
     PageName getPageName() {
-        return PageName.send(address);
+        return PageName.send(widget.address);
     }
 
     @override
     int refreshInterval() {
-        return 1;
+        return 80;
     }
 
     @override
@@ -42,23 +42,17 @@ class SendState extends GenericState<Send> {
         navigateTo(context, Amount(address));
     }
 
-    @override
-    void initState() {
-        super.initState();
-        controller.text = address;
-    }
-
     onPaste() async {
         ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
         if (data != null) {controller.text = data.text!;}
-        address = controller.text;
+        setState(() => widget.address = controller.text);
     }
 
     Future<void> onScan() async {
         String scannedQR = await navigateToReturn(context, ScanQR());
-        if (scannedQR != null) { 
-            setState(() => address = scannedQR);
-            controller.text = address;
+        if (scannedQR != null) {
+            setState(() => widget.address = scannedQR);
+            controller.text = widget.address;
         }
     }
 
@@ -74,7 +68,7 @@ class SendState extends GenericState<Send> {
             bumper: Bumper(context, content: [
                 CustomButton(
                     txt: 'Continue',
-                    onTap: onContinue, 
+                    onTap: onContinue,
                     enabled: widget.addressValid
                 ),
             ]),

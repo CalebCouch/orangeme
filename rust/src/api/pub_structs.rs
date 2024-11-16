@@ -29,10 +29,11 @@ pub enum WalletMethod {
 #[derive(Debug)]
 pub enum PageName {
     BitcoinHome,
+    ViewTransaction(String),
     Receive,
     Send(String),
+    Amount(String, Option<KeyPress>),
     Speed(Sats),
-    ViewTransaction(String),
   //MyProfile,
   //MessagesHome,
 //  Receive,
@@ -46,6 +47,7 @@ pub enum PageName {
     Test(String)
 }
 
+#[derive(Debug)]
 pub enum KeyPress {
     Zero = 0,
     One = 1,

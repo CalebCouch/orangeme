@@ -18,17 +18,15 @@ class Amount extends GenericWidget {
     String? err;
     KeyPress? input;
 
-    @override
     AmountState createState() => AmountState();
 }
 
-class AmountState extends GenericState<State> {
+class AmountState extends GenericState<Amount> {
     final ShakeController _shakeController = ShakeController();
-    bool enabled = false;
     @override
-    
+
     PageName getPageName() {
-        return PageName.amount();
+        return PageName.amount(widget.amount, widget.input);
     }
 
     @override
@@ -66,13 +64,16 @@ class AmountState extends GenericState<State> {
         }
     }
 
-    update(String input) { HapticFeedback.heavyImpact();}
-
-    bool isNotZero() { return !['0', '0.00', '0.', '0.0'].contains(widget.amount);}
+    update(KeyPress input) {
+        setState(() {
+            widget.input = input;
+        });
+        HapticFeedback.heavyImpact();
+    }
 
     @override
     Widget build_with_state(BuildContext context) {
-        setState(() { enabled = err == '' && isNotZero(); });
+        var enabled = widget.err == null &&!['0', '0.00', '0.', '0.0'].contains(widget.amount);
 
         return Stack_Default(
             header: Header_Stack(context, "Send bitcoin"),
@@ -83,8 +84,8 @@ class AmountState extends GenericState<State> {
                     NumericKeypad(onNumberPressed: update),
                     CustomButton(
                         txt: 'Continue',
-                        onTap: onContinue, 
-                        enabled: enabled, 
+                        onTap: onContinue,
+                        enabled: enabled,
                         onDis: onDisabled
                     ),
                 ],
@@ -151,7 +152,7 @@ class AmountState extends GenericState<State> {
                                                 variant: 'text',
                                                 font_size: 'lg',
                                                 text_color: 'danger',
-                                                txt: widget.err,
+                                                txt: widget.err!,
                                             ),
                                         ],
                                     ),
