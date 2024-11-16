@@ -7,10 +7,10 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
-Future<(String, double, int, bool, String)> updateDisplayAmount(
-        {required String amount,
-        required double balance,
-        required double price,
-        required KeyPress input}) =>
-    RustLib.instance.api.crateApiUtilsUpdateDisplayAmount(
-        amount: amount, balance: balance, price: price, input: input);
+
+            
+
+            Future<(String,double,int,bool,String)> updateDisplayAmount({required String amount , required double balance , required double price , required KeyPress input }) => RustLib.instance.api.crateApiUtilsUpdateDisplayAmount(amount: amount, balance: balance, price: price, input: input);
+
+            
+            
