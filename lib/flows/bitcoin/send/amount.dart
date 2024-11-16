@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
-import 'package:orange/util.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:vibration/vibration.dart';
@@ -19,15 +18,15 @@ class AmountState extends State<Amount> {
     final ShakeController _shakeController = ShakeController();
     bool enabled = false;
     String amount = '';
-    double btc = 0.0;
+    String btc = "0.0 BTC";
     int zeros = 0; 
     bool validation = true;
     String err = '';
 
 
     onContinue() {
-        BigInt amount = btc*1000000 as BigInt;
-        navigateTo(context, Speed(widget.address, amount));
+       //BigInt amount = btc*1000000 as BigInt;
+       // navigateTo(context, Speed(widget.address, amount));
     }
 
     onDisabled() {
@@ -38,16 +37,8 @@ class AmountState extends State<Amount> {
     update(String input) {
 
         HapticFeedback.heavyImpact();
-        final (String a, double b, int z, bool v, String e) =
-            updateDisplayAmount(amount, widget.balance, widget.price, input) as (String, double, int, bool, String);
-            
-        setState((){
-            amount = a;
-            btc = b;
-            zeros = z;
-            validation = v;
-            err = e;
-        });
+
+        //update amount function here
 
         if (validation) {
             _shakeController.shake();
@@ -98,7 +89,7 @@ class AmountState extends State<Amount> {
     Widget keyboardAmountDisplay(BuildContext context) {
         Widget subText() {
             if (err == '') {
-                return CustomText('text lg text_secondary', "${btc.toStringAsFixed(8)} BTC");
+                return CustomText(variant: 'text', font_size: 'lg', text_color: 'text_secondary', txt: btc);
             } else {
                 return Row(children: [
                     const CustomIcon(icon: 'error', size: 'md', color: 'danger'),

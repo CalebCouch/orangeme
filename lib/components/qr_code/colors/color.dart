@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui';
-
 import '../util.dart';
 
 abstract class QrColor {

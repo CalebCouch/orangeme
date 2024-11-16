@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
 //import 'package:orange/flows/bitcoin/transaction_details.dart';
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
 // import 'package:flutter/services.dart';
 // import 'package:orange/components/list_item.dart';
 import 'package:orange/components/banner.dart';
@@ -52,8 +49,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
             widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map(
                 (json) => ShorthandTransaction(
                     isWithdraw: json['is_withdraw'] as bool,
-                    date: json['date'] as String,
-                    time: json['time'] as String,
+                    datetime: json['datetime'] as String,
                     amount: json['amount'] as String,
                     txid: json['txid'] as String,
                 )
@@ -150,7 +146,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                 //navigateTo(ViewTransaction(txid: transaction.txid.toString()));
             },
             title: transaction.isWithdraw ? "Sent bitcoin" : "Received bitcoin",
-            sub: formatTransactionDate(transaction.date, transaction.time),
+            sub: transaction.datetime,
             titleR: transaction.amount,
             subR: "Details",
             caret: false,

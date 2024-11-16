@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/components/profile_photo.dart';
-import 'package:orange/theme/stylesheet.dart';
-import 'package:orange/util.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class ListItem extends StatelessWidget {
@@ -93,7 +91,7 @@ Widget ContactItem(BuildContext context, Profile contact, onTap) {
         onTap: onTap,
         visual: ProfilePhoto(context, contact.pfpPath, ProfileSize.lg),
         title: contact.name,
-        sub: cutString(contact.did),
+        sub: contact.did,
         caret: false,
     );
 }

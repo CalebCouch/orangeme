@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/tabular.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 
@@ -72,7 +71,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
     }
 
 
-    
+
   //The following widgets can ONLY be used in this file
 
     Widget BalanceDisplay(dynamic tx) {

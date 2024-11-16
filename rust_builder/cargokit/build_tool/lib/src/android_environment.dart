@@ -10,7 +10,6 @@ import 'package:path/path.dart' as path;
 import 'package:version/version.dart';
 
 import 'target.dart';
-import 'util.dart';
 
 class AndroidEnvironment {
   AndroidEnvironment({

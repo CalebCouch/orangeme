@@ -3,13 +3,11 @@
 // import 'package:orange/components/tab_navigator.dart';
 // import 'package:orange/flows/bitcoin/home.dart';
 // import 'package:orange/flows/messages/profile/my_profile.dart';
-// import 'package:orange/theme/stylesheet.dart';
 // import 'package:orange/components/list_item.dart';
 // import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 // import 'package:orange/src/rust/api/simple.dart';
 // import 'package:orange/flows/messages/conversation/exchange.dart';
 // import 'package:orange/src/rust/api/pub_structs.dart';
-// import 'package:orange/classes.dart';
 
 // import 'package:orangeme_material/orangeme_material.dart';
 // import 'package:orange/global.dart' as global;

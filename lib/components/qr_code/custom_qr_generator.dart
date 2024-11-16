@@ -7,5 +7,5 @@ export 'options/options.dart';
 export 'options/colors.dart';
 export 'options/shapes.dart';
 export 'neighbors.dart';
-export 'util.dart';
 export 'qr_painter.dart';
+export 'util.dart';

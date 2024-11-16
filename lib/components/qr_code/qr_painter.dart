@@ -3,6 +3,7 @@ import 'custom_qr_generator.dart';
 import 'package:flutter/widgets.dart';
 // ignore: depend_on_referenced_packages
 import 'package:zxing_lib/qrcode.dart';
+import './util.dart';
 
 class QrPainter extends CustomPainter {
   final String data;

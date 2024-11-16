@@ -11,7 +11,6 @@ import 'environment.dart';
 import 'options.dart';
 import 'rustup.dart';
 import 'target.dart';
-import 'util.dart';
 
 final _log = Logger('builder');
 
