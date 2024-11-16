@@ -5,27 +5,52 @@ import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:vibration/vibration.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 
-class Amount extends StatefulWidget {
+class Amount extends GenericWidget {
     String address;
     Amount(this.address, {super.key});
+
+    String amount = "";
+    String amount_btc = "";
+    int needed_placeholders = 0; 
+    bool valid_input = true;
+    String? err;
+    KeyPress? input;
 
     @override
     AmountState createState() => AmountState();
 }
 
-class AmountState extends State<Amount> {
+class AmountState extends GenericState<State> {
     final ShakeController _shakeController = ShakeController();
     bool enabled = false;
-    String amount = '';
-    String btc = "0.0 BTC";
-    int zeros = 0; 
-    bool validation = true;
-    String err = '';
+    @override
+    
+    PageName getPageName() {
+        return PageName.amount();
+    }
 
+    @override
+    int refreshInterval() {
+        return 1;
+    }
+
+    @override
+    void unpack_state(Map<String, dynamic> json) {
+        setState(() {
+            widget.amount = json["amount"] as String;
+            widget.amount_btc = json["amount_btc"] as String;
+            widget.needed_placeholders = json["needed_placeholders"] as int;
+            widget.valid_input = json["valid_input"] as bool;
+            widget.err = json["err"] as String?;
+            widget.input = null;
+
+            vibrate();
+        });
+    }
 
     onContinue() {
-       //BigInt amount = btc*1000000 as BigInt;
        // navigateTo(context, Speed(widget.address, amount));
     }
 
@@ -34,29 +59,24 @@ class AmountState extends State<Amount> {
         Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
     }
 
-    update(String input) {
-
-        HapticFeedback.heavyImpact();
-
-        //update amount function here
-
-        if (validation) {
+    vibrate() {
+        if (widget.valid_input) {
             _shakeController.shake();
             Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
         }
     }
 
-    bool isNotZero() {
-        return !['0', '0.00', '0.', '0.0'].contains(amount);
-    }
+    update(String input) { HapticFeedback.heavyImpact();}
+
+    bool isNotZero() { return !['0', '0.00', '0.', '0.0'].contains(widget.amount);}
 
     @override
-    Widget build(BuildContext context) {
+    Widget build_with_state(BuildContext context) {
         setState(() { enabled = err == '' && isNotZero(); });
 
         return Stack_Default(
             header: Header_Stack(context, "Send bitcoin"),
-            content: [display()],
+            content: [InputDisplay(context)],
             bumper: Bumper(
                 context,
                 content: [
@@ -75,73 +95,72 @@ class AmountState extends State<Amount> {
         );
     }
 
-    Widget display() {
-        return Expanded(
+    Widget InputDisplay(BuildContext context) {
+        String convert(int x) => x == 1 ? "0" : x == 2 ? "00" : "";
+
+        return Expanded (
             child: Center(
                 child: ShakeWidget(
                     controller: _shakeController,
-                    child: keyboardAmountDisplay(context),
-                ),
-            ),
-        );
-    }
-
-    Widget keyboardAmountDisplay(BuildContext context) {
-        Widget subText() {
-            if (err == '') {
-                return CustomText(variant: 'text', font_size: 'lg', text_color: 'text_secondary', txt: btc);
-            } else {
-                return Row(children: [
-                    const CustomIcon(icon: 'error', size: 'md', color: 'danger'),
-                    const Spacing(8),
-                    CustomText(variant: 'text', font_size: 'lg', text_color: 'danger', txt: err),
-                ]);
-            }
-        }
-
-        String convert(int x) => x == 1 ? "0" : x == 2 ? "00" : "";
-
-        return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                    FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                                const CustomText(
-                                    variant: 'heading', 
-                                    font_size: 'title', 
-                                    txt: '\$'
+                                FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                            CustomText(
+                                                variant: 'heading', 
+                                                font_size: 'title', 
+                                                txt: "\$${widget.amount}"
+                                            ),
+                                            CustomText(
+                                                variant: 'heading', 
+                                                font_size: 'title', 
+                                                text_color: 'text_secondary', 
+                                                txt:convert(widget.needed_placeholders)
+                                            ),
+                                        ],
+                                    ),
                                 ),
-                                CustomText(
-                                    variant: 'heading', 
-                                    font_size: 'title', 
-                                    txt: amount
-                                ),
-                                CustomText(
-                                    variant: 'heading', 
-                                    font_size: 'title', 
-                                    text_color: 'text_secondary', 
-                                    txt:convert(zeros)
+                                FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: widget.err == null ? [
+                                             CustomText(
+                                                variant: 'text',
+                                                font_size: 'lg',
+                                                text_color: 'text_secondary',
+                                                txt: widget.amount_btc,
+                                            ),
+                                        ] : [
+                                            const CustomIcon(
+                                                icon: 'error',
+                                                size: 'md',
+                                                color: 'danger',
+                                            ),
+                                            const Spacing(8),
+                                            CustomText(
+                                                variant: 'text',
+                                                font_size: 'lg',
+                                                text_color: 'danger',
+                                                txt: widget.err,
+                                            ),
+                                        ],
+                                    ),
                                 ),
                             ],
                         ),
                     ),
-                    FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [subText()],
-                        ),
-                    ),
-                ],
-            ),
+                ),
+            )
         );
     }
 }
