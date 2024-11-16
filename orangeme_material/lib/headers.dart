@@ -45,7 +45,7 @@ class Header extends StatelessWidget {
 Widget Header_Home(BuildContext context, String title, String? profile_picture, Widget profile, [Widget? right]) {
     return Header(
         ProfileButton(context, profile_picture, profile), 
-        CustomText(variant: 'heading', size: 'h3', txt: title), 
+        CustomText(variant: 'heading', font_size: 'h3', txt: title), 
         right ?? Container()
     );
 }
