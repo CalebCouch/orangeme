@@ -136,7 +136,7 @@ impl MessagingAgent {
 
     pub async fn init_profile(&self, state: &State) -> Result<(), Error> {
         let tenant = self.agent.tenant().clone();
-        let profile = if let Some(p) = self.agent.public_read(FiltersBuilder::build(vec![
+        if let Some(p) = self.agent.public_read(FiltersBuilder::build(vec![
             ("author", Filter::equal(tenant.to_string())),
             ("type", Filter::equal("profile"))]
         ), None, None).await?.first() {
@@ -148,7 +148,7 @@ impl MessagingAgent {
             let record = Record::new(None, &Protocols::profile(), serde_json::to_vec(&profile)?);
             self.agent.public_create(record, index, None).await?;
             state.set(Field::Profile(Some(profile))).await?;
-        };
+        }
         Ok(())
     }
 

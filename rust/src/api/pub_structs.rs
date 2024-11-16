@@ -30,6 +30,7 @@ pub enum WalletMethod {
 pub enum PageName {
     BitcoinHome,
     Receive,
+    Send(String),
   //Speed(Sats),
   //ViewTransaction(String),
   //MyProfile,
@@ -74,6 +75,17 @@ pub struct DartCommand {
 
 /*  DISPLAYED ON BITCOIN HOME   */
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[flutter_rust_bridge::frb(dart_code = "
+    int extraMethod() => a * 2;
+    ShorthandTransaction fromJson(Map<String, dynamic> json) => ShorthandTransaction(
+        isWithdraw: json['is_withdraw'] as bool,
+        date: json['date'] as String,
+        time: json['time'] as String,
+        amount: json['amount'] as String,
+        txid: json['txid'] as String,
+    );
+"
+)]
 pub struct ShorthandTransaction {
     pub is_withdraw: bool,
     pub date: String,
