@@ -163,7 +163,7 @@ pub async fn rustStart (
     let mut dart_callback = DartCallback::new();
     dart_callback.add_thread(thread);
 
-    let mut state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
+    let state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
     state.set(Field::Path(Some(path.clone()))).await?;
     state.set(Field::Platform(Some(platform.clone()))).await?;
 

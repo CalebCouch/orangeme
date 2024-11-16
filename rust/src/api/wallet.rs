@@ -121,7 +121,7 @@ impl Transaction {
             Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string()
         };
         let confirmation_time = details.confirmation_time.map(|ct|
-            Ok::<DateTime, Error>(DateTime::from_timestamp(ct.timestamp)?)
+            DateTime::from_timestamp(ct.timestamp)
         ).transpose()?;
         let usd = btc * price;
         let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))?;
