@@ -54,7 +54,7 @@ class _ButtonState extends State<CustomButton> {
     }
 
     getColors() {
-        setState(() => status = widget.enabled ? 'enabled' : 'disabled';);
+        setState(() => status = widget.enabled ? 'enabled' : 'disabled');
         text = buttonColors[widget.variant][status].text;
         fill = customize_color[buttonColors[widget.variant][status].fill]!;
     }
