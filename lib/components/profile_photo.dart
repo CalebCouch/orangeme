@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:orange/theme/stylesheet.dart';
 import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
-_getIconSize(double profileSize) {
-    switch (profileSize) {
-        case 96: return IconSizeProfile.xxl;
-        case 64: return IconSizeProfile.xl;
-        case 48: return IconSizeProfile.lg;
-        case 32: return IconSizeProfile.md;
-        case 24: return IconSizeProfile.sm;
-    }
-}
 
 Widget ProfilePhoto ( 
     BuildContext context, [ 
@@ -23,7 +13,7 @@ Widget ProfilePhoto (
     ]
 ){
         
-    bool isValidPfp = pfp != null && pfp.isNotEmpty && !isGroup;
+    bool isValidPfp = pfp != null && !isGroup;
 
     return Container(
         alignment: Alignment.center,
@@ -38,12 +28,12 @@ Widget ProfilePhoto (
                 fit: BoxFit.cover,
             )
         ),
-        child: !isValidPfp ? SvgPicture.asset(
+        child: isValidPfp ? null : SvgPicture.asset(
             height: _getIconSize(size),
             width: _getIconSize(size),
             isGroup ? ThemeIcon.group : ThemeIcon.profile,
             colorFilter: const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
-        ) : null,
+        ),
     );
 }
 
@@ -83,4 +73,30 @@ Widget EditPhoto(BuildContext context, onTap, [pfp]) {
             ),
         ], AppPadding.header,
     );
+}
+
+class ProfileSize {
+    static const double xxl = 96;
+    static const double xl = 64;
+    static const double lg = 48;
+    static const double md = 32;
+    static const double sm = 24;
+}
+
+class IconSizeProfile {
+    static const double xxl = 74;
+    static const double xl = 48;
+    static const double lg = 36;
+    static const double md = 24;
+    static const double sm = 18;
+}
+
+_getIconSize(double profileSize) {
+    switch (profileSize) {
+        case 96: return IconSizeProfile.xxl;
+        case 64: return IconSizeProfile.xl;
+        case 48: return IconSizeProfile.lg;
+        case 32: return IconSizeProfile.md;
+        case 24: return IconSizeProfile.sm;
+    }
 }

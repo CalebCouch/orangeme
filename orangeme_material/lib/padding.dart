@@ -1,23 +1,3 @@
-class ProfilePlaceholder {
-  static const String single = 'assets/icons/photo.svg';
-  static const String group = 'assets/icons/group_photo.svg';
-}
-
-class ProfileSize {
-  static const double xxl = 96;
-  static const double xl = 64;
-  static const double lg = 48;
-  static const double md = 32;
-  static const double sm = 24;
-}
-
-class IconSizeProfile {
-  static const double xxl = 74;
-  static const double xl = 48;
-  static const double lg = 36;
-  static const double md = 24;
-  static const double sm = 18;
-}
 
 class AppPadding {
   static const double desktop = 16;
@@ -41,13 +21,4 @@ class AppPadding {
 
   static const buttonSpacing = [12, 8];
   static const button = [16, 12];
-}
-
-class BrandSize {
-  static const double xxl = 74;
-  static const double xl = 64;
-  static const double lg = 48;
-  static const double md = 32;
-  static const double sm = 24;
-  static const double xs = 16;
 }
