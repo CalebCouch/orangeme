@@ -17,6 +17,7 @@ class SingleTab extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppPadding.tab),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Flexible(
             flex: 1,
