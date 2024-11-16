@@ -10,14 +10,14 @@ class ViewTransaction extends GenericWidget {
     ViewTransaction({super.key, required this.txid});
 
     bool is_withdraw = true;
-    String time = "12:34 PM";
-    String date = "12/8/24";
-    String address = "123456789...123";
-    String amount_btc = "0.00001234 BTC";
-    String amount_usd = "\$12.00";
-    String price = "\$73,802.34";
-    String? fee = "\$0.12";
-    String? total = "\$12.12";
+    String time = "";
+    String date = "";
+    String address = "";
+    String amount_btc = "";
+    String amount_usd = "";
+    String price = "";
+    String? fee;
+    String? total;
 
     @override
     ViewTransactionState createState() => ViewTransactionState();
@@ -31,7 +31,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
 
     @override
     int refreshInterval() {
-        return 1;
+        return 0;
     }
 
     @override
@@ -64,17 +64,13 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
             ],
             bumper: Bumper(context, content: [
                 CustomButton(
-                    txt:'Done', 
+                    txt:'Done',
                     variant: 'secondary',
                     onTap: () => onDone()
                 ),
             ]),
         );
     }
-
-
-
-    //The following widgets can ONLY be used in this file
 
     Widget BalanceDisplay() {
         return Container(
@@ -86,8 +82,8 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
                     FittedBox(
                         fit: BoxFit.scaleDown,
                         child: CustomText(
-                            variant:'heading', 
-                            font_size: 'title', 
+                            variant:'heading',
+                            font_size: 'title',
                             txt: widget.amount_usd
                         ),
                     ),
@@ -122,7 +118,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
                 SingleTab(title: "Amount $direction", subtitle: widget.amount_btc),
                 SingleTab(title: "Bitcoin Price", subtitle: widget.price),
                 SingleTab(title: "USD Value $direction", subtitle: widget.amount_usd),
-                
+
                 widget.is_withdraw ? const Spacing(AppPadding.content) : Container(),
                 widget.fee != null ? SingleTab(title: "Fee", subtitle: widget.fee!) : Container(),
                 widget.total != null ? SingleTab(title: "Total Amount", subtitle: widget.total!) : Container(),

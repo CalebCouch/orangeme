@@ -105,11 +105,10 @@ pub struct StateManager {
     state: State,
 }
 
-pub fn format_usd(usd: Usd) -> String {
-//  if usd == 0.0 {"$0.00".to_string()} else {
-//      let usd = format!("${}", usd.separate_with_commas()).split(".");
-//      format!("{}.{}", usd.split(".")[0], usd.
-//  }
+pub fn format_usd(price: Usd) -> String {
+    let whole_part = price.trunc() as i64;
+    let decimal_part = (price.fract() * 100.0).round() as i64;
+    format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() })
 }
 
 pub fn format_btc(btc: Btc) -> String {format!("{:.8} BTC", btc)}
