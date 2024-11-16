@@ -11,7 +11,7 @@ import 'package:orange/components/banner.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
-//import 'package:orange/flows/bitcoin/send/send.dart';
+import 'package:orange/flows/bitcoin/send/send.dart';
 //import 'package:orange/flows/messages/home.dart';
 //import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
@@ -62,15 +62,14 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     }
 
     onReceive() {navigateTo(Receive());}
-//  onSend() {navigateTo(Send());}
-//  toProfile() {navigateTo(MyProfile());}
+    onSend() {navigateTo(Send());}
+    toProfile() {navigateTo(Receive());}
 
     @override
     Widget build_with_state(BuildContext context) {
         bool noTransactions = widget.transactions.isEmpty;
-        return Container ();
         return Root_Home(
-            header: Header_Home(context, "Wallet", null, BitcoinHome()),
+            header: Header_Home(context, "Wallet", null, toProfile),
             content: [
                 BalanceDisplay(),
                 InternetBanner(widget.internet),
@@ -84,7 +83,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                 ),
                 CustomButton(
                     txt: 'Send', 
-                    onTap: onReceive, 
+                    onTap: onSend, 
                     enabled: widget.internet
                 ),
             ]),

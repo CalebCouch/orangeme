@@ -11,36 +11,46 @@ import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Confirm extends StatefulWidget {
-    final ExtTransaction tx;
+    final BuildingTransaction tx;
     const Confirm({super.key, required this.tx});
 
     @override
     ConfirmState createState() => ConfirmState();
 }
 
+/*
+pub struct BuildingTransaction {
+    pub date: String, // "10:45 PM"
+    pub time: String, // "11/12/24"
+    pub amount_usd: String, // "$10.00"
+    pub amount_btc: String, // "0.00001234 BTC"
+    pub address_whole: String, // "ack9723dxsahkdob239u1dumoiuhare482u"
+    pub address_cut: String, // "123456789...123"
+    pub fee: String, // "$0.14"
+}
+*/
+
 class ConfirmState extends State<Confirm> {
     bool isLoading = false;
 
     Future<void> onContinue() async {
-        setState(() {
-            isLoading = true;
-        });
-        //broadcastTx(path: global.dataDir!);
-        setState(() {
-            isLoading = false;
-        });
+        setState(() => isLoading = true);
+
+        // Broadcast the transaction here //
+
+        setState(() => isLoading = false);
+
         navigateTo(context, Success());
     }
 
+
     @override
     Widget build(BuildContext context) {
-        BasicTransaction basicTx = widget.tx.tx;
-        ShorthandTransaction shTx = basicTx.tx;
         return Stack_Default(
             header: Header_Stack(context, "Confirm send"),
             content: [
-                ConfirmAddress(context, basicTx.address),
-                ConfirmAmount(context, widget.tx, basicTx, shTx),
+                ConfirmAddress(context, tx.address),
+                ConfirmAmount(context, widget.tx),
             ],
             bumper: Bumper(context, content: [ 
                 CustomButton(
@@ -56,46 +66,40 @@ class ConfirmState extends State<Confirm> {
 //The following widgets can ONLY be used in this file
 
 ConfirmAddress(BuildContext context, String address) {
-    changeAddress() {
-        resetNavTo(context, Send());
-    }
+    changeAddress() {resetNavTo(context, Send());}
+
     return DataItem(
         title: "Confirm Address",
         number: 1,
-        subtitle: address,
+        subtitle: address_whole,
         helperText: "Bitcoin sent to the wrong address can never be recovered.",
-        buttons: [ editButton('Address', changeAddress)],
+        buttons: [EditButton('Address', changeAddress)],
     );
 }
 
-ConfirmAmount(BuildContext context, ExtTransaction tx, BasicTransaction basicTx, ShorthandTransaction shTx) {
-    changeAmount() {
-        resetNavTo(context, Amount());
-    }
-
-    changeSpeed() {
-        resetNavTo(context, Speed());
-    }
+ConfirmAmount(BuildContext context, SentTransaction tx) {
+    changeAmount() {resetNavTo(context, Amount());}
+    changeSpeed() {resetNavTo(context, Speed());}
 
     return DataItem(
         title: "Confirm Amount",
         number: 2,
         content: Column(
             children: [
-                SingleTab(title: "Send to Address", subtitle: transactionCut(basicTx.address)),
-                SingleTab(title: "Amount Sent", subtitle: "${shTx.btc} BTC"),
-                SingleTab(title: "USD Value Sent", subtitle: shTx.usd),
+                SingleTab(title: "Send to Address", subtitle: tx.address_cut),
+                SingleTab(title: "Amount Sent", subtitle: tx.amount_btc),
+                SingleTab(title: "USD Value Sent", subtitle: tx.amount_usd),
                 SingleTab(title: "Fee", subtitle: tx.fee),
             ],
         ),
         buttons: [
-            editButton('Amount', changeAmount),
-            editButton('Speed', changeSpeed),
+            EditButton('Amount', changeAmount),
+            EditButton('Speed', changeSpeed),
         ], 
     );
 }
 
-Widget editButton(text, onTap){
+Widget EditButton(text, onTap){
     return CustomButton(
         txt: text, 
         variant: 'secondary',

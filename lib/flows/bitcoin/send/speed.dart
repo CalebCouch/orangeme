@@ -9,10 +9,11 @@ import 'package:orange/classes.dart';
 
 class Speed extends GenericWidget {
     String address;
-    BigInt amount;
+    BigInt amount; 
     Speed(this.address, this.amount, {super.key});
 
-    dynamic fees = (0.0, 0.0);
+    String standard = "";
+    String priority = "";
 
     @override
     SpeedState createState() => SpeedState();
@@ -32,7 +33,8 @@ class SpeedState extends GenericState<Speed> {
     @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
-            widget.fees = (json["fees"] as List<dynamic>).map((e) => e as double).toList();
+            widget.standard = json["standard_fee"] as String;
+            widget.priority = json["priority_fee"] as String;
         });
     }
 
@@ -58,7 +60,7 @@ class SpeedState extends GenericState<Speed> {
             header: Header_Stack(context, "Transaction speed"),
             content: [SpeedSelector(widget.fees)],
             bumper: Bumper(context, content: [
-                CustomButton( txt: 'Continue', onTap: onContinue,)
+                CustomButton( txt: 'Continue', onTap: onContinue)
             ]),
             alignment: Alignment.topCenter,
             isLoading: isLoading,
@@ -69,21 +71,21 @@ class SpeedState extends GenericState<Speed> {
 
     Widget SpeedSelector(fees) {
         return CustomColumn([
-            radioButton(
-                "Standard",
-                "Arrives in ~2 hours\n${fees[0]} bitcoin network fee",
-                index == 0,
-                () {
+            RadioButton(
+                title: "Standard",
+                subtitle: "Arrives in ~2 hours\n${widget.standard} bitcoin network fee",
+                isEnabled: index == 0,
+                onTap: () {
                     setState(() {
                         index = 0;
                     });
                 },
             ),
-            radioButton(
-                "Priority",
-                "Arrives in ~30 minutes\n${fees[1]} bitcoin network fee",
-                index == 1,
-                () {
+            RadioButton(
+                title: "Priority",
+                subtitle: "Arrives in ~30 minutes\n${widget.priority} bitcoin network fee",
+                isEnabled: index == 1,
+                onTap: () {
                     setState(() {
                         index = 1;
                     });
@@ -93,8 +95,7 @@ class SpeedState extends GenericState<Speed> {
     }
 }
 
-Widget radioButton(String title, String subtitle, bool isEnabled, onTap) {
-    String icon = isEnabled ? 'radioFilled' : 'radio';
+Widget RadioButton {required String title, required String subtitle, required bool isEnabled, required onTap} {
     return InkWell(
         onTap: onTap,
         child: Container(
@@ -104,7 +105,11 @@ Widget radioButton(String title, String subtitle, bool isEnabled, onTap) {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                    CustomIcon(icon: icon, size: 'lg', key: UniqueKey()),
+                    CustomIcon(
+                        icon: isEnabled ? 'radioFilled' : 'radio', 
+                        size: 'lg', 
+                        key: UniqueKey()
+                    ),
                     const Spacing(16),
                     Container(
                         padding: const EdgeInsets.symmetric(vertical: 6),

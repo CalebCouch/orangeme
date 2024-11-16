@@ -15,8 +15,13 @@ _getIconSize(double profileSize) {
     }
 }
 
-Widget ProfilePhoto ( BuildContext context, [ String? pfp, double size = ProfileSize.md, bool isGroup = false,
-        ]) {
+Widget ProfilePhoto ( 
+    BuildContext context, [ 
+        String? pfp, 
+        double size = ProfileSize.md, 
+        bool isGroup = false,
+    ]
+){
         
     bool isValidPfp = pfp != null && pfp.isNotEmpty && !isGroup;
 

@@ -202,13 +202,13 @@ pub async fn rustStart (
 
     tokio::try_join!(
         spawn(internet_thread(state.clone())),
-        // spawn(price_thread(state.clone())),
-        // spawn(wallet_sync_thread(wallet.clone())),
-        // spawn(wallet_refresh_thread(wallet.clone(), state.clone())),
-        // spawn(wallet_thread(wallet.clone(), w_rx)),
-        // spawn(agent_sync_thread(agent.clone())),
-        // spawn(agent_refresh_thread(agent.clone(), state.clone())),
-      //spawn(agent_thread(agent, state.clone())),
+        spawn(price_thread(state.clone())),
+        spawn(wallet_sync_thread(wallet.clone())),
+        spawn(wallet_refresh_thread(wallet.clone(), state.clone())),
+        spawn(wallet_thread(wallet.clone(), w_rx)),
+        spawn(agent_sync_thread(agent.clone())),
+        spawn(agent_refresh_thread(agent.clone(), state.clone())),
+        //spawn(agent_thread(agent, state.clone())),
     )?;
 
     Err(Error::Exited("Main Thread".to_string()))

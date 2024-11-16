@@ -7,23 +7,19 @@ import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Send extends StatefulWidget {
-    double balance;
-    double price;
-    Send(this.balance, this.price, {super.key});
+    Send({super.key});
 
     @override
     SendState createState() => SendState();
 }
 
 class SendState extends State<Send> {
+    TextEditingController controller = TextEditingController();
     bool addressIsValid = true;
-    bool isLoading = false;
     String address = '';
 
     onContinue() {
-        if (addressIsValid) {
-            navigateTo(context, Amount(widget.balance, widget.price, address));
-        }
+        navigateTo(context, Amount(address));
     }
 
     @override
@@ -47,40 +43,29 @@ class SendState extends State<Send> {
     checkAddressValid(String address) {
         setState(() {
             addressIsValid = true;
+            controller.text = address;
         });
     }
 
     Future<void> onScan() async {
         String scannedQR = await navigateToReturn(context, ScanQR());
 
-        if (scannedQR != null) {
-            setState(() {
-                address = scannedQR;
-                controller.text = address;
-            });
-        }
+        if (scannedQR != null) address = scannedQR;
+        checkAddressValid(address);
     }
 
-
-    backButton() {
-        return iconButton(() {
-            navigateTo(context, BitcoinHome());
-        }, 'left', 'lg');
-    }
-
-    final TextEditingController controller = TextEditingController();
 
     @override
     Widget build(BuildContext context) {
         return Stack_Default(
-            header: Header_Stack(context, "Bitcoin address", null, backButton()),
+            header: Header_Stack(context, "Bitcoin address", null, BackButton()),
             content: [
                 AddressInput(controller),
                 ButtonTips(),
             ],
             bumper: Bumper(context, content: [
                 CustomButton(
-                    txt: 'Continue', ]
+                    txt: 'Continue',
                     onTap: onContinue, 
                     enabled: addressIsValid
                 ),
@@ -97,6 +82,12 @@ class SendState extends State<Send> {
             error: addressIsValid || controller.text.isEmpty ? "" : "Not a valid address",
             hint: 'Bitcoin address...',
         );
+    }
+
+    Widget BackButton() {
+        return iconButton(() {
+            navigateTo(context, BitcoinHome());
+        }, 'left', 'lg');
     }
 
     Widget ButtonTips() {
@@ -117,7 +108,7 @@ class SendState extends State<Send> {
                     text_color: 'text_secondary', 
                     txt: 'or'
                 ),
-                CustomButton(
+                 CustomButton(
                     txt: 'Scan QR Code', 
                     variant: 'secondary',
                     size: 'md',

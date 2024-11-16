@@ -8,10 +8,8 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:vibration/vibration.dart';
 
 class Amount extends StatefulWidget {
-    double balance;
-    double price;
     String address;
-    Amount(this.balance, this.price, this.address, {super.key});
+    Amount(this.address, {super.key});
 
     @override
     AmountState createState() => AmountState();
@@ -42,6 +40,7 @@ class AmountState extends State<Amount> {
         HapticFeedback.heavyImpact();
         final (String a, double b, int z, bool v, String e) =
             updateDisplayAmount(amount, widget.balance, widget.price, input) as (String, double, int, bool, String);
+            
         setState((){
             amount = a;
             btc = b;
@@ -49,6 +48,7 @@ class AmountState extends State<Amount> {
             validation = v;
             err = e;
         });
+
         if (validation) {
             _shakeController.shake();
             Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);

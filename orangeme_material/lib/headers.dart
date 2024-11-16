@@ -42,9 +42,9 @@ class Header extends StatelessWidget {
     }
 }
 
-Widget Header_Home(BuildContext context, String title, String? profile_picture, Widget profile, [Widget? right]) {
+Widget Header_Home(BuildContext context, String title, String? profile_picture, onTap, [Widget? right]) {
     return Header(
-        ProfileButton(context, profile_picture, profile), 
+        InkWell(onTap: onTap, child: ProfilePhoto(context, profile_picture)),
         CustomText(variant: 'heading', font_size: 'h3', txt: title), 
         right ?? Container()
     );

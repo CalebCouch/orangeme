@@ -71,6 +71,8 @@ pub struct DartCommand {
     pub data: String
 }
 
+
+/*  DISPLAYED ON BITCOIN HOME   */
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ShorthandTransaction {
     pub is_withdraw: bool,
@@ -78,6 +80,42 @@ pub struct ShorthandTransaction {
     pub time: String,
     pub amount: String,
     pub txid: String,
+}
+
+/*  DISPLAYED ON CONFIRM SEND   */
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct BuildingTransaction {
+    pub date: String, // "10:45 PM"
+    pub time: String, // "11/12/24"
+    pub amount_usd: String, // "$10.00"
+    pub amount_btc: String, // "0.00001234 BTC"
+    pub address_whole: String, // "ack9723dxsahkdob239u1dumoiuhare482u"
+    pub address_cut: String, // "123456789...123"
+    pub fee: String, // "$0.14"
+}
+
+/*  DISPLAYED ON VIEW TRANSACTION - RECEIVED TRANSACTION   */
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ReceivedTransaction {
+    pub date: String, // "10:45 PM"
+    pub time: String, // "11/12/24"
+    pub amount_usd: String, // "$10.00"
+    pub amount_btc: String, // "0.00001234 BTC"
+    pub address: String, // "123456789...123"
+    pub price: String, // "$78,394.12"
+}
+
+/*  DISPLAYED ON VIEW TRANSACTION - SENT TRANSACTION   */
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct SentTransaction {
+    pub date: String, // "10:45 PM"
+    pub time: String, // "11/12/24"
+    pub amount_usd: String, // "$10.00"
+    pub amount_btc: String, // "0.00001234 BTC"
+    pub address: String, // "123456789...123"
+    pub price: String, // "$78,394.12"
+    pub fee: String, // "$0.14"
+    pub total: String, // "$10.14"
 }
 
 pub struct Profile {

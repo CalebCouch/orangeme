@@ -20,7 +20,7 @@ class ScanQRState extends State<ScanQR> {
         return Root_Takeover(
             header: Header_Stack(context, "Scan QR code"),
             content: Stack(children: [
-                qrScanner(context),
+                QRScanner(context),
                 Guide(),
             ]),
         );
@@ -52,7 +52,7 @@ class ScanQRState extends State<ScanQR> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                    scanBox(),
+                    ScanBox(),
                     const Spacing(12),
                     const CustomText(
                         variant: 'text',
@@ -65,7 +65,7 @@ class ScanQRState extends State<ScanQR> {
         );
     }
 
-    scanBox() {
+    Widget ScanBox() {
         return Container(
             height: 300,
             width: 300,
@@ -76,7 +76,7 @@ class ScanQRState extends State<ScanQR> {
         );
     }
 
-    qrScanner(BuildContext context) {
+    Widget QRScanner(BuildContext context) {
         return QRView(
             key: qrKey,
             onQRViewCreated: (QRViewController controller) => {_onQRViewCreated(context, controller)},

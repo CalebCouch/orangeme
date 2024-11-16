@@ -6,8 +6,8 @@ import 'package:orangeme_material/orangeme_material.dart';
 //import 'package:orange/global.dart' as global;
 
 class Success extends StatefulWidget {
-  String usd;
-  Success(this.usd, {super.key});
+  String amount_sent;
+  Success(this.amount_sent, {super.key});
 
   @override
   SuccessState createState() => SuccessState();
@@ -22,7 +22,7 @@ class SuccessState extends State<Success> {
     Widget build(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Confirm send", Container(), exitButton(context, BitcoinHome())),
-            content: [Result('You sent ${widget.usd}')],
+            content: [Result(text: 'You sent ${widget.amount_sent}')],
             bumper: Bumper(context, content: [
                 CustomButton(
                     txt: 'Done', 
@@ -37,14 +37,14 @@ class SuccessState extends State<Success> {
     }
 }
 
-Widget Result(String resultMessage, [String icon = 'bitcoin']) {
+Widget Result {required String text, String icon = 'bitcoin'} {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
             CustomIcon(icon: icon, size: 'xxl'),
             const Spacing(16),
-            CustomText(variant:'heading', font_size: 'h3', txt: resultMessage),
+            CustomText(variant:'heading', font_size: 'h3', txt: text),
         ],
     );
 }
