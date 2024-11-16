@@ -36,12 +36,6 @@ class _ButtonState extends State<CustomButton> {
     late String text;
     late String status;
 
-    @override
-    void initState() {
-        status = widget.enabled ? 'enabled' : 'disabled';
-        super.initState();
-    }
-
     Widget _displayIcon() {
         return Container(
             padding: EdgeInsets.only(right: widget.size == 'md' ? 8 : 12),
@@ -60,6 +54,7 @@ class _ButtonState extends State<CustomButton> {
     }
 
     getColors() {
+        setState(() => status = widget.enabled ? 'enabled' : 'disabled';);
         text = buttonColors[widget.variant][status].text;
         fill = customize_color[buttonColors[widget.variant][status].fill]!;
     }

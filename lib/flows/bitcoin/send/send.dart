@@ -39,21 +39,17 @@ class SendState extends GenericState<Send> {
     }
 
     onContinue() {
-        navigateTo(context, Amount(address));
+        navigateTo(context, Amount(widget.address));
     }
 
     onPaste() async {
         ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
-        if (data != null) {controller.text = data.text!;}
-        setState(() => widget.address = controller.text);
+        if (data != null) {setState(() => controller.text = widget.address = data.text!);}
     }
 
     Future<void> onScan() async {
         String scannedQR = await navigateToReturn(context, ScanQR());
-        if (scannedQR != null) {
-            setState(() => widget.address = scannedQR);
-            controller.text = widget.address;
-        }
+        if (scannedQR != null) {setState(() => controller.text = widget.address = scannedQR);}
     }
 
 
