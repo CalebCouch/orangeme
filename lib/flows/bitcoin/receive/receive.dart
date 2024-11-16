@@ -3,7 +3,6 @@ import 'package:orange/components/qr_code/options/options.dart';
 import 'package:orange/components/qr_code/options/shapes.dart';
 import 'package:orange/components/qr_code/qr_painter.dart';
 import 'package:orange/components/qr_code/shapes/pixel_shape.dart';
-import 'package:orange/classes.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:share/share.dart';

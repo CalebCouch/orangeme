@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import '../util.dart';
 import 'package:orange/components/qr_code/custom_qr_generator.dart';
 
 abstract class QrFrameShape extends QrElementShape {

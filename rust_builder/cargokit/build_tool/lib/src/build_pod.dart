@@ -10,7 +10,6 @@ import 'builder.dart';
 import 'environment.dart';
 import 'options.dart';
 import 'target.dart';
-import 'util.dart';
 
 class BuildPod {
   BuildPod({required this.userOptions});

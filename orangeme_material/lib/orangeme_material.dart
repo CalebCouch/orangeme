@@ -12,5 +12,4 @@ export 'text_input.dart';
 export 'headers.dart';
 export 'listener.dart';
 export 'padding.dart';
-export 'logo.dart';
 export 'generic.dart';

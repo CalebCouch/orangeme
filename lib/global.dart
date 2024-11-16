@@ -1,6 +1,5 @@
 library orangeme.global;
 
-import 'package:orange/classes.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/navigation.dart';
 import 'package:orange/storage.dart';

@@ -76,8 +76,7 @@ pub struct DartCommand {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ShorthandTransaction {
     pub is_withdraw: bool,
-    pub date: String,
-    pub time: String,
+    pub datetime: String,
     pub amount: String,
     pub txid: String,
 }

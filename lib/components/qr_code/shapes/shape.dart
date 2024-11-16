@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import '../util.dart';
 
 import '../neighbors.dart';

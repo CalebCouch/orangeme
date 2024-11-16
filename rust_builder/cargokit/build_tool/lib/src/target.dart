@@ -5,8 +5,6 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 
-import 'util.dart';
-
 class Target {
   Target({
     required this.rust,

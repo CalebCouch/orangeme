@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/global.dart' as global;
-import 'package:orange/classes.dart';
 
 
 class Speed extends GenericWidget {
@@ -58,7 +57,7 @@ class SpeedState extends GenericState<Speed> {
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Transaction speed"),
-            content: [SpeedSelector(widget.fees)],
+            content: [SpeedSelector(widget.standard, widget.priority)],
             bumper: Bumper(context, content: [
                 CustomButton( txt: 'Continue', onTap: onContinue)
             ]),
@@ -69,11 +68,11 @@ class SpeedState extends GenericState<Speed> {
 
     //The following widgets can ONLY be used in this file
 
-    Widget SpeedSelector(fees) {
+    Widget SpeedSelector(String standard, String priority) {
         return CustomColumn([
             RadioButton(
                 title: "Standard",
-                subtitle: "Arrives in ~2 hours\n${widget.standard} bitcoin network fee",
+                subtitle: "Arrives in ~2 hours\n${standard} bitcoin network fee",
                 isEnabled: index == 0,
                 onTap: () {
                     setState(() {
@@ -83,7 +82,7 @@ class SpeedState extends GenericState<Speed> {
             ),
             RadioButton(
                 title: "Priority",
-                subtitle: "Arrives in ~30 minutes\n${widget.priority} bitcoin network fee",
+                subtitle: "Arrives in ~30 minutes\n${priority} bitcoin network fee",
                 isEnabled: index == 1,
                 onTap: () {
                     setState(() {
@@ -95,7 +94,7 @@ class SpeedState extends GenericState<Speed> {
     }
 }
 
-Widget RadioButton {required String title, required String subtitle, required bool isEnabled, required onTap} {
+Widget RadioButton ({required String title, required String subtitle, required bool isEnabled, required onTap}) {
     return InkWell(
         onTap: onTap,
         child: Container(

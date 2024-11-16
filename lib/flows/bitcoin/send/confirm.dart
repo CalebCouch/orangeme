@@ -5,8 +5,6 @@ import 'package:orange/flows/bitcoin/send/success.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/components/data_item.dart';
-import 'package:orange/classes.dart';
-import 'package:orange/util.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 

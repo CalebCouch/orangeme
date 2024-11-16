@@ -8,147 +8,148 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-            // These types are ignored because they are not used by any `pub` functions: `ReceivedTransaction`, `SentTransaction`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These types are ignored because they are not used by any `pub` functions: `BuildingTransaction`, `ReceivedTransaction`, `SentTransaction`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
+Future<void> loadStructs(
+        {required ShorthandTransaction s, required Profile p}) =>
+    RustLib.instance.api.crateApiPubStructsLoadStructs(s: s, p: p);
 
-            Future<void> loadStructs({required ShorthandTransaction s , required Profile p }) => RustLib.instance.api.crateApiPubStructsLoadStructs(s: s, p: p);
+class DartCommand {
+  final String method;
+  final String data;
 
-            class DartCommand  {
-                final String method;
-final String data;
+  const DartCommand({
+    required this.method,
+    required this.data,
+  });
 
-                const DartCommand({required this.method ,required this.data ,});
+  @override
+  int get hashCode => method.hashCode ^ data.hashCode;
 
-                
-                
-
-                
-        @override
-        int get hashCode => method.hashCode^data.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is DartCommand &&
-                runtimeType == other.runtimeType
-                && method == other.method&& data == other.data;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DartCommand &&
+          runtimeType == other.runtimeType &&
+          method == other.method &&
+          data == other.data;
+}
 
 enum KeyPress {
-                    zero,
-one,
-two,
-three,
-four,
-five,
-six,
-seven,
-eight,
-nine,
-reset,
-decimal,
-backspace,
-                    ;
-                    
-                }
+  zero,
+  one,
+  two,
+  three,
+  four,
+  five,
+  six,
+  seven,
+  eight,
+  nine,
+  reset,
+  decimal,
+  backspace,
+  ;
+}
 
 @freezed
-                sealed class PageName with _$PageName  {
-                    const PageName._();
+sealed class PageName with _$PageName {
+  const PageName._();
 
-                     const factory PageName.bitcoinHome() = PageName_BitcoinHome;
- const factory PageName.receive() = PageName_Receive;
- const factory PageName.test(  String field0,) = PageName_Test;
-
-                    
-                }
+  const factory PageName.bitcoinHome() = PageName_BitcoinHome;
+  const factory PageName.receive() = PageName_Receive;
+  const factory PageName.test(
+    String field0,
+  ) = PageName_Test;
+}
 
 enum Platform {
-                    mac,
-linux,
-windows,
-ios,
-android,
-fuchsia,
-                    ;
-                     bool  isDesktop()=>RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(that: this, );
+  mac,
+  linux,
+  windows,
+  ios,
+  android,
+  fuchsia,
+  ;
 
+  bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
+        that: this,
+      );
+}
 
-                }
+class Profile {
+  final String name;
+  final String did;
+  final String? pfpPath;
+  final String? abtMe;
 
-class Profile  {
-                final String name;
-final String did;
-final String? pfpPath;
-final String? abtMe;
+  const Profile({
+    required this.name,
+    required this.did,
+    this.pfpPath,
+    this.abtMe,
+  });
 
-                const Profile({required this.name ,required this.did ,this.pfpPath ,this.abtMe ,});
+  @override
+  int get hashCode =>
+      name.hashCode ^ did.hashCode ^ pfpPath.hashCode ^ abtMe.hashCode;
 
-                
-                
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Profile &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          did == other.did &&
+          pfpPath == other.pfpPath &&
+          abtMe == other.abtMe;
+}
 
-                
-        @override
-        int get hashCode => name.hashCode^did.hashCode^pfpPath.hashCode^abtMe.hashCode;
-        
+class ShorthandTransaction {
+  final bool isWithdraw;
+  final String datetime;
+  final String amount;
+  final String txid;
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is Profile &&
-                runtimeType == other.runtimeType
-                && name == other.name&& did == other.did&& pfpPath == other.pfpPath&& abtMe == other.abtMe;
-        
-            }
+  const ShorthandTransaction({
+    required this.isWithdraw,
+    required this.datetime,
+    required this.amount,
+    required this.txid,
+  });
 
-class ShorthandTransaction  {
-                final bool isWithdraw;
-final String date;
-final String time;
-final String amount;
-final String txid;
+  @override
+  int get hashCode =>
+      isWithdraw.hashCode ^ datetime.hashCode ^ amount.hashCode ^ txid.hashCode;
 
-                const ShorthandTransaction({required this.isWithdraw ,required this.date ,required this.time ,required this.amount ,required this.txid ,});
-
-                
-                
-
-                
-        @override
-        int get hashCode => isWithdraw.hashCode^date.hashCode^time.hashCode^amount.hashCode^txid.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is ShorthandTransaction &&
-                runtimeType == other.runtimeType
-                && isWithdraw == other.isWithdraw&& date == other.date&& time == other.time&& amount == other.amount&& txid == other.txid;
-        
-            }
-
-@freezed
-                sealed class Thread with _$Thread  {
-                    const Thread._();
-
-                     const factory Thread.wallet(  WalletMethod field0,) = Thread_Wallet;
-
-                    
-                }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ShorthandTransaction &&
+          runtimeType == other.runtimeType &&
+          isWithdraw == other.isWithdraw &&
+          datetime == other.datetime &&
+          amount == other.amount &&
+          txid == other.txid;
+}
 
 @freezed
-                sealed class WalletMethod with _$WalletMethod  {
-                    const WalletMethod._();
+sealed class Thread with _$Thread {
+  const Thread._();
 
-                     const factory WalletMethod.getNewAddress() = WalletMethod_GetNewAddress;
- const factory WalletMethod.getFees(  BigInt field0,  double field1,) = WalletMethod_GetFees;
+  const factory Thread.wallet(
+    WalletMethod field0,
+  ) = Thread_Wallet;
+}
 
-                    
-                }
-            
+@freezed
+sealed class WalletMethod with _$WalletMethod {
+  const WalletMethod._();
+
+  const factory WalletMethod.getNewAddress() = WalletMethod_GetNewAddress;
+  const factory WalletMethod.getFees(
+    BigInt field0,
+    double field1,
+  ) = WalletMethod_GetFees;
+}
