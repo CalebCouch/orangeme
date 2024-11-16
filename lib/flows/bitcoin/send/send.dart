@@ -5,18 +5,38 @@ import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 
-class Send extends StatefulWidget {
+
+class Send extends GenericWidget {
     Send({super.key});
+
+    bool addressValid = true;
 
     @override
     SendState createState() => SendState();
 }
 
-class SendState extends State<Send> {
+class SendState extends GenericState<Send> {
     TextEditingController controller = TextEditingController();
-    bool addressIsValid = true;
     String address = '';
+
+    @override
+    PageName getPageName() {
+        return PageName.send(address);
+    }
+
+    @override
+    int refreshInterval() {
+        return 80;
+    }
+
+    @override
+    void unpack_state(Map<String, dynamic> json) {
+        setState(() {
+            widget.addressValid = json["valid_address"] as bool;
+        });
+    }
 
     onContinue() {
         navigateTo(context, Amount(address));
@@ -26,37 +46,25 @@ class SendState extends State<Send> {
     void initState() {
         super.initState();
         controller.text = address;
-        checkAddressValid(address);
     }
 
     onPaste() async {
         ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
-        if (data != null) {
-            checkAddressValid(data.text!);
-            controller.text = data.text!;
-            if (controller.text.startsWith("bitcoin:")) {
-                controller.text = controller.text.replaceFirst("bitcoin:", "");
-            }
-        }
-    }
-
-    checkAddressValid(String address) {
-        setState(() {
-            addressIsValid = true;
-            controller.text = address;
-        });
+        if (data != null) {controller.text = data.text!;}
+        address = controller.text;
     }
 
     Future<void> onScan() async {
         String scannedQR = await navigateToReturn(context, ScanQR());
-
-        if (scannedQR != null) address = scannedQR;
-        checkAddressValid(address);
+        if (scannedQR != null) { 
+            setState(() => address = scannedQR);
+            controller.text = address;
+        }
     }
 
 
     @override
-    Widget build(BuildContext context) {
+    Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Bitcoin address", null, BackButton()),
             content: [
@@ -67,7 +75,7 @@ class SendState extends State<Send> {
                 CustomButton(
                     txt: 'Continue',
                     onTap: onContinue, 
-                    enabled: addressIsValid
+                    enabled: widget.addressValid
                 ),
             ]),
         );
@@ -78,8 +86,7 @@ class SendState extends State<Send> {
     Widget AddressInput(controller) {
         return CustomTextInput(
             controller: controller,
-            onSubmitted: (String address) => {checkAddressValid(address)},
-            error: addressIsValid || controller.text.isEmpty ? "" : "Not a valid address",
+            error: widget.addressValid || controller.text.isEmpty ? "" : "Not a valid address",
             hint: 'Bitcoin address...',
         );
     }
