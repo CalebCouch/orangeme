@@ -108,9 +108,8 @@ pub fn format_usd(usd: Usd) -> String {
     if usd == 0.0 {"$0.00".to_string()} else {format!("${:.2}", usd)}
 }
 
-pub fn format_btc(btc: Btc) -> String {
-    format!("{:.8} BTC", btc)
-}
+pub fn format_btc(btc: Btc) -> String {format!("{:.8} BTC", btc)}
+pub fn format_adr(adr: String) -> String {format!("{}...{}", adr[..9].to_string(), adr[adr.len()-3..].to_string())}
 
 pub fn format_datetime(date: Option<&DateTime>) -> String {
     if let Some(dt) = date {
@@ -207,7 +206,7 @@ impl StateManager {
             "is_withdraw": tx.is_withdraw,
             "date": dt.map(|dt| dt.format("%m/%d/%Y").to_string()).unwrap_or("Pending".to_string()),
             "time": dt.map(|dt| dt.format("%l:%M %p").to_string()).unwrap_or("Pending".to_string()),
-            "address": tx.address,
+            "address": format_adr(tx.address),
             "amount_btc": format_btc(tx.btc),
             "amount_usd": format_usd(tx.usd),
             "price": format_usd(tx.price),
