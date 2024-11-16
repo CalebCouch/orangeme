@@ -168,7 +168,9 @@ impl Wallet {
     pub async fn get_fees(&self, amount: Sats, price: Usd) -> Result<(Usd, Usd), Error> {
         let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
         let one = client.estimate_fee(1)? as Sats;
+        log::info!("Fee 1: {}", one);
         let three = client.estimate_fee(3)? as Sats;
+        log::info!("Fee 3: {}", three);
         let kvb = (self.tx_builder(DUMMY_ADDRESS, amount, three).await?.0.extract_tx().vsize() / 1000) as u64;
         Ok((
             ((one * kvb) * SATS) as f64 * price,

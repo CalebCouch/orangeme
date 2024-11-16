@@ -218,15 +218,6 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
-        let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-        let fees = serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await?)?;
-        Ok(serde_json::to_string(&json!({
-            "one": fees.0,
-            "three": fees.1
-        }))?)
-    }
-
     pub async fn amount(&self, amount: String, key: Option<KeyPress>) -> Result<String, Error> {
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
         let balance = self.state.get_or_default::<Btc>(&Field::Balance(None)).await? * price;
@@ -304,6 +295,15 @@ impl StateManager {
             "needed_placeholders": needed_placeholders,
             "valid_input": valid_input,
             "err": err,
+        }))?)
+    }
+
+    pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
+        let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
+        let fees = serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await?)?;
+        Ok(serde_json::to_string(&json!({
+            "one": fees.0,
+            "three": fees.1
         }))?)
     }
 
