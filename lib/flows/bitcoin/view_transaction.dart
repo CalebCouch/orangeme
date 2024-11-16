@@ -3,22 +3,21 @@ import 'package:orange/components/tabular.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
-
-///////////////////////////////////////////////////
-
-// FIX THIS AFTER TRANSACTION TYPES ARE DEFINED //
-
-///////////////////////////////////////////////////
-
 import 'package:orange/global.dart' as global;
 
 class ViewTransaction extends GenericWidget {
     String txid;
     ViewTransaction({super.key, required this.txid});
 
-    late bool is_withdraw;
-    late ReceivedTransaction? received_tx;
-    late SentTransaction? sent_tx;
+    bool is_withdraw = true;
+    String time = "12:34 PM";
+    String date = "12/8/24";
+    String address = "123456789...123";
+    String amount_btc = "0.00001234 BTC";
+    String amount_usd = "\$12.00";
+    String price = "\$73,802.34";
+    String? fee = "\$0.12";
+    String? total = "\$12.12";
 
     @override
     ViewTransactionState createState() => ViewTransactionState();
@@ -38,10 +37,15 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
     @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
-            // is it possible to only give this page one transaction, if so, i won't need the boolean
             widget.is_withdraw = json["is_withdraw"] as bool;
-            widget.received_tx = ReceivedTransaction?.fromJson(json['received_tx']);
-            widget.sent_tx = SentTransaction?.fromJson(json['sent_tx']);
+            widget.time = json["time"] as String; //"12:34 PM"
+            widget.date = json["date"] as String; //"12/8/24"
+            widget.address = json["address"] as String; //"123456789...123"
+            widget.amount_btc = json["amount_btc"] as String; //"0.00001234 BTC"
+            widget.amount_usd = json["amount_usd"] as String; //"$12.00"
+            widget.price = json["price"] as String; //"$73,802.34"
+            widget.fee = json["fee"] as String?; //"$0.12"
+            widget.total = json["total"] as String?; //"$12.12"
         });
     }
 
@@ -50,15 +54,13 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
     }
 
     Widget build_with_state(BuildContext context) {
-        dynamic tx = is_withdraw ? widget.sent_tx : widget.received_tx;
-        String header_text = is_withdraw ? "Sent bitcoin" : "Received bitcoin";
+        String header_text = widget.is_withdraw ? "Sent bitcoin" : "Received bitcoin";
 
         return Stack_Default(
             header: Header_Stack(context, header_text),
             content: [
-                BalanceDisplay(tx),
-                if (!is_withdraw) ReceivedTabular(context, tx),
-                if (is_withdraw) SentTabular(context, tx),
+                BalanceDisplay(),
+                TransactionData(),
             ],
             bumper: Bumper(context, content: [
                 CustomButton(
@@ -72,9 +74,9 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
 
 
 
-  //The following widgets can ONLY be used in this file
+    //The following widgets can ONLY be used in this file
 
-    Widget BalanceDisplay(dynamic tx) {
+    Widget BalanceDisplay() {
         return Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 64),
             child: Column(
@@ -86,7 +88,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
                         child: CustomText(
                             variant:'heading', 
                             font_size: 'title', 
-                            txt: tx.amount_usd
+                            txt: widget.amount_usd
                         ),
                     ),
                     const Spacing(8),
@@ -99,7 +101,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
                                 variant: 'text',
                                 font_size: 'lg',
                                 text_color: 'text_secondary',
-                                txt: tx.amount_btc
+                                txt: widget.amount_btc
                                 ),
                             ],
                         ),
@@ -108,33 +110,23 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
             ),
         );
     }
-}
 
-Widget SentTabular(BuildContext context, SentTransaction tx) {
-    return Column(
-        children: [
-            SingleTab(title: "Date", subtitle: tx.date),
-            SingleTab(title: "Time", subtitle: tx.time),
-            SingleTab(title: "Sent to Address", subtitle: tx.address),
-            SingleTab(title: "Amount Sent", subtitle: tx.amount_btc),
-            SingleTab(title: "Bitcoin Price", subtitle: tx.price),
-            SingleTab(title: "USD Value Sent", subtitle: tx.amount_usd),
-            const Spacing(AppPadding.content),
-            SingleTab(title: "Fee", subtitle: tx.fee),
-            SingleTab(title: "Total Amount", subtitle: tx.total),
-        ],
-    );
-}
-
-Widget ReceivedTabular(BuildContext context, ReceivedTransaction tx) {
-    return Column(
-        children: [
-            SingleTab(title: "Date", subtitle: tx.date),
-            SingleTab(title: "Time", subtitle: tx.time),
-            SingleTab(title: "Received from Address", subtitle: tx.address),
-            SingleTab(title: "Amount Sent", subtitle: tx.amount_btc),
-            SingleTab(title: "Bitcoin Price", subtitle: tx.price),
-            SingleTab(title: "USD Value Received", subtitle: tx.amount_usd),
-        ],
-    );
+    Widget TransactionData() {
+        String direction = widget.is_withdraw ? "Sent" : "Received";
+        String address_direction = widget.is_withdraw ? "$direction to Address" : "Received from Address";
+        return Column(
+            children: [
+                SingleTab(title: "Date", subtitle: widget.date),
+                SingleTab(title: "Time", subtitle: widget.time),
+                SingleTab(title: address_direction, subtitle: widget.address),
+                SingleTab(title: "Amount $direction", subtitle: widget.amount_btc),
+                SingleTab(title: "Bitcoin Price", subtitle: widget.price),
+                SingleTab(title: "USD Value $direction", subtitle: widget.amount_usd),
+                
+                widget.is_withdraw ? const Spacing(AppPadding.content) : Container(),
+                widget.fee != null ? SingleTab(title: "Fee", subtitle: widget.fee!) : Container(),
+                widget.total != null ? SingleTab(title: "Total Amount", subtitle: widget.total!) : Container(),
+            ],
+        );
+    }
 }
