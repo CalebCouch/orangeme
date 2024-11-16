@@ -25,8 +25,8 @@ clippy::needless_borrow
 
 // Section: imports
 
-use crate::api::custom_handler::*;
-use crate::api::error::*;use flutter_rust_bridge::{Handler, IntoIntoDart};
+use crate::api::error::*;
+use crate::api::custom_handler::*;use flutter_rust_bridge::{Handler, IntoIntoDart};
 use flutter_rust_bridge::for_generated::{Lockable, transform_result_dco, Lifetimeable};
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, WriteBytesExt, ReadBytesExt};
 
@@ -841,8 +841,8 @@ crate::api::pub_structs::WalletMethod::GetFees(field0,field1) => { <i32>::sse_en
 
 // Section: imports
 
-use crate::api::custom_handler::*;
-use crate::api::error::*;use flutter_rust_bridge::{Handler, IntoIntoDart};
+use crate::api::error::*;
+use crate::api::custom_handler::*;use flutter_rust_bridge::{Handler, IntoIntoDart};
 use flutter_rust_bridge::for_generated::{Lockable, transform_result_dco, Lifetimeable};
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, WriteBytesExt, ReadBytesExt};use super::*;
 
@@ -889,8 +889,8 @@ flutter_rust_bridge::frb_generated_boilerplate_io!();
 
 // Section: imports
 
-use crate::api::custom_handler::*;
-use crate::api::error::*;use flutter_rust_bridge::{Handler, IntoIntoDart};
+use crate::api::error::*;
+use crate::api::custom_handler::*;use flutter_rust_bridge::{Handler, IntoIntoDart};
 use flutter_rust_bridge::for_generated::{Lockable, transform_result_dco, Lifetimeable};
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, WriteBytesExt, ReadBytesExt};use super::*;
                 use flutter_rust_bridge::for_generated::wasm_bindgen;

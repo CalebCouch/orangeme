@@ -105,11 +105,7 @@ pub struct StateManager {
 }
 
 pub fn format_datetime(datetime: Option<&DateTime>) -> (String, String) {
-    datetime.map(|dt| (
-        dt.format("%m/%d/%Y").to_string(),
-        dt.format("%l:%M %p").to_string()
-    )).unwrap_or(("Pending".to_string(), "Pending".to_string()))
-}
+    }
 
 pub fn format_usd(usd: Usd) -> String {
     if usd == 0.0 {"$0.00".to_string()} else {format!("${:.2}", usd)}
@@ -123,6 +119,21 @@ pub fn format_price(price: Usd) -> String {
     let whole_part = price.trunc() as i64;
     let decimal_part = (price.fract() * 100.0).round() as i64;
     format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() })
+}
+
+pub fn format_datetime(date: Option<&DateTime>) -> String {
+    if let Some(dt) = date {
+        let duration = DateTime::now().date.signed_duration_since(dt.date);
+        if duration.num_days() == 0 {
+            dt.format("%l:%M %p").to_string()
+        } else if duration.num_days() == 1 {
+            "Yesterday".to_string()
+        } else if duration.num_days() <= 365 {
+            dt.format("%B %e").to_string()
+        } else {
+            dt.format("%m/%d/%Y").to_string()
+        }
+    } else {"Pending".to_string()}
 }
 
 impl StateManager {
@@ -174,7 +185,7 @@ impl StateManager {
                 let date_time = format_datetime(tx.confirmation_time.as_ref());
                 ShorthandTransaction{
                     is_withdraw: tx.is_withdraw,
-                    datetime: date_time.0,
+                    datetime: date_time,
                     amount: format_usd(tx.usd),
                     txid: txid.to_string()
                 }
@@ -197,9 +208,24 @@ impl StateManager {
 
     pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
         todo!()
-      //let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
-      //let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
-      //let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
+        let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
+        let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
+        let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
+
+        let date_time = tx.confirmation_time.map(|dt| (
+            ,
+            dt.format("%l:%M %p").to_string()
+        )).unwrap_or(("Pending".to_string(), "Pending".to_string()));
+
+
+        Ok(serde_json::to_string(&json!({
+            "is_withdraw": tx.is_withdraw,
+            "date": tx.confirmation_time.map(|dt| dt.format("%m/%d/%Y").to_string()).unwrap_or("Pending".to_string()),
+            "time": tx.confirmation_time.map(|dt| dt.format("%l:%M %p").to_string()).unwrap_or("Pending".to_string()),
+            "address": 
+            
+        }))?)
+
 
       //    SingleTab(title: "Date", subtitle: tx.date),
       //    SingleTab(title: "Time", subtitle: tx.time),

@@ -73,16 +73,4 @@ pub async fn updateDisplayAmount(
     Ok((updated_amount, amount_btc, needed_placeholder, validation, err))
 }
 
-//  #[frb(sync)]
-//  pub fn format_transaction_date(date: String, time: String) -> String {
-//      let now = Local::now().date_naive();
-//      let transaction_date = NaiveDate::parse_from_str(&date, "%m/%d/%Y").expect("Invalid date format");
 
-//      if is_same_date(transaction_date, now) {
-//          time
-//      } else if is_same_date(transaction_date, now - Duration::days(1)) {
-//          "Yesterday".to_string()
-//      } else {
-//          format!("{}", transaction_date.format("%B %e"))
-//      }
-//  }

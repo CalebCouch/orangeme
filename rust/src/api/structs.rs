@@ -23,7 +23,7 @@ const STORAGE_SPLIT: &str = "\u{0000}";
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
 pub struct DateTime {
-    date: ChronoDateTime<Utc>
+    pub date: ChronoDateTime<Utc>
 }
 
 impl DateTime {
