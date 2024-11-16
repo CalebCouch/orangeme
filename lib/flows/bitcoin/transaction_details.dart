@@ -98,7 +98,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
                             children: [CustomText(
                                 variant: 'text',
                                 font_size: 'lg',
-                                text_color 'text_secondary', 
+                                text_color: 'text_secondary',
                                 txt: tx.amount_btc
                                 ),
                             ],

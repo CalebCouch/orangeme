@@ -141,8 +141,8 @@ impl StateManager {
           //PageName::ViewTransaction => self.view_transaction().await,
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::Receive => self.receive().await,
-          //PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
-          //PageName::Speed(amount) => self.speed(amount).await,
+            PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
+            PageName::Speed(amount) => self.speed(amount).await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
@@ -174,8 +174,7 @@ impl StateManager {
                 let date_time = format_datetime(tx.confirmation_time.as_ref());
                 ShorthandTransaction{
                     is_withdraw: tx.is_withdraw,
-                    date: date_time.0,
-                    time: date_time.1,
+                    datetime: date_time.0,
                     amount: format_usd(tx.usd),
                     txid: txid.to_string()
                 }
@@ -197,65 +196,67 @@ impl StateManager {
     }
 
     pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
-        let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
-        let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
-        let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
+        todo!()
+      //let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
+      //let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
+      //let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
 
-SingleTab(title: "Date", subtitle: tx.date),
-            SingleTab(title: "Time", subtitle: tx.time),
-            SingleTab(title: "Sent to Address", subtitle: tx.address),
-            SingleTab(title: "Amount Sent", subtitle: tx.amount_btc),
-            SingleTab(title: "Bitcoin Price", subtitle: tx.price),
-            SingleTab(title: "USD Value Sent", subtitle: tx.amount_usd),
-            const Spacing(AppPadding.content),
-            SingleTab(title: "Fee", subtitle: tx.fee),
-            SingleTab(title: "Total Amount", subtitle: tx.total),
+      //    SingleTab(title: "Date", subtitle: tx.date),
+      //    SingleTab(title: "Time", subtitle: tx.time),
+      //    SingleTab(title: "Sent to Address", subtitle: tx.address),
+      //    SingleTab(title: "Amount Sent", subtitle: tx.amount_btc),
+      //    SingleTab(title: "Bitcoin Price", subtitle: tx.price),
+      //    SingleTab(title: "USD Value Sent", subtitle: tx.amount_usd),
+      //    const Spacing(AppPadding.content),
+      //    SingleTab(title: "Fee", subtitle: tx.fee),
+      //    SingleTab(title: "Total Amount", subtitle: tx.total),
 
-        
+      //
 
 
-        let price = tx.price;
-        let whole_part = price.trunc() as i64;
-        let decimal_part = (price.fract() * 100.0).round() as i64;
-        let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
+      //let price = tx.price;
+      //let whole_part = price.trunc() as i64;
+      //let decimal_part = (price.fract() * 100.0).round() as i64;
+      //let formatted_price = format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() });
 
-        let basic_tx = BasicTransaction {
-            tx: ShorthandTransaction {
-                is_withdraw: tx.is_withdraw,
-                date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
-                time: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
-                btc: tx.btc,
-                usd: format!("${:.2}", tx.usd),
-                txid: txid.to_string(),
-            },
-            address: tx.address.clone(),
-            price: formatted_price,
-        };
+      //let basic_tx = BasicTransaction {
+      //    tx: ShorthandTransaction {
+      //        is_withdraw: tx.is_withdraw,
+      //        date: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).0,
+      //        time: self.format_datetime(tx.confirmation_time.as_ref().map(|(_, dt)| dt)).1,
+      //        btc: tx.btc,
+      //        usd: format!("${:.2}", tx.usd),
+      //        txid: txid.to_string(),
+      //    },
+      //    address: tx.address.clone(),
+      //    price: formatted_price,
+      //};
 
-        let ext_transaction = if tx.is_withdraw {
-            Some(ExtTransaction {
-                tx: basic_tx.clone(),
-                fee: format!("${:.2}", tx.fee_usd),
-                total: format!("${:.2}", tx.fee_usd + tx.usd),
-            })
-        } else {
-            None
-        };
+      //let ext_transaction = if tx.is_withdraw {
+      //    Some(ExtTransaction {
+      //        tx: basic_tx.clone(),
+      //        fee: format!("${:.2}", tx.fee_usd),
+      //        total: format!("${:.2}", tx.fee_usd + tx.usd),
+      //    })
+      //} else {
+      //    None
+      //};
 
-        Ok(serde_json::to_string(&ViewTransaction {
-            basic_transaction: Some(basic_tx),
-            ext_transaction,
-        })?)
+      //Ok(serde_json::to_string(&ViewTransaction {
+      //    basic_transaction: Some(basic_tx),
+      //    ext_transaction,
+      //})?)
     }
 
-//  pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
-//      let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-//      let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await;
-//      info!("{:?}", fees);
-//      Ok(serde_json::to_string(&Speed{
-//          fees: (0.0, 0.0),
-//      })?)
-//  }
+    pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
+        todo!()
+      //let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
+      //let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await;
+      //info!("{:?}", fees);
+      //Ok(serde_json::to_string(&Speed{
+      //    fees: (0.0, 0.0),
+      //})?)
+    }
 
     
 

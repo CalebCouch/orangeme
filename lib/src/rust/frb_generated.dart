@@ -726,6 +726,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 1:
         return const PageName_Receive();
       case 2:
+        return PageName_Send(
+          dco_decode_String(raw[1]),
+        );
+      case 3:
+        return PageName_Speed(
+          dco_decode_u_64(raw[1]),
+        );
+      case 4:
+        return PageName_ViewTransaction(
+          dco_decode_String(raw[1]),
+        );
+      case 5:
         return PageName_Test(
           dco_decode_String(raw[1]),
         );
@@ -995,6 +1007,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 1:
         return const PageName_Receive();
       case 2:
+        var var_field0 = sse_decode_String(deserializer);
+        return PageName_Send(var_field0);
+      case 3:
+        var var_field0 = sse_decode_u_64(deserializer);
+        return PageName_Speed(var_field0);
+      case 4:
+        var var_field0 = sse_decode_String(deserializer);
+        return PageName_ViewTransaction(var_field0);
+      case 5:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
       default:
@@ -1267,8 +1288,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(0, serializer);
       case PageName_Receive():
         sse_encode_i_32(1, serializer);
-      case PageName_Test(field0: final field0):
+      case PageName_Send(field0: final field0):
         sse_encode_i_32(2, serializer);
+        sse_encode_String(field0, serializer);
+      case PageName_Speed(field0: final field0):
+        sse_encode_i_32(3, serializer);
+        sse_encode_u_64(field0, serializer);
+      case PageName_ViewTransaction(field0: final field0):
+        sse_encode_i_32(4, serializer);
+        sse_encode_String(field0, serializer);
+      case PageName_Test(field0: final field0):
+        sse_encode_i_32(5, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');

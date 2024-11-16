@@ -17,6 +17,7 @@ import 'logging.dart';
 import 'options.dart';
 import 'precompile_binaries.dart';
 import 'target.dart';
+import 'util.dart';
 import 'verify_binaries.dart';
 
 final log = Logger('build_tool');

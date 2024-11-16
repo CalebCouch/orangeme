@@ -39,7 +39,7 @@ class DataItem extends StatelessWidget {
                                 children: [
                                     CustomText('heading h5', title, alignment: TextAlign.left),
                                     const Spacing(16),
-                                    if (subtitle != null) CustomText(variant: 'text' font_size: 'md', txt: subtitle!, alignment: TextAlign.left),
+                                    if (subtitle != null) CustomText(variant: 'text', font_size: 'md', txt: subtitle!, alignment: TextAlign.left),
                                     if (subtitle != null) const Spacing(16),
                                     if (helperText != null) CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: helperText!, alignment: TextAlign.left),
                                     if (helperText != null) const Spacing(16),
@@ -90,7 +90,7 @@ Widget addressItem(BuildContext context, String address) {
     copyAddress() async {
         HapticFeedback.heavyImpact();
         await Clipboard.setData(ClipboardData(text: address));
-    }s
+    };
 
     return DataItem(
         title: 'Bitcoin address',

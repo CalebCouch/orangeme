@@ -767,6 +767,18 @@ impl SseDecode for crate::api::pub_structs::PageName {
             }
             2 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::pub_structs::PageName::Send(var_field0);
+            }
+            3 => {
+                let mut var_field0 = <u64>::sse_decode(deserializer);
+                return crate::api::pub_structs::PageName::Speed(var_field0);
+            }
+            4 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::pub_structs::PageName::ViewTransaction(var_field0);
+            }
+            5 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::pub_structs::PageName::Test(var_field0);
             }
             _ => {
@@ -1037,8 +1049,17 @@ impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::PageName {
         match self {
             crate::api::pub_structs::PageName::BitcoinHome => [0.into_dart()].into_dart(),
             crate::api::pub_structs::PageName::Receive => [1.into_dart()].into_dart(),
-            crate::api::pub_structs::PageName::Test(field0) => {
+            crate::api::pub_structs::PageName::Send(field0) => {
                 [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::pub_structs::PageName::Speed(field0) => {
+                [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::pub_structs::PageName::ViewTransaction(field0) => {
+                [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::pub_structs::PageName::Test(field0) => {
+                [5.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1340,8 +1361,20 @@ impl SseEncode for crate::api::pub_structs::PageName {
             crate::api::pub_structs::PageName::Receive => {
                 <i32>::sse_encode(1, serializer);
             }
-            crate::api::pub_structs::PageName::Test(field0) => {
+            crate::api::pub_structs::PageName::Send(field0) => {
                 <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::pub_structs::PageName::Speed(field0) => {
+                <i32>::sse_encode(3, serializer);
+                <u64>::sse_encode(field0, serializer);
+            }
+            crate::api::pub_structs::PageName::ViewTransaction(field0) => {
+                <i32>::sse_encode(4, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::pub_structs::PageName::Test(field0) => {
+                <i32>::sse_encode(5, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {

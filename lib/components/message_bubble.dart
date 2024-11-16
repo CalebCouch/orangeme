@@ -13,9 +13,9 @@ Widget bubble(Message message) {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: CustomText(
             variant: 'text',
-            font_size: 'md'
-            text_color: 'heading', 
-            txt: message.message, 
+            font_size: 'md',
+            text_color: 'heading',
+            txt: message.message,
             alignment: TextAlign.left
         ),
     );
@@ -27,7 +27,7 @@ Widget details(Message m, [bool showTimeOnly = false]) {
             mainAxisAlignment: m.isIncoming ? MainAxisAlignment.start : MainAxisAlignment.end,
             children: [
                 CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: m.sender.name),
-                CustomText(variant: 'text' font_size: 'sm', text_color: 'text_secondary', txt: '${String.fromCharCodes([0x0020])}·${String.fromCharCodes([0x0020])}'),
+                CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: '${String.fromCharCodes([0x0020])}·${String.fromCharCodes([0x0020])}'),
                 CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: m.time),
             ],
         );
@@ -74,7 +74,7 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
                         padding: const EdgeInsets.only(right: 8, bottom: 24),
                         child: ProfilePhoto(context, m.sender.pfp),
                     ),
-                )
+                ),
                 Flexible(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

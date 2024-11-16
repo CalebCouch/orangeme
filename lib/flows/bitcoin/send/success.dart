@@ -37,7 +37,7 @@ class SuccessState extends State<Success> {
     }
 }
 
-Widget Result {required String text, String icon = 'bitcoin'} {
+Widget Result ({required String text, String icon = 'bitcoin'}) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,

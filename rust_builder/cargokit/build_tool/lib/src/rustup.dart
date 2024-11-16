@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:path/path.dart' as path;
 
+import 'util.dart';
+
 class _Toolchain {
   _Toolchain(
     this.name,

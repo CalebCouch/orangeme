@@ -8,11 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-<<<<<<< HEAD
-            // These types are ignored because they are not used by any `pub` functions: `BuildingTransaction`, `ReceivedTransaction`, `SentTransaction`
-=======
 // These types are ignored because they are not used by any `pub` functions: `BuildingTransaction`, `ReceivedTransaction`, `SentTransaction`
->>>>>>> d86a84e20feea9e62fdb6c3c5bf90d87882b05aa
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 Future<void> loadStructs(
@@ -63,6 +59,15 @@ sealed class PageName with _$PageName {
 
   const factory PageName.bitcoinHome() = PageName_BitcoinHome;
   const factory PageName.receive() = PageName_Receive;
+  const factory PageName.send(
+    String field0,
+  ) = PageName_Send;
+  const factory PageName.speed(
+    BigInt field0,
+  ) = PageName_Speed;
+  const factory PageName.viewTransaction(
+    String field0,
+  ) = PageName_ViewTransaction;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;
