@@ -219,16 +219,13 @@ impl StateManager {
     }
 
     pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
-        todo!()
-      //let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-      //let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await;
-      //info!("{:?}", fees);
-      //Ok(serde_json::to_string(&Speed{
-      //    fees: (0.0, 0.0),
-      //})?)
+        let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
+        let fees = rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await;
+        Ok(serde_json::to_string(&json!({
+            "one": fees.0,
+            "three": fees.1
+        }))?)
     }
-
-    
 
 //  pub async fn my_profile(&self) -> Result<String, Error> {
 //      let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
