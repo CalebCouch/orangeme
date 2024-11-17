@@ -14,7 +14,7 @@ Future<void> startRust(String path) async {
   global.navigation.throwError(await rustStart(
     path: path,
     platform: global.platform,
-    thread: global.dartCallback,
+    callback: global.dartCallback,
   ));
 }
 

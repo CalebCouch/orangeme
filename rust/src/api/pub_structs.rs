@@ -69,9 +69,9 @@ pub type Sats = u64;
 pub type Usd = f64;
 pub type Btc = f64;
 
-pub struct DartCommand {
-    pub method: String,
-    pub data: String
+pub enum DartMethod {
+    StorageSet(String, String),
+    StorageGet(String),
 }
 
 
@@ -99,4 +99,4 @@ pub struct Profile {
     pub abt_me: Option<String>,
 }
 
-pub fn load_structs(_s: ShorthandTransaction, _p: Profile) {}
+pub fn load_structs(_s: ShorthandTransaction, _p: Profile, _dm: DartMethod, _kp: KeyPress, _pl: Platform, _pn: PageName, _wm: WalletMethod, _t: Thread) {}

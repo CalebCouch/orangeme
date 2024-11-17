@@ -11,28 +11,28 @@ part 'pub_structs.freezed.dart';
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`
 
 Future<void> loadStructs(
-        {required ShorthandTransaction s, required Profile p}) =>
-    RustLib.instance.api.crateApiPubStructsLoadStructs(s: s, p: p);
+        {required ShorthandTransaction s,
+        required Profile p,
+        required DartMethod dm,
+        required KeyPress kp,
+        required Platform pl,
+        required PageName pn,
+        required WalletMethod wm,
+        required Thread t}) =>
+    RustLib.instance.api.crateApiPubStructsLoadStructs(
+        s: s, p: p, dm: dm, kp: kp, pl: pl, pn: pn, wm: wm, t: t);
 
-class DartCommand {
-  final String method;
-  final String data;
+@freezed
+sealed class DartMethod with _$DartMethod {
+  const DartMethod._();
 
-  const DartCommand({
-    required this.method,
-    required this.data,
-  });
-
-  @override
-  int get hashCode => method.hashCode ^ data.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DartCommand &&
-          runtimeType == other.runtimeType &&
-          method == other.method &&
-          data == other.data;
+  const factory DartMethod.storageSet(
+    String field0,
+    String field1,
+  ) = DartMethod_StorageSet;
+  const factory DartMethod.storageGet(
+    String field0,
+  ) = DartMethod_StorageGet;
 }
 
 enum KeyPress {

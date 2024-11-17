@@ -16,8 +16,6 @@ use schemars::JsonSchema;
 use tokio::sync::Mutex;
 use std::sync::Arc;
 
-use super::pub_structs::DartCommand;
-
 const STORAGE_SPLIT: &str = "\u{0000}";
 
 
@@ -53,54 +51,5 @@ impl Request {
                 return Ok(res);
             }
         }
-    }
-}
-
-pub type Thread = Arc<Mutex<dyn Fn(DartCommand) -> DartFnFuture<String> + 'static + Sync + Send>>;
-
-#[derive(Clone, Default)]
-pub struct DartCallback {
-    threads: Vec<Thread>
-}
-
-impl DartCallback {
-    pub fn new() -> Self {DartCallback{threads: vec![]}}
-
-    pub fn add_thread(&mut self, thread: impl Fn(DartCommand) -> DartFnFuture<String> + 'static + Sync + Send) {
-        self.threads.push(Arc::new(Mutex::new(thread)));
-    }
-
-    pub async fn call(&self, method: &str, data: &str) -> Result<String, Error> {
-        loop {
-            for thread in &self.threads {
-                if let Ok(thread) = thread.try_lock() {
-                    return Ok(thread(DartCommand{
-                        method: method.to_string(),
-                        data: data.to_string()
-                    }).await);
-                }
-            }
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct Storage {
-    dart_callback: DartCallback
-}
-
-impl Storage {
-    pub fn new(dart_callback: DartCallback) -> Self {
-        Storage{dart_callback}
-    }
-
-    pub async fn set(&self, key: &str, value: &str) -> Result<(), Error> {
-        let data = key.to_string()+STORAGE_SPLIT+value;
-        self.dart_callback.call("storage_set", &data).await?;
-        Ok(())
-    }
-
-    pub async fn get(&self, key: &str) -> Result<Option<String>, Error> {
-        Ok(Some(self.dart_callback.call("storage_get", key).await?).filter(|s: &String| !s.is_empty()))
     }
 }

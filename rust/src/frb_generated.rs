@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.6.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1535927307;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -60639323;
 
 // Section: executor
 
@@ -393,11 +393,19 @@ fn wire__crate__api__pub_structs__load_structs_impl(
             let api__s =
                 <crate::api::pub_structs::ShorthandTransaction>::sse_decode(&mut deserializer);
             let api__p = <crate::api::pub_structs::Profile>::sse_decode(&mut deserializer);
+            let api__dm = <crate::api::pub_structs::DartMethod>::sse_decode(&mut deserializer);
+            let api__kp = <crate::api::pub_structs::KeyPress>::sse_decode(&mut deserializer);
+            let api__pl = <crate::api::pub_structs::Platform>::sse_decode(&mut deserializer);
+            let api__pn = <crate::api::pub_structs::PageName>::sse_decode(&mut deserializer);
+            let api__wm = <crate::api::pub_structs::WalletMethod>::sse_decode(&mut deserializer);
+            let api__t = <crate::api::pub_structs::Thread>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::pub_structs::load_structs(api__s, api__p);
+                        crate::api::pub_structs::load_structs(
+                            api__s, api__p, api__dm, api__kp, api__pl, api__pn, api__wm, api__t,
+                        );
                     })?;
                     Ok(output_ok)
                 })())
@@ -496,7 +504,7 @@ fn wire__crate__api__simple__rustStart_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_path = <String>::sse_decode(&mut deserializer);
             let api_platform = <crate::api::pub_structs::Platform>::sse_decode(&mut deserializer);
-            let api_thread = decode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
+            let api_callback = decode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
             deserializer.end();
@@ -504,53 +512,8 @@ fn wire__crate__api__simple__rustStart_impl(
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || async move {
                         let output_ok =
-                            crate::api::simple::rustStart(api_path, api_platform, api_thread)
+                            crate::api::simple::rustStart(api_path, api_platform, api_callback)
                                 .await?;
-                        Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__utils__updateDisplayAmount_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "updateDisplayAmount",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_amount = <String>::sse_decode(&mut deserializer);
-            let api_balance = <f64>::sse_decode(&mut deserializer);
-            let api_price = <f64>::sse_decode(&mut deserializer);
-            let api_input = <crate::api::pub_structs::KeyPress>::sse_decode(&mut deserializer);
-            deserializer.end();
-            move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || async move {
-                        let output_ok = crate::api::utils::updateDisplayAmount(
-                            api_amount,
-                            api_balance,
-                            api_price,
-                            api_input,
-                        )
-                        .await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -562,15 +525,16 @@ fn wire__crate__api__utils__updateDisplayAmount_impl(
 
 // Section: related_funcs
 
-fn decode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
+fn decode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
     dart_opaque: flutter_rust_bridge::DartOpaque,
-) -> impl Fn(crate::api::pub_structs::DartCommand) -> flutter_rust_bridge::DartFnFuture<String> {
+) -> impl Fn(crate::api::pub_structs::DartMethod) -> flutter_rust_bridge::DartFnFuture<Option<String>>
+{
     use flutter_rust_bridge::IntoDart;
 
     async fn body(
         dart_opaque: flutter_rust_bridge::DartOpaque,
-        arg0: crate::api::pub_structs::DartCommand,
-    ) -> String {
+        arg0: crate::api::pub_structs::DartMethod,
+    ) -> Option<String> {
         let args = vec![arg0.into_into_dart().into_dart()];
         let message = FLUTTER_RUST_BRIDGE_HANDLER
             .dart_fn_invoke(dart_opaque, args)
@@ -579,7 +543,7 @@ fn decode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
         let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
         let action = deserializer.cursor.read_u8().unwrap();
         let ans = match action {
-            0 => std::result::Result::Ok(<String>::sse_decode(&mut deserializer)),
+            0 => std::result::Result::Ok(<Option<String>>::sse_decode(&mut deserializer)),
             1 => std::result::Result::Err(
                 <flutter_rust_bridge::for_generated::anyhow::Error>::sse_decode(&mut deserializer),
             ),
@@ -590,7 +554,7 @@ fn decode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
         ans
     }
 
-    move |arg0: crate::api::pub_structs::DartCommand| {
+    move |arg0: crate::api::pub_structs::DartMethod| {
         flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
             dart_opaque.clone(),
             arg0,
@@ -675,15 +639,24 @@ impl SseDecode for bool {
     }
 }
 
-impl SseDecode for crate::api::pub_structs::DartCommand {
+impl SseDecode for crate::api::pub_structs::DartMethod {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_method = <String>::sse_decode(deserializer);
-        let mut var_data = <String>::sse_decode(deserializer);
-        return crate::api::pub_structs::DartCommand {
-            method: var_method,
-            data: var_data,
-        };
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                let mut var_field1 = <String>::sse_decode(deserializer);
+                return crate::api::pub_structs::DartMethod::StorageSet(var_field0, var_field1);
+            }
+            1 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::pub_structs::DartMethod::StorageGet(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -846,18 +819,6 @@ impl SseDecode for crate::api::pub_structs::Profile {
     }
 }
 
-impl SseDecode for (String, f64, u8, bool, String) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_field0 = <String>::sse_decode(deserializer);
-        let mut var_field1 = <f64>::sse_decode(deserializer);
-        let mut var_field2 = <u8>::sse_decode(deserializer);
-        let mut var_field3 = <bool>::sse_decode(deserializer);
-        let mut var_field4 = <String>::sse_decode(deserializer);
-        return (var_field0, var_field1, var_field2, var_field3, var_field4);
-    }
-}
-
 impl SseDecode for crate::api::pub_structs::ShorthandTransaction {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -963,7 +924,6 @@ fn pde_ffi_dispatcher_primary_impl(
         10 => wire__crate__api__pub_structs__load_structs_impl(port, ptr, rust_vec_len, data_len),
         12 => wire__crate__api__simple__rustCall_impl(port, ptr, rust_vec_len, data_len),
         13 => wire__crate__api__simple__rustStart_impl(port, ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__utils__updateDisplayAmount_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1017,23 +977,32 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<MyCustomAsyncRuntime>> for MyC
 }
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::DartCommand {
+impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::DartMethod {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.method.into_into_dart().into_dart(),
-            self.data.into_into_dart().into_dart(),
-        ]
-        .into_dart()
+        match self {
+            crate::api::pub_structs::DartMethod::StorageSet(field0, field1) => [
+                0.into_dart(),
+                field0.into_into_dart().into_dart(),
+                field1.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::pub_structs::DartMethod::StorageGet(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::pub_structs::DartCommand
+    for crate::api::pub_structs::DartMethod
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<crate::api::pub_structs::DartCommand>
-    for crate::api::pub_structs::DartCommand
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pub_structs::DartMethod>
+    for crate::api::pub_structs::DartMethod
 {
-    fn into_into_dart(self) -> crate::api::pub_structs::DartCommand {
+    fn into_into_dart(self) -> crate::api::pub_structs::DartMethod {
         self
     }
 }
@@ -1304,11 +1273,23 @@ impl SseEncode for bool {
     }
 }
 
-impl SseEncode for crate::api::pub_structs::DartCommand {
+impl SseEncode for crate::api::pub_structs::DartMethod {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <String>::sse_encode(self.method, serializer);
-        <String>::sse_encode(self.data, serializer);
+        match self {
+            crate::api::pub_structs::DartMethod::StorageSet(field0, field1) => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(field0, serializer);
+                <String>::sse_encode(field1, serializer);
+            }
+            crate::api::pub_structs::DartMethod::StorageGet(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -1465,17 +1446,6 @@ impl SseEncode for crate::api::pub_structs::Profile {
         <String>::sse_encode(self.did, serializer);
         <Option<String>>::sse_encode(self.pfp_path, serializer);
         <Option<String>>::sse_encode(self.abt_me, serializer);
-    }
-}
-
-impl SseEncode for (String, f64, u8, bool, String) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <String>::sse_encode(self.0, serializer);
-        <f64>::sse_encode(self.1, serializer);
-        <u8>::sse_encode(self.2, serializer);
-        <bool>::sse_encode(self.3, serializer);
-        <String>::sse_encode(self.4, serializer);
     }
 }
 

@@ -12,9 +12,9 @@ import 'pub_structs.dart';
 Future<String> rustStart(
         {required String path,
         required Platform platform,
-        required FutureOr<String> Function(DartCommand) thread}) =>
+        required FutureOr<String?> Function(DartMethod) callback}) =>
     RustLib.instance.api.crateApiSimpleRustStart(
-        path: path, platform: platform, thread: thread);
+        path: path, platform: platform, callback: callback);
 
 Future<String> rustCall({required Thread thread}) =>
     RustLib.instance.api.crateApiSimpleRustCall(thread: thread);

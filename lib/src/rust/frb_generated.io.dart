@@ -7,7 +7,6 @@ import 'api/custom_handler.dart';
 import 'api/error.dart';
 import 'api/pub_structs.dart';
 import 'api/simple.dart';
-import 'api/utils.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
@@ -43,8 +42,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           dynamic raw);
 
   @protected
-  FutureOr<String> Function(DartCommand)
-      dco_decode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
+  FutureOr<String?> Function(DartMethod)
+      dco_decode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
           dynamic raw);
 
   @protected
@@ -67,6 +66,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  DartMethod dco_decode_box_autoadd_dart_method(dynamic raw);
+
+  @protected
   KeyPress dco_decode_box_autoadd_key_press(dynamic raw);
 
   @protected
@@ -86,7 +88,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   WalletMethod dco_decode_box_autoadd_wallet_method(dynamic raw);
 
   @protected
-  DartCommand dco_decode_dart_command(dynamic raw);
+  DartMethod dco_decode_dart_method(dynamic raw);
 
   @protected
   double dco_decode_f_32(dynamic raw);
@@ -120,10 +122,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Profile dco_decode_profile(dynamic raw);
-
-  @protected
-  (String, double, int, bool, String)
-      dco_decode_record_string_f_64_u_8_bool_string(dynamic raw);
 
   @protected
   ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw);
@@ -179,6 +177,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer);
+
+  @protected
   KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer);
 
   @protected
@@ -199,7 +200,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
-  DartCommand sse_decode_dart_command(SseDeserializer deserializer);
+  DartMethod sse_decode_dart_method(SseDeserializer deserializer);
 
   @protected
   double sse_decode_f_32(SseDeserializer deserializer);
@@ -233,15 +234,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Profile sse_decode_profile(SseDeserializer deserializer);
-
-  @protected
-  (
-    String,
-    double,
-    int,
-    bool,
-    String
-  ) sse_decode_record_string_f_64_u_8_bool_string(SseDeserializer deserializer);
 
   @protected
   ShorthandTransaction sse_decode_shorthand_transaction(
@@ -280,8 +272,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           MyCustomAsyncRuntime self, SseSerializer serializer);
 
   @protected
-  void sse_encode_DartFn_Inputs_dart_command_Output_String_AnyhowException(
-      FutureOr<String> Function(DartCommand) self, SseSerializer serializer);
+  void sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
+      FutureOr<String?> Function(DartMethod) self, SseSerializer serializer);
 
   @protected
   void sse_encode_DartOpaque(Object self, SseSerializer serializer);
@@ -301,6 +293,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_dart_method(
+      DartMethod self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_key_press(
@@ -325,7 +321,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       WalletMethod self, SseSerializer serializer);
 
   @protected
-  void sse_encode_dart_command(DartCommand self, SseSerializer serializer);
+  void sse_encode_dart_method(DartMethod self, SseSerializer serializer);
 
   @protected
   void sse_encode_f_32(double self, SseSerializer serializer);
@@ -361,10 +357,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_profile(Profile self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_record_string_f_64_u_8_bool_string(
-      (String, double, int, bool, String) self, SseSerializer serializer);
 
   @protected
   void sse_encode_shorthand_transaction(

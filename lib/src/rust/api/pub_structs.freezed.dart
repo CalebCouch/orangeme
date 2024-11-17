@@ -15,6 +15,395 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
+mixin _$DartMethod {
+  String get field0 => throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0, String field1) storageSet,
+    required TResult Function(String field0) storageGet,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0, String field1)? storageSet,
+    TResult? Function(String field0)? storageGet,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0, String field1)? storageSet,
+    TResult Function(String field0)? storageGet,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DartMethod_StorageSet value) storageSet,
+    required TResult Function(DartMethod_StorageGet value) storageGet,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(DartMethod_StorageSet value)? storageSet,
+    TResult? Function(DartMethod_StorageGet value)? storageGet,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DartMethod_StorageSet value)? storageSet,
+    TResult Function(DartMethod_StorageGet value)? storageGet,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DartMethodCopyWith<DartMethod> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DartMethodCopyWith<$Res> {
+  factory $DartMethodCopyWith(
+          DartMethod value, $Res Function(DartMethod) then) =
+      _$DartMethodCopyWithImpl<$Res, DartMethod>;
+  @useResult
+  $Res call({String field0});
+}
+
+/// @nodoc
+class _$DartMethodCopyWithImpl<$Res, $Val extends DartMethod>
+    implements $DartMethodCopyWith<$Res> {
+  _$DartMethodCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_value.copyWith(
+      field0: null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DartMethod_StorageSetImplCopyWith<$Res>
+    implements $DartMethodCopyWith<$Res> {
+  factory _$$DartMethod_StorageSetImplCopyWith(
+          _$DartMethod_StorageSetImpl value,
+          $Res Function(_$DartMethod_StorageSetImpl) then) =
+      __$$DartMethod_StorageSetImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String field0, String field1});
+}
+
+/// @nodoc
+class __$$DartMethod_StorageSetImplCopyWithImpl<$Res>
+    extends _$DartMethodCopyWithImpl<$Res, _$DartMethod_StorageSetImpl>
+    implements _$$DartMethod_StorageSetImplCopyWith<$Res> {
+  __$$DartMethod_StorageSetImplCopyWithImpl(_$DartMethod_StorageSetImpl _value,
+      $Res Function(_$DartMethod_StorageSetImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+    Object? field1 = null,
+  }) {
+    return _then(_$DartMethod_StorageSetImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == field1
+          ? _value.field1
+          : field1 // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DartMethod_StorageSetImpl extends DartMethod_StorageSet {
+  const _$DartMethod_StorageSetImpl(this.field0, this.field1) : super._();
+
+  @override
+  final String field0;
+  @override
+  final String field1;
+
+  @override
+  String toString() {
+    return 'DartMethod.storageSet(field0: $field0, field1: $field1)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DartMethod_StorageSetImpl &&
+            (identical(other.field0, field0) || other.field0 == field0) &&
+            (identical(other.field1, field1) || other.field1 == field1));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0, field1);
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DartMethod_StorageSetImplCopyWith<_$DartMethod_StorageSetImpl>
+      get copyWith => __$$DartMethod_StorageSetImplCopyWithImpl<
+          _$DartMethod_StorageSetImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0, String field1) storageSet,
+    required TResult Function(String field0) storageGet,
+  }) {
+    return storageSet(field0, field1);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0, String field1)? storageSet,
+    TResult? Function(String field0)? storageGet,
+  }) {
+    return storageSet?.call(field0, field1);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0, String field1)? storageSet,
+    TResult Function(String field0)? storageGet,
+    required TResult orElse(),
+  }) {
+    if (storageSet != null) {
+      return storageSet(field0, field1);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DartMethod_StorageSet value) storageSet,
+    required TResult Function(DartMethod_StorageGet value) storageGet,
+  }) {
+    return storageSet(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(DartMethod_StorageSet value)? storageSet,
+    TResult? Function(DartMethod_StorageGet value)? storageGet,
+  }) {
+    return storageSet?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DartMethod_StorageSet value)? storageSet,
+    TResult Function(DartMethod_StorageGet value)? storageGet,
+    required TResult orElse(),
+  }) {
+    if (storageSet != null) {
+      return storageSet(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DartMethod_StorageSet extends DartMethod {
+  const factory DartMethod_StorageSet(
+      final String field0, final String field1) = _$DartMethod_StorageSetImpl;
+  const DartMethod_StorageSet._() : super._();
+
+  @override
+  String get field0;
+  String get field1;
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DartMethod_StorageSetImplCopyWith<_$DartMethod_StorageSetImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DartMethod_StorageGetImplCopyWith<$Res>
+    implements $DartMethodCopyWith<$Res> {
+  factory _$$DartMethod_StorageGetImplCopyWith(
+          _$DartMethod_StorageGetImpl value,
+          $Res Function(_$DartMethod_StorageGetImpl) then) =
+      __$$DartMethod_StorageGetImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String field0});
+}
+
+/// @nodoc
+class __$$DartMethod_StorageGetImplCopyWithImpl<$Res>
+    extends _$DartMethodCopyWithImpl<$Res, _$DartMethod_StorageGetImpl>
+    implements _$$DartMethod_StorageGetImplCopyWith<$Res> {
+  __$$DartMethod_StorageGetImplCopyWithImpl(_$DartMethod_StorageGetImpl _value,
+      $Res Function(_$DartMethod_StorageGetImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_$DartMethod_StorageGetImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DartMethod_StorageGetImpl extends DartMethod_StorageGet {
+  const _$DartMethod_StorageGetImpl(this.field0) : super._();
+
+  @override
+  final String field0;
+
+  @override
+  String toString() {
+    return 'DartMethod.storageGet(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DartMethod_StorageGetImpl &&
+            (identical(other.field0, field0) || other.field0 == field0));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0);
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DartMethod_StorageGetImplCopyWith<_$DartMethod_StorageGetImpl>
+      get copyWith => __$$DartMethod_StorageGetImplCopyWithImpl<
+          _$DartMethod_StorageGetImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0, String field1) storageSet,
+    required TResult Function(String field0) storageGet,
+  }) {
+    return storageGet(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0, String field1)? storageSet,
+    TResult? Function(String field0)? storageGet,
+  }) {
+    return storageGet?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0, String field1)? storageSet,
+    TResult Function(String field0)? storageGet,
+    required TResult orElse(),
+  }) {
+    if (storageGet != null) {
+      return storageGet(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(DartMethod_StorageSet value) storageSet,
+    required TResult Function(DartMethod_StorageGet value) storageGet,
+  }) {
+    return storageGet(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(DartMethod_StorageSet value)? storageSet,
+    TResult? Function(DartMethod_StorageGet value)? storageGet,
+  }) {
+    return storageGet?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(DartMethod_StorageSet value)? storageSet,
+    TResult Function(DartMethod_StorageGet value)? storageGet,
+    required TResult orElse(),
+  }) {
+    if (storageGet != null) {
+      return storageGet(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DartMethod_StorageGet extends DartMethod {
+  const factory DartMethod_StorageGet(final String field0) =
+      _$DartMethod_StorageGetImpl;
+  const DartMethod_StorageGet._() : super._();
+
+  @override
+  String get field0;
+
+  /// Create a copy of DartMethod
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DartMethod_StorageGetImplCopyWith<_$DartMethod_StorageGetImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$PageName {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({

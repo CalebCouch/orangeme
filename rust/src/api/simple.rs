@@ -14,11 +14,10 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-use super::pub_structs::{Platform, PageName, Thread, WalletMethod, DartCommand};
+use super::pub_structs::{Platform, PageName, Thread, WalletMethod, DartMethod};
 use super::state::Field;
 
 use super::web5::MessagingAgent;
-use super::structs::{Storage, DartCallback};
 use super::price::PriceGetter;
 use super::state::{StateManager, State};
 //use super::usb::UsbInfo;
@@ -68,6 +67,8 @@ use std::collections::HashMap;
 use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 
 use web5_rust::dids::{DhtDocument, Identity};
+
+pub type Callback = Arc<Mutex<dyn Fn(DartMethod) -> DartFnFuture<Option<String>> + 'static + Sync + Send>>;
 
 pub type WalletSender = Sender<(oneshot::Sender<String>, WalletMethod)>;
 pub type WalletReceiver = Receiver<(oneshot::Sender<String>, WalletMethod)>;
@@ -141,7 +142,7 @@ async fn wallet_thread(wallet: Wallet, mut recv: WalletReceiver) -> Result<(), E
 
 async fn wallet_init(
     state: State,
-    storage: Storage,
+    callback: Callback,
     path: PathBuf,
     w_rx: WalletReceiver
 ) -> Result<(), Error> {
@@ -182,12 +183,13 @@ async fn agent_refresh_thread(agent: MessagingAgent, state: State) -> Result<(),
     }
 }
 
-async fn agent_init(state: State, storage: Storage, path: PathBuf) -> Result<(), Error> {
-    let (doc, id) = if let Some(i) = storage.get("identity").await? {
+async fn agent_init(state: State, callback: Callback, path: PathBuf) -> Result<(), Error> {
+    let callback = callback.lock().await;
+    let (doc, id) = if let Some(i) = callback(DartMethod::StorageGet("identity".to_string())).await {
         serde_json::from_str::<(DhtDocument, Identity)>(&i)?
     } else {
         let tup = DhtDocument::default(vec!["did:dht:fxaigdryri3os713aaepighxf6sm9h5xouwqfpinh9izwro3mbky".to_string()])?;
-        storage.set("identity", &serde_json::to_string(&tup)?).await?;
+        callback(DartMethod::StorageSet("identity".to_string(), serde_json::to_string(&tup)?)).await;
         tup
     };
 
@@ -206,7 +208,7 @@ async fn agent_init(state: State, storage: Storage, path: PathBuf) -> Result<(),
 pub async fn rustStart (
     path: String,
     platform: Platform,
-    thread: impl Fn(DartCommand) -> DartFnFuture<String> + 'static + Sync + Send,
+    callback: impl Fn(DartMethod) -> DartFnFuture<Option<String>> + 'static + Sync + Send,
 ) -> Result<String, Error> {
 
     #[cfg(target_os = "android")]
@@ -217,26 +219,23 @@ pub async fn rustStart (
     oslog::OsLogger::new("frb_user").level_filter(log::LevelFilter::Info).init();
     thread::sleep(time::Duration::from_millis(500));//TODO: loggers need time to initialize maybe find an async solution
 
+    let callback = Arc::new(Mutex::new(callback));
+
     let mut threads = THREAD_CHANNELS.lock().await;
     let (w_tx, w_rx) = mpsc::channel::<(oneshot::Sender<String>, WalletMethod)>(100);
     threads.0 = Some(w_tx);
     drop(threads);
-
-    let mut dart_callback = DartCallback::new();
-    dart_callback.add_thread(thread);
 
     let path = PathBuf::from(&path);
     let state = State::new::<SqliteStore>(path.clone()).await?;
     state.set(Field::Path(Some(path.clone()))).await?;
     state.set(Field::Platform(Some(platform.clone()))).await?;
 
-    let storage = Storage::new(dart_callback.clone());
-
     tokio::try_join!(
         spawn(internet_thread(state.clone())),
         spawn(price_thread(state.clone())),
-        spawn(wallet_init(state.clone(), storage.clone(), path.clone(), w_rx)),
-        spawn(agent_init(state.clone(), storage.clone(), path.clone())),
+        spawn(wallet_init(state.clone(), callback.clone(), path.clone(), w_rx)),
+        spawn(agent_init(state.clone(), callback.clone(), path.clone())),
     )?;
 
     Err(Error::Exited("Main Thread".to_string()))
@@ -287,6 +286,7 @@ pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
 
 //      "Transaction successfully broadcast".to_string()
 //  }
+
 pub fn clearData(path: String) {
     std::fs::remove_dir_all(PathBuf::from(path));
 }

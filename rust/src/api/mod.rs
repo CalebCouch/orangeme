@@ -8,7 +8,6 @@ pub mod error;
 use error::Error;
 
 pub mod pub_structs;
-pub mod utils;
 
 /// flutter_rust_bridge:ignore
 pub mod structs;
@@ -22,9 +21,5 @@ pub mod web5;
 pub mod state;
 //  /// flutter_rust_bridge:ignore
 //  pub mod usb;
-
-
-
-
 
 pub mod simple;
