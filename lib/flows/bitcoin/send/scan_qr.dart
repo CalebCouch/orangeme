@@ -37,9 +37,7 @@ class ScanQRState extends State<ScanQR> {
         controller.scannedDataStream.listen((scanData) {
             String scannedCode = scanData.code ?? '';
 
-            if (scannedCode.startsWith('bitcoin:')) {
-                scannedCode = scannedCode.substring(8); 
-            }
+            if (scannedCode.startsWith('bitcoin:')) scannedCode = scannedCode.substring(8); 
             
             Navigator.pop(context, scannedCode);
         });

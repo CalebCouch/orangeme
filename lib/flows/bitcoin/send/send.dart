@@ -48,8 +48,8 @@ class SendState extends GenericState<Send> {
     }
 
     Future<void> onScan() async {
-        String scannedQR = await navigateToReturn(context, ScanQR());
-        if (scannedQR != null) {setState(() => controller.text = widget.address = scannedQR);}
+        String? scannedQR = await navigateToReturn(context, ScanQR());
+        if (scannedQR != null) {setState(() => controller.text = widget.address = scannedQR ?? widget.address);}
     }
 
 
