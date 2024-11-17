@@ -12,7 +12,6 @@ class Success extends StatefulWidget {
 }
 
 class SuccessState extends State<Success> {
-    onDone() {resetNavTo(context, BitcoinHome());}
 
     @override
     Widget build(BuildContext context) {
@@ -20,7 +19,11 @@ class SuccessState extends State<Success> {
             header: Header_Stack(context, "Confirm send", Container(), exitButton(context, BitcoinHome())),
             content: [Result(text: 'You sent ${widget.amount_sent}')],
             bumper: Bumper(context, content: [
-                CustomButton(txt: 'Done', variant: 'secondary', onTap: onDone),
+                CustomButton(
+                    txt: 'Done', 
+                    variant: 'secondary', 
+                    onTap: () {resetNavTo(context, BitcoinHome());},
+                ),
             ]),
             alignment: Alignment.center,
             scroll: false,
