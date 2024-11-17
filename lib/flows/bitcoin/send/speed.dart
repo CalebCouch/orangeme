@@ -8,7 +8,7 @@ import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
     String address;
-    BigInt amount; 
+    double amount;
     Speed(this.address, this.amount, {super.key});
 
     String standard = "";

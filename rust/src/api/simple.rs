@@ -70,6 +70,7 @@ use super::wallet::{Wallet, DescriptorSet, Seed, Transaction};
 use web5_rust::dids::{DhtDocument, Identity};
 
 pub type WalletSender = Sender<(oneshot::Sender<String>, WalletMethod)>;
+pub type WalletReceiver = Receiver<(oneshot::Sender<String>, WalletMethod)>;
 
 static THREAD_CHANNELS: LazyLock<Mutex<(Option<WalletSender>, Option<String>)>> = LazyLock::new(|| Mutex::new((None, None)));
 
@@ -122,14 +123,49 @@ async fn wallet_refresh_thread(wallet: Wallet, state: State) -> Result<(), Error
     }
 }
 
-async fn wallet_thread(wallet: Wallet, mut recv: Receiver<(oneshot::Sender<String>, WalletMethod)>) -> Result<(), Error> {
+async fn wallet_thread(wallet: Wallet, mut recv: WalletReceiver) -> Result<(), Error> {
     loop {
         let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
+        log::info!("Start");
         match method {
             WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?),
-            WalletMethod::GetFees(amount, price) => o_tx.send(serde_json::to_string(&wallet.get_fees(amount, price).await?)?),
+            WalletMethod::GetFees(amount, price) => {
+                let fees = wallet.get_fees(amount, price).await?;
+                let payload = serde_json::to_string(&fees)?;
+                o_tx.send(payload)
+            },
         }.map_err(Error::Exited)?;
+        log::info!("End");
     }
+}
+
+async fn wallet_init(
+    state: State,
+    storage: Storage,
+    path: PathBuf,
+    w_rx: WalletReceiver
+) -> Result<(), Error> {
+    //let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
+    //    serde_json::from_str(&seed)?
+    //} else {
+    //    let seed = Seed::new();
+    //    storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+    //    seed
+    //};
+    //Hard coded for testing
+    let seed: Seed = Seed{inner: vec![175, 178, 194, 229, 165, 10, 1, 80, 224, 239, 231, 107, 145, 96, 212, 195, 10, 78, 64, 17, 241, 77, 229, 246, 109, 226, 14, 83, 139, 28, 232, 220, 5, 150, 79, 185, 67, 31, 247, 41, 150, 36, 77, 199, 67, 47, 157, 15, 61, 142, 5, 244, 245, 137, 198, 34, 174, 221, 63, 134, 129, 165, 25, 7]};
+    let descriptors = DescriptorSet::from_seed(&seed)?;
+
+    let wallet = Wallet::new(descriptors, path.clone())?;
+
+
+    tokio::try_join!(
+        spawn(wallet_thread(wallet.clone(), w_rx)),
+        spawn(wallet_sync_thread(wallet.clone())),
+        spawn(wallet_refresh_thread(wallet, state)),
+    )?;
+
+    Err(Error::Exited("Wallet Thread".to_string()))
 }
 
 async fn agent_sync_thread(agent: MessagingAgent) -> Result<(), Error> {
@@ -146,6 +182,27 @@ async fn agent_refresh_thread(agent: MessagingAgent, state: State) -> Result<(),
     }
 }
 
+async fn agent_init(state: State, storage: Storage, path: PathBuf) -> Result<(), Error> {
+    let (doc, id) = if let Some(i) = storage.get("identity").await? {
+        serde_json::from_str::<(DhtDocument, Identity)>(&i)?
+    } else {
+        let tup = DhtDocument::default(vec!["did:dht:fxaigdryri3os713aaepighxf6sm9h5xouwqfpinh9izwro3mbky".to_string()])?;
+        storage.set("identity", &serde_json::to_string(&tup)?).await?;
+        tup
+    };
+
+    doc.publish(&id.did_key).await?;
+
+    let agent = MessagingAgent::new(id, path).await?;
+
+    tokio::try_join!(
+        spawn(agent_sync_thread(agent.clone())),
+        spawn(agent_refresh_thread(agent, state)),
+        //spawn(agent_thread(agent, state.clone())),
+    )?;
+    Err(Error::Exited("Agent Thread".to_string()))
+}
+
 pub async fn rustStart (
     path: String,
     platform: Platform,
@@ -160,55 +217,26 @@ pub async fn rustStart (
     oslog::OsLogger::new("frb_user").level_filter(log::LevelFilter::Info).init();
     thread::sleep(time::Duration::from_millis(500));//TODO: loggers need time to initialize maybe find an async solution
 
-    let mut dart_callback = DartCallback::new();
-    dart_callback.add_thread(thread);
-
-    let state = State::new::<SqliteStore>(PathBuf::from(&path)).await?;
-    state.set(Field::Path(Some(path.clone()))).await?;
-    state.set(Field::Platform(Some(platform.clone()))).await?;
-
-    let storage = Storage::new(dart_callback.clone());
-
-    let (doc, id) = if let Some(i) = storage.get("identity").await? {
-        serde_json::from_str::<(DhtDocument, Identity)>(&i)?
-    } else {
-        let tup = DhtDocument::default(vec!["did:dht:fxaigdryri3os713aaepighxf6sm9h5xouwqfpinh9izwro3mbky".to_string()])?;
-        storage.set("identity", &serde_json::to_string(&tup)?).await?;
-        tup
-    };
-
-    doc.publish(&id.did_key).await?;
-
-    //let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
-    //    serde_json::from_str(&seed)?
-    //} else {
-    //    let seed = Seed::new();
-    //    storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
-    //    seed
-    //};
-    //Hard coded for testing
-    let seed: Seed = Seed{inner: vec![175, 178, 194, 229, 165, 10, 1, 80, 224, 239, 231, 107, 145, 96, 212, 195, 10, 78, 64, 17, 241, 77, 229, 246, 109, 226, 14, 83, 139, 28, 232, 220, 5, 150, 79, 185, 67, 31, 247, 41, 150, 36, 77, 199, 67, 47, 157, 15, 61, 142, 5, 244, 245, 137, 198, 34, 174, 221, 63, 134, 129, 165, 25, 7]};
-    let descriptors = DescriptorSet::from_seed(&seed)?;
-    let path = PathBuf::from(&path);
-
     let mut threads = THREAD_CHANNELS.lock().await;
     let (w_tx, w_rx) = mpsc::channel::<(oneshot::Sender<String>, WalletMethod)>(100);
     threads.0 = Some(w_tx);
     drop(threads);
 
-    let wallet = Wallet::new(descriptors, path.clone())?;
+    let mut dart_callback = DartCallback::new();
+    dart_callback.add_thread(thread);
 
-    let agent = MessagingAgent::new(id, path).await?;
+    let path = PathBuf::from(&path);
+    let state = State::new::<SqliteStore>(path.clone()).await?;
+    state.set(Field::Path(Some(path.clone()))).await?;
+    state.set(Field::Platform(Some(platform.clone()))).await?;
+
+    let storage = Storage::new(dart_callback.clone());
 
     tokio::try_join!(
         spawn(internet_thread(state.clone())),
         spawn(price_thread(state.clone())),
-        spawn(wallet_sync_thread(wallet.clone())),
-        spawn(wallet_refresh_thread(wallet.clone(), state.clone())),
-        spawn(wallet_thread(wallet.clone(), w_rx)),
-        spawn(agent_sync_thread(agent.clone())),
-        spawn(agent_refresh_thread(agent.clone(), state.clone())),
-        //spawn(agent_thread(agent, state.clone())),
+        spawn(wallet_init(state.clone(), storage.clone(), path.clone(), w_rx)),
+        spawn(agent_init(state.clone(), storage.clone(), path.clone())),
     )?;
 
     Err(Error::Exited("Main Thread".to_string()))

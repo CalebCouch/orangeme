@@ -84,6 +84,7 @@ impl DartCallback {
     }
 }
 
+#[derive(Clone)]
 pub struct Storage {
     dart_callback: DartCallback
 }

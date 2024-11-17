@@ -687,6 +687,13 @@ impl SseDecode for crate::api::pub_structs::DartCommand {
     }
 }
 
+impl SseDecode for f32 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_f32::<NativeEndian>().unwrap()
+    }
+}
+
 impl SseDecode for f64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -793,7 +800,7 @@ impl SseDecode for crate::api::pub_structs::PageName {
                 return crate::api::pub_structs::PageName::Amount(var_field0, var_field1);
             }
             5 => {
-                let mut var_field0 = <u64>::sse_decode(deserializer);
+                let mut var_field0 = <f32>::sse_decode(deserializer);
                 return crate::api::pub_structs::PageName::Speed(var_field0);
             }
             6 => {
@@ -1305,6 +1312,13 @@ impl SseEncode for crate::api::pub_structs::DartCommand {
     }
 }
 
+impl SseEncode for f32 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer.cursor.write_f32::<NativeEndian>(self).unwrap();
+    }
+}
+
 impl SseEncode for f64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1411,7 +1425,7 @@ impl SseEncode for crate::api::pub_structs::PageName {
             }
             crate::api::pub_structs::PageName::Speed(field0) => {
                 <i32>::sse_encode(5, serializer);
-                <u64>::sse_encode(field0, serializer);
+                <f32>::sse_encode(field0, serializer);
             }
             crate::api::pub_structs::PageName::Test(field0) => {
                 <i32>::sse_encode(6, serializer);

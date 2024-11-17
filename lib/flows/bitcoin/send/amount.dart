@@ -13,7 +13,8 @@ class Amount extends GenericWidget {
 
     String amount = "";
     String amount_btc = "";
-    int needed_placeholders = 0; 
+    double raw_btc = 0.0;
+    int needed_placeholders = 0;
     bool valid_input = true;
     String? err;
     KeyPress? input;
@@ -31,7 +32,7 @@ class AmountState extends GenericState<Amount> {
 
     @override
     int refreshInterval() {
-        return 1;
+        return 0;
     }
 
     @override
@@ -39,36 +40,34 @@ class AmountState extends GenericState<Amount> {
         setState(() {
             widget.amount = json["amount"] as String;
             widget.amount_btc = json["amount_btc"] as String;
+            widget.raw_btc = json["raw_btc"] as double;
             widget.needed_placeholders = json["needed_placeholders"] as int;
             widget.valid_input = json["valid_input"] as bool;
             widget.err = json["err"] as String?;
+            print("input: ${widget.input}");
             widget.input = null;
 
-            vibrate();
         });
+        if (!widget.valid_input) {
+            vibrate();
+        }
     }
 
     onContinue() {
-       // navigateTo(context, Speed(widget.address, amount));
+       navigateTo(context, Speed(widget.address, widget.raw_btc));
     }
 
-    onDisabled() {
+    vibrate() {
         _shakeController.shake();
         Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
     }
 
-    vibrate() {
-        if (widget.valid_input) {
-            _shakeController.shake();
-            Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
-        }
-    }
-
     update(KeyPress input) {
+        HapticFeedback.heavyImpact();
         setState(() {
             widget.input = input;
         });
-        HapticFeedback.heavyImpact();
+        super.getState();
     }
 
     @override
@@ -86,7 +85,7 @@ class AmountState extends GenericState<Amount> {
                         txt: 'Continue',
                         onTap: onContinue,
                         enabled: enabled,
-                        onDis: onDisabled
+                        onDis: vibrate
                     ),
                 ],
                 vertical: true,

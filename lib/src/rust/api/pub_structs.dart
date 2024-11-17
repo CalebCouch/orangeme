@@ -69,7 +69,7 @@ sealed class PageName with _$PageName {
     KeyPress? field1,
   ]) = PageName_Amount;
   const factory PageName.speed(
-    BigInt field0,
+    double field0,
   ) = PageName_Speed;
   const factory PageName.test(
     String field0,

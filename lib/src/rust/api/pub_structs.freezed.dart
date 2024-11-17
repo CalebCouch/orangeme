@@ -23,7 +23,7 @@ mixin _$PageName {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) =>
       throw _privateConstructorUsedError;
@@ -34,7 +34,7 @@ mixin _$PageName {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) =>
       throw _privateConstructorUsedError;
@@ -45,7 +45,7 @@ mixin _$PageName {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) =>
@@ -153,7 +153,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) {
     return bitcoinHome();
@@ -167,7 +167,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) {
     return bitcoinHome?.call();
@@ -181,7 +181,7 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -319,7 +319,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) {
     return viewTransaction(field0);
@@ -333,7 +333,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) {
     return viewTransaction?.call(field0);
@@ -347,7 +347,7 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -464,7 +464,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) {
     return receive();
@@ -478,7 +478,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) {
     return receive?.call();
@@ -492,7 +492,7 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -627,7 +627,7 @@ class _$PageName_SendImpl extends PageName_Send {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) {
     return send(field0);
@@ -641,7 +641,7 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) {
     return send?.call(field0);
@@ -655,7 +655,7 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -807,7 +807,7 @@ class _$PageName_AmountImpl extends PageName_Amount {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) {
     return amount(field0, field1);
@@ -821,7 +821,7 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) {
     return amount?.call(field0, field1);
@@ -835,7 +835,7 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -913,7 +913,7 @@ abstract class _$$PageName_SpeedImplCopyWith<$Res> {
           $Res Function(_$PageName_SpeedImpl) then) =
       __$$PageName_SpeedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({BigInt field0});
+  $Res call({double field0});
 }
 
 /// @nodoc
@@ -935,7 +935,7 @@ class __$$PageName_SpeedImplCopyWithImpl<$Res>
       null == field0
           ? _value.field0
           : field0 // ignore: cast_nullable_to_non_nullable
-              as BigInt,
+              as double,
     ));
   }
 }
@@ -946,7 +946,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
   const _$PageName_SpeedImpl(this.field0) : super._();
 
   @override
-  final BigInt field0;
+  final double field0;
 
   @override
   String toString() {
@@ -981,7 +981,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) {
     return speed(field0);
@@ -995,7 +995,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) {
     return speed?.call(field0);
@@ -1009,7 +1009,7 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -1067,10 +1067,10 @@ class _$PageName_SpeedImpl extends PageName_Speed {
 }
 
 abstract class PageName_Speed extends PageName {
-  const factory PageName_Speed(final BigInt field0) = _$PageName_SpeedImpl;
+  const factory PageName_Speed(final double field0) = _$PageName_SpeedImpl;
   const PageName_Speed._() : super._();
 
-  BigInt get field0;
+  double get field0;
 
   /// Create a copy of PageName
   /// with the given fields replaced by the non-null parameter values.
@@ -1152,7 +1152,7 @@ class _$PageName_TestImpl extends PageName_Test {
     required TResult Function() receive,
     required TResult Function(String field0) send,
     required TResult Function(String field0, KeyPress? field1) amount,
-    required TResult Function(BigInt field0) speed,
+    required TResult Function(double field0) speed,
     required TResult Function(String field0) test,
   }) {
     return test(field0);
@@ -1166,7 +1166,7 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
     TResult? Function(String field0, KeyPress? field1)? amount,
-    TResult? Function(BigInt field0)? speed,
+    TResult? Function(double field0)? speed,
     TResult? Function(String field0)? test,
   }) {
     return test?.call(field0);
@@ -1180,7 +1180,7 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult Function()? receive,
     TResult Function(String field0)? send,
     TResult Function(String field0, KeyPress? field1)? amount,
-    TResult Function(BigInt field0)? speed,
+    TResult Function(double field0)? speed,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {

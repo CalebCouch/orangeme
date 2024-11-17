@@ -78,6 +78,7 @@ Future<String> callRust(Thread thread) async {
 }
 
 Future<String> dartCallback(DartCommand command) async {
+    print("Start dart");
     switch (command.method) {
         case "storage_set": {
             var split = command.data.split("\u0000");
@@ -86,10 +87,13 @@ Future<String> dartCallback(DartCommand command) async {
             await storage.write(key, value);
         }
         case "storage_get": {
-            return await storage.read(command.data) ?? "";
+            var val = await storage.read(command.data) ?? "";
+            print("End2 dart");
+            return val;
         }
         case "print":
             print(command.data);
     }
+    print("End dart");
     return "Ok";
 }

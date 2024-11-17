@@ -7,7 +7,7 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
-// These functions are ignored because they are not marked as `pub`: `agent_refresh_thread`, `agent_sync_thread`, `internet_thread`, `price_thread`, `spawn`, `wallet_refresh_thread`, `wallet_sync_thread`, `wallet_thread`
+// These functions are ignored because they are not marked as `pub`: `agent_init`, `agent_refresh_thread`, `agent_sync_thread`, `internet_thread`, `price_thread`, `spawn`, `wallet_init`, `wallet_refresh_thread`, `wallet_sync_thread`, `wallet_thread`
 
 Future<String> rustStart(
         {required String path,

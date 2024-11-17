@@ -28,7 +28,7 @@ use thousands::Separable;
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum Field {
-    Path(Option<String>),
+    Path(Option<PathBuf>),
     Price(Option<f64>),
     Internet(Option<bool>),
     Platform(Option<Platform>),
@@ -146,7 +146,7 @@ impl StateManager {
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
             PageName::Receive => self.receive().await,
             PageName::Amount(amount, key_press) => self.amount(amount, key_press).await,
-            PageName::Speed(amount) => self.speed(amount).await,
+            PageName::Speed(amount) => self.speed(amount as Sats).await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
@@ -186,19 +186,6 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn receive(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&json!({
-            "address": rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?,
-        }))?)
-    }
-
-    pub async fn send(&self, address: &str) -> Result<String, Error> {
-        let valid_address = Address::from_str(address).ok().map(|a| a.require_network(Network::Bitcoin).is_ok()).unwrap_or(false);
-        Ok(serde_json::to_string(&json!({
-            "valid_address": valid_address,
-        }))?)
-    }
-
     pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
         let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
         let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
@@ -218,7 +205,21 @@ impl StateManager {
         }))?)
     }
 
+    pub async fn receive(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&json!({
+            "address": rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?,
+        }))?)
+    }
+
+    pub async fn send(&self, address: &str) -> Result<String, Error> {
+        let valid_address = if address.is_empty() {true} else {Address::from_str(address).ok().map(|a| a.require_network(Network::Bitcoin).is_ok()).unwrap_or(false)};
+        Ok(serde_json::to_string(&json!({
+            "valid_address": valid_address,
+        }))?)
+    }
+
     pub async fn amount(&self, amount: String, key: Option<KeyPress>) -> Result<String, Error> {
+        log::info!("key: {:?}", key);
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
         let balance = self.state.get_or_default::<Btc>(&Field::Balance(None)).await? * price;
 
@@ -273,12 +274,12 @@ impl StateManager {
         let amount_btc = updated_amount_usd / price;
         let amount_sats = (amount_btc * SATS as Btc) as Sats;
 
-        let min: Usd = serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount_sats, price))).await?)?.1;
+        let min: Usd = 0.30;//serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(std::cmp::max(amount_sats, 5460), price))).await?)?.1;
         let max = balance - min;
 
         let err = if updated_amount_usd != 0.0 {
             if max <= 0.0 {
-                Some("You have no bitcoin".to_string())
+                Some("You don't have enough bitcoin".to_string())
             } else if updated_amount_usd < min {
                 Some(format!("${:.2} minimum", min))
             } else if updated_amount_usd > max {
@@ -291,7 +292,8 @@ impl StateManager {
 
         Ok(serde_json::to_string(&json!({
             "amount": updated_amount,
-            "amount_btc": amount_btc,
+            "amount_btc": format_btc(amount_btc),
+            "raw_btc": amount_btc,
             "needed_placeholders": needed_placeholders,
             "valid_input": valid_input,
             "err": err,
@@ -302,8 +304,8 @@ impl StateManager {
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
         let fees = serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await?)?;
         Ok(serde_json::to_string(&json!({
-            "one": fees.0,
-            "three": fees.1
+            "one": format_usd(fees.0),
+            "three": format_usd(fees.1)
         }))?)
     }
 

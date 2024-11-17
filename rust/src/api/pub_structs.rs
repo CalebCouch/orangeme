@@ -33,7 +33,7 @@ pub enum PageName {
     Receive,
     Send(String),
     Amount(String, Option<KeyPress>),
-    Speed(Sats),
+    Speed(f32),
   //MyProfile,
   //MessagesHome,
 //  Receive,
