@@ -115,10 +115,7 @@ pub fn format_usd(price: Usd) -> String {
 pub fn format_btc(btc: Btc) -> String {format!("{:.8} BTC", btc)}
 
 pub fn format_adr(adr: &str) -> String {
-    if adr.starts_with("The ") {
-       return "Redeposit".to_string();
-    }
-    
+    if adr.starts_with("The ") { return "Redeposit".to_string();}
     format!("{}...{}", &adr[..9], &adr[adr.len()-3..])
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/flows/bitcoin/send/confirm.dart';
 // import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
@@ -79,6 +80,7 @@ class SpeedState extends GenericState<Speed> {
                 subtitle: "Arrives in ~2 hours\n${standard} bitcoin network fee",
                 isEnabled: index == 0,
                 onTap: () {
+                    HapticFeedback.heavyImpact();
                     setState(() {
                         index = 0;
                     });
@@ -89,6 +91,7 @@ class SpeedState extends GenericState<Speed> {
                 subtitle: "Arrives in ~30 minutes\n${priority} bitcoin network fee",
                 isEnabled: index == 1,
                 onTap: () {
+                    HapticFeedback.heavyImpact();
                     setState(() {
                         index = 1;
                     });
