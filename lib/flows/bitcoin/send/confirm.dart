@@ -21,7 +21,7 @@ class Confirm extends GenericWidget {
     String address_whole = '';
     String amount_btc = '';
     String amount_usd = '';
-    String fee = '';
+    //String fee = '';
     String total = '';
 
     @override
@@ -48,7 +48,7 @@ class ConfirmState extends GenericState<Confirm> {
             widget.address_whole = json["address_whole"] as String;
             widget.amount_btc = json["amount_btc"] as String;
             widget.amount_usd = json["amount_usd"] as String;
-            widget.fee = json["fee"] as String;
+            //widget.fee = json["fee"] as String;
             widget.total = json["total"] as String;
             widget.raw_tx = json["raw_tx"] as String;
         });
@@ -60,7 +60,7 @@ class ConfirmState extends GenericState<Confirm> {
 
 
     @override
-    Widget build(BuildContext context) {
+    Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Confirm send"),
             content: [
@@ -91,9 +91,9 @@ class ConfirmState extends GenericState<Confirm> {
         );
     }
 
-    ConfirmAmount(BuildContext context, tx) {
-        changeAmount() {resetNavTo(context, Amount());}
-        changeSpeed() {resetNavTo(context, Speed());}
+    ConfirmAmount() {
+        changeAmount() {resetNavTo(context, Amount(widget.address));}
+        changeSpeed() {resetNavTo(context, Speed(widget.address, widget.amount));}
 
         return DataItem(
             title: "Confirm Amount",
@@ -118,7 +118,7 @@ class ConfirmState extends GenericState<Confirm> {
     }
 }
 
-Widget EditButton(text, onTap){
+CustomButton EditButton(text, onTap){
     return CustomButton(
         txt: text, 
         variant: 'secondary',

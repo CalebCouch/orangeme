@@ -37,7 +37,7 @@ class DataItem extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                    CustomText('heading h5', title, alignment: TextAlign.left),
+                                    CustomText(variant: 'heading', font_size: 'h5', txt: title, alignment: TextAlign.left),
                                     const Spacing(16),
                                     if (subtitle != null) CustomText(variant: 'text', font_size: 'md', txt: subtitle!, alignment: TextAlign.left),
                                     if (subtitle != null) const Spacing(16),
@@ -66,7 +66,7 @@ class DataItem extends StatelessWidget {
             ),
             child: CustomText(
                 variant: 'heading', 
-                text_size: 'h6', 
+                font_size: 'h6', 
                 txt: number.toString()
             ),
         );
