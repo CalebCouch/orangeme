@@ -6,13 +6,12 @@ import 'package:orangeme_material/orangeme_material.dart';
 class Success extends StatefulWidget {
   String amount_sent; //"$10.00"
   Success(this.amount_sent, {super.key});
-
+  
   @override
   SuccessState createState() => SuccessState();
 }
 
 class SuccessState extends State<Success> {
-
     @override
     Widget build(BuildContext context) {
         return Stack_Default(
