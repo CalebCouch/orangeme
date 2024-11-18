@@ -11,13 +11,13 @@ import 'package:orangeme_material/orangeme_material.dart';
 
 class Confirm extends GenericWidget {
     String address;
-    BigInt amount;
+    BigInt amount_sats;
     BigInt fee;
 
-    Confirm(this.address, this.amount, this.fee, {super.key});
+    Confirm(this.address, this.amount_sats, this.fee, {super.key});
 
     String raw_tx = "";
-
+    String amount = "";
     String address_cut = '';
     String address_whole = '';
     String amount_btc = '';
@@ -34,8 +34,8 @@ class ConfirmState extends GenericState<Confirm> {
 
     @override
     PageName getPageName() {
-        print("widget.fee == ${widget.fee}");
-        return PageName.confirm(widget.address, widget.amount, widget.fee);
+        //print("widget.fee == ${widget.fee}");
+        return PageName.confirm(widget.address, widget.amount_sats, widget.fee);
     }
 
     @override
@@ -50,6 +50,7 @@ class ConfirmState extends GenericState<Confirm> {
             widget.address_whole = json["address_whole"] as String;
             widget.amount_btc = json["amount_btc"] as String;
             widget.amount_usd = json["amount_usd"] as String;
+            widget.amount = json["amount"] as String;
             widget.fee_usd = json["fee_usd"] as String;
             widget.total = json["total"] as String;
             widget.raw_tx = json["raw_tx"] as String;
@@ -82,7 +83,7 @@ class ConfirmState extends GenericState<Confirm> {
 
 
     ConfirmAddress() {
-        changeAddress() {resetNavTo(context, Send());}
+        changeAddress() {resetNavTo(context, Send(address: widget.address, amount: widget.amount));}
 
         return DataItem(
             title: "Confirm Address",
@@ -94,8 +95,8 @@ class ConfirmState extends GenericState<Confirm> {
     }
 
     ConfirmAmount() {
-        changeAmount() {resetNavTo(context, Amount(widget.address));}
-        changeSpeed() {resetNavTo(context, Speed(widget.address, widget.amount));}
+        changeAmount() {resetNavTo(context, Amount(widget.address, amount: widget.amount));}
+        changeSpeed() {resetNavTo(context, Speed(widget.address, widget.amount_sats));}
 
         return DataItem(
             title: "Confirm Amount",

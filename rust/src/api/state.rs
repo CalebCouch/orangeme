@@ -319,10 +319,10 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn confirm(&self, address: String, amount: Sats, fee: Sats) -> Result<String, Error> {
+    pub async fn confirm(&self, address: String, amount_sats: Sats, fee: Sats) -> Result<String, Error> {
         log::info!("fee c: {}", fee);
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-        let (btx, tx) = serde_json::from_str::<(bdk::bitcoin::Transaction, Transaction)>(&rustCall(Threads::Wallet(WalletMethod::BuildTransaction(address, amount, fee, price))).await?)?;
+        let (btx, tx) = serde_json::from_str::<(bdk::bitcoin::Transaction, Transaction)>(&rustCall(Threads::Wallet(WalletMethod::BuildTransaction(address, amount_sats, fee, price))).await?)?;
         log::info!("transaction: {:#?}", btx);
         log::info!("transaction: {:#?}", tx);
         Ok(serde_json::to_string(&json!({
@@ -331,6 +331,7 @@ impl StateManager {
             "address_whole": tx.address,
             "amount_btc": format_btc(tx.btc),
             "amount_usd": format_usd(tx.usd),
+            "amount": format_usd(tx.usd).replace('$', "").trim(),
             "fee_usd": format_usd(tx.fee_usd),
             "total": format_usd(tx.usd + tx.fee_usd),
         }))?)

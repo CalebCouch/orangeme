@@ -9,9 +9,9 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 
 class Amount extends GenericWidget {
     String address;
-    Amount(this.address, {super.key});
+    String amount;
+    Amount(this.address, {super.key, this.amount = ''});
 
-    String amount = "";
     String amount_btc = "";
     BigInt amount_sats = BigInt.from(0);
     int needed_placeholders = 0;

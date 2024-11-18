@@ -9,9 +9,11 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 
 
 class Send extends GenericWidget {
-    Send({super.key});
+    String address;
+    String amount;
 
-    String address = '';
+    Send({super.key, this.address = '', this.amount = ''});
+
     bool addressValid = true;
 
     @override
@@ -37,9 +39,14 @@ class SendState extends GenericState<Send> {
             widget.addressValid = json["valid_address"] as bool;
         });
     }
+    
+    void initState() {
+        super.initState();
+        controller.text = widget.address;
+    }
 
     onContinue() {
-        navigateTo(context, Amount(widget.address));
+        navigateTo(context, Amount(widget.address, amount: widget.amount));
     }
 
     onPaste() async {
