@@ -82,6 +82,7 @@ pub enum DartMethod {
 //      );
 //  "
 //  )]
+
 pub struct ShorthandTransaction {
     pub is_withdraw: bool,
     pub datetime: String,

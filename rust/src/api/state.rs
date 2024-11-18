@@ -113,7 +113,14 @@ pub fn format_usd(price: Usd) -> String {
 }
 
 pub fn format_btc(btc: Btc) -> String {format!("{:.8} BTC", btc)}
-pub fn format_adr(adr: &str) -> String {format!("{}...{}", &adr[..9], &adr[adr.len()-3..])}
+
+pub fn format_adr(adr: &str) -> String {
+    if adr.starts_with("The ") {
+       return "Redeposit".to_string();
+    }
+    
+    format!("{}...{}", &adr[..9], &adr[adr.len()-3..])
+}
 
 pub fn format_datetime(date: Option<&DateTime>) -> String {
     if let Some(dt) = date {
@@ -151,7 +158,7 @@ impl StateManager {
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
             PageName::Success(tx) => self.success(tx).await,
           //PageName::MyProfile => self.my_profile().await,
-          //PageName::MessagesHome => self.messages_home().await,
+            //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::UserProfile => self.user_profile().await,
@@ -164,6 +171,8 @@ impl StateManager {
     pub async fn test(&self) -> Result<String, Error> {
         Ok(format!("{{\"count\": {}}}", 0))
     }
+
+    /*      Bitcoin Home        */
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
         let internet = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
@@ -342,6 +351,17 @@ impl StateManager {
         rustCall(Threads::Wallet(WalletMethod::BroadcastTransaction(tx))).await?;
         Ok("{}".to_string())
     }
+
+    /*      Messages Home        */
+
+    // pub async fn messages_home(&self) -> Result<String, Error> {
+    //     let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
+
+    //     Ok(serde_json::to_string(&json!({
+    //         "profile_picture": profile_pfp,
+    //         "conversations": None, //ShorthandConversation
+    //     }))?)
+    // }
 
 
 

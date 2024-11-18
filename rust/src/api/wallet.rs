@@ -119,7 +119,7 @@ impl Transaction {
                 if !is_mine(txout.script_pubkey.as_script()) {
                     Some(Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin).ok()?.to_string())
                 } else {None}
-            }).unwrap_or("Redoposit".to_string())
+            }).unwrap_or("The Bitcoin you are trying to send will be redeposited to your account.".to_string())
         } else {
             let txout = details_tx.output.clone().into_iter().find(|txout| is_mine(txout.script_pubkey.as_script())).ok_or(Error::bad_request(ec, "No Output is_mine"))?;
             Address::from_script(txout.script_pubkey.as_script(), Network::Bitcoin)?.to_string()

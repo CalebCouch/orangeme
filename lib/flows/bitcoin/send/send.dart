@@ -86,6 +86,8 @@ class SendState extends GenericState<Send> {
             controller: controller,
             error: widget.addressValid || controller.text.isEmpty ? "" : "Not a valid address",
             hint: 'Bitcoin address...',
+            onSubmitted: (String _str) => widget.address = _str,
+            onChanged: (String _str) => widget.address = _str,
         );
     }
 

@@ -89,7 +89,9 @@ class ConfirmState extends GenericState<Confirm> {
             title: "Confirm Address",
             number: 1,
             subtitle: widget.address_whole,
-            helperText: "Bitcoin sent to the wrong address can never be recovered.",
+            helperText: widget.address_whole.startsWith("The Bitcoin you") ? 
+                "Please review the transaction details before continuing." :
+                "Bitcoin sent to the wrong address can never be recovered.",
             buttons: [EditButton('Address', changeAddress)],
         );
     }
