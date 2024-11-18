@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:orange/flows/bitcoin/send/confirm.dart';
+import 'package:orange/flows/bitcoin/send/confirm.dart';
 // import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
@@ -53,7 +53,7 @@ class SpeedState extends GenericState<Speed> {
     }
 
     onContinue() {
-        //navigateTo(context, const Confirm(widget.address, widget.amount, index == 0 ? widget.one : widget.three));
+        navigateTo(Confirm(widget.address, widget.amount, index == 0 ? widget.one : widget.three));
     }
 
 

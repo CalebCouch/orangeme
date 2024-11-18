@@ -169,4 +169,10 @@ sealed class WalletMethod with _$WalletMethod {
     BigInt field0,
     double field1,
   ) = WalletMethod_GetFees;
+  const factory WalletMethod.buildTransaction(
+    String field0,
+    BigInt field1,
+    BigInt field2,
+    double field3,
+  ) = WalletMethod_BuildTransaction;
 }

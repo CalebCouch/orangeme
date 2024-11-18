@@ -844,6 +844,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_u_64(raw[1]),
           dco_decode_f_64(raw[2]),
         );
+      case 2:
+        return WalletMethod_BuildTransaction(
+          dco_decode_String(raw[1]),
+          dco_decode_u_64(raw[2]),
+          dco_decode_u_64(raw[3]),
+          dco_decode_f_64(raw[4]),
+        );
       default:
         throw Exception("unreachable");
     }
@@ -1146,6 +1153,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_u_64(deserializer);
         var var_field1 = sse_decode_f_64(deserializer);
         return WalletMethod_GetFees(var_field0, var_field1);
+      case 2:
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_u_64(deserializer);
+        var var_field2 = sse_decode_u_64(deserializer);
+        var var_field3 = sse_decode_f_64(deserializer);
+        return WalletMethod_BuildTransaction(
+            var_field0, var_field1, var_field2, var_field3);
       default:
         throw UnimplementedError('');
     }
@@ -1451,6 +1465,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(1, serializer);
         sse_encode_u_64(field0, serializer);
         sse_encode_f_64(field1, serializer);
+      case WalletMethod_BuildTransaction(
+          field0: final field0,
+          field1: final field1,
+          field2: final field2,
+          field3: final field3
+        ):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(field0, serializer);
+        sse_encode_u_64(field1, serializer);
+        sse_encode_u_64(field2, serializer);
+        sse_encode_f_64(field3, serializer);
       default:
         throw UnimplementedError('');
     }

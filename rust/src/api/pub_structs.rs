@@ -25,6 +25,7 @@ pub enum Thread {
 pub enum WalletMethod {
     GetNewAddress,
     GetFees(Sats, Usd),
+    BuildTransaction(String, Sats, Sats, Usd)
 }
 
 #[derive(Debug)]

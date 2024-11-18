@@ -188,16 +188,18 @@ impl Wallet {
         Ok(built)
     }
 
+    pub async fn build_transaction(&self, address: &str, amount: Sats, fee: Sats, price: Usd) -> Result<(bdk::bitcoin::Transaction, Transaction), Error> {
+        let (mut psbt, mut tx_details) = self.tx_builder(address, amount, fee).await?;
 
-  //pub async fn build_transaction(&self, address: &str, amount: f64, blocks: usize) -> Result<(PSBT, Transaction), Error> {
-  //    let (psbt, mut tx_details) = self.tx_builder(address, amount, blocks).await?;
-  //    let tx = psbt.clone().extract_tx();
-  //    tx_details.transaction = Some(tx);
-  //    let price = Self::get_price(tx_details.confirmation_time.as_ref()).await?;
-  //    let inner = self.inner.lock().await;
-  //    let transaction = Transaction::from_details(tx_details, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?;
-  //    Ok((psbt, transaction))
-  //}
+        let inner = self.inner.lock().await;
+        inner.sign(&mut psbt, SignOptions::default())?;
+
+        let tx = psbt.clone().extract_tx();
+        tx_details.transaction = Some(tx.clone());
+
+        let transaction = Transaction::from_details(tx_details, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?;
+        Ok((tx, transaction))
+    }
 
 //  pub async fn build_transaction(&mut self) -> Result<String, Error> {
 //      let ec = "Main.create_transaction";

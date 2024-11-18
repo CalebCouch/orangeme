@@ -9,7 +9,13 @@ import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Confirm extends GenericWidget {
-    Confirm({super.key});
+    String address;
+    BigInt amount;
+    BigInt fee;
+
+    Confirm(this.address, this.amount, this.fee, {super.key});
+
+    String raw_tx = "";
 
     String address_cut = '';
     String address_whole = '';
@@ -27,7 +33,7 @@ class ConfirmState extends GenericState<Confirm> {
 
     @override
     PageName getPageName() {
-        return PageName.confirm();
+        return PageName.confirm(widget.address, widget.amount. widget.fee);
     }
 
     @override
@@ -44,25 +50,12 @@ class ConfirmState extends GenericState<Confirm> {
             widget.amount_usd = json["amount_usd"] as String;
             widget.fee = json["fee"] as String;
             widget.total = json["total"] as String;
+            widget.raw_tx = json["raw_tx"] as String;
         });
-    }
-
-    @override
-    void initState() {
-        setState(() {
-            isLoading = false;
-        });
-        super.initState();
     }
 
     Future<void> onContinue() async {
-        setState(() => isLoading = true);
-
-        // Broadcast the transaction here //
-
-        setState(() => isLoading = false);
-
-        navigateTo(context, Success());
+        //navigateTo(context, Success(widget.raw_tx));
     }
 
 

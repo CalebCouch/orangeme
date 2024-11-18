@@ -312,13 +312,17 @@ impl StateManager {
     }
 
     pub async fn confirm(&self, address: String, amount: Sats, fee: Sats) -> Result<String, Error> {
-        todo!()
-      //let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-      //let fees = serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await?)?;
-      //Ok(serde_json::to_string(&json!({
-      //    "one": format_usd(fees.0),
-      //    "three": format_usd(fees.1)
-      //}))?)
+        let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
+        let (btx, tx) = serde_json::from_str::<(bdk::bitcoin::Transaction, Transaction)>(&rustCall(Thread::Wallet(WalletMethod::BuildTransaction(address, amount, fee, price))).await?)?;
+        Ok(serde_json::to_string(&json!({
+            "raw_tx": serde_json::to_string(&btx)?,
+            "address_cut": format_adr(&tx.address),
+            "address_whole": tx.address,
+            "amount_btc": format_btc(tx.btc),
+            "amount_usd": format_usd(tx.usd),
+            "fee": format_usd(tx.fee_usd),
+            "total": format_usd(tx.usd+tx.fee_usd),
+        }))?)
     }
 
 //  pub async fn my_profile(&self) -> Result<String, Error> {
