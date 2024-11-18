@@ -95,23 +95,25 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     //The following widgets can ONLY be used in this file
 
     Widget BalanceDisplay() {
-        int txtL = widget.balance_usd.length;
+        int txtL = widget.balance_usd.length - 1;
         return Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(vertical: 64),
-            child: CustomColumn([
-                CustomText(
-                    variant: 'heading',
-                    font_size: txtL <= 4 ? 'title' : txtL <= 7 ? 'h1' : 'h2',
-                    txt: widget.balance_usd,
-                ),
-                CustomText(
-                    variant: 'text',
-                    font_size: 'lg',
-                    text_color: 'text_secondary',
-                    txt: widget.balance_btc,
-                ) 
-            ], AppPadding.valueDisplaySep),
+            child: FittedBox(
+                child: CustomColumn([
+                    CustomText(
+                        variant: 'heading',
+                        font_size: txtL <= 4 ? 'title' : txtL <= 7 ? 'h1' : 'h2',
+                        txt: widget.balance_usd,
+                    ),
+                    CustomText(
+                        variant: 'text',
+                        font_size: 'lg',
+                        text_color: 'text_secondary',
+                        txt: widget.balance_btc,
+                    ) 
+                ], AppPadding.valueDisplaySep),
+            )
         );
     }
 
