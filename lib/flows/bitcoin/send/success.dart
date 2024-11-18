@@ -3,10 +3,8 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
-//import 'package:orange/global.dart' as global;
-
 class Success extends StatefulWidget {
-  String amount_sent;
+  String amount_sent; //"$10.00"
   Success(this.amount_sent, {super.key});
 
   @override
@@ -14,9 +12,6 @@ class Success extends StatefulWidget {
 }
 
 class SuccessState extends State<Success> {
-    onDone() {
-        resetNavTo(context, BitcoinHome());
-    }
 
     @override
     Widget build(BuildContext context) {
@@ -26,9 +21,8 @@ class SuccessState extends State<Success> {
             bumper: Bumper(context, content: [
                 CustomButton(
                     txt: 'Done', 
-                    variant: 'secondary',
-                    size: 'lg',
-                    onTap: onDone,
+                    variant: 'secondary', 
+                    onTap: () {resetNavTo(context, BitcoinHome());},
                 ),
             ]),
             alignment: Alignment.center,

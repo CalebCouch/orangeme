@@ -18,7 +18,7 @@ class Confirm extends StatefulWidget {
 
 /*
 pub struct BuildingTransaction {
-    pub date: String, // "10:45 PM"
+    pub date: String, // "10:45 PM"g
     pub time: String, // "11/12/24"
     pub amount_usd: String, // "$10.00"
     pub amount_btc: String, // "0.00001234 BTC"
@@ -47,7 +47,7 @@ class ConfirmState extends State<Confirm> {
         return Stack_Default(
             header: Header_Stack(context, "Confirm send"),
             content: [
-                ConfirmAddress(context, tx.address),
+                ConfirmAddress(context, tx.address_whole),
                 ConfirmAmount(context, widget.tx),
             ],
             bumper: Bumper(context, content: [ 
@@ -61,7 +61,6 @@ class ConfirmState extends State<Confirm> {
     }
 }
 
-//The following widgets can ONLY be used in this file
 
 ConfirmAddress(BuildContext context, String address) {
     changeAddress() {resetNavTo(context, Send());}
@@ -69,27 +68,20 @@ ConfirmAddress(BuildContext context, String address) {
     return DataItem(
         title: "Confirm Address",
         number: 1,
-        subtitle: address_whole,
+        subtitle: address,
         helperText: "Bitcoin sent to the wrong address can never be recovered.",
         buttons: [EditButton('Address', changeAddress)],
     );
 }
 
-ConfirmAmount(BuildContext context, SentTransaction tx) {
+ConfirmAmount(BuildContext context, tx) {
     changeAmount() {resetNavTo(context, Amount());}
     changeSpeed() {resetNavTo(context, Speed());}
 
     return DataItem(
         title: "Confirm Amount",
         number: 2,
-        content: Column(
-            children: [
-                SingleTab(title: "Send to Address", subtitle: tx.address_cut),
-                SingleTab(title: "Amount Sent", subtitle: tx.amount_btc),
-                SingleTab(title: "USD Value Sent", subtitle: tx.amount_usd),
-                SingleTab(title: "Fee", subtitle: tx.fee),
-            ],
-        ),
+        content: Details(tx),
         buttons: [
             EditButton('Amount', changeAmount),
             EditButton('Speed', changeSpeed),
@@ -105,5 +97,16 @@ Widget EditButton(text, onTap){
         expand: false,
         icon: 'edit', 
         onTap: onTap,
+    );
+}
+
+Widget Details(tx){
+    return Column(
+        children: [
+            SingleTab(title: "Send to Address", subtitle: tx.address_cut),
+            SingleTab(title: "Amount Sent", subtitle: tx.amount_btc),
+            SingleTab(title: "USD Value Sent", subtitle: tx.amount_usd),
+            SingleTab(title: "Fee", subtitle: tx.fee),
+        ],
     );
 }
