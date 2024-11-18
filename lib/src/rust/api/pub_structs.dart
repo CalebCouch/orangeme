@@ -167,7 +167,6 @@ sealed class WalletMethod with _$WalletMethod {
   const factory WalletMethod.getNewAddress() = WalletMethod_GetNewAddress;
   const factory WalletMethod.getFees(
     BigInt field0,
-    double field1,
   ) = WalletMethod_GetFees;
   const factory WalletMethod.buildTransaction(
     String field0,

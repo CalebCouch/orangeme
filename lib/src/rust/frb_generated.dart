@@ -842,7 +842,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 1:
         return WalletMethod_GetFees(
           dco_decode_u_64(raw[1]),
-          dco_decode_f_64(raw[2]),
         );
       case 2:
         return WalletMethod_BuildTransaction(
@@ -1151,8 +1150,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return const WalletMethod_GetNewAddress();
       case 1:
         var var_field0 = sse_decode_u_64(deserializer);
-        var var_field1 = sse_decode_f_64(deserializer);
-        return WalletMethod_GetFees(var_field0, var_field1);
+        return WalletMethod_GetFees(var_field0);
       case 2:
         var var_field0 = sse_decode_String(deserializer);
         var var_field1 = sse_decode_u_64(deserializer);
@@ -1461,10 +1459,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     switch (self) {
       case WalletMethod_GetNewAddress():
         sse_encode_i_32(0, serializer);
-      case WalletMethod_GetFees(field0: final field0, field1: final field1):
+      case WalletMethod_GetFees(field0: final field0):
         sse_encode_i_32(1, serializer);
         sse_encode_u_64(field0, serializer);
-        sse_encode_f_64(field1, serializer);
       case WalletMethod_BuildTransaction(
           field0: final field0,
           field1: final field1,

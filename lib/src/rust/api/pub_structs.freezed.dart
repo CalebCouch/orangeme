@@ -2130,7 +2130,7 @@ mixin _$WalletMethod {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() getNewAddress,
-    required TResult Function(BigInt field0, double field1) getFees,
+    required TResult Function(BigInt field0) getFees,
     required TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)
         buildTransaction,
@@ -2139,7 +2139,7 @@ mixin _$WalletMethod {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? getNewAddress,
-    TResult? Function(BigInt field0, double field1)? getFees,
+    TResult? Function(BigInt field0)? getFees,
     TResult? Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,
@@ -2148,7 +2148,7 @@ mixin _$WalletMethod {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? getNewAddress,
-    TResult Function(BigInt field0, double field1)? getFees,
+    TResult Function(BigInt field0)? getFees,
     TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,
@@ -2246,7 +2246,7 @@ class _$WalletMethod_GetNewAddressImpl extends WalletMethod_GetNewAddress {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() getNewAddress,
-    required TResult Function(BigInt field0, double field1) getFees,
+    required TResult Function(BigInt field0) getFees,
     required TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)
         buildTransaction,
@@ -2258,7 +2258,7 @@ class _$WalletMethod_GetNewAddressImpl extends WalletMethod_GetNewAddress {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? getNewAddress,
-    TResult? Function(BigInt field0, double field1)? getFees,
+    TResult? Function(BigInt field0)? getFees,
     TResult? Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,
@@ -2270,7 +2270,7 @@ class _$WalletMethod_GetNewAddressImpl extends WalletMethod_GetNewAddress {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? getNewAddress,
-    TResult Function(BigInt field0, double field1)? getFees,
+    TResult Function(BigInt field0)? getFees,
     TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,
@@ -2329,7 +2329,7 @@ abstract class _$$WalletMethod_GetFeesImplCopyWith<$Res> {
           $Res Function(_$WalletMethod_GetFeesImpl) then) =
       __$$WalletMethod_GetFeesImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({BigInt field0, double field1});
+  $Res call({BigInt field0});
 }
 
 /// @nodoc
@@ -2346,17 +2346,12 @@ class __$$WalletMethod_GetFeesImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? field0 = null,
-    Object? field1 = null,
   }) {
     return _then(_$WalletMethod_GetFeesImpl(
       null == field0
           ? _value.field0
           : field0 // ignore: cast_nullable_to_non_nullable
               as BigInt,
-      null == field1
-          ? _value.field1
-          : field1 // ignore: cast_nullable_to_non_nullable
-              as double,
     ));
   }
 }
@@ -2364,16 +2359,14 @@ class __$$WalletMethod_GetFeesImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$WalletMethod_GetFeesImpl extends WalletMethod_GetFees {
-  const _$WalletMethod_GetFeesImpl(this.field0, this.field1) : super._();
+  const _$WalletMethod_GetFeesImpl(this.field0) : super._();
 
   @override
   final BigInt field0;
-  @override
-  final double field1;
 
   @override
   String toString() {
-    return 'WalletMethod.getFees(field0: $field0, field1: $field1)';
+    return 'WalletMethod.getFees(field0: $field0)';
   }
 
   @override
@@ -2381,12 +2374,11 @@ class _$WalletMethod_GetFeesImpl extends WalletMethod_GetFees {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$WalletMethod_GetFeesImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
+            (identical(other.field0, field0) || other.field0 == field0));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
+  int get hashCode => Object.hash(runtimeType, field0);
 
   /// Create a copy of WalletMethod
   /// with the given fields replaced by the non-null parameter values.
@@ -2402,38 +2394,38 @@ class _$WalletMethod_GetFeesImpl extends WalletMethod_GetFees {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() getNewAddress,
-    required TResult Function(BigInt field0, double field1) getFees,
+    required TResult Function(BigInt field0) getFees,
     required TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)
         buildTransaction,
   }) {
-    return getFees(field0, field1);
+    return getFees(field0);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? getNewAddress,
-    TResult? Function(BigInt field0, double field1)? getFees,
+    TResult? Function(BigInt field0)? getFees,
     TResult? Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,
   }) {
-    return getFees?.call(field0, field1);
+    return getFees?.call(field0);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? getNewAddress,
-    TResult Function(BigInt field0, double field1)? getFees,
+    TResult Function(BigInt field0)? getFees,
     TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,
     required TResult orElse(),
   }) {
     if (getFees != null) {
-      return getFees(field0, field1);
+      return getFees(field0);
     }
     return orElse();
   }
@@ -2475,12 +2467,11 @@ class _$WalletMethod_GetFeesImpl extends WalletMethod_GetFees {
 }
 
 abstract class WalletMethod_GetFees extends WalletMethod {
-  const factory WalletMethod_GetFees(final BigInt field0, final double field1) =
+  const factory WalletMethod_GetFees(final BigInt field0) =
       _$WalletMethod_GetFeesImpl;
   const WalletMethod_GetFees._() : super._();
 
   BigInt get field0;
-  double get field1;
 
   /// Create a copy of WalletMethod
   /// with the given fields replaced by the non-null parameter values.
@@ -2590,7 +2581,7 @@ class _$WalletMethod_BuildTransactionImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() getNewAddress,
-    required TResult Function(BigInt field0, double field1) getFees,
+    required TResult Function(BigInt field0) getFees,
     required TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)
         buildTransaction,
@@ -2602,7 +2593,7 @@ class _$WalletMethod_BuildTransactionImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? getNewAddress,
-    TResult? Function(BigInt field0, double field1)? getFees,
+    TResult? Function(BigInt field0)? getFees,
     TResult? Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,
@@ -2614,7 +2605,7 @@ class _$WalletMethod_BuildTransactionImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? getNewAddress,
-    TResult Function(BigInt field0, double field1)? getFees,
+    TResult Function(BigInt field0)? getFees,
     TResult Function(
             String field0, BigInt field1, BigInt field2, double field3)?
         buildTransaction,

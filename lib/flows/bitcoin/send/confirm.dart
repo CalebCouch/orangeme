@@ -34,6 +34,7 @@ class ConfirmState extends GenericState<Confirm> {
 
     @override
     PageName getPageName() {
+        print("widget.fee == ${widget.fee}");
         return PageName.confirm(widget.address, widget.amount, widget.fee);
     }
 

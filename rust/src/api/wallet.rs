@@ -87,6 +87,8 @@ impl DescriptorSet {
     }
 }
 
+//TODO: build a global Sats to btc and Sats to usd function
+//TODO: No Usd Values only Sats
 #[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct Transaction {
     pub btc: Btc,
@@ -102,11 +104,12 @@ pub struct Transaction {
 impl Transaction {
     pub fn from_details(details: TransactionDetails, price: Usd, is_mine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
         let ec = "Transaction::from_details";
+        let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))?;
         let sats = if details.sent >= details.received {
             details.sent - details.received
         } else {
             details.received - details.sent
-        };
+        } - fee;
         let btc = sats as Btc / SATS as Btc;
         let is_withdraw = details.sent > 0;
         let details_tx = details.transaction.ok_or(Error::bad_request(ec, "Missing Transaction"))?;
@@ -124,7 +127,6 @@ impl Transaction {
             DateTime::from_timestamp(ct.timestamp)
         ).transpose()?;
         let usd = btc * price;
-        let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))?;
         let fee_usd = (fee as Btc / SATS as Btc) * price;
         Ok(Transaction{btc, usd, price, address, is_withdraw, confirmation_time, fee, fee_usd})
     }
@@ -165,16 +167,14 @@ impl Wallet {
         Ok(self.inner.lock().await.get_address(AddressIndex::New)?.address.to_string())
     }
 
-    pub async fn get_fees(&self, amount: Sats, price: Usd) -> Result<(Usd, Usd), Error> {
+    pub async fn get_fees(&self, amount: Sats) -> Result<(Sats, Sats), Error> {
         let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
         let one = client.estimate_fee(1)?;
-        log::info!("one: {}", one);
-        let three = client.estimate_fee(5)?;
-        log::info!("three: {}", three);
+        let three = client.estimate_fee(3)?;
         let kvb = self.tx_builder(DUMMY_ADDRESS, amount, (three * SATS as Btc) as Sats).await?.0.extract_tx().vsize() as f64 / 1000.0;
         Ok((
-            (one * kvb) * price,
-            (three * kvb) * price,
+            ((one * kvb) * SATS as Btc) as Sats,
+            ((three * kvb) * SATS as Btc) as Sats,
         ))
     }
 
@@ -184,11 +184,11 @@ impl Wallet {
         let address = Address::from_str(address)?.require_network(Network::Bitcoin)?;
         builder.add_recipient(address.script_pubkey(), amount);
         builder.fee_rate(FeeRate::from_sat_per_kvb(fee as f32));
-        let built = builder.finish()?;
-        Ok(built)
+        Ok(builder.finish()?)
     }
 
     pub async fn build_transaction(&self, address: &str, amount: Sats, fee: Sats, price: Usd) -> Result<(bdk::bitcoin::Transaction, Transaction), Error> {
+        log::info!("fee bt: {}", fee);
         let (mut psbt, mut tx_details) = self.tx_builder(address, amount, fee).await?;
 
         let inner = self.inner.lock().await;
