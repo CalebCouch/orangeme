@@ -56,8 +56,8 @@ class ConfirmState extends GenericState<Confirm> {
         });
     }
 
-    Future<void> onContinue() async {
-        //navigateTo(context, Success(widget.raw_tx));
+    onContinue() {
+        navigateTo(context, Success(widget.raw_tx, widget.amount_usd));
     }
 
 
