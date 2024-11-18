@@ -317,6 +317,7 @@ impl StateManager {
     pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
         let fees = serde_json::from_str::<(Sats, Sats)>(&rustCall(Threads::Wallet(WalletMethod::GetFees(amount))).await?)?;
+        log::info!("fees; {} {}", fees.0.clone(), fees.1.clone()); //@2.00 USD == 3875 sats or 3.65 USD
         Ok(serde_json::to_string(&json!({
             "one_f": format_usd((fees.0 as Btc / SATS as Btc) * price),
             "one": fees.0,

@@ -172,7 +172,9 @@ impl Wallet {
         let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
         let one = client.estimate_fee(1)?.as_sat_per_vb() as Sats;
         let three = client.estimate_fee(3)?.as_sat_per_vb() as Sats;
+        log::info!("one and three; {} {}", one.clone(), three.clone());
         let vb = self.tx_builder(DUMMY_ADDRESS, amount, three).await?.0.extract_tx().vsize() as u64;
+        log::info!("vb {}", vb);
         Ok((
             one * vb,
             three * vb
