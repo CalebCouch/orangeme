@@ -3,6 +3,7 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
@@ -15,414 +16,264 @@ import 'dart:convert';
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 
-abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
-  RustLibApiImplPlatform({
-    required super.handler,
-    required super.wire,
-    required super.generalizedFrbRustBinding,
-    required super.portManager,
-  });
 
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
 
-  CrossPlatformFinalizerArg
-      get rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
 
-  @protected
-  AnyhowException dco_decode_AnyhowException(dynamic raw);
+                abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
+                  RustLibApiImplPlatform({
+                    required super.handler,
+                    required super.wire,
+                    required super.generalizedFrbRustBinding,
+                    required super.portManager,
+                  });
 
-  @protected
-  Error
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw);
+                  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
 
-  @protected
-  MyCustomAsyncRuntime
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          dynamic raw);
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
 
-  @protected
-  FutureOr<String?> Function(DartMethod)
-      dco_decode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
-          dynamic raw);
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ThreadPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread;
 
-  @protected
-  Object dco_decode_DartOpaque(dynamic raw);
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_WalletMethodPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod;
 
-  @protected
-  Error
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw);
 
-  @protected
-  MyCustomAsyncRuntime
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          dynamic raw);
 
-  @protected
-  String dco_decode_String(dynamic raw);
+                  @protected AnyhowException dco_decode_AnyhowException(dynamic raw);
 
-  @protected
-  bool dco_decode_bool(dynamic raw);
+@protected Error dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(dynamic raw);
 
-  @protected
-  DartMethod dco_decode_box_autoadd_dart_method(dynamic raw);
+@protected MyCustomAsyncRuntime dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(dynamic raw);
 
-  @protected
-  KeyPress dco_decode_box_autoadd_key_press(dynamic raw);
+@protected Thread dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(dynamic raw);
 
-  @protected
-  PageName dco_decode_box_autoadd_page_name(dynamic raw);
+@protected WalletMethod dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(dynamic raw);
 
-  @protected
-  Profile dco_decode_box_autoadd_profile(dynamic raw);
+@protected FutureOr<String?> Function(DartMethod) dco_decode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(dynamic raw);
 
-  @protected
-  ShorthandTransaction dco_decode_box_autoadd_shorthand_transaction(
-      dynamic raw);
+@protected Object dco_decode_DartOpaque(dynamic raw);
 
-  @protected
-  Thread dco_decode_box_autoadd_thread(dynamic raw);
+@protected Error dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(dynamic raw);
 
-  @protected
-  WalletMethod dco_decode_box_autoadd_wallet_method(dynamic raw);
+@protected MyCustomAsyncRuntime dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(dynamic raw);
 
-  @protected
-  DartMethod dco_decode_dart_method(dynamic raw);
+@protected Thread dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(dynamic raw);
 
-  @protected
-  double dco_decode_f_64(dynamic raw);
+@protected WalletMethod dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(dynamic raw);
 
-  @protected
-  int dco_decode_i_32(dynamic raw);
+@protected String dco_decode_String(dynamic raw);
 
-  @protected
-  PlatformInt64 dco_decode_isize(dynamic raw);
+@protected bool dco_decode_bool(dynamic raw);
 
-  @protected
-  KeyPress dco_decode_key_press(dynamic raw);
+@protected DartMethod dco_decode_box_autoadd_dart_method(dynamic raw);
 
-  @protected
-  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+@protected KeyPress dco_decode_box_autoadd_key_press(dynamic raw);
 
-  @protected
-  String? dco_decode_opt_String(dynamic raw);
+@protected PageName dco_decode_box_autoadd_page_name(dynamic raw);
 
-  @protected
-  KeyPress? dco_decode_opt_box_autoadd_key_press(dynamic raw);
+@protected Profile dco_decode_box_autoadd_profile(dynamic raw);
 
-  @protected
-  PageName dco_decode_page_name(dynamic raw);
+@protected ShorthandTransaction dco_decode_box_autoadd_shorthand_transaction(dynamic raw);
 
-  @protected
-  Platform dco_decode_platform(dynamic raw);
+@protected DartMethod dco_decode_dart_method(dynamic raw);
 
-  @protected
-  Profile dco_decode_profile(dynamic raw);
+@protected int dco_decode_i_32(dynamic raw);
 
-  @protected
-  ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw);
+@protected PlatformInt64 dco_decode_isize(dynamic raw);
 
-  @protected
-  Thread dco_decode_thread(dynamic raw);
+@protected KeyPress dco_decode_key_press(dynamic raw);
 
-  @protected
-  BigInt dco_decode_u_64(dynamic raw);
+@protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
-  @protected
-  int dco_decode_u_8(dynamic raw);
+@protected String? dco_decode_opt_String(dynamic raw);
 
-  @protected
-  void dco_decode_unit(dynamic raw);
+@protected KeyPress? dco_decode_opt_box_autoadd_key_press(dynamic raw);
 
-  @protected
-  BigInt dco_decode_usize(dynamic raw);
+@protected PageName dco_decode_page_name(dynamic raw);
 
-  @protected
-  WalletMethod dco_decode_wallet_method(dynamic raw);
+@protected Platform dco_decode_platform(dynamic raw);
 
-  @protected
-  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
+@protected Profile dco_decode_profile(dynamic raw);
 
-  @protected
-  Error
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer);
+@protected ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw);
 
-  @protected
-  MyCustomAsyncRuntime
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          SseDeserializer deserializer);
+@protected BigInt dco_decode_u_64(dynamic raw);
 
-  @protected
-  Object sse_decode_DartOpaque(SseDeserializer deserializer);
+@protected int dco_decode_u_8(dynamic raw);
 
-  @protected
-  Error
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer);
+@protected void dco_decode_unit(dynamic raw);
 
-  @protected
-  MyCustomAsyncRuntime
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          SseDeserializer deserializer);
+@protected BigInt dco_decode_usize(dynamic raw);
 
-  @protected
-  String sse_decode_String(SseDeserializer deserializer);
+@protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
-  @protected
-  bool sse_decode_bool(SseDeserializer deserializer);
+@protected Error sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(SseDeserializer deserializer);
 
-  @protected
-  DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer);
+@protected MyCustomAsyncRuntime sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(SseDeserializer deserializer);
 
-  @protected
-  KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer);
+@protected Thread sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(SseDeserializer deserializer);
 
-  @protected
-  PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer);
+@protected WalletMethod sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(SseDeserializer deserializer);
 
-  @protected
-  Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer);
+@protected Object sse_decode_DartOpaque(SseDeserializer deserializer);
 
-  @protected
-  ShorthandTransaction sse_decode_box_autoadd_shorthand_transaction(
-      SseDeserializer deserializer);
+@protected Error sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(SseDeserializer deserializer);
 
-  @protected
-  Thread sse_decode_box_autoadd_thread(SseDeserializer deserializer);
+@protected MyCustomAsyncRuntime sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(SseDeserializer deserializer);
 
-  @protected
-  WalletMethod sse_decode_box_autoadd_wallet_method(
-      SseDeserializer deserializer);
+@protected Thread sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(SseDeserializer deserializer);
 
-  @protected
-  DartMethod sse_decode_dart_method(SseDeserializer deserializer);
+@protected WalletMethod sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(SseDeserializer deserializer);
 
-  @protected
-  double sse_decode_f_64(SseDeserializer deserializer);
+@protected String sse_decode_String(SseDeserializer deserializer);
 
-  @protected
-  int sse_decode_i_32(SseDeserializer deserializer);
+@protected bool sse_decode_bool(SseDeserializer deserializer);
 
-  @protected
-  PlatformInt64 sse_decode_isize(SseDeserializer deserializer);
+@protected DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer);
 
-  @protected
-  KeyPress sse_decode_key_press(SseDeserializer deserializer);
+@protected KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer);
 
-  @protected
-  Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+@protected PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer);
 
-  @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer);
+@protected Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer);
 
-  @protected
-  KeyPress? sse_decode_opt_box_autoadd_key_press(SseDeserializer deserializer);
+@protected ShorthandTransaction sse_decode_box_autoadd_shorthand_transaction(SseDeserializer deserializer);
 
-  @protected
-  PageName sse_decode_page_name(SseDeserializer deserializer);
+@protected DartMethod sse_decode_dart_method(SseDeserializer deserializer);
 
-  @protected
-  Platform sse_decode_platform(SseDeserializer deserializer);
+@protected int sse_decode_i_32(SseDeserializer deserializer);
 
-  @protected
-  Profile sse_decode_profile(SseDeserializer deserializer);
+@protected PlatformInt64 sse_decode_isize(SseDeserializer deserializer);
 
-  @protected
-  ShorthandTransaction sse_decode_shorthand_transaction(
-      SseDeserializer deserializer);
+@protected KeyPress sse_decode_key_press(SseDeserializer deserializer);
 
-  @protected
-  Thread sse_decode_thread(SseDeserializer deserializer);
+@protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
-  @protected
-  BigInt sse_decode_u_64(SseDeserializer deserializer);
+@protected String? sse_decode_opt_String(SseDeserializer deserializer);
 
-  @protected
-  int sse_decode_u_8(SseDeserializer deserializer);
+@protected KeyPress? sse_decode_opt_box_autoadd_key_press(SseDeserializer deserializer);
 
-  @protected
-  void sse_decode_unit(SseDeserializer deserializer);
+@protected PageName sse_decode_page_name(SseDeserializer deserializer);
 
-  @protected
-  BigInt sse_decode_usize(SseDeserializer deserializer);
+@protected Platform sse_decode_platform(SseDeserializer deserializer);
 
-  @protected
-  WalletMethod sse_decode_wallet_method(SseDeserializer deserializer);
+@protected Profile sse_decode_profile(SseDeserializer deserializer);
 
-  @protected
-  void sse_encode_AnyhowException(
-      AnyhowException self, SseSerializer serializer);
+@protected ShorthandTransaction sse_decode_shorthand_transaction(SseDeserializer deserializer);
 
-  @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer);
+@protected BigInt sse_decode_u_64(SseDeserializer deserializer);
 
-  @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          MyCustomAsyncRuntime self, SseSerializer serializer);
+@protected int sse_decode_u_8(SseDeserializer deserializer);
 
-  @protected
-  void sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
-      FutureOr<String?> Function(DartMethod) self, SseSerializer serializer);
+@protected void sse_decode_unit(SseDeserializer deserializer);
 
-  @protected
-  void sse_encode_DartOpaque(Object self, SseSerializer serializer);
+@protected BigInt sse_decode_usize(SseDeserializer deserializer);
 
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer);
+@protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
 
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          MyCustomAsyncRuntime self, SseSerializer serializer);
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(Error self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_String(String self, SseSerializer serializer);
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(MyCustomAsyncRuntime self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer);
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(Thread self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_box_autoadd_dart_method(
-      DartMethod self, SseSerializer serializer);
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(WalletMethod self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_box_autoadd_key_press(
-      KeyPress self, SseSerializer serializer);
+@protected void sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(FutureOr<String?> Function(DartMethod) self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_box_autoadd_page_name(
-      PageName self, SseSerializer serializer);
+@protected void sse_encode_DartOpaque(Object self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer);
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(Error self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_box_autoadd_shorthand_transaction(
-      ShorthandTransaction self, SseSerializer serializer);
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(MyCustomAsyncRuntime self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_box_autoadd_thread(Thread self, SseSerializer serializer);
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(Thread self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_box_autoadd_wallet_method(
-      WalletMethod self, SseSerializer serializer);
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(WalletMethod self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_dart_method(DartMethod self, SseSerializer serializer);
+@protected void sse_encode_String(String self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_f_64(double self, SseSerializer serializer);
+@protected void sse_encode_bool(bool self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer);
+@protected void sse_encode_box_autoadd_dart_method(DartMethod self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_isize(PlatformInt64 self, SseSerializer serializer);
+@protected void sse_encode_box_autoadd_key_press(KeyPress self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_key_press(KeyPress self, SseSerializer serializer);
+@protected void sse_encode_box_autoadd_page_name(PageName self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_list_prim_u_8_strict(
-      Uint8List self, SseSerializer serializer);
+@protected void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer);
+@protected void sse_encode_box_autoadd_shorthand_transaction(ShorthandTransaction self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_opt_box_autoadd_key_press(
-      KeyPress? self, SseSerializer serializer);
+@protected void sse_encode_dart_method(DartMethod self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_page_name(PageName self, SseSerializer serializer);
+@protected void sse_encode_i_32(int self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_platform(Platform self, SseSerializer serializer);
+@protected void sse_encode_isize(PlatformInt64 self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_profile(Profile self, SseSerializer serializer);
+@protected void sse_encode_key_press(KeyPress self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_shorthand_transaction(
-      ShorthandTransaction self, SseSerializer serializer);
+@protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_thread(Thread self, SseSerializer serializer);
+@protected void sse_encode_opt_String(String? self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_u_64(BigInt self, SseSerializer serializer);
+@protected void sse_encode_opt_box_autoadd_key_press(KeyPress? self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_u_8(int self, SseSerializer serializer);
+@protected void sse_encode_page_name(PageName self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_unit(void self, SseSerializer serializer);
+@protected void sse_encode_platform(Platform self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_usize(BigInt self, SseSerializer serializer);
+@protected void sse_encode_profile(Profile self, SseSerializer serializer);
 
-  @protected
-  void sse_encode_wallet_method(WalletMethod self, SseSerializer serializer);
-}
+@protected void sse_encode_shorthand_transaction(ShorthandTransaction self, SseSerializer serializer);
+
+@protected void sse_encode_u_64(BigInt self, SseSerializer serializer);
+
+@protected void sse_encode_u_8(int self, SseSerializer serializer);
+
+@protected void sse_encode_unit(void self, SseSerializer serializer);
+
+@protected void sse_encode_usize(BigInt self, SseSerializer serializer);
+                }
+                
+
 
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
-  RustLibWire.fromExternalLibrary(ExternalLibrary lib);
+            RustLibWire.fromExternalLibrary(ExternalLibrary lib);
 
-  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          int ptr) =>
-      wasmModule
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-              ptr);
+            void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(ptr);
 
-  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          int ptr) =>
-      wasmModule
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-              ptr);
+void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(int ptr) => wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(ptr);
 
-  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          int ptr) =>
-      wasmModule
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-              ptr);
+void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(ptr);
 
-  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          int ptr) =>
-      wasmModule
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-              ptr);
-}
+void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(int ptr) => wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(ptr);
 
-@JS('wasm_bindgen')
-external RustLibWasmModule get wasmModule;
+void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(ptr);
 
-@JS()
-@anonymous
-extension type RustLibWasmModule._(JSObject _) implements JSObject {
-  external void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          int ptr);
+void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(int ptr) => wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(ptr);
 
-  external void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          int ptr);
+void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(ptr);
 
-  external void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          int ptr);
+void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(int ptr) => wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(ptr);
+        }
+        @JS('wasm_bindgen') external RustLibWasmModule get wasmModule;
 
-  external void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          int ptr);
-}
+        @JS() @anonymous extension type RustLibWasmModule._(JSObject _) implements JSObject {
+            external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(int ptr);
+
+external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(int ptr);
+
+external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(int ptr);
+
+external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(int ptr);
+
+external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(int ptr);
+
+external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(int ptr);
+
+external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(int ptr);
+
+external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(int ptr);
+        }
+        

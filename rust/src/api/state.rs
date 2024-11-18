@@ -329,6 +329,14 @@ impl StateManager {
         }))?)
     }
 
+    pub async fn success(&self, raw_tx: String) -> Result<String, Error> {
+        let tx: bdk::bitcoin::Transaction = serde_json::from_str(&raw_tx)?;
+        rustCall(Thread::Wallet(WalletMethod::BroadcastTransaction(tx))).await?;
+        Ok(String::new())
+    }
+
+
+
 //  pub async fn my_profile(&self) -> Result<String, Error> {
 //      let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
 //      Ok(serde_json::to_string(&MyProfile{

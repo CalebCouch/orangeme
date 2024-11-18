@@ -41,7 +41,6 @@ class TestState extends GenericState<Test> {
       Text("count: ${widget.val}"),
         TextButton(
           onPressed: () async {
-            print(await rustCall(thread: Thread.wallet(WalletMethod.getNewAddress())));
           },
           child: Text('TextButton')
         ),

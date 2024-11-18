@@ -10,1513 +10,989 @@ import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
-import 'frb_generated.io.dart'
-    if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'frb_generated.io.dart' if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-/// Main entrypoint of the Rust API
-class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
-  @internal
-  static final instance = RustLib._();
 
-  RustLib._();
+                /// Main entrypoint of the Rust API
+                class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
+                  @internal
+                  static final instance = RustLib._();
 
-  /// Initialize flutter_rust_bridge
-  static Future<void> init({
-    RustLibApi? api,
-    BaseHandler? handler,
-    ExternalLibrary? externalLibrary,
-  }) async {
-    await instance.initImpl(
-      api: api,
-      handler: handler,
-      externalLibrary: externalLibrary,
-    );
-  }
+                  RustLib._();
 
-  /// Initialize flutter_rust_bridge in mock mode.
-  /// No libraries for FFI are loaded.
-  static void initMock({
-    required RustLibApi api,
-  }) {
-    instance.initMockImpl(
-      api: api,
-    );
-  }
+                  /// Initialize flutter_rust_bridge
+                  static Future<void> init({
+                    RustLibApi? api,
+                    BaseHandler? handler,
+                    ExternalLibrary? externalLibrary,
+                  }) async {
+                    await instance.initImpl(
+                      api: api,
+                      handler: handler,
+                      externalLibrary: externalLibrary,
+                    );
+                  }
 
-  /// Dispose flutter_rust_bridge
-  ///
-  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
-  /// is automatically disposed when the app stops.
-  static void dispose() => instance.disposeImpl();
+                  /// Initialize flutter_rust_bridge in mock mode.
+                  /// No libraries for FFI are loaded.
+                  static void initMock({
+                    required RustLibApi api,
+                  }) {
+                    instance.initMockImpl(
+                      api: api,
+                    );
+                  }
 
-  @override
-  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor =>
-      RustLibApiImpl.new;
+                  /// Dispose flutter_rust_bridge
+                  ///
+                  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
+                  /// is automatically disposed when the app stops.
+                  static void dispose() => instance.disposeImpl();
 
-  @override
-  WireConstructor<RustLibWire> get wireConstructor =>
-      RustLibWire.fromExternalLibrary;
+                  @override
+                  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor => RustLibApiImpl.new;
 
-  @override
-  Future<void> executeRustInitializers() async {}
+                  @override
+                  WireConstructor<RustLibWire> get wireConstructor => RustLibWire.fromExternalLibrary;
 
-  @override
-  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
-      kDefaultExternalLibraryLoaderConfig;
+                  @override
+                  Future<void> executeRustInitializers() async {
+                    
+                  }
 
-  @override
-  String get codegenVersion => '2.6.0';
+                  @override
+                  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig => kDefaultExternalLibraryLoaderConfig;
 
-  @override
-  int get rustContentHash => -60639323;
+                  @override
+                  String get codegenVersion => '2.6.0';
 
-  static const kDefaultExternalLibraryLoaderConfig =
-      ExternalLibraryLoaderConfig(
-    stem: 'rust_lib',
-    ioDirectory: 'rust/target/release/',
-    webPrefix: 'pkg/',
-  );
-}
+                  @override
+                  int get rustContentHash => -60639323;
 
-abstract class RustLibApi extends BaseApi {
-  Future<Error> crateApiErrorErrorAuthFailed(
-      {required String ctx, required String err});
+                  static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
+                    stem: 'rust_lib',
+                    ioDirectory: 'rust/target/release/',
+                    webPrefix: 'pkg/',
+                  );
+                }
+                
 
-  Future<Error> crateApiErrorErrorBadRequest(
-      {required String ctx, required String err});
+                abstract class RustLibApi extends BaseApi {
+                  Future<Error> crateApiErrorErrorAuthFailed({required String ctx , required String err });
 
-  Future<Error> crateApiErrorErrorConflict(
-      {required String ctx, required String err});
+Future<Error> crateApiErrorErrorBadRequest({required String ctx , required String err });
 
-  Future<Error> crateApiErrorErrorErr(
-      {required String ctx, required String err});
+Future<Error> crateApiErrorErrorConflict({required String ctx , required String err });
 
-  Future<Error> crateApiErrorErrorNotFound(
-      {required String ctx, required String err});
+Future<Error> crateApiErrorErrorErr({required String ctx , required String err });
 
-  Future<Error> crateApiErrorErrorParse(
-      {required String rtype, required String data});
+Future<Error> crateApiErrorErrorNotFound({required String ctx , required String err });
 
-  Future<MyCustomAsyncRuntime>
-      crateApiCustomHandlerMyCustomAsyncRuntimeDefault();
+Future<Error> crateApiErrorErrorParse({required String rtype , required String data });
 
-  Future<void> crateApiSimpleClearData({required String path});
+Future<MyCustomAsyncRuntime> crateApiCustomHandlerMyCustomAsyncRuntimeDefault();
 
-  Future<String> crateApiSimpleGetPage(
-      {required String path, required PageName page});
+Future<void> crateApiSimpleClearData({required String path });
 
-  Future<void> crateApiPubStructsLoadStructs(
-      {required ShorthandTransaction s,
-      required Profile p,
-      required DartMethod dm,
-      required KeyPress kp,
-      required Platform pl,
-      required PageName pn,
-      required WalletMethod wm,
-      required Thread t});
+Future<String> crateApiSimpleGetPage({required String path , required PageName page });
 
-  bool crateApiPubStructsPlatformIsDesktop({required Platform that});
+Future<void> crateApiPubStructsLoadStructs({required ShorthandTransaction s , required Profile p , required DartMethod dm , required KeyPress kp , required Platform pl , required PageName pn , required WalletMethod wm , required Thread t });
 
-  Future<String> crateApiSimpleRustCall({required Thread thread});
+bool crateApiPubStructsPlatformIsDesktop({required Platform that });
 
-  Future<String> crateApiSimpleRustStart(
-      {required String path,
-      required Platform platform,
-      required FutureOr<String?> Function(DartMethod) callback});
+Future<String> crateApiSimpleRustCall({required Thread thread });
 
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error;
+Future<String> crateApiSimpleRustStart({required String path , required Platform platform , required FutureOr<String?> Function(DartMethod) callback });
 
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Error;
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error;
 
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr;
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Error;
 
-  RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_MyCustomAsyncRuntime;
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr;
 
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_MyCustomAsyncRuntime;
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_MyCustomAsyncRuntime;
 
-  CrossPlatformFinalizerArg
-      get rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr;
-}
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_MyCustomAsyncRuntime;
 
-class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
-  RustLibApiImpl({
-    required super.handler,
-    required super.wire,
-    required super.generalizedFrbRustBinding,
-    required super.portManager,
-  });
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr;
 
-  @override
-  Future<Error> crateApiErrorErrorAuthFailed(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 1, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorAuthFailedConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Thread;
 
-  TaskConstMeta get kCrateApiErrorErrorAuthFailedConstMeta =>
-      const TaskConstMeta(
-        debugName: "Error_auth_failed",
-        argNames: ["ctx", "err"],
-      );
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Thread;
 
-  @override
-  Future<Error> crateApiErrorErrorBadRequest(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorBadRequestConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ThreadPtr;
 
-  TaskConstMeta get kCrateApiErrorErrorBadRequestConstMeta =>
-      const TaskConstMeta(
-        debugName: "Error_bad_request",
-        argNames: ["ctx", "err"],
-      );
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_WalletMethod;
 
-  @override
-  Future<Error> crateApiErrorErrorConflict(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorConflictConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_WalletMethod;
 
-  TaskConstMeta get kCrateApiErrorErrorConflictConstMeta => const TaskConstMeta(
-        debugName: "Error_conflict",
-        argNames: ["ctx", "err"],
-      );
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_WalletMethodPtr;
 
-  @override
-  Future<Error> crateApiErrorErrorErr(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorErrConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
 
-  TaskConstMeta get kCrateApiErrorErrorErrConstMeta => const TaskConstMeta(
-        debugName: "Error_err",
-        argNames: ["ctx", "err"],
-      );
+                }
+                
 
-  @override
-  Future<Error> crateApiErrorErrorNotFound(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorNotFoundConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
+                class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
+                  RustLibApiImpl({
+                    required super.handler,
+                    required super.wire,
+                    required super.generalizedFrbRustBinding,
+                    required super.portManager,
+                  });
 
-  TaskConstMeta get kCrateApiErrorErrorNotFoundConstMeta => const TaskConstMeta(
-        debugName: "Error_not_found",
-        argNames: ["ctx", "err"],
-      );
+                  @override Future<Error> crateApiErrorErrorAuthFailed({required String ctx , required String err })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(ctx, serializer);
+sse_encode_String(err, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiErrorErrorAuthFailedConstMeta,
+            argValues: [ctx, err],
+            apiImpl: this,
+        )); }
 
-  @override
-  Future<Error> crateApiErrorErrorParse(
-      {required String rtype, required String data}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(rtype, serializer);
-        sse_encode_String(data, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 6, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorParseConstMeta,
-      argValues: [rtype, data],
-      apiImpl: this,
-    ));
-  }
 
-  TaskConstMeta get kCrateApiErrorErrorParseConstMeta => const TaskConstMeta(
-        debugName: "Error_parse",
-        argNames: ["rtype", "data"],
-      );
+        TaskConstMeta get kCrateApiErrorErrorAuthFailedConstMeta => const TaskConstMeta(
+            debugName: "Error_auth_failed",
+            argNames: ["ctx", "err"],
+        );
+        
 
-  @override
-  Future<MyCustomAsyncRuntime>
-      crateApiCustomHandlerMyCustomAsyncRuntimeDefault() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 7, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiCustomHandlerMyCustomAsyncRuntimeDefaultConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
-  }
+@override Future<Error> crateApiErrorErrorBadRequest({required String ctx , required String err })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(ctx, serializer);
+sse_encode_String(err, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiErrorErrorBadRequestConstMeta,
+            argValues: [ctx, err],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta
-      get kCrateApiCustomHandlerMyCustomAsyncRuntimeDefaultConstMeta =>
-          const TaskConstMeta(
+
+        TaskConstMeta get kCrateApiErrorErrorBadRequestConstMeta => const TaskConstMeta(
+            debugName: "Error_bad_request",
+            argNames: ["ctx", "err"],
+        );
+        
+
+@override Future<Error> crateApiErrorErrorConflict({required String ctx , required String err })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(ctx, serializer);
+sse_encode_String(err, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiErrorErrorConflictConstMeta,
+            argValues: [ctx, err],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiErrorErrorConflictConstMeta => const TaskConstMeta(
+            debugName: "Error_conflict",
+            argNames: ["ctx", "err"],
+        );
+        
+
+@override Future<Error> crateApiErrorErrorErr({required String ctx , required String err })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(ctx, serializer);
+sse_encode_String(err, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiErrorErrorErrConstMeta,
+            argValues: [ctx, err],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiErrorErrorErrConstMeta => const TaskConstMeta(
+            debugName: "Error_err",
+            argNames: ["ctx", "err"],
+        );
+        
+
+@override Future<Error> crateApiErrorErrorNotFound({required String ctx , required String err })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(ctx, serializer);
+sse_encode_String(err, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiErrorErrorNotFoundConstMeta,
+            argValues: [ctx, err],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiErrorErrorNotFoundConstMeta => const TaskConstMeta(
+            debugName: "Error_not_found",
+            argNames: ["ctx", "err"],
+        );
+        
+
+@override Future<Error> crateApiErrorErrorParse({required String rtype , required String data })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(rtype, serializer);
+sse_encode_String(data, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiErrorErrorParseConstMeta,
+            argValues: [rtype, data],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiErrorErrorParseConstMeta => const TaskConstMeta(
+            debugName: "Error_parse",
+            argNames: ["rtype", "data"],
+        );
+        
+
+@override Future<MyCustomAsyncRuntime> crateApiCustomHandlerMyCustomAsyncRuntimeDefault()  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiCustomHandlerMyCustomAsyncRuntimeDefaultConstMeta,
+            argValues: [],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiCustomHandlerMyCustomAsyncRuntimeDefaultConstMeta => const TaskConstMeta(
             debugName: "MyCustomAsyncRuntime_default",
             argNames: [],
-          );
-
-  @override
-  Future<void> crateApiSimpleClearData({required String path}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(path, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 8, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiSimpleClearDataConstMeta,
-      argValues: [path],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleClearDataConstMeta => const TaskConstMeta(
-        debugName: "clearData",
-        argNames: ["path"],
-      );
-
-  @override
-  Future<String> crateApiSimpleGetPage(
-      {required String path, required PageName page}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(path, serializer);
-        sse_encode_box_autoadd_page_name(page, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: sse_decode_AnyhowException,
-      ),
-      constMeta: kCrateApiSimpleGetPageConstMeta,
-      argValues: [path, page],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleGetPageConstMeta => const TaskConstMeta(
-        debugName: "getPage",
-        argNames: ["path", "page"],
-      );
-
-  @override
-  Future<void> crateApiPubStructsLoadStructs(
-      {required ShorthandTransaction s,
-      required Profile p,
-      required DartMethod dm,
-      required KeyPress kp,
-      required Platform pl,
-      required PageName pn,
-      required WalletMethod wm,
-      required Thread t}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_box_autoadd_shorthand_transaction(s, serializer);
-        sse_encode_box_autoadd_profile(p, serializer);
-        sse_encode_box_autoadd_dart_method(dm, serializer);
-        sse_encode_key_press(kp, serializer);
-        sse_encode_platform(pl, serializer);
-        sse_encode_box_autoadd_page_name(pn, serializer);
-        sse_encode_box_autoadd_wallet_method(wm, serializer);
-        sse_encode_box_autoadd_thread(t, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiPubStructsLoadStructsConstMeta,
-      argValues: [s, p, dm, kp, pl, pn, wm, t],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiPubStructsLoadStructsConstMeta =>
-      const TaskConstMeta(
-        debugName: "load_structs",
-        argNames: ["s", "p", "dm", "kp", "pl", "pn", "wm", "t"],
-      );
-
-  @override
-  bool crateApiPubStructsPlatformIsDesktop({required Platform that}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_platform(that, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiPubStructsPlatformIsDesktopConstMeta,
-      argValues: [that],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiPubStructsPlatformIsDesktopConstMeta =>
-      const TaskConstMeta(
-        debugName: "platform_is_desktop",
-        argNames: ["that"],
-      );
-
-  @override
-  Future<String> crateApiSimpleRustCall({required Thread thread}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_box_autoadd_thread(thread, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 12, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: sse_decode_AnyhowException,
-      ),
-      constMeta: kCrateApiSimpleRustCallConstMeta,
-      argValues: [thread],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleRustCallConstMeta => const TaskConstMeta(
-        debugName: "rustCall",
-        argNames: ["thread"],
-      );
-
-  @override
-  Future<String> crateApiSimpleRustStart(
-      {required String path,
-      required Platform platform,
-      required FutureOr<String?> Function(DartMethod) callback}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(path, serializer);
-        sse_encode_platform(platform, serializer);
-        sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
-            callback, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 13, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: sse_decode_AnyhowException,
-      ),
-      constMeta: kCrateApiSimpleRustStartConstMeta,
-      argValues: [path, platform, callback],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleRustStartConstMeta => const TaskConstMeta(
-        debugName: "rustStart",
-        argNames: ["path", "platform", "callback"],
-      );
-
-  Future<void> Function(int, dynamic)
-      encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
-          FutureOr<String?> Function(DartMethod) raw) {
-    return (callId, rawArg0) async {
-      final arg0 = dco_decode_dart_method(rawArg0);
-
-      Box<String?>? rawOutput;
-      Box<AnyhowException>? rawError;
-      try {
-        rawOutput = Box(await raw(arg0));
-      } catch (e, s) {
-        rawError = Box(AnyhowException("$e\n\n$s"));
-      }
-
-      final serializer = SseSerializer(generalizedFrbRustBinding);
-      assert((rawOutput != null) ^ (rawError != null));
-      if (rawOutput != null) {
-        serializer.buffer.putUint8(0);
-        sse_encode_opt_String(rawOutput.value, serializer);
-      } else {
-        serializer.buffer.putUint8(1);
-        sse_encode_AnyhowException(rawError!.value, serializer);
-      }
-      final output = serializer.intoRaw();
-
-      generalizedFrbRustBinding.dartFnDeliverOutput(
-          callId: callId,
-          ptr: output.ptr,
-          rustVecLen: output.rustVecLen,
-          dataLen: output.dataLen);
-    };
-  }
-
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error =>
-      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Error =>
-      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
-
-  RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_MyCustomAsyncRuntime => wire
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
-
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_MyCustomAsyncRuntime => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
-
-  @protected
-  AnyhowException dco_decode_AnyhowException(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return AnyhowException(raw as String);
-  }
-
-  @protected
-  Error
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  MyCustomAsyncRuntime
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  FutureOr<String?> Function(DartMethod)
-      dco_decode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    throw UnimplementedError('');
-  }
-
-  @protected
-  Object dco_decode_DartOpaque(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return decodeDartOpaque(raw, generalizedFrbRustBinding);
-  }
-
-  @protected
-  Error
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  MyCustomAsyncRuntime
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  String dco_decode_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as String;
-  }
-
-  @protected
-  bool dco_decode_bool(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as bool;
-  }
-
-  @protected
-  DartMethod dco_decode_box_autoadd_dart_method(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_dart_method(raw);
-  }
-
-  @protected
-  KeyPress dco_decode_box_autoadd_key_press(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_key_press(raw);
-  }
-
-  @protected
-  PageName dco_decode_box_autoadd_page_name(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_page_name(raw);
-  }
-
-  @protected
-  Profile dco_decode_box_autoadd_profile(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_profile(raw);
-  }
-
-  @protected
-  ShorthandTransaction dco_decode_box_autoadd_shorthand_transaction(
-      dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_shorthand_transaction(raw);
-  }
-
-  @protected
-  Thread dco_decode_box_autoadd_thread(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_thread(raw);
-  }
-
-  @protected
-  WalletMethod dco_decode_box_autoadd_wallet_method(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_wallet_method(raw);
-  }
-
-  @protected
-  DartMethod dco_decode_dart_method(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return DartMethod_StorageSet(
-          dco_decode_String(raw[1]),
-          dco_decode_String(raw[2]),
         );
-      case 1:
-        return DartMethod_StorageGet(
-          dco_decode_String(raw[1]),
+        
+
+@override Future<void> crateApiSimpleClearData({required String path })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiSimpleClearDataConstMeta,
+            argValues: [path],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiSimpleClearDataConstMeta => const TaskConstMeta(
+            debugName: "clearData",
+            argNames: ["path"],
         );
-      default:
-        throw Exception("unreachable");
-    }
-  }
+        
 
-  @protected
-  double dco_decode_f_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
-  }
+@override Future<String> crateApiSimpleGetPage({required String path , required PageName page })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+sse_encode_box_autoadd_page_name(page, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_AnyhowException,
+        )
+        ,
+            constMeta: kCrateApiSimpleGetPageConstMeta,
+            argValues: [path, page],
+            apiImpl: this,
+        )); }
 
-  @protected
-  int dco_decode_i_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
 
-  @protected
-  PlatformInt64 dco_decode_isize(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeI64(raw);
-  }
-
-  @protected
-  KeyPress dco_decode_key_press(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return KeyPress.values[raw as int];
-  }
-
-  @protected
-  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as Uint8List;
-  }
-
-  @protected
-  String? dco_decode_opt_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_String(raw);
-  }
-
-  @protected
-  KeyPress? dco_decode_opt_box_autoadd_key_press(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_key_press(raw);
-  }
-
-  @protected
-  PageName dco_decode_page_name(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return const PageName_BitcoinHome();
-      case 1:
-        return PageName_ViewTransaction(
-          dco_decode_String(raw[1]),
+        TaskConstMeta get kCrateApiSimpleGetPageConstMeta => const TaskConstMeta(
+            debugName: "getPage",
+            argNames: ["path", "page"],
         );
-      case 2:
-        return const PageName_Receive();
-      case 3:
-        return PageName_Send(
-          dco_decode_String(raw[1]),
+        
+
+@override Future<void> crateApiPubStructsLoadStructs({required ShorthandTransaction s , required Profile p , required DartMethod dm , required KeyPress kp , required Platform pl , required PageName pn , required WalletMethod wm , required Thread t })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_box_autoadd_shorthand_transaction(s, serializer);
+sse_encode_box_autoadd_profile(p, serializer);
+sse_encode_box_autoadd_dart_method(dm, serializer);
+sse_encode_key_press(kp, serializer);
+sse_encode_platform(pl, serializer);
+sse_encode_box_autoadd_page_name(pn, serializer);
+sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(wm, serializer);
+sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(t, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiPubStructsLoadStructsConstMeta,
+            argValues: [s, p, dm, kp, pl, pn, wm, t],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPubStructsLoadStructsConstMeta => const TaskConstMeta(
+            debugName: "load_structs",
+            argNames: ["s", "p", "dm", "kp", "pl", "pn", "wm", "t"],
         );
-      case 4:
-        return PageName_Amount(
-          dco_decode_String(raw[1]),
-          dco_decode_opt_box_autoadd_key_press(raw[2]),
+        
+
+@override bool crateApiPubStructsPlatformIsDesktop({required Platform that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_platform(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiPubStructsPlatformIsDesktopConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPubStructsPlatformIsDesktopConstMeta => const TaskConstMeta(
+            debugName: "platform_is_desktop",
+            argNames: ["that"],
         );
-      case 5:
-        return PageName_Speed(
-          dco_decode_u_64(raw[1]),
+        
+
+@override Future<String> crateApiSimpleRustCall({required Thread thread })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(thread, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_AnyhowException,
+        )
+        ,
+            constMeta: kCrateApiSimpleRustCallConstMeta,
+            argValues: [thread],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiSimpleRustCallConstMeta => const TaskConstMeta(
+            debugName: "rustCall",
+            argNames: ["thread"],
         );
-      case 6:
-        return PageName_Confirm(
-          dco_decode_String(raw[1]),
-          dco_decode_u_64(raw[2]),
-          dco_decode_u_64(raw[3]),
+        
+
+@override Future<String> crateApiSimpleRustStart({required String path , required Platform platform , required FutureOr<String?> Function(DartMethod) callback })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+sse_encode_platform(platform, serializer);
+sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(callback, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_AnyhowException,
+        )
+        ,
+            constMeta: kCrateApiSimpleRustStartConstMeta,
+            argValues: [path, platform, callback],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiSimpleRustStartConstMeta => const TaskConstMeta(
+            debugName: "rustStart",
+            argNames: ["path", "platform", "callback"],
         );
-      case 7:
-        return PageName_Test(
-          dco_decode_String(raw[1]),
-        );
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  Platform dco_decode_platform(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return Platform.values[raw as int];
-  }
-
-  @protected
-  Profile dco_decode_profile(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return Profile(
-      name: dco_decode_String(arr[0]),
-      did: dco_decode_String(arr[1]),
-      pfpPath: dco_decode_opt_String(arr[2]),
-      abtMe: dco_decode_opt_String(arr[3]),
-    );
-  }
-
-  @protected
-  ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return ShorthandTransaction(
-      isWithdraw: dco_decode_bool(arr[0]),
-      datetime: dco_decode_String(arr[1]),
-      amount: dco_decode_String(arr[2]),
-      txid: dco_decode_String(arr[3]),
-    );
-  }
-
-  @protected
-  Thread dco_decode_thread(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return Thread_Wallet(
-          dco_decode_box_autoadd_wallet_method(raw[1]),
-        );
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  BigInt dco_decode_u_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeU64(raw);
-  }
-
-  @protected
-  int dco_decode_u_8(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  void dco_decode_unit(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return;
-  }
-
-  @protected
-  BigInt dco_decode_usize(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeU64(raw);
-  }
-
-  @protected
-  WalletMethod dco_decode_wallet_method(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return const WalletMethod_GetNewAddress();
-      case 1:
-        return WalletMethod_GetFees(
-          dco_decode_u_64(raw[1]),
-        );
-      case 2:
-        return WalletMethod_BuildTransaction(
-          dco_decode_String(raw[1]),
-          dco_decode_u_64(raw[2]),
-          dco_decode_u_64(raw[3]),
-          dco_decode_f_64(raw[4]),
-        );
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_String(deserializer);
-    return AnyhowException(inner);
-  }
-
-  @protected
-  Error
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return ErrorImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
-  MyCustomAsyncRuntime
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return MyCustomAsyncRuntimeImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
-  Object sse_decode_DartOpaque(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_isize(deserializer);
-    return decodeDartOpaque(inner, generalizedFrbRustBinding);
-  }
-
-  @protected
-  Error
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return ErrorImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
-  MyCustomAsyncRuntime
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return MyCustomAsyncRuntimeImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
-  String sse_decode_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_list_prim_u_8_strict(deserializer);
-    return utf8.decoder.convert(inner);
-  }
-
-  @protected
-  bool sse_decode_bool(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8() != 0;
-  }
-
-  @protected
-  DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_dart_method(deserializer));
-  }
-
-  @protected
-  KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_key_press(deserializer));
-  }
-
-  @protected
-  PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_page_name(deserializer));
-  }
-
-  @protected
-  Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_profile(deserializer));
-  }
-
-  @protected
-  ShorthandTransaction sse_decode_box_autoadd_shorthand_transaction(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_shorthand_transaction(deserializer));
-  }
-
-  @protected
-  Thread sse_decode_box_autoadd_thread(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_thread(deserializer));
-  }
-
-  @protected
-  WalletMethod sse_decode_box_autoadd_wallet_method(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_wallet_method(deserializer));
-  }
-
-  @protected
-  DartMethod sse_decode_dart_method(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_String(deserializer);
-        return DartMethod_StorageSet(var_field0, var_field1);
-      case 1:
-        var var_field0 = sse_decode_String(deserializer);
-        return DartMethod_StorageGet(var_field0);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  double sse_decode_f_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat64();
-  }
-
-  @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
-  }
-
-  @protected
-  PlatformInt64 sse_decode_isize(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getPlatformInt64();
-  }
-
-  @protected
-  KeyPress sse_decode_key_press(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_i_32(deserializer);
-    return KeyPress.values[inner];
-  }
-
-  @protected
-  Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getUint8List(len_);
-  }
-
-  @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_String(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  KeyPress? sse_decode_opt_box_autoadd_key_press(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_key_press(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  PageName sse_decode_page_name(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        return const PageName_BitcoinHome();
-      case 1:
-        var var_field0 = sse_decode_String(deserializer);
-        return PageName_ViewTransaction(var_field0);
-      case 2:
-        return const PageName_Receive();
-      case 3:
-        var var_field0 = sse_decode_String(deserializer);
-        return PageName_Send(var_field0);
-      case 4:
-        var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_opt_box_autoadd_key_press(deserializer);
-        return PageName_Amount(var_field0, var_field1);
-      case 5:
-        var var_field0 = sse_decode_u_64(deserializer);
-        return PageName_Speed(var_field0);
-      case 6:
-        var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_u_64(deserializer);
-        var var_field2 = sse_decode_u_64(deserializer);
-        return PageName_Confirm(var_field0, var_field1, var_field2);
-      case 7:
-        var var_field0 = sse_decode_String(deserializer);
-        return PageName_Test(var_field0);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  Platform sse_decode_platform(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_i_32(deserializer);
-    return Platform.values[inner];
-  }
-
-  @protected
-  Profile sse_decode_profile(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_name = sse_decode_String(deserializer);
-    var var_did = sse_decode_String(deserializer);
-    var var_pfpPath = sse_decode_opt_String(deserializer);
-    var var_abtMe = sse_decode_opt_String(deserializer);
-    return Profile(
-        name: var_name, did: var_did, pfpPath: var_pfpPath, abtMe: var_abtMe);
-  }
-
-  @protected
-  ShorthandTransaction sse_decode_shorthand_transaction(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_isWithdraw = sse_decode_bool(deserializer);
-    var var_datetime = sse_decode_String(deserializer);
-    var var_amount = sse_decode_String(deserializer);
-    var var_txid = sse_decode_String(deserializer);
-    return ShorthandTransaction(
-        isWithdraw: var_isWithdraw,
-        datetime: var_datetime,
-        amount: var_amount,
-        txid: var_txid);
-  }
-
-  @protected
-  Thread sse_decode_thread(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        var var_field0 = sse_decode_box_autoadd_wallet_method(deserializer);
-        return Thread_Wallet(var_field0);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  BigInt sse_decode_u_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getBigUint64();
-  }
-
-  @protected
-  int sse_decode_u_8(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8();
-  }
-
-  @protected
-  void sse_decode_unit(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  BigInt sse_decode_usize(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getBigUint64();
-  }
-
-  @protected
-  WalletMethod sse_decode_wallet_method(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        return const WalletMethod_GetNewAddress();
-      case 1:
-        var var_field0 = sse_decode_u_64(deserializer);
-        return WalletMethod_GetFees(var_field0);
-      case 2:
-        var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_u_64(deserializer);
-        var var_field2 = sse_decode_u_64(deserializer);
-        var var_field3 = sse_decode_f_64(deserializer);
-        return WalletMethod_BuildTransaction(
-            var_field0, var_field1, var_field2, var_field3);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  void sse_encode_AnyhowException(
-      AnyhowException self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.message, serializer);
-  }
-
-  @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as ErrorImpl).frbInternalSseEncode(move: true), serializer);
-  }
-
-  @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          MyCustomAsyncRuntime self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as MyCustomAsyncRuntimeImpl).frbInternalSseEncode(move: true),
-        serializer);
-  }
-
-  @protected
-  void sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
-      FutureOr<String?> Function(DartMethod) self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_DartOpaque(
-        encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
-            self),
-        serializer);
-  }
-
-  @protected
-  void sse_encode_DartOpaque(Object self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_isize(
-        PlatformPointerUtil.ptrToPlatformInt64(encodeDartOpaque(
-            self, portManager.dartHandlerPort, generalizedFrbRustBinding)),
-        serializer);
-  }
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as ErrorImpl).frbInternalSseEncode(move: null), serializer);
-  }
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          MyCustomAsyncRuntime self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as MyCustomAsyncRuntimeImpl).frbInternalSseEncode(move: null),
-        serializer);
-  }
-
-  @protected
-  void sse_encode_String(String self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
-  }
-
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self ? 1 : 0);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_dart_method(
-      DartMethod self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_dart_method(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_key_press(
-      KeyPress self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_key_press(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_page_name(
-      PageName self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_page_name(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_profile(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_shorthand_transaction(
-      ShorthandTransaction self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_shorthand_transaction(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_thread(Thread self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_thread(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_wallet_method(
-      WalletMethod self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_wallet_method(self, serializer);
-  }
-
-  @protected
-  void sse_encode_dart_method(DartMethod self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case DartMethod_StorageSet(field0: final field0, field1: final field1):
-        sse_encode_i_32(0, serializer);
-        sse_encode_String(field0, serializer);
-        sse_encode_String(field1, serializer);
-      case DartMethod_StorageGet(field0: final field0):
-        sse_encode_i_32(1, serializer);
-        sse_encode_String(field0, serializer);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  void sse_encode_f_64(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat64(self);
-  }
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
-  }
-
-  @protected
-  void sse_encode_isize(PlatformInt64 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putPlatformInt64(self);
-  }
-
-  @protected
-  void sse_encode_key_press(KeyPress self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_list_prim_u_8_strict(
-      Uint8List self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putUint8List(self);
-  }
-
-  @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_String(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_opt_box_autoadd_key_press(
-      KeyPress? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_key_press(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_page_name(PageName self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case PageName_BitcoinHome():
-        sse_encode_i_32(0, serializer);
-      case PageName_ViewTransaction(field0: final field0):
-        sse_encode_i_32(1, serializer);
-        sse_encode_String(field0, serializer);
-      case PageName_Receive():
-        sse_encode_i_32(2, serializer);
-      case PageName_Send(field0: final field0):
-        sse_encode_i_32(3, serializer);
-        sse_encode_String(field0, serializer);
-      case PageName_Amount(field0: final field0, field1: final field1):
-        sse_encode_i_32(4, serializer);
-        sse_encode_String(field0, serializer);
-        sse_encode_opt_box_autoadd_key_press(field1, serializer);
-      case PageName_Speed(field0: final field0):
-        sse_encode_i_32(5, serializer);
-        sse_encode_u_64(field0, serializer);
-      case PageName_Confirm(
-          field0: final field0,
-          field1: final field1,
-          field2: final field2
-        ):
-        sse_encode_i_32(6, serializer);
-        sse_encode_String(field0, serializer);
-        sse_encode_u_64(field1, serializer);
-        sse_encode_u_64(field2, serializer);
-      case PageName_Test(field0: final field0):
-        sse_encode_i_32(7, serializer);
-        sse_encode_String(field0, serializer);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  void sse_encode_platform(Platform self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_profile(Profile self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.name, serializer);
-    sse_encode_String(self.did, serializer);
-    sse_encode_opt_String(self.pfpPath, serializer);
-    sse_encode_opt_String(self.abtMe, serializer);
-  }
-
-  @protected
-  void sse_encode_shorthand_transaction(
-      ShorthandTransaction self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_bool(self.isWithdraw, serializer);
-    sse_encode_String(self.datetime, serializer);
-    sse_encode_String(self.amount, serializer);
-    sse_encode_String(self.txid, serializer);
-  }
-
-  @protected
-  void sse_encode_thread(Thread self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case Thread_Wallet(field0: final field0):
-        sse_encode_i_32(0, serializer);
-        sse_encode_box_autoadd_wallet_method(field0, serializer);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  void sse_encode_u_64(BigInt self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putBigUint64(self);
-  }
-
-  @protected
-  void sse_encode_u_8(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self);
-  }
-
-  @protected
-  void sse_encode_unit(void self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  void sse_encode_usize(BigInt self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putBigUint64(self);
-  }
-
-  @protected
-  void sse_encode_wallet_method(WalletMethod self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case WalletMethod_GetNewAddress():
-        sse_encode_i_32(0, serializer);
-      case WalletMethod_GetFees(field0: final field0):
-        sse_encode_i_32(1, serializer);
-        sse_encode_u_64(field0, serializer);
-      case WalletMethod_BuildTransaction(
-          field0: final field0,
-          field1: final field1,
-          field2: final field2,
-          field3: final field3
-        ):
-        sse_encode_i_32(2, serializer);
-        sse_encode_String(field0, serializer);
-        sse_encode_u_64(field1, serializer);
-        sse_encode_u_64(field2, serializer);
-        sse_encode_f_64(field3, serializer);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-}
-
-@sealed
-class ErrorImpl extends RustOpaque implements Error {
-  // Not to be used by end users
-  ErrorImpl.frbInternalDcoDecode(List<dynamic> wire)
-      : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  ErrorImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_Error,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_Error,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_ErrorPtr,
-  );
-}
-
-@sealed
-class MyCustomAsyncRuntimeImpl extends RustOpaque
-    implements MyCustomAsyncRuntime {
-  // Not to be used by end users
-  MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(List<dynamic> wire)
-      : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  MyCustomAsyncRuntimeImpl.frbInternalSseDecode(
-      BigInt ptr, int externalSizeOnNative)
-      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount: RustLib
-        .instance.api.rust_arc_increment_strong_count_MyCustomAsyncRuntime,
-    rustArcDecrementStrongCount: RustLib
-        .instance.api.rust_arc_decrement_strong_count_MyCustomAsyncRuntime,
-    rustArcDecrementStrongCountPtr: RustLib
-        .instance.api.rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr,
-  );
-}
+        
+
+
+            Future<void> Function(int, dynamic)
+                encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(FutureOr<String?> Function(DartMethod) raw) {
+              return (callId, rawArg0) async {
+                final arg0 = dco_decode_dart_method(rawArg0);
+
+
+                Box<String?>? rawOutput;
+                Box<AnyhowException>? rawError;
+                try {
+                    rawOutput = Box(await raw(arg0));
+                } catch (e, s) {
+                    rawError = Box(AnyhowException("$e\n\n$s"));
+                }
+
+                final serializer = SseSerializer(generalizedFrbRustBinding);
+                assert((rawOutput != null) ^ (rawError != null));
+                if (rawOutput != null) {
+                    serializer.buffer.putUint8(0);
+                    sse_encode_opt_String(rawOutput.value, serializer);
+                } else {
+                    serializer.buffer.putUint8(1);
+                    sse_encode_AnyhowException(rawError!.value, serializer);
+                }
+                final output = serializer.intoRaw();
+
+                generalizedFrbRustBinding.dartFnDeliverOutput(
+                  callId: callId, ptr: output.ptr, rustVecLen: output.rustVecLen, dataLen: output.dataLen);
+              };
+            }
+            RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
+
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Error => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
+
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_MyCustomAsyncRuntime => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
+
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_MyCustomAsyncRuntime => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
+
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Thread => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread;
+
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Thread => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread;
+
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_WalletMethod => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod;
+
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_WalletMethod => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod;
+
+
+
+                  @protected AnyhowException dco_decode_AnyhowException(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return AnyhowException(raw as String); }
+
+@protected Error dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return ErrorImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected MyCustomAsyncRuntime dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected Thread dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return ThreadImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected WalletMethod dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return WalletMethodImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected FutureOr<String?> Function(DartMethod) dco_decode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+throw UnimplementedError(''); }
+
+@protected Object dco_decode_DartOpaque(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return decodeDartOpaque(raw, generalizedFrbRustBinding); }
+
+@protected Error dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return ErrorImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected MyCustomAsyncRuntime dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected Thread dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return ThreadImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected WalletMethod dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return WalletMethodImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected String dco_decode_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as String; }
+
+@protected bool dco_decode_bool(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as bool; }
+
+@protected DartMethod dco_decode_box_autoadd_dart_method(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_dart_method(raw); }
+
+@protected KeyPress dco_decode_box_autoadd_key_press(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_key_press(raw); }
+
+@protected PageName dco_decode_box_autoadd_page_name(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_page_name(raw); }
+
+@protected Profile dco_decode_box_autoadd_profile(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_profile(raw); }
+
+@protected ShorthandTransaction dco_decode_box_autoadd_shorthand_transaction(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_shorthand_transaction(raw); }
+
+@protected DartMethod dco_decode_dart_method(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return DartMethod_StorageSet(dco_decode_String(raw[1]),dco_decode_String(raw[2]),);
+case 1: return DartMethod_StorageGet(dco_decode_String(raw[1]),);
+                default: throw Exception("unreachable");
+            } }
+
+@protected int dco_decode_i_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected PlatformInt64 dco_decode_isize(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dcoDecodeI64(raw); }
+
+@protected KeyPress dco_decode_key_press(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return KeyPress.values[raw as int]; }
+
+@protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as Uint8List; }
+
+@protected String? dco_decode_opt_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_String(raw); }
+
+@protected KeyPress? dco_decode_opt_box_autoadd_key_press(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_key_press(raw); }
+
+@protected PageName dco_decode_page_name(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return const PageName_BitcoinHome();
+case 1: return PageName_ViewTransaction(dco_decode_String(raw[1]),);
+case 2: return const PageName_Receive();
+case 3: return PageName_Send(dco_decode_String(raw[1]),);
+case 4: return PageName_Amount(dco_decode_String(raw[1]),dco_decode_opt_box_autoadd_key_press(raw[2]),);
+case 5: return PageName_Speed(dco_decode_u_64(raw[1]),);
+case 6: return PageName_Confirm(dco_decode_String(raw[1]),dco_decode_u_64(raw[2]),dco_decode_u_64(raw[3]),);
+case 7: return PageName_Success(dco_decode_String(raw[1]),);
+case 8: return PageName_Test(dco_decode_String(raw[1]),);
+                default: throw Exception("unreachable");
+            } }
+
+@protected Platform dco_decode_platform(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return Platform.values[raw as int]; }
+
+@protected Profile dco_decode_profile(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return Profile(name: dco_decode_String(arr[0]),
+did: dco_decode_String(arr[1]),
+pfpPath: dco_decode_opt_String(arr[2]),
+abtMe: dco_decode_opt_String(arr[3]),); }
+
+@protected ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return ShorthandTransaction(isWithdraw: dco_decode_bool(arr[0]),
+datetime: dco_decode_String(arr[1]),
+amount: dco_decode_String(arr[2]),
+txid: dco_decode_String(arr[3]),); }
+
+@protected BigInt dco_decode_u_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dcoDecodeU64(raw); }
+
+@protected int dco_decode_u_8(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected void dco_decode_unit(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return; }
+
+@protected BigInt dco_decode_usize(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dcoDecodeU64(raw); }
+
+@protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_String(deserializer);
+        return AnyhowException(inner); }
+
+@protected Error sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return ErrorImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected MyCustomAsyncRuntime sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return MyCustomAsyncRuntimeImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected Thread sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return ThreadImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected WalletMethod sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return WalletMethodImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected Object sse_decode_DartOpaque(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_isize(deserializer);
+        return decodeDartOpaque(inner, generalizedFrbRustBinding); }
+
+@protected Error sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return ErrorImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected MyCustomAsyncRuntime sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return MyCustomAsyncRuntimeImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected Thread sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return ThreadImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected WalletMethod sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return WalletMethodImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected String sse_decode_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_list_prim_u_8_strict(deserializer);
+        return utf8.decoder.convert(inner); }
+
+@protected bool sse_decode_bool(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint8() != 0; }
+
+@protected DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_dart_method(deserializer)); }
+
+@protected KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_key_press(deserializer)); }
+
+@protected PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_page_name(deserializer)); }
+
+@protected Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_profile(deserializer)); }
+
+@protected ShorthandTransaction sse_decode_box_autoadd_shorthand_transaction(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_shorthand_transaction(deserializer)); }
+
+@protected DartMethod sse_decode_dart_method(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: var var_field0 = sse_decode_String(deserializer);
+var var_field1 = sse_decode_String(deserializer);
+return DartMethod_StorageSet(var_field0, var_field1);case 1: var var_field0 = sse_decode_String(deserializer);
+return DartMethod_StorageGet(var_field0); default: throw UnimplementedError(''); }
+             }
+
+@protected int sse_decode_i_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getInt32(); }
+
+@protected PlatformInt64 sse_decode_isize(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getPlatformInt64(); }
+
+@protected KeyPress sse_decode_key_press(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return KeyPress.values[inner]; }
+
+@protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var len_ = sse_decode_i_32(deserializer);
+                return deserializer.buffer.getUint8List(len_); }
+
+@protected String? sse_decode_opt_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_String(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected KeyPress? sse_decode_opt_box_autoadd_key_press(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_key_press(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected PageName sse_decode_page_name(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: return const PageName_BitcoinHome();case 1: var var_field0 = sse_decode_String(deserializer);
+return PageName_ViewTransaction(var_field0);case 2: return const PageName_Receive();case 3: var var_field0 = sse_decode_String(deserializer);
+return PageName_Send(var_field0);case 4: var var_field0 = sse_decode_String(deserializer);
+var var_field1 = sse_decode_opt_box_autoadd_key_press(deserializer);
+return PageName_Amount(var_field0, var_field1);case 5: var var_field0 = sse_decode_u_64(deserializer);
+return PageName_Speed(var_field0);case 6: var var_field0 = sse_decode_String(deserializer);
+var var_field1 = sse_decode_u_64(deserializer);
+var var_field2 = sse_decode_u_64(deserializer);
+return PageName_Confirm(var_field0, var_field1, var_field2);case 7: var var_field0 = sse_decode_String(deserializer);
+return PageName_Success(var_field0);case 8: var var_field0 = sse_decode_String(deserializer);
+return PageName_Test(var_field0); default: throw UnimplementedError(''); }
+             }
+
+@protected Platform sse_decode_platform(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return Platform.values[inner]; }
+
+@protected Profile sse_decode_profile(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_name = sse_decode_String(deserializer);
+var var_did = sse_decode_String(deserializer);
+var var_pfpPath = sse_decode_opt_String(deserializer);
+var var_abtMe = sse_decode_opt_String(deserializer);
+return Profile(name: var_name, did: var_did, pfpPath: var_pfpPath, abtMe: var_abtMe); }
+
+@protected ShorthandTransaction sse_decode_shorthand_transaction(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_isWithdraw = sse_decode_bool(deserializer);
+var var_datetime = sse_decode_String(deserializer);
+var var_amount = sse_decode_String(deserializer);
+var var_txid = sse_decode_String(deserializer);
+return ShorthandTransaction(isWithdraw: var_isWithdraw, datetime: var_datetime, amount: var_amount, txid: var_txid); }
+
+@protected BigInt sse_decode_u_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getBigUint64(); }
+
+@protected int sse_decode_u_8(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint8(); }
+
+@protected void sse_decode_unit(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+ }
+
+@protected BigInt sse_decode_usize(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getBigUint64(); }
+
+@protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.message, serializer); }
+
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(Error self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as ErrorImpl).frbInternalSseEncode(move: true), serializer); }
+
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(MyCustomAsyncRuntime self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as MyCustomAsyncRuntimeImpl).frbInternalSseEncode(move: true), serializer); }
+
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(Thread self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as ThreadImpl).frbInternalSseEncode(move: true), serializer); }
+
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(WalletMethod self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as WalletMethodImpl).frbInternalSseEncode(move: true), serializer); }
+
+@protected void sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(FutureOr<String?> Function(DartMethod) self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_DartOpaque(encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(self), serializer); }
+
+@protected void sse_encode_DartOpaque(Object self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_isize(PlatformPointerUtil.ptrToPlatformInt64(encodeDartOpaque(self, portManager.dartHandlerPort, generalizedFrbRustBinding)), serializer); }
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(Error self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as ErrorImpl).frbInternalSseEncode(move: null), serializer); }
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(MyCustomAsyncRuntime self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as MyCustomAsyncRuntimeImpl).frbInternalSseEncode(move: null), serializer); }
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThread(Thread self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as ThreadImpl).frbInternalSseEncode(move: null), serializer); }
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletMethod(WalletMethod self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as WalletMethodImpl).frbInternalSseEncode(move: null), serializer); }
+
+@protected void sse_encode_String(String self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer); }
+
+@protected void sse_encode_bool(bool self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint8(self ? 1 : 0); }
+
+@protected void sse_encode_box_autoadd_dart_method(DartMethod self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_dart_method(self, serializer); }
+
+@protected void sse_encode_box_autoadd_key_press(KeyPress self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_key_press(self, serializer); }
+
+@protected void sse_encode_box_autoadd_page_name(PageName self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_page_name(self, serializer); }
+
+@protected void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_profile(self, serializer); }
+
+@protected void sse_encode_box_autoadd_shorthand_transaction(ShorthandTransaction self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_shorthand_transaction(self, serializer); }
+
+@protected void sse_encode_dart_method(DartMethod self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case DartMethod_StorageSet(field0: final field0,field1: final field1): sse_encode_i_32(0, serializer); sse_encode_String(field0, serializer);
+sse_encode_String(field1, serializer);
+case DartMethod_StorageGet(field0: final field0): sse_encode_i_32(1, serializer); sse_encode_String(field0, serializer);
+ default: throw UnimplementedError(''); } }
+
+@protected void sse_encode_i_32(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putInt32(self); }
+
+@protected void sse_encode_isize(PlatformInt64 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putPlatformInt64(self); }
+
+@protected void sse_encode_key_press(KeyPress self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
+@protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+                    serializer.buffer.putUint8List(self); }
+
+@protected void sse_encode_opt_String(String? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_String(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_key_press(KeyPress? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_key_press(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_page_name(PageName self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case PageName_BitcoinHome(): sse_encode_i_32(0, serializer); case PageName_ViewTransaction(field0: final field0): sse_encode_i_32(1, serializer); sse_encode_String(field0, serializer);
+case PageName_Receive(): sse_encode_i_32(2, serializer); case PageName_Send(field0: final field0): sse_encode_i_32(3, serializer); sse_encode_String(field0, serializer);
+case PageName_Amount(field0: final field0,field1: final field1): sse_encode_i_32(4, serializer); sse_encode_String(field0, serializer);
+sse_encode_opt_box_autoadd_key_press(field1, serializer);
+case PageName_Speed(field0: final field0): sse_encode_i_32(5, serializer); sse_encode_u_64(field0, serializer);
+case PageName_Confirm(field0: final field0,field1: final field1,field2: final field2): sse_encode_i_32(6, serializer); sse_encode_String(field0, serializer);
+sse_encode_u_64(field1, serializer);
+sse_encode_u_64(field2, serializer);
+case PageName_Success(field0: final field0): sse_encode_i_32(7, serializer); sse_encode_String(field0, serializer);
+case PageName_Test(field0: final field0): sse_encode_i_32(8, serializer); sse_encode_String(field0, serializer);
+ default: throw UnimplementedError(''); } }
+
+@protected void sse_encode_platform(Platform self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
+@protected void sse_encode_profile(Profile self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.name, serializer);
+sse_encode_String(self.did, serializer);
+sse_encode_opt_String(self.pfpPath, serializer);
+sse_encode_opt_String(self.abtMe, serializer);
+ }
+
+@protected void sse_encode_shorthand_transaction(ShorthandTransaction self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_bool(self.isWithdraw, serializer);
+sse_encode_String(self.datetime, serializer);
+sse_encode_String(self.amount, serializer);
+sse_encode_String(self.txid, serializer);
+ }
+
+@protected void sse_encode_u_64(BigInt self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putBigUint64(self); }
+
+@protected void sse_encode_u_8(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint8(self); }
+
+@protected void sse_encode_unit(void self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+ }
+
+@protected void sse_encode_usize(BigInt self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putBigUint64(self); }
+                }
+                
+
+            @sealed class ErrorImpl extends RustOpaque implements Error {
+                // Not to be used by end users
+                ErrorImpl.frbInternalDcoDecode(List<dynamic> wire):
+                    super.frbInternalDcoDecode(wire, _kStaticData);
+
+                // Not to be used by end users
+                ErrorImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative):
+                    super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+                static final _kStaticData = RustArcStaticData(
+                    rustArcIncrementStrongCount: RustLib.instance.api.rust_arc_increment_strong_count_Error,
+                    rustArcDecrementStrongCount: RustLib.instance.api.rust_arc_decrement_strong_count_Error,
+                    rustArcDecrementStrongCountPtr: RustLib.instance.api.rust_arc_decrement_strong_count_ErrorPtr,
+                );
+
+                
+            }
+            @sealed class MyCustomAsyncRuntimeImpl extends RustOpaque implements MyCustomAsyncRuntime {
+                // Not to be used by end users
+                MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(List<dynamic> wire):
+                    super.frbInternalDcoDecode(wire, _kStaticData);
+
+                // Not to be used by end users
+                MyCustomAsyncRuntimeImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative):
+                    super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+                static final _kStaticData = RustArcStaticData(
+                    rustArcIncrementStrongCount: RustLib.instance.api.rust_arc_increment_strong_count_MyCustomAsyncRuntime,
+                    rustArcDecrementStrongCount: RustLib.instance.api.rust_arc_decrement_strong_count_MyCustomAsyncRuntime,
+                    rustArcDecrementStrongCountPtr: RustLib.instance.api.rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr,
+                );
+
+                
+            }
+            @sealed class ThreadImpl extends RustOpaque implements Thread {
+                // Not to be used by end users
+                ThreadImpl.frbInternalDcoDecode(List<dynamic> wire):
+                    super.frbInternalDcoDecode(wire, _kStaticData);
+
+                // Not to be used by end users
+                ThreadImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative):
+                    super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+                static final _kStaticData = RustArcStaticData(
+                    rustArcIncrementStrongCount: RustLib.instance.api.rust_arc_increment_strong_count_Thread,
+                    rustArcDecrementStrongCount: RustLib.instance.api.rust_arc_decrement_strong_count_Thread,
+                    rustArcDecrementStrongCountPtr: RustLib.instance.api.rust_arc_decrement_strong_count_ThreadPtr,
+                );
+
+                
+            }
+            @sealed class WalletMethodImpl extends RustOpaque implements WalletMethod {
+                // Not to be used by end users
+                WalletMethodImpl.frbInternalDcoDecode(List<dynamic> wire):
+                    super.frbInternalDcoDecode(wire, _kStaticData);
+
+                // Not to be used by end users
+                WalletMethodImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative):
+                    super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+                static final _kStaticData = RustArcStaticData(
+                    rustArcIncrementStrongCount: RustLib.instance.api.rust_arc_increment_strong_count_WalletMethod,
+                    rustArcDecrementStrongCount: RustLib.instance.api.rust_arc_decrement_strong_count_WalletMethod,
+                    rustArcDecrementStrongCountPtr: RustLib.instance.api.rust_arc_decrement_strong_count_WalletMethodPtr,
+                );
+
+                
+            }

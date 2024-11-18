@@ -73,6 +73,10 @@ pub type Callback = Arc<Mutex<dyn Fn(DartMethod) -> DartFnFuture<Option<String>>
 pub type WalletSender = Sender<(oneshot::Sender<String>, WalletMethod)>;
 pub type WalletReceiver = Receiver<(oneshot::Sender<String>, WalletMethod)>;
 
+pub enum Threads {
+    Wallet(WalletMethod)
+}
+
 static THREAD_CHANNELS: LazyLock<Mutex<(Option<WalletSender>, Option<String>)>> = LazyLock::new(|| Mutex::new((None, None)));
 
 use reqwest::Client;
@@ -124,6 +128,14 @@ async fn wallet_refresh_thread(wallet: Wallet, state: State) -> Result<(), Error
     }
 }
 
+#[derive(Debug)]
+pub enum WalletMethod {
+    GetNewAddress,
+    GetFees(Sats),
+    BuildTransaction(String, Sats, Sats, Usd),
+    BroadcastTransaction(bdk::bitcoin::Transaction)
+}
+
 async fn wallet_thread(wallet: Wallet, mut recv: WalletReceiver) -> Result<(), Error> {
     loop {
         let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
@@ -134,6 +146,10 @@ async fn wallet_thread(wallet: Wallet, mut recv: WalletReceiver) -> Result<(), E
             },
             WalletMethod::BuildTransaction(address, amount, fee, price) => {
                 o_tx.send(serde_json::to_string(&wallet.build_transaction(&address, amount, fee, price).await?)?)
+            },
+            WalletMethod::BroadcastTransaction(tx) => {
+                wallet.broadcast_transaction(&tx).await?;
+                o_tx.send(String::new())
             },
         }.map_err(Error::Exited)?;
     }
@@ -244,7 +260,7 @@ pub async fn rustCall(thread: Thread) -> Result<String, Error> {
     let (o_tx, o_rx) = oneshot::channel::<String>();
     let threads = THREAD_CHANNELS.lock().await;
     match thread {
-        Thread::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await?,
+        Threads::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await?,
     }
     let res = o_rx.await;
     //This error isn't helpful, let the error on the transmitter side propagate

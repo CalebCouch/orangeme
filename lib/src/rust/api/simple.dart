@@ -7,20 +7,26 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
-// These functions are ignored because they are not marked as `pub`: `agent_init`, `agent_refresh_thread`, `agent_sync_thread`, `internet_thread`, `price_thread`, `spawn`, `wallet_init`, `wallet_refresh_thread`, `wallet_sync_thread`, `wallet_thread`
 
-Future<String> rustStart(
-        {required String path,
-        required Platform platform,
-        required FutureOr<String?> Function(DartMethod) callback}) =>
-    RustLib.instance.api.crateApiSimpleRustStart(
-        path: path, platform: platform, callback: callback);
+            // These functions are ignored because they are not marked as `pub`: `agent_init`, `agent_refresh_thread`, `agent_sync_thread`, `internet_thread`, `price_thread`, `spawn`, `wallet_init`, `wallet_refresh_thread`, `wallet_sync_thread`, `wallet_thread`
+// These types are ignored because they are not used by any `pub` functions: `Threads`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`
 
-Future<String> rustCall({required Thread thread}) =>
-    RustLib.instance.api.crateApiSimpleRustCall(thread: thread);
 
-Future<String> getPage({required String path, required PageName page}) =>
-    RustLib.instance.api.crateApiSimpleGetPage(path: path, page: page);
+            Future<String> rustStart({required String path , required Platform platform , required FutureOr<String?> Function(DartMethod) callback }) => RustLib.instance.api.crateApiSimpleRustStart(path: path, platform: platform, callback: callback);
 
-Future<void> clearData({required String path}) =>
-    RustLib.instance.api.crateApiSimpleClearData(path: path);
+Future<String> rustCall({required Thread thread }) => RustLib.instance.api.crateApiSimpleRustCall(thread: thread);
+
+Future<String> getPage({required String path , required PageName page }) => RustLib.instance.api.crateApiSimpleGetPage(path: path, page: page);
+
+Future<void> clearData({required String path }) => RustLib.instance.api.crateApiSimpleClearData(path: path);
+
+            
+                // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WalletMethod>>
+                abstract class WalletMethod implements RustOpaqueInterface {
+                    
+
+                    
+                }
+                
+            

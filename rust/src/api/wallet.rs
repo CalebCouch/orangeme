@@ -201,6 +201,12 @@ impl Wallet {
         Ok((tx, transaction))
     }
 
+
+    pub async fn broadcast_transaction(&self, tx: &bdk::bitcoin::Transaction) -> Result<(), Error> {
+        let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
+        client.broadcast(tx)?;
+    }
+
 //  pub async fn build_transaction(&mut self) -> Result<String, Error> {
 //      let ec = "Main.create_transaction";
 //      let error = || Error::bad_request(ec, "Invalid parameters");

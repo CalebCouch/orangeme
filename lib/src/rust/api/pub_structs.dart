@@ -6,172 +6,130 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+import 'simple.dart';
 part 'pub_structs.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`
 
-Future<void> loadStructs(
-        {required ShorthandTransaction s,
-        required Profile p,
-        required DartMethod dm,
-        required KeyPress kp,
-        required Platform pl,
-        required PageName pn,
-        required WalletMethod wm,
-        required Thread t}) =>
-    RustLib.instance.api.crateApiPubStructsLoadStructs(
-        s: s, p: p, dm: dm, kp: kp, pl: pl, pn: pn, wm: wm, t: t);
+
+            Future<void> loadStructs({required ShorthandTransaction s , required Profile p , required DartMethod dm , required KeyPress kp , required Platform pl , required PageName pn , required WalletMethod wm , required Thread t }) => RustLib.instance.api.crateApiPubStructsLoadStructs(s: s, p: p, dm: dm, kp: kp, pl: pl, pn: pn, wm: wm, t: t);
+
+            
+                // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Thread>>
+                abstract class Thread implements RustOpaqueInterface {
+                    
+
+                    
+                }
+                
 
 @freezed
-sealed class DartMethod with _$DartMethod {
-  const DartMethod._();
+                sealed class DartMethod with _$DartMethod  {
+                    const DartMethod._();
 
-  const factory DartMethod.storageSet(
-    String field0,
-    String field1,
-  ) = DartMethod_StorageSet;
-  const factory DartMethod.storageGet(
-    String field0,
-  ) = DartMethod_StorageGet;
-}
+                     const factory DartMethod.storageSet(  String field0,  String field1,) = DartMethod_StorageSet;
+ const factory DartMethod.storageGet(  String field0,) = DartMethod_StorageGet;
+
+                    
+                }
 
 enum KeyPress {
-  zero,
-  one,
-  two,
-  three,
-  four,
-  five,
-  six,
-  seven,
-  eight,
-  nine,
-  reset,
-  decimal,
-  backspace,
-  ;
-}
+                    zero,
+one,
+two,
+three,
+four,
+five,
+six,
+seven,
+eight,
+nine,
+reset,
+decimal,
+backspace,
+                    ;
+                    
+                }
 
 @freezed
-sealed class PageName with _$PageName {
-  const PageName._();
+                sealed class PageName with _$PageName  {
+                    const PageName._();
 
-  const factory PageName.bitcoinHome() = PageName_BitcoinHome;
-  const factory PageName.viewTransaction(
-    String field0,
-  ) = PageName_ViewTransaction;
-  const factory PageName.receive() = PageName_Receive;
-  const factory PageName.send(
-    String field0,
-  ) = PageName_Send;
-  const factory PageName.amount(
-    String field0, [
-    KeyPress? field1,
-  ]) = PageName_Amount;
-  const factory PageName.speed(
-    BigInt field0,
-  ) = PageName_Speed;
-  const factory PageName.confirm(
-    String field0,
-    BigInt field1,
-    BigInt field2,
-  ) = PageName_Confirm;
-  const factory PageName.test(
-    String field0,
-  ) = PageName_Test;
-}
+                     const factory PageName.bitcoinHome() = PageName_BitcoinHome;
+ const factory PageName.viewTransaction(  String field0,) = PageName_ViewTransaction;
+ const factory PageName.receive() = PageName_Receive;
+ const factory PageName.send(  String field0,) = PageName_Send;
+ const factory PageName.amount(  String field0,[  KeyPress? field1,]) = PageName_Amount;
+ const factory PageName.speed(  BigInt field0,) = PageName_Speed;
+ const factory PageName.confirm(  String field0,  BigInt field1,  BigInt field2,) = PageName_Confirm;
+ const factory PageName.success(  String field0,) = PageName_Success;
+ const factory PageName.test(  String field0,) = PageName_Test;
+
+                    
+                }
 
 enum Platform {
-  mac,
-  linux,
-  windows,
-  ios,
-  android,
-  fuchsia,
-  ;
+                    mac,
+linux,
+windows,
+ios,
+android,
+fuchsia,
+                    ;
+                     bool  isDesktop()=>RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(that: this, );
 
-  bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
-        that: this,
-      );
-}
 
-class Profile {
-  final String name;
-  final String did;
-  final String? pfpPath;
-  final String? abtMe;
+                }
 
-  const Profile({
-    required this.name,
-    required this.did,
-    this.pfpPath,
-    this.abtMe,
-  });
+class Profile  {
+                final String name;
+final String did;
+final String? pfpPath;
+final String? abtMe;
 
-  @override
-  int get hashCode =>
-      name.hashCode ^ did.hashCode ^ pfpPath.hashCode ^ abtMe.hashCode;
+                const Profile({required this.name ,required this.did ,this.pfpPath ,this.abtMe ,});
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Profile &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          did == other.did &&
-          pfpPath == other.pfpPath &&
-          abtMe == other.abtMe;
-}
+                
+                
 
-class ShorthandTransaction {
-  final bool isWithdraw;
-  final String datetime;
-  final String amount;
-  final String txid;
+                
+        @override
+        int get hashCode => name.hashCode^did.hashCode^pfpPath.hashCode^abtMe.hashCode;
+        
 
-  const ShorthandTransaction({
-    required this.isWithdraw,
-    required this.datetime,
-    required this.amount,
-    required this.txid,
-  });
+                
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is Profile &&
+                runtimeType == other.runtimeType
+                && name == other.name&& did == other.did&& pfpPath == other.pfpPath&& abtMe == other.abtMe;
+        
+            }
 
-  @override
-  int get hashCode =>
-      isWithdraw.hashCode ^ datetime.hashCode ^ amount.hashCode ^ txid.hashCode;
+class ShorthandTransaction  {
+                final bool isWithdraw;
+final String datetime;
+final String amount;
+final String txid;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ShorthandTransaction &&
-          runtimeType == other.runtimeType &&
-          isWithdraw == other.isWithdraw &&
-          datetime == other.datetime &&
-          amount == other.amount &&
-          txid == other.txid;
-}
+                const ShorthandTransaction({required this.isWithdraw ,required this.datetime ,required this.amount ,required this.txid ,});
 
-@freezed
-sealed class Thread with _$Thread {
-  const Thread._();
+                
+                
 
-  const factory Thread.wallet(
-    WalletMethod field0,
-  ) = Thread_Wallet;
-}
+                
+        @override
+        int get hashCode => isWithdraw.hashCode^datetime.hashCode^amount.hashCode^txid.hashCode;
+        
 
-@freezed
-sealed class WalletMethod with _$WalletMethod {
-  const WalletMethod._();
-
-  const factory WalletMethod.getNewAddress() = WalletMethod_GetNewAddress;
-  const factory WalletMethod.getFees(
-    BigInt field0,
-  ) = WalletMethod_GetFees;
-  const factory WalletMethod.buildTransaction(
-    String field0,
-    BigInt field1,
-    BigInt field2,
-    double field3,
-  ) = WalletMethod_BuildTransaction;
-}
+                
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ShorthandTransaction &&
+                runtimeType == other.runtimeType
+                && isWithdraw == other.isWithdraw&& datetime == other.datetime&& amount == other.amount&& txid == other.txid;
+        
+            }
+            

@@ -17,16 +17,9 @@ impl Platform {
     }
 }
 
-pub enum Thread {
-    Wallet(WalletMethod)
-}
 
-#[derive(Debug)]
-pub enum WalletMethod {
-    GetNewAddress,
-    GetFees(Sats),
-    BuildTransaction(String, Sats, Sats, Usd)
-}
+
+
 
 #[derive(Debug)]
 pub enum PageName {
@@ -37,6 +30,7 @@ pub enum PageName {
     Amount(String, Option<KeyPress>),
     Speed(Sats),
     Confirm(String, Sats, Sats),
+    Success(String),
   //MyProfile,
   //MessagesHome,
 //  Receive,
