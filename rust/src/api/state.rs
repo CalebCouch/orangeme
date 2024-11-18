@@ -105,10 +105,11 @@ pub struct StateManager {
     state: State,
 }
 
+
 pub fn format_usd(price: Usd) -> String {
     let whole_part = price.trunc() as i64;
-    let decimal_part = (price.fract() * 100.0).round() as i64;
-    format!("${}{}", whole_part.to_formatted_string(&Locale::en), if decimal_part > 0 { format!(".{:02}", decimal_part) } else { "".to_string() })
+    let decimal_part = ((price.fract() * 100.0) as u64) % 100; 
+    format!("${}.{:02}", whole_part.to_formatted_string(&Locale::en), decimal_part)
 }
 
 pub fn format_btc(btc: Btc) -> String {format!("{:.8} BTC", btc)}
@@ -319,9 +320,9 @@ impl StateManager {
             "address_cut": format_adr(&tx.address),
             "address_whole": tx.address,
             "amount_btc": format_btc(tx.btc),
-            "amount_usd": format_usd(tx.usd),
-            "fee": format_usd(tx.fee_usd),
-            "total": format_usd(tx.usd+tx.fee_usd),
+            "amount_usd": format_usd(tx.amount),
+            "fee_usd": format_usd(tx.fee as f64),
+            "total": format_usd(tx.amount + tx.fee),
         }))?)
     }
 

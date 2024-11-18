@@ -6,6 +6,7 @@ import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:orangeme_material/navigation.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Confirm extends GenericWidget {
@@ -21,7 +22,7 @@ class Confirm extends GenericWidget {
     String address_whole = '';
     String amount_btc = '';
     String amount_usd = '';
-    //String fee = '';
+    String fee_usd = '';
     String total = '';
 
     @override
@@ -33,7 +34,7 @@ class ConfirmState extends GenericState<Confirm> {
 
     @override
     PageName getPageName() {
-        return PageName.confirm(widget.address, widget.amount. widget.fee);
+        return PageName.confirm(widget.address, widget.amount, widget.fee);
     }
 
     @override
@@ -48,7 +49,7 @@ class ConfirmState extends GenericState<Confirm> {
             widget.address_whole = json["address_whole"] as String;
             widget.amount_btc = json["amount_btc"] as String;
             widget.amount_usd = json["amount_usd"] as String;
-            //widget.fee = json["fee"] as String;
+            widget.fee_usd = json["fee_usd"] as String;
             widget.total = json["total"] as String;
             widget.raw_tx = json["raw_tx"] as String;
         });
@@ -112,7 +113,7 @@ class ConfirmState extends GenericState<Confirm> {
                 SingleTab(title: "Send to Address", subtitle: widget.address_cut),
                 SingleTab(title: "Amount Sent", subtitle: widget.amount_btc),
                 SingleTab(title: "USD Value Sent", subtitle: widget.amount_usd),
-                SingleTab(title: "Fee", subtitle: widget.fee),
+                SingleTab(title: "Fee", subtitle: widget.fee_usd),
             ],
         );
     }
