@@ -38,14 +38,14 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
             widget.is_withdraw = json["is_withdraw"] as bool;
-            widget.time = json["time"] as String; //"12:34 PM"
-            widget.date = json["date"] as String; //"12/8/24"
-            widget.address = json["address"] as String; //"123456789...123"
-            widget.amount_btc = json["amount_btc"] as String; //"0.00001234 BTC"
-            widget.amount_usd = json["amount_usd"] as String; //"$12.00"
-            widget.price = json["price"] as String; //"$73,802.34"
-            widget.fee = json["fee"] as String?; //"$0.12"
-            widget.total = json["total"] as String?; //"$12.12"
+            widget.time = json["time"] as String;
+            widget.date = json["date"] as String;
+            widget.address = json["address"] as String;
+            widget.amount_btc = json["amount_btc"] as String;
+            widget.amount_usd = json["amount_usd"] as String;
+            widget.price = json["price"] as String;
+            widget.fee = json["fee"] as String?;
+            widget.total = json["total"] as String?;
         });
     }
 
@@ -54,10 +54,12 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
     }
 
     Widget build_with_state(BuildContext context) {
-        String header_text = widget.is_withdraw ? "Sent bitcoin" : "Received bitcoin";
 
         return Stack_Default(
-            header: Header_Stack(context, header_text),
+            header: Header_Stack(
+                context, 
+                widget.is_withdraw ? "Sent bitcoin" : "Received bitcoin",
+            ),
             content: [
                 BalanceDisplay(),
                 TransactionData(),

@@ -29,11 +29,6 @@ class SendState extends GenericState<Send> {
     }
 
     @override
-    int refreshInterval() {
-        return 80;
-    }
-
-    @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
             widget.addressValid = json["valid_address"] as bool;

@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/bitcoin/view_transaction.dart';
-// import 'package:flutter/services.dart';
-// import 'package:orange/components/list_item.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 //import 'package:orange/flows/messages/home.dart';
-//import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
@@ -34,11 +32,6 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     }
 
     @override
-    int refreshInterval() {
-        return 1;
-    }
-
-    @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
             widget.internet = json["internet"] as bool;
@@ -59,7 +52,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
     onReceive() {navigateTo(Receive());}
     onSend() {navigateTo(Send());}
-    toProfile() {navigateTo(Receive());}
+    toProfile() {navigateTo(MyProfile());}
 
     @override
     Widget build_with_state(BuildContext context) {

@@ -795,6 +795,14 @@ impl SseDecode for crate::api::pub_structs::PageName {
                 return crate::api::pub_structs::PageName::Success(var_field0);
             }
             8 => {
+                let mut var_field0 = <Option<String>>::sse_decode(deserializer);
+                let mut var_field1 = <Option<String>>::sse_decode(deserializer);
+                let mut var_field2 = <Option<String>>::sse_decode(deserializer);
+                return crate::api::pub_structs::PageName::MyProfile(
+                    var_field0, var_field1, var_field2,
+                );
+            }
+            9 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::pub_structs::PageName::Test(var_field0);
             }
@@ -1065,8 +1073,15 @@ impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::PageName {
             crate::api::pub_structs::PageName::Success(field0) => {
                 [7.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
+            crate::api::pub_structs::PageName::MyProfile(field0, field1, field2) => [
+                8.into_dart(),
+                field0.into_into_dart().into_dart(),
+                field1.into_into_dart().into_dart(),
+                field2.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
             crate::api::pub_structs::PageName::Test(field0) => {
-                [8.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+                [9.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1374,8 +1389,14 @@ impl SseEncode for crate::api::pub_structs::PageName {
                 <i32>::sse_encode(7, serializer);
                 <String>::sse_encode(field0, serializer);
             }
-            crate::api::pub_structs::PageName::Test(field0) => {
+            crate::api::pub_structs::PageName::MyProfile(field0, field1, field2) => {
                 <i32>::sse_encode(8, serializer);
+                <Option<String>>::sse_encode(field0, serializer);
+                <Option<String>>::sse_encode(field1, serializer);
+                <Option<String>>::sse_encode(field2, serializer);
+            }
+            crate::api::pub_structs::PageName::Test(field0) => {
+                <i32>::sse_encode(9, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {

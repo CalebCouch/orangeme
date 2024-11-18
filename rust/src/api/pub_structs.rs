@@ -31,7 +31,7 @@ pub enum PageName {
     Speed(Sats),
     Confirm(String, Sats, Sats),
     Success(String),
-  //MyProfile,
+    MyProfile(Option<String>, Option<String>, Option<String>),
   //MessagesHome,
 //  Receive,
 //  ViewTransaction,

@@ -2,43 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
+import 'dart:io';
 
 
-Widget ProfilePhoto ( 
-    BuildContext context, [ 
-        String? pfp, 
-        double size = ProfileSize.md, 
-        bool isGroup = false,
-    ]
-){
-        
-    bool isValidPfp = pfp != null && !isGroup;
-
+Widget ProfilePhoto (BuildContext context, [String? pfp, double size = ProfileSize.md, bool isGroup = false ] ){
     return Container(
         alignment: Alignment.center,
         height: size,
         width: size,
+
         decoration: BoxDecoration(
             border: isGroup ? Border.all(color: ThemeColor.bg) : null,
             color: ThemeColor.bgSecondary,
             shape: BoxShape.circle,
-            image: !isValidPfp ? null : DecorationImage(
-                image: AssetImage(pfp),
+            // IF the pfp is not null, display picture
+            image: pfp == null ? null : DecorationImage(
+                image: FileImage(File(pfp)),
                 fit: BoxFit.cover,
-            )
+            ),
         ),
-        child: isValidPfp ? null : SvgPicture.asset(
+
+        // IF the pfp is null, or a group icon, display preset
+        child: pfp == null || isGroup ? SvgPicture.asset(
             height: _getIconSize(size),
             width: _getIconSize(size),
             isGroup ? ThemeIcon.group : ThemeIcon.profile,
             colorFilter: const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
-        ),
+        ) : null,
     );
 }
 
-Widget ProfileButton(BuildContext context, pfp, onTap) {
-    return InkWell(onTap: onTap, child: ProfilePhoto(context));
-}
+Widget ProfileButton(BuildContext context, pfp, onTap) { return InkWell(onTap: onTap, child: ProfilePhoto(context));}
 
 Widget profilePhotoStack(BuildContext context, List<Profile> contacts) {
     return Container(
@@ -56,21 +50,6 @@ Widget profilePhotoStack(BuildContext context, List<Profile> contacts) {
                 );
             },
         ),
-    );
-}
-
-Widget EditPhoto(BuildContext context, onTap, [pfp]) {
-    return CustomColumn([
-            ProfilePhoto(context, pfp, ProfileSize.xxl),
-            CustomButton(
-                txt: 'Photo', 
-                variant: 'secondary', 
-                size: 'md', 
-                expand: false, 
-                icon: 'edit', 
-                onTap: onTap
-            ),
-        ], AppPadding.header,
     );
 }
 

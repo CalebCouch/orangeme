@@ -765,6 +765,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_String(raw[1]),
         );
       case 8:
+        return PageName_MyProfile(
+          dco_decode_opt_String(raw[1]),
+          dco_decode_opt_String(raw[2]),
+          dco_decode_opt_String(raw[3]),
+        );
+      case 9:
         return PageName_Test(
           dco_decode_String(raw[1]),
         );
@@ -1041,6 +1047,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Success(var_field0);
       case 8:
+        var var_field0 = sse_decode_opt_String(deserializer);
+        var var_field1 = sse_decode_opt_String(deserializer);
+        var var_field2 = sse_decode_opt_String(deserializer);
+        return PageName_MyProfile(var_field0, var_field1, var_field2);
+      case 9:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
       default:
@@ -1328,8 +1339,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_Success(field0: final field0):
         sse_encode_i_32(7, serializer);
         sse_encode_String(field0, serializer);
-      case PageName_Test(field0: final field0):
+      case PageName_MyProfile(
+          field0: final field0,
+          field1: final field1,
+          field2: final field2
+        ):
         sse_encode_i_32(8, serializer);
+        sse_encode_opt_String(field0, serializer);
+        sse_encode_opt_String(field1, serializer);
+        sse_encode_opt_String(field2, serializer);
+      case PageName_Test(field0: final field0):
+        sse_encode_i_32(9, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');

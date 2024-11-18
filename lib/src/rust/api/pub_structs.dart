@@ -77,6 +77,11 @@ sealed class PageName with _$PageName {
   const factory PageName.success(
     String field0,
   ) = PageName_Success;
+  const factory PageName.myProfile([
+    String? field0,
+    String? field1,
+    String? field2,
+  ]) = PageName_MyProfile;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;

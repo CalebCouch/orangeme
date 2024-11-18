@@ -154,7 +154,7 @@ impl StateManager {
             PageName::Speed(amount) => self.speed(amount).await,
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
             PageName::Success(tx) => self.success(tx).await,
-          //PageName::MyProfile => self.my_profile().await,
+            PageName::MyProfile(name, about_me, profile_picture) => self.my_profile(name, about_me, profile_picture).await,
             //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
@@ -361,15 +361,16 @@ impl StateManager {
     //     }))?)
     // }
 
-
-
-//  pub async fn my_profile(&self) -> Result<String, Error> {
-//      let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
-//      Ok(serde_json::to_string(&MyProfile{
-//          profile: profile,
-//          address: rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?
-//      })?)
-//  }
+    pub async fn my_profile(&self, name: Option<String>, about_me: Option<String>, profile_picture: Option<String>) -> Result<String, Error> {
+        let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+        Ok(serde_json::to_string(&json!({
+            "name": profile.name,
+            "about_me": profile.abt_me,
+            "did": profile.did,
+            "profile_picture": profile.pfp_path,
+            "address": "".to_string(), //rustCall(Threads::Wallet(WalletMethod::GetNewAddress)).await?,
+        }))?)
+    }
 
 //  pub async fn messages_home(&mut self) -> Result<String, Error> {
 //      let conversations = self.state.get::<Vec<Conversation>>(&Field::Conversations(None)).await?;
