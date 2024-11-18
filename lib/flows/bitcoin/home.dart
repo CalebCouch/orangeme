@@ -130,7 +130,6 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     Widget TransactionList() {
         return ListView.builder(
             shrinkWrap: true,
-            reverse: true,
             physics: const ScrollPhysics(),
             itemCount: widget.transactions.length,
             itemBuilder: (BuildContext context, int index) {
