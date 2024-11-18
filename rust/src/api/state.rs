@@ -265,7 +265,13 @@ impl StateManager {
                     }
                 }
             }
-        } else {(amount, true)};
+        } else {
+            if amount.is_empty() {
+                ("0".to_string(), true)
+            } else {
+                (amount, true)
+            }
+        };
 
         let needed_placeholders = if updated_amount.contains('.') {
             let split: Vec<&str> = updated_amount.split('.').collect();
