@@ -22,6 +22,10 @@ use web5_rust::{
     Protocol,
 };
 
+use std::str::FromStr;
+
+const DUMMY_DID: &str = "did:dht:0000000000000000000000000000000000000000000000000000";
+
 pub struct Protocols {}
 impl Protocols {
     pub fn profile() -> Protocol {
@@ -89,6 +93,12 @@ impl Profile {
         abt_me: Option<String>,
     ) -> Self {
         Profile{name, did, pfp_path, abt_me}
+    }
+}
+
+impl Default for Profile {
+    fn default() -> Self {
+        Profile::new("Default Name".to_string(), Did::from_str(DUMMY_DID).unwrap(), None, None)
     }
 }
 

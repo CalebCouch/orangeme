@@ -21,6 +21,7 @@ pub enum Thread {
     Wallet(WalletMethod)
 }
 
+#[derive(Debug)]
 pub enum WalletMethod {
     GetNewAddress,
     GetFees(Sats, Usd),
@@ -33,7 +34,8 @@ pub enum PageName {
     Receive,
     Send(String),
     Amount(String, Option<KeyPress>),
-    Speed(f32),
+    Speed(Sats),
+    Confirm(String, Sats, Sats),
   //MyProfile,
   //MessagesHome,
 //  Receive,

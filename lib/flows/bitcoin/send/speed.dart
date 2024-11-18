@@ -8,11 +8,13 @@ import 'package:orange/global.dart' as global;
 
 class Speed extends GenericWidget {
     String address;
-    double amount;
+    BigInt amount;
     Speed(this.address, this.amount, {super.key});
 
-    String standard = "";
-    String priority = "";
+    String one_f = "";
+    BigInt one = BigInt.from(0);
+    String three_f = "";
+    BigInt three = BigInt.from(0);
 
     @override
     SpeedState createState() => SpeedState();
@@ -32,8 +34,10 @@ class SpeedState extends GenericState<Speed> {
     @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
-            widget.standard = json["standard_fee"] as String;
-            widget.priority = json["priority_fee"] as String;
+            widget.three_f = json["three_f"] as String;
+            widget.three = BigInt.from(json["three"]);
+            widget.one_f = json["one_f"] as String;
+            widget.one = BigInt.from(json["one"]);
         });
     }
 
@@ -49,7 +53,7 @@ class SpeedState extends GenericState<Speed> {
     }
 
     onContinue() {
-        //navigateTo(context, const Confirm());
+        //navigateTo(context, const Confirm(widget.address, widget.amount, index == 0 ? widget.one : widget.three));
     }
 
 
@@ -57,7 +61,7 @@ class SpeedState extends GenericState<Speed> {
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Transaction speed"),
-            content: [SpeedSelector(widget.standard, widget.priority)],
+            content: [SpeedSelector(widget.three_f, widget.one_f)],
             bumper: Bumper(context, content: [
                 CustomButton( txt: 'Continue', onTap: onContinue)
             ]),

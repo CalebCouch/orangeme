@@ -167,14 +167,14 @@ impl Wallet {
 
     pub async fn get_fees(&self, amount: Sats, price: Usd) -> Result<(Usd, Usd), Error> {
         let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
-        let one = client.estimate_fee(1)? as Sats;
-        log::info!("Fee 1: {}", one);
-        let three = client.estimate_fee(3)? as Sats;
-        log::info!("Fee 3: {}", three);
-        let kvb = (self.tx_builder(DUMMY_ADDRESS, amount, three).await?.0.extract_tx().vsize() / 1000) as u64;
+        let one = client.estimate_fee(1)?;
+        log::info!("one: {}", one);
+        let three = client.estimate_fee(5)?;
+        log::info!("three: {}", three);
+        let kvb = self.tx_builder(DUMMY_ADDRESS, amount, (three * SATS as Btc) as Sats).await?.0.extract_tx().vsize() as f64 / 1000.0;
         Ok((
-            ((one * kvb) * SATS) as f64 * price,
-            ((three * kvb) * SATS) as f64 * price,
+            (one * kvb) * price,
+            (three * kvb) * price,
         ))
     }
 
@@ -184,7 +184,8 @@ impl Wallet {
         let address = Address::from_str(address)?.require_network(Network::Bitcoin)?;
         builder.add_recipient(address.script_pubkey(), amount);
         builder.fee_rate(FeeRate::from_sat_per_kvb(fee as f32));
-        Ok(builder.finish()?)
+        let built = builder.finish()?;
+        Ok(built)
     }
 
 

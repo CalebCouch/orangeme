@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 Future<void> loadStructs(
         {required ShorthandTransaction s,
@@ -69,8 +69,13 @@ sealed class PageName with _$PageName {
     KeyPress? field1,
   ]) = PageName_Amount;
   const factory PageName.speed(
-    double field0,
+    BigInt field0,
   ) = PageName_Speed;
+  const factory PageName.confirm(
+    String field0,
+    BigInt field1,
+    BigInt field2,
+  ) = PageName_Confirm;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;

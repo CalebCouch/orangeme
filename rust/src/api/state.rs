@@ -146,7 +146,8 @@ impl StateManager {
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
             PageName::Receive => self.receive().await,
             PageName::Amount(amount, key_press) => self.amount(amount, key_press).await,
-            PageName::Speed(amount) => self.speed(amount as Sats).await,
+            PageName::Speed(amount) => self.speed(amount).await,
+            PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
@@ -164,7 +165,7 @@ impl StateManager {
 
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
         let internet = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
-        let profile_pfp = self.state.get::<Profile>(&Field::Profile(None)).await?.pfp_path;
+        let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
         let balance = self.state.get_or_default::<Btc>(&Field::Balance(None)).await?;
         let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
@@ -219,7 +220,6 @@ impl StateManager {
     }
 
     pub async fn amount(&self, amount: String, key: Option<KeyPress>) -> Result<String, Error> {
-        log::info!("key: {:?}", key);
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
         let balance = self.state.get_or_default::<Btc>(&Field::Balance(None)).await? * price;
 
@@ -293,7 +293,7 @@ impl StateManager {
         Ok(serde_json::to_string(&json!({
             "amount": updated_amount,
             "amount_btc": format_btc(amount_btc),
-            "raw_btc": amount_btc,
+            "amount_sats": amount_sats,
             "needed_placeholders": needed_placeholders,
             "valid_input": valid_input,
             "err": err,
@@ -304,9 +304,21 @@ impl StateManager {
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
         let fees = serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await?)?;
         Ok(serde_json::to_string(&json!({
-            "one": format_usd(fees.0),
-            "three": format_usd(fees.1)
+            "one_f": format_usd(fees.0),
+            "one": fees.0,
+            "three_f": format_usd(fees.1),
+            "three": fees.1
         }))?)
+    }
+
+    pub async fn confirm(&self, address: String, amount: Sats, fee: Sats) -> Result<String, Error> {
+        todo!()
+      //let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
+      //let fees = serde_json::from_str::<(Usd, Usd)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount, price))).await?)?;
+      //Ok(serde_json::to_string(&json!({
+      //    "one": format_usd(fees.0),
+      //    "three": format_usd(fees.1)
+      //}))?)
     }
 
 //  pub async fn my_profile(&self) -> Result<String, Error> {

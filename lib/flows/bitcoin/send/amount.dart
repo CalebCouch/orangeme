@@ -13,7 +13,7 @@ class Amount extends GenericWidget {
 
     String amount = "";
     String amount_btc = "";
-    double raw_btc = 0.0;
+    BigInt amount_sats = BigInt.from(0);
     int needed_placeholders = 0;
     bool valid_input = true;
     String? err;
@@ -40,11 +40,10 @@ class AmountState extends GenericState<Amount> {
         setState(() {
             widget.amount = json["amount"] as String;
             widget.amount_btc = json["amount_btc"] as String;
-            widget.raw_btc = json["raw_btc"] as double;
+            widget.amount_sats = BigInt.from(json["amount_sats"]);
             widget.needed_placeholders = json["needed_placeholders"] as int;
             widget.valid_input = json["valid_input"] as bool;
             widget.err = json["err"] as String?;
-            print("input: ${widget.input}");
             widget.input = null;
 
         });
@@ -54,7 +53,7 @@ class AmountState extends GenericState<Amount> {
     }
 
     onContinue() {
-       navigateTo(context, Speed(widget.address, widget.raw_btc));
+       navigateTo(context, Speed(widget.address, widget.amount_sats));
     }
 
     vibrate() {

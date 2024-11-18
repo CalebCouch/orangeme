@@ -681,12 +681,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double dco_decode_f_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
-  }
-
-  @protected
   double dco_decode_f_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
@@ -751,9 +745,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         );
       case 5:
         return PageName_Speed(
-          dco_decode_f_32(raw[1]),
+          dco_decode_u_64(raw[1]),
         );
       case 6:
+        return PageName_Confirm(
+          dco_decode_String(raw[1]),
+          dco_decode_u_64(raw[2]),
+          dco_decode_u_64(raw[3]),
+        );
+      case 7:
         return PageName_Test(
           dco_decode_String(raw[1]),
         );
@@ -975,12 +975,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double sse_decode_f_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat32();
-  }
-
-  @protected
   double sse_decode_f_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getFloat64();
@@ -1055,9 +1049,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field1 = sse_decode_opt_box_autoadd_key_press(deserializer);
         return PageName_Amount(var_field0, var_field1);
       case 5:
-        var var_field0 = sse_decode_f_32(deserializer);
+        var var_field0 = sse_decode_u_64(deserializer);
         return PageName_Speed(var_field0);
       case 6:
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_u_64(deserializer);
+        var var_field2 = sse_decode_u_64(deserializer);
+        return PageName_Confirm(var_field0, var_field1, var_field2);
+      case 7:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
       default:
@@ -1292,12 +1291,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_f_32(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat32(self);
-  }
-
-  @protected
   void sse_encode_f_64(double self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putFloat64(self);
@@ -1370,9 +1363,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_box_autoadd_key_press(field1, serializer);
       case PageName_Speed(field0: final field0):
         sse_encode_i_32(5, serializer);
-        sse_encode_f_32(field0, serializer);
-      case PageName_Test(field0: final field0):
+        sse_encode_u_64(field0, serializer);
+      case PageName_Confirm(
+          field0: final field0,
+          field1: final field1,
+          field2: final field2
+        ):
         sse_encode_i_32(6, serializer);
+        sse_encode_String(field0, serializer);
+        sse_encode_u_64(field1, serializer);
+        sse_encode_u_64(field2, serializer);
+      case PageName_Test(field0: final field0):
+        sse_encode_i_32(7, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');

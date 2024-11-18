@@ -127,16 +127,13 @@ async fn wallet_refresh_thread(wallet: Wallet, state: State) -> Result<(), Error
 async fn wallet_thread(wallet: Wallet, mut recv: WalletReceiver) -> Result<(), Error> {
     loop {
         let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
-        log::info!("Start");
         match method {
             WalletMethod::GetNewAddress => o_tx.send(wallet.get_new_address().await?),
             WalletMethod::GetFees(amount, price) => {
                 let fees = wallet.get_fees(amount, price).await?;
-                let payload = serde_json::to_string(&fees)?;
-                o_tx.send(payload)
+                o_tx.send(serde_json::to_string(&fees)?)
             },
         }.map_err(Error::Exited)?;
-        log::info!("End");
     }
 }
 
@@ -247,7 +244,9 @@ pub async fn rustCall(thread: Thread) -> Result<String, Error> {
     match thread {
         Thread::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await?,
     }
-    Ok(o_rx.await?)
+    let res = o_rx.await;
+    //This error isn't helpful, let the error on the transmitter side propagate
+    if res.is_err() {loop{}} else {Ok(res?)}
 }
 
 pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
