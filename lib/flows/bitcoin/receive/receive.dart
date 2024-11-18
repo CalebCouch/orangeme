@@ -41,7 +41,7 @@ class ReceiveState extends GenericState<Receive> {
         super.initState();
     }
 
-    onShare() => Share.share(widget.address);
+    onShare() => Share.share("Send me Bitcoin: ${widget.address}");
 
     @override
     Widget build_with_state(BuildContext context) {
