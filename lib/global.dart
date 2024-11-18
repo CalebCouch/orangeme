@@ -69,13 +69,13 @@ Navigation navigation = Navigation.init();
 //      }
 //  }
 
-Future<String> callRust(Thread thread) async {
-    var result = await rustCall(thread: thread);
-    if (result.contains("Error")) {
-        navigation.throwError(result);
-    }
-    return result;
-}
+//  Future<String> callRust(Thread thread) async {
+//      var result = await rustCall(thread: thread);
+//      if (result.contains("Error")) {
+//          navigation.throwError(result);
+//      }
+//      return result;
+//  }
 
 Future<String?> dartCallback(DartMethod command) async {
     try {

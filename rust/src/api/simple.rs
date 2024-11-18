@@ -14,7 +14,7 @@ use super::Error;
 //      format!("{{\"count\": {}}}", count)
 //  }
 
-use super::pub_structs::{Platform, PageName, Thread, WalletMethod, DartMethod};
+use super::pub_structs::{Platform, PageName, DartMethod, Sats, Btc, Usd};
 use super::state::Field;
 
 use super::web5::MessagingAgent;
@@ -256,7 +256,7 @@ pub async fn rustStart (
     Err(Error::Exited("Main Thread".to_string()))
 }
 
-pub async fn rustCall(thread: Thread) -> Result<String, Error> {
+pub async fn rustCall(thread: Threads) -> Result<String, Error> {
     let (o_tx, o_rx) = oneshot::channel::<String>();
     let threads = THREAD_CHANNELS.lock().await;
     match thread {

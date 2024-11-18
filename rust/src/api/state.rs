@@ -1,7 +1,7 @@
 use super::Error;
 
-use super::simple::rustCall;
-use super::pub_structs::{PageName, Platform, Thread, WalletMethod, ShorthandTransaction, KeyPress};
+use super::simple::{rustCall, Threads, WalletMethod};
+use super::pub_structs::{PageName, Platform, ShorthandTransaction, KeyPress};
 use super::pub_structs::{SATS, Sats, Btc, Usd};
 use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime};
@@ -149,6 +149,7 @@ impl StateManager {
             PageName::Amount(amount, key_press) => self.amount(amount, key_press).await,
             PageName::Speed(amount) => self.speed(amount).await,
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
+            PageName::Success(tx) => self.success(tx).await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
@@ -209,7 +210,7 @@ impl StateManager {
 
     pub async fn receive(&self) -> Result<String, Error> {
         Ok(serde_json::to_string(&json!({
-            "address": rustCall(Thread::Wallet(WalletMethod::GetNewAddress)).await?,
+            "address": rustCall(Threads::Wallet(WalletMethod::GetNewAddress)).await?,
         }))?)
     }
 
@@ -303,7 +304,7 @@ impl StateManager {
 
     pub async fn speed(&self, amount: Sats) -> Result<String, Error> {
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-        let fees = serde_json::from_str::<(Sats, Sats)>(&rustCall(Thread::Wallet(WalletMethod::GetFees(amount))).await?)?;
+        let fees = serde_json::from_str::<(Sats, Sats)>(&rustCall(Threads::Wallet(WalletMethod::GetFees(amount))).await?)?;
         Ok(serde_json::to_string(&json!({
             "one_f": format_usd((fees.0 as Btc / SATS as Btc) * price),
             "one": fees.0,
@@ -315,7 +316,7 @@ impl StateManager {
     pub async fn confirm(&self, address: String, amount: Sats, fee: Sats) -> Result<String, Error> {
         log::info!("fee c: {}", fee);
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-        let (btx, tx) = serde_json::from_str::<(bdk::bitcoin::Transaction, Transaction)>(&rustCall(Thread::Wallet(WalletMethod::BuildTransaction(address, amount, fee, price))).await?)?;
+        let (btx, tx) = serde_json::from_str::<(bdk::bitcoin::Transaction, Transaction)>(&rustCall(Threads::Wallet(WalletMethod::BuildTransaction(address, amount, fee, price))).await?)?;
         log::info!("transaction: {:#?}", btx);
         log::info!("transaction: {:#?}", tx);
         Ok(serde_json::to_string(&json!({
@@ -331,8 +332,8 @@ impl StateManager {
 
     pub async fn success(&self, raw_tx: String) -> Result<String, Error> {
         let tx: bdk::bitcoin::Transaction = serde_json::from_str(&raw_tx)?;
-        rustCall(Thread::Wallet(WalletMethod::BroadcastTransaction(tx))).await?;
-        Ok(String::new())
+        rustCall(Threads::Wallet(WalletMethod::BroadcastTransaction(tx))).await?;
+        Ok("{}".to_string())
     }
 
 

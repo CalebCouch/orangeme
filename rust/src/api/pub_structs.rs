@@ -96,4 +96,4 @@ pub struct Profile {
     pub abt_me: Option<String>,
 }
 
-pub fn load_structs(_s: ShorthandTransaction, _p: Profile, _dm: DartMethod, _kp: KeyPress, _pl: Platform, _pn: PageName, _wm: WalletMethod, _t: Thread) {}
+pub fn load_structs(_s: ShorthandTransaction, _p: Profile, _dm: DartMethod, _kp: KeyPress, _pl: Platform, _pn: PageName) {}

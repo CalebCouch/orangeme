@@ -22,6 +22,7 @@ use bdk::bitcoin::{Network, Address};
 use bdk::bitcoin::hash_types::Txid;
 use bdk::database::SqliteDatabase;
 use bdk::database::MemoryDatabase;
+use bdk::blockchain::Blockchain;
 use bdk::electrum_client::Client;
 use bdk::wallet::{AddressIndex};
 use bdk::template::Bip86;
@@ -169,12 +170,12 @@ impl Wallet {
 
     pub async fn get_fees(&self, amount: Sats) -> Result<(Sats, Sats), Error> {
         let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
-        let one = client.estimate_fee(1)?;
-        let three = client.estimate_fee(3)?;
-        let kvb = self.tx_builder(DUMMY_ADDRESS, amount, (three * SATS as Btc) as Sats).await?.0.extract_tx().vsize() as f64 / 1000.0;
+        let one = client.estimate_fee(1)?.as_sat_per_vb() as Sats;
+        let three = client.estimate_fee(3)?.as_sat_per_vb() as Sats;
+        let vb = self.tx_builder(DUMMY_ADDRESS, amount, three).await?.0.extract_tx().vsize() as u64;
         Ok((
-            ((one * kvb) * SATS as Btc) as Sats,
-            ((three * kvb) * SATS as Btc) as Sats,
+            one * vb,
+            three * vb
         ))
     }
 
@@ -205,6 +206,7 @@ impl Wallet {
     pub async fn broadcast_transaction(&self, tx: &bdk::bitcoin::Transaction) -> Result<(), Error> {
         let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
         client.broadcast(tx)?;
+        Ok(())
     }
 
 //  pub async fn build_transaction(&mut self) -> Result<String, Error> {
