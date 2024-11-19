@@ -68,7 +68,7 @@ class SendState extends GenericState<Send> {
                 CustomButton(
                     txt: 'Continue',
                     onTap: onContinue,
-                    enabled: widget.addressValid
+                    enabled: widget.addressValid && controller.text.isNotEmpty,
                 ),
             ]),
         );

@@ -106,7 +106,6 @@ class MyProfileState extends GenericState<MyProfile> {
         }
 
         Widget EditPhoto() {
-            print(widget.photo);
             return CustomColumn([
                     ProfilePhoto(context, widget.photo, ProfileSize.xxl),
                     CustomButton(
@@ -130,13 +129,7 @@ class MyProfileState extends GenericState<MyProfile> {
                 didItem(context, widget.did),
                 addressItem(context, widget.address),
             ],
-            bumper: Bumper(context, content: [
-                CustomButton(
-                    txt: 'Save', 
-                    onTap: saveInfo,
-                    enabled: save
-                )
-            ]),
+            bumper: Bumper(context, content: [CustomButton(txt: 'Save', onTap: saveInfo, enabled: save)]),
         );
     }
 }

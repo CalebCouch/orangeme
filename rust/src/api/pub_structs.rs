@@ -28,7 +28,8 @@ pub enum PageName {
     Confirm(String, Sats, Sats),
     Success(String),
     MyProfile(bool),
-  //MessagesHome,
+    MessagesHome,
+    ChooseRecipient,
 //  Receive,
 //  ViewTransaction,
 //  MessagesHome,
@@ -75,6 +76,27 @@ pub struct ShorthandTransaction {
     pub txid: String,
 }
 
+pub struct ShorthandConversation {
+    pub room_name: String,
+    pub photo: Option<String>,
+    pub subtext: String,
+    pub is_group: bool,
+    pub room_id: String,
+}
+
+pub struct Conversation {
+    pub members: Vec<Profile>,
+    pub messages: Vec<Message>,
+    pub room_id: String,
+}
+
+pub struct Message {
+    pub sender: Profile,
+    pub message: String,
+    pub date: String,
+    pub time: String,
+}
+
 pub struct Profile {
     pub name: String,
     pub did: String,
@@ -82,4 +104,5 @@ pub struct Profile {
     pub abt_me: Option<String>,
 }
 
-pub fn load_structs(_s: ShorthandTransaction, _p: Profile, _dm: DartMethod, _kp: KeyPress, _pl: Platform, _pn: PageName) {}
+pub fn load_structs(_s: ShorthandTransaction, _sc: ShorthandConversation, _c: Conversation, _m: Message, _p: Profile, _dm: DartMethod, _kp: KeyPress) {}
+pub fn load_structs2(_pl: Platform, _pn: PageName) {}

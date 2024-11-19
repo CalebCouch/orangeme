@@ -10,7 +10,7 @@ Widget iconButton(onTap, String icon, String size) {
             HapticFeedback.heavyImpact();
             onTap();
         },
-        child: CustomIcon(icon: icon, size: size),
+        child: Container(padding: EdgeInsets.only(left: 16), child: CustomIcon(icon: icon, size: size)),
     );
 }
 

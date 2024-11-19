@@ -12,7 +12,7 @@ use super::pub_structs::{
 use super::threads::{call_thread, Threads, WalletMethod};
 use super::wallet::{Transactions, Transaction};
 use super::structs::DateTime;
-use super::web5::Profile;
+use super::web5::{Profile, ShorthandConversation, Conversation};
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -26,7 +26,7 @@ use serde_json::json;
 use bdk::bitcoin::{Network, Address};
 use bdk::bitcoin::hash_types::Txid;
 
-use num_format::{Locale, ToFormattedString, };
+use num_format::{Locale, ToFormattedString};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
@@ -40,11 +40,26 @@ pub enum Field {
     Balance(Option<Sats>),
 
     Profile(Option<Profile>),
+
+    Conversations(Option<Vec<Conversation>>),
+    Users(Option<Vec<Profile>>),
 }
 
 impl Field {
     pub fn into_bytes(&self) -> Vec<u8> {
         format!("{:?}", self).split("(").collect::<Vec<&str>>()[0].as_bytes().to_vec()
+    }
+}
+
+/* dummy data */
+#[derive(Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+struct RoomID {
+    id: u32,
+}
+
+impl RoomID {
+    fn new(id: u32) -> Self {
+        RoomID { id }
     }
 }
 
@@ -107,6 +122,8 @@ impl StateManager {
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
             PageName::Success(tx) => self.success(tx).await,
             PageName::MyProfile(init) => self.my_profile(init).await,
+            PageName::MessagesHome => self.messages_home().await,
+            PageName::ChooseRecipient => self.choose_recipient().await,
             PageName::Test(_) => self.test().await,
         }
     }
@@ -276,6 +293,65 @@ impl StateManager {
             "address": address,
         }))?)
     }
+
+    pub async fn messages_home(&self) -> Result<String, Error> {
+        let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
+        let conversations = self.state.get_or_default::<BTreeMap<RoomID, Conversation>>(&Field::Conversations(None)).await?;
+
+        Ok(serde_json::to_string(&json!({
+            "profile_picture": profile_pfp,
+            "conversations": conversations.values().map(|cv| {
+                let is_group = cv.members.len() > 1;
+                let photo = if is_group { None } else { cv.members[0].pfp_path.clone() };
+
+                ShorthandConversation{
+                    room_name: if is_group { "Group Message".to_string() } else { cv.members[0].name.clone() },
+                    photo,
+                    subtext: if is_group { cv.messages[0].message.to_string() } else { format_names(&cv.members) },
+                    room_id: "123".to_string(),
+                    is_group,
+                }
+            }).collect::<Vec<ShorthandConversation>>()
+        }))?)
+    }
+
+
+    //  pub async fn user_profile(&self) -> Result<String, Error> {
+    //      Ok(serde_json::to_string(&UserProfile{
+    //          profile: None,
+    //      })?)
+    //  }
+
+
+//      pub async fn exchange(&self) -> Result<String, Error> {
+//          let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;
+//          Ok(serde_json::to_string(&Exchange{
+//              conversation: conversation,
+//          })?)
+//      }
+
+    pub async fn choose_recipient(&self) -> Result<String, Error> {
+        let users = self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
+        Ok(serde_json::to_string(&json!({
+            "users": users.into_iter().map(|profile| {
+                Profile{
+                    name: profile.name,
+                    did: profile.did,
+                    abt_me: profile.abt_me,
+                    pfp_path: profile.pfp_path,
+                }
+            }).collect::<Vec<Profile>>()
+        }))?)
+    }
+
+//      pub async fn conv_info(&self) -> Result<String, Error> {
+//          let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;
+//          let contacts = conversation.members;
+//          Ok(serde_json::to_string(&ConvInfo{
+//              contacts: contacts,
+//          })?)
+//      }
+
 }
 
 pub fn format_usd(price: Usd) -> String {
@@ -309,4 +385,8 @@ pub fn format_datetime(date: Option<&DateTime>) -> String {
     } else {"Pending".to_string()}
 }
 
-
+fn format_names(cv: &[Profile]) -> String {
+    let names: String = cv.iter().map(|profile| profile.name.as_str()).collect::<Vec<_>>().join(", ");
+    if names.len() > 20 {return format!("{}...", &names[0..20]);}
+    names
+}

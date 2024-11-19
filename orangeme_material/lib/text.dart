@@ -30,7 +30,6 @@ class _CustomTextState extends State<CustomText> {
         return Text(
             widget.txt,
             textAlign: widget.alignment,
-            maxLines: 5,
             style: TextStyle(
                 fontFamily: "Outfit",
                 fontSize: size[widget.font_size],

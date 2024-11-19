@@ -12,6 +12,7 @@ use flutter_rust_bridge::DartFnFuture;
 use simple_database::SqliteStore;
 use tokio::sync::Mutex;
 
+#[allow(non_snake_case)]
 pub async fn rustStart (
     path: String,
     platform: Platform,
@@ -36,10 +37,12 @@ pub async fn rustStart (
     start_threads(state, callback, path).await
 }
 
+#[allow(non_snake_case)]
 pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
     StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(page).await
 }
 
-pub fn clearData(path: String) {
-    std::fs::remove_dir_all(PathBuf::from(path));
+#[allow(non_snake_case)]
+pub fn clearData(path: String) -> Result<(), Error> {
+    Ok(std::fs::remove_dir_all(PathBuf::from(path))?)
 }

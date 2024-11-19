@@ -4,7 +4,7 @@ use super::price::PriceGetter;
 use super::state::{State};
 use super::structs::{Callback, DateTime};
 use super::state::Field;
-use super::pub_structs::{SATS, Btc, Sats, Usd};
+use super::pub_structs::{Sats, Usd};
 
 use std::collections::BTreeMap;
 use std::convert::TryInto;
@@ -17,7 +17,6 @@ use bdk::bitcoin::psbt::PartiallySignedTransaction as PSBT;
 use bdk::blockchain::electrum::ElectrumBlockchain;
 use bdk::bitcoin::blockdata::script::Script;
 use bdk::bitcoin::bip32::ExtendedPrivKey;
-use bdk::{Wallet as BDKWallet, FeeRate};
 use bdk::template::DescriptorTemplate;
 use bdk::bitcoin::{Network, Address};
 use bdk::bitcoin::hash_types::Txid;
@@ -25,6 +24,7 @@ use bdk::database::SqliteDatabase;
 use bdk::electrum_client::Client;
 use bdk::blockchain::Blockchain;
 use bdk::wallet::AddressIndex;
+use bdk::Wallet as BDKWallet;
 use bdk::template::Bip86;
 
 use serde::{Serialize, Deserialize};
@@ -234,7 +234,7 @@ impl Wallet {
             };
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }
-        let balance = txs.iter().map(|(_, tx)| if tx.is_withdraw {-(tx.sats as i64)} else {tx.sats as i64}).sum::<i64>() as u64;
+        let balance = txs.values().map(|tx| if tx.is_withdraw {-(tx.sats as i64)} else {tx.sats as i64}).sum::<i64>() as u64;
         state.set(Field::Transactions(Some(txs))).await?;
 
         //Balance

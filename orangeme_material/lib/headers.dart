@@ -23,7 +23,6 @@ class Header extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 children: [
                     Container(
-                        padding: const EdgeInsets.only(left: 16),
                         alignment: Alignment.centerLeft,
                         child: left,
                     ),
@@ -32,7 +31,6 @@ class Header extends StatelessWidget {
                         child: center,
                     ),
                     Container(
-                        padding: const EdgeInsets.only(right: 16),
                         alignment: Alignment.centerRight,
                         child: right,
                     ),
@@ -44,7 +42,10 @@ class Header extends StatelessWidget {
 
 Widget Header_Home(BuildContext context, String title, String? profile_picture, onTap, [Widget? right]) {
     return Header(
-        InkWell(onTap: onTap, child: ProfilePhoto(context, profile_picture)),
+        InkWell( onTap: onTap, child: Container( 
+            padding: EdgeInsets.symmetric(horizontal: 16), 
+            child: ProfilePhoto(context, profile_picture),
+        )),
         CustomText(variant: 'heading', font_size: 'h3', txt: title), 
         right ?? Container()
     );
@@ -70,6 +71,6 @@ Widget Header_Button(BuildContext context, String title, CustomButton button) {
     return Header(
         backButton(context),
         CustomText(variant: 'heading', font_size:'h4', txt: title),
-        button,
+        Container(padding: EdgeInsets.symmetric(horizontal: 16), child: button),
     );
 }
