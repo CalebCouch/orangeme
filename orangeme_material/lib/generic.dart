@@ -11,6 +11,7 @@ import 'package:orange/global.dart' as global;
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/error.dart';
+import 'package:orange/loading.dart';
 
 
 abstract class GenericWidget extends StatefulWidget {
@@ -46,7 +47,7 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
                 if (snapshot.hasData) {
                     return build_with_state(context);
                 } else {
-                    return Container();
+                    return Loading();
                 }
             }
         );
