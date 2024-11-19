@@ -11,11 +11,11 @@ import 'package:orange/test.dart';
 import 'dart:ui';
 
 Future<void> startRust(String path) async {
-  global.navigation.throwError(await rustStart(
+  await rustStart(
     path: path,
     platform: global.platform,
     callback: global.dartCallback,
-  ));
+  );
 }
 
 Future<void> main() async {

@@ -19,6 +19,8 @@ class MyProfile extends GenericWidget {
   String? new_abtme;
   String? new_pfp;
 
+    bool init = true;
+
   @override
   MyProfileState createState() => MyProfileState();
 }
@@ -27,12 +29,14 @@ class MyProfileState extends GenericState<MyProfile> {
     
   @override
   PageName getPageName() {
-    return PageName.myProfile(widget.new_name, widget.new_abtme, widget.new_pfp);
+    return PageName.myProfile(widget.init);
   }
 
   @override
   void unpack_state(Map<String, dynamic> json) {
     setState(() {
+        widget.init = false;
+
         widget.address = json['address'] as String;
         widget.name = json['name'] as String;
         widget.did = json['did'] as String;

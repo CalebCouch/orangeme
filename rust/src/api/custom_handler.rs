@@ -1,4 +1,3 @@
-
 use flutter_rust_bridge::handler::{SimpleHandler, SimpleExecutor, NoOpErrorListener};
 use flutter_rust_bridge::{BaseAsyncRuntime, SimpleThreadPool, JoinHandle};
 use std::future::Future;

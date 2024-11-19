@@ -2,47 +2,35 @@ use super::Error;
 
 use super::price::PriceGetter;
 use super::state::{State};
-use super::structs::DateTime;
+use super::structs::{Callback, DateTime};
 use super::state::Field;
 use super::pub_structs::{SATS, Btc, Sats, Usd};
 
-use simple_database::SqliteStore;
+use std::collections::BTreeMap;
+use std::convert::TryInto;
+use std::path::PathBuf;
+use std::str::FromStr;
+use std::sync::Arc;
 
 use bdk::{TransactionDetails, KeychainKind, SyncOptions, SignOptions};
-use bdk::bitcoin::consensus::{Encodable, Decodable};
+use bdk::bitcoin::psbt::PartiallySignedTransaction as PSBT;
 use bdk::blockchain::electrum::ElectrumBlockchain;
-use bdk::blockchain::esplora::EsploraBlockchain;
-use bdk::esplora_client::{Builder, blocking::BlockingClient};
 use bdk::bitcoin::blockdata::script::Script;
 use bdk::bitcoin::bip32::ExtendedPrivKey;
-use bdk::bitcoin::TxOut;
-use bdk::electrum_client::ElectrumApi;
+use bdk::{Wallet as BDKWallet, FeeRate};
 use bdk::template::DescriptorTemplate;
 use bdk::bitcoin::{Network, Address};
 use bdk::bitcoin::hash_types::Txid;
 use bdk::database::SqliteDatabase;
-use bdk::database::MemoryDatabase;
-use bdk::blockchain::Blockchain;
 use bdk::electrum_client::Client;
-use bdk::wallet::{AddressIndex};
+use bdk::blockchain::Blockchain;
+use bdk::wallet::AddressIndex;
 use bdk::template::Bip86;
-use bdk::sled::Tree;
-use bdk::{BlockTime, FeeRate};
-use bdk::bitcoin::psbt::PartiallySignedTransaction as PSBT;
-use bdk::Wallet as BDKWallet;
-use bdk::blockchain::GetTx;
-
-use tokio::sync::Mutex;
-use std::sync::Arc;
 
 use serde::{Serialize, Deserialize};
 use secp256k1::rand::RngCore;
 use secp256k1::rand;
-
-use std::path::PathBuf;
-use std::convert::TryInto;
-use std::collections::BTreeMap;
-use std::str::FromStr;
+use tokio::sync::Mutex;
 
 const NO_INTERNET: &str = "failed to lookup address information: No address associated with hostname";
 const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
@@ -92,27 +80,26 @@ impl DescriptorSet {
 //TODO: No Usd Values only Sats
 #[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct Transaction {
-    pub btc: Btc,
-    pub usd: Usd,
+    pub sats: Sats,
+    pub fee: Sats,
     pub price: Usd,
     pub address: String,
     pub is_withdraw: bool,
     pub confirmation_time: Option<DateTime>,
-    pub fee: Sats,
-    pub fee_usd: Usd,
+    pub time_created: DateTime,
 }
 
 impl Transaction {
     pub fn from_details(details: TransactionDetails, price: Usd, is_mine: impl Fn(&Script) -> bool) -> Result<Self, Error> {
         let ec = "Transaction::from_details";
         let fee = details.fee.ok_or(Error::bad_request(ec, "Missing Fee"))?;
+        let is_withdraw = details.sent > 0;
         let sats = if details.sent >= details.received {
             details.sent - details.received
         } else {
             details.received - details.sent
-        } - fee;
-        let btc = sats as Btc / SATS as Btc;
-        let is_withdraw = details.sent > 0;
+        };
+        let sats = if is_withdraw {sats-fee} else {sats};
         let details_tx = details.transaction.ok_or(Error::bad_request(ec, "Missing Transaction"))?;
         let address = if is_withdraw {
             details_tx.output.clone().into_iter().find_map(|txout| {
@@ -127,9 +114,7 @@ impl Transaction {
         let confirmation_time = details.confirmation_time.map(|ct|
             DateTime::from_timestamp(ct.timestamp)
         ).transpose()?;
-        let usd = btc * price;
-        let fee_usd = (fee as Btc / SATS as Btc) * price;
-        Ok(Transaction{btc, usd, price, address, is_withdraw, confirmation_time, fee, fee_usd})
+        Ok(Transaction{sats, fee, price, address, is_withdraw, confirmation_time, time_created: DateTime::now()})
     }
 }
 
@@ -140,10 +125,21 @@ pub struct Wallet{
 }
 
 impl Wallet {
-    pub fn new(
-        descriptors: DescriptorSet,
+    pub async fn new(
+        _callback: Callback,
         path: PathBuf,
     ) -> Result<Self, Error> {
+        //let seed: Seed = if let Some(seed) = storage.get("legacy_seed").await? {
+        //    serde_json::from_str(&seed)?
+        //} else {
+        //    let seed = Seed::new();
+        //    storage.set("legacy_seed", &serde_json::to_string(&seed)?).await?;
+        //    seed
+        //};
+        //Hard coded for testing
+        let seed: Seed = Seed{inner: vec![175, 178, 194, 229, 165, 10, 1, 80, 224, 239, 231, 107, 145, 96, 212, 195, 10, 78, 64, 17, 241, 77, 229, 246, 109, 226, 14, 83, 139, 28, 232, 220, 5, 150, 79, 185, 67, 31, 247, 41, 150, 36, 77, 199, 67, 47, 157, 15, 61, 142, 5, 244, 245, 137, 198, 34, 174, 221, 63, 134, 129, 165, 25, 7]};
+        let descriptors = DescriptorSet::from_seed(&seed)?;
+
         Ok(Wallet{
             inner: Self::inner_wallet(&descriptors, path.clone())?,
             descriptors,
@@ -169,15 +165,12 @@ impl Wallet {
     }
 
     pub async fn get_fees(&self, amount: Sats) -> Result<(Sats, Sats), Error> {
-        let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
+        let client = Self::get_blockchain()?;
         let one = client.estimate_fee(1)?.as_sat_per_vb() as Sats;
-        let three = client.estimate_fee(3)?.as_sat_per_vb() as Sats;
-        log::info!("one and three; {} {}", one.clone(), three.clone());
-        let vb = self.tx_builder(DUMMY_ADDRESS, amount, three).await?.0.extract_tx().vsize() as u64;
-        log::info!("vb {}", vb);
+        let vb = self.tx_builder(DUMMY_ADDRESS, amount, one * 200).await?.0.extract_tx().vsize() as u64;
         Ok((
-            one * vb,
-            three * vb
+            (one * 2) * vb,
+            one * vb
         ))
     }
 
@@ -186,7 +179,7 @@ impl Wallet {
         let mut builder = inner.build_tx();
         let address = Address::from_str(address)?.require_network(Network::Bitcoin)?;
         builder.add_recipient(address.script_pubkey(), amount);
-        builder.fee_rate(FeeRate::from_sat_per_kvb(fee as f32));
+        builder.fee_absolute(fee);
         Ok(builder.finish()?)
     }
 
@@ -206,56 +199,12 @@ impl Wallet {
 
 
     pub async fn broadcast_transaction(&self, tx: &bdk::bitcoin::Transaction) -> Result<(), Error> {
-        let client = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
-        client.broadcast(tx)?;
+        Self::get_blockchain()?.broadcast(tx)?;
         Ok(())
     }
 
-//  pub async fn build_transaction(&mut self) -> Result<String, Error> {
-//      let ec = "Main.create_transaction";
-//      let error = || Error::bad_request(ec, "Invalid parameters");
-//      let blockchain = ElectrumBlockchain::from(Client::new(CLIENT_URI)?);
-
-//      let address_str = self.state.get::<String>(Field::Address).await?;
-//      let address = Address::from_str(&address_str)?.require_network(Network::Bitcoin);
-
-//      let amount_btc = self.state.get::<f64>(Field::AmountBTC).await?;
-//      let priority = self.state.get::<u8>(Field::Priority).await?;
-
-//      let price = self.state.get::<f64>(Field::Price).await?;
-
-//      let is_mine = |s: &Script| self.inner.is_mine(s).unwrap_or(false);
-//      let amount = (amount_btc * SATS) as u64;
-
-//      let selected_fee = if priority == 0 {
-//          blockchain.estimate_fee(3)? as f64 / 1000.0
-//      } else {
-//          blockchain.estimate_fee(1)? as f64 / 1000.0
-//      };
-
-//      let (mut psbt, mut tx_details) = {
-//          let mut builder = self.inner.build_tx();
-//          builder.add_recipient(address?.script_pubkey(), amount);
-//          builder.fee_rate(FeeRate::from_sat_per_vb(selected_fee as f32));
-//          builder.finish()?
-//      };
-
-//      let finalized = self.inner.sign(&mut psbt, SignOptions::default())?;
-//      if !finalized { return Err(Error::err(ec, "Could not sign std tx"));}
-
-//      let tx = psbt.clone().extract_tx();
-//      self.state.set(Field::CurrentRawTx, &tx).await?;
-
-//      tx_details.transaction = Some(tx);
-
-//      let tx = Transaction::from_details(tx_details.clone(), price, |s: &Script| {self.inner.is_mine(s).unwrap_or(false)})?;
-//      self.state.set(Field::CurrentTx, &tx).await?;
-//      Ok(serde_json::to_string(&tx)?)
-//  }
-
     fn get_blockchain() -> Result<ElectrumBlockchain, Error> {
-        let client = bdk::electrum_client::Client::new(CLIENT_URI)?;
-        Ok(ElectrumBlockchain::from(client))
+        Ok(ElectrumBlockchain::from(Client::new(CLIENT_URI)?))
     }
 
     pub async fn sync(&self) -> Result<(), Error> {
@@ -285,10 +234,11 @@ impl Wallet {
             };
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }
+        let balance = txs.iter().map(|(_, tx)| if tx.is_withdraw {-(tx.sats as i64)} else {tx.sats as i64}).sum::<i64>() as u64;
         state.set(Field::Transactions(Some(txs))).await?;
 
         //Balance
-        state.set(Field::Balance(Some(inner.get_balance()?.get_total() as Btc / SATS as Btc))).await?;
+        state.set(Field::Balance(Some(balance))).await?;
         Ok(())
     }
 }

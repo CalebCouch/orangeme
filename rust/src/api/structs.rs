@@ -1,23 +1,17 @@
 use super::Error;
 
-use web5_rust::dids::Did;
+use super::pub_structs::DartMethod;
 
-use serde::{Serialize, Deserialize};
-
-use reqwest::Response;
-
-use flutter_rust_bridge::DartFnFuture;
-
-use chrono::{Utc, DateTime as ChronoDateTime};
-use chrono::format::SecondsFormat;
-
-use schemars::JsonSchema;
-
-use tokio::sync::Mutex;
 use std::sync::Arc;
 
-const STORAGE_SPLIT: &str = "\u{0000}";
+use chrono::{Utc, DateTime as ChronoDateTime};
+use flutter_rust_bridge::DartFnFuture;
+use serde::{Serialize, Deserialize};
+use tokio::sync::Mutex;
+use reqwest::Response;
 
+
+pub type Callback = Arc<Mutex<dyn Fn(DartMethod) -> DartFnFuture<Option<String>> + 'static + Sync + Send>>;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
 pub struct DateTime {

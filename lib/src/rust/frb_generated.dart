@@ -7,6 +7,7 @@ import 'api/custom_handler.dart';
 import 'api/error.dart';
 import 'api/pub_structs.dart';
 import 'api/simple.dart';
+import 'api/utils.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -69,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.6.0';
 
   @override
-  int get rustContentHash => -60639323;
+  int get rustContentHash => -845483616;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -116,12 +117,13 @@ abstract class RustLibApi extends BaseApi {
 
   bool crateApiPubStructsPlatformIsDesktop({required Platform that});
 
-  Future<String> crateApiSimpleRustCall({required Threads thread});
-
-  Future<String> crateApiSimpleRustStart(
+  Future<void> crateApiSimpleRustStart(
       {required String path,
       required Platform platform,
       required FutureOr<String?> Function(DartMethod) callback});
+
+  Future<(String, bool, int)> crateApiUtilsUpdateAmount(
+      {required String amount, required KeyPress key});
 
   RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error;
 
@@ -137,12 +139,6 @@ abstract class RustLibApi extends BaseApi {
 
   CrossPlatformFinalizerArg
       get rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr;
-
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Threads;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Threads;
-
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ThreadsPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -455,32 +451,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<String> crateApiSimpleRustCall({required Threads thread}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-            thread, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 12, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: sse_decode_AnyhowException,
-      ),
-      constMeta: kCrateApiSimpleRustCallConstMeta,
-      argValues: [thread],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleRustCallConstMeta => const TaskConstMeta(
-        debugName: "rustCall",
-        argNames: ["thread"],
-      );
-
-  @override
-  Future<String> crateApiSimpleRustStart(
+  Future<void> crateApiSimpleRustStart(
       {required String path,
       required Platform platform,
       required FutureOr<String?> Function(DartMethod) callback}) {
@@ -492,10 +463,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
             callback, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 13, port: port_);
+            funcId: 12, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
+        decodeSuccessData: sse_decode_unit,
         decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiSimpleRustStartConstMeta,
@@ -507,6 +478,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiSimpleRustStartConstMeta => const TaskConstMeta(
         debugName: "rustStart",
         argNames: ["path", "platform", "callback"],
+      );
+
+  @override
+  Future<(String, bool, int)> crateApiUtilsUpdateAmount(
+      {required String amount, required KeyPress key}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(amount, serializer);
+        sse_encode_key_press(key, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 13, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_record_string_bool_u_8,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateApiUtilsUpdateAmountConstMeta,
+      argValues: [amount, key],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiUtilsUpdateAmountConstMeta => const TaskConstMeta(
+        debugName: "update_amount",
+        argNames: ["amount", "key"],
       );
 
   Future<void> Function(int, dynamic)
@@ -556,14 +553,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       get rust_arc_decrement_strong_count_MyCustomAsyncRuntime => wire
           .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
 
-  RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_Threads => wire
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads;
-
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_Threads => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads;
-
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -584,14 +573,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return MyCustomAsyncRuntimeImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  Threads
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ThreadsImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -625,14 +606,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Threads
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ThreadsImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
   String dco_decode_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as String;
@@ -648,12 +621,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DartMethod dco_decode_box_autoadd_dart_method(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_dart_method(raw);
-  }
-
-  @protected
-  KeyPress dco_decode_box_autoadd_key_press(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_key_press(raw);
   }
 
   @protected
@@ -724,12 +691,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  KeyPress? dco_decode_opt_box_autoadd_key_press(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_key_press(raw);
-  }
-
-  @protected
   PageName dco_decode_page_name(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
@@ -748,7 +709,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 4:
         return PageName_Amount(
           dco_decode_String(raw[1]),
-          dco_decode_opt_box_autoadd_key_press(raw[2]),
         );
       case 5:
         return PageName_Speed(
@@ -766,9 +726,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         );
       case 8:
         return PageName_MyProfile(
-          dco_decode_opt_String(raw[1]),
-          dco_decode_opt_String(raw[2]),
-          dco_decode_opt_String(raw[3]),
+          dco_decode_bool(raw[1]),
         );
       case 9:
         return PageName_Test(
@@ -796,6 +754,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       did: dco_decode_String(arr[1]),
       pfpPath: dco_decode_opt_String(arr[2]),
       abtMe: dco_decode_opt_String(arr[3]),
+    );
+  }
+
+  @protected
+  (String, bool, int) dco_decode_record_string_bool_u_8(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3) {
+      throw Exception('Expected 3 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_bool(arr[1]),
+      dco_decode_u_8(arr[2]),
     );
   }
 
@@ -863,15 +835,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Threads
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return ThreadsImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
   Object sse_decode_DartOpaque(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_isize(deserializer);
@@ -897,15 +860,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Threads
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return ThreadsImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
   String sse_decode_String(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_prim_u_8_strict(deserializer);
@@ -922,12 +876,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_dart_method(deserializer));
-  }
-
-  @protected
-  KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_key_press(deserializer));
   }
 
   @protected
@@ -1005,17 +953,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  KeyPress? sse_decode_opt_box_autoadd_key_press(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_key_press(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
   PageName sse_decode_page_name(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1033,8 +970,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return PageName_Send(var_field0);
       case 4:
         var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_opt_box_autoadd_key_press(deserializer);
-        return PageName_Amount(var_field0, var_field1);
+        return PageName_Amount(var_field0);
       case 5:
         var var_field0 = sse_decode_u_64(deserializer);
         return PageName_Speed(var_field0);
@@ -1047,10 +983,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Success(var_field0);
       case 8:
-        var var_field0 = sse_decode_opt_String(deserializer);
-        var var_field1 = sse_decode_opt_String(deserializer);
-        var var_field2 = sse_decode_opt_String(deserializer);
-        return PageName_MyProfile(var_field0, var_field1, var_field2);
+        var var_field0 = sse_decode_bool(deserializer);
+        return PageName_MyProfile(var_field0);
       case 9:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
@@ -1075,6 +1009,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_abtMe = sse_decode_opt_String(deserializer);
     return Profile(
         name: var_name, did: var_did, pfpPath: var_pfpPath, abtMe: var_abtMe);
+  }
+
+  @protected
+  (String, bool, int) sse_decode_record_string_bool_u_8(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_String(deserializer);
+    var var_field1 = sse_decode_bool(deserializer);
+    var var_field2 = sse_decode_u_8(deserializer);
+    return (var_field0, var_field1, var_field2);
   }
 
   @protected
@@ -1142,15 +1086,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          Threads self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as ThreadsImpl).frbInternalSseEncode(move: true), serializer);
-  }
-
-  @protected
   void sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
       FutureOr<String?> Function(DartMethod) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1189,15 +1124,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          Threads self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as ThreadsImpl).frbInternalSseEncode(move: null), serializer);
-  }
-
-  @protected
   void sse_encode_String(String self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
@@ -1214,13 +1140,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       DartMethod self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_dart_method(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_key_press(
-      KeyPress self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_key_press(self, serializer);
   }
 
   @protected
@@ -1296,17 +1215,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_box_autoadd_key_press(
-      KeyPress? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_key_press(self, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_page_name(PageName self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -1320,10 +1228,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_Send(field0: final field0):
         sse_encode_i_32(3, serializer);
         sse_encode_String(field0, serializer);
-      case PageName_Amount(field0: final field0, field1: final field1):
+      case PageName_Amount(field0: final field0):
         sse_encode_i_32(4, serializer);
         sse_encode_String(field0, serializer);
-        sse_encode_opt_box_autoadd_key_press(field1, serializer);
       case PageName_Speed(field0: final field0):
         sse_encode_i_32(5, serializer);
         sse_encode_u_64(field0, serializer);
@@ -1339,15 +1246,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_Success(field0: final field0):
         sse_encode_i_32(7, serializer);
         sse_encode_String(field0, serializer);
-      case PageName_MyProfile(
-          field0: final field0,
-          field1: final field1,
-          field2: final field2
-        ):
+      case PageName_MyProfile(field0: final field0):
         sse_encode_i_32(8, serializer);
-        sse_encode_opt_String(field0, serializer);
-        sse_encode_opt_String(field1, serializer);
-        sse_encode_opt_String(field2, serializer);
+        sse_encode_bool(field0, serializer);
       case PageName_Test(field0: final field0):
         sse_encode_i_32(9, serializer);
         sse_encode_String(field0, serializer);
@@ -1369,6 +1270,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.did, serializer);
     sse_encode_opt_String(self.pfpPath, serializer);
     sse_encode_opt_String(self.abtMe, serializer);
+  }
+
+  @protected
+  void sse_encode_record_string_bool_u_8(
+      (String, bool, int) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.$1, serializer);
+    sse_encode_bool(self.$2, serializer);
+    sse_encode_u_8(self.$3, serializer);
   }
 
   @protected
@@ -1444,25 +1354,5 @@ class MyCustomAsyncRuntimeImpl extends RustOpaque
         .instance.api.rust_arc_decrement_strong_count_MyCustomAsyncRuntime,
     rustArcDecrementStrongCountPtr: RustLib
         .instance.api.rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr,
-  );
-}
-
-@sealed
-class ThreadsImpl extends RustOpaque implements Threads {
-  // Not to be used by end users
-  ThreadsImpl.frbInternalDcoDecode(List<dynamic> wire)
-      : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  ThreadsImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_Threads,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_Threads,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_ThreadsPtr,
   );
 }

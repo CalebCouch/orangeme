@@ -6,6 +6,7 @@ import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:vibration/vibration.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orange/src/rust/api/utils.dart';
 
 class Amount extends GenericWidget {
     String address;
@@ -17,7 +18,6 @@ class Amount extends GenericWidget {
     int needed_placeholders = 0;
     bool valid_input = true;
     String? err;
-    KeyPress? input;
 
     AmountState createState() => AmountState();
 }
@@ -27,29 +27,16 @@ class AmountState extends GenericState<Amount> {
     @override
 
     PageName getPageName() {
-        return PageName.amount(widget.amount, widget.input);
-    }
-
-    @override
-    int refreshInterval() {
-        return 0;
+        return PageName.amount(widget.amount);
     }
 
     @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
-            widget.amount = json["amount"] as String;
             widget.amount_btc = json["amount_btc"] as String;
             widget.amount_sats = BigInt.from(json["amount_sats"]);
-            widget.needed_placeholders = json["needed_placeholders"] as int;
-            widget.valid_input = json["valid_input"] as bool;
             widget.err = json["err"] as String?;
-            widget.input = null;
-
         });
-        if (!widget.valid_input) {
-            vibrate();
-        }
     }
 
     onContinue() {
@@ -61,12 +48,15 @@ class AmountState extends GenericState<Amount> {
         Vibration.vibrate(pattern: [0, 200, 100], intensities: [0, 100, 50]);
     }
 
-    update(KeyPress input) {
+    update(KeyPress input) async {
         HapticFeedback.heavyImpact();
+        var (amount, valid_input, np) = await updateAmount(amount: widget.amount, key: input);
         setState(() {
-            widget.input = input;
+            widget.valid_input = valid_input;
+            widget.needed_placeholders = np;
+            widget.amount = amount;
         });
-        super.getState();
+        if (!widget.valid_input) {vibrate();}
     }
 
     @override

@@ -17,21 +17,17 @@ impl Platform {
     }
 }
 
-
-
-
-
 #[derive(Debug)]
 pub enum PageName {
     BitcoinHome,
     ViewTransaction(String),
     Receive,
     Send(String),
-    Amount(String, Option<KeyPress>),
+    Amount(String),
     Speed(Sats),
     Confirm(String, Sats, Sats),
     Success(String),
-    MyProfile(Option<String>, Option<String>, Option<String>),
+    MyProfile(bool),
   //MessagesHome,
 //  Receive,
 //  ViewTransaction,
@@ -71,18 +67,7 @@ pub enum DartMethod {
     StorageGet(String),
 }
 
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
-//  #[flutter_rust_bridge::frb(dart_code = "
-//      ShorthandTransaction fromJson(Map<String, dynamic> json) => ShorthandTransaction(
-//          isWithdraw: json['is_withdraw'] as bool,
-//          datetime: json['datetime'] as String,
-//          amount: json['amount'] as String,
-//          txid: json['txid'] as String,
-//      );
-//  "
-//  )]
-
 pub struct ShorthandTransaction {
     pub is_withdraw: bool,
     pub datetime: String,

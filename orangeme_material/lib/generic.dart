@@ -22,10 +22,12 @@ abstract class GenericWidget extends StatefulWidget {
 
 abstract class GenericState<T extends GenericWidget> extends State<T> {
     PageName getPageName();
-    int refreshInterval() {return 80;}
+
     Widget build_with_state(BuildContext context);
 
     void unpack_state(Map<String, dynamic> json);
+
+    int refreshInterval() {return 80;}
 
     void getState() async {
         int time = DateTime.now().millisecondsSinceEpoch;

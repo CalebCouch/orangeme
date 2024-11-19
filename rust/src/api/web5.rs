@@ -1,6 +1,8 @@
 use super::Error;
 
+use super::pub_structs::DartMethod;
 use super::state::{State, Field};
+use super::structs::Callback;
 
 use simple_database::SqliteStore;
 use simple_database::database::{FiltersBuilder, IndexBuilder, Filter};
@@ -127,7 +129,17 @@ pub struct MessagingAgent {
 }
 
 impl MessagingAgent {
-    pub async fn new(id: Identity, path: PathBuf) -> Result<Self, Error> {
+    pub async fn new(callback: Callback, path: PathBuf) -> Result<Self, Error> {
+        let callback = callback.lock().await;
+        let (doc, id) = if let Some(i) = callback(DartMethod::StorageGet("identity".to_string())).await {
+            serde_json::from_str::<(DhtDocument, Identity)>(&i)?
+        } else {
+            let tup = DhtDocument::default(vec!["did:dht:fxaigdryri3os713aaepighxf6sm9h5xouwqfpinh9izwro3mbky".to_string()])?;
+            callback(DartMethod::StorageSet("identity".to_string(), serde_json::to_string(&tup)?)).await;
+            tup
+        };
+        doc.publish(&id.did_key).await?;
+
         let did_resolver = Box::new(DefaultDidResolver::new::<SqliteStore>(Some(path.join("DefaultDidResolver"))).await?);
         Ok(MessagingAgent{
             agent: Agent::new::<SqliteStore>(

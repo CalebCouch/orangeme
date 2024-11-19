@@ -19,7 +19,10 @@ pub mod wallet;
 pub mod web5;
 /// flutter_rust_bridge:ignore
 pub mod state;
+/// flutter_rust_bridge:ignore
+pub mod threads;
 //  /// flutter_rust_bridge:ignore
 //  pub mod usb;
 
 pub mod simple;
+pub mod utils;

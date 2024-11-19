@@ -411,13 +411,12 @@ mixin _$PageName {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) =>
       throw _privateConstructorUsedError;
@@ -427,12 +426,11 @@ mixin _$PageName {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) =>
       throw _privateConstructorUsedError;
@@ -442,11 +440,11 @@ mixin _$PageName {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) =>
@@ -562,13 +560,12 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return bitcoinHome();
@@ -581,12 +578,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return bitcoinHome?.call();
@@ -599,11 +595,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -749,13 +745,12 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return viewTransaction(field0);
@@ -768,12 +763,11 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return viewTransaction?.call(field0);
@@ -786,11 +780,11 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -915,13 +909,12 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return receive();
@@ -934,12 +927,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return receive?.call();
@@ -952,11 +944,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -1099,13 +1091,12 @@ class _$PageName_SendImpl extends PageName_Send {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return send(field0);
@@ -1118,12 +1109,11 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return send?.call(field0);
@@ -1136,11 +1126,11 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -1225,7 +1215,7 @@ abstract class _$$PageName_AmountImplCopyWith<$Res> {
           $Res Function(_$PageName_AmountImpl) then) =
       __$$PageName_AmountImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String field0, KeyPress? field1});
+  $Res call({String field0});
 }
 
 /// @nodoc
@@ -1242,17 +1232,12 @@ class __$$PageName_AmountImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? field0 = null,
-    Object? field1 = freezed,
   }) {
     return _then(_$PageName_AmountImpl(
       null == field0
           ? _value.field0
           : field0 // ignore: cast_nullable_to_non_nullable
               as String,
-      freezed == field1
-          ? _value.field1
-          : field1 // ignore: cast_nullable_to_non_nullable
-              as KeyPress?,
     ));
   }
 }
@@ -1260,16 +1245,14 @@ class __$$PageName_AmountImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$PageName_AmountImpl extends PageName_Amount {
-  const _$PageName_AmountImpl(this.field0, [this.field1]) : super._();
+  const _$PageName_AmountImpl(this.field0) : super._();
 
   @override
   final String field0;
-  @override
-  final KeyPress? field1;
 
   @override
   String toString() {
-    return 'PageName.amount(field0: $field0, field1: $field1)';
+    return 'PageName.amount(field0: $field0)';
   }
 
   @override
@@ -1277,12 +1260,11 @@ class _$PageName_AmountImpl extends PageName_Amount {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PageName_AmountImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
+            (identical(other.field0, field0) || other.field0 == field0));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
+  int get hashCode => Object.hash(runtimeType, field0);
 
   /// Create a copy of PageName
   /// with the given fields replaced by the non-null parameter values.
@@ -1300,16 +1282,15 @@ class _$PageName_AmountImpl extends PageName_Amount {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
-    return amount(field0, field1);
+    return amount(field0);
   }
 
   @override
@@ -1319,15 +1300,14 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
-    return amount?.call(field0, field1);
+    return amount?.call(field0);
   }
 
   @override
@@ -1337,16 +1317,16 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
     if (amount != null) {
-      return amount(field0, field1);
+      return amount(field0);
     }
     return orElse();
   }
@@ -1408,12 +1388,10 @@ class _$PageName_AmountImpl extends PageName_Amount {
 }
 
 abstract class PageName_Amount extends PageName {
-  const factory PageName_Amount(final String field0, [final KeyPress? field1]) =
-      _$PageName_AmountImpl;
+  const factory PageName_Amount(final String field0) = _$PageName_AmountImpl;
   const PageName_Amount._() : super._();
 
   String get field0;
-  KeyPress? get field1;
 
   /// Create a copy of PageName
   /// with the given fields replaced by the non-null parameter values.
@@ -1495,13 +1473,12 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return speed(field0);
@@ -1514,12 +1491,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return speed?.call(field0);
@@ -1532,11 +1508,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -1705,13 +1681,12 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return confirm(field0, field1, field2);
@@ -1724,12 +1699,11 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return confirm?.call(field0, field1, field2);
@@ -1742,11 +1716,11 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -1902,13 +1876,12 @@ class _$PageName_SuccessImpl extends PageName_Success {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return success(field0);
@@ -1921,12 +1894,11 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return success?.call(field0);
@@ -1939,11 +1911,11 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
@@ -2028,7 +2000,7 @@ abstract class _$$PageName_MyProfileImplCopyWith<$Res> {
           $Res Function(_$PageName_MyProfileImpl) then) =
       __$$PageName_MyProfileImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? field0, String? field1, String? field2});
+  $Res call({bool field0});
 }
 
 /// @nodoc
@@ -2044,23 +2016,13 @@ class __$$PageName_MyProfileImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? field0 = freezed,
-    Object? field1 = freezed,
-    Object? field2 = freezed,
+    Object? field0 = null,
   }) {
     return _then(_$PageName_MyProfileImpl(
-      freezed == field0
+      null == field0
           ? _value.field0
           : field0 // ignore: cast_nullable_to_non_nullable
-              as String?,
-      freezed == field1
-          ? _value.field1
-          : field1 // ignore: cast_nullable_to_non_nullable
-              as String?,
-      freezed == field2
-          ? _value.field2
-          : field2 // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as bool,
     ));
   }
 }
@@ -2068,19 +2030,14 @@ class __$$PageName_MyProfileImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$PageName_MyProfileImpl extends PageName_MyProfile {
-  const _$PageName_MyProfileImpl([this.field0, this.field1, this.field2])
-      : super._();
+  const _$PageName_MyProfileImpl(this.field0) : super._();
 
   @override
-  final String? field0;
-  @override
-  final String? field1;
-  @override
-  final String? field2;
+  final bool field0;
 
   @override
   String toString() {
-    return 'PageName.myProfile(field0: $field0, field1: $field1, field2: $field2)';
+    return 'PageName.myProfile(field0: $field0)';
   }
 
   @override
@@ -2088,13 +2045,11 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PageName_MyProfileImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1) &&
-            (identical(other.field2, field2) || other.field2 == field2));
+            (identical(other.field0, field0) || other.field0 == field0));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, field0, field1, field2);
+  int get hashCode => Object.hash(runtimeType, field0);
 
   /// Create a copy of PageName
   /// with the given fields replaced by the non-null parameter values.
@@ -2112,16 +2067,15 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
-    return myProfile(field0, field1, field2);
+    return myProfile(field0);
   }
 
   @override
@@ -2131,15 +2085,14 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
-    return myProfile?.call(field0, field1, field2);
+    return myProfile?.call(field0);
   }
 
   @override
@@ -2149,16 +2102,16 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {
     if (myProfile != null) {
-      return myProfile(field0, field1, field2);
+      return myProfile(field0);
     }
     return orElse();
   }
@@ -2220,15 +2173,11 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
 }
 
 abstract class PageName_MyProfile extends PageName {
-  const factory PageName_MyProfile(
-      [final String? field0,
-      final String? field1,
-      final String? field2]) = _$PageName_MyProfileImpl;
+  const factory PageName_MyProfile(final bool field0) =
+      _$PageName_MyProfileImpl;
   const PageName_MyProfile._() : super._();
 
-  String? get field0;
-  String? get field1;
-  String? get field2;
+  bool get field0;
 
   /// Create a copy of PageName
   /// with the given fields replaced by the non-null parameter values.
@@ -2309,13 +2258,12 @@ class _$PageName_TestImpl extends PageName_Test {
     required TResult Function(String field0) viewTransaction,
     required TResult Function() receive,
     required TResult Function(String field0) send,
-    required TResult Function(String field0, KeyPress? field1) amount,
+    required TResult Function(String field0) amount,
     required TResult Function(BigInt field0) speed,
     required TResult Function(String field0, BigInt field1, BigInt field2)
         confirm,
     required TResult Function(String field0) success,
-    required TResult Function(String? field0, String? field1, String? field2)
-        myProfile,
+    required TResult Function(bool field0) myProfile,
     required TResult Function(String field0) test,
   }) {
     return test(field0);
@@ -2328,12 +2276,11 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult? Function(String field0)? viewTransaction,
     TResult? Function()? receive,
     TResult? Function(String field0)? send,
-    TResult? Function(String field0, KeyPress? field1)? amount,
+    TResult? Function(String field0)? amount,
     TResult? Function(BigInt field0)? speed,
     TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult? Function(String field0)? success,
-    TResult? Function(String? field0, String? field1, String? field2)?
-        myProfile,
+    TResult? Function(bool field0)? myProfile,
     TResult? Function(String field0)? test,
   }) {
     return test?.call(field0);
@@ -2346,11 +2293,11 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult Function(String field0)? viewTransaction,
     TResult Function()? receive,
     TResult Function(String field0)? send,
-    TResult Function(String field0, KeyPress? field1)? amount,
+    TResult Function(String field0)? amount,
     TResult Function(BigInt field0)? speed,
     TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
     TResult Function(String field0)? success,
-    TResult Function(String? field0, String? field1, String? field2)? myProfile,
+    TResult Function(bool field0)? myProfile,
     TResult Function(String field0)? test,
     required TResult orElse(),
   }) {

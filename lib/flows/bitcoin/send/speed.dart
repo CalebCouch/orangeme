@@ -12,10 +12,10 @@ class Speed extends GenericWidget {
     BigInt amount;
     Speed(this.address, this.amount, {super.key});
 
-    String one_f = "";
-    BigInt one = BigInt.from(0);
-    String three_f = "";
-    BigInt three = BigInt.from(0);
+    String priority_f = "";
+    BigInt priority = BigInt.from(0);
+    String standard_f = "";
+    BigInt standard = BigInt.from(0);
 
     @override
     SpeedState createState() => SpeedState();
@@ -35,10 +35,10 @@ class SpeedState extends GenericState<Speed> {
     @override
     void unpack_state(Map<String, dynamic> json) {
         setState(() {
-            widget.three_f = json["three_f"] as String;
-            widget.three = BigInt.from(json["three"]);
-            widget.one_f = json["one_f"] as String;
-            widget.one = BigInt.from(json["one"]);
+            widget.priority_f = json["priority_f"] as String;
+            widget.priority = BigInt.from(json["priority"]);
+            widget.standard_f = json["standard_f"] as String;
+            widget.standard = BigInt.from(json["standard"]);
         });
     }
 
@@ -54,7 +54,7 @@ class SpeedState extends GenericState<Speed> {
     }
 
     onContinue() {
-        navigateTo(Confirm(widget.address, widget.amount, index == 0 ? widget.one : widget.three));
+        navigateTo(Confirm(widget.address, widget.amount, index == 0 ? widget.standard : widget.priority));
     }
 
 
@@ -62,7 +62,7 @@ class SpeedState extends GenericState<Speed> {
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Transaction speed"),
-            content: [SpeedSelector(widget.three_f, widget.one_f)],
+            content: [SpeedSelector(widget.standard_f, widget.priority_f)],
             bumper: Bumper(context, content: [
                 CustomButton( txt: 'Continue', onTap: onContinue)
             ]),

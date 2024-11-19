@@ -63,9 +63,8 @@ sealed class PageName with _$PageName {
     String field0,
   ) = PageName_Send;
   const factory PageName.amount(
-    String field0, [
-    KeyPress? field1,
-  ]) = PageName_Amount;
+    String field0,
+  ) = PageName_Amount;
   const factory PageName.speed(
     BigInt field0,
   ) = PageName_Speed;
@@ -77,11 +76,9 @@ sealed class PageName with _$PageName {
   const factory PageName.success(
     String field0,
   ) = PageName_Success;
-  const factory PageName.myProfile([
-    String? field0,
-    String? field1,
-    String? field2,
-  ]) = PageName_MyProfile;
+  const factory PageName.myProfile(
+    bool field0,
+  ) = PageName_MyProfile;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;

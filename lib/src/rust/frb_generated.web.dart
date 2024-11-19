@@ -10,6 +10,7 @@ import 'api/custom_handler.dart';
 import 'api/error.dart';
 import 'api/pub_structs.dart';
 import 'api/simple.dart';
+import 'api/utils.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -30,9 +31,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       get rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr => wire
           .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
 
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ThreadsPtr => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads;
-
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
@@ -44,11 +42,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   MyCustomAsyncRuntime
       dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          dynamic raw);
-
-  @protected
-  Threads
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
           dynamic raw);
 
   @protected
@@ -70,11 +63,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           dynamic raw);
 
   @protected
-  Threads
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          dynamic raw);
-
-  @protected
   String dco_decode_String(dynamic raw);
 
   @protected
@@ -82,9 +70,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DartMethod dco_decode_box_autoadd_dart_method(dynamic raw);
-
-  @protected
-  KeyPress dco_decode_box_autoadd_key_press(dynamic raw);
 
   @protected
   PageName dco_decode_box_autoadd_page_name(dynamic raw);
@@ -115,9 +100,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
-  KeyPress? dco_decode_opt_box_autoadd_key_press(dynamic raw);
-
-  @protected
   PageName dco_decode_page_name(dynamic raw);
 
   @protected
@@ -125,6 +107,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Profile dco_decode_profile(dynamic raw);
+
+  @protected
+  (String, bool, int) dco_decode_record_string_bool_u_8(dynamic raw);
 
   @protected
   ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw);
@@ -155,11 +140,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
-  Threads
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          SseDeserializer deserializer);
-
-  @protected
   Object sse_decode_DartOpaque(SseDeserializer deserializer);
 
   @protected
@@ -173,11 +153,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
-  Threads
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          SseDeserializer deserializer);
-
-  @protected
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
@@ -185,9 +160,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer);
-
-  @protected
-  KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer);
 
   @protected
   PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer);
@@ -218,9 +190,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
-  KeyPress? sse_decode_opt_box_autoadd_key_press(SseDeserializer deserializer);
-
-  @protected
   PageName sse_decode_page_name(SseDeserializer deserializer);
 
   @protected
@@ -228,6 +197,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Profile sse_decode_profile(SseDeserializer deserializer);
+
+  @protected
+  (String, bool, int) sse_decode_record_string_bool_u_8(
+      SseDeserializer deserializer);
 
   @protected
   ShorthandTransaction sse_decode_shorthand_transaction(
@@ -260,11 +233,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           MyCustomAsyncRuntime self, SseSerializer serializer);
 
   @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          Threads self, SseSerializer serializer);
-
-  @protected
   void sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
       FutureOr<String?> Function(DartMethod) self, SseSerializer serializer);
 
@@ -282,11 +250,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           MyCustomAsyncRuntime self, SseSerializer serializer);
 
   @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          Threads self, SseSerializer serializer);
-
-  @protected
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
@@ -295,10 +258,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_dart_method(
       DartMethod self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_box_autoadd_key_press(
-      KeyPress self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_page_name(
@@ -331,10 +290,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_key_press(
-      KeyPress? self, SseSerializer serializer);
-
-  @protected
   void sse_encode_page_name(PageName self, SseSerializer serializer);
 
   @protected
@@ -342,6 +297,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_profile(Profile self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_string_bool_u_8(
+      (String, bool, int) self, SseSerializer serializer);
 
   @protected
   void sse_encode_shorthand_transaction(
@@ -388,18 +347,6 @@ class RustLibWire implements BaseWire {
       wasmModule
           .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
               ptr);
-
-  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          int ptr) =>
-      wasmModule
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-              ptr);
-
-  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          int ptr) =>
-      wasmModule
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-              ptr);
 }
 
 @JS('wasm_bindgen')
@@ -422,13 +369,5 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void
       rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
-          int ptr);
-
-  external void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
-          int ptr);
-
-  external void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerThreads(
           int ptr);
 }
