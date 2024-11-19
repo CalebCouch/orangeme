@@ -71,6 +71,6 @@ Widget Header_Button(BuildContext context, String title, CustomButton button) {
     return Header(
         backButton(context),
         CustomText(variant: 'heading', font_size:'h4', txt: title),
-        button,
+        Container(padding: EdgeInsets.symmetric(horizontal: 16), child: button),
     );
 }

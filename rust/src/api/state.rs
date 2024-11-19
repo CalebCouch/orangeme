@@ -39,6 +39,7 @@ pub enum Field {
     Profile(Option<Profile>),
 
     Conversations(Option<Vec<Conversation>>),
+    Users(Option<Vec<Profile>>),
 
 //  LegacySeed(Option<Seed>),
 //  DescriptorSet(Option<DescriptorSet>),
@@ -175,6 +176,7 @@ impl StateManager {
             PageName::Success(tx) => self.success(tx).await,
             PageName::MyProfile(name, about_me, profile_picture) => self.my_profile(name, about_me, profile_picture).await,
             PageName::MessagesHome => self.messages_home().await,
+            PageName::ChooseRecipient => self.choose_recipient().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::UserProfile => self.user_profile().await,
@@ -399,9 +401,7 @@ impl StateManager {
             "profile_picture": profile_pfp,
             "conversations": conversations.into_iter().map(|(room_id, cv)| {
                 let is_group = cv.members.len() > 1;
-                let photo = if is_group { None } else { 
-                    cv.members.get(0).and_then(|member| member.pfp_path.as_ref()).map(|path| path.to_string()) 
-                };
+                let photo = if is_group { None } else { cv.members[0].pfp_path.clone() };
 
                 ShorthandConversation{
                     room_name: if is_group { "Group Message".to_string() } else { cv.members[0].name.clone() },
@@ -429,12 +429,19 @@ impl StateManager {
 //          })?)
 //      }
 
-//      pub async fn choose_recipient(&self) -> Result<String, Error> {
-//          let users = self.state.get::<Vec<Profile>>(Field::Users).await?;
-//          Ok(serde_json::to_string(&ChooseRecipient{
-//              users: users,
-//          })?)
-//      }
+    pub async fn choose_recipient(&self) -> Result<String, Error> {
+        let users = self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
+        Ok(serde_json::to_string(&json!({
+            "users": users.into_iter().map(|Profile| {
+                Profile{
+                    name: Profile.name,
+                    did: Profile.did,
+                    abt_me: Profile.abt_me,
+                    pfp_path: Profile.pfp_path,
+                }
+            }).collect::<Vec<Profile>>()
+        }))?)
+    }
 
 //      pub async fn conv_info(&self) -> Result<String, Error> {
 //          let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;

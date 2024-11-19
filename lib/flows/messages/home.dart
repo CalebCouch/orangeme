@@ -16,14 +16,14 @@ class MessagesHome extends GenericWidget {
     MessagesHome({super.key});
 
     List<ShorthandConversation> conversations = [];
-    String profile_picture = "";
+    String? profile_picture = "";
+    bool noConversations = true;
     
     @override
     MessagesHomeState createState() => MessagesHomeState();
 }
 
 class MessagesHomeState extends GenericState<MessagesHome> {
-    bool noConversations = true;
 
     @override
     PageName getPageName() {
@@ -43,11 +43,11 @@ class MessagesHomeState extends GenericState<MessagesHome> {
                     roomId: json['room_id'] as String,
                 )
             ));
-            if (widget.conversations.isEmpty) noConversations = false;
+            widget.noConversations = widget.conversations.isEmpty;
         });
     }
 
-    createNewMessage() {/*navigateTo(ChooseRecipient());*/}
+    createNewMessage() {navigateTo(ChooseRecipient());}
     toProfile() {navigateTo(MyProfile());}
 
     Widget NoConversations() {
@@ -88,11 +88,11 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     Widget build_with_state(BuildContext context) {
         return Root_Home(
             header: Header_Home(context, "Messages", widget.profile_picture, toProfile),
-            content: [noConversations ? NoConversations() : ConversationsList()],
+            content: [widget.noConversations ? NoConversations() : ConversationsList()],
             bumper: Bumper(context, content: [CustomButton(txt: 'New Message', onTap: createNewMessage)]),
             tabNav: TabNav(1, [ TabInfo(BitcoinHome(), 'wallet'), TabInfo(MessagesHome(), 'message')]),
-            alignment: noConversations ? Alignment.center : Alignment.topCenter,
-            scroll: !noConversations,
+            alignment: widget.noConversations ? Alignment.center : Alignment.topCenter,
+            scroll: !widget.noConversations,
         );
     }
 }

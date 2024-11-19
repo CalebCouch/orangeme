@@ -138,6 +138,7 @@ sealed class PageName with _$PageName {
     String? field2,
   ]) = PageName_MyProfile;
   const factory PageName.messagesHome() = PageName_MessagesHome;
+  const factory PageName.chooseRecipient() = PageName_ChooseRecipient;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;

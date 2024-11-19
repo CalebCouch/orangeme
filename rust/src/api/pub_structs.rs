@@ -33,6 +33,7 @@ pub enum PageName {
     Success(String),
     MyProfile(Option<String>, Option<String>, Option<String>),
     MessagesHome,
+    ChooseRecipient,
 //  Receive,
 //  ViewTransaction,
 //  MessagesHome,

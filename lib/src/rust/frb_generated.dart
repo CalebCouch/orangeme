@@ -840,6 +840,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 9:
         return const PageName_MessagesHome();
       case 10:
+        return const PageName_ChooseRecipient();
+      case 11:
         return PageName_Test(
           dco_decode_String(raw[1]),
         );
@@ -1206,6 +1208,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 9:
         return const PageName_MessagesHome();
       case 10:
+        return const PageName_ChooseRecipient();
+      case 11:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
       default:
@@ -1576,8 +1580,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_String(field2, serializer);
       case PageName_MessagesHome():
         sse_encode_i_32(9, serializer);
-      case PageName_Test(field0: final field0):
+      case PageName_ChooseRecipient():
         sse_encode_i_32(10, serializer);
+      case PageName_Test(field0: final field0):
+        sse_encode_i_32(11, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');
