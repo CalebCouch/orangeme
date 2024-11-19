@@ -5,7 +5,7 @@ use super::pub_structs::{PageName, Platform, ShorthandTransaction, KeyPress};
 use super::pub_structs::{SATS, Sats, Btc, Usd};
 use super::wallet::{Transactions, Transaction};
 use super::structs::{DateTime};
-use super::web5::Profile;
+use super::web5::{Profile, ShorthandConversation, Conversation, Message};
 
 use log::info;
 use simple_database::KeyValueStore;
@@ -37,7 +37,8 @@ pub enum Field {
     Balance(Option<f64>),
 
     Profile(Option<Profile>),
-  //Conversations(Option<Vec<Conversation>>),
+
+    Conversations(Option<Vec<Conversation>>),
 
 //  LegacySeed(Option<Seed>),
 //  DescriptorSet(Option<DescriptorSet>),
@@ -59,6 +60,18 @@ pub enum Field {
 impl Field {
     pub fn into_bytes(&self) -> Vec<u8> {
         format!("{:?}", self).split("(").collect::<Vec<&str>>()[0].as_bytes().to_vec()
+    }
+}
+
+/* dummy data */
+#[derive(Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+struct RoomID {
+    id: u32,
+}
+
+impl RoomID {
+    fn new(id: u32) -> Self {
+        RoomID { id }
     }
 }
 
@@ -134,6 +147,12 @@ pub fn format_datetime(date: Option<&DateTime>) -> String {
     } else {"Pending".to_string()}
 }
 
+fn format_names(cv: &[Profile]) -> String {
+    let names: String = cv.iter().map(|profile| profile.name.as_str()).collect::<Vec<_>>().join(", ");
+    if names.len() > 20 {return format!("{}...", &names[0..20]);}
+    names
+}
+
 impl StateManager {
     pub fn new(state: State) -> Self {
         StateManager{state}
@@ -155,7 +174,7 @@ impl StateManager {
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
             PageName::Success(tx) => self.success(tx).await,
             PageName::MyProfile(name, about_me, profile_picture) => self.my_profile(name, about_me, profile_picture).await,
-            //PageName::MessagesHome => self.messages_home().await,
+            PageName::MessagesHome => self.messages_home().await,
           //PageName::Exchange => self.exchange().await,
           //PageName::MyProfile => self.my_profile().await,
           //PageName::UserProfile => self.user_profile().await,
@@ -372,14 +391,28 @@ impl StateManager {
         }))?)
     }
 
-//  pub async fn messages_home(&mut self) -> Result<String, Error> {
-//      let conversations = self.state.get::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+    pub async fn messages_home(&self) -> Result<String, Error> {
+        let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
+        let conversations = self.state.get_or_default::<BTreeMap<RoomID, Conversation>>(&Field::Conversations(None)).await?;
 
-//      Ok(serde_json::to_string(&MessagesHome{
-//          profile_picture: "".to_string(),
-//          conversations: conversations, 
-//      })?)
-//  }
+        Ok(serde_json::to_string(&json!({
+            "profile_picture": profile_pfp,
+            "conversations": conversations.into_iter().map(|(room_id, cv)| {
+                let is_group = cv.members.len() > 1;
+                let photo = if is_group { None } else { 
+                    cv.members.get(0).and_then(|member| member.pfp_path.as_ref()).map(|path| path.to_string()) 
+                };
+
+                ShorthandConversation{
+                    room_name: if is_group { "Group Message".to_string() } else { cv.members[0].name.clone() },
+                    photo,
+                    subtext: if is_group { cv.messages[0].message.to_string() } else { format_names(&cv.members) },
+                    room_id: "123".to_string(),
+                    is_group,
+                }
+            }).collect::<Vec<ShorthandConversation>>()
+        }))?)
+    }
 
 
     //  pub async fn user_profile(&self) -> Result<String, Error> {

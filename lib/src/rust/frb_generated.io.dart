@@ -79,10 +79,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  Conversation dco_decode_box_autoadd_conversation(dynamic raw);
+
+  @protected
   DartMethod dco_decode_box_autoadd_dart_method(dynamic raw);
 
   @protected
   KeyPress dco_decode_box_autoadd_key_press(dynamic raw);
+
+  @protected
+  Message dco_decode_box_autoadd_message(dynamic raw);
 
   @protected
   PageName dco_decode_box_autoadd_page_name(dynamic raw);
@@ -91,8 +97,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Profile dco_decode_box_autoadd_profile(dynamic raw);
 
   @protected
+  ShorthandConversation dco_decode_box_autoadd_shorthand_conversation(
+      dynamic raw);
+
+  @protected
   ShorthandTransaction dco_decode_box_autoadd_shorthand_transaction(
       dynamic raw);
+
+  @protected
+  Conversation dco_decode_conversation(dynamic raw);
 
   @protected
   DartMethod dco_decode_dart_method(dynamic raw);
@@ -107,7 +120,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   KeyPress dco_decode_key_press(dynamic raw);
 
   @protected
+  List<Message> dco_decode_list_message(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  List<Profile> dco_decode_list_profile(dynamic raw);
+
+  @protected
+  Message dco_decode_message(dynamic raw);
 
   @protected
   String? dco_decode_opt_String(dynamic raw);
@@ -123,6 +145,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Profile dco_decode_profile(dynamic raw);
+
+  @protected
+  ShorthandConversation dco_decode_shorthand_conversation(dynamic raw);
 
   @protected
   ShorthandTransaction dco_decode_shorthand_transaction(dynamic raw);
@@ -182,10 +207,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  Conversation sse_decode_box_autoadd_conversation(
+      SseDeserializer deserializer);
+
+  @protected
   DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer);
 
   @protected
   KeyPress sse_decode_box_autoadd_key_press(SseDeserializer deserializer);
+
+  @protected
+  Message sse_decode_box_autoadd_message(SseDeserializer deserializer);
 
   @protected
   PageName sse_decode_box_autoadd_page_name(SseDeserializer deserializer);
@@ -194,8 +226,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer);
 
   @protected
+  ShorthandConversation sse_decode_box_autoadd_shorthand_conversation(
+      SseDeserializer deserializer);
+
+  @protected
   ShorthandTransaction sse_decode_box_autoadd_shorthand_transaction(
       SseDeserializer deserializer);
+
+  @protected
+  Conversation sse_decode_conversation(SseDeserializer deserializer);
 
   @protected
   DartMethod sse_decode_dart_method(SseDeserializer deserializer);
@@ -210,7 +249,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   KeyPress sse_decode_key_press(SseDeserializer deserializer);
 
   @protected
+  List<Message> sse_decode_list_message(SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  List<Profile> sse_decode_list_profile(SseDeserializer deserializer);
+
+  @protected
+  Message sse_decode_message(SseDeserializer deserializer);
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
@@ -226,6 +274,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Profile sse_decode_profile(SseDeserializer deserializer);
+
+  @protected
+  ShorthandConversation sse_decode_shorthand_conversation(
+      SseDeserializer deserializer);
 
   @protected
   ShorthandTransaction sse_decode_shorthand_transaction(
@@ -291,12 +343,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_conversation(
+      Conversation self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_dart_method(
       DartMethod self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_key_press(
       KeyPress self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_message(Message self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_page_name(
@@ -306,8 +365,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_shorthand_conversation(
+      ShorthandConversation self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_shorthand_transaction(
       ShorthandTransaction self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_conversation(Conversation self, SseSerializer serializer);
 
   @protected
   void sse_encode_dart_method(DartMethod self, SseSerializer serializer);
@@ -322,8 +388,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_key_press(KeyPress self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_message(List<Message> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_profile(List<Profile> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_message(Message self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
@@ -340,6 +415,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_profile(Profile self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_shorthand_conversation(
+      ShorthandConversation self, SseSerializer serializer);
 
   @protected
   void sse_encode_shorthand_transaction(

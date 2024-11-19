@@ -1,106 +1,98 @@
-// import 'package:flutter/material.dart';
-// import 'package:orange/components/profile_photo.dart';
-// import 'package:orange/components/tab_navigator.dart';
-// import 'package:orange/flows/bitcoin/home.dart';
-// import 'package:orange/flows/messages/profile/my_profile.dart';
-// import 'package:orange/components/list_item.dart';
-// import 'package:orange/flows/messages/new_message/choose_recipient.dart';
-// import 'package:orange/src/rust/api/simple.dart';
-// import 'package:orange/flows/messages/conversation/exchange.dart';
-// import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:flutter/material.dart';
+import 'package:orange/components/profile_photo.dart';
+import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/components/list_item.dart';
+import 'package:orange/flows/messages/new_message/choose_recipient.dart';
+import 'package:orange/src/rust/api/simple.dart';
+import 'package:orange/flows/messages/conversation/exchange.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 
-// import 'package:orangeme_material/orangeme_material.dart';
-// import 'package:orange/global.dart' as global;
+import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/global.dart' as global;
 
-// class MessagesHome extends GenericWidget {
-//   MessagesHome({super.key});
+class MessagesHome extends GenericWidget {
+    MessagesHome({super.key});
 
-//   List<Conversation> conversations = [];
-//   String profile_picture = "";
-//   @override
-//   MessagesHomeState createState() => MessagesHomeState();
-// }
+    List<ShorthandConversation> conversations = [];
+    String profile_picture = "";
+    
+    @override
+    MessagesHomeState createState() => MessagesHomeState();
+}
 
-// class MessagesHomeState extends GenericState<MessagesHome> {
-//   bool noConversations = true;
-//   @override
-//   PageName getPageName() {
-//     return PageName.messagesHome();
-//   }
+class MessagesHomeState extends GenericState<MessagesHome> {
+    bool noConversations = true;
 
-//   @override
-//   int refreshInterval() {
-//     return 100;
-//   }
+    @override
+    PageName getPageName() {
+        return PageName.messagesHome();
+    }
 
-//   @override
-//   void unpack_state(Map<String, dynamic> json) {
-//     setState(() {
-//       widget.profile_picture = json["profile_picture"];
-//       widget.conversations = List<Conversation>.from((json['conversations'] as List<dynamic>).map((item) => Conversation.fromJson(item as Map<String, dynamic>)));
-//       if (widget.conversations.isEmpty) noConversations = false;
-//     });
-//   }
+    @override
+    void unpack_state(Map<String, dynamic> json) {
+        setState(() {
+            widget.profile_picture = json["profile_picture"];
+            widget.conversations = List<ShorthandConversation>.from(json['conversations'].map(
+                (json) => ShorthandConversation(
+                    roomName: json['room_name'] as String,
+                    photo: json['photo_path'] as String?,
+                    subtext: json['subtext'] as String,
+                    isGroup: json['is_group'] as bool,
+                    roomId: json['room_id'] as String,
+                )
+            ));
+            if (widget.conversations.isEmpty) noConversations = false;
+        });
+    }
 
-//   createNewMessage() {
-//     //navigateTo(ChooseRecipient());
-//   }
+    createNewMessage() {/*navigateTo(ChooseRecipient());*/}
+    toProfile() {navigateTo(MyProfile());}
 
-//   toProfile() {
-//     //navigateTo(MyProfile());
-//   }
+    Widget NoConversations() {
+        return const CustomText(
+            variant:'text',
+            font_size: 'md',
+            text_color: 'text_secondary', 
+            txt: 'No messages yet.\nGet started by messaging a friend.'
+        );
+    }
 
-//   setConversation(int i) {
-//     //BigInt bigIntValue = BigInt.from(i);
-//     //setStateConversation(path: global.dataDir!, index: bigIntValue);
-//   }
+    Widget ConversationsList() {
+        return ListView.builder(
+            shrinkWrap: true,
+            itemCount: widget.conversations.length,
+            itemBuilder: (context, i) {
+                return ConversationItem(
+                    widget.conversations[i].photo,
+                    widget.conversations[i].isGroup,
+                    widget.conversations[i].roomName,
+                    widget.conversations[i].subtext,
+                    (){},
+                );
+            },
+        );
+    }
 
-//   @override
-//   Widget build_with_state(BuildContext context) {
-//     return Root_Home(
-//       Header_Home(ProfileButton(context, widget.profile_picture, toProfile), "Messages"),
-//       [
-//         noConversations ? noMessages() : listConversations(),
-//       ],
-//       Bumper(context, [CustomButton('New Message', 'primary lg expand none', createNewMessage, true)]),
-//       TabNav(1, [
-//         TabInfo(BitcoinHome(), 'wallet'),
-//         TabInfo(MessagesHome(), 'message'),
-//       ]),
-//       noConversations ? Alignment.center : Alignment.topCenter,
-//       !noConversations,
-//     );
-//   }
+    Widget ConversationItem(photo, isGroup, roomName, subtext, onTap) {
+        return ListItem(
+            onTap: onTap,
+            visual: ProfilePhoto(context, photo, ProfileSize.lg, isGroup),
+            title: roomName,
+            desc: subtext,
+        );
+    }
 
-//   Widget noMessages() {
-//     return const CustomText('text md text_secondary', 'No messages yet.\nGet started by messaging a friend.');
-//   }
-
-//   Widget listConversations() {
-//     return ListView.builder(
-//       shrinkWrap: true,
-//       itemCount: widget.conversations!.length,
-//       itemBuilder: (context, index) {
-//         return ConversationItem(
-//           context,
-//           widget.conversations![index].members,
-//           widget.conversations![index].messages[0].message,
-//           () {
-//             setConversation(index);
-//             //navigateTo(Exchange());
-//           },
-//         );
-//       },
-//     );
-//   }
-
-//   Widget ConversationItem(BuildContext context, List<Profile> contact, String lastText, onTap) {
-//     bool isGroup = contact.length > 1;
-//     return ListItem(
-//       onTap: onTap,
-//       visual: ProfilePhoto(context, contact[0].pfp, ProfileSize.lg, false, isGroup),
-//       title: isGroup ? 'Group Message' : contact[0].name,
-//       desc: lastText,
-//     );
-//   }
-// }
+    @override
+    Widget build_with_state(BuildContext context) {
+        return Root_Home(
+            header: Header_Home(context, "Messages", widget.profile_picture, toProfile),
+            content: [noConversations ? NoConversations() : ConversationsList()],
+            bumper: Bumper(context, content: [CustomButton(txt: 'New Message', onTap: createNewMessage)]),
+            tabNav: TabNav(1, [ TabInfo(BitcoinHome(), 'wallet'), TabInfo(MessagesHome(), 'message')]),
+            alignment: noConversations ? Alignment.center : Alignment.topCenter,
+            scroll: !noConversations,
+        );
+    }
+}

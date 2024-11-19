@@ -65,11 +65,7 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
                 TransactionData(),
             ],
             bumper: Bumper(context, content: [
-                CustomButton(
-                    txt:'Done',
-                    variant: 'secondary',
-                    onTap: () => onDone()
-                ),
+                CustomButton(txt:'Done', variant: 'secondary', onTap: () => onDone()),
             ]),
         );
     }

@@ -125,13 +125,7 @@ class MyProfileState extends GenericState<MyProfile> {
                 didItem(context, widget.did),
                 addressItem(context, widget.address),
             ],
-            bumper: Bumper(context, content: [
-                CustomButton(
-                    txt: 'Save', 
-                    onTap: saveInfo,
-                    enabled: save
-                )
-            ]),
+            bumper: Bumper(context, content: [CustomButton(txt: 'Save', onTap: saveInfo, enabled: save)]),
         );
     }
 }

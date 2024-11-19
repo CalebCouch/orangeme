@@ -38,9 +38,29 @@ impl Protocols {
         ).unwrap()
     }
 
+    pub fn shorthand_conversations() -> Protocol {
+        Protocol::new(
+            "Shorthand_Conversation",
+            true,
+            PermissionOptions::new(true, true, false, None),
+            Some(serde_json::to_string(&schema_for!(ShorthandConversation)).unwrap()),
+            None
+        ).unwrap()
+    }
+
+    pub fn conversation() -> Protocol {
+        Protocol::new(
+            "Conversation",
+            true,
+            PermissionOptions::new(true, true, false, None),
+            Some(serde_json::to_string(&schema_for!(Conversation)).unwrap()),
+            None
+        ).unwrap()
+    }
+
     pub fn message() -> Protocol {
         Protocol::new(
-            "Message",
+            "Single_Message",
             true,
             PermissionOptions::new(true, true, false, None),
             Some(serde_json::to_string(&schema_for!(Message)).unwrap()),
@@ -73,7 +93,7 @@ impl Protocols {
     }
 
     pub fn get() -> Vec<Protocol> {
-        vec![Self::messages_protocol(), Self::rooms_protocol(), Self::profile()]
+        vec![Self::messages_protocol(), Self::shorthand_conversations(), Self::conversation(), Self::message(), Self::rooms_protocol(), Self::profile()]
     }
 }
 
@@ -101,6 +121,45 @@ impl Default for Profile {
         Profile::new("Default Name".to_string(), Did::from_str(DUMMY_DID).unwrap(), None, None)
     }
 }
+
+#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
+pub struct ShorthandConversation {
+    pub room_name: String,
+    pub photo: Option<String>,
+    pub subtext: String,
+    pub is_group: bool,
+    pub room_id: String,
+}
+
+impl ShorthandConversation {
+    pub fn new(
+        room_name: String,
+        photo: Option<String>,
+        subtext: String,
+        is_group: bool,
+        room_id: String
+    ) -> Self {
+        ShorthandConversation{room_name, photo, subtext, is_group, room_id}
+    }
+}
+
+#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
+pub struct Conversation {
+    pub members: Vec<Profile>,
+    pub messages: Vec<Message>,
+    pub room_id: String,
+}
+
+impl Conversation {
+    pub fn new(
+        members: Vec<Profile>,
+        messages: Vec<Message>,
+        room_id: String,
+    ) -> Self {
+        Conversation{members, messages, room_id}
+    }
+}
+
 
 #[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
 pub struct Message {

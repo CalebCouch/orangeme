@@ -12,13 +12,40 @@ part 'pub_structs.freezed.dart';
 
 Future<void> loadStructs(
         {required ShorthandTransaction s,
+        required ShorthandConversation sc,
+        required Conversation c,
+        required Message m,
         required Profile p,
         required DartMethod dm,
         required KeyPress kp,
         required Platform pl,
         required PageName pn}) =>
     RustLib.instance.api.crateApiPubStructsLoadStructs(
-        s: s, p: p, dm: dm, kp: kp, pl: pl, pn: pn);
+        s: s, sc: sc, c: c, m: m, p: p, dm: dm, kp: kp, pl: pl, pn: pn);
+
+class Conversation {
+  final List<Profile> members;
+  final List<Message> messages;
+  final String roomId;
+
+  const Conversation({
+    required this.members,
+    required this.messages,
+    required this.roomId,
+  });
+
+  @override
+  int get hashCode => members.hashCode ^ messages.hashCode ^ roomId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Conversation &&
+          runtimeType == other.runtimeType &&
+          members == other.members &&
+          messages == other.messages &&
+          roomId == other.roomId;
+}
 
 @freezed
 sealed class DartMethod with _$DartMethod {
@@ -48,6 +75,34 @@ enum KeyPress {
   decimal,
   backspace,
   ;
+}
+
+class Message {
+  final Profile sender;
+  final String message;
+  final String date;
+  final String time;
+
+  const Message({
+    required this.sender,
+    required this.message,
+    required this.date,
+    required this.time,
+  });
+
+  @override
+  int get hashCode =>
+      sender.hashCode ^ message.hashCode ^ date.hashCode ^ time.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Message &&
+          runtimeType == other.runtimeType &&
+          sender == other.sender &&
+          message == other.message &&
+          date == other.date &&
+          time == other.time;
 }
 
 @freezed
@@ -82,6 +137,7 @@ sealed class PageName with _$PageName {
     String? field1,
     String? field2,
   ]) = PageName_MyProfile;
+  const factory PageName.messagesHome() = PageName_MessagesHome;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;
@@ -127,6 +183,41 @@ class Profile {
           did == other.did &&
           pfpPath == other.pfpPath &&
           abtMe == other.abtMe;
+}
+
+class ShorthandConversation {
+  final String roomName;
+  final String? photo;
+  final String subtext;
+  final bool isGroup;
+  final String roomId;
+
+  const ShorthandConversation({
+    required this.roomName,
+    this.photo,
+    required this.subtext,
+    required this.isGroup,
+    required this.roomId,
+  });
+
+  @override
+  int get hashCode =>
+      roomName.hashCode ^
+      photo.hashCode ^
+      subtext.hashCode ^
+      isGroup.hashCode ^
+      roomId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ShorthandConversation &&
+          runtimeType == other.runtimeType &&
+          roomName == other.roomName &&
+          photo == other.photo &&
+          subtext == other.subtext &&
+          isGroup == other.isGroup &&
+          roomId == other.roomId;
 }
 
 class ShorthandTransaction {
