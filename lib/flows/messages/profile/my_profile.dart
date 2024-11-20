@@ -8,61 +8,61 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 //import 'package:orange/global.dart' as global;
 
 class MyProfile extends GenericWidget {
-  MyProfile({super.key});
+    MyProfile({super.key});
 
-  String address = '';
-  String name = '';
-  String did = '';
-  String? aboutMe;
-  String? photo;
-  String? new_name;
-  String? new_abtme;
-  String? new_pfp;
+    String address = '';
+    String name = '';
+    String did = '';
+    String? aboutMe;
+    String? photo;
+    String? new_name;
+    String? new_abtme;
+    String? new_pfp;
 
     bool init = true;
 
-  @override
-  MyProfileState createState() => MyProfileState();
+    @override
+    MyProfileState createState() => MyProfileState();
 }
 
 class MyProfileState extends GenericState<MyProfile> {
     
-  @override
-  PageName getPageName() {
-    return PageName.myProfile(widget.init);
-  }
+    @override
+    PageName getPageName() {
+        return PageName.myProfile(widget.init);
+    }
 
-  @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-        widget.init = false;
+    @override
+    void unpack_state(Map<String, dynamic> json) {
+        setState(() {
+            widget.init = false;
 
-        widget.address = json['address'] as String;
-        widget.name = json['name'] as String;
-        widget.did = json['did'] as String;
-        widget.aboutMe = json['about_me'] as String?;
-        widget.photo = json['profile_picture'] as String?;
-        widget.new_name = null;
-        widget.new_abtme = null;
-        widget.new_pfp = null;
-    });
-  }
+            widget.address = json['address'] as String;
+            widget.name = json['name'] as String;
+            widget.did = json['did'] as String;
+            widget.aboutMe = json['about_me'] as String?;
+            widget.photo = json['profile_picture'] as String?;
+            widget.new_name = null;
+            widget.new_abtme = null;
+            widget.new_pfp = null;
+        });
+    }
 
-  final ImagePicker _picker = ImagePicker();
-  late TextEditingController _profileName = TextEditingController();
-  late TextEditingController _aboutMe = TextEditingController();
+    final ImagePicker _picker = ImagePicker();
+    late TextEditingController _profileName = TextEditingController();
+    late TextEditingController _aboutMe = TextEditingController();
 
-  @override
-  void dispose() {
-    _profileName.dispose();
-    _aboutMe.dispose();
-    super.dispose();
-  }
+    @override
+    void dispose() {
+        _profileName.dispose();
+        _aboutMe.dispose();
+        super.dispose();
+    }
 
-  bool save = false;
+    bool save = false;
 
-  @override
-  Widget build_with_state(BuildContext context) {
+    @override
+    Widget build_with_state(BuildContext context) {
         _profileName = TextEditingController(text: widget.name);
         _aboutMe = TextEditingController(text: widget.aboutMe);
 

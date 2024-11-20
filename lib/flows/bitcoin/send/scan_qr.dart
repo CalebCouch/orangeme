@@ -3,20 +3,29 @@ import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
 
-class ScanQR extends StatefulWidget {
-  const ScanQR({super.key});
 
-  @override
-  ScanQRState createState() => ScanQRState();
+class ScanQR extends GenericWidget {
+    ScanQR({super.key});
+
+    @override
+    ScanQRState createState() => ScanQRState();
 }
 
-class ScanQRState extends State<ScanQR> {
+class ScanQRState extends GenericState<ScanQR> {
+
+    @override
+    PageName getPageName() {return PageName.none();}
+
+    @override
+    void unpack_state(Map<String, dynamic> json) {setState(() {});}
+
     late QRViewController controller;
     GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
     @override
-    Widget build(BuildContext context) {
+    Widget build_with_state(BuildContext context) {
         return Root_Takeover(
             header: Header_Stack(context, "Scan QR code"),
             content: Stack(children: [

@@ -854,12 +854,22 @@ impl SseDecode for crate::api::pub_structs::PageName {
                 return crate::api::pub_structs::PageName::MyProfile(var_field0);
             }
             9 => {
-                return crate::api::pub_structs::PageName::MessagesHome;
+                let mut var_field0 = <bool>::sse_decode(deserializer);
+                return crate::api::pub_structs::PageName::UserProfile(var_field0);
             }
             10 => {
-                return crate::api::pub_structs::PageName::ChooseRecipient;
+                return crate::api::pub_structs::PageName::MessagesHome;
             }
             11 => {
+                return crate::api::pub_structs::PageName::ChooseRecipient;
+            }
+            12 => {
+                return crate::api::pub_structs::PageName::Conversation;
+            }
+            13 => {
+                return crate::api::pub_structs::PageName::ConversationInfo;
+            }
+            14 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::pub_structs::PageName::Test(var_field0);
             }
@@ -1189,10 +1199,15 @@ impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::PageName {
             crate::api::pub_structs::PageName::MyProfile(field0) => {
                 [8.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
-            crate::api::pub_structs::PageName::MessagesHome => [9.into_dart()].into_dart(),
-            crate::api::pub_structs::PageName::ChooseRecipient => [10.into_dart()].into_dart(),
+            crate::api::pub_structs::PageName::UserProfile(field0) => {
+                [9.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::pub_structs::PageName::MessagesHome => [10.into_dart()].into_dart(),
+            crate::api::pub_structs::PageName::ChooseRecipient => [11.into_dart()].into_dart(),
+            crate::api::pub_structs::PageName::Conversation => [12.into_dart()].into_dart(),
+            crate::api::pub_structs::PageName::ConversationInfo => [13.into_dart()].into_dart(),
             crate::api::pub_structs::PageName::Test(field0) => {
-                [11.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+                [14.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1540,14 +1555,24 @@ impl SseEncode for crate::api::pub_structs::PageName {
                 <i32>::sse_encode(8, serializer);
                 <bool>::sse_encode(field0, serializer);
             }
-            crate::api::pub_structs::PageName::MessagesHome => {
+            crate::api::pub_structs::PageName::UserProfile(field0) => {
                 <i32>::sse_encode(9, serializer);
+                <bool>::sse_encode(field0, serializer);
             }
-            crate::api::pub_structs::PageName::ChooseRecipient => {
+            crate::api::pub_structs::PageName::MessagesHome => {
                 <i32>::sse_encode(10, serializer);
             }
-            crate::api::pub_structs::PageName::Test(field0) => {
+            crate::api::pub_structs::PageName::ChooseRecipient => {
                 <i32>::sse_encode(11, serializer);
+            }
+            crate::api::pub_structs::PageName::Conversation => {
+                <i32>::sse_encode(12, serializer);
+            }
+            crate::api::pub_structs::PageName::ConversationInfo => {
+                <i32>::sse_encode(13, serializer);
+            }
+            crate::api::pub_structs::PageName::Test(field0) => {
+                <i32>::sse_encode(14, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {

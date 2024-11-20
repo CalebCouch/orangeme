@@ -135,8 +135,13 @@ sealed class PageName with _$PageName {
   const factory PageName.myProfile(
     bool field0,
   ) = PageName_MyProfile;
+  const factory PageName.userProfile(
+    bool field0,
+  ) = PageName_UserProfile;
   const factory PageName.messagesHome() = PageName_MessagesHome;
   const factory PageName.chooseRecipient() = PageName_ChooseRecipient;
+  const factory PageName.conversation() = PageName_Conversation;
+  const factory PageName.conversationInfo() = PageName_ConversationInfo;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;

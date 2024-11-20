@@ -28,17 +28,12 @@ pub enum PageName {
     Confirm(String, Sats, Sats),
     Success(String),
     MyProfile(bool),
+    UserProfile(bool),
     MessagesHome,
     ChooseRecipient,
-//  Receive,
-//  ViewTransaction,
-//  MessagesHome,
-//  Exchange,
-//  MyProfile,
-//  UserProfile,
-//  ConvoInfo,
-//  ChooseRecipient,
-    Test(String)
+    Conversation(),
+    ConversationInfo(),
+    Test(String),
 }
 
 #[derive(Debug)]

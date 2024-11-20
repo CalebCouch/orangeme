@@ -122,8 +122,11 @@ impl StateManager {
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
             PageName::Success(tx) => self.success(tx).await,
             PageName::MyProfile(init) => self.my_profile(init).await,
+            PageName::UserProfile(init) => self.user_profile(init).await,
             PageName::MessagesHome => self.messages_home().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
+            PageName::ConversationInfo => self.conversation_info().await,
+            PageName::Conversation => self.conversation().await,
             PageName::Test(_) => self.test().await,
         }
     }
@@ -294,6 +297,21 @@ impl StateManager {
         }))?)
     }
 
+    pub async fn user_profile(&self, init: bool) -> Result<String, Error> {
+        let profile = self.state.get::<Profile>(&Field::Profile(None)).await?; // Needs to be the user's profile
+        let address = if init {
+            call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await? // Needs to get for users address
+        } else {String::new()};
+
+        Ok(serde_json::to_string(&json!({
+            "name": profile.name,
+            "about_me": profile.abt_me,
+            "did": profile.did,
+            "profile_picture": profile.pfp_path,
+            "address": address,
+        }))?)
+    }
+
     pub async fn messages_home(&self) -> Result<String, Error> {
         let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
         let conversations = self.state.get_or_default::<BTreeMap<RoomID, Conversation>>(&Field::Conversations(None)).await?;
@@ -315,20 +333,15 @@ impl StateManager {
         }))?)
     }
 
+    pub async fn conversation_info(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&json!({
+        }))?)
+    }
 
-    //  pub async fn user_profile(&self) -> Result<String, Error> {
-    //      Ok(serde_json::to_string(&UserProfile{
-    //          profile: None,
-    //      })?)
-    //  }
-
-
-//      pub async fn exchange(&self) -> Result<String, Error> {
-//          let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;
-//          Ok(serde_json::to_string(&Exchange{
-//              conversation: conversation,
-//          })?)
-//      }
+    pub async fn conversation(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&json!({
+        }))?)
+    }
 
     pub async fn choose_recipient(&self) -> Result<String, Error> {
         let users = self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
@@ -343,16 +356,6 @@ impl StateManager {
             }).collect::<Vec<Profile>>()
         }))?)
     }
-
-//      pub async fn conv_info(&self) -> Result<String, Error> {
-//          let conversation = self.state.get::<Conversation>(Field::CurrentConversation).await?;
-//          let contacts = conversation.members;
-//          Ok(serde_json::to_string(&ConvInfo{
-//              contacts: contacts,
-//          })?)
-//      }
-
-}
 
 pub fn format_usd(price: Usd) -> String {
     let price = (price * 100.0).round() / 100.0;

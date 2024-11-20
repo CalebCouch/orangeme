@@ -2,6 +2,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url "${project(':background_fetch').projectDir}/libs" }
     }
 }
 
@@ -16,3 +17,8 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    compileSdkVersion   = 33                // or higher / as desired
+    targetSdkVersion    = 33                // or higher / as desired
+}   

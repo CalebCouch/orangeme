@@ -820,10 +820,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_bool(raw[1]),
         );
       case 9:
-        return const PageName_MessagesHome();
+        return PageName_UserProfile(
+          dco_decode_bool(raw[1]),
+        );
       case 10:
-        return const PageName_ChooseRecipient();
+        return const PageName_MessagesHome();
       case 11:
+        return const PageName_ChooseRecipient();
+      case 12:
+        return const PageName_Conversation();
+      case 13:
+        return const PageName_ConversationInfo();
+      case 14:
         return PageName_Test(
           dco_decode_String(raw[1]),
         );
@@ -1164,10 +1172,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_bool(deserializer);
         return PageName_MyProfile(var_field0);
       case 9:
-        return const PageName_MessagesHome();
+        var var_field0 = sse_decode_bool(deserializer);
+        return PageName_UserProfile(var_field0);
       case 10:
-        return const PageName_ChooseRecipient();
+        return const PageName_MessagesHome();
       case 11:
+        return const PageName_ChooseRecipient();
+      case 12:
+        return const PageName_Conversation();
+      case 13:
+        return const PageName_ConversationInfo();
+      case 14:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
       default:
@@ -1503,12 +1518,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_MyProfile(field0: final field0):
         sse_encode_i_32(8, serializer);
         sse_encode_bool(field0, serializer);
-      case PageName_MessagesHome():
+      case PageName_UserProfile(field0: final field0):
         sse_encode_i_32(9, serializer);
-      case PageName_ChooseRecipient():
+        sse_encode_bool(field0, serializer);
+      case PageName_MessagesHome():
         sse_encode_i_32(10, serializer);
-      case PageName_Test(field0: final field0):
+      case PageName_ChooseRecipient():
         sse_encode_i_32(11, serializer);
+      case PageName_Conversation():
+        sse_encode_i_32(12, serializer);
+      case PageName_ConversationInfo():
+        sse_encode_i_32(13, serializer);
+      case PageName_Test(field0: final field0):
+        sse_encode_i_32(14, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');
