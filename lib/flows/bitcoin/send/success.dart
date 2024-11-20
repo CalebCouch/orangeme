@@ -32,7 +32,7 @@ class SuccessState extends GenericState<Success> {
 
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
-            header: Header_Stack(context, "Send confirmed", Container(), exitButton(context, BitcoinHome())),
+            header: Header_Stack(context, "Send confirmed", Container(), ExitButton(context, BitcoinHome())),
             content: [Result()],
             bumper: Bumper(context, content: [
                 CustomButton(

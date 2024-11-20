@@ -73,7 +73,7 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
                     child: Container(
                         alignment: Alignment.bottomCenter,
                         padding: const EdgeInsets.only(right: 8, bottom: 24),
-                        child: ProfilePhoto(context, m.sender.pfp),
+                        child: ProfilePhoto(context, m.sender.pfpPath),
                     ),
                 ),
                 Flexible(

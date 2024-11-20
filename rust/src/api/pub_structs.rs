@@ -31,9 +31,10 @@ pub enum PageName {
     UserProfile(bool),
     MessagesHome,
     ChooseRecipient,
-    Conversation(),
-    ConversationInfo(),
+    CurrentConversation,
+    ConversationInfo,
     Test(String),
+    Scan,
 }
 
 #[derive(Debug)]
@@ -90,6 +91,7 @@ pub struct Message {
     pub message: String,
     pub date: String,
     pub time: String,
+    pub is_incoming: bool,
 }
 
 pub struct Profile {

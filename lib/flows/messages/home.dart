@@ -6,7 +6,7 @@ import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/flows/messages/conversation/exchange.dart';
+import 'package:orange/flows/messages/conversation/conversation.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
 import 'package:orangeme_material/orangeme_material.dart';

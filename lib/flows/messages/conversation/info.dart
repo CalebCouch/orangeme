@@ -35,24 +35,24 @@ class ConversationInfoState extends GenericState<ConversationInfo> {
         });
     }
 
-    Widget Information(List<Profile> contacts) {
+    Widget Information() {
         return CustomText(
             variant: 'text', 
             font_size: 'md', 
             text_color: 'text_secondary', 
-            txt: 'This group has ${contacts.length} members'
+            txt: 'This group has ${widget.members.length} members'
         );
     }
 
-    Widget ListMembers(BuildContext context, contacts) {
+    Widget ListMembers() {
         onPressed(int i) {/*navigateTo(context, UserProfile(contacts[index]));*/}
 
         return ListView.builder(
             shrinkWrap: true,
             physics: const ScrollPhysics(),
-            itemCount: contacts.length,
+            itemCount: widget.members.length,
             itemBuilder: (BuildContext context, int index) {
-                return ContactItem(context, contacts[index], () => onPressed(index));
+                return ContactItem(context, widget.members[index], () => onPressed(index));
             },
         );
     }

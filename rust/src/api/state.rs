@@ -126,7 +126,8 @@ impl StateManager {
             PageName::MessagesHome => self.messages_home().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
             PageName::ConversationInfo => self.conversation_info().await,
-            PageName::Conversation => self.conversation().await,
+            PageName::CurrentConversation => self.current_conversation().await,
+            PageName::Scan => self.scan_qr().await,
             PageName::Test(_) => self.test().await,
         }
     }
@@ -271,16 +272,12 @@ impl StateManager {
         Ok("{}".to_string())
     }
 
+    pub async fn scan_qr(&self) -> Result<String, Error> {
+        Ok(serde_json::to_string(&json!({
+        }))?)
+    }
+
     /*      Messages Home        */
-
-    // pub async fn messages_home(&self) -> Result<String, Error> {
-    //     let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
-
-    //     Ok(serde_json::to_string(&json!({
-    //         "profile_picture": profile_pfp,
-    //         "conversations": None, //ShorthandConversation
-    //     }))?)
-    // }
 
     pub async fn my_profile(&self, init: bool) -> Result<String, Error> {
         let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
@@ -338,7 +335,7 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn conversation(&self) -> Result<String, Error> {
+    pub async fn current_conversation(&self) -> Result<String, Error> {
         Ok(serde_json::to_string(&json!({
         }))?)
     }
@@ -356,6 +353,7 @@ impl StateManager {
             }).collect::<Vec<Profile>>()
         }))?)
     }
+}
 
 pub fn format_usd(price: Usd) -> String {
     let price = (price * 100.0).round() / 100.0;

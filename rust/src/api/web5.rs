@@ -169,6 +169,7 @@ pub struct Message {
     pub message: String,
     pub date: String,
     pub time: String,
+    pub is_incoming: bool,
 }
 
 impl Message {
@@ -177,8 +178,9 @@ impl Message {
         message: String,
         date: String,
         time: String,
+        is_incoming: bool,
     ) -> Self {
-        Message{sender, message, date, time}
+        Message{sender, message, date, time, is_incoming}
     }
 }
 

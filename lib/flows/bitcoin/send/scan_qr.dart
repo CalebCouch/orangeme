@@ -16,7 +16,7 @@ class ScanQR extends GenericWidget {
 class ScanQRState extends GenericState<ScanQR> {
 
     @override
-    PageName getPageName() {return PageName.none();}
+    PageName getPageName() {return PageName.scan();}
 
     @override
     void unpack_state(Map<String, dynamic> json) {setState(() {});}

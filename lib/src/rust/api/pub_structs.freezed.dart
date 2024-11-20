@@ -420,9 +420,10 @@ mixin _$PageName {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -439,9 +440,10 @@ mixin _$PageName {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -458,9 +460,10 @@ mixin _$PageName {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -478,9 +481,11 @@ mixin _$PageName {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -497,9 +502,10 @@ mixin _$PageName {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -516,9 +522,10 @@ mixin _$PageName {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -599,9 +606,10 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return bitcoinHome();
   }
@@ -621,9 +629,10 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return bitcoinHome?.call();
   }
@@ -643,9 +652,10 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (bitcoinHome != null) {
@@ -669,9 +679,11 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return bitcoinHome(this);
   }
@@ -691,9 +703,10 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return bitcoinHome?.call(this);
   }
@@ -713,9 +726,10 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (bitcoinHome != null) {
@@ -814,9 +828,10 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return viewTransaction(field0);
   }
@@ -836,9 +851,10 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return viewTransaction?.call(field0);
   }
@@ -858,9 +874,10 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (viewTransaction != null) {
@@ -884,9 +901,11 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return viewTransaction(this);
   }
@@ -906,9 +925,10 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return viewTransaction?.call(this);
   }
@@ -928,9 +948,10 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (viewTransaction != null) {
@@ -1008,9 +1029,10 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return receive();
   }
@@ -1030,9 +1052,10 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return receive?.call();
   }
@@ -1052,9 +1075,10 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (receive != null) {
@@ -1078,9 +1102,11 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return receive(this);
   }
@@ -1100,9 +1126,10 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return receive?.call(this);
   }
@@ -1122,9 +1149,10 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (receive != null) {
@@ -1220,9 +1248,10 @@ class _$PageName_SendImpl extends PageName_Send {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return send(field0);
   }
@@ -1242,9 +1271,10 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return send?.call(field0);
   }
@@ -1264,9 +1294,10 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (send != null) {
@@ -1290,9 +1321,11 @@ class _$PageName_SendImpl extends PageName_Send {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return send(this);
   }
@@ -1312,9 +1345,10 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return send?.call(this);
   }
@@ -1334,9 +1368,10 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (send != null) {
@@ -1441,9 +1476,10 @@ class _$PageName_AmountImpl extends PageName_Amount {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return amount(field0);
   }
@@ -1463,9 +1499,10 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return amount?.call(field0);
   }
@@ -1485,9 +1522,10 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (amount != null) {
@@ -1511,9 +1549,11 @@ class _$PageName_AmountImpl extends PageName_Amount {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return amount(this);
   }
@@ -1533,9 +1573,10 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return amount?.call(this);
   }
@@ -1555,9 +1596,10 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (amount != null) {
@@ -1662,9 +1704,10 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return speed(field0);
   }
@@ -1684,9 +1727,10 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return speed?.call(field0);
   }
@@ -1706,9 +1750,10 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (speed != null) {
@@ -1732,9 +1777,11 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return speed(this);
   }
@@ -1754,9 +1801,10 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return speed?.call(this);
   }
@@ -1776,9 +1824,10 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (speed != null) {
@@ -1900,9 +1949,10 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return confirm(field0, field1, field2);
   }
@@ -1922,9 +1972,10 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return confirm?.call(field0, field1, field2);
   }
@@ -1944,9 +1995,10 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (confirm != null) {
@@ -1970,9 +2022,11 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return confirm(this);
   }
@@ -1992,9 +2046,10 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return confirm?.call(this);
   }
@@ -2014,9 +2069,10 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (confirm != null) {
@@ -2125,9 +2181,10 @@ class _$PageName_SuccessImpl extends PageName_Success {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return success(field0);
   }
@@ -2147,9 +2204,10 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return success?.call(field0);
   }
@@ -2169,9 +2227,10 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -2195,9 +2254,11 @@ class _$PageName_SuccessImpl extends PageName_Success {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return success(this);
   }
@@ -2217,9 +2278,10 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return success?.call(this);
   }
@@ -2239,9 +2301,10 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -2346,9 +2409,10 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return myProfile(field0);
   }
@@ -2368,9 +2432,10 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return myProfile?.call(field0);
   }
@@ -2390,9 +2455,10 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (myProfile != null) {
@@ -2416,9 +2482,11 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return myProfile(this);
   }
@@ -2438,9 +2506,10 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return myProfile?.call(this);
   }
@@ -2460,9 +2529,10 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (myProfile != null) {
@@ -2569,9 +2639,10 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return userProfile(field0);
   }
@@ -2591,9 +2662,10 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return userProfile?.call(field0);
   }
@@ -2613,9 +2685,10 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (userProfile != null) {
@@ -2639,9 +2712,11 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return userProfile(this);
   }
@@ -2661,9 +2736,10 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return userProfile?.call(this);
   }
@@ -2683,9 +2759,10 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (userProfile != null) {
@@ -2765,9 +2842,10 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return messagesHome();
   }
@@ -2787,9 +2865,10 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return messagesHome?.call();
   }
@@ -2809,9 +2888,10 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (messagesHome != null) {
@@ -2835,9 +2915,11 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return messagesHome(this);
   }
@@ -2857,9 +2939,10 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return messagesHome?.call(this);
   }
@@ -2879,9 +2962,10 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (messagesHome != null) {
@@ -2953,9 +3037,10 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return chooseRecipient();
   }
@@ -2975,9 +3060,10 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return chooseRecipient?.call();
   }
@@ -2997,9 +3083,10 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (chooseRecipient != null) {
@@ -3023,9 +3110,11 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return chooseRecipient(this);
   }
@@ -3045,9 +3134,10 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return chooseRecipient?.call(this);
   }
@@ -3067,9 +3157,10 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (chooseRecipient != null) {
@@ -3085,19 +3176,20 @@ abstract class PageName_ChooseRecipient extends PageName {
 }
 
 /// @nodoc
-abstract class _$$PageName_ConversationImplCopyWith<$Res> {
-  factory _$$PageName_ConversationImplCopyWith(
-          _$PageName_ConversationImpl value,
-          $Res Function(_$PageName_ConversationImpl) then) =
-      __$$PageName_ConversationImplCopyWithImpl<$Res>;
+abstract class _$$PageName_CurrentConversationImplCopyWith<$Res> {
+  factory _$$PageName_CurrentConversationImplCopyWith(
+          _$PageName_CurrentConversationImpl value,
+          $Res Function(_$PageName_CurrentConversationImpl) then) =
+      __$$PageName_CurrentConversationImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$PageName_ConversationImplCopyWithImpl<$Res>
-    extends _$PageNameCopyWithImpl<$Res, _$PageName_ConversationImpl>
-    implements _$$PageName_ConversationImplCopyWith<$Res> {
-  __$$PageName_ConversationImplCopyWithImpl(_$PageName_ConversationImpl _value,
-      $Res Function(_$PageName_ConversationImpl) _then)
+class __$$PageName_CurrentConversationImplCopyWithImpl<$Res>
+    extends _$PageNameCopyWithImpl<$Res, _$PageName_CurrentConversationImpl>
+    implements _$$PageName_CurrentConversationImplCopyWith<$Res> {
+  __$$PageName_CurrentConversationImplCopyWithImpl(
+      _$PageName_CurrentConversationImpl _value,
+      $Res Function(_$PageName_CurrentConversationImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of PageName
@@ -3106,19 +3198,19 @@ class __$$PageName_ConversationImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$PageName_ConversationImpl extends PageName_Conversation {
-  const _$PageName_ConversationImpl() : super._();
+class _$PageName_CurrentConversationImpl extends PageName_CurrentConversation {
+  const _$PageName_CurrentConversationImpl() : super._();
 
   @override
   String toString() {
-    return 'PageName.conversation()';
+    return 'PageName.currentConversation()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PageName_ConversationImpl);
+            other is _$PageName_CurrentConversationImpl);
   }
 
   @override
@@ -3140,11 +3232,12 @@ class _$PageName_ConversationImpl extends PageName_Conversation {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
-    return conversation();
+    return currentConversation();
   }
 
   @override
@@ -3162,11 +3255,12 @@ class _$PageName_ConversationImpl extends PageName_Conversation {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
-    return conversation?.call();
+    return currentConversation?.call();
   }
 
   @override
@@ -3184,13 +3278,14 @@ class _$PageName_ConversationImpl extends PageName_Conversation {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
-    if (conversation != null) {
-      return conversation();
+    if (currentConversation != null) {
+      return currentConversation();
     }
     return orElse();
   }
@@ -3210,11 +3305,13 @@ class _$PageName_ConversationImpl extends PageName_Conversation {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
-    return conversation(this);
+    return currentConversation(this);
   }
 
   @override
@@ -3232,11 +3329,12 @@ class _$PageName_ConversationImpl extends PageName_Conversation {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
-    return conversation?.call(this);
+    return currentConversation?.call(this);
   }
 
   @override
@@ -3254,21 +3352,23 @@ class _$PageName_ConversationImpl extends PageName_Conversation {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
-    if (conversation != null) {
-      return conversation(this);
+    if (currentConversation != null) {
+      return currentConversation(this);
     }
     return orElse();
   }
 }
 
-abstract class PageName_Conversation extends PageName {
-  const factory PageName_Conversation() = _$PageName_ConversationImpl;
-  const PageName_Conversation._() : super._();
+abstract class PageName_CurrentConversation extends PageName {
+  const factory PageName_CurrentConversation() =
+      _$PageName_CurrentConversationImpl;
+  const PageName_CurrentConversation._() : super._();
 }
 
 /// @nodoc
@@ -3328,9 +3428,10 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return conversationInfo();
   }
@@ -3350,9 +3451,10 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return conversationInfo?.call();
   }
@@ -3372,9 +3474,10 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (conversationInfo != null) {
@@ -3398,9 +3501,11 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return conversationInfo(this);
   }
@@ -3420,9 +3525,10 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return conversationInfo?.call(this);
   }
@@ -3442,9 +3548,10 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (conversationInfo != null) {
@@ -3540,9 +3647,10 @@ class _$PageName_TestImpl extends PageName_Test {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() conversation,
+    required TResult Function() currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
+    required TResult Function() scan,
   }) {
     return test(field0);
   }
@@ -3562,9 +3670,10 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? conversation,
+    TResult? Function()? currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
+    TResult? Function()? scan,
   }) {
     return test?.call(field0);
   }
@@ -3584,9 +3693,10 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? conversation,
+    TResult Function()? currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
+    TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (test != null) {
@@ -3610,9 +3720,11 @@ class _$PageName_TestImpl extends PageName_Test {
     required TResult Function(PageName_UserProfile value) userProfile,
     required TResult Function(PageName_MessagesHome value) messagesHome,
     required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
-    required TResult Function(PageName_Conversation value) conversation,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
     required TResult Function(PageName_ConversationInfo value) conversationInfo,
     required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
   }) {
     return test(this);
   }
@@ -3632,9 +3744,10 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult? Function(PageName_UserProfile value)? userProfile,
     TResult? Function(PageName_MessagesHome value)? messagesHome,
     TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult? Function(PageName_Conversation value)? conversation,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
     TResult? Function(PageName_ConversationInfo value)? conversationInfo,
     TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
   }) {
     return test?.call(this);
   }
@@ -3654,9 +3767,10 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult Function(PageName_UserProfile value)? userProfile,
     TResult Function(PageName_MessagesHome value)? messagesHome,
     TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
-    TResult Function(PageName_Conversation value)? conversation,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
     TResult Function(PageName_ConversationInfo value)? conversationInfo,
     TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
     required TResult orElse(),
   }) {
     if (test != null) {
@@ -3677,4 +3791,196 @@ abstract class PageName_Test extends PageName {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PageName_TestImplCopyWith<_$PageName_TestImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$PageName_ScanImplCopyWith<$Res> {
+  factory _$$PageName_ScanImplCopyWith(
+          _$PageName_ScanImpl value, $Res Function(_$PageName_ScanImpl) then) =
+      __$$PageName_ScanImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$PageName_ScanImplCopyWithImpl<$Res>
+    extends _$PageNameCopyWithImpl<$Res, _$PageName_ScanImpl>
+    implements _$$PageName_ScanImplCopyWith<$Res> {
+  __$$PageName_ScanImplCopyWithImpl(
+      _$PageName_ScanImpl _value, $Res Function(_$PageName_ScanImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$PageName_ScanImpl extends PageName_Scan {
+  const _$PageName_ScanImpl() : super._();
+
+  @override
+  String toString() {
+    return 'PageName.scan()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$PageName_ScanImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() bitcoinHome,
+    required TResult Function(String field0) viewTransaction,
+    required TResult Function() receive,
+    required TResult Function(String field0) send,
+    required TResult Function(String field0) amount,
+    required TResult Function(BigInt field0) speed,
+    required TResult Function(String field0, BigInt field1, BigInt field2)
+        confirm,
+    required TResult Function(String field0) success,
+    required TResult Function(bool field0) myProfile,
+    required TResult Function(bool field0) userProfile,
+    required TResult Function() messagesHome,
+    required TResult Function() chooseRecipient,
+    required TResult Function() currentConversation,
+    required TResult Function() conversationInfo,
+    required TResult Function(String field0) test,
+    required TResult Function() scan,
+  }) {
+    return scan();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? bitcoinHome,
+    TResult? Function(String field0)? viewTransaction,
+    TResult? Function()? receive,
+    TResult? Function(String field0)? send,
+    TResult? Function(String field0)? amount,
+    TResult? Function(BigInt field0)? speed,
+    TResult? Function(String field0, BigInt field1, BigInt field2)? confirm,
+    TResult? Function(String field0)? success,
+    TResult? Function(bool field0)? myProfile,
+    TResult? Function(bool field0)? userProfile,
+    TResult? Function()? messagesHome,
+    TResult? Function()? chooseRecipient,
+    TResult? Function()? currentConversation,
+    TResult? Function()? conversationInfo,
+    TResult? Function(String field0)? test,
+    TResult? Function()? scan,
+  }) {
+    return scan?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? bitcoinHome,
+    TResult Function(String field0)? viewTransaction,
+    TResult Function()? receive,
+    TResult Function(String field0)? send,
+    TResult Function(String field0)? amount,
+    TResult Function(BigInt field0)? speed,
+    TResult Function(String field0, BigInt field1, BigInt field2)? confirm,
+    TResult Function(String field0)? success,
+    TResult Function(bool field0)? myProfile,
+    TResult Function(bool field0)? userProfile,
+    TResult Function()? messagesHome,
+    TResult Function()? chooseRecipient,
+    TResult Function()? currentConversation,
+    TResult Function()? conversationInfo,
+    TResult Function(String field0)? test,
+    TResult Function()? scan,
+    required TResult orElse(),
+  }) {
+    if (scan != null) {
+      return scan();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(PageName_BitcoinHome value) bitcoinHome,
+    required TResult Function(PageName_ViewTransaction value) viewTransaction,
+    required TResult Function(PageName_Receive value) receive,
+    required TResult Function(PageName_Send value) send,
+    required TResult Function(PageName_Amount value) amount,
+    required TResult Function(PageName_Speed value) speed,
+    required TResult Function(PageName_Confirm value) confirm,
+    required TResult Function(PageName_Success value) success,
+    required TResult Function(PageName_MyProfile value) myProfile,
+    required TResult Function(PageName_UserProfile value) userProfile,
+    required TResult Function(PageName_MessagesHome value) messagesHome,
+    required TResult Function(PageName_ChooseRecipient value) chooseRecipient,
+    required TResult Function(PageName_CurrentConversation value)
+        currentConversation,
+    required TResult Function(PageName_ConversationInfo value) conversationInfo,
+    required TResult Function(PageName_Test value) test,
+    required TResult Function(PageName_Scan value) scan,
+  }) {
+    return scan(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult? Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult? Function(PageName_Receive value)? receive,
+    TResult? Function(PageName_Send value)? send,
+    TResult? Function(PageName_Amount value)? amount,
+    TResult? Function(PageName_Speed value)? speed,
+    TResult? Function(PageName_Confirm value)? confirm,
+    TResult? Function(PageName_Success value)? success,
+    TResult? Function(PageName_MyProfile value)? myProfile,
+    TResult? Function(PageName_UserProfile value)? userProfile,
+    TResult? Function(PageName_MessagesHome value)? messagesHome,
+    TResult? Function(PageName_ChooseRecipient value)? chooseRecipient,
+    TResult? Function(PageName_CurrentConversation value)? currentConversation,
+    TResult? Function(PageName_ConversationInfo value)? conversationInfo,
+    TResult? Function(PageName_Test value)? test,
+    TResult? Function(PageName_Scan value)? scan,
+  }) {
+    return scan?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(PageName_BitcoinHome value)? bitcoinHome,
+    TResult Function(PageName_ViewTransaction value)? viewTransaction,
+    TResult Function(PageName_Receive value)? receive,
+    TResult Function(PageName_Send value)? send,
+    TResult Function(PageName_Amount value)? amount,
+    TResult Function(PageName_Speed value)? speed,
+    TResult Function(PageName_Confirm value)? confirm,
+    TResult Function(PageName_Success value)? success,
+    TResult Function(PageName_MyProfile value)? myProfile,
+    TResult Function(PageName_UserProfile value)? userProfile,
+    TResult Function(PageName_MessagesHome value)? messagesHome,
+    TResult Function(PageName_ChooseRecipient value)? chooseRecipient,
+    TResult Function(PageName_CurrentConversation value)? currentConversation,
+    TResult Function(PageName_ConversationInfo value)? conversationInfo,
+    TResult Function(PageName_Test value)? test,
+    TResult Function(PageName_Scan value)? scan,
+    required TResult orElse(),
+  }) {
+    if (scan != null) {
+      return scan(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PageName_Scan extends PageName {
+  const factory PageName_Scan() = _$PageName_ScanImpl;
+  const PageName_Scan._() : super._();
 }

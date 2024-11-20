@@ -59,7 +59,7 @@ class UserProfileState extends GenericState<UserProfile> {
                 didItem(context, widget.did),
                 addressItem(context, widget.address),
             ],
-            Bumper(context, content: [
+            bumper: Bumper(context, content: [
                 CustomButton(txt: 'Message', onTap: sendMessage),
                 CustomButton(txt: 'Send Bitcoin', onTap: sendBitcoin),
             ]),

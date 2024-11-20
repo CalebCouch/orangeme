@@ -790,11 +790,13 @@ impl SseDecode for crate::api::pub_structs::Message {
         let mut var_message = <String>::sse_decode(deserializer);
         let mut var_date = <String>::sse_decode(deserializer);
         let mut var_time = <String>::sse_decode(deserializer);
+        let mut var_isIncoming = <bool>::sse_decode(deserializer);
         return crate::api::pub_structs::Message {
             sender: var_sender,
             message: var_message,
             date: var_date,
             time: var_time,
+            is_incoming: var_isIncoming,
         };
     }
 }
@@ -864,7 +866,7 @@ impl SseDecode for crate::api::pub_structs::PageName {
                 return crate::api::pub_structs::PageName::ChooseRecipient;
             }
             12 => {
-                return crate::api::pub_structs::PageName::Conversation;
+                return crate::api::pub_structs::PageName::CurrentConversation;
             }
             13 => {
                 return crate::api::pub_structs::PageName::ConversationInfo;
@@ -872,6 +874,9 @@ impl SseDecode for crate::api::pub_structs::PageName {
             14 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::pub_structs::PageName::Test(var_field0);
+            }
+            15 => {
+                return crate::api::pub_structs::PageName::Scan;
             }
             _ => {
                 unimplemented!("");
@@ -1153,6 +1158,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::Message {
             self.message.into_into_dart().into_dart(),
             self.date.into_into_dart().into_dart(),
             self.time.into_into_dart().into_dart(),
+            self.is_incoming.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1204,11 +1210,12 @@ impl flutter_rust_bridge::IntoDart for crate::api::pub_structs::PageName {
             }
             crate::api::pub_structs::PageName::MessagesHome => [10.into_dart()].into_dart(),
             crate::api::pub_structs::PageName::ChooseRecipient => [11.into_dart()].into_dart(),
-            crate::api::pub_structs::PageName::Conversation => [12.into_dart()].into_dart(),
+            crate::api::pub_structs::PageName::CurrentConversation => [12.into_dart()].into_dart(),
             crate::api::pub_structs::PageName::ConversationInfo => [13.into_dart()].into_dart(),
             crate::api::pub_structs::PageName::Test(field0) => {
                 [14.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
+            crate::api::pub_structs::PageName::Scan => [15.into_dart()].into_dart(),
             _ => {
                 unimplemented!("");
             }
@@ -1502,6 +1509,7 @@ impl SseEncode for crate::api::pub_structs::Message {
         <String>::sse_encode(self.message, serializer);
         <String>::sse_encode(self.date, serializer);
         <String>::sse_encode(self.time, serializer);
+        <bool>::sse_encode(self.is_incoming, serializer);
     }
 }
 
@@ -1565,7 +1573,7 @@ impl SseEncode for crate::api::pub_structs::PageName {
             crate::api::pub_structs::PageName::ChooseRecipient => {
                 <i32>::sse_encode(11, serializer);
             }
-            crate::api::pub_structs::PageName::Conversation => {
+            crate::api::pub_structs::PageName::CurrentConversation => {
                 <i32>::sse_encode(12, serializer);
             }
             crate::api::pub_structs::PageName::ConversationInfo => {
@@ -1574,6 +1582,9 @@ impl SseEncode for crate::api::pub_structs::PageName {
             crate::api::pub_structs::PageName::Test(field0) => {
                 <i32>::sse_encode(14, serializer);
                 <String>::sse_encode(field0, serializer);
+            }
+            crate::api::pub_structs::PageName::Scan => {
+                <i32>::sse_encode(15, serializer);
             }
             _ => {
                 unimplemented!("");

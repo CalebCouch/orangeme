@@ -7,20 +7,20 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 // import 'package:orange/global.dart' as global;
 
-class Exchange extends GenericWidget {
-    Exchange({super.key});
+class CurrentConversation extends GenericWidget {
+    CurrentConversation({super.key});
 
     List<Message> messages = [];
     List<Profile> members = [];
 
     @override
-    ExchangeState createState() => ExchangeState();
+    CurrentConversationState createState() => CurrentConversationState();
 }
 
-class ExchangeState extends GenericState<Exchange> {
+class CurrentConversationState extends GenericState<CurrentConversation> {
     @override
     PageName getPageName() {
-        return PageName.conversation();
+        return PageName.currentConversation();
     }
 
     @override
@@ -49,10 +49,10 @@ class ExchangeState extends GenericState<Exchange> {
     toUserProfile() {/*navigateTo(UserProfile(widget.members[0]));*/}
 
     Widget ChatRecipients() {
-        bool isGroup =  widget.contacts.length > 1;
+        bool isGroup =  widget.members.length > 1;
         return CustomColumn([
-            isGroup ? profilePhotoStack(context, contacts) : ProfilePhoto(context, widget.members[0].pfpPath, ProfileSize.lg, false),
-            CustomText( variant: 'heading', font-size: 'h5', txt: isGroup ? 'Group Message' : contacts[0].name),
+            isGroup ? profilePhotoStack(context, widget.members) : ProfilePhoto(context, widget.members[0].pfpPath, ProfileSize.lg, false),
+            CustomText( variant: 'heading', font_size: 'h5', txt: isGroup ? 'Group Message' : widget.members[0].name),
         ], 8);
     }
 
@@ -71,14 +71,14 @@ class ExchangeState extends GenericState<Exchange> {
         return Stack_Chat(
             header: Header_Message(
                 context, 
-                ChatRecipients(context, members), 
-                members.length > 1 
-                    ? infoButton(context, MessageInfo()) 
-                    : iconButton(toUserProfile, 'info lg')
+                ChatRecipients(), 
+                widget.members.length > 1 
+                    ? InfoButton(context, ConversationInfo()) 
+                    : CustomIconButton(toUserProfile, 'info', 'lg')
             ),
             content: [
-                widget.conversation.messages.isNotEmpty,
-                messageStack(context, scrollController, members, widget.conversation.messages),
+                widget.messages.isNotEmpty,
+                messageStack(context, scrollController, widget.members, widget.messages),
             ],
             bumper: Bumper(context, content: [MessageInput()]),
         );

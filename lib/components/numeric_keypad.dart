@@ -53,7 +53,7 @@ class Key extends StatelessWidget {
                 padding: const EdgeInsets.all(AppPadding.bumper),
                 alignment: Alignment.center,
                 height: 48,
-                child: number == KeyPress.backspace ? deleteButton(context) : numberButton(context, txt),
+                child: number == KeyPress.backspace ? DeleteButton(context) : NumberButton(context, txt),
             ),
         );
     }
