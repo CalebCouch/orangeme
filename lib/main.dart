@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:workmanager/workmanager.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orangeme_material/orangeme_material.dart';
@@ -8,10 +9,26 @@ import 'package:orange/global.dart' as global;
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/test.dart';
 import 'dart:ui';
-import 'package:background_fetch/background_fetch.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:async';
 
-// Function to start Rust, unchanged
+void main() async {
+    await RustLib.init();
+    WidgetsFlutterBinding.ensureInitialized();
+    await global.getAppData();
+    startRust(global.dataDir!);
+    await initNotifications();
+    runApp(MyApp());
+
+    await waitForAppInBackground();
+    await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+    await Workmanager().registerPeriodicTask(
+        "id_unique_task",
+        "simpleTask",
+        frequency: Duration(minutes: 15),
+        inputData: <String, dynamic>{'key': 'value'},
+    );
+}
+
 Future<void> startRust(String path) async {
     await rustStart(
         path: path,
@@ -20,87 +37,65 @@ Future<void> startRust(String path) async {
     );
 }
 
-void initBackgroundFetch() {
-    BackgroundFetch.configure(
-        BackgroundFetchConfig(
-            minimumFetchInterval: 15, 
-            stopOnTerminate: false,
-            startOnBoot: true,
-            enableHeadless: true, 
-        ), (String taskId) async {
+bool isAppInForeground = true;
 
-            await _sendNotification();
-            BackgroundFetch.finish(taskId);
-        },
-    );
+Future<void> waitForAppInBackground() async { 
+    while (isAppInForeground) { await Future.delayed(Duration(seconds: 3)); }
 }
 
-// Example function to send notifications in the background
-Future<void> _sendNotification() async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    var android = AndroidInitializationSettings('app_icon');
-    var initializationSettings = InitializationSettings(android: android);
-
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-    var androidDetails = AndroidNotificationDetails(
-        'your_channel_id',    // Channel ID
-        'your_channel_name',  // Channel name
-        channelDescription: 'your_channel_description',  // Channel description
-        importance: Importance.high,
-        priority: Priority.high,
-        ticker: 'ticker',
-    );
-
-    var notificationDetails = NotificationDetails(android: androidDetails);
-
-    await flutterLocalNotificationsPlugin.show(
-        0,
-        'Background Task Notification',
-        'This notification was triggered in the background.',
-        notificationDetails,
-    );
+void notifications() {
+    sendNotification("Message Received");
 }
 
-Future<void> main() async {
-    await RustLib.init();
-    WidgetsFlutterBinding.ensureInitialized();
-    await global.getAppData();
-    startRust(global.dataDir!);
+void callbackDispatcher() {
+    print("CALLBACK");
+    Workmanager().executeTask((task, inputData) {
+        notifications();
+        print("Background Task Triggered");
+        return Future.value(true);
+    });
+}
 
-    // Initialize background fetch
-    initBackgroundFetch();
+class MyApp extends StatefulWidget {
+    @override
+    _MyAppState createState() => _MyAppState();
+}
 
-    if (global.platform_isDesktop) {
-        WindowManager.instance.setMinimumSize(const Size(1280, 832));
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+
+    @override
+    void initState() {
+        super.initState();
+        WidgetsBinding.instance.addObserver(this);
     }
 
-    FlutterError.onError = (details) {
-        FlutterError.presentError(details);
-        global.navigation.throwError(details.toString());
-    };
+    @override
+    void dispose() {
+        WidgetsBinding.instance.removeObserver(this);
+        super.dispose();
+    }
 
-    PlatformDispatcher.instance.onError = (error, stack) {
-        print(stack);
-        global.navigation.throwError(error.toString());
-        return true;
-    };
-
-    runApp(MyApp());
-
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-}
-
-class MyApp extends StatelessWidget {
-    MyApp({super.key});
+    @override
+    void didChangeAppLifecycleState(AppLifecycleState state) {
+        super.didChangeAppLifecycleState(state);
+        switch(state) {
+            case AppLifecycleState.resumed:
+                setState(() => isAppInForeground = true);
+                break;
+            case AppLifecycleState.paused:
+                setState(() => isAppInForeground = false);
+                break;
+            default:
+                break;
+        }
+    }
 
     @override
     Widget build(BuildContext context) {
         return MaterialApp(
             debugShowCheckedModeBanner: false,
             navigatorKey: global.navigation.navkey,
-            title: 'orange.me',
+            title: 'orange',
             theme: theme(),
             home: BitcoinHome(),
         );
