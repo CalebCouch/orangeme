@@ -2,7 +2,7 @@ use super::Error;
 
 use super::price::PriceGetter;
 use super::state::{State};
-use super::structs::{Callback, DateTime};
+use super::structs::{Callback, DateTime, Request};
 use super::state::Field;
 use super::pub_structs::{Sats, Usd};
 
@@ -32,7 +32,6 @@ use secp256k1::rand::RngCore;
 use secp256k1::rand;
 use tokio::sync::Mutex;
 
-const NO_INTERNET: &str = "failed to lookup address information: No address associated with hostname";
 const CLIENT_URI: &str = "ssl://electrum.blockstream.info:50002";
 const DUMMY_ADDRESS: &str = "bc1qxma2dwmutht4vxyl6u395slew5ectfpn35ug9l";
 
@@ -166,7 +165,7 @@ impl Wallet {
 
     pub async fn get_fees(&self, amount: Sats) -> Result<(Sats, Sats), Error> {
         let client = Self::get_blockchain()?;
-        let one = client.estimate_fee(1)?.as_sat_per_vb() as Sats;
+        let one = Request::process_result(client.estimate_fee(1))?.as_sat_per_vb() as Sats;
         let vb = self.tx_builder(DUMMY_ADDRESS, amount, one * 200).await?.0.extract_tx().vsize() as u64;
         Ok((
             (one * 2) * vb,
@@ -199,21 +198,16 @@ impl Wallet {
 
 
     pub async fn broadcast_transaction(&self, tx: &bdk::bitcoin::Transaction) -> Result<(), Error> {
-        Self::get_blockchain()?.broadcast(tx)?;
-        Ok(())
+        Request::process_result(Self::get_blockchain()?.broadcast(tx))
     }
 
     fn get_blockchain() -> Result<ElectrumBlockchain, Error> {
-        Ok(ElectrumBlockchain::from(Client::new(CLIENT_URI)?))
+        Ok(ElectrumBlockchain::from(Request::process_result(Client::new(CLIENT_URI))?))
     }
 
     pub async fn sync(&self) -> Result<(), Error> {
         let blockchain = Self::get_blockchain()?;
-        if let Err(e) = self.inner.lock().await.sync(&blockchain, SyncOptions::default()) {
-           if !format!("{:?}", e).contains(NO_INTERNET) {
-               return Err(e.into());
-            }
-        }
+        Request::process_result(self.inner.lock().await.sync(&blockchain, SyncOptions::default()))?;
         Ok(())
     }
 

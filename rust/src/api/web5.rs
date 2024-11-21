@@ -2,29 +2,32 @@ use super::Error;
 
 use super::pub_structs::DartMethod;
 use super::state::{State, Field};
-use super::structs::Callback;
+use super::structs::{Callback, Request};
 
-use simple_database::SqliteStore;
-use simple_database::database::{FiltersBuilder, IndexBuilder, Filter};
-
-use web5_rust::dids::{DefaultDidResolver, DhtDocument, Identity, Did};
-use web5_rust::{Wallet, Record, Agent};
-
-use serde::{Serialize, Deserialize};
 use std::path::PathBuf;
+use std::str::FromStr;
 
-use schemars::schema::Schema;
-use schemars::schema_for;
-use schemars::JsonSchema;
+use simple_database::{KeyValueStore, SqliteStore};
+use simple_database::database::{FiltersBuilder, IndexBuilder, Filter};
 
 use web5_rust::{
     ChannelPermissionOptions,
     PermissionOptions,
     ChannelProtocol,
+    DwnResponse,
     Protocol,
+    Packet,
 };
+use web5_rust::dids::{DidResolver, DefaultDidResolver, DidDocument, DhtDocument, Identity, Did};
+use web5_rust::{Wallet, Record, Agent, DefaultRouter};
+use web5_rust::json_rpc::JsonRpcClient;
+use web5_rust::traits::Client;
 
-use std::str::FromStr;
+use schemars::schema::Schema;
+use schemars::schema_for;
+use schemars::JsonSchema;
+
+use serde::{Serialize, Deserialize};
 
 const DUMMY_DID: &str = "did:dht:0000000000000000000000000000000000000000000000000000";
 
@@ -162,7 +165,6 @@ impl Conversation {
     }
 }
 
-
 #[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
 pub struct Message {
     pub sender: Profile,
@@ -197,13 +199,21 @@ impl MessagingAgent {
             callback(DartMethod::StorageSet("identity".to_string(), serde_json::to_string(&tup)?)).await;
             tup
         };
-        doc.publish(&id.did_key).await?;
 
-        let did_resolver = Box::new(DefaultDidResolver::new::<SqliteStore>(Some(path.join("DefaultDidResolver"))).await?);
+        Request::repeat(|| {
+            let key = id.did_key.clone();
+            let doc = doc.clone();
+            Box::pin(async move {doc.publish(&key).await})
+        }).await?;
+
+        let did_resolver = Box::new(IntervalDidResolver::new::<SqliteStore>(Some(path.join("DefaultDidResolver"))).await?);
+        let client = Box::new(IntervalClient::new());
+        let router = Box::new(DefaultRouter::new(did_resolver.clone(), Some(client)));
         Ok(MessagingAgent{
             agent: Agent::new::<SqliteStore>(
-                Wallet::new(id, did_resolver.clone(), None).get_agent_key(&Protocols::rooms_protocol()).await?,
-                Protocols::get(), Some(path), Some(did_resolver), None
+                Wallet::new(id, did_resolver.clone(), Some(router.clone()))
+                    .get_agent_key(&Protocols::rooms_protocol()).await?,
+                Protocols::get(), Some(path), Some(did_resolver), Some(router)
             ).await?
         })
     }
@@ -241,5 +251,62 @@ impl MessagingAgent {
     pub async fn refresh_state(&self, state: &State) -> Result<(), Error> {
         self.init_profile(state).await?;
         Ok(())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct IntervalClient {
+    client: JsonRpcClient
+}
+
+impl IntervalClient {
+    pub fn new() -> Self {
+        IntervalClient{client: JsonRpcClient{}}
+    }
+}
+
+impl Default for IntervalClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[async_trait::async_trait]
+impl Client for IntervalClient {
+    async fn send_packet(
+        &self,
+        p: Packet,
+        url: url::Url
+    ) -> Result<DwnResponse, web5_rust::Error> {
+        Request::repeat(|| {
+            let client = self.client.clone();
+            let p = p.clone();
+            let url = url.clone();
+            Box::pin(async move {client.send_packet(p, url).await})
+        }).await
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct IntervalDidResolver {
+    resolver: DefaultDidResolver
+}
+
+impl IntervalDidResolver {
+    pub async fn new<KVS: KeyValueStore + 'static>(path: Option<PathBuf>) -> Result<Self, Error> {
+        Ok(IntervalDidResolver{
+            resolver: DefaultDidResolver::new::<KVS>(path).await?
+        })
+    }
+}
+
+#[async_trait::async_trait]
+impl DidResolver for IntervalDidResolver {
+    async fn resolve(&self, did: &Did) -> Result<Option<Box<dyn DidDocument>>, web5_rust::Error> {
+        Request::repeat(|| {
+            let resolver = self.resolver.clone();
+            let did = did.clone();
+            Box::pin(async move {resolver.resolve(&did).await})
+        }).await
     }
 }

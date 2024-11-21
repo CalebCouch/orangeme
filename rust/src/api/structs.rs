@@ -9,7 +9,8 @@ use flutter_rust_bridge::DartFnFuture;
 use serde::{Serialize, Deserialize};
 use tokio::sync::Mutex;
 use reqwest::Response;
-
+use std::time::Duration;
+use tokio::time;
 
 pub type Callback = Arc<Mutex<dyn Fn(DartMethod) -> DartFnFuture<Option<String>> + 'static + Sync + Send>>;
 
@@ -40,9 +41,43 @@ pub struct Request {}
 
 impl Request {
     pub async fn get(url: &str) -> Result<Response, Error> {
+        Ok(Self::repeat(|| Box::pin(reqwest::get(url.to_string()))).await?)
+    }
+
+    pub fn check_error<E: std::fmt::Debug>(err: &E) -> bool {
+        let e = format!("{:?}", err);
+        e.contains("failed to lookup address information: No address associated with hostname") ||
+        e.contains("Network is unreachable") ||
+        e.contains("Software caused connection abort")
+    }
+
+    pub fn process_result<T, E>(res: Result<T, E>) -> Result<T, Error>
+        where E: std::fmt::Debug + Into<Error>
+    {
+        res.map_err(|err|
+            if Self::check_error(&err) {Error::NoInternet()} else {err.into()}
+        )
+    }
+
+    pub fn filter_error(res: Result<(), Error>) -> Result<(), Error> {
+        match res {
+            Err(Error::NoInternet()) => Ok(()),
+            Err(e) => Err(e),
+            _ => Ok(())
+        }
+    }
+
+    pub async fn repeat<T, O, E>(task: T) -> Result<O, E>
+        where
+            E: std::fmt::Debug,
+            T: Fn() -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<O, E>> + Send + 'static>>
+    {
+        let mut interval = time::interval(Duration::from_millis(1000));
         loop {
-            if let Ok(res) = reqwest::get(url).await {
-                return Ok(res);
+            match task().await {
+                Ok(res) => {return Ok(res);},
+                Err(e) if Self::check_error(&e) => {interval.tick().await;},
+                Err(e) => {return Err(e);},
             }
         }
     }

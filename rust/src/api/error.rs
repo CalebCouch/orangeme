@@ -67,6 +67,9 @@ pub enum Error {
     Conflict(String, String), //409
     #[error("Error {0}: {1}")]
     Error(String, String), //500
+
+    #[error("Cannot connect to the Internet")]
+    NoInternet()
 }
 
 impl Error {

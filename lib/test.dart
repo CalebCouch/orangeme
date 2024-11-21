@@ -29,10 +29,10 @@ class TestState extends GenericState<Test> {
   }
 
   @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
+  unpack_state(Map<String, dynamic> json) {
+  //setState(() {
       widget.val = json["count"] as int;
-    });
+  //});
   }
 
   @override

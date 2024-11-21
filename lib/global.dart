@@ -1,17 +1,17 @@
 library orangeme.global;
 
 import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/navigation.dart';
 import 'package:orange/storage.dart';
 
-import 'package:uuid/uuid.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io' as DartIO;
 
 import 'package:path_provider/path_provider.dart';
-
-import 'package:orange/src/rust/api/simple.dart';
+import 'package:async/async.dart';
+import 'package:uuid/uuid.dart';
 
 String? dataDir;
 
@@ -51,32 +51,6 @@ bool internet_connected = true;
 Storage storage = Storage.init(platform);
 Navigation navigation = Navigation.init();
 
-//  List<RustR> rustResponses = [];
-//  List<RustC> rustCommands = [];
-//  Uuid uuid = const Uuid();
-
-//  Future<String> invoke(String method, String data) async {
-//      var uid = uuid.v1();
-//      var command = RustC(uid, method, data);
-//      print(jsonEncode(command));
-//      rustCommands.add(command);
-//      while (true) {
-//          var index = rustResponses.indexWhere((res) => res.uid == uid);
-//          if (index != -1) {
-//              return rustResponses.removeAt(index).data;
-//          }
-//          await Future.delayed(const Duration(milliseconds: 10));
-//      }
-//  }
-
-//  Future<String> callRust(Thread thread) async {
-//      var result = await rustCall(thread: thread);
-//      if (result.contains("Error")) {
-//          navigation.throwError(result);
-//      }
-//      return result;
-//  }
-
 Future<String?> dartCallback(DartMethod command) async {
     try {
         switch (command) {
@@ -91,4 +65,17 @@ Future<String?> dartCallback(DartMethod command) async {
         navigation.throwError(e.toString());
     }
     return "Error";
+}
+
+CancelableOperation<void>? rust_thread;
+
+void startRust() {
+    rust_thread = CancelableOperation.fromFuture(
+        rustStart(path: dataDir!, platform: platform, callback: dartCallback)
+    );
+}
+
+void throwError(String err) {
+    rust_thread?.cancel();
+    navigation.throwError(err);
 }

@@ -40,9 +40,12 @@ pub enum Field {
     Balance(Option<Sats>),
 
     Profile(Option<Profile>),
+    ProfileAddress(Option<String>),
 
     Conversations(Option<Vec<Conversation>>),
     Users(Option<Vec<Profile>>),
+
+    Test(Option<u64>)
 }
 
 impl Field {
@@ -55,12 +58,6 @@ impl Field {
 #[derive(Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 struct RoomID {
     id: u32,
-}
-
-impl RoomID {
-    fn new(id: u32) -> Self {
-        RoomID { id }
-    }
 }
 
 #[derive(Clone)]
@@ -112,7 +109,7 @@ impl StateManager {
     }
 
     pub async fn get(&mut self, page: PageName) -> Result<String, Error> {
-        match page {
+        let page_state = match page {
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
             PageName::Receive => self.receive().await,
@@ -125,28 +122,36 @@ impl StateManager {
             PageName::MessagesHome => self.messages_home().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
             PageName::Test(_) => self.test().await,
-        }
+        };
+        Ok(serde_json::to_string(&json!({
+            "connected": self.state.get_or_default::<bool>(&Field::Internet(None)).await?,
+            "state": match page_state {
+                Err(Error::NoInternet()) => String::new(),
+                Err(e) => {return Err(e);},
+                Ok(s) => s
+            }
+        }))?)
+
     }
 
     pub async fn test(&self) -> Result<String, Error> {
-        Ok(format!("{{\"count\": {}}}", 0))
+        let count = self.state.get_or_default::<u64>(&Field::Test(None)).await?;
+        self.state.set(Field::Test(Some(count+1))).await?;
+        Ok(format!("{{\"count\": {}}}", count/10))
     }
 
     /*      Bitcoin Home        */
     pub async fn bitcoin_home(&self) -> Result<String, Error> {
-        let internet = self.state.get_or_default::<bool>(&Field::Internet(None)).await?;
         let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
         let balance = sats_to_btc(self.state.get_or_default::<Sats>(&Field::Balance(None)).await?);
-        let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
+        let transactions: BTreeMap<Txid, Transaction> = self.state.get_or_default(&Field::Transactions(None)).await?;
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-        //log::info!("transactions: {:#?}", transactions);
         let mut transactions = transactions.into_iter()
         .collect::<Vec<(Txid, Transaction)>>();
         transactions.sort_by_key(|(_, tx)| tx.confirmation_time.as_ref().unwrap_or(&tx.time_created).clone());
         transactions.reverse();
 
         Ok(serde_json::to_string(&json!({
-            "internet": internet,
             "balance_btc": format_btc(balance),
             "balance_usd": format_usd(balance*price),
             "profile_picture": profile_pfp,
@@ -282,8 +287,10 @@ impl StateManager {
     pub async fn my_profile(&self, init: bool) -> Result<String, Error> {
         let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
         let address = if init {
-            call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await?
-        } else {String::new()};
+            let adr = call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await?;
+            self.state.set(Field::ProfileAddress(Some(adr.clone()))).await?;
+            adr
+        } else {self.state.get_or_default::<String>(&Field::ProfileAddress(None)).await?};
 
         Ok(serde_json::to_string(&json!({
             "name": profile.name,

@@ -10,29 +10,22 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/test.dart';
 import 'dart:ui';
 
-Future<void> startRust(String path) async {
-  await rustStart(
-    path: path,
-    platform: global.platform,
-    callback: global.dartCallback,
-  );
-}
 
 Future<void> main() async {
     await RustLib.init();
     WidgetsFlutterBinding.ensureInitialized();
     await global.getAppData();
-    startRust(global.dataDir!);
+    global.startRust();
     if (global.platform_isDesktop) {
         WindowManager.instance.setMinimumSize(const Size(1280, 832));
     }
     FlutterError.onError = (details) {
         FlutterError.presentError(details);
-        global.navigation.throwError(details.toString());
+        global.throwError(details.toString());
     };
     PlatformDispatcher.instance.onError = (error, stack) {
         print(stack);
-        global.navigation.throwError(error.toString());
+        global.throwError(error.toString());
         return true;
     };
     runApp(MyApp());

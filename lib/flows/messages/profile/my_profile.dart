@@ -26,26 +26,23 @@ class MyProfile extends GenericWidget {
 }
 
 class MyProfileState extends GenericState<MyProfile> {
-    
   @override
   PageName getPageName() {
     return PageName.myProfile(widget.init);
   }
 
   @override
-  void unpack_state(Map<String, dynamic> json) {
-    setState(() {
-        widget.init = false;
+  unpack_state(Map<String, dynamic> json) {
+      widget.init = false;
 
-        widget.address = json['address'] as String;
-        widget.name = json['name'] as String;
-        widget.did = json['did'] as String;
-        widget.aboutMe = json['about_me'] as String?;
-        widget.photo = json['profile_picture'] as String?;
-        widget.new_name = null;
-        widget.new_abtme = null;
-        widget.new_pfp = null;
-    });
+      widget.address = json['address'] as String;
+      widget.name = json['name'] as String;
+      widget.did = json['did'] as String;
+      widget.aboutMe = json['about_me'] as String?;
+      widget.photo = json['profile_picture'] as String?;
+      widget.new_name = null;
+      widget.new_abtme = null;
+      widget.new_pfp = null;
   }
 
   final ImagePicker _picker = ImagePicker();

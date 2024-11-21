@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/flows/bitcoin/view_transaction.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
+import 'package:orange/flows/bitcoin/view_transaction.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
@@ -15,7 +15,6 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 class BitcoinHome extends GenericWidget {
     BitcoinHome({super.key});
 
-    bool internet = true;
     String? profile_picture;
     String balance_usd = "";
     String balance_btc = "";
@@ -32,22 +31,19 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     }
 
     @override
-    void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.internet = json["internet"] as bool;
-            widget.profile_picture = json["profile_picture"] as String?;
-            widget.balance_usd = json["balance_usd"] as String;
-            widget.balance_btc = json["balance_btc"] as String;
+    unpack_state(Map<String, dynamic> json) {
+        widget.profile_picture = json["profile_picture"] as String?;
+        widget.balance_usd = json["balance_usd"] as String;
+        widget.balance_btc = json["balance_btc"] as String;
 
-            widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map(
-                (json) => ShorthandTransaction(
-                    isWithdraw: json['is_withdraw'] as bool,
-                    datetime: json['datetime'] as String,
-                    amount: json['amount'] as String,
-                    txid: json['txid'] as String,
-                )
-            ));
-        });
+        widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map(
+            (json) => ShorthandTransaction(
+                isWithdraw: json['is_withdraw'] as bool,
+                datetime: json['datetime'] as String,
+                amount: json['amount'] as String,
+                txid: json['txid'] as String,
+            )
+        ));
     }
 
     onReceive() {navigateTo(Receive());}
@@ -61,15 +57,15 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
             header: Header_Home(context, "Wallet", widget.profile_picture, toProfile),
             content: [
                 BalanceDisplay(),
-                InternetBanner(widget.internet),
+                InternetBanner(super.isConnected()),
                 TransactionList(),
             ],
             bumper: Bumper(context, content: [
-                CustomButton(txt: 'Receive', onTap: onReceive, enabled: widget.internet),
-                CustomButton(txt: 'Send', onTap: onSend, enabled: widget.internet),
+                CustomButton(txt: 'Receive', onTap: onReceive, enabled: super.isConnected()),
+                CustomButton(txt: 'Send', onTap: onSend, enabled: super.isConnected()),
             ]),
-            tabNav: TabNav(0, [TabInfo(BitcoinHome(), 'wallet'), TabInfo(MessagesHome(), 'message')]),
-            alignment: noTransactions && widget.internet ? Alignment.center : Alignment.topCenter,
+            tabNav: TabNav(0, [TabInfo(BitcoinHome(), 'wallet'), TabInfo(BitcoinHome(), 'message')]),
+            alignment: noTransactions && super.isConnected() ? Alignment.center : Alignment.topCenter,
             scroll: !noTransactions,
         );
     }

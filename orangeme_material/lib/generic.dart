@@ -8,6 +8,7 @@ import 'package:async/async.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:orange/global.dart' as global;
+import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/error.dart';
@@ -15,8 +16,12 @@ import 'package:orange/loading.dart';
 
 
 abstract class GenericWidget extends StatefulWidget {
+    CancelableCompleter? completer;
     Timer? timer;
-    CancelableOperation<String>? async_state;
+    bool connected = false;
+    bool running = true;
+    bool init = true;
+    ValueNotifier<String> state_notifier = ValueNotifier("");
 
     GenericWidget({super.key});
 }
@@ -30,42 +35,58 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
     int refreshInterval() {return 80;}
 
+    Future<String> getStateAsync() async {
+        widget.state_notifier.value = await getPage(path: global.dataDir!, page: getPageName());
+        _createTimer();
+        return "DONE";
+    }
+
+    void handleState(String state) {
+        var json = jsonDecode(state);
+        widget.connected = json["connected"] as bool;
+        if (!widget.connected && getPageName() != PageName.bitcoinHome()) {
+            global.navigation.resetNavTo(BitcoinHome());
+        }
+        unpack_state(jsonDecode(json["state"] as String));
+        widget.init = false;
+    }
+
     void getState() async {
-        int time = DateTime.now().millisecondsSinceEpoch;
-        widget.async_state = CancelableOperation.fromFuture(
-            getPage(path: global.dataDir!, page: getPageName()),
-        );
-        widget.async_state!.then((String state) {
-            unpack_state(jsonDecode(state));
-            _createTimer();
+        widget.completer = CancelableCompleter(onCancel: () {
+            print('CANCELED FUTURE');
         });
+        widget.completer?.complete(getStateAsync());
     }
 
     @override
     Widget build(BuildContext context) {
-        return FutureBuilder<String>(
-            future: widget.async_state?.value,
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (snapshot.hasData) {
-                    return build_with_state(context);
+        return ValueListenableBuilder(
+            valueListenable: widget.state_notifier,
+            builder: (BuildContext context, String state, Widget? child) {
+                print("BUILD: ${getPageName()}, state: ${state}");
+                if (state == "") {
+                    return Container();
                 } else {
-                    return Loading();
+                    handleState(state);
+                    return build_with_state(context);
                 }
             }
         );
     }
 
+    bool isConnected() {return widget.connected;}
+
     navigateTo(Widget next) async {
-        widget.async_state?.cancel();
-        widget.timer?.cancel();
+        widget.completer?.operation.cancel();
+        widget.running = false;
         await global.navigation.navigateTo(next);
-        await _createTimer();
+         _createTimer();
+        widget.running = true;
     }
 
     _createTimer() {
-        widget.timer?.cancel();
         var interval = refreshInterval();
-        if (interval > 0) {
+        if (interval > 0 && widget.running) {
             widget.timer = Timer(Duration(milliseconds: interval), () {
                 getState();
             });
@@ -74,14 +95,15 @@ abstract class GenericState<T extends GenericWidget> extends State<T> {
 
     @override
     void initState() {
+        print("PAGE INIT: ${getPageName()}");
         getState();
         super.initState();
     }
 
     @override
     void dispose() {
-        widget.async_state?.cancel();
-        widget.timer?.cancel();
+        widget.completer?.operation.cancel();
+        widget.running = false;
         super.dispose();
     }
 }

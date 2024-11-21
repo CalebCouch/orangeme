@@ -30,10 +30,8 @@ class ReceiveState extends GenericState<Receive> {
     }
 
     @override
-    void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.address = json["address"];
-        });
+    unpack_state(Map<String, dynamic> json) {
+        widget.address = json["address"];
     }
 
     @override

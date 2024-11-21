@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/global.dart' as global;
 
 class ErrorPage extends StatefulWidget {
   final String message;
@@ -28,8 +29,9 @@ class ErrorPageState extends State<ErrorPage> {
             }
         }
 
-        back() {
-            navPop(context);
+        tryAgain() {
+            global.startRust();
+            global.navigation.navigateTo(BitcoinHome());
         }
 
         return Stack_Default(
@@ -65,10 +67,10 @@ class ErrorPageState extends State<ErrorPage> {
             ],
             bumper: Bumper(context, content: [
                 CustomButton(
-                    txt: 'Try Again', 
+                    txt: 'Try Again',
                     variant: 'secondary',
                     size: 'lg',
-                    onTap: back, 
+                    onTap: tryAgain,
                 )
             ]),
         );
