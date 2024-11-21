@@ -159,7 +159,7 @@ Widget Stack_Scroll({
 
 Widget Stack_Chat({
     required Widget header,
-    required List<dynamic> exchangeData,
+    required List<dynamic> content,
     required Widget bumper,
 }) {
     return PopScope(
@@ -169,10 +169,10 @@ Widget Stack_Chat({
                 child: Column(
                     children: [
                         header,
-                        if (exchangeData[0]) Expanded(
+                        if (content[0]) Expanded(
                             child: Container(
                                 padding: const EdgeInsets.all(24),
-                                child: exchangeData[1],
+                                child: content[1],
                             ),
                         ) else const Expanded(
                             child: Center(

@@ -19,13 +19,9 @@ class ErrorPageState extends State<ErrorPage> {
     Widget build(BuildContext context) {
         onTap() {
             if (showError) {
-                setState(() {
-                    showError = false;
-                });
+                setState(() => showError = false);
             } else {
-                setState(() {
-                    showError = true;
-                });
+                setState(() => showError = true);
             }
         }
 

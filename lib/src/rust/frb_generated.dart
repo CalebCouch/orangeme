@@ -765,13 +765,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Message dco_decode_message(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return Message(
       sender: dco_decode_profile(arr[0]),
       message: dco_decode_String(arr[1]),
       date: dco_decode_String(arr[2]),
       time: dco_decode_String(arr[3]),
+      isIncoming: dco_decode_bool(arr[4]),
     );
   }
 
@@ -820,13 +821,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_bool(raw[1]),
         );
       case 9:
-        return const PageName_MessagesHome();
+        return PageName_UserProfile(
+          dco_decode_bool(raw[1]),
+        );
       case 10:
-        return const PageName_ChooseRecipient();
+        return const PageName_MessagesHome();
       case 11:
+        return const PageName_ChooseRecipient();
+      case 12:
+        return const PageName_CurrentConversation();
+      case 13:
+        return const PageName_ConversationInfo();
+      case 14:
         return PageName_Test(
           dco_decode_String(raw[1]),
         );
+      case 15:
+        return const PageName_Scan();
       default:
         throw Exception("unreachable");
     }
@@ -1112,11 +1123,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_message = sse_decode_String(deserializer);
     var var_date = sse_decode_String(deserializer);
     var var_time = sse_decode_String(deserializer);
+    var var_isIncoming = sse_decode_bool(deserializer);
     return Message(
         sender: var_sender,
         message: var_message,
         date: var_date,
-        time: var_time);
+        time: var_time,
+        isIncoming: var_isIncoming);
   }
 
   @protected
@@ -1164,12 +1177,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_bool(deserializer);
         return PageName_MyProfile(var_field0);
       case 9:
-        return const PageName_MessagesHome();
+        var var_field0 = sse_decode_bool(deserializer);
+        return PageName_UserProfile(var_field0);
       case 10:
-        return const PageName_ChooseRecipient();
+        return const PageName_MessagesHome();
       case 11:
+        return const PageName_ChooseRecipient();
+      case 12:
+        return const PageName_CurrentConversation();
+      case 13:
+        return const PageName_ConversationInfo();
+      case 14:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
+      case 15:
+        return const PageName_Scan();
       default:
         throw UnimplementedError('');
     }
@@ -1456,6 +1478,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.message, serializer);
     sse_encode_String(self.date, serializer);
     sse_encode_String(self.time, serializer);
+    sse_encode_bool(self.isIncoming, serializer);
   }
 
   @protected
@@ -1503,13 +1526,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_MyProfile(field0: final field0):
         sse_encode_i_32(8, serializer);
         sse_encode_bool(field0, serializer);
-      case PageName_MessagesHome():
+      case PageName_UserProfile(field0: final field0):
         sse_encode_i_32(9, serializer);
-      case PageName_ChooseRecipient():
+        sse_encode_bool(field0, serializer);
+      case PageName_MessagesHome():
         sse_encode_i_32(10, serializer);
-      case PageName_Test(field0: final field0):
+      case PageName_ChooseRecipient():
         sse_encode_i_32(11, serializer);
+      case PageName_CurrentConversation():
+        sse_encode_i_32(12, serializer);
+      case PageName_ConversationInfo():
+        sse_encode_i_32(13, serializer);
+      case PageName_Test(field0: final field0):
+        sse_encode_i_32(14, serializer);
         sse_encode_String(field0, serializer);
+      case PageName_Scan():
+        sse_encode_i_32(15, serializer);
       default:
         throw UnimplementedError('');
     }

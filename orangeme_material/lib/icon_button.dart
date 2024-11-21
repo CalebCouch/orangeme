@@ -4,7 +4,7 @@ import 'package:orangeme_material/icon.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/text.dart';
 
-Widget iconButton(onTap, String icon, String size) {
+Widget CustomIconButton(onTap, String icon, String size) {
     return InkWell(
         onTap: () {
             HapticFeedback.heavyImpact();
@@ -14,41 +14,41 @@ Widget iconButton(onTap, String icon, String size) {
     );
 }
 
-Widget sendButton(bool isEnabled) {
+Widget SendButton(bool isEnabled) {
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        child: iconButton(null, 'send', 'lg'),
+        child: CustomIconButton(null, 'send', 'lg'),
     );
 }
 
-Widget backButton(BuildContext context) {
-    return iconButton(
+Widget CustomBackButton(BuildContext context) {
+    return CustomIconButton(
         () { navPop(context); }, 
         'left',
         'lg'
     );
 }
 
-Widget exitButton(BuildContext context, Widget home) {
-    return iconButton(
+Widget ExitButton(BuildContext context, Widget home) {
+    return CustomIconButton(
         () { resetNavTo(context, home); }, 
         'close',
         'lg'
     );
 }
 
-Widget infoButton(BuildContext context, Widget page) {
-    return iconButton(
+Widget InfoButton(BuildContext context, Widget page) {
+    return CustomIconButton(
         () { navigateTo(context, page); }, 
         'info',
         'lg',
     );
 }
 
-Widget numberButton(BuildContext context, String number) {
+Widget NumberButton(BuildContext context, String number) {
     return CustomText(variant: 'label', font_size: 'lg', text_color: 'secondary', txt: number);
 }
 
-Widget deleteButton(BuildContext context) {
+Widget DeleteButton(BuildContext context) {
   return const CustomIcon(icon: 'back', size: 'lg');
 }

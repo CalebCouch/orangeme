@@ -1,72 +1,68 @@
-// import 'package:flutter/material.dart';
-// import 'package:orange/components/data_item.dart';
-// import 'package:orange/components/profile_photo.dart';
-// // import 'package:orange/flows/messages/conversation/exchange.dart';
-// import 'package:orange/src/rust/api/pub_structs.dart';
-// import 'package:orangeme_material/orangeme_material.dart';
-// //import 'package:orange/global.dart' as global;
+import 'package:flutter/material.dart';
+import 'package:orange/components/data_item.dart';
+import 'package:orange/components/profile_photo.dart';
+// import 'package:orange/flows/messages/conversation/exchange.dart';
+import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+//import 'package:orange/global.dart' as global;
 
-// class UserProfile extends GenericWidget {
-//   final Profile user;
-//   UserProfile(this.user, {super.key});
+class UserProfile extends GenericWidget {
+    UserProfile({super.key});
 
-//   @override
-//   UserProfileState createState() => UserProfileState();
-// }
+    String address = '';
+    String name = '';
+    String did = '';
+    String? aboutMe;
+    String? photo;
 
-// class UserProfileState extends GenericState<UserProfile> {
-//   @override
-//   PageName getPageName() {
-//     return PageName.userProfile;
-//   }
+    bool init = true;
 
-//   @override
-//   int refreshInterval() {
-//     return 0;
-//   }
+    @override
+    UserProfileState createState() => UserProfileState();
+}
 
-//   @override
-//   void unpack_state(Map<String, dynamic> json) {
-//     setState(() {});
-//   }
+class UserProfileState extends GenericState<UserProfile> {
+    @override
+    PageName getPageName() {
+        return PageName.userProfile(widget.init);
+    }
 
-//   onMessage() {
-//     /*navigateTo(
-//       Exchange(
-//         //needs to check if a conversation has already been created with this person
-//         Conversation(
-//           [Contact(widget.user.name, widget.user.did, widget.user.pfp, widget.user.abtme)],
-//           [],
-//         ),
-//       ), 
-//     ); */
-//   }
+    @override
+    int refreshInterval() {
+        return 0;
+    }
 
-//   onBitcoin() {}
+    @override
+    void unpack_state(Map<String, dynamic> json) {
+        setState(() {
+            widget.init = false;
 
-//   String address = ''; //Need to generate an address
+            widget.address = json['address'] as String;
+            widget.name = json['name'] as String;
+            widget.did = json['did'] as String;
+            widget.aboutMe = json['about_me'] as String?;
+            widget.photo = json['profile_picture'] as String?;
+        });
+    }
 
-//   @override
-//   Widget build_with_state(BuildContext context) {
-//     return Stack_Default(
-//       Header_Stack(
-//         context,
-//         widget.user.name.isNotEmpty
-//             ? widget.user.name
-//             : widget.user.did != ''
-//                 ? widget.user.did
-//                 : 'Unknown User',
-//       ),
-//       [
-//         ProfilePhoto(context, widget.user.pfp, ProfileSize.xxl),
-//         aboutMeItem(context, widget.user.abtme ?? "This profile is still a mystery."),
-//         didItem(context, widget.user.did),
-//         addressItem(context, address),
-//       ],
-//       Bumper(context, [
-//         CustomButton('Message', 'primary lg expand none', onMessage, 'enabled'),
-//         CustomButton('Send Bitcoin', 'primary lg expand none', onBitcoin, 'enabled'),
-//       ]),
-//     );
-//   }
-// }
+    sendMessage() {}
+
+    sendBitcoin() {}
+
+    @override
+    Widget build_with_state(BuildContext context) {
+        return Stack_Default(
+            header: Header_Stack(context, widget.name),
+            content: [
+                ProfilePhoto(context, widget.photo, ProfileSize.xxl),
+                aboutMeItem(context, widget.aboutMe ?? "This profile is still a mystery."),
+                didItem(context, widget.did),
+                addressItem(context, widget.address),
+            ],
+            bumper: Bumper(context, content: [
+                CustomButton(txt: 'Message', onTap: sendMessage),
+                CustomButton(txt: 'Send Bitcoin', onTap: sendBitcoin),
+            ]),
+        );
+    }
+}

@@ -53,7 +53,7 @@ Widget Header_Home(BuildContext context, String title, String? profile_picture, 
 
 Widget Header_Stack(BuildContext context, String title, [Widget? right, Widget? left]) {
     return Header(
-        left ?? backButton(context),
+        left ?? CustomBackButton(context),
         CustomText(variant: 'heading', font_size:'h4', txt: title),
         right ?? Container(),
     );
@@ -61,7 +61,7 @@ Widget Header_Stack(BuildContext context, String title, [Widget? right, Widget? 
 
 Widget Header_Message(BuildContext context, Widget ChatRecipients, [Widget? right, Widget? left]) {
     return Header(
-        left ?? backButton(context),
+        left ?? CustomBackButton(context),
         ChatRecipients,
         right ?? Container(),
     );
@@ -69,7 +69,7 @@ Widget Header_Message(BuildContext context, Widget ChatRecipients, [Widget? righ
 
 Widget Header_Button(BuildContext context, String title, CustomButton button) {
     return Header(
-        backButton(context),
+        CustomBackButton(context),
         CustomText(variant: 'heading', font_size:'h4', txt: title),
         Container(padding: EdgeInsets.symmetric(horizontal: 16), child: button),
     );

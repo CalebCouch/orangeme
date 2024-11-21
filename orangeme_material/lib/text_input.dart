@@ -128,7 +128,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                                         ),
                                     ),
                                 ),
-                                widget.showIcon ? sendButton(iconEnabled) : Container(),
+                                widget.showIcon ? SendButton(iconEnabled) : Container(),
                             ],
                         ),
                     ),

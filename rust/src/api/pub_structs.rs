@@ -28,17 +28,13 @@ pub enum PageName {
     Confirm(String, Sats, Sats),
     Success(String),
     MyProfile(bool),
+    UserProfile(bool),
     MessagesHome,
     ChooseRecipient,
-//  Receive,
-//  ViewTransaction,
-//  MessagesHome,
-//  Exchange,
-//  MyProfile,
-//  UserProfile,
-//  ConvoInfo,
-//  ChooseRecipient,
-    Test(String)
+    CurrentConversation,
+    ConversationInfo,
+    Test(String),
+    Scan,
 }
 
 #[derive(Debug)]
@@ -95,6 +91,7 @@ pub struct Message {
     pub message: String,
     pub date: String,
     pub time: String,
+    pub is_incoming: bool,
 }
 
 pub struct Profile {

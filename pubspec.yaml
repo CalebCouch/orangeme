@@ -60,6 +60,8 @@ dependencies:
   # orangeme_material: ^0.2.3
   orangeme_material:
     path: ./orangeme_material
+  flutter_local_notifications: ^18.0.1
+  workmanager: ^0.5.2
   
 
 flutter_native_splash:

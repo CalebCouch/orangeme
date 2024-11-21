@@ -83,17 +83,23 @@ class Message {
   final String message;
   final String date;
   final String time;
+  final bool isIncoming;
 
   const Message({
     required this.sender,
     required this.message,
     required this.date,
     required this.time,
+    required this.isIncoming,
   });
 
   @override
   int get hashCode =>
-      sender.hashCode ^ message.hashCode ^ date.hashCode ^ time.hashCode;
+      sender.hashCode ^
+      message.hashCode ^
+      date.hashCode ^
+      time.hashCode ^
+      isIncoming.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -103,7 +109,8 @@ class Message {
           sender == other.sender &&
           message == other.message &&
           date == other.date &&
-          time == other.time;
+          time == other.time &&
+          isIncoming == other.isIncoming;
 }
 
 @freezed
@@ -135,11 +142,17 @@ sealed class PageName with _$PageName {
   const factory PageName.myProfile(
     bool field0,
   ) = PageName_MyProfile;
+  const factory PageName.userProfile(
+    bool field0,
+  ) = PageName_UserProfile;
   const factory PageName.messagesHome() = PageName_MessagesHome;
   const factory PageName.chooseRecipient() = PageName_ChooseRecipient;
+  const factory PageName.currentConversation() = PageName_CurrentConversation;
+  const factory PageName.conversationInfo() = PageName_ConversationInfo;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;
+  const factory PageName.scan() = PageName_Scan;
 }
 
 enum Platform {
