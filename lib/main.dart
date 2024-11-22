@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:workmanager/workmanager.dart';
-import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/src/rust/frb_generated.dart';
-import 'package:orangeme_material/orangeme_material.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:orange/global.dart' as global;
 import 'package:orange/src/rust/api/simple.dart';
-import 'package:orange/test.dart';
-import 'dart:ui';
-import 'dart:async';
+import 'package:orange/src/rust/frb_generated.dart';
+
+//import 'package:workmanager/workmanager.dart';
+import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/global.dart' as global;
+import 'package:flutter/services.dart';
+
 
 Future<void> main() async {
     await RustLib.init();
     WidgetsFlutterBinding.ensureInitialized();
     await global.getAppData();
     global.startRust();
-    await initNotifications();
-    if (global.platform_isDesktop) {
-        WindowManager.instance.setMinimumSize(const Size(1280, 832));
-    }
+//     await initNotifications();
+//     if (global.platform_isDesktop) {
+//         WindowManager.instance.setMinimumSize(const Size(1280, 832));
+//    }
     FlutterError.onError = (details) {
         FlutterError.presentError(details);
         global.throwError(details.toString());
     };
-    PlatformDispatcher.instance.onError = (error, stack) {
-        print(stack);
-        global.throwError(error.toString());
-        return true;
-    };
+    // PlatformDispatcher.instance.onError = (error, stack) {
+    //     print(stack);
+    //     global.throwError(error.toString());
+    //     return true;
+    // };
     runApp(MyApp());
 
-    await waitForAppInBackground();
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-    await Workmanager().registerPeriodicTask(
-        "id_unique_task",
-        "simpleTask",
-        frequency: Duration(minutes: 15),
-        inputData: <String, dynamic>{'key': 'value'},
-    );
+    // await waitForAppInBackground();
+    // await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+    // await Workmanager().registerPeriodicTask(
+    //     "id_unique_task",
+    //     "simpleTask",
+    //     frequency: Duration(minutes: 15),
+    //     inputData: <String, dynamic>{'key': 'value'},
+    // );
 }
+
+
 
 Future<void> startRust(String path) async {
     await rustStart(
@@ -49,24 +49,24 @@ Future<void> startRust(String path) async {
     );
 }
 
-bool isAppInForeground = true;
+// bool isAppInForeground = true;
 
-Future<void> waitForAppInBackground() async { 
-    while (isAppInForeground) { await Future.delayed(Duration(seconds: 3)); }
-}
+// Future<void> waitForAppInBackground() async { 
+//     while (isAppInForeground) { await Future.delayed(Duration(seconds: 3)); }
+// }
 
-void notifications() {
-    sendNotification("Message Received");
-}
+// void notifications() {
+//     sendNotification("Message Received");
+// }
 
-void callbackDispatcher() {
-    print("CALLBACK");
-    Workmanager().executeTask((task, inputData) {
-        notifications();
-        print("Background Task Triggered");
-        return Future.value(true);
-    });
-}
+// // void callbackDispatcher() {
+// //     print("CALLBACK");
+// //     Workmanager().executeTask((task, inputData) {
+// //         notifications();
+// //         print("Background Task Triggered");
+// //         return Future.value(true);
+// //     });
+// // }
 
 class MyApp extends StatefulWidget {
     @override
@@ -75,32 +75,32 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
-    @override
-    void initState() {
-        super.initState();
-        WidgetsBinding.instance.addObserver(this);
-    }
+    // @override
+    // void initState() {
+    //     super.initState();
+    //     WidgetsBinding.instance.addObserver(this);
+    // }
 
-    @override
-    void dispose() {
-        WidgetsBinding.instance.removeObserver(this);
-        super.dispose();
-    }
+    // @override
+    // void dispose() {
+    //     WidgetsBinding.instance.removeObserver(this);
+    //     super.dispose();
+    // }
 
-    @override
-    void didChangeAppLifecycleState(AppLifecycleState state) {
-        super.didChangeAppLifecycleState(state);
-        switch(state) {
-            case AppLifecycleState.resumed:
-                setState(() => isAppInForeground = true);
-                break;
-            case AppLifecycleState.paused:
-                setState(() => isAppInForeground = false);
-                break;
-            default:
-                break;
-        }
-    }
+    // @override
+    // void didChangeAppLifecycleState(AppLifecycleState state) {
+    //     super.didChangeAppLifecycleState(state);
+    //     switch(state) {
+    //         case AppLifecycleState.resumed:
+    //             setState(() => isAppInForeground = true);
+    //             break;
+    //         case AppLifecycleState.paused:
+    //             setState(() => isAppInForeground = false);
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
 
     @override
     Widget build(BuildContext context) {

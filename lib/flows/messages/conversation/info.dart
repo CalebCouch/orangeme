@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/list_item.dart';
-import 'package:orange/flows/messages/profile/user_profile.dart';
-import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/generic.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
 class ConversationInfo extends GenericWidget {

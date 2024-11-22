@@ -5,13 +5,11 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/navigation.dart';
 import 'package:orange/storage.dart';
 
-import 'dart:convert';
 import 'dart:async';
 import 'dart:io' as DartIO;
 
 import 'package:path_provider/path_provider.dart';
 import 'package:async/async.dart';
-import 'package:uuid/uuid.dart';
 
 String? dataDir;
 

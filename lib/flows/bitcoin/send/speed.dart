@@ -4,7 +4,7 @@ import 'package:orange/flows/bitcoin/send/confirm.dart';
 // import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orange/global.dart' as global;
+import 'package:orange/generic.dart';
 
 
 class Speed extends GenericWidget {

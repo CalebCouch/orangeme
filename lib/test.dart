@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:orange/components/list_item.dart';
-import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
+import 'package:orange/generic.dart';
 
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';

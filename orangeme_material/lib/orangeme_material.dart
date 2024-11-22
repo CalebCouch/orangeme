@@ -12,5 +12,5 @@ export 'text_input.dart';
 export 'headers.dart';
 export 'listener.dart';
 export 'padding.dart';
-export 'generic.dart';
+export 'profile.dart';
 export 'notifications.dart';

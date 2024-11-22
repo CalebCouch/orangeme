@@ -7,6 +7,7 @@ import 'package:orange/flows/bitcoin/send/speed.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orange/generic.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
 class Confirm extends GenericWidget {

@@ -1,18 +1,21 @@
 name: orangeme_material
 description: "Theme data for orange.me"
-version: 0.2.4
+version: 0.3.1
 homepage:
 
-publish_to: none
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
+  async: ^2.11.0
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^18.0.1
+  flutter_secure_storage: ^9.0.0
   flutter_svg: ^2.0.10+1
+  uuid: ^3.0.7
 
 dev_dependencies:
   flutter_test:

@@ -92,7 +92,7 @@ class CustomIconState extends State<CustomIcon> {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      icon[widget.icon!]!,
+      icon[widget.icon]!,
       width: icon_size[widget.size],
       height: icon_size[widget.size],
       colorFilter: ColorFilter.mode(

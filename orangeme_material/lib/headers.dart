@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/components/profile_photo.dart';
 
 class Header extends StatelessWidget {
     final Widget center;

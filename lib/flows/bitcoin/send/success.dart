@@ -3,6 +3,7 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orange/generic.dart';
 
 class Success extends GenericWidget {
     String rawTx;

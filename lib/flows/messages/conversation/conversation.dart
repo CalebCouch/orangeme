@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:orange/components/message_bubble.dart';
 import 'package:orange/components/profile_photo.dart';
 import 'package:orange/flows/messages/conversation/info.dart';
-import 'package:orange/flows/messages/profile/user_profile.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orange/generic.dart';
 // import 'package:orange/global.dart' as global;
 
 class CurrentConversation extends GenericWidget {

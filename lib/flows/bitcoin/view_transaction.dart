@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:orange/components/tabular.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/generic.dart';
 
-import 'package:orange/global.dart' as global;
 
 class ViewTransaction extends GenericWidget {
     String txid;

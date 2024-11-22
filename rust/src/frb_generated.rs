@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.6.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1188477753;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1578921640;
 
 // Section: executor
 
@@ -365,6 +365,36 @@ fn wire__crate__api__simple__getPage_impl(
                     .await,
                 )
             }
+        },
+    )
+}
+fn wire__crate__api__simple__greet_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "greet",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_name = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok(crate::api::simple::greet(api_name))?;
+                Ok(output_ok)
+            })())
         },
     )
 }
@@ -1010,10 +1040,10 @@ fn pde_ffi_dispatcher_primary_impl(
         ),
         8 => wire__crate__api__simple__clearData_impl(port, ptr, rust_vec_len, data_len),
         9 => wire__crate__api__simple__getPage_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__pub_structs__load_structs_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__pub_structs__load_structs2_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__simple__rustStart_impl(port, ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__utils__update_amount_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__pub_structs__load_structs_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__pub_structs__load_structs2_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__simple__rustStart_impl(port, ptr, rust_vec_len, data_len),
+        15 => wire__crate__api__utils__update_amount_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1026,7 +1056,8 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        12 => wire__crate__api__pub_structs__platform_is_desktop_impl(ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__simple__greet_impl(ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__pub_structs__platform_is_desktop_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/data_item.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:orange/components/profile_photo.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/generic.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 //import 'package:orange/global.dart' as global;
 

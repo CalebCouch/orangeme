@@ -1,7 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orange/global.dart' as global;
 
 class Storage {
     Platform platform;

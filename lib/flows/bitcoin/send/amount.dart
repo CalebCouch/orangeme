@@ -7,6 +7,7 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:vibration/vibration.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/src/rust/api/utils.dart';
+import 'package:orange/generic.dart';
 
 class Amount extends GenericWidget {
     String address;

@@ -5,8 +5,8 @@ import 'package:orange/components/qr_code/qr_painter.dart';
 import 'package:orange/components/qr_code/shapes/pixel_shape.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:share/share.dart';
-import 'package:orange/global.dart' as global;
+import 'package:share_plus/share_plus.dart';
+import 'package:orange/generic.dart';
 
 class Receive extends GenericWidget {
     Receive({super.key});
