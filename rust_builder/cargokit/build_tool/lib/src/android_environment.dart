@@ -118,7 +118,7 @@ class AndroidEnvironment {
 
     final cxxKey = 'CXX_${target.rust}';
     final cxxValue = path.join(toolchainPath, 'clang++$exe');
-    final cxxFlagsKey = 'CXXFLAGS_${target.rust}';
+    final cxxfFlagsKey = 'CXXFLAGS_${target.rust}';
     final cxxFlagsValue = targetArg;
 
     final linkerKey =
@@ -155,7 +155,7 @@ class AndroidEnvironment {
       ccKey: ccValue,
       cfFlagsKey: cFlagsValue,
       cxxKey: cxxValue,
-      cxxFlagsKey: cxxFlagsValue,
+      cxxfFlagsKey: cxxFlagsValue,
       ranlibKey: ranlibValue,
       rustFlagsKey: rustFlagsValue,
       linkerKey: selfPath,

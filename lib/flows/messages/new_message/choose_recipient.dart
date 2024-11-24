@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
-// import 'package:orange/flows/messages/conversation/conversation.dart';
+import 'package:orange/flows/messages/conversation/conversation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 //import 'package:orange/global.dart' as global;
@@ -10,7 +10,7 @@ import 'package:orange/generic.dart';
 class ChooseRecipient extends GenericWidget {
     ChooseRecipient({super.key});
 
-    List<Profile> users = [];
+    List<DartProfile> users = [];
     bool noUsers = true;
 
     @override
@@ -30,25 +30,32 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.users = List<Profile>.from(json['users'].map(
-                (json) => Profile(
-                    name: json['name'] as String,
-                    did: json['did'] as String,
-                    abtMe: json['about_me'] as String?,
-                    pfpPath: json['pfp_path'] as String?,
-                )
-            ));
-            widget.noUsers = widget.users.isEmpty;
-        });
+        widget.users = List<DartProfile>.from(json['users'].map(
+            (json) => DartProfile(
+                name: json['name'] as String,
+                did: json['did'] as String,
+                abtMe: json['about_me'] as String?,
+                pfpPath: json['pfp_path'] as String?,
+            )
+        ));
+        widget.noUsers = widget.users.isEmpty;
     }
+    
 
-    List<Profile> recipients = [];
-    List<Profile> filteredContacts = [];
+    List<DartProfile> recipients = [];
+    List<DartProfile> filteredContacts = [];
     TextEditingController searchController = TextEditingController();
     bool hasRecipients = false;
 
-    onNext() {/*navigateTo(Exchange(Conversation(recipients, [])));*/}
+
+    @override
+    void initState() {
+        filteredContacts = widget.users;
+        searchController.addListener(_filterContacts);
+        super.initState();
+    }
+
+    onNext() {navigateTo(CurrentConversation(members: recipients));}
 
     @override
     Widget build_with_state(BuildContext context) {
@@ -64,7 +71,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
             content: [
                 Searchbar(searchController),
                 recipients.isEmpty ? Container() : SelectedContacts(recipients),
-                widget.noUsers ? NoUsers() : ListContacts(filteredContacts),
+                widget.noUsers ? NoUsers() : ListContacts(widget.users),
             ],
             bumper: Bumper(context, content: [Container()]),
         );
@@ -116,13 +123,6 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
     }
 
     @override
-    void initState() {
-        super.initState();
-        filteredContacts = widget.users;
-        searchController.addListener(_filterContacts);
-    }
-
-    @override
     void dispose() {
         searchController.removeListener(_filterContacts);
         searchController.dispose();
@@ -140,7 +140,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
         });
     }
 
-    void addRecipient(Profile selected) {
+    void addRecipient(DartProfile selected) {
         setState(() {
             if (!recipients.contains(selected)) {
                 recipients.add(selected);
@@ -148,7 +148,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
         });
     }
 
-    void removeRecipient(Profile selected) {
+    void removeRecipient(DartProfile selected) {
         setState(() {
             recipients.remove(selected);
         });

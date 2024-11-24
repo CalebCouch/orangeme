@@ -8,6 +8,7 @@ class CustomText extends StatefulWidget {
     final String txt;
     final TextDecoration text_decoration;
     final TextAlign alignment;
+    final int? max_lines;
 
     const CustomText({
         super.key,
@@ -17,6 +18,7 @@ class CustomText extends StatefulWidget {
         this.text_color,
         this.text_decoration = TextDecoration.none,
         this.alignment = TextAlign.center,
+        this.max_lines,
     });
 
     @override
@@ -30,6 +32,8 @@ class _CustomTextState extends State<CustomText> {
         return Text(
             widget.txt,
             textAlign: widget.alignment,
+            maxLines: widget.max_lines ?? null, 
+            overflow: widget.max_lines == null ? null : TextOverflow.ellipsis,
             style: TextStyle(
                 fontFamily: "Outfit",
                 fontSize: size[widget.font_size],

@@ -34,7 +34,6 @@ class MyProfileState extends GenericState<MyProfile> {
     @override
     unpack_state(Map<String, dynamic> json) {
         widget.init = false;
-
         widget.address = json['address'] as String;
         widget.name = json['name'] as String;
         widget.did = json['did'] as String;

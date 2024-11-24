@@ -7,6 +7,7 @@ import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/view_transaction.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/flows/messages/home.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
@@ -63,7 +64,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                 CustomButton(txt: 'Receive', onTap: onReceive, enabled: super.isConnected()),
                 CustomButton(txt: 'Send', onTap: onSend, enabled: super.isConnected()),
             ]),
-            tabNav: TabNav(0, [TabInfo(BitcoinHome(), 'wallet'), TabInfo(BitcoinHome(), 'message')]),
+            tabNav: TabNav(0, [TabInfo(BitcoinHome(), 'wallet'), TabInfo(MessagesHome(), 'message')]),
             alignment: noTransactions && super.isConnected() ? Alignment.center : Alignment.topCenter,
             scroll: !noTransactions,
         );

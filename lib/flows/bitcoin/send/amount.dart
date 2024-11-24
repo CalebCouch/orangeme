@@ -33,11 +33,9 @@ class AmountState extends GenericState<Amount> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.amount_btc = json["amount_btc"] as String;
-            widget.amount_sats = BigInt.from(json["amount_sats"]);
-            widget.err = json["err"] as String?;
-        });
+        widget.amount_btc = json["amount_btc"] as String;
+        widget.amount_sats = BigInt.from(json["amount_sats"]);
+        widget.err = json["err"] as String?;
     }
 
     onContinue() {

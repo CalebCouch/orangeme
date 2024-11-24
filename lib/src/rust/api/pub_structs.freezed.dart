@@ -420,7 +420,8 @@ mixin _$PageName {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -440,7 +441,8 @@ mixin _$PageName {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -460,7 +462,8 @@ mixin _$PageName {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -606,7 +609,8 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -629,7 +633,8 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -652,7 +657,8 @@ class _$PageName_BitcoinHomeImpl extends PageName_BitcoinHome {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -828,7 +834,8 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -851,7 +858,8 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -874,7 +882,8 @@ class _$PageName_ViewTransactionImpl extends PageName_ViewTransaction {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -1029,7 +1038,8 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -1052,7 +1062,8 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -1075,7 +1086,8 @@ class _$PageName_ReceiveImpl extends PageName_Receive {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -1248,7 +1260,8 @@ class _$PageName_SendImpl extends PageName_Send {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -1271,7 +1284,8 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -1294,7 +1308,8 @@ class _$PageName_SendImpl extends PageName_Send {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -1476,7 +1491,8 @@ class _$PageName_AmountImpl extends PageName_Amount {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -1499,7 +1515,8 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -1522,7 +1539,8 @@ class _$PageName_AmountImpl extends PageName_Amount {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -1704,7 +1722,8 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -1727,7 +1746,8 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -1750,7 +1770,8 @@ class _$PageName_SpeedImpl extends PageName_Speed {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -1949,7 +1970,8 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -1972,7 +1994,8 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -1995,7 +2018,8 @@ class _$PageName_ConfirmImpl extends PageName_Confirm {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -2181,7 +2205,8 @@ class _$PageName_SuccessImpl extends PageName_Success {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -2204,7 +2229,8 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -2227,7 +2253,8 @@ class _$PageName_SuccessImpl extends PageName_Success {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -2409,7 +2436,8 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -2432,7 +2460,8 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -2455,7 +2484,8 @@ class _$PageName_MyProfileImpl extends PageName_MyProfile {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -2639,7 +2669,8 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -2662,7 +2693,8 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -2685,7 +2717,8 @@ class _$PageName_UserProfileImpl extends PageName_UserProfile {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -2842,7 +2875,8 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -2865,7 +2899,8 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -2888,7 +2923,8 @@ class _$PageName_MessagesHomeImpl extends PageName_MessagesHome {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -3037,7 +3073,8 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -3060,7 +3097,8 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -3083,7 +3121,8 @@ class _$PageName_ChooseRecipientImpl extends PageName_ChooseRecipient {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -3181,6 +3220,8 @@ abstract class _$$PageName_CurrentConversationImplCopyWith<$Res> {
           _$PageName_CurrentConversationImpl value,
           $Res Function(_$PageName_CurrentConversationImpl) then) =
       __$$PageName_CurrentConversationImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String field0, List<DartProfile>? field1});
 }
 
 /// @nodoc
@@ -3194,27 +3235,72 @@ class __$$PageName_CurrentConversationImplCopyWithImpl<$Res>
 
   /// Create a copy of PageName
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+    Object? field1 = freezed,
+  }) {
+    return _then(_$PageName_CurrentConversationImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+      freezed == field1
+          ? _value._field1
+          : field1 // ignore: cast_nullable_to_non_nullable
+              as List<DartProfile>?,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$PageName_CurrentConversationImpl extends PageName_CurrentConversation {
-  const _$PageName_CurrentConversationImpl() : super._();
+  const _$PageName_CurrentConversationImpl(this.field0,
+      [final List<DartProfile>? field1])
+      : _field1 = field1,
+        super._();
+
+  @override
+  final String field0;
+  final List<DartProfile>? _field1;
+  @override
+  List<DartProfile>? get field1 {
+    final value = _field1;
+    if (value == null) return null;
+    if (_field1 is EqualUnmodifiableListView) return _field1;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'PageName.currentConversation()';
+    return 'PageName.currentConversation(field0: $field0, field1: $field1)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PageName_CurrentConversationImpl);
+            other is _$PageName_CurrentConversationImpl &&
+            (identical(other.field0, field0) || other.field0 == field0) &&
+            const DeepCollectionEquality().equals(other._field1, _field1));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(
+      runtimeType, field0, const DeepCollectionEquality().hash(_field1));
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PageName_CurrentConversationImplCopyWith<
+          _$PageName_CurrentConversationImpl>
+      get copyWith => __$$PageName_CurrentConversationImplCopyWithImpl<
+          _$PageName_CurrentConversationImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -3232,12 +3318,13 @@ class _$PageName_CurrentConversationImpl extends PageName_CurrentConversation {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
   }) {
-    return currentConversation();
+    return currentConversation(field0, field1);
   }
 
   @override
@@ -3255,12 +3342,13 @@ class _$PageName_CurrentConversationImpl extends PageName_CurrentConversation {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
   }) {
-    return currentConversation?.call();
+    return currentConversation?.call(field0, field1);
   }
 
   @override
@@ -3278,14 +3366,15 @@ class _$PageName_CurrentConversationImpl extends PageName_CurrentConversation {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
     required TResult orElse(),
   }) {
     if (currentConversation != null) {
-      return currentConversation();
+      return currentConversation(field0, field1);
     }
     return orElse();
   }
@@ -3366,9 +3455,19 @@ class _$PageName_CurrentConversationImpl extends PageName_CurrentConversation {
 }
 
 abstract class PageName_CurrentConversation extends PageName {
-  const factory PageName_CurrentConversation() =
-      _$PageName_CurrentConversationImpl;
+  const factory PageName_CurrentConversation(final String field0,
+      [final List<DartProfile>? field1]) = _$PageName_CurrentConversationImpl;
   const PageName_CurrentConversation._() : super._();
+
+  String get field0;
+  List<DartProfile>? get field1;
+
+  /// Create a copy of PageName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PageName_CurrentConversationImplCopyWith<
+          _$PageName_CurrentConversationImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -3428,7 +3527,8 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -3451,7 +3551,8 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -3474,7 +3575,8 @@ class _$PageName_ConversationInfoImpl extends PageName_ConversationInfo {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -3647,7 +3749,8 @@ class _$PageName_TestImpl extends PageName_Test {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -3670,7 +3773,8 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -3693,7 +3797,8 @@ class _$PageName_TestImpl extends PageName_Test {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,
@@ -3847,7 +3952,8 @@ class _$PageName_ScanImpl extends PageName_Scan {
     required TResult Function(bool field0) userProfile,
     required TResult Function() messagesHome,
     required TResult Function() chooseRecipient,
-    required TResult Function() currentConversation,
+    required TResult Function(String field0, List<DartProfile>? field1)
+        currentConversation,
     required TResult Function() conversationInfo,
     required TResult Function(String field0) test,
     required TResult Function() scan,
@@ -3870,7 +3976,8 @@ class _$PageName_ScanImpl extends PageName_Scan {
     TResult? Function(bool field0)? userProfile,
     TResult? Function()? messagesHome,
     TResult? Function()? chooseRecipient,
-    TResult? Function()? currentConversation,
+    TResult? Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult? Function()? conversationInfo,
     TResult? Function(String field0)? test,
     TResult? Function()? scan,
@@ -3893,7 +4000,8 @@ class _$PageName_ScanImpl extends PageName_Scan {
     TResult Function(bool field0)? userProfile,
     TResult Function()? messagesHome,
     TResult Function()? chooseRecipient,
-    TResult Function()? currentConversation,
+    TResult Function(String field0, List<DartProfile>? field1)?
+        currentConversation,
     TResult Function()? conversationInfo,
     TResult Function(String field0)? test,
     TResult Function()? scan,

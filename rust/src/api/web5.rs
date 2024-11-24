@@ -102,7 +102,7 @@ impl Protocols {
     }
 }
 
-#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
+#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone, Ord, PartialOrd, Eq, PartialEq)]
 pub struct Profile {
     pub name: String,
     pub did: Did,
@@ -148,7 +148,7 @@ impl ShorthandConversation {
     }
 }
 
-#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
+#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone, Ord, PartialOrd, Eq, PartialEq)]//Ord, PartialOrd, Eq, PartialEq
 pub struct Conversation {
     pub members: Vec<Profile>,
     pub messages: Vec<Message>,
@@ -165,7 +165,7 @@ impl Conversation {
     }
 }
 
-#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
+#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone, Ord, PartialOrd, Eq, PartialEq)]
 pub struct Message {
     pub sender: Profile,
     pub message: String,

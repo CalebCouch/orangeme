@@ -70,11 +70,11 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.6.0';
 
   @override
-  int get rustContentHash => -1578921640;
+  int get rustContentHash => 1188477753;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
-    stem: 'rust_lib_testingo',
+    stem: 'rust_lib',
     ioDirectory: 'rust/target/release/',
     webPrefix: 'pkg/',
   );
@@ -107,14 +107,11 @@ abstract class RustLibApi extends BaseApi {
   Future<String> crateApiSimpleGetPage(
       {required String path, required PageName page});
 
-  String crateApiSimpleGreet({required String name});
-
   Future<void> crateApiPubStructsLoadStructs(
       {required ShorthandTransaction s,
       required ShorthandConversation sc,
-      required Conversation c,
       required Message m,
-      required Profile p,
+      required DartProfile p,
       required DartMethod dm,
       required KeyPress kp});
 
@@ -397,35 +394,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSimpleGreet({required String name}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(name, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiSimpleGreetConstMeta,
-      argValues: [name],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleGreetConstMeta => const TaskConstMeta(
-        debugName: "greet",
-        argNames: ["name"],
-      );
-
-  @override
   Future<void> crateApiPubStructsLoadStructs(
       {required ShorthandTransaction s,
       required ShorthandConversation sc,
-      required Conversation c,
       required Message m,
-      required Profile p,
+      required DartProfile p,
       required DartMethod dm,
       required KeyPress kp}) {
     return handler.executeNormal(NormalTask(
@@ -433,20 +406,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_shorthand_transaction(s, serializer);
         sse_encode_box_autoadd_shorthand_conversation(sc, serializer);
-        sse_encode_box_autoadd_conversation(c, serializer);
         sse_encode_box_autoadd_message(m, serializer);
-        sse_encode_box_autoadd_profile(p, serializer);
+        sse_encode_box_autoadd_dart_profile(p, serializer);
         sse_encode_box_autoadd_dart_method(dm, serializer);
         sse_encode_key_press(kp, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
+            funcId: 10, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
         decodeErrorData: null,
       ),
       constMeta: kCrateApiPubStructsLoadStructsConstMeta,
-      argValues: [s, sc, c, m, p, dm, kp],
+      argValues: [s, sc, m, p, dm, kp],
       apiImpl: this,
     ));
   }
@@ -454,7 +426,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiPubStructsLoadStructsConstMeta =>
       const TaskConstMeta(
         debugName: "load_structs",
-        argNames: ["s", "sc", "c", "m", "p", "dm", "kp"],
+        argNames: ["s", "sc", "m", "p", "dm", "kp"],
       );
 
   @override
@@ -466,7 +438,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_platform(pl, serializer);
         sse_encode_box_autoadd_page_name(pn, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 12, port: port_);
+            funcId: 11, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -490,7 +462,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_platform(that, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
@@ -521,7 +493,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
             callback, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 14, port: port_);
+            funcId: 13, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -547,7 +519,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(amount, serializer);
         sse_encode_key_press(key, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 15, port: port_);
+            funcId: 14, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_record_string_bool_u_8,
@@ -676,15 +648,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Conversation dco_decode_box_autoadd_conversation(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_conversation(raw);
-  }
-
-  @protected
   DartMethod dco_decode_box_autoadd_dart_method(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_dart_method(raw);
+  }
+
+  @protected
+  DartProfile dco_decode_box_autoadd_dart_profile(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_dart_profile(raw);
   }
 
   @protected
@@ -700,12 +672,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Profile dco_decode_box_autoadd_profile(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_profile(raw);
-  }
-
-  @protected
   ShorthandConversation dco_decode_box_autoadd_shorthand_conversation(
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -717,19 +683,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_shorthand_transaction(raw);
-  }
-
-  @protected
-  Conversation dco_decode_conversation(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return Conversation(
-      members: dco_decode_list_profile(arr[0]),
-      messages: dco_decode_list_message(arr[1]),
-      roomId: dco_decode_String(arr[2]),
-    );
   }
 
   @protected
@@ -751,6 +704,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  DartProfile dco_decode_dart_profile(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return DartProfile(
+      name: dco_decode_String(arr[0]),
+      did: dco_decode_String(arr[1]),
+      pfpPath: dco_decode_opt_String(arr[2]),
+      abtMe: dco_decode_opt_String(arr[3]),
+    );
+  }
+
+  @protected
   int dco_decode_i_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -769,9 +736,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<Message> dco_decode_list_message(dynamic raw) {
+  List<DartProfile> dco_decode_list_dart_profile(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_message).toList();
+    return (raw as List<dynamic>).map(dco_decode_dart_profile).toList();
   }
 
   @protected
@@ -781,19 +748,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<Profile> dco_decode_list_profile(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_profile).toList();
-  }
-
-  @protected
   Message dco_decode_message(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
     if (arr.length != 5)
       throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return Message(
-      sender: dco_decode_profile(arr[0]),
+      sender: dco_decode_dart_profile(arr[0]),
       message: dco_decode_String(arr[1]),
       date: dco_decode_String(arr[2]),
       time: dco_decode_String(arr[3]),
@@ -805,6 +766,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   String? dco_decode_opt_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
+  List<DartProfile>? dco_decode_opt_list_dart_profile(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_list_dart_profile(raw);
   }
 
   @protected
@@ -854,7 +821,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 11:
         return const PageName_ChooseRecipient();
       case 12:
-        return const PageName_CurrentConversation();
+        return PageName_CurrentConversation(
+          dco_decode_String(raw[1]),
+          dco_decode_opt_list_dart_profile(raw[2]),
+        );
       case 13:
         return const PageName_ConversationInfo();
       case 14:
@@ -872,20 +842,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Platform dco_decode_platform(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return Platform.values[raw as int];
-  }
-
-  @protected
-  Profile dco_decode_profile(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return Profile(
-      name: dco_decode_String(arr[0]),
-      did: dco_decode_String(arr[1]),
-      pfpPath: dco_decode_opt_String(arr[2]),
-      abtMe: dco_decode_opt_String(arr[3]),
-    );
   }
 
   @protected
@@ -1019,16 +975,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Conversation sse_decode_box_autoadd_conversation(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_conversation(deserializer));
-  }
-
-  @protected
   DartMethod sse_decode_box_autoadd_dart_method(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_dart_method(deserializer));
+  }
+
+  @protected
+  DartProfile sse_decode_box_autoadd_dart_profile(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_dart_profile(deserializer));
   }
 
   @protected
@@ -1044,12 +1000,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Profile sse_decode_box_autoadd_profile(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_profile(deserializer));
-  }
-
-  @protected
   ShorthandConversation sse_decode_box_autoadd_shorthand_conversation(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1061,16 +1011,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_shorthand_transaction(deserializer));
-  }
-
-  @protected
-  Conversation sse_decode_conversation(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_members = sse_decode_list_profile(deserializer);
-    var var_messages = sse_decode_list_message(deserializer);
-    var var_roomId = sse_decode_String(deserializer);
-    return Conversation(
-        members: var_members, messages: var_messages, roomId: var_roomId);
   }
 
   @protected
@@ -1089,6 +1029,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  DartProfile sse_decode_dart_profile(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_did = sse_decode_String(deserializer);
+    var var_pfpPath = sse_decode_opt_String(deserializer);
+    var var_abtMe = sse_decode_opt_String(deserializer);
+    return DartProfile(
+        name: var_name, did: var_did, pfpPath: var_pfpPath, abtMe: var_abtMe);
   }
 
   @protected
@@ -1111,13 +1062,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<Message> sse_decode_list_message(SseDeserializer deserializer) {
+  List<DartProfile> sse_decode_list_dart_profile(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <Message>[];
+    var ans_ = <DartProfile>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_message(deserializer));
+      ans_.add(sse_decode_dart_profile(deserializer));
     }
     return ans_;
   }
@@ -1130,21 +1081,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<Profile> sse_decode_list_profile(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <Profile>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_profile(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
   Message sse_decode_message(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_sender = sse_decode_profile(deserializer);
+    var var_sender = sse_decode_dart_profile(deserializer);
     var var_message = sse_decode_String(deserializer);
     var var_date = sse_decode_String(deserializer);
     var var_time = sse_decode_String(deserializer);
@@ -1163,6 +1102,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  List<DartProfile>? sse_decode_opt_list_dart_profile(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_list_dart_profile(deserializer));
     } else {
       return null;
     }
@@ -1209,7 +1160,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 11:
         return const PageName_ChooseRecipient();
       case 12:
-        return const PageName_CurrentConversation();
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_opt_list_dart_profile(deserializer);
+        return PageName_CurrentConversation(var_field0, var_field1);
       case 13:
         return const PageName_ConversationInfo();
       case 14:
@@ -1227,17 +1180,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_i_32(deserializer);
     return Platform.values[inner];
-  }
-
-  @protected
-  Profile sse_decode_profile(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_name = sse_decode_String(deserializer);
-    var var_did = sse_decode_String(deserializer);
-    var var_pfpPath = sse_decode_opt_String(deserializer);
-    var var_abtMe = sse_decode_opt_String(deserializer);
-    return Profile(
-        name: var_name, did: var_did, pfpPath: var_pfpPath, abtMe: var_abtMe);
   }
 
   @protected
@@ -1382,17 +1324,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_box_autoadd_conversation(
-      Conversation self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_conversation(self, serializer);
-  }
-
-  @protected
   void sse_encode_box_autoadd_dart_method(
       DartMethod self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_dart_method(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_dart_profile(
+      DartProfile self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_dart_profile(self, serializer);
   }
 
   @protected
@@ -1406,12 +1348,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       PageName self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_page_name(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_profile(Profile self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_profile(self, serializer);
   }
 
   @protected
@@ -1429,14 +1365,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_conversation(Conversation self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_profile(self.members, serializer);
-    sse_encode_list_message(self.messages, serializer);
-    sse_encode_String(self.roomId, serializer);
-  }
-
-  @protected
   void sse_encode_dart_method(DartMethod self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -1450,6 +1378,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  void sse_encode_dart_profile(DartProfile self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.did, serializer);
+    sse_encode_opt_String(self.pfpPath, serializer);
+    sse_encode_opt_String(self.abtMe, serializer);
   }
 
   @protected
@@ -1471,11 +1408,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_message(List<Message> self, SseSerializer serializer) {
+  void sse_encode_list_dart_profile(
+      List<DartProfile> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
-      sse_encode_message(item, serializer);
+      sse_encode_dart_profile(item, serializer);
     }
   }
 
@@ -1488,18 +1426,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_profile(List<Profile> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_profile(item, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_message(Message self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_profile(self.sender, serializer);
+    sse_encode_dart_profile(self.sender, serializer);
     sse_encode_String(self.message, serializer);
     sse_encode_String(self.date, serializer);
     sse_encode_String(self.time, serializer);
@@ -1513,6 +1442,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_String(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_list_dart_profile(
+      List<DartProfile>? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_list_dart_profile(self, serializer);
     }
   }
 
@@ -1558,8 +1498,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(10, serializer);
       case PageName_ChooseRecipient():
         sse_encode_i_32(11, serializer);
-      case PageName_CurrentConversation():
+      case PageName_CurrentConversation(
+          field0: final field0,
+          field1: final field1
+        ):
         sse_encode_i_32(12, serializer);
+        sse_encode_String(field0, serializer);
+        sse_encode_opt_list_dart_profile(field1, serializer);
       case PageName_ConversationInfo():
         sse_encode_i_32(13, serializer);
       case PageName_Test(field0: final field0):
@@ -1576,15 +1521,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_platform(Platform self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_profile(Profile self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.name, serializer);
-    sse_encode_String(self.did, serializer);
-    sse_encode_opt_String(self.pfpPath, serializer);
-    sse_encode_opt_String(self.abtMe, serializer);
   }
 
   @protected

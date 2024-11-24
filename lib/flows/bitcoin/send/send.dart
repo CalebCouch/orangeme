@@ -31,9 +31,7 @@ class SendState extends GenericState<Send> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.addressValid = json["valid_address"] as bool;
-        });
+        widget.addressValid = json["valid_address"] as bool;
     }
     
     void initState() {
@@ -62,7 +60,7 @@ class SendState extends GenericState<Send> {
         return Stack_Default(
             header: Header_Stack(context, "Bitcoin address", null, UniBackButton()),
             content: [
-                AddressInput(controller),
+                AddressInput(),
                 ButtonTips(),
             ],
             bumper: Bumper(context, content: [
@@ -75,9 +73,8 @@ class SendState extends GenericState<Send> {
         );
     }
 
-//The following widgets can ONLY be used in this file
 
-    Widget AddressInput(controller) {
+    Widget AddressInput() {
         return CustomTextInput(
             controller: controller,
             error: widget.addressValid || controller.text.isEmpty ? "" : "Not a valid address",
@@ -88,9 +85,7 @@ class SendState extends GenericState<Send> {
     }
 
     Widget UniBackButton() {
-        return CustomIconButton(() {
-            navigateTo(context, BitcoinHome());
-        }, 'left', 'lg');
+        return CustomIconButton(() {navigateTo(context, BitcoinHome());}, 'left', 'lg');
     }
 
     Widget ButtonTips() {

@@ -36,17 +36,15 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.is_withdraw = json["is_withdraw"] as bool;
-            widget.time = json["time"] as String;
-            widget.date = json["date"] as String;
-            widget.address = json["address"] as String;
-            widget.amount_btc = json["amount_btc"] as String;
-            widget.amount_usd = json["amount_usd"] as String;
-            widget.price = json["price"] as String;
-            widget.fee = json["fee"] as String?;
-            widget.total = json["total"] as String?;
-        });
+        widget.is_withdraw = json["is_withdraw"] as bool;
+        widget.time = json["time"] as String;
+        widget.date = json["date"] as String;
+        widget.address = json["address"] as String;
+        widget.amount_btc = json["amount_btc"] as String;
+        widget.amount_usd = json["amount_usd"] as String;
+        widget.price = json["price"] as String;
+        widget.fee = json["fee"] as String?;
+        widget.total = json["total"] as String?;
     }
 
     onDone() {

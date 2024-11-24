@@ -47,7 +47,9 @@ class ListItem extends StatelessWidget {
                                     if (sub != null) CustomText(
                                         variant:'text', 
                                         font_size: 'sm', 
-                                        txt: sub!
+                                        txt: sub!,
+                                        max_lines: 2,
+                                        alignment: TextAlign.left
                                     ),
                                     if (desc != null) CustomText(
                                         variant: 'text', 
@@ -73,7 +75,8 @@ class ListItem extends StatelessWidget {
                                 font_size: 'sm', 
                                 txt: subR!, 
                                 text_decoration: TextDecoration.underline,
-                                alignment: TextAlign.right
+                                alignment: TextAlign.right,
+                                max_lines: 2,
                             ),
                         ]),
                         if (caret) const Spacing(16),
@@ -85,7 +88,7 @@ class ListItem extends StatelessWidget {
     }
 }
 
-Widget ContactItem(BuildContext context, Profile contact, onTap) {
+Widget ContactItem(BuildContext context, DartProfile contact, onTap) {
     return ListItem(
         onTap: onTap,
         visual: ProfilePhoto(context, contact.pfpPath, ProfileSize.lg),

@@ -4,6 +4,7 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/messages/profile/my_profile.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
+import 'package:orange/flows/messages/conversation/conversation.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
 import 'package:orangeme_material/orangeme_material.dart';
@@ -29,23 +30,22 @@ class MessagesHomeState extends GenericState<MessagesHome> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.profile_picture = json["profile_picture"];
-            widget.conversations = List<ShorthandConversation>.from(json['conversations'].map(
-                (json) => ShorthandConversation(
-                    roomName: json['room_name'] as String,
-                    photo: json['photo_path'] as String?,
-                    subtext: json['subtext'] as String,
-                    isGroup: json['is_group'] as bool,
-                    roomId: json['room_id'] as String,
-                )
-            ));
-            widget.noConversations = widget.conversations.isEmpty;
-        });
+        widget.profile_picture = json["profile_picture"];
+        widget.conversations = List<ShorthandConversation>.from(json['conversations'].map(
+            (json) => ShorthandConversation(
+                roomName: json['room_name'] as String,
+                photo: json['photo_path'] as String?,
+                subtext: json['subtext'] as String,
+                isGroup: json['is_group'] as bool,
+                roomId: json['room_id'] as String,
+            )
+        ));
+        widget.noConversations = widget.conversations.isEmpty;
     }
 
-    createNewMessage() {navigateTo(ChooseRecipient());}
-    toProfile() {navigateTo(MyProfile());}
+
+    createNewMessage(){navigateTo(ChooseRecipient());}
+    toProfile(){navigateTo(MyProfile());}
 
     Widget NoConversations() {
         return const CustomText(
@@ -66,7 +66,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
                     widget.conversations[i].isGroup,
                     widget.conversations[i].roomName,
                     widget.conversations[i].subtext,
-                    (){},
+                    (){ navigateTo(CurrentConversation(roomId: widget.conversations[i].roomId)); },
                 );
             },
         );

@@ -703,10 +703,9 @@ packages:
   orangeme_material:
     dependency: "direct main"
     description:
-      name: orangeme_material
-      sha256: a0179131e6c6dd9fc6d6a101d8de2b967450d4948ad0846403fbac72a3a7db40
-      url: "https://pub.dev"
-    source: hosted
+      path: orangeme_material
+      relative: true
+    source: path
     version: "0.3.1"
   package_config:
     dependency: transitive
@@ -860,7 +859,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
-  rust_lib_testingo:
+  rust_builder:
     dependency: "direct main"
     description:
       path: rust_builder

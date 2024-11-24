@@ -34,12 +34,10 @@ class SpeedState extends GenericState<Speed> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.priority_f = json["priority_f"] as String;
-            widget.priority = BigInt.from(json["priority"]);
-            widget.standard_f = json["standard_f"] as String;
-            widget.standard = BigInt.from(json["standard"]);
-        });
+        widget.priority_f = json["priority_f"] as String;
+        widget.priority = BigInt.from(json["priority"]);
+        widget.standard_f = json["standard_f"] as String;
+        widget.standard = BigInt.from(json["standard"]);
     }
 
     int index = 0;

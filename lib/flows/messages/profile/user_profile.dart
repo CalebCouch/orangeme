@@ -34,7 +34,6 @@ class UserProfileState extends GenericState<UserProfile> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
             widget.init = false;
 
             widget.address = json['address'] as String;
@@ -42,7 +41,6 @@ class UserProfileState extends GenericState<UserProfile> {
             widget.did = json['did'] as String;
             widget.aboutMe = json['about_me'] as String?;
             widget.photo = json['profile_picture'] as String?;
-        });
     }
 
     sendMessage() {}

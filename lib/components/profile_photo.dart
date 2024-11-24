@@ -3,7 +3,7 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
 
-Widget profilePhotoStack(BuildContext context, List<Profile> contacts) {
+Widget profilePhotoStack(BuildContext context, List<DartProfile> contacts) {
     return Container(
         width: 128,
         height: 32,

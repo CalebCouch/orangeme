@@ -7,7 +7,7 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 class ConversationInfo extends GenericWidget {
     ConversationInfo({super.key});
 
-    List<Profile> members = [];
+    List<DartProfile> members = [];
 
     @override
     ConversationInfoState createState() => ConversationInfoState();
@@ -22,16 +22,14 @@ class ConversationInfoState extends GenericState<ConversationInfo> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.members = List<Profile>.from(json['members'].map(
-                (json) => Profile(
-                    name: json['name'] as String,
-                    did: json['did'] as String,
-                    abtMe: json['about_me'] as String?,
-                    pfpPath: json['pfp_path'] as String?,
-                )
-            ));
-        });
+        widget.members = List<DartProfile>.from(json['members'].map(
+            (json) => DartProfile(
+                name: json['name'] as String,
+                did: json['did'] as String,
+                abtMe: json['about_me'] as String?,
+                pfpPath: json['pfp_path'] as String?,
+            )
+        ));
     }
 
     Widget Information() {

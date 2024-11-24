@@ -46,16 +46,14 @@ class ConfirmState extends GenericState<Confirm> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        setState(() {
-            widget.address_cut = json["address_cut"] as String;
-            widget.address_whole = json["address_whole"] as String;
-            widget.amount_btc = json["amount_btc"] as String;
-            widget.amount_usd = json["amount_usd"] as String;
-            widget.amount = json["amount"] as String;
-            widget.fee_usd = json["fee_usd"] as String;
-            widget.total = json["total"] as String;
-            widget.raw_tx = json["raw_tx"] as String;
-        });
+        widget.address_cut = json["address_cut"] as String;
+        widget.address_whole = json["address_whole"] as String;
+        widget.amount_btc = json["amount_btc"] as String;
+        widget.amount_usd = json["amount_usd"] as String;
+        widget.amount = json["amount"] as String;
+        widget.fee_usd = json["fee_usd"] as String;
+        widget.total = json["total"] as String;
+        widget.raw_tx = json["raw_tx"] as String;
     }
 
     onContinue() {

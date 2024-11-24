@@ -31,7 +31,7 @@ pub enum PageName {
     UserProfile(bool),
     MessagesHome,
     ChooseRecipient,
-    CurrentConversation,
+    CurrentConversation(String, Option<Vec<DartProfile>>),
     ConversationInfo,
     Test(String),
     Scan,
@@ -72,6 +72,7 @@ pub struct ShorthandTransaction {
     pub txid: String,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ShorthandConversation {
     pub room_name: String,
     pub photo: Option<String>,
@@ -80,26 +81,29 @@ pub struct ShorthandConversation {
     pub room_id: String,
 }
 
-pub struct Conversation {
-    pub members: Vec<Profile>,
-    pub messages: Vec<Message>,
-    pub room_id: String,
-}
+// #[derive(Serialize, Deserialize, Clone, Debug)]
+// pub struct Conversation {
+//     pub members: Vec<Profile>,
+//     pub messages: Vec<Message>,
+//     pub room_id: String,
+// }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Message {
-    pub sender: Profile,
+    pub sender: DartProfile,
     pub message: String,
     pub date: String,
     pub time: String,
     pub is_incoming: bool,
 }
 
-pub struct Profile {
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct DartProfile {
     pub name: String,
     pub did: String,
     pub pfp_path: Option<String>,
     pub abt_me: Option<String>,
 }
 
-pub fn load_structs(_s: ShorthandTransaction, _sc: ShorthandConversation, _c: Conversation, _m: Message, _p: Profile, _dm: DartMethod, _kp: KeyPress) {}
+pub fn load_structs(_s: ShorthandTransaction, _sc: ShorthandConversation, _m: Message, _p: DartProfile, _dm: DartMethod, _kp: KeyPress) {}
 pub fn load_structs2(_pl: Platform, _pn: PageName) {}

@@ -28,8 +28,7 @@ class SuccessState extends GenericState<Success> {
     }
 
     @override
-    void unpack_state(Map<String, dynamic> json) {
-    }
+    void unpack_state(Map<String, dynamic> json) {}
 
     Widget build_with_state(BuildContext context) {
         return Stack_Default(

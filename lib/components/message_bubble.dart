@@ -95,24 +95,3 @@ Widget textMessage(BuildContext context, Message m, bool isGroup, [Message? pM, 
         ),
     );
 }
-
-Widget messageStack(BuildContext context, ScrollController controller, List<Profile> contacts, List<Message> messages) {
-    var isGroup = false;
-    if (contacts.length > 1) isGroup = true;
-    return SizedBox(
-        height: double.infinity,
-        child: ListView.builder(
-            controller: controller,
-            itemCount: messages.length,
-            itemBuilder: (BuildContext context, int index) {
-                return textMessage(
-                    context,
-                    messages[index],
-                    isGroup,
-                    index >= 1 ? messages[index - 1] : null,
-                    index < (messages.length - 1) ? messages[index + 1] : null,
-                );
-            },
-        ),
-    );
-}

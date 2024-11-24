@@ -2,17 +2,18 @@ use super::Error;
 
 use super::pub_structs::{
     ShorthandTransaction,
+    DartProfile,
     Platform,
     PageName,
     SATS,
     Sats,
     Btc,
-    Usd
+    Usd,
 };
 use super::threads::{call_thread, Threads, WalletMethod};
 use super::wallet::{Transactions, Transaction};
 use super::structs::DateTime;
-use super::web5::{Profile, ShorthandConversation, Conversation};
+use super::web5::{Profile, ShorthandConversation, Conversation, Message};
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -26,7 +27,15 @@ use serde_json::json;
 use bdk::bitcoin::{Network, Address};
 use bdk::bitcoin::hash_types::Txid;
 
-use num_format::{Locale, ToFormattedString};
+use num_format::{Locale, ToFormattedString}; 
+
+// USED FOR TESTING PURPOSES ONLY //
+use rand::{distributions::Alphanumeric, Rng}; 
+use secp256k1::rand;
+use web5_rust::dids::Did;
+use crate::api::state::rand::thread_rng;
+use crate::api::web5;
+// USED FOR TESTING PURPOSES ONLY //
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
@@ -52,12 +61,6 @@ impl Field {
     pub fn into_bytes(&self) -> Vec<u8> {
         format!("{:?}", self).split("(").collect::<Vec<&str>>()[0].as_bytes().to_vec()
     }
-}
-
-/* dummy data */
-#[derive(Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
-struct RoomID {
-    id: u32,
 }
 
 #[derive(Clone)]
@@ -123,7 +126,7 @@ impl StateManager {
             PageName::MessagesHome => self.messages_home().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
             PageName::ConversationInfo => self.conversation_info().await,
-            PageName::CurrentConversation => self.current_conversation().await,
+            PageName::CurrentConversation(record, members) => self.current_conversation(record, members).await,
             PageName::Scan => self.scan_qr().await,
             PageName::Test(_) => self.test().await,
         };
@@ -318,23 +321,40 @@ impl StateManager {
 
     pub async fn messages_home(&self) -> Result<String, Error> {
         let profile_pfp = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?.pfp_path;
-        let conversations = self.state.get_or_default::<BTreeMap<RoomID, Conversation>>(&Field::Conversations(None)).await?;
+        let conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+        let conversations: BTreeMap<String, Conversation> = conversations.into_iter().map(|conversation| (conversation.room_id.clone(), conversation)).collect();
 
         Ok(serde_json::to_string(&json!({
             "profile_picture": profile_pfp,
-            "conversations": conversations.values().map(|cv| {
+            "conversations": conversations.into_iter().map(|(room_id, cv)| {
                 let is_group = cv.members.len() > 1;
-                let photo = if is_group { None } else { cv.members[0].pfp_path.clone() };
 
-                ShorthandConversation{
-                    room_name: if is_group { "Group Message".to_string() } else { cv.members[0].name.clone() },
-                    photo,
-                    subtext: if is_group { cv.messages[0].message.to_string() } else { format_names(&cv.members) },
-                    room_id: "123".to_string(),
-                    is_group,
-                }
+                let room_name = if cv.members.is_empty() {
+                    "Unnamed Conversation".to_string()
+                } else if is_group {
+                    "Group Message".to_string()
+                } else {
+                    cv.members[0].name.clone()
+                };
+
+                let photo = if !is_group && !cv.members.is_empty() {
+                    cv.members[0].pfp_path.clone()
+                } else {
+                    None
+                };
+
+                let subtext = if is_group {
+                    cv.members.iter().map(|profile| profile.name.as_str()).collect::<Vec<_>>().join(", ")
+                } else if let Some(first_message) = cv.messages.first() {
+                    first_message.message.to_string()
+                } else {
+                    "No messages yet".to_string()
+                };
+
+                ShorthandConversation { room_name, photo, subtext, room_id, is_group }
             }).collect::<Vec<ShorthandConversation>>()
         }))?)
+
     }
 
     pub async fn conversation_info(&self) -> Result<String, Error> {
@@ -342,13 +362,139 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn current_conversation(&self) -> Result<String, Error> {
+    pub async fn current_conversation(&self, record: String, members: Option<Vec<DartProfile>>) -> Result<String, Error> {
+        let new_record: String = thread_rng().sample_iter(&Alphanumeric).take(5).map(char::from).collect();
+    
+        let this_conversation = if let Some(members) = members {
+            let chosen_members = members.into_iter().map(|dart_profile| Profile {
+                name: dart_profile.name,
+                did: Did::from_str(dart_profile.did.as_str()).unwrap(),
+                abt_me: dart_profile.abt_me,
+                pfp_path: dart_profile.pfp_path,
+            }).collect::<Vec<Profile>>();
+    
+            let new_conversation = Conversation::new(chosen_members, Vec::new(), new_record);
+            let mut conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+            conversations.push(new_conversation.clone());
+            self.state.set(Field::Conversations(Some(conversations))).await?;
+    
+            new_conversation
+        } else {
+            let conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+            let conversations: BTreeMap<String, Conversation> = conversations.into_iter().map(|conversation| (conversation.room_id.clone(), conversation)).collect();
+            conversations.get(&record)
+                .ok_or(Error::err("current_conversation", "No conversation found for room record"))?
+                .clone()
+        };
+    
+        let members = this_conversation.members;
+        let messages = this_conversation.messages;
+    
         Ok(serde_json::to_string(&json!({
+            "is_group": members.len() > 1,
+            "members": members.into_iter().map(|m| Profile {
+                name: m.name,
+                did: m.did,
+                abt_me: m.abt_me,
+                pfp_path: m.pfp_path
+            }).collect::<Vec<Profile>>(),
+            "messages": Some(messages.into_iter().map(|m| Message {
+                sender: Profile {
+                    name: m.sender.name,
+                    did: m.sender.did,
+                    abt_me: m.sender.abt_me,
+                    pfp_path: m.sender.pfp_path
+                },
+                message: m.message,
+                date: "11/11/11".to_string(),
+                time: "11:11 PM".to_string(),
+                is_incoming: m.is_incoming,
+            }).collect::<Vec<Message>>()),
         }))?)
     }
+    
+
+
+    fn generate_random_did() -> Did {
+        let random_part: String = rand::thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(64)
+            .map(char::from)
+            .collect();
+        Did::from_str(format!("did:dht:{}", random_part).as_str()).unwrap()
+    }
+
+    pub async fn create_fake_profiles(&self) -> Result<Vec<Profile>, Error> {
+        let fake_profiles = vec![
+            Profile {
+                name: "Avery Bloom".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Gardener and plant enthusiast, finding beauty in every green corner.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Casey Ray".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Photographer capturing moments that tell stories.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Riley Sage".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Coder by day, gamer by night. Always up for a good challenge.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Jordan Quinn".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Traveler with a knack for storytelling. Exploring one place at a time.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Taylor Vale".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("DIY enthusiast with a passion for building and fixing things.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Ike Stone".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Architect turned urban explorer. I build during the week and explore on weekends.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Derrik North".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Ex-military, now a survival instructor. Always ready for an adventure.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Jordan Ember".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Writer and history buff. Stories are everywhere if you look close enough.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Tara Ridge".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Hiker, geologist, and rock collector. The world is my lab.".to_string()),
+                pfp_path: None,
+            },
+            Profile {
+                name: "Quentin Vale".to_string(),
+                did: Self::generate_random_did(),
+                abt_me: Some("Engineer and tinkerer. If it’s broken, I’ll fix it. If it works, I’ll make it better.".to_string()),
+                pfp_path: None,
+            },
+        ];
+
+        Ok(fake_profiles)
+    }
+    
 
     pub async fn choose_recipient(&self) -> Result<String, Error> {
-        let users = self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
+        let users = self.create_fake_profiles().await?; //
+        self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
         Ok(serde_json::to_string(&json!({
             "users": users.into_iter().map(|profile| {
                 Profile{
@@ -361,6 +507,7 @@ impl StateManager {
         }))?)
     }
 }
+
 
 pub fn format_usd(price: Usd) -> String {
     let price = (price * 100.0).round() / 100.0;
@@ -391,10 +538,4 @@ pub fn format_datetime(date: Option<&DateTime>) -> String {
             dt.format("%m/%d/%Y").to_string()
         }
     } else {"Pending".to_string()}
-}
-
-fn format_names(cv: &[Profile]) -> String {
-    let names: String = cv.iter().map(|profile| profile.name.as_str()).collect::<Vec<_>>().join(", ");
-    if names.len() > 20 {return format!("{}...", &names[0..20]);}
-    names
 }

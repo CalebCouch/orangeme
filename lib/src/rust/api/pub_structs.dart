@@ -8,45 +8,20 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 Future<void> loadStructs(
         {required ShorthandTransaction s,
         required ShorthandConversation sc,
-        required Conversation c,
         required Message m,
-        required Profile p,
+        required DartProfile p,
         required DartMethod dm,
         required KeyPress kp}) =>
     RustLib.instance.api.crateApiPubStructsLoadStructs(
-        s: s, sc: sc, c: c, m: m, p: p, dm: dm, kp: kp);
+        s: s, sc: sc, m: m, p: p, dm: dm, kp: kp);
 
 Future<void> loadStructs2({required Platform pl, required PageName pn}) =>
     RustLib.instance.api.crateApiPubStructsLoadStructs2(pl: pl, pn: pn);
-
-class Conversation {
-  final List<Profile> members;
-  final List<Message> messages;
-  final String roomId;
-
-  const Conversation({
-    required this.members,
-    required this.messages,
-    required this.roomId,
-  });
-
-  @override
-  int get hashCode => members.hashCode ^ messages.hashCode ^ roomId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Conversation &&
-          runtimeType == other.runtimeType &&
-          members == other.members &&
-          messages == other.messages &&
-          roomId == other.roomId;
-}
 
 @freezed
 sealed class DartMethod with _$DartMethod {
@@ -59,6 +34,34 @@ sealed class DartMethod with _$DartMethod {
   const factory DartMethod.storageGet(
     String field0,
   ) = DartMethod_StorageGet;
+}
+
+class DartProfile {
+  final String name;
+  final String did;
+  final String? pfpPath;
+  final String? abtMe;
+
+  const DartProfile({
+    required this.name,
+    required this.did,
+    this.pfpPath,
+    this.abtMe,
+  });
+
+  @override
+  int get hashCode =>
+      name.hashCode ^ did.hashCode ^ pfpPath.hashCode ^ abtMe.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DartProfile &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          did == other.did &&
+          pfpPath == other.pfpPath &&
+          abtMe == other.abtMe;
 }
 
 enum KeyPress {
@@ -79,7 +82,7 @@ enum KeyPress {
 }
 
 class Message {
-  final Profile sender;
+  final DartProfile sender;
   final String message;
   final String date;
   final String time;
@@ -147,7 +150,10 @@ sealed class PageName with _$PageName {
   ) = PageName_UserProfile;
   const factory PageName.messagesHome() = PageName_MessagesHome;
   const factory PageName.chooseRecipient() = PageName_ChooseRecipient;
-  const factory PageName.currentConversation() = PageName_CurrentConversation;
+  const factory PageName.currentConversation(
+    String field0, [
+    List<DartProfile>? field1,
+  ]) = PageName_CurrentConversation;
   const factory PageName.conversationInfo() = PageName_ConversationInfo;
   const factory PageName.test(
     String field0,
@@ -167,34 +173,6 @@ enum Platform {
   bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
         that: this,
       );
-}
-
-class Profile {
-  final String name;
-  final String did;
-  final String? pfpPath;
-  final String? abtMe;
-
-  const Profile({
-    required this.name,
-    required this.did,
-    this.pfpPath,
-    this.abtMe,
-  });
-
-  @override
-  int get hashCode =>
-      name.hashCode ^ did.hashCode ^ pfpPath.hashCode ^ abtMe.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Profile &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          did == other.did &&
-          pfpPath == other.pfpPath &&
-          abtMe == other.abtMe;
 }
 
 class ShorthandConversation {

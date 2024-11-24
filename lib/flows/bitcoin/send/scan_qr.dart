@@ -18,7 +18,7 @@ class ScanQRState extends GenericState<ScanQR> {
     PageName getPageName() {return PageName.scan();}
 
     @override
-    void unpack_state(Map<String, dynamic> json) {setState(() {});}
+    void unpack_state(Map<String, dynamic> json) {}
 
     late QRViewController controller;
     GlobalKey qrKey = GlobalKey(debugLabel: 'QR');

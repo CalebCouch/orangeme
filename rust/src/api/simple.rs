@@ -12,11 +12,6 @@ use flutter_rust_bridge::DartFnFuture;
 use simple_database::SqliteStore;
 use tokio::sync::Mutex;
 
-#[flutter_rust_bridge::frb(sync)]
-pub fn greet(name: String) -> String {
-    format!("Hello, {name}!")
-}
-
 #[allow(non_snake_case)]
 pub async fn rustStart (
     path: String,
@@ -28,10 +23,10 @@ pub async fn rustStart (
     android_logger::init_once(
         android_logger::Config::default().with_max_level(log::LevelFilter::Info),
     );
-
-    // #[cfg(any(target_os = "ios", target_os = "macos"))]
-    // oslog::OsLogger::new("frb_user").level_filter(log::LevelFilter::Info).init();
-    thread::sleep(time::Duration::from_millis(500));
+    
+    //#[cfg(any(target_os = "ios", target_os = "macos"))]
+    //oslog::OsLogger::new("frb_user").level_filter(log::LevelFilter::Info).init();
+    thread::sleep(time::Duration::from_millis(500));//TODO: loggers need time to initialize maybe find an async solution
 
     let callback = Arc::new(Mutex::new(callback));
 
