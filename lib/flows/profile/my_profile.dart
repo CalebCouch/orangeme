@@ -13,7 +13,7 @@ class MyProfile extends GenericWidget {
     String address = '';
     String name = '';
     String did = '';
-    String? aboutMe;
+    String? abtMe;
     String? photo;
     String? new_name;
     String? new_abtme;
@@ -37,7 +37,7 @@ class MyProfileState extends GenericState<MyProfile> {
         widget.address = json['address'] as String;
         widget.name = json['name'] as String;
         widget.did = json['did'] as String;
-        widget.aboutMe = json['about_me'] as String?;
+        widget.abtMe = json['abt_me'] as String?;
         widget.photo = json['profile_picture'] as String?;
         widget.new_name = null;
         widget.new_abtme = null;
@@ -60,7 +60,7 @@ class MyProfileState extends GenericState<MyProfile> {
     @override
     Widget build_with_state(BuildContext context) {
         _profileName = TextEditingController(text: widget.name);
-        _aboutMe = TextEditingController(text: widget.aboutMe);
+        _aboutMe = TextEditingController(text: widget.abtMe);
 
         saveInfo(){
             setState(() {

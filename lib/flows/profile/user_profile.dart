@@ -14,7 +14,7 @@ class UserProfile extends GenericWidget {
     String address = '';
     String name = '';
     String did = '';
-    String? aboutMe;
+    String? abtMe;
     String? photo;
 
     bool init = true;
@@ -50,7 +50,7 @@ class UserProfileState extends GenericState<UserProfile> {
             widget.address = json['address'] as String;
             widget.name = json['name'] as String;
             widget.did = json['did'] as String;
-            widget.aboutMe = json['about_me'] as String?;
+            widget.abtMe = json['abt_me'] as String?;
             widget.photo = json['profile_picture'] as String?;
     }
 
@@ -64,7 +64,7 @@ class UserProfileState extends GenericState<UserProfile> {
             header: Header_Stack(context, widget.name),
             content: [
                 ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
-                aboutMeItem(context, widget.aboutMe ?? "This profile is still a mystery."),
+                aboutMeItem(context, widget.abtMe ?? "This profile is still a mystery."),
                 didItem(context, widget.did),
                 addressItem(context, widget.address),
             ],
