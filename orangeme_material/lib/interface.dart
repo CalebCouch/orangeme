@@ -102,7 +102,6 @@ Widget Stack_Default({
   required Widget bumper,
   Alignment alignment = Alignment.topCenter,
   bool scroll = true,
-  bool isLoading = false,
 }) {
     return PopScope(
         canPop: false,
@@ -110,8 +109,8 @@ Widget Stack_Default({
             resizeToAvoidBottomInset: scroll,
             body: SafeArea(
                 child: Column(
-                mainAxisAlignment: isLoading ? MainAxisAlignment.center : MainAxisAlignment.start,
-                children: isLoading ? [loadingCircle()] : [
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
                         header,
                         !scroll ? Expanded(
                             child: Content(
@@ -198,17 +197,25 @@ Widget CustomColumn(List<Widget> children, [double spacing = 24, bool centerH = 
   List<Widget> content = [];
 
     for (int i = 0; i < children.length; i++) {
-        content.add(children[i]);
-        if (i < children.length - 1) {
-            content.add(Spacing(spacing));
+        if(children[i] is! SizedBox) {
+            content.add(children[i]);
+            if (i < children.length - 1) {
+                content.add(Container(child:Spacing(spacing)));
+            }
+        } else {
+            SizedBox sizedBox = children[i] as SizedBox;
+            if (sizedBox.child != null) {
+                content.add(children[i]);
+            }
         }
     }
-    return Column(
+    return Container(
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: centerH ? MainAxisAlignment.center : MainAxisAlignment.start,
         crossAxisAlignment: centerV ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: content,
-    );
+    ),);
 }
 
 Widget CustomRow(List<Widget> children, [double spacing = 8]) {

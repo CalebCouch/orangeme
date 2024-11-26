@@ -103,7 +103,7 @@ class MyProfileState extends GenericState<MyProfile> {
 
         Widget EditPhoto() {
             return CustomColumn([
-                    ProfilePhoto(context, widget.photo, ProfileSize.xxl),
+                    ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
                     CustomButton(
                         txt: 'Photo', 
                         variant: 'secondary', 

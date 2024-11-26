@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orange/flows/profile/user_profile.dart';
 import 'package:orange/generic.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
 class ConversationInfo extends GenericWidget {
-    ConversationInfo({super.key});
+    String roomId = "";
+    ConversationInfo(this.roomId, {super.key});
 
     List<DartProfile> members = [];
 
@@ -15,7 +17,7 @@ class ConversationInfo extends GenericWidget {
 
 class ConversationInfoState extends GenericState<ConversationInfo> {
     @override
-    PageName getPageName() {return PageName.conversationInfo();}
+    PageName getPageName() {return PageName.conversationInfo(widget.roomId);}
 
     @override
     int refreshInterval() {return 0;}
@@ -42,14 +44,18 @@ class ConversationInfoState extends GenericState<ConversationInfo> {
     }
 
     Widget ListMembers() {
-        onPressed(int i) {/*navigateTo(context, UserProfile(contacts[index]));*/}
+        onPressed(DartProfile user) {navigateTo(UserProfile(user));}
 
         return ListView.builder(
             shrinkWrap: true,
             physics: const ScrollPhysics(),
             itemCount: widget.members.length,
             itemBuilder: (BuildContext context, int index) {
-                return ContactItem(context, widget.members[index], () => onPressed(index));
+                return ContactItem(
+                    context, 
+                    widget.members[index], 
+                    () => onPressed(widget.members[index]),
+                );
             },
         );
     }

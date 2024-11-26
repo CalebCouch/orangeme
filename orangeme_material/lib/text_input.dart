@@ -9,7 +9,7 @@ class CustomTextInput extends StatefulWidget {
     final ValueChanged<String>? onChanged;
     final VoidCallback? onEditingComplete;
     final ValueChanged<String>? onSubmitted;
-    final bool showIcon;
+    final Widget? icon;
     final String error;
     final String? presetTxt;
     final TextEditingController? controller;
@@ -22,7 +22,7 @@ class CustomTextInput extends StatefulWidget {
         this.onChanged,
         this.onEditingComplete,
         this.onSubmitted,
-        this.showIcon = false,
+        this.icon,
         this.error = '',
         this.presetTxt,
         this.controller,
@@ -39,14 +39,12 @@ class CustomTextInputState extends State<CustomTextInput> {
     var textColor = ThemeColor.secondary;
     var isFocused = false;
     var focusNode = FocusNode();
-    bool iconEnabled = true;
 
     @override
     void initState() {
-        super.initState();
         controller = widget.controller ?? TextEditingController(text: widget.presetTxt);
-        if (widget.showIcon == true) iconEnabled = false;
         focusNode.addListener(_onFocusChange);
+        super.initState();
     }
 
     @override
@@ -65,16 +63,6 @@ class CustomTextInputState extends State<CustomTextInput> {
             textColor = ThemeColor.secondary;
             if (!isFocused && controller.text.isEmpty) {
                 borderColor = ThemeColor.outline;
-            }
-        });
-    }
-
-    Future<void> iconStatus(String text) async {
-        setState(() {
-            if (text == '') {
-                iconEnabled = false;
-            } else {
-                iconEnabled = true;
             }
         });
     }
@@ -115,7 +103,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                                         cursorWidth: 2.0,
                                         cursorColor: ThemeColor.textSecondary,
                                         style: TextStyle(color: textColor),
-                                        onChanged: widget.showIcon ? (String text) => iconStatus(text) : widget.onChanged,
+                                        onChanged: (String text) => widget.onChanged,
                                         onSubmitted: widget.onSubmitted,
                                         onEditingComplete: widget.onEditingComplete,
                                         textInputAction: TextInputAction.done,
@@ -128,7 +116,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                                         ),
                                     ),
                                 ),
-                                widget.showIcon ? SendButton(iconEnabled) : Container(),
+                                widget.icon ?? Container(),
                             ],
                         ),
                     ),

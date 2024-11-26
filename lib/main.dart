@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             title: 'orange',
             theme: theme(),
             home: BitcoinHome(),
-            //home: Test(),
+            // home: Test(),
         );
     }
 }

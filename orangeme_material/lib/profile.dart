@@ -5,14 +5,14 @@ import 'package:orangeme_material/icon.dart';
 import 'dart:io';
 
 
-Widget ProfilePhoto (BuildContext context, [String? pfp, double size = ProfileSize.md, bool isGroup = false ] ){
+Widget ProfilePhoto (BuildContext context, {String? pfp, double size = ProfileSize.lg, bool isGroup = false, bool outline = false}){
     return Container(
         alignment: Alignment.center,
         height: size,
         width: size,
 
         decoration: BoxDecoration(
-            border: isGroup ? Border.all(color: ThemeColor.bg) : null,
+            border: outline ? Border.all(color: ThemeColor.bg) : null,
             color: ThemeColor.bgSecondary,
             shape: BoxShape.circle,
             // IF the pfp is not null, display picture

@@ -4,44 +4,51 @@ import 'package:orangeme_material/icon.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/text.dart';
 
-Widget CustomIconButton(onTap, String icon, String size) {
+Widget CustomIconButton(onTap, {required String icon, String size = 'lg', String color = 'secondary'}) {
     return InkWell(
         onTap: () {
             HapticFeedback.heavyImpact();
             onTap();
         },
-        child: Container(padding: EdgeInsets.only(left: 16), child: CustomIcon(icon: icon, size: size)),
+        child: Container(
+            padding: EdgeInsets.only(left: 16), 
+            child: CustomIcon(icon: icon, size: size, color: color)
+        ),
     );
 }
 
-Widget SendButton(bool isEnabled) {
+Widget SendButton({bool isEnabled = true, required onTap}) {
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        child: CustomIconButton(null, 'send', 'lg'),
+        child: CustomIconButton(onTap, icon: 'send'),
     );
 }
 
 Widget CustomBackButton(BuildContext context) {
     return CustomIconButton(
         () { navPop(context); }, 
-        'left',
-        'lg'
+        icon: 'left',
+    );
+}
+
+Widget UniBackButton(BuildContext context, Widget destination) {
+    return CustomIconButton(
+        () { navigateTo(context, destination); }, 
+        icon: 'left'
     );
 }
 
 Widget ExitButton(BuildContext context, Widget home) {
     return CustomIconButton(
         () { resetNavTo(context, home); }, 
-        'close',
-        'lg'
+        icon: 'close',
     );
 }
 
 Widget InfoButton(BuildContext context, Widget page) {
     return CustomIconButton(
         () { navigateTo(context, page); }, 
-        'info',
-        'lg',
+        icon: 'info',
     );
 }
 

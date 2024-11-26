@@ -7,6 +7,7 @@ class CustomText extends StatefulWidget {
     final String? font_size;
     final String txt;
     final TextDecoration text_decoration;
+    final TextOverflow? overflow;
     final TextAlign alignment;
     final int? max_lines;
 
@@ -18,6 +19,7 @@ class CustomText extends StatefulWidget {
         this.text_color,
         this.text_decoration = TextDecoration.none,
         this.alignment = TextAlign.center,
+        this.overflow,
         this.max_lines,
     });
 
@@ -73,3 +75,11 @@ final Map<String, FontWeight> weight = {
     'text': FontWeight.w400,
     'label': FontWeight.w700,
 };
+
+String EllipsisText(String input){
+    int maxLength = 30;
+    if (input.length <= maxLength) { return input; }
+    final startLength = (maxLength / 2).floor();
+    final endLength = maxLength - startLength - 3; 
+    return '${input.substring(0, startLength)}...${input.substring(input.length - endLength)}';
+}

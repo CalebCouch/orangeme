@@ -7,8 +7,10 @@ import 'package:orange/generic.dart';
 //import 'package:orange/global.dart' as global;
 
 class UserProfile extends GenericWidget {
-    UserProfile({super.key});
+    DartProfile user;
+    UserProfile(this.user, {super.key});
 
+    
     String address = '';
     String name = '';
     String did = '';
@@ -16,6 +18,8 @@ class UserProfile extends GenericWidget {
     String? photo;
 
     bool init = true;
+    bool sendMessage = false;
+    bool sendBitcoin = false;
 
     @override
     UserProfileState createState() => UserProfileState();
@@ -24,7 +28,12 @@ class UserProfile extends GenericWidget {
 class UserProfileState extends GenericState<UserProfile> {
     @override
     PageName getPageName() {
-        return PageName.userProfile(widget.init);
+        return PageName.userProfile(
+            widget.init, 
+            widget.user,
+            widget.sendMessage,
+            widget.sendBitcoin,
+        );
     }
 
     @override
@@ -35,6 +44,8 @@ class UserProfileState extends GenericState<UserProfile> {
     @override
     void unpack_state(Map<String, dynamic> json) {
             widget.init = false;
+            widget.sendMessage = false;
+            widget.sendBitcoin = false;
 
             widget.address = json['address'] as String;
             widget.name = json['name'] as String;
@@ -43,16 +54,16 @@ class UserProfileState extends GenericState<UserProfile> {
             widget.photo = json['profile_picture'] as String?;
     }
 
-    sendMessage() {}
+    sendMessage() { setState(() => widget.sendMessage = true); }
 
-    sendBitcoin() {}
+    sendBitcoin() { setState(() => widget.sendBitcoin = true); }
 
     @override
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, widget.name),
             content: [
-                ProfilePhoto(context, widget.photo, ProfileSize.xxl),
+                ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
                 aboutMeItem(context, widget.aboutMe ?? "This profile is still a mystery."),
                 didItem(context, widget.did),
                 addressItem(context, widget.address),

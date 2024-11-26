@@ -6,7 +6,7 @@ import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/view_transaction.dart';
-import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/flows/profile/my_profile.dart';
 import 'package:orange/flows/messages/home.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
@@ -96,13 +96,13 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     }
 
     Widget BackupReminder(bool display) {
-        return display ? Container() : CustomBanner(
+        return display ? SizedBox() : CustomBanner(
             'orange recommends that you back\n your phone up to the cloud.',
         );
     }
 
     Widget InternetBanner(bool internet) {
-        return internet ? Container() : CustomBanner(
+        return internet ? SizedBox() : CustomBanner(
             'You are not connected to the internet.\norange requires an internet connection.',
         );
     }
@@ -132,4 +132,3 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
         );
     }
 }
-

@@ -147,14 +147,20 @@ sealed class PageName with _$PageName {
   ) = PageName_MyProfile;
   const factory PageName.userProfile(
     bool field0,
+    DartProfile field1,
+    bool field2,
+    bool field3,
   ) = PageName_UserProfile;
   const factory PageName.messagesHome() = PageName_MessagesHome;
   const factory PageName.chooseRecipient() = PageName_ChooseRecipient;
   const factory PageName.currentConversation(
-    String field0, [
-    List<DartProfile>? field1,
-  ]) = PageName_CurrentConversation;
-  const factory PageName.conversationInfo() = PageName_ConversationInfo;
+    String field0,
+    String? field1,
+    List<DartProfile> field2,
+  ) = PageName_CurrentConversation;
+  const factory PageName.conversationInfo(
+    String field0,
+  ) = PageName_ConversationInfo;
   const factory PageName.test(
     String field0,
   ) = PageName_Test;

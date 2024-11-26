@@ -138,7 +138,7 @@ impl Wallet {
         //Hard coded for testing
         let seed: Seed = Seed{inner: vec![175, 178, 194, 229, 165, 10, 1, 80, 224, 239, 231, 107, 145, 96, 212, 195, 10, 78, 64, 17, 241, 77, 229, 246, 109, 226, 14, 83, 139, 28, 232, 220, 5, 150, 79, 185, 67, 31, 247, 41, 150, 36, 77, 199, 67, 47, 157, 15, 61, 142, 5, 244, 245, 137, 198, 34, 174, 221, 63, 134, 129, 165, 25, 7]};
         let descriptors = DescriptorSet::from_seed(&seed)?;
-
+        log::info!("CHECKING THE WALLET IMPP CONNECTION");
         Ok(Wallet{
             inner: Self::inner_wallet(&descriptors, path.clone())?,
             descriptors,

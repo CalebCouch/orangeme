@@ -22,8 +22,7 @@ pub struct DateTime {
 impl DateTime {
     pub fn from_timestamp(timestamp: u64) -> Result<DateTime, Error> {
         Ok(DateTime{date:
-            ChronoDateTime::<Utc>::from_timestamp(timestamp as i64, 0)
-            .ok_or(Error::bad_request("DateTime::from_timestamp", "Could not create date from timestamp"))?
+            ChronoDateTime::<Utc>::from_timestamp(timestamp as i64, 0).ok_or(Error::bad_request("DateTime::from_timestamp", "Could not create date from timestamp"))?
         })
     }
     pub fn now() -> DateTime {

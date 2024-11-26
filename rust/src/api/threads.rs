@@ -103,7 +103,7 @@ async fn wallet_thread(
     w_rx: WalletReceiver
 ) -> Result<(), Error> {
     let wallet = Wallet::new(callback, path.clone()).await?;
-
+    log::info!("CHECKING THE INTERNET CONNECTION");
     Err(tokio::select!(
         Err(e) = spawn(wallet_method_thread(wallet.clone(), w_rx)) => e,
         Err(e) = spawn(wallet_sync_thread(wallet.clone())) => e,
@@ -114,6 +114,7 @@ async fn wallet_thread(
 
 async fn wallet_sync_thread(wallet: Wallet) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(10_000));
+    log::info!("CHECKING THE WALLET SYNC THERAD");
     loop {
         Request::filter_error(wallet.sync().await)?;
         interval.tick().await;

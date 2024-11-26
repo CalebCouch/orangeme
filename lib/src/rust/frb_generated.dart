@@ -769,12 +769,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<DartProfile>? dco_decode_opt_list_dart_profile(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_list_dart_profile(raw);
-  }
-
-  @protected
   PageName dco_decode_page_name(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
@@ -815,6 +809,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 9:
         return PageName_UserProfile(
           dco_decode_bool(raw[1]),
+          dco_decode_box_autoadd_dart_profile(raw[2]),
+          dco_decode_bool(raw[3]),
+          dco_decode_bool(raw[4]),
         );
       case 10:
         return const PageName_MessagesHome();
@@ -823,10 +820,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 12:
         return PageName_CurrentConversation(
           dco_decode_String(raw[1]),
-          dco_decode_opt_list_dart_profile(raw[2]),
+          dco_decode_opt_String(raw[2]),
+          dco_decode_list_dart_profile(raw[3]),
         );
       case 13:
-        return const PageName_ConversationInfo();
+        return PageName_ConversationInfo(
+          dco_decode_String(raw[1]),
+        );
       case 14:
         return PageName_Test(
           dco_decode_String(raw[1]),
@@ -1108,18 +1108,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<DartProfile>? sse_decode_opt_list_dart_profile(
-      SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_list_dart_profile(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
   PageName sse_decode_page_name(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1154,17 +1142,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return PageName_MyProfile(var_field0);
       case 9:
         var var_field0 = sse_decode_bool(deserializer);
-        return PageName_UserProfile(var_field0);
+        var var_field1 = sse_decode_box_autoadd_dart_profile(deserializer);
+        var var_field2 = sse_decode_bool(deserializer);
+        var var_field3 = sse_decode_bool(deserializer);
+        return PageName_UserProfile(
+            var_field0, var_field1, var_field2, var_field3);
       case 10:
         return const PageName_MessagesHome();
       case 11:
         return const PageName_ChooseRecipient();
       case 12:
         var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_opt_list_dart_profile(deserializer);
-        return PageName_CurrentConversation(var_field0, var_field1);
+        var var_field1 = sse_decode_opt_String(deserializer);
+        var var_field2 = sse_decode_list_dart_profile(deserializer);
+        return PageName_CurrentConversation(var_field0, var_field1, var_field2);
       case 13:
-        return const PageName_ConversationInfo();
+        var var_field0 = sse_decode_String(deserializer);
+        return PageName_ConversationInfo(var_field0);
       case 14:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_Test(var_field0);
@@ -1446,17 +1440,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_list_dart_profile(
-      List<DartProfile>? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_list_dart_profile(self, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_page_name(PageName self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -1491,22 +1474,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_MyProfile(field0: final field0):
         sse_encode_i_32(8, serializer);
         sse_encode_bool(field0, serializer);
-      case PageName_UserProfile(field0: final field0):
+      case PageName_UserProfile(
+          field0: final field0,
+          field1: final field1,
+          field2: final field2,
+          field3: final field3
+        ):
         sse_encode_i_32(9, serializer);
         sse_encode_bool(field0, serializer);
+        sse_encode_box_autoadd_dart_profile(field1, serializer);
+        sse_encode_bool(field2, serializer);
+        sse_encode_bool(field3, serializer);
       case PageName_MessagesHome():
         sse_encode_i_32(10, serializer);
       case PageName_ChooseRecipient():
         sse_encode_i_32(11, serializer);
       case PageName_CurrentConversation(
           field0: final field0,
-          field1: final field1
+          field1: final field1,
+          field2: final field2
         ):
         sse_encode_i_32(12, serializer);
         sse_encode_String(field0, serializer);
-        sse_encode_opt_list_dart_profile(field1, serializer);
-      case PageName_ConversationInfo():
+        sse_encode_opt_String(field1, serializer);
+        sse_encode_list_dart_profile(field2, serializer);
+      case PageName_ConversationInfo(field0: final field0):
         sse_encode_i_32(13, serializer);
+        sse_encode_String(field0, serializer);
       case PageName_Test(field0: final field0):
         sse_encode_i_32(14, serializer);
         sse_encode_String(field0, serializer);

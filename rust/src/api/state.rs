@@ -112,6 +112,7 @@ impl StateManager {
     }
 
     pub async fn get(&mut self, page: PageName) -> Result<String, Error> {
+        //log::info!("BUILDING ALL PAGES");
         let page_state = match page {
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
@@ -122,11 +123,11 @@ impl StateManager {
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
             PageName::Success(tx) => self.success(tx).await,
             PageName::MyProfile(init) => self.my_profile(init).await,
-            PageName::UserProfile(init) => self.user_profile(init).await,
+            PageName::UserProfile(init, profile, send_message, send_bitcoin) => self.user_profile(init, profile, send_message, send_bitcoin).await,
             PageName::MessagesHome => self.messages_home().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
-            PageName::ConversationInfo => self.conversation_info().await,
-            PageName::CurrentConversation(record, members) => self.current_conversation(record, members).await,
+            PageName::ConversationInfo(record) => self.conversation_info(record).await,
+            PageName::CurrentConversation(record, new_message, members) => self.current_conversation(record, new_message, members).await,
             PageName::Scan => self.scan_qr().await,
             PageName::Test(_) => self.test().await,
         };
@@ -153,11 +154,9 @@ impl StateManager {
         let balance = sats_to_btc(self.state.get_or_default::<Sats>(&Field::Balance(None)).await?);
         let transactions: BTreeMap<Txid, Transaction> = self.state.get_or_default(&Field::Transactions(None)).await?;
         let price = self.state.get_or_default::<Usd>(&Field::Price(None)).await?;
-        let mut transactions = transactions.into_iter()
-        .collect::<Vec<(Txid, Transaction)>>();
+        let mut transactions = transactions.into_iter().collect::<Vec<(Txid, Transaction)>>();
         transactions.sort_by_key(|(_, tx)| tx.confirmation_time.as_ref().unwrap_or(&tx.time_created).clone());
         transactions.reverse();
-
         Ok(serde_json::to_string(&json!({
             "balance_btc": format_btc(balance),
             "balance_usd": format_usd(balance*price),
@@ -175,6 +174,7 @@ impl StateManager {
     }
 
     pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
+        log::info!("BUILDING VIEW TRANSACITON");
         let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
         let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
         let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
@@ -304,8 +304,7 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn user_profile(&self, init: bool) -> Result<String, Error> {
-        let profile = self.state.get::<Profile>(&Field::Profile(None)).await?; // Needs to be the user's profile
+    pub async fn user_profile(&self, init: bool, profile: DartProfile, send_message: bool, send_bitcoin: bool) -> Result<String, Error> {
         let address = if init {
             call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await? // Needs to get for users address
         } else {String::new()};
@@ -328,25 +327,13 @@ impl StateManager {
             "profile_picture": profile_pfp,
             "conversations": conversations.into_iter().map(|(room_id, cv)| {
                 let is_group = cv.members.len() > 1;
-
-                let room_name = if cv.members.is_empty() {
-                    "Unnamed Conversation".to_string()
-                } else if is_group {
-                    "Group Message".to_string()
-                } else {
-                    cv.members[0].name.clone()
-                };
-
-                let photo = if !is_group && !cv.members.is_empty() {
-                    cv.members[0].pfp_path.clone()
-                } else {
-                    None
-                };
+                let room_name = if is_group { "Group Message".to_string() } else { cv.members[0].name.clone() };
+                let photo = if !is_group && !cv.members.is_empty() { cv.members[0].pfp_path.clone() } else { None };
 
                 let subtext = if is_group {
                     cv.members.iter().map(|profile| profile.name.as_str()).collect::<Vec<_>>().join(", ")
                 } else if let Some(first_message) = cv.messages.first() {
-                    first_message.message.to_string()
+                    if !first_message.is_incoming { format!("You: {}", first_message.message) } else { first_message.message.to_string() }
                 } else {
                     "No messages yet".to_string()
                 };
@@ -357,64 +344,113 @@ impl StateManager {
 
     }
 
-    pub async fn conversation_info(&self) -> Result<String, Error> {
+    pub async fn conversation_info(&self, record: String) -> Result<String, Error> {
+        let conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+        let conversations: BTreeMap<String, Conversation> = conversations.into_iter().map(|conversation| (conversation.room_id.clone(), conversation)).collect();
+        let members = conversations.get(&record).ok_or(Error::err("current_conversation", "No conversation found for room record"))?.clone().members;
+
         Ok(serde_json::to_string(&json!({
+            "members": members.into_iter().map(|m| DartProfile {
+                name: m.name,
+                did: m.did.to_string(),
+                abt_me: m.abt_me,
+                pfp_path: m.pfp_path
+            }).collect::<Vec<DartProfile>>(),
         }))?)
     }
 
-    pub async fn current_conversation(&self, record: String, members: Option<Vec<DartProfile>>) -> Result<String, Error> {
-        let new_record: String = thread_rng().sample_iter(&Alphanumeric).take(5).map(char::from).collect();
-    
-        let this_conversation = if let Some(members) = members {
+    pub async fn current_conversation(&self, record: String, new_message: Option<String>, members: Vec<DartProfile>) -> Result<String, Error> {
+        let mut vec_conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+        // IF there is no record, create a new conversation
+        let record = if record.is_empty() {
+
+            // Collect the members as Web5 Profiles from DartProfiles
             let chosen_members = members.into_iter().map(|dart_profile| Profile {
                 name: dart_profile.name,
                 did: Did::from_str(dart_profile.did.as_str()).unwrap(),
                 abt_me: dart_profile.abt_me,
                 pfp_path: dart_profile.pfp_path,
             }).collect::<Vec<Profile>>();
-    
-            let new_conversation = Conversation::new(chosen_members, Vec::new(), new_record);
-            let mut conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
-            conversations.push(new_conversation.clone());
-            self.state.set(Field::Conversations(Some(conversations))).await?;
-    
-            new_conversation
-        } else {
-            let conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
-            let conversations: BTreeMap<String, Conversation> = conversations.into_iter().map(|conversation| (conversation.room_id.clone(), conversation)).collect();
-            conversations.get(&record)
-                .ok_or(Error::err("current_conversation", "No conversation found for room record"))?
-                .clone()
-        };
-    
-        let members = this_conversation.members;
-        let messages = this_conversation.messages;
+
+            // Create a record
+            let record: String = thread_rng().sample_iter(&Alphanumeric).take(5).map(char::from).collect();
+
+            // Create a new conversation and push it to the state
+            let new_conversation = Conversation::new(chosen_members, Vec::new(), record.clone());
+            vec_conversations.push(new_conversation.clone());
+            self.state.set(Field::Conversations(Some(vec_conversations.clone()))).await?;
+
+            // Return the new record
+            record
+        } else { record };
+        // Find my conversation based of the record
+        let mut map_conversations: BTreeMap<String, Conversation> = vec_conversations.into_iter().map(|conversation| (conversation.room_id.clone(), conversation)).collect();
+        let this_conversation = map_conversations.get_mut(record.as_str()).ok_or(Error::err("current_conversation", format!("No conversation found for room record {:?}", &record).as_str()))?;
+
+        // IF there is a new message, push it to the messages
+        log::info!("NEW MESSAGE: {:?}", new_message.clone());
+        log::info!("IS THERE REALLY A NEW MESSAGE: {:?}", new_message.is_some());
+        if new_message.is_some() {
+            log::info!("NEW MESSAGE: {:?}", new_message.clone());
+
+            // Get my profile and create a new message
+            let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+            let new_message: Message = create_message(new_message.clone().unwrap_or("Message failed to send".to_string()), profile).await;
+            log::info!("NEW MESSAGE HAS BEEN CREATED: {:?}", new_message.clone());
+
+            // Add the message to the conversaion and update the conversations list
+            this_conversation.messages.push(new_message);
+            log::info!("THIS MESSAGE INSIDE THIS CONVERSATION: {:?}", this_conversation.clone());
+            log::info!("added message: {:?}", this_conversation.messages.clone());
+            let updated_conversations = map_conversations.iter().map(|(_, conversation)| conversation.clone()).collect::<Vec<Conversation>>();
+            self.state.set(Field::Conversations(Some(updated_conversations))).await?;
+        } 
+
+        // Resetting new message to null
+        let new_message: Option<String> = None;
+        
+        // Have to remap the conversations cause creating a new one turns the map immutable. 
+        // RUST IS DUMB DUMB
+        let this_conversation = map_conversations.get(&record).ok_or(Error::err("current_conversation", "No conversation found for room record"))?;
+
+        // Get the members and messages out of this_conversation
+        let members = this_conversation.members.clone();
+        let messages = this_conversation.messages.clone();
     
         Ok(serde_json::to_string(&json!({
+            "room_id": record,
+            "room_name": if members.len() > 1 { "Group Message".to_string() } else { members[0].name.clone() },
             "is_group": members.len() > 1,
-            "members": members.into_iter().map(|m| Profile {
-                name: m.name,
-                did: m.did,
-                abt_me: m.abt_me,
-                pfp_path: m.pfp_path
-            }).collect::<Vec<Profile>>(),
+            "members": members.into_iter().map(|m| Profile { name: m.name, did: m.did, abt_me: m.abt_me, pfp_path: m.pfp_path }).collect::<Vec<Profile>>(),
+
             "messages": Some(messages.into_iter().map(|m| Message {
-                sender: Profile {
-                    name: m.sender.name,
-                    did: m.sender.did,
-                    abt_me: m.sender.abt_me,
-                    pfp_path: m.sender.pfp_path
-                },
+                sender: Profile { name: m.sender.name, did: m.sender.did, abt_me: m.sender.abt_me, pfp_path: m.sender.pfp_path },
                 message: m.message,
                 date: "11/11/11".to_string(),
                 time: "11:11 PM".to_string(),
                 is_incoming: m.is_incoming,
             }).collect::<Vec<Message>>()),
+            "new_message": new_message,
+        }))?)
+    }
+
+    pub async fn choose_recipient(&self) -> Result<String, Error> {
+        let users = self.create_fake_profiles().await?; //
+        self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
+        Ok(serde_json::to_string(&json!({
+            "users": users.into_iter().map(|profile| {
+                DartProfile{
+                    name: profile.name,
+                    did: profile.did.to_string(),
+                    abt_me: profile.abt_me,
+                    pfp_path: profile.pfp_path,
+                }
+            }).collect::<Vec<DartProfile>>()
         }))?)
     }
     
 
-
+    // USED FOR TESTING, CAN BE DELETED //
     fn generate_random_did() -> Did {
         let random_part: String = rand::thread_rng()
             .sample_iter(&Alphanumeric)
@@ -424,6 +460,7 @@ impl StateManager {
         Did::from_str(format!("did:dht:{}", random_part).as_str()).unwrap()
     }
 
+    // USED FOR TESTING, CAN BE DELETED //
     pub async fn create_fake_profiles(&self) -> Result<Vec<Profile>, Error> {
         let fake_profiles = vec![
             Profile {
@@ -490,24 +527,14 @@ impl StateManager {
 
         Ok(fake_profiles)
     }
-    
-
-    pub async fn choose_recipient(&self) -> Result<String, Error> {
-        let users = self.create_fake_profiles().await?; //
-        self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
-        Ok(serde_json::to_string(&json!({
-            "users": users.into_iter().map(|profile| {
-                Profile{
-                    name: profile.name,
-                    did: profile.did,
-                    abt_me: profile.abt_me,
-                    pfp_path: profile.pfp_path,
-                }
-            }).collect::<Vec<Profile>>()
-        }))?)
-    }
 }
 
+// USED FOR TESTING, CAN BE DELETED //
+pub async fn create_message(message: String, profile: Profile) -> Message {
+    let now: DateTime = DateTime::now();
+    let formatted_time = now.format("%I:%M%p").to_string();
+    Message::new(profile, message, now.date.to_string(), formatted_time, false)
+}
 
 pub fn format_usd(price: Usd) -> String {
     let price = (price * 100.0).round() / 100.0;

@@ -31,7 +31,6 @@ class Confirm extends GenericWidget {
 }
 
 class ConfirmState extends GenericState<Confirm> {
-    bool isLoading = false;
 
     @override
     PageName getPageName() {
@@ -60,7 +59,6 @@ class ConfirmState extends GenericState<Confirm> {
         navigateTo(context, Success(widget.raw_tx, widget.amount_usd));
     }
 
-
     @override
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
@@ -75,7 +73,6 @@ class ConfirmState extends GenericState<Confirm> {
                     onTap: () => onContinue()
                 )
             ]),
-            isLoading: isLoading,
         );
     }
 

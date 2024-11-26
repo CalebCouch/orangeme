@@ -41,13 +41,9 @@ class SpeedState extends GenericState<Speed> {
     }
 
     int index = 0;
-    bool isLoading = false;
 
     @override
     void initState() {
-        setState(() {
-            isLoading = false;
-        });
         super.initState();
     }
 
@@ -65,7 +61,6 @@ class SpeedState extends GenericState<Speed> {
                 CustomButton( txt: 'Continue', onTap: onContinue)
             ]),
             alignment: Alignment.topCenter,
-            isLoading: isLoading,
         );
     }
 

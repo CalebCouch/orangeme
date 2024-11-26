@@ -43,7 +43,7 @@ Widget Header_Home(BuildContext context, String title, String? profile_picture, 
     return Header(
         InkWell( onTap: onTap, child: Container( 
             padding: EdgeInsets.symmetric(horizontal: 16), 
-            child: ProfilePhoto(context, profile_picture),
+            child: ProfilePhoto(context, pfp: profile_picture, size: ProfileSize.md),
         )),
         CustomText(variant: 'heading', font_size: 'h3', txt: title), 
         right ?? Container()
@@ -58,10 +58,10 @@ Widget Header_Stack(BuildContext context, String title, [Widget? right, Widget? 
     );
 }
 
-Widget Header_Message(BuildContext context, Widget ChatRecipients, [Widget? right, Widget? left]) {
+Widget Header_Message(BuildContext context, {required Widget center, Widget? right, Widget? left}) {
     return Header(
         left ?? CustomBackButton(context),
-        ChatRecipients,
+        center,
         right ?? Container(),
     );
 }

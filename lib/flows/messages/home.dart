@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/flows/messages/profile/my_profile.dart';
+import 'package:orange/flows/profile/my_profile.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/flows/messages/conversation/conversation.dart';
@@ -75,7 +75,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     Widget ConversationItem(photo, isGroup, roomName, subtext, onTap) {
         return ListItem(
             onTap: onTap,
-            visual: ProfilePhoto(context, photo, ProfileSize.lg, isGroup),
+            visual: ProfilePhoto(context, pfp: photo, isGroup: isGroup),
             title: roomName,
             desc: subtext,
         );

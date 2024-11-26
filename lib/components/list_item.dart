@@ -76,7 +76,6 @@ class ListItem extends StatelessWidget {
                                 txt: subR!, 
                                 text_decoration: TextDecoration.underline,
                                 alignment: TextAlign.right,
-                                max_lines: 2,
                             ),
                         ]),
                         if (caret) const Spacing(16),
@@ -91,9 +90,9 @@ class ListItem extends StatelessWidget {
 Widget ContactItem(BuildContext context, DartProfile contact, onTap) {
     return ListItem(
         onTap: onTap,
-        visual: ProfilePhoto(context, contact.pfpPath, ProfileSize.lg),
+        visual: ProfilePhoto(context, pfp: contact.pfpPath, size: ProfileSize.lg),
         title: contact.name,
-        sub: contact.did,
+        sub: EllipsisText(contact.did),
         caret: false,
     );
 }

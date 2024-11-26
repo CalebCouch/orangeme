@@ -70,7 +70,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
             )),
             content: [
                 Searchbar(searchController),
-                recipients.isEmpty ? Container() : SelectedContacts(recipients),
+                SelectedContacts(recipients),
                 widget.noUsers ? NoUsers() : ListContacts(widget.users),
             ],
             bumper: Bumper(context, content: [Container()]),

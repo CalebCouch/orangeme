@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orange/components/message_bubble.dart';
-import 'package:orange/components/profile_photo.dart';
 import 'package:orange/flows/messages/conversation/info.dart';
+import 'package:orange/flows/profile/user_profile.dart';
+import 'package:orange/flows/messages/home.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
@@ -9,14 +10,19 @@ import 'package:orange/generic.dart';
 
 class CurrentConversation extends GenericWidget {
 
-    List<DartProfile>? members;
-    String roomId = "";
+    List<DartProfile> members;
+    String roomId;
 
-    CurrentConversation({super.key, this.roomId = "", this.members = null});
+    CurrentConversation({
+        super.key, 
+        this.roomId = "", 
+        this.members = const [],
+    });
 
     List<Message> messages = [];
-    List<DartProfile> membersList = [];
     bool isGroup = false;
+    String roomName = '';
+    String? newMessage;
 
     @override
     CurrentConversationState createState() => CurrentConversationState();
@@ -26,23 +32,43 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
 
     @override
     PageName getPageName() {
-        return PageName.currentConversation(widget.roomId, widget.members);
+        print("getting page name withh value::: ${widget.newMessage}");
+        return PageName.currentConversation(
+            widget.roomId, 
+            widget.newMessage,
+            widget.members, 
+        );
     }
 
     @override
-    int refreshInterval() { return 0; }
+    int refreshInterval() { return 10; }
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        widget.messages = List<Message>.from(json['messages'].map(
-            (json) => Message(
-                sender: json['sender'] as DartProfile,
-                message: json['message'] as String,
-                date: json['date'] as String,
-                time: json['time'] as String,
-                isIncoming: json['is_incoming'] as bool,
-            )
-        ));
+        print("About to unpack state");
+        
+        print("Before WIDGET SETTING::: --- ${widget.newMessage} ---");
+        widget.newMessage = null;
+        print("AFTER WIDGET SETTING::: --- ${widget.newMessage} ---");
+
+        widget.messages = List<Message>.from(
+            json['messages'].map(
+                (json) => Message(
+                    sender: DartProfile(
+                        name: json['sender']['name'] as String,
+                        did: json['sender']['did'] as String,
+                        abtMe: json['sender']['about_me'] as String?,
+                        pfpPath: json['sender']['pfp_path'] as String?,
+                    ),
+
+                    message: json['message'] as String,
+                    date: json['date'] as String,
+                    time: json['time'] as String,
+                    isIncoming: json['is_incoming'] as bool,
+                ),
+            ),
+        );
+
         widget.members = List<DartProfile>.from(json['members'].map(
             (json) => DartProfile(
                 name: json['name'] as String,
@@ -51,10 +77,14 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
                 pfpPath: json['pfp_path'] as String?,
             )
         ));
-        widget.membersList = widget.members ?? [];
+
+        widget.roomName = json['room_name'] as String;
+        widget.isGroup = json['is_group'] as bool;
+        widget.roomId = json['room_id'] as String;
     }
 
     ScrollController scrollController = ScrollController();
+    TextEditingController textController = TextEditingController();
 
     @override
     void initState() {
@@ -64,32 +94,45 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
 
     //_scrollToBottom() {scrollController.jumpTo(scrollController.position.maxScrollExtent);}
 
-    toUserProfile() {/*navigateTo(UserProfile(membersList[0]));*/}
+    toUserProfile() { navigateTo(UserProfile(widget.members[0])); }
 
     Widget ChatRecipients() {
-        bool isGroup =  widget.membersList.length > 1;
         return CustomColumn([
-            isGroup ? profilePhotoStack(context, widget.membersList) : ProfilePhoto(context, widget.membersList[0].pfpPath, ProfileSize.lg, false),
-            CustomText( variant: 'heading', font_size: 'h5', txt: isGroup ? 'Group Message' : widget.membersList[0].name),
+            widget.isGroup 
+            ? ProfilePhotoStack(context, widget.members) 
+            : ProfilePhoto(context, pfp: widget.members[0].pfpPath, size: ProfileSize.md),
+            CustomText( 
+                variant: 'heading', 
+                font_size: 'h5', 
+                txt: widget.roomName,
+            ),
         ], 8);
     }
 
     Widget MessageInput() {
         return Container(
             padding: const EdgeInsets.only(top: 16, bottom: 8),
-            child: const CustomTextInput(hint: 'Message', showIcon: true),
+            child: CustomTextInput(
+                controller: textController,
+                hint: 'Message...', 
+                icon: SendButton(
+                    onTap: () {
+                        print("TEXT message.... '-${textController.text}-'");
+                        setState(() => widget.newMessage = textController.text);
+                        print("Sending message.... '-${widget.newMessage}-'");
+                    },
+                ),
+            ),
         );
     }
     Widget MessageStack(List<DartProfile> contacts, List<Message> messages) {
-        var isGroup = false;
-        if (contacts.length > 1) isGroup = true;
         return ListView.builder(
             itemCount: messages.length,
             itemBuilder: (BuildContext context, int index) {
                 return textMessage(
                     context,
                     messages[index],
-                    isGroup,
+                    widget.isGroup,
                     index >= 1 ? messages[index - 1] : null,
                     index < (messages.length - 1) ? messages[index + 1] : null,
                 );
@@ -100,20 +143,39 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
 
     @override
     Widget build_with_state(BuildContext context) {
-        //return Container();
         return Stack_Chat(
             header: Header_Message(
                 context, 
-                ChatRecipients(), 
-                widget.membersList.length > 1 
-                    ? InfoButton(context, ConversationInfo()) 
-                    : CustomIconButton(toUserProfile, 'info', 'lg')
+                left: UniBackButton(context, MessagesHome()),
+                center: ChatRecipients(), 
+                right: widget.members.length > 1 
+                    ? InfoButton(context, ConversationInfo(widget.roomId)) 
+                    : CustomIconButton(toUserProfile, icon: 'info')
             ),
             content: [
                 widget.messages.isNotEmpty,
-                Container(color: Colors.red), //MessageStack(widget.membersList, widget.messages),
+                MessageStack(widget.members, widget.messages),
             ],
             bumper: Bumper(context, vertical: true, content: [MessageInput()]),
         );
     }
+}
+
+Widget ProfilePhotoStack(BuildContext context, List<DartProfile> contacts) {
+    return Container(
+        width: 128,
+        height: 32,
+        alignment: Alignment.center,
+        child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: contacts.length < 5 ? contacts.length : 5,
+            itemBuilder: (BuildContext context, int index) {
+                return Align(
+                    widthFactor: 0.75,
+                    child: ProfilePhoto(context, pfp: contacts[index].pfpPath, size: ProfileSize.md, outline: true),
+                );
+            },
+        ),
+    );
 }

@@ -116,9 +116,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
-  List<DartProfile>? dco_decode_opt_list_dart_profile(dynamic raw);
-
-  @protected
   PageName dco_decode_page_name(dynamic raw);
 
   @protected
@@ -223,10 +220,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
-
-  @protected
-  List<DartProfile>? sse_decode_opt_list_dart_profile(
-      SseDeserializer deserializer);
 
   @protected
   PageName sse_decode_page_name(SseDeserializer deserializer);
@@ -346,10 +339,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_opt_list_dart_profile(
-      List<DartProfile>? self, SseSerializer serializer);
 
   @protected
   void sse_encode_page_name(PageName self, SseSerializer serializer);

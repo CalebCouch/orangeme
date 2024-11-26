@@ -58,7 +58,7 @@ class SendState extends GenericState<Send> {
     Widget build_with_state(BuildContext context) {
         //print(widget.addressValid);
         return Stack_Default(
-            header: Header_Stack(context, "Bitcoin address", null, UniBackButton()),
+            header: Header_Stack(context, "Bitcoin address", null, UniBackButton(context, BitcoinHome())),
             content: [
                 AddressInput(),
                 ButtonTips(),
@@ -82,10 +82,6 @@ class SendState extends GenericState<Send> {
             onSubmitted: (String _str) => widget.address = _str,
             onChanged: (String _str) => widget.address = _str,
         );
-    }
-
-    Widget UniBackButton() {
-        return CustomIconButton(() {navigateTo(context, BitcoinHome());}, 'left', 'lg');
     }
 
     Widget ButtonTips() {
