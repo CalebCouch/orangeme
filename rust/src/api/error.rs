@@ -1,45 +1,45 @@
-#[derive(thiserror::Error, Debug)]
+#[derive(snafu::Error, Debug)]
 pub enum Error {
-    #[error(transparent)]
-    BDKBitcoinConsensusEncode(#[from] bdk::bitcoin::consensus::encode::Error),
-    #[error(transparent)]
-    BDKDescriptor(#[from] bdk::descriptor::DescriptorError),
-    #[error(transparent)]
-    BDKBitcoinBip32(#[from] bdk::bitcoin::bip32::Error),
-    #[error(transparent)]
-    BDK(#[from] bdk::Error),
-    #[error(transparent)]
-    HexError(#[from] hex::FromHexError),
-    #[error(transparent)]
-    IoError(#[from] std::io::Error),
-    #[error(transparent)]
-    SerdeJson(#[from] serde_json::Error),
-    #[error(transparent)]
-    Reqwest(#[from] reqwest::Error),
-    #[error(transparent)]
-    BDKSled(#[from] bdk::sled::Error),
-    #[error(transparent)]
-    ElectrumError(#[from] bdk::electrum_client::Error),
-    #[error(transparent)]
-    BDKBitcoinPSBT(#[from] bdk::bitcoin::psbt::Error),
-    #[error(transparent)]
-    BDKBitcoinAddress(#[from] bdk::bitcoin::address::Error),
-    #[error(transparent)]
-    NumParseInt(#[from] std::num::ParseIntError),
-    #[error(transparent)]
-    Web5(#[from] web5_rust::Error),
-    #[error(transparent)]
-    SimpleDatabase(#[from] simple_database::Error),
-    #[error(transparent)]
-    Utf8Str(#[from] std::str::Utf8Error),
-    #[error(transparent)]
-    Utf8String(#[from] std::string::FromUtf8Error),
-    #[error(transparent)]
-    TokioJoin(#[from] tokio::task::JoinError),
-    #[error(transparent)]
-    EsploraError(#[from] Box<bdk::esplora_client::Error>),
-    #[error(transparent)]
-    RecvError(#[from] tokio::sync::oneshot::error::RecvError),
+    #[snafu(transparent)]
+    BDKBitcoinConsensusEncode{source: bdk::bitcoin::consensus::encode::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    BDKDescriptor{source: bdk::descriptor::DescriptorError, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    BDKBitcoinBip32{source: bdk::bitcoin::bip32::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    BDK{source: bdk::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    HexError{source: hex::FromHexError, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    IoError{source: std::io::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    SerdeJson{source: serde_json::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    Reqwest{source: reqwest::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    BDKSled{source: bdk::sled::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    ElectrumError{source: bdk::electrum_client::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    BDKBitcoinPSBT{source: bdk::bitcoin::psbt::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    BDKBitcoinAddress{source: bdk::bitcoin::address::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    NumParseInt{source: std::num::ParseIntError, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    Web5{source: web5_rust::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    SimpleDatabase{source: simple_database::Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    Utf8Str{source: std::str::Utf8Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    Utf8String{source: std::string::FromUtf8Error, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    TokioJoin{source: tokio::task::JoinError, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    EsploraError{source: Box<bdk::esplora_client::Error>, backtrace: snafu::Backtrace},
+    #[snafu(transparent)]
+    RecvError{source: tokio::sync::oneshot::error::RecvError, backtrace: snafu::Backtrace},
 
 
 

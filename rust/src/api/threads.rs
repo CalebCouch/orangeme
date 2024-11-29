@@ -116,7 +116,9 @@ async fn wallet_sync_thread(wallet: Wallet) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(10_000));
     log::info!("CHECKING THE WALLET SYNC THERAD");
     loop {
+        log::info!("------******* BEFORE RQUEST *******---------");
         Request::filter_error(wallet.sync().await)?;
+        log::info!("------******* AFTER RQUEST *******---------");
         interval.tick().await;
     }
 }
