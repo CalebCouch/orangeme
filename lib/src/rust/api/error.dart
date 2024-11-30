@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `source`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `backtrace`, `cause`, `description`, `fmt`, `fmt`, `from`, `from`, `source`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Error>>
 abstract class Error implements RustOpaqueInterface {
@@ -22,9 +22,21 @@ abstract class Error implements RustOpaqueInterface {
   static Future<Error> err({required String ctx, required String err}) =>
       RustLib.instance.api.crateApiErrorErrorErr(ctx: ctx, err: err);
 
+  static Future<Error> exited({required String msg}) =>
+      RustLib.instance.api.crateApiErrorErrorExited(msg: msg);
+
+  static Future<Error> noInternet() =>
+      RustLib.instance.api.crateApiErrorErrorNoInternet();
+
   static Future<Error> notFound({required String ctx, required String err}) =>
       RustLib.instance.api.crateApiErrorErrorNotFound(ctx: ctx, err: err);
 
   static Future<Error> parse({required String rtype, required String data}) =>
       RustLib.instance.api.crateApiErrorErrorParse(rtype: rtype, data: data);
+
+  static Future<Error> tokioJoin({required JoinError source}) =>
+      RustLib.instance.api.crateApiErrorErrorTokioJoin(source: source);
 }
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<JoinError>>
+abstract class JoinError implements RustOpaqueInterface {}

@@ -134,7 +134,7 @@ impl StateManager {
         Ok(serde_json::to_string(&json!({
             "connected": self.state.get_or_default::<bool>(&Field::Internet(None)).await?,
             "state": match page_state {
-                Err(Error::NoInternet()) => String::new(),
+                Err(Error::NoInternet{backtrace: _}) => String::new(),
                 Err(e) => {return Err(e);},
                 Ok(s) => s
             }

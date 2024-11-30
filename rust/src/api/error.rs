@@ -1,4 +1,6 @@
-#[derive(snafu::Error, Debug)]
+#[derive(snafu::Snafu, Debug)]
+#[snafu(module)]
+#[frb(opaque)]
 pub enum Error {
     #[snafu(transparent)]
     BDKBitcoinConsensusEncode{source: bdk::bitcoin::consensus::encode::Error, backtrace: snafu::Backtrace},
@@ -43,60 +45,68 @@ pub enum Error {
 
 
 
-    #[error("SendError: {0}")]
-    SendError(String),
+    #[snafu(display("SendError: {message}"))]
+    SendError{message: String, backtrace: snafu::Backtrace},
 
+    #[snafu(transparent)]
+    ParseFloat{source: std::num::ParseFloatError, backtrace: snafu::Backtrace},
 
-    #[error(transparent)]
-    ParseFloat(#[from] std::num::ParseFloatError),
+    #[snafu(display("Exited, Reason: {message}"))]
+    Exited{message: String, backtrace: snafu::Backtrace},
 
-    #[error("Exited, Reason: {0}")]
-    Exited(String),
-    #[error("Dart Error: {0}")]
-    DartError(String),
+    #[snafu(display("Dart Error: {message}"))]
+    DartError{message: String, backtrace: snafu::Backtrace},
 
-    #[error("Could not parse type ({0}) from: {1}")]
-    Parse(String, String),
-    #[error("Bad Request: {0}: {1}")]
-    BadRequest(String, String), //400
-    #[error("Auth failed {0}: {1}")]
-    AuthFailed(String, String), //401
-    #[error("Not Found {0}: {1}")]
-    NotFound(String, String), //404
-    #[error("Conflict {0}: {1}")]
-    Conflict(String, String), //409
-    #[error("Error {0}: {1}")]
-    Error(String, String), //500
+    #[snafu(display("Could not parse type ({message}) from: {error}"))]
+    Parse{message: String, error: String, backtrace: snafu::Backtrace},
 
-    #[error("Cannot connect to the Internet")]
-    NoInternet()
+    #[snafu(display("Bad Request: {message}: {error}"))] // 400
+    BadRequest{message: String, error: String, backtrace: snafu::Backtrace},
+
+    #[snafu(display("Auth failed {message}: {error}"))] // 401
+    AuthFailed{message: String, error: String, backtrace: snafu::Backtrace},
+
+    #[snafu(display("Not Found {message}: {error}"))] // 404
+    NotFound{message: String, error: String, backtrace: snafu::Backtrace},
+
+    #[snafu(display("Conflict {message}: {error}"))] // 409
+    Conflict{message: String, error: String, backtrace: snafu::Backtrace},
+
+    #[snafu(display("Error {message}: {error}"))] // 500
+    Error{message: String, error: String, backtrace: snafu::Backtrace},
+
+    #[snafu(display("Cannot connect to the Internet"))]
+    NoInternet{backtrace: snafu::Backtrace}
 }
 
 impl Error {
     pub fn bad_request(ctx: &str, err: &str) -> Self {
-        Error::BadRequest(ctx.to_string(), err.to_string())
+        Error::BadRequest{message: ctx.to_string(), error: err.to_string(), backtrace: snafu::Backtrace::capture()}
     }
     pub fn auth_failed(ctx: &str, err: &str) -> Self {
-        Error::AuthFailed(ctx.to_string(), err.to_string())
+        Error::AuthFailed{message: ctx.to_string(), error: err.to_string(), backtrace: snafu::Backtrace::capture()}
     }
     pub fn not_found(ctx: &str, err: &str) -> Self {
-        Error::NotFound(ctx.to_string(), err.to_string())
+        Error::NotFound{message: ctx.to_string(), error: err.to_string(), backtrace: snafu::Backtrace::capture()}
     }
     pub fn conflict(ctx: &str, err: &str) -> Self {
-        Error::Conflict(ctx.to_string(), err.to_string())
+        Error::Conflict{message: ctx.to_string(), error: err.to_string(), backtrace: snafu::Backtrace::capture()}
     }
-    pub fn parse(rtype: &str, data: &str) -> Self {Error::Parse(rtype.to_string(), data.to_string())}
-    pub fn err(ctx: &str, err: &str) -> Self {Error::Error(ctx.to_string(), err.to_string())}
+    pub fn parse(rtype: &str, data: &str) -> Self {Error::Parse{message: rtype.to_string(), error: data.to_string(), backtrace: snafu::Backtrace::capture()}}
+    pub fn err(ctx: &str, err: &str) -> Self {Error::Error{message: ctx.to_string(), error: err.to_string(), backtrace: snafu::Backtrace::capture()}}
+    pub fn no_internet() -> Self {Error::NoInternet{backtrace: snafu::Backtrace::capture()}}
+    pub fn exited(msg: &str) -> Self {Error::Exited{message: msg.to_string(), backtrace: snafu::Backtrace::capture()}}
+    pub fn tokio_join(source: tokio::task::JoinError) -> Self {Error::TokioJoin{source, backtrace: snafu::Backtrace::capture()}}
 }
 
 impl From<bdk::esplora_client::Error> for Error {
     fn from(ece: bdk::esplora_client::Error) -> Error {
-        Error::EsploraError(Box::new(ece))
+        Error::EsploraError{source: Box::new(ece), backtrace: snafu::Backtrace::capture()}
     }
 }
 
 impl<T> From<tokio::sync::mpsc::error::SendError<T>> for Error {
     fn from(e: tokio::sync::mpsc::error::SendError<T>) -> Error {
-        Error::SendError(e.to_string())
+        Error::SendError{message: e.to_string(), backtrace: snafu::Backtrace::capture()}
     }
 }

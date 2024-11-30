@@ -54,16 +54,12 @@ impl Request {
         where E: std::fmt::Debug + Into<Error>
     {
         res.map_err(|err|
-            if Self::check_error(&err) {Error::NoInternet()} else {err.into()}
+            if Self::check_error(&err) {Error::no_internet()} else {err.into()}
         )
     }
 
     pub fn filter_error(res: Result<(), Error>) -> Result<(), Error> {
-        match res {
-            Err(Error::NoInternet()) => Ok(()),
-            Err(e) => Err(e),
-            _ => Ok(())
-        }
+        if matches!(res, Err(Error::NoInternet{backtrace: _})) {Ok(())} else {res}
     }
 
     pub async fn repeat<T, O, E>(task: T) -> Result<O, E>

@@ -46,7 +46,7 @@ pub async fn start_threads(state: State, callback: Callback, path: PathBuf) -> R
         Err(e) = spawn(price_thread(state.clone())) => e,
         Err(e) = spawn(wallet_thread(state.clone(), callback.clone(), path.clone(), w_rx)) => e,
         Err(e) = spawn(agent_thread(state, callback, path)) => e,
-        else => Error::Exited("Main Thread".to_string())
+        else => Error::exited("Main Thread")
     );
 
     let mut threads = THREAD_CHANNELS.lock().await;
@@ -59,7 +59,7 @@ pub async fn call_thread(thread: Threads) -> Result<String, Error> {
     let (o_tx, o_rx) = oneshot::channel::<ChannelType>();
     let threads = THREAD_CHANNELS.lock().await;
     match thread {
-        Threads::Wallet(method) => threads.0.as_ref().ok_or(Error::Exited("Wallet Channel".to_string()))?.send((o_tx, method)).await?,
+        Threads::Wallet(method) => threads.0.as_ref().ok_or(Error::exited("Wallet Channel"))?.send((o_tx, method)).await?,
     }
     o_rx.await?
 }
@@ -69,7 +69,7 @@ async fn spawn<T>(task: T) -> Result<(), Error>
     where
         T: std::future::Future<Output = Result<(), Error>> + Send + 'static
 {
-    tokio::spawn(task).await.map_err(Error::TokioJoin)?
+    tokio::spawn(task).await.map_err(|e| Error::tokio_join(e))?
 }
 
 async fn internet_thread(state: State) -> Result<(), Error> {
@@ -77,7 +77,7 @@ async fn internet_thread(state: State) -> Result<(), Error> {
     loop {
         let connected = match Request::process_result(reqwest::get("https://google.com").await) {
             Ok(_) => true,
-            Err(Error::NoInternet()) => false,
+            Err(Error::NoInternet{backtrace: _}) => false,
             Err(e) => {
                 log::info!("Connection Error: {:?}", e);
                 return Err(e);
@@ -108,7 +108,7 @@ async fn wallet_thread(
         Err(e) = spawn(wallet_method_thread(wallet.clone(), w_rx)) => e,
         Err(e) = spawn(wallet_sync_thread(wallet.clone())) => e,
         Err(e) = spawn(wallet_refresh_thread(wallet, state)) => e,
-        else => Error::Exited("Wallet Thread".to_string())
+        else => Error::exited("Wallet Thread")
     ))
 }
 
@@ -133,7 +133,7 @@ async fn wallet_refresh_thread(wallet: Wallet, state: State) -> Result<(), Error
 
 async fn wallet_method_thread(wallet: Wallet, mut recv: WalletReceiver) -> Result<(), Error> {
     loop {
-        let (o_tx, method) = recv.recv().await.ok_or(Error::Exited("Wallet Channel".to_string()))?;
+        let (o_tx, method) = recv.recv().await.ok_or(Error::exited("Wallet Channel"))?;
         o_tx.send(async { match method {
             WalletMethod::GetNewAddress => Ok(wallet.get_new_address().await?),
             WalletMethod::GetFees(amount) => {
@@ -146,7 +146,7 @@ async fn wallet_method_thread(wallet: Wallet, mut recv: WalletReceiver) -> Resul
                 wallet.broadcast_transaction(&tx).await?;
                 Ok(String::new())
             },
-        }}.await).map_err(|e| Error::Exited(format!("{:?}", e)))?;
+        }}.await).map_err(|e| Error::exited(format!("{:?}", e).as_str()))?;
     }
 }
 
@@ -155,7 +155,7 @@ async fn agent_thread(state: State, callback: Callback, path: PathBuf) -> Result
     Err(tokio::select!(
         Err(e) = spawn(agent_sync_thread(agent.clone())) => e,
         Err(e) = spawn(agent_refresh_thread(agent, state)) => e,
-        else => Error::Exited("Agent Thread".to_string())
+        else => Error::exited("Agent Thread")
     ))
 }
 
