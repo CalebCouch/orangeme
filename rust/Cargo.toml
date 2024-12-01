@@ -32,7 +32,8 @@ allo-isolate = "0.1.26"
 thousands = "0.2.0"
 async-trait = "0.1.83"
 url = "2.5.3"
-snafu = "0.8.5"
+snafu = { version = "0.8.5", features = ["backtraces-impl-backtrace-crate"] }
+async-backtrace = "0.2.7"
 [target.'cfg(target_os = "android")'.dependencies]
 android_logger = "0.14.1"
 [target.'cfg(any(target_os = "ios", target_os = "macos"))'.dependencies]

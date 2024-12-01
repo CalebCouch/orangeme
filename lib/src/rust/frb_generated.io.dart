@@ -4,7 +4,6 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/custom_handler.dart';
-import 'api/error.dart';
 import 'api/pub_structs.dart';
 import 'api/simple.dart';
 import 'api/utils.dart';
@@ -22,28 +21,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     required super.portManager,
   });
 
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr => wire
-      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerErrorPtr;
-
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_JoinErrorPtr =>
-      wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinErrorPtr;
-
   CrossPlatformFinalizerArg
       get rust_arc_decrement_strong_count_MyCustomAsyncRuntimePtr => wire
           ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntimePtr;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
-
-  @protected
-  Error
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw);
-
-  @protected
-  JoinError
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          dynamic raw);
 
   @protected
   MyCustomAsyncRuntime
@@ -57,16 +40,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Object dco_decode_DartOpaque(dynamic raw);
-
-  @protected
-  Error
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw);
-
-  @protected
-  JoinError
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          dynamic raw);
 
   @protected
   MyCustomAsyncRuntime
@@ -157,32 +130,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
   @protected
-  Error
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer);
-
-  @protected
-  JoinError
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          SseDeserializer deserializer);
-
-  @protected
   MyCustomAsyncRuntime
       sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
           SseDeserializer deserializer);
 
   @protected
   Object sse_decode_DartOpaque(SseDeserializer deserializer);
-
-  @protected
-  Error
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer);
-
-  @protected
-  JoinError
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          SseDeserializer deserializer);
 
   @protected
   MyCustomAsyncRuntime
@@ -278,16 +231,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer);
-
-  @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          JoinError self, SseSerializer serializer);
-
-  @protected
-  void
       sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
           MyCustomAsyncRuntime self, SseSerializer serializer);
 
@@ -297,16 +240,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_DartOpaque(Object self, SseSerializer serializer);
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer);
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          JoinError self, SseSerializer serializer);
 
   @protected
   void
@@ -415,70 +348,6 @@ class RustLibWire implements BaseWire {
   /// The symbols are looked up in [dynamicLibrary].
   RustLibWire(ffi.DynamicLibrary dynamicLibrary)
       : _lookup = dynamicLibrary.lookup;
-
-  void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-    ffi.Pointer<ffi.Void> ptr,
-  ) {
-    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-      ptr,
-    );
-  }
-
-  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerErrorPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
-          'frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError');
-  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError =
-      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerErrorPtr
-          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
-
-  void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-    ffi.Pointer<ffi.Void> ptr,
-  ) {
-    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-      ptr,
-    );
-  }
-
-  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerErrorPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
-          'frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError');
-  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError =
-      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerErrorPtr
-          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
-
-  void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-    ffi.Pointer<ffi.Void> ptr,
-  ) {
-    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-      ptr,
-    );
-  }
-
-  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinErrorPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
-          'frbgen_orange_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError');
-  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError =
-      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinErrorPtr
-          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
-
-  void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-    ffi.Pointer<ffi.Void> ptr,
-  ) {
-    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-      ptr,
-    );
-  }
-
-  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinErrorPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
-          'frbgen_orange_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError');
-  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError =
-      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinErrorPtr
-          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
   void
       rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(

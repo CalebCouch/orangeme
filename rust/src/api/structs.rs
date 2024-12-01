@@ -39,6 +39,7 @@ impl DateTime {
 pub struct Request {}
 
 impl Request {
+    #[async_backtrace::framed]
     pub async fn get(url: &str) -> Result<Response, Error> {
         Ok(Self::repeat(|| Box::pin(reqwest::get(url.to_string()))).await?)
     }
@@ -62,6 +63,7 @@ impl Request {
         if matches!(res, Err(Error::NoInternet{backtrace: _})) {Ok(())} else {res}
     }
 
+    #[async_backtrace::framed]
     pub async fn repeat<T, O, E>(task: T) -> Result<O, E>
         where
             E: std::fmt::Debug,

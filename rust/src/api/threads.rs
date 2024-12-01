@@ -34,6 +34,7 @@ pub enum WalletMethod {
     BroadcastTransaction(bdk::bitcoin::Transaction)
 }
 
+#[async_backtrace::framed]
 pub async fn start_threads(state: State, callback: Callback, path: PathBuf) -> Result<(), Error> {
     //Init channels
     let mut threads = THREAD_CHANNELS.lock().await;
@@ -45,7 +46,7 @@ pub async fn start_threads(state: State, callback: Callback, path: PathBuf) -> R
         Err(e) = spawn(internet_thread(state.clone())) => e,
         Err(e) = spawn(price_thread(state.clone())) => e,
         Err(e) = spawn(wallet_thread(state.clone(), callback.clone(), path.clone(), w_rx)) => e,
-        Err(e) = spawn(agent_thread(state, callback, path)) => e,
+        //Err(e) = spawn(agent_thread(state, callback, path)) => e,
         else => Error::exited("Main Thread")
     );
 
@@ -55,6 +56,7 @@ pub async fn start_threads(state: State, callback: Callback, path: PathBuf) -> R
     Err(err)
 }
 
+#[async_backtrace::framed]
 pub async fn call_thread(thread: Threads) -> Result<String, Error> {
     let (o_tx, o_rx) = oneshot::channel::<ChannelType>();
     let threads = THREAD_CHANNELS.lock().await;
@@ -69,9 +71,10 @@ async fn spawn<T>(task: T) -> Result<(), Error>
     where
         T: std::future::Future<Output = Result<(), Error>> + Send + 'static
 {
-    tokio::spawn(task).await.map_err(|e| Error::tokio_join(e))?
+    tokio::spawn(async_backtrace::location!().frame(task)).await.map_err(|e| Error::tokio_join(e))?
 }
 
+#[async_backtrace::framed]
 async fn internet_thread(state: State) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(1000));
     loop {
@@ -88,6 +91,7 @@ async fn internet_thread(state: State) -> Result<(), Error> {
     }
 }
 
+#[async_backtrace::framed]
 async fn price_thread(state: State) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(10_000));
     loop {
@@ -96,6 +100,7 @@ async fn price_thread(state: State) -> Result<(), Error> {
     }
 }
 
+#[async_backtrace::framed]
 async fn wallet_thread(
     state: State,
     callback: Callback,
@@ -103,7 +108,6 @@ async fn wallet_thread(
     w_rx: WalletReceiver
 ) -> Result<(), Error> {
     let wallet = Wallet::new(callback, path.clone()).await?;
-    log::info!("CHECKING THE INTERNET CONNECTION");
     Err(tokio::select!(
         Err(e) = spawn(wallet_method_thread(wallet.clone(), w_rx)) => e,
         Err(e) = spawn(wallet_sync_thread(wallet.clone())) => e,
@@ -112,17 +116,16 @@ async fn wallet_thread(
     ))
 }
 
+#[async_backtrace::framed]
 async fn wallet_sync_thread(wallet: Wallet) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(10_000));
-    log::info!("CHECKING THE WALLET SYNC THERAD");
     loop {
-        log::info!("------******* BEFORE RQUEST *******---------");
         Request::filter_error(wallet.sync().await)?;
-        log::info!("------******* AFTER RQUEST *******---------");
         interval.tick().await;
     }
 }
 
+#[async_backtrace::framed]
 async fn wallet_refresh_thread(wallet: Wallet, state: State) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(10_000));
     loop {
@@ -131,6 +134,7 @@ async fn wallet_refresh_thread(wallet: Wallet, state: State) -> Result<(), Error
     }
 }
 
+#[async_backtrace::framed]
 async fn wallet_method_thread(wallet: Wallet, mut recv: WalletReceiver) -> Result<(), Error> {
     loop {
         let (o_tx, method) = recv.recv().await.ok_or(Error::exited("Wallet Channel"))?;
@@ -150,6 +154,7 @@ async fn wallet_method_thread(wallet: Wallet, mut recv: WalletReceiver) -> Resul
     }
 }
 
+#[async_backtrace::framed]
 async fn agent_thread(state: State, callback: Callback, path: PathBuf) -> Result<(), Error> {
     let agent = MessagingAgent::new(callback, path).await?;
     Err(tokio::select!(
@@ -159,6 +164,7 @@ async fn agent_thread(state: State, callback: Callback, path: PathBuf) -> Result
     ))
 }
 
+#[async_backtrace::framed]
 async fn agent_sync_thread(agent: MessagingAgent) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(10_000));
     loop {
@@ -167,6 +173,7 @@ async fn agent_sync_thread(agent: MessagingAgent) -> Result<(), Error> {
     }
 }
 
+#[async_backtrace::framed]
 async fn agent_refresh_thread(agent: MessagingAgent, state: State) -> Result<(), Error> {
     let mut interval = time::interval(Duration::from_millis(5_000));
     loop {

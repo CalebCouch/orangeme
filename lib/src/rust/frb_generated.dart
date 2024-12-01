@@ -4,7 +4,6 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/custom_handler.dart';
-import 'api/error.dart';
 import 'api/pub_structs.dart';
 import 'api/simple.dart';
 import 'api/utils.dart';
@@ -70,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.6.0';
 
   @override
-  int get rustContentHash => -2053235866;
+  int get rustContentHash => 2021589139;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -81,30 +80,6 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<Error> crateApiErrorErrorAuthFailed(
-      {required String ctx, required String err});
-
-  Future<Error> crateApiErrorErrorBadRequest(
-      {required String ctx, required String err});
-
-  Future<Error> crateApiErrorErrorConflict(
-      {required String ctx, required String err});
-
-  Future<Error> crateApiErrorErrorErr(
-      {required String ctx, required String err});
-
-  Future<Error> crateApiErrorErrorExited({required String msg});
-
-  Future<Error> crateApiErrorErrorNoInternet();
-
-  Future<Error> crateApiErrorErrorNotFound(
-      {required String ctx, required String err});
-
-  Future<Error> crateApiErrorErrorParse(
-      {required String rtype, required String data});
-
-  Future<Error> crateApiErrorErrorTokioJoin({required JoinError source});
-
   Future<MyCustomAsyncRuntime>
       crateApiCustomHandlerMyCustomAsyncRuntimeDefault();
 
@@ -134,20 +109,6 @@ abstract class RustLibApi extends BaseApi {
   Future<(String, bool, int)> crateApiUtilsUpdateAmount(
       {required String amount, required KeyPress key});
 
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Error;
-
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ErrorPtr;
-
-  RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_JoinError;
-
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_JoinError;
-
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_JoinErrorPtr;
-
   RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_MyCustomAsyncRuntime;
 
@@ -167,254 +128,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<Error> crateApiErrorErrorAuthFailed(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 1, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorAuthFailedConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorAuthFailedConstMeta =>
-      const TaskConstMeta(
-        debugName: "Error_auth_failed",
-        argNames: ["ctx", "err"],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorBadRequest(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorBadRequestConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorBadRequestConstMeta =>
-      const TaskConstMeta(
-        debugName: "Error_bad_request",
-        argNames: ["ctx", "err"],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorConflict(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorConflictConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorConflictConstMeta => const TaskConstMeta(
-        debugName: "Error_conflict",
-        argNames: ["ctx", "err"],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorErr(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorErrConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorErrConstMeta => const TaskConstMeta(
-        debugName: "Error_err",
-        argNames: ["ctx", "err"],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorExited({required String msg}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(msg, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorExitedConstMeta,
-      argValues: [msg],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorExitedConstMeta => const TaskConstMeta(
-        debugName: "Error_exited",
-        argNames: ["msg"],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorNoInternet() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 6, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorNoInternetConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorNoInternetConstMeta =>
-      const TaskConstMeta(
-        debugName: "Error_no_internet",
-        argNames: [],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorNotFound(
-      {required String ctx, required String err}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(ctx, serializer);
-        sse_encode_String(err, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 7, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorNotFoundConstMeta,
-      argValues: [ctx, err],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorNotFoundConstMeta => const TaskConstMeta(
-        debugName: "Error_not_found",
-        argNames: ["ctx", "err"],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorParse(
-      {required String rtype, required String data}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(rtype, serializer);
-        sse_encode_String(data, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 8, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorParseConstMeta,
-      argValues: [rtype, data],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorParseConstMeta => const TaskConstMeta(
-        debugName: "Error_parse",
-        argNames: ["rtype", "data"],
-      );
-
-  @override
-  Future<Error> crateApiErrorErrorTokioJoin({required JoinError source}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-            source, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiErrorErrorTokioJoinConstMeta,
-      argValues: [source],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiErrorErrorTokioJoinConstMeta =>
-      const TaskConstMeta(
-        debugName: "Error_tokio_join",
-        argNames: ["source"],
-      );
-
-  @override
   Future<MyCustomAsyncRuntime>
       crateApiCustomHandlerMyCustomAsyncRuntimeDefault() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
+            funcId: 1, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -441,11 +161,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(path, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
+            funcId: 2, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateApiSimpleClearDataConstMeta,
       argValues: [path],
@@ -467,11 +187,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(path, serializer);
         sse_encode_box_autoadd_page_name(page, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 12, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateApiSimpleGetPageConstMeta,
       argValues: [path, page],
@@ -502,7 +222,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_box_autoadd_dart_method(dm, serializer);
         sse_encode_key_press(kp, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 13, port: port_);
+            funcId: 4, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -529,7 +249,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_platform(pl, serializer);
         sse_encode_box_autoadd_page_name(pn, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 14, port: port_);
+            funcId: 5, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -553,7 +273,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_platform(that, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
@@ -584,11 +304,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_DartFn_Inputs_dart_method_Output_opt_String_AnyhowException(
             callback, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 16, port: port_);
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_String,
       ),
       constMeta: kCrateApiSimpleRustStartConstMeta,
       argValues: [path, platform, callback],
@@ -610,7 +330,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(amount, serializer);
         sse_encode_key_press(key, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 17, port: port_);
+            funcId: 8, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_record_string_bool_u_8,
@@ -660,20 +380,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     };
   }
 
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Error =>
-      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Error =>
-      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError;
-
-  RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_JoinError => wire
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError;
-
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_JoinError => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError;
-
   RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_MyCustomAsyncRuntime => wire
           .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime;
@@ -686,22 +392,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return AnyhowException(raw as String);
-  }
-
-  @protected
-  Error
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  JoinError
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return JoinErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -724,22 +414,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Object dco_decode_DartOpaque(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return decodeDartOpaque(raw, generalizedFrbRustBinding);
-  }
-
-  @protected
-  Error
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  JoinError
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return JoinErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1034,24 +708,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Error
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return ErrorImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
-  JoinError
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return JoinErrorImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
   MyCustomAsyncRuntime
       sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
           SseDeserializer deserializer) {
@@ -1065,24 +721,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_isize(deserializer);
     return decodeDartOpaque(inner, generalizedFrbRustBinding);
-  }
-
-  @protected
-  Error
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return ErrorImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
-  JoinError
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return JoinErrorImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
   @protected
@@ -1383,24 +1021,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as ErrorImpl).frbInternalSseEncode(move: true), serializer);
-  }
-
-  @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          JoinError self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as JoinErrorImpl).frbInternalSseEncode(move: true), serializer);
-  }
-
-  @protected
-  void
       sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMyCustomAsyncRuntime(
           MyCustomAsyncRuntime self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1426,24 +1046,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         PlatformPointerUtil.ptrToPlatformInt64(encodeDartOpaque(
             self, portManager.dartHandlerPort, generalizedFrbRustBinding)),
         serializer);
-  }
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerError(
-          Error self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as ErrorImpl).frbInternalSseEncode(move: null), serializer);
-  }
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerJoinError(
-          JoinError self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as JoinErrorImpl).frbInternalSseEncode(move: null), serializer);
   }
 
   @protected
@@ -1720,46 +1322,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
   }
-}
-
-@sealed
-class ErrorImpl extends RustOpaque implements Error {
-  // Not to be used by end users
-  ErrorImpl.frbInternalDcoDecode(List<dynamic> wire)
-      : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  ErrorImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_Error,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_Error,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_ErrorPtr,
-  );
-}
-
-@sealed
-class JoinErrorImpl extends RustOpaque implements JoinError {
-  // Not to be used by end users
-  JoinErrorImpl.frbInternalDcoDecode(List<dynamic> wire)
-      : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  JoinErrorImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_JoinError,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_JoinError,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_JoinErrorPtr,
-  );
 }
 
 @sealed

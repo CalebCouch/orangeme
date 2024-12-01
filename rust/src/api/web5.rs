@@ -192,6 +192,7 @@ pub struct MessagingAgent {
 }
 
 impl MessagingAgent {
+    #[async_backtrace::framed]
     pub async fn new(callback: Callback, path: PathBuf) -> Result<Self, Error> {
         let callback = callback.lock().await;
         let (doc, id) = if let Some(i) = callback(DartMethod::StorageGet("identity".to_string())).await {
@@ -219,14 +220,14 @@ impl MessagingAgent {
             ).await?
         })
     }
-
+    #[async_backtrace::framed]
     pub async fn set_profile(&self, profile: Profile) -> Result<(), Error> {
         let index = IndexBuilder::build(vec![("type", "profile")]);
         let record = Record::new(None, &Protocols::profile(), serde_json::to_vec(&profile)?);
         self.agent.public_update(record, index, None).await?;
         Ok(())
     }
-
+    #[async_backtrace::framed]
     pub async fn init_profile(&self, state: &State) -> Result<(), Error> {
         let tenant = self.agent.tenant().clone();
         if let Some(p) = self.agent.public_read(FiltersBuilder::build(vec![
@@ -245,11 +246,13 @@ impl MessagingAgent {
         Ok(())
     }
 
+    #[async_backtrace::framed]
     pub async fn sync(&self) -> Result<(), Error> {
         self.agent.scan().await?;
         Ok(())
     }
 
+    #[async_backtrace::framed]
     pub async fn refresh_state(&self, state: &State) -> Result<(), Error> {
         self.init_profile(state).await?;
         Ok(())
@@ -295,6 +298,7 @@ pub struct IntervalDidResolver {
 }
 
 impl IntervalDidResolver {
+    #[async_backtrace::framed]
     pub async fn new<KVS: KeyValueStore + 'static>(path: Option<PathBuf>) -> Result<Self, Error> {
         Ok(IntervalDidResolver{
             resolver: DefaultDidResolver::new::<KVS>(path).await?
@@ -304,6 +308,7 @@ impl IntervalDidResolver {
 
 #[async_trait::async_trait]
 impl DidResolver for IntervalDidResolver {
+    #[async_backtrace::framed]
     async fn resolve(&self, did: &Did) -> Result<Option<Box<dyn DidDocument>>, web5_rust::Error> {
         Request::repeat(|| {
             let resolver = self.resolver.clone();

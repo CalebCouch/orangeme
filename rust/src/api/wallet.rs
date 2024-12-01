@@ -66,16 +66,11 @@ pub struct DescriptorSet {
 
 impl DescriptorSet {
     pub fn from_seed(seed: &Seed) -> Result<Self, Error> {
-        log::info!("-------------14--------------");
         let xpriv = ExtendedPrivKey::new_master(Network::Bitcoin, &seed.get())?;
-        log::info!("-------------15--------------");
         let ex_desc = Bip86(xpriv, KeychainKind::External).build(Network::Bitcoin)?;
         let external = ex_desc.0.to_string_with_secret(&ex_desc.1);
-        log::info!("-------------16--------------");
         let in_desc = Bip86(xpriv, KeychainKind::Internal).build(Network::Bitcoin)?;
-        log::info!("-------------17--------------");
         let internal = in_desc.0.to_string_with_secret(&in_desc.1);
-        log::info!("-------------18--------------");
         Ok(DescriptorSet{external, internal})
     }
 }
@@ -129,6 +124,7 @@ pub struct Wallet{
 }
 
 impl Wallet {
+    #[async_backtrace::framed]
     pub async fn new(
         _callback: Callback,
         path: PathBuf,
@@ -141,11 +137,8 @@ impl Wallet {
         //    seed
         //};
         //Hard coded for testing
-        log::info!("-------------10--------------");
         let seed: Seed = Seed{inner: vec![175, 178, 194, 229, 165, 10, 1, 80, 224, 239, 231, 107, 145, 96, 212, 195, 10, 78, 64, 17, 241, 77, 229, 246, 109, 226, 14, 83, 139, 28, 232, 220, 5, 150, 79, 185, 67, 31, 247, 41, 150, 36, 77, 199, 67, 47, 157, 15, 61, 142, 5, 244, 245, 137, 198, 34, 174, 221, 63, 134, 129, 165, 25, 7]};
-        log::info!("-------------11--------------");
         let descriptors = DescriptorSet::from_seed(&seed)?;
-        log::info!("-------------12--------------");
         Ok(Wallet{
             inner: Self::inner_wallet(&descriptors, path.clone())?,
             descriptors,
@@ -158,7 +151,6 @@ impl Wallet {
         path: PathBuf
     ) -> Result<Arc<Mutex<BDKWallet<SqliteDatabase>>>, Error> {
         std::fs::create_dir_all(path.clone())?;
-        log::info!("-------------9--------------");
         Ok(Arc::new(Mutex::new(BDKWallet::new(
             &descriptors.external,
             Some(&descriptors.internal),
@@ -167,10 +159,12 @@ impl Wallet {
         )?)))
     }
 
+    #[async_backtrace::framed]
     pub async fn get_new_address(&self) -> Result<String, Error> {
         Ok(self.inner.lock().await.get_address(AddressIndex::New)?.address.to_string())
     }
 
+    #[async_backtrace::framed]
     pub async fn get_fees(&self, amount: Sats) -> Result<(Sats, Sats), Error> {
         let client = Self::get_blockchain()?;
         let one = Request::process_result(client.estimate_fee(1))?.as_sat_per_vb() as Sats;
@@ -181,6 +175,7 @@ impl Wallet {
         ))
     }
 
+    #[async_backtrace::framed]
     async fn tx_builder(&self, address: &str, amount: Sats, fee: Sats) -> Result<(PSBT, bdk::TransactionDetails), Error> {
         let inner = self.inner.lock().await;
         let mut builder = inner.build_tx();
@@ -190,6 +185,7 @@ impl Wallet {
         Ok(builder.finish()?)
     }
 
+    #[async_backtrace::framed]
     pub async fn build_transaction(&self, address: &str, amount: Sats, fee: Sats, price: Usd) -> Result<(bdk::bitcoin::Transaction, Transaction), Error> {
         log::info!("fee bt: {}", fee);
         let (mut psbt, mut tx_details) = self.tx_builder(address, amount, fee).await?;
@@ -205,31 +201,27 @@ impl Wallet {
     }
 
 
+    #[async_backtrace::framed]
     pub async fn broadcast_transaction(&self, tx: &bdk::bitcoin::Transaction) -> Result<(), Error> {
         Request::process_result(Self::get_blockchain()?.broadcast(tx))
     }
 
     fn get_blockchain() -> Result<ElectrumBlockchain, Error> {
-        log::info!("-------------0--------------");
         Ok(ElectrumBlockchain::from(Request::process_result(Client::new(CLIENT_URI))?))
     }
-
+    
+    #[async_backtrace::framed]
     pub async fn sync(&self) -> Result<(), Error> {
-        log::info!("-------------7--------------");
         let blockchain = Self::get_blockchain().map_err(|e| Error::bad_request("Failed to get blockchain", &format!("{}", e)))?;
-        log::info!("-------------8--------------");
         Request::process_result(self.inner.lock().await.sync(&blockchain, SyncOptions::default()))?;
-        log::info!("-------------1111--------------");
         Ok(())
     }
 
+    #[async_backtrace::framed]
     pub async fn refresh_state(&self, state: &State) -> Result<(), Error> {
-        log::info!("-------------1--------------");
         let inner = self.inner.lock().await;
-        log::info!("-------------2--------------");
         //Transactions
         let mut txs = state.get_or_default::<Transactions>(&Field::Transactions(None)).await?;
-        log::info!("-------------3--------------");
         for tx in inner.list_transactions(true)? {
             if let Some(transaction) = txs.get(&tx.txid) {
                 if transaction.confirmation_time.is_some() {continue;}
@@ -243,12 +235,8 @@ impl Wallet {
             };
             txs.insert(tx.txid, Transaction::from_details(tx, price, |s: &Script| -> bool {inner.is_mine(s).unwrap_or_default()})?);
         }
-        log::info!("-------------4--------------");
         let balance = txs.values().map(|tx| if tx.is_withdraw {-(tx.sats as i64)} else {tx.sats as i64}).sum::<i64>() as u64;
-        log::info!("-------------5--------------");
         state.set(Field::Transactions(Some(txs))).await?;
-        log::info!("-------------6--------------");
-
         //Balance
         state.set(Field::Balance(Some(balance))).await?;
         Ok(())

@@ -13,11 +13,12 @@ use simple_database::SqliteStore;
 use tokio::sync::Mutex;
 
 #[allow(non_snake_case)]
+#[async_backtrace::framed]
 pub async fn rustStart (
     path: String,
     platform: Platform,
     callback: impl Fn(DartMethod) -> DartFnFuture<Option<String>> + 'static + Sync + Send,
-) -> Result<(), Error> {
+) -> Result<(), String> {
 
     #[cfg(target_os = "android")]
     android_logger::init_once(
@@ -35,15 +36,17 @@ pub async fn rustStart (
     state.set(Field::Path(Some(path.clone()))).await?;
     state.set(Field::Platform(Some(platform))).await?;
 
-    start_threads(state, callback, path).await
+    Ok(start_threads(state, callback, path).await?)
 }
 
 #[allow(non_snake_case)]
-pub async fn getPage(path: String, page: PageName) -> Result<String, Error> {
-    StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(page).await
+#[async_backtrace::framed]
+pub async fn getPage(path: String, page: PageName) -> Result<String, String> {
+    Ok(StateManager::new(State::new::<SqliteStore>(PathBuf::from(&path)).await?).get(page).await?)
 }
 
 #[allow(non_snake_case)]
-pub fn clearData(path: String) -> Result<(), Error> {
-    Ok(std::fs::remove_dir_all(PathBuf::from(path))?)
+pub fn clearData(path: String) -> Result<(), String> {
+    std::fs::remove_dir_all(PathBuf::from(path)).unwrap();
+    Ok(())
 }

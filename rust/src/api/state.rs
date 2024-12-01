@@ -111,8 +111,8 @@ impl StateManager {
         StateManager{state}
     }
 
+    #[async_backtrace::framed]
     pub async fn get(&mut self, page: PageName) -> Result<String, Error> {
-        //log::info!("BUILDING ALL PAGES");
         let page_state = match page {
             PageName::BitcoinHome => self.bitcoin_home().await,
             PageName::ViewTransaction(txid) => self.view_transaction(txid).await,
@@ -174,7 +174,6 @@ impl StateManager {
     }
 
     pub async fn view_transaction(&self, txid: String) -> Result<String, Error> {
-        log::info!("BUILDING VIEW TRANSACITON");
         let txid = Txid::from_str(&txid).map_err(|e| Error::err("Txid::from_str", &e.to_string()))?;
         let transactions = self.state.get_or_default::<BTreeMap<Txid, Transaction>>(&Field::Transactions(None)).await?;
         let tx = transactions.get(&txid).ok_or(Error::err("view_transaction", "No transaction found for txid"))?;
@@ -388,20 +387,14 @@ impl StateManager {
         let this_conversation = map_conversations.get_mut(record.as_str()).ok_or(Error::err("current_conversation", format!("No conversation found for room record {:?}", &record).as_str()))?;
 
         // IF there is a new message, push it to the messages
-        log::info!("NEW MESSAGE: {:?}", new_message.clone());
-        log::info!("IS THERE REALLY A NEW MESSAGE: {:?}", new_message.is_some());
         if new_message.is_some() {
-            log::info!("NEW MESSAGE: {:?}", new_message.clone());
 
             // Get my profile and create a new message
             let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
             let new_message: Message = create_message(new_message.clone().unwrap_or("Message failed to send".to_string()), profile).await;
-            log::info!("NEW MESSAGE HAS BEEN CREATED: {:?}", new_message.clone());
 
             // Add the message to the conversaion and update the conversations list
             this_conversation.messages.push(new_message);
-            log::info!("THIS MESSAGE INSIDE THIS CONVERSATION: {:?}", this_conversation.clone());
-            log::info!("added message: {:?}", this_conversation.messages.clone());
             let updated_conversations = map_conversations.iter().map(|(_, conversation)| conversation.clone()).collect::<Vec<Conversation>>();
             self.state.set(Field::Conversations(Some(updated_conversations))).await?;
         } 

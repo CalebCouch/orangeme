@@ -4,6 +4,7 @@
 
 pub mod custom_handler;
 
+/// flutter_rust_bridge:ignore
 pub mod error;
 use error::Error;
 
