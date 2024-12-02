@@ -32,12 +32,7 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
 
     @override
     PageName getPageName() {
-        print("getting page name withh value::: ${widget.newMessage}");
-        return PageName.currentConversation(
-            widget.roomId, 
-            widget.newMessage,
-            widget.members, 
-        );
+        return PageName.currentConversation(widget.roomId, widget.members);
     }
 
     @override
@@ -45,12 +40,6 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-        print("About to unpack state");
-        
-        print("Before WIDGET SETTING::: --- ${widget.newMessage} ---");
-        widget.newMessage = null;
-        print("AFTER WIDGET SETTING::: --- ${widget.newMessage} ---");
-
         widget.messages = List<Message>.from(
             json['messages'].map(
                 (json) => Message(
@@ -60,7 +49,6 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
                         abtMe: json['sender']['about_me'] as String?,
                         pfpPath: json['sender']['pfp_path'] as String?,
                     ),
-
                     message: json['message'] as String,
                     date: json['date'] as String,
                     time: json['time'] as String,
@@ -117,9 +105,11 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
                 hint: 'Message...', 
                 icon: SendButton(
                     onTap: () {
-                        print("TEXT message.... '-${textController.text}-'");
-                        setState(() => widget.newMessage = textController.text);
-                        print("Sending message.... '-${widget.newMessage}-'");
+                        // SET RUST STATE HERE
+                        //setState(() => widget.newMessage = textController.text);
+                        print("Attempting to send message:: '-${textController.text}-'");
+                        //setRustState("NewMessage", textController.text);
+                        setState(() => textController.text = "");
                     },
                 ),
             ),

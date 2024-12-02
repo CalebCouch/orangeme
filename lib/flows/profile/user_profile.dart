@@ -28,12 +28,7 @@ class UserProfile extends GenericWidget {
 class UserProfileState extends GenericState<UserProfile> {
     @override
     PageName getPageName() {
-        return PageName.userProfile(
-            widget.init, 
-            widget.user,
-            widget.sendMessage,
-            widget.sendBitcoin,
-        );
+        return PageName.userProfile(widget.init, widget.user);
     }
 
     @override

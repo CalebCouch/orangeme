@@ -11,7 +11,6 @@ pub struct Backtrace {
 }
 impl Backtrace {
     pub fn new() -> Self {
-        log::error!("GETTING NEW ERROR");
         Backtrace{inner: async_backtrace::backtrace().map(|b| b.iter().map(|l| l.to_string()).collect::<Vec<_>>())}
     }
 }

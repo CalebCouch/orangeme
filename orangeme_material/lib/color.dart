@@ -1,53 +1,123 @@
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
-class ConstantsColor {
-    static const Color _black = Color(0xFF000000);
-    static const Color _offBlack = Color(0xFF262626);
-    static const Color _darkGrey = Color(0xFF525458);
-    static const Color _grey = Color(0xFF8A8C93);
-    static const Color _lightGrey = Color(0xFFD7D8E5);
-    static const Color _offWhite = Color(0xFFF4F5F5);
-    static const Color _white = Color(0xFFFFFFFF);
-    static const Color _red = Color(0xFFFF3B00);
-    static const Color _green = Color(0xFF00CC00);
-    static const Color _orange = Color(0xFFF3474D);
-    static const Color _pink = Color(0xFFD13F45);
+class Tapa {
+    static const Color shade0 = Color(0xFFFFFFFF);
+    static const Color shade50 = Color(0xFFF4F3F2);
+    static const Color shade100 = Color(0xFFE2E1DF);
+    static const Color shade200 = Color(0xFFC7C4C1);
+    static const Color shade300 = Color(0xFFA7A29D);
+    static const Color shade400 = Color(0xFF8E8781);
+    static const Color shade500 = Color(0xFF78716C);
+    static const Color shade600 = Color(0xFF6D6561);
+    static const Color shade700 = Color(0xFF585250);
+    static const Color shade800 = Color(0xFF4D4846);
+    static const Color shade900 = Color(0xFF443F3F);
+    static const Color shade950 = Color(0xFF262322);
+    static const Color shade1000 = Color(0xFF000000);
+}
+
+class Torch {
+    static const Color shade50 = Color(0xFFFEF2F2);
+    static const Color shade100 = Color(0xFFFEE2E3);
+    static const Color shade200 = Color(0xFFFDCBCD);
+    static const Color shade300 = Color(0xFFFBA6A9);
+    static const Color shade400 = Color(0xFFF67377);
+    static const Color shade500 = Color(0xFFEB343A);
+    static const Color shade600 = Color(0xFFDA282E);
+    static const Color shade700 = Color(0xFFB71E23);
+    static const Color shade800 = Color(0xFF971D21);
+    static const Color shade900 = Color(0xFF7E1E21);
+    static const Color shade950 = Color(0xFF440B0D);
+}
+
+class GoldDrop {
+    static const Color shade50 = Color(0xFFFFF8ED);
+    static const Color shade100 = Color(0xFFFEEFD6);
+    static const Color shade200 = Color(0xFFFCDCAC);
+    static const Color shade300 = Color(0xFFFAC177);
+    static const Color shade400 = Color(0xFFF79C40);
+    static const Color shade500 = Color(0xFFF58727);
+    static const Color shade600 = Color(0xFFE66510);
+    static const Color shade700 = Color(0xFFBE4D10);
+    static const Color shade800 = Color(0xFF973C15);
+    static const Color shade900 = Color(0xFF7A3414);
+    static const Color shade950 = Color(0xFF421808);
+}
+
+class Malachite {
+    static const Color shade50 = Color(0xFFF1FCF2);
+    static const Color shade100 = Color(0xFFDFF9E4);
+    static const Color shade200 = Color(0xFFC0F2CA);
+    static const Color shade300 = Color(0xFF8FE6A1);
+    static const Color shade400 = Color(0xFF57D171);
+    static const Color shade500 = Color(0xFF3CCB5A);
+    static const Color shade600 = Color(0xFF23963B);
+    static const Color shade700 = Color(0xFF1F7631);
+    static const Color shade800 = Color(0xFF1D5E2C);
+    static const Color shade900 = Color(0xFF1A4D26);
+    static const Color shade950 = Color(0xFF092A12);
+}
+
+class Lightning {
+    static const Color shade50 = Color(0xFFFFFDEB);
+    static const Color shade100 = Color(0xFFFEFAC7);
+    static const Color shade200 = Color(0xFFFDF48A);
+    static const Color shade300 = Color(0xFFFCE94D);
+    static const Color shade400 = Color(0xFFFBD924);
+    static const Color shade500 = Color(0xFFF5BD14);
+    static const Color shade600 = Color(0xFFD99106);
+    static const Color shade700 = Color(0xFFB46809);
+    static const Color shade800 = Color(0xFF92500E);
+    static const Color shade900 = Color(0xFF78420F);
+    static const Color shade950 = Color(0xFF452203);
+}
+
+class Shade {
+    static const Color darken_1 = Color(0x14000000);
+    static const Color darken_2 = Color(0x40000000);
+    static const Color lighten_1 = Color(0x14FFFFFF);
+    static const Color lighten_2 = Color(0x40FFFFFF);
 }
 
 class ThemeColor {
-    static const Color bg = ConstantsColor._black;
-    static const Color bgSecondary = ConstantsColor._offBlack;
-    static const Color border = ConstantsColor._darkGrey;
-    static const Color heading = ConstantsColor._white;
-    static const Color text = ConstantsColor._lightGrey;
-    static const Color textSecondary = ConstantsColor._grey;
-    static const Color primary = ConstantsColor._orange;
-    static const Color secondary = ConstantsColor._white;
-    static const Color handle = ConstantsColor._black;
-    static const Color colorHandle = ConstantsColor._white;
-    static const Color outline = ConstantsColor._darkGrey;
-    static const Color brand = ConstantsColor._white;
-    static const Color success = ConstantsColor._green;
-    static const Color danger = ConstantsColor._red;
-    static const Color hover = ConstantsColor._pink;
+    /// Display ///
+    static const Color bg = Tapa.shade1000;
+    static const Color bgSecondary = Tapa.shade950;
+    static const Color border = Tapa.shade700;
+    static const Color outline = Tapa.shade700;
+    static const Color heading = Tapa.shade0;
+    static const Color text = Tapa.shade100;
+    static const Color textSecondary = Tapa.shade300;
+    static const Color success = Malachite.shade500;
+    static const Color warning = Lightning.shade500;
+    static const Color danger = Torch.shade500;
+
+    /// Interactive ///
+    static const Color primary = Torch.shade500;
+    static const Color label = Tapa.shade0;
+    static const Color secondary = Tapa.shade0;
+    static const Color disabled = Tapa.shade900;
+    static const Color labelSecondary = Tapa.shade800;
+    static const Color labelDisabled = Tapa.shade1000;
+
 }
 
 final Map<String, Color> customize_color = {
     'bg': ThemeColor.bg,
     'bg_secondary': ThemeColor.bgSecondary,
     'border': ThemeColor.border,
+    'outline': ThemeColor.outline,
     'heading': ThemeColor.heading,
     'text': ThemeColor.text,
     'text_secondary': ThemeColor.textSecondary,
     'primary': ThemeColor.primary,
     'secondary': ThemeColor.secondary,
-    'handle': ThemeColor.handle,
-    'color_handle': ThemeColor.colorHandle,
-    'outline': ThemeColor.outline,
-    'brand': ThemeColor.brand,
+    'handle': ThemeColor.label,
+    'color_handle': ThemeColor.labelSecondary,
+    'brand': ThemeColor.primary,
     'success': ThemeColor.success,
+    'warning': ThemeColor.warning,
     'danger': ThemeColor.danger,
-    'primary_hover': ThemeColor.hover,
+    // 'primary_hover': ThemeColor.hover,
 };

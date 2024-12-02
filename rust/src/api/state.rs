@@ -53,6 +53,7 @@ pub enum Field {
 
     Conversations(Option<Vec<Conversation>>),
     Users(Option<Vec<Profile>>),
+    NewMessage(Option<Message>),
 
     Test(Option<u64>)
 }
@@ -123,11 +124,11 @@ impl StateManager {
             PageName::Confirm(address, amount, fee) => self.confirm(address, amount, fee).await,
             PageName::Success(tx) => self.success(tx).await,
             PageName::MyProfile(init) => self.my_profile(init).await,
-            PageName::UserProfile(init, profile, send_message, send_bitcoin) => self.user_profile(init, profile, send_message, send_bitcoin).await,
+            PageName::UserProfile(init, profile) => self.user_profile(init, profile).await,
             PageName::MessagesHome => self.messages_home().await,
             PageName::ChooseRecipient => self.choose_recipient().await,
             PageName::ConversationInfo(record) => self.conversation_info(record).await,
-            PageName::CurrentConversation(record, new_message, members) => self.current_conversation(record, new_message, members).await,
+            PageName::CurrentConversation(record, members) => self.current_conversation(record, members).await,
             PageName::Scan => self.scan_qr().await,
             PageName::Test(_) => self.test().await,
         };
@@ -303,7 +304,7 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn user_profile(&self, init: bool, profile: DartProfile, send_message: bool, send_bitcoin: bool) -> Result<String, Error> {
+    pub async fn user_profile(&self, init: bool, profile: DartProfile) -> Result<String, Error> {
         let address = if init {
             call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await? // Needs to get for users address
         } else {String::new()};
@@ -358,8 +359,9 @@ impl StateManager {
         }))?)
     }
 
-    pub async fn current_conversation(&self, record: String, new_message: Option<String>, members: Vec<DartProfile>) -> Result<String, Error> {
+    pub async fn current_conversation(&self, record: String, members: Vec<DartProfile>) -> Result<String, Error> {
         let mut vec_conversations = self.state.get_or_default::<Vec<Conversation>>(&Field::Conversations(None)).await?;
+        //let mut new_message = self.state.get_or_default::<Message>(&Field::NewMessage(None)).await?;
         // IF there is no record, create a new conversation
         let record = if record.is_empty() {
 
@@ -387,17 +389,17 @@ impl StateManager {
         let this_conversation = map_conversations.get_mut(record.as_str()).ok_or(Error::err("current_conversation", format!("No conversation found for room record {:?}", &record).as_str()))?;
 
         // IF there is a new message, push it to the messages
-        if new_message.is_some() {
+        // if new_message.is_some() {
 
-            // Get my profile and create a new message
-            let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
-            let new_message: Message = create_message(new_message.clone().unwrap_or("Message failed to send".to_string()), profile).await;
+        //     // Get my profile and create a new message
+        //     let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+        //     let new_message: Message = create_message(new_message.clone().unwrap_or("Message failed to send".to_string()), profile).await;
 
-            // Add the message to the conversaion and update the conversations list
-            this_conversation.messages.push(new_message);
-            let updated_conversations = map_conversations.iter().map(|(_, conversation)| conversation.clone()).collect::<Vec<Conversation>>();
-            self.state.set(Field::Conversations(Some(updated_conversations))).await?;
-        } 
+        //     // Add the message to the conversaion and update the conversations list
+        //     this_conversation.messages.push(new_message);
+        //     let updated_conversations = map_conversations.iter().map(|(_, conversation)| conversation.clone()).collect::<Vec<Conversation>>();
+        //     self.state.set(Field::Conversations(Some(updated_conversations))).await?;
+        // } 
 
         // Resetting new message to null
         let new_message: Option<String> = None;
@@ -520,6 +522,7 @@ impl StateManager {
 
         Ok(fake_profiles)
     }
+
 }
 
 // USED FOR TESTING, CAN BE DELETED //

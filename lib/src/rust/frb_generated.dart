@@ -599,8 +599,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return PageName_UserProfile(
           dco_decode_bool(raw[1]),
           dco_decode_box_autoadd_dart_profile(raw[2]),
-          dco_decode_bool(raw[3]),
-          dco_decode_bool(raw[4]),
         );
       case 10:
         return const PageName_MessagesHome();
@@ -609,8 +607,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 12:
         return PageName_CurrentConversation(
           dco_decode_String(raw[1]),
-          dco_decode_opt_String(raw[2]),
-          dco_decode_list_dart_profile(raw[3]),
+          dco_decode_list_dart_profile(raw[2]),
         );
       case 13:
         return PageName_ConversationInfo(
@@ -914,19 +911,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 9:
         var var_field0 = sse_decode_bool(deserializer);
         var var_field1 = sse_decode_box_autoadd_dart_profile(deserializer);
-        var var_field2 = sse_decode_bool(deserializer);
-        var var_field3 = sse_decode_bool(deserializer);
-        return PageName_UserProfile(
-            var_field0, var_field1, var_field2, var_field3);
+        return PageName_UserProfile(var_field0, var_field1);
       case 10:
         return const PageName_MessagesHome();
       case 11:
         return const PageName_ChooseRecipient();
       case 12:
         var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_opt_String(deserializer);
-        var var_field2 = sse_decode_list_dart_profile(deserializer);
-        return PageName_CurrentConversation(var_field0, var_field1, var_field2);
+        var var_field1 = sse_decode_list_dart_profile(deserializer);
+        return PageName_CurrentConversation(var_field0, var_field1);
       case 13:
         var var_field0 = sse_decode_String(deserializer);
         return PageName_ConversationInfo(var_field0);
@@ -1227,30 +1220,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case PageName_MyProfile(field0: final field0):
         sse_encode_i_32(8, serializer);
         sse_encode_bool(field0, serializer);
-      case PageName_UserProfile(
-          field0: final field0,
-          field1: final field1,
-          field2: final field2,
-          field3: final field3
-        ):
+      case PageName_UserProfile(field0: final field0, field1: final field1):
         sse_encode_i_32(9, serializer);
         sse_encode_bool(field0, serializer);
         sse_encode_box_autoadd_dart_profile(field1, serializer);
-        sse_encode_bool(field2, serializer);
-        sse_encode_bool(field3, serializer);
       case PageName_MessagesHome():
         sse_encode_i_32(10, serializer);
       case PageName_ChooseRecipient():
         sse_encode_i_32(11, serializer);
       case PageName_CurrentConversation(
           field0: final field0,
-          field1: final field1,
-          field2: final field2
+          field1: final field1
         ):
         sse_encode_i_32(12, serializer);
         sse_encode_String(field0, serializer);
-        sse_encode_opt_String(field1, serializer);
-        sse_encode_list_dart_profile(field2, serializer);
+        sse_encode_list_dart_profile(field1, serializer);
       case PageName_ConversationInfo(field0: final field0):
         sse_encode_i_32(13, serializer);
         sse_encode_String(field0, serializer);

@@ -11,7 +11,7 @@ Widget CustomIconButton(onTap, {required String icon, String size = 'lg', String
             onTap();
         },
         child: Container(
-            padding: EdgeInsets.only(left: 16), 
+            padding: EdgeInsets.symmetric(horizontal: 16), 
             child: CustomIcon(icon: icon, size: size, color: color)
         ),
     );
@@ -46,10 +46,7 @@ Widget ExitButton(BuildContext context, Widget home) {
 }
 
 Widget InfoButton(BuildContext context, Widget page) {
-    return CustomIconButton(
-        () { navigateTo(context, page); }, 
-        icon: 'info',
-    );
+    return CustomIconButton(() { navigateTo(context, page); }, icon: 'info');
 }
 
 Widget NumberButton(BuildContext context, String number) {
