@@ -32,13 +32,13 @@ class DataItem extends StatelessWidget {
                     if (number != null) const Spacing(16),
                     Expanded(
                         child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            padding: const EdgeInsets.only(top: 6),
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                     CustomText(variant: 'heading', font_size: 'h5', txt: title, alignment: TextAlign.left),
-                                    const Spacing(16),
+                                    if (subtitle != null || helperText != null || buttons != null || content != null) const Spacing(16),
                                     if (subtitle != null) CustomText(variant: 'text', font_size: 'md', txt: subtitle!, alignment: TextAlign.left),
                                     if (subtitle != null) const Spacing(16),
                                     if (helperText != null) CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: helperText!, alignment: TextAlign.left),
@@ -87,59 +87,36 @@ Widget aboutMeItem(BuildContext context, String aboutMe) {
 }
 
 Widget addressItem(BuildContext context, String address) {
-    copyAddress() async {
-        HapticFeedback.heavyImpact();
-        await Clipboard.setData(ClipboardData(text: address));
-    };
-
     return DataItem(
-        title: 'Bitcoin address',
+        title: 'Bitcoin Address',
         content: CustomText(
-            txt: address, 
-            variant: 'text', 
-            font_size: 'md', 
-            text_color: 'secondary', 
-            alignment: TextAlign.start
+            txt: address,
+            variant: 'text',
+            font_size: 'md',
+            text_color: 'secondary',
+            alignment: TextAlign.start,
         ),
         buttons: [
-            CustomButton(
-                txt: 'Copy', 
-                variant: 
-                'secondary', 
-                size: 'md', 
-                expand: false, 
-                icon: 'copy', 
-                onTap: () => copyAddress()
-            ),
+            CopyButton(textToCopy: address),
         ],
     );
 }
 
-Widget didItem(BuildContext context, String did) {
-    copyDid() async {
-        HapticFeedback.heavyImpact();
-        await Clipboard.setData(ClipboardData(text: did));
-    }
 
+Widget didItem(BuildContext context, String did) {
     return DataItem(
         title: 'Digital ID',
         content: CustomText(
-            txt: did, 
-            variant: 'text', 
-            font_size: 'md', 
-            text_color: 'secondary', 
-            alignment: TextAlign.start
+            txt: did,
+            variant: 'text',
+            font_size: 'md',
+            text_color: 'secondary',
+            alignment: TextAlign.start,
         ),
         buttons: [
-            CustomButton(
-                txt: 'Copy', 
-                variant: 
-                'secondary', 
-                size: 'md', 
-                expand: false, 
-                icon: 'copy', 
-                onTap: () => copyDid()
-            ),
+            CopyButton(textToCopy: did),
         ],
     );
 }
+
+

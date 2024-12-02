@@ -119,5 +119,5 @@ final Map<String, Color> customize_color = {
     'success': ThemeColor.success,
     'warning': ThemeColor.warning,
     'danger': ThemeColor.danger,
-    // 'primary_hover': ThemeColor.hover,
+    'primary_hover': ThemeColor.primary,
 };

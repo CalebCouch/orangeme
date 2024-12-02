@@ -7,15 +7,14 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
-Future<void> rustStart(
-        {required String path,
-        required Platform platform,
-        required FutureOr<String?> Function(DartMethod) callback}) =>
-    RustLib.instance.api.crateApiSimpleRustStart(
-        path: path, platform: platform, callback: callback);
 
-Future<String> getPage({required String path, required PageName page}) =>
-    RustLib.instance.api.crateApiSimpleGetPage(path: path, page: page);
+            
 
-Future<void> clearData({required String path}) =>
-    RustLib.instance.api.crateApiSimpleClearData(path: path);
+            Future<void> rustStart({required String path , required Platform platform , required FutureOr<String?> Function(DartMethod) callback }) => RustLib.instance.api.crateApiSimpleRustStart(path: path, platform: platform, callback: callback);
+
+Future<String> getPage({required String path , required PageName page }) => RustLib.instance.api.crateApiSimpleGetPage(path: path, page: page);
+
+Future<void> clearData({required String path }) => RustLib.instance.api.crateApiSimpleClearData(path: path);
+
+            
+            

@@ -8,235 +8,181 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'pub_structs.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+            // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
-Future<void> loadStructs(
-        {required ShorthandTransaction s,
-        required ShorthandConversation sc,
-        required Message m,
-        required DartProfile p,
-        required DartMethod dm,
-        required KeyPress kp}) =>
-    RustLib.instance.api.crateApiPubStructsLoadStructs(
-        s: s, sc: sc, m: m, p: p, dm: dm, kp: kp);
 
-Future<void> loadStructs2({required Platform pl, required PageName pn}) =>
-    RustLib.instance.api.crateApiPubStructsLoadStructs2(pl: pl, pn: pn);
+            Future<void> loadStructs({required ShorthandTransaction s , required ShorthandConversation sc , required Message m , required DartProfile p , required DartMethod dm , required KeyPress kp }) => RustLib.instance.api.crateApiPubStructsLoadStructs(s: s, sc: sc, m: m, p: p, dm: dm, kp: kp);
 
-@freezed
-sealed class DartMethod with _$DartMethod {
-  const DartMethod._();
+Future<void> loadStructs2({required Platform pl , required PageName pn }) => RustLib.instance.api.crateApiPubStructsLoadStructs2(pl: pl, pn: pn);
 
-  const factory DartMethod.storageSet(
-    String field0,
-    String field1,
-  ) = DartMethod_StorageSet;
-  const factory DartMethod.storageGet(
-    String field0,
-  ) = DartMethod_StorageGet;
-}
+            @freezed
+                sealed class DartMethod with _$DartMethod  {
+                    const DartMethod._();
 
-class DartProfile {
-  final String name;
-  final String did;
-  final String? pfpPath;
-  final String? abtMe;
+                     const factory DartMethod.storageSet(  String field0,  String field1,) = DartMethod_StorageSet;
+ const factory DartMethod.storageGet(  String field0,) = DartMethod_StorageGet;
 
-  const DartProfile({
-    required this.name,
-    required this.did,
-    this.pfpPath,
-    this.abtMe,
-  });
+                    
+                }
 
-  @override
-  int get hashCode =>
-      name.hashCode ^ did.hashCode ^ pfpPath.hashCode ^ abtMe.hashCode;
+class DartProfile  {
+                final String name;
+final String did;
+final String? pfpPath;
+final String? abtMe;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DartProfile &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          did == other.did &&
-          pfpPath == other.pfpPath &&
-          abtMe == other.abtMe;
-}
+                const DartProfile({required this.name ,required this.did ,this.pfpPath ,this.abtMe ,});
+
+                
+                
+
+                
+        @override
+        int get hashCode => name.hashCode^did.hashCode^pfpPath.hashCode^abtMe.hashCode;
+        
+
+                
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is DartProfile &&
+                runtimeType == other.runtimeType
+                && name == other.name&& did == other.did&& pfpPath == other.pfpPath&& abtMe == other.abtMe;
+        
+            }
 
 enum KeyPress {
-  zero,
-  one,
-  two,
-  three,
-  four,
-  five,
-  six,
-  seven,
-  eight,
-  nine,
-  reset,
-  decimal,
-  backspace,
-  ;
-}
+                    zero,
+one,
+two,
+three,
+four,
+five,
+six,
+seven,
+eight,
+nine,
+reset,
+decimal,
+backspace,
+                    ;
+                    
+                }
 
-class Message {
-  final DartProfile sender;
-  final String message;
-  final String date;
-  final String time;
-  final bool isIncoming;
+class Message  {
+                final DartProfile sender;
+final String message;
+final String date;
+final String time;
+final bool isIncoming;
 
-  const Message({
-    required this.sender,
-    required this.message,
-    required this.date,
-    required this.time,
-    required this.isIncoming,
-  });
+                const Message({required this.sender ,required this.message ,required this.date ,required this.time ,required this.isIncoming ,});
 
-  @override
-  int get hashCode =>
-      sender.hashCode ^
-      message.hashCode ^
-      date.hashCode ^
-      time.hashCode ^
-      isIncoming.hashCode;
+                
+                
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Message &&
-          runtimeType == other.runtimeType &&
-          sender == other.sender &&
-          message == other.message &&
-          date == other.date &&
-          time == other.time &&
-          isIncoming == other.isIncoming;
-}
+                
+        @override
+        int get hashCode => sender.hashCode^message.hashCode^date.hashCode^time.hashCode^isIncoming.hashCode;
+        
+
+                
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is Message &&
+                runtimeType == other.runtimeType
+                && sender == other.sender&& message == other.message&& date == other.date&& time == other.time&& isIncoming == other.isIncoming;
+        
+            }
 
 @freezed
-sealed class PageName with _$PageName {
-  const PageName._();
+                sealed class PageName with _$PageName  {
+                    const PageName._();
 
-  const factory PageName.bitcoinHome() = PageName_BitcoinHome;
-  const factory PageName.viewTransaction(
-    String field0,
-  ) = PageName_ViewTransaction;
-  const factory PageName.receive() = PageName_Receive;
-  const factory PageName.send(
-    String field0,
-  ) = PageName_Send;
-  const factory PageName.amount(
-    String field0,
-  ) = PageName_Amount;
-  const factory PageName.speed(
-    BigInt field0,
-  ) = PageName_Speed;
-  const factory PageName.confirm(
-    String field0,
-    BigInt field1,
-    BigInt field2,
-  ) = PageName_Confirm;
-  const factory PageName.success(
-    String field0,
-  ) = PageName_Success;
-  const factory PageName.myProfile(
-    bool field0,
-  ) = PageName_MyProfile;
-  const factory PageName.userProfile(
-    bool field0,
-    DartProfile field1,
-  ) = PageName_UserProfile;
-  const factory PageName.messagesHome() = PageName_MessagesHome;
-  const factory PageName.chooseRecipient() = PageName_ChooseRecipient;
-  const factory PageName.currentConversation(
-    String field0,
-    List<DartProfile> field1,
-  ) = PageName_CurrentConversation;
-  const factory PageName.conversationInfo(
-    String field0,
-  ) = PageName_ConversationInfo;
-  const factory PageName.test(
-    String field0,
-  ) = PageName_Test;
-  const factory PageName.scan() = PageName_Scan;
-}
+                     const factory PageName.bitcoinHome() = PageName_BitcoinHome;
+ const factory PageName.viewTransaction(  String field0,) = PageName_ViewTransaction;
+ const factory PageName.receive() = PageName_Receive;
+ const factory PageName.send(  String field0,) = PageName_Send;
+ const factory PageName.amount(  String field0,) = PageName_Amount;
+ const factory PageName.speed(  BigInt field0,) = PageName_Speed;
+ const factory PageName.confirm(  String field0,  BigInt field1,  BigInt field2,) = PageName_Confirm;
+ const factory PageName.success(  String field0,) = PageName_Success;
+ const factory PageName.myProfile(  bool field0,) = PageName_MyProfile;
+ const factory PageName.userProfile(  bool field0,  DartProfile field1,) = PageName_UserProfile;
+ const factory PageName.messagesHome() = PageName_MessagesHome;
+ const factory PageName.chooseRecipient() = PageName_ChooseRecipient;
+ const factory PageName.currentConversation(  String field0,  List<DartProfile> field1,) = PageName_CurrentConversation;
+ const factory PageName.conversationInfo(  String field0,) = PageName_ConversationInfo;
+ const factory PageName.test(  String field0,) = PageName_Test;
+ const factory PageName.scan() = PageName_Scan;
+
+                    
+                }
 
 enum Platform {
-  mac,
-  linux,
-  windows,
-  ios,
-  android,
-  fuchsia,
-  ;
+                    mac,
+linux,
+windows,
+ios,
+android,
+fuchsia,
+                    ;
+                     bool  isDesktop()=>RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(that: this, );
 
-  bool isDesktop() => RustLib.instance.api.crateApiPubStructsPlatformIsDesktop(
-        that: this,
-      );
-}
 
-class ShorthandConversation {
-  final String roomName;
-  final String? photo;
-  final String subtext;
-  final bool isGroup;
-  final String roomId;
+                }
 
-  const ShorthandConversation({
-    required this.roomName,
-    this.photo,
-    required this.subtext,
-    required this.isGroup,
-    required this.roomId,
-  });
+class ShorthandConversation  {
+                final String roomName;
+final String? photo;
+final String subtext;
+final bool isGroup;
+final String roomId;
 
-  @override
-  int get hashCode =>
-      roomName.hashCode ^
-      photo.hashCode ^
-      subtext.hashCode ^
-      isGroup.hashCode ^
-      roomId.hashCode;
+                const ShorthandConversation({required this.roomName ,this.photo ,required this.subtext ,required this.isGroup ,required this.roomId ,});
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ShorthandConversation &&
-          runtimeType == other.runtimeType &&
-          roomName == other.roomName &&
-          photo == other.photo &&
-          subtext == other.subtext &&
-          isGroup == other.isGroup &&
-          roomId == other.roomId;
-}
+                
+                
 
-class ShorthandTransaction {
-  final bool isWithdraw;
-  final String datetime;
-  final String amount;
-  final String txid;
+                
+        @override
+        int get hashCode => roomName.hashCode^photo.hashCode^subtext.hashCode^isGroup.hashCode^roomId.hashCode;
+        
 
-  const ShorthandTransaction({
-    required this.isWithdraw,
-    required this.datetime,
-    required this.amount,
-    required this.txid,
-  });
+                
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ShorthandConversation &&
+                runtimeType == other.runtimeType
+                && roomName == other.roomName&& photo == other.photo&& subtext == other.subtext&& isGroup == other.isGroup&& roomId == other.roomId;
+        
+            }
 
-  @override
-  int get hashCode =>
-      isWithdraw.hashCode ^ datetime.hashCode ^ amount.hashCode ^ txid.hashCode;
+class ShorthandTransaction  {
+                final bool isWithdraw;
+final String datetime;
+final String amount;
+final String txid;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ShorthandTransaction &&
-          runtimeType == other.runtimeType &&
-          isWithdraw == other.isWithdraw &&
-          datetime == other.datetime &&
-          amount == other.amount &&
-          txid == other.txid;
-}
+                const ShorthandTransaction({required this.isWithdraw ,required this.datetime ,required this.amount ,required this.txid ,});
+
+                
+                
+
+                
+        @override
+        int get hashCode => isWithdraw.hashCode^datetime.hashCode^amount.hashCode^txid.hashCode;
+        
+
+                
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ShorthandTransaction &&
+                runtimeType == other.runtimeType
+                && isWithdraw == other.isWithdraw&& datetime == other.datetime&& amount == other.amount&& txid == other.txid;
+        
+            }
+            

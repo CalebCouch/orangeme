@@ -80,7 +80,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
     //The following widgets can ONLY be used in this file
 
     Widget SelectedContacts(recipients) {
-        return Container(
+        return recipients.isEmpty ? SizedBox() : Container(
             alignment: Alignment.topLeft,
             child: Wrap(
                 spacing: 8,

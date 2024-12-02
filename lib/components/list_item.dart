@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 
@@ -27,7 +28,10 @@ class ListItem extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return InkWell(
-            onTap: onTap ?? () {},
+            onTap: () {
+                HapticFeedback.heavyImpact();
+                if (onTap != null) onTap!();
+            },
             child: Container(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.listItem),
                 child: Row(

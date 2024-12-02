@@ -55,6 +55,7 @@ class UserProfileState extends GenericState<UserProfile> {
 
     @override
     Widget build_with_state(BuildContext context) {
+        print(widget.abtMe);
         return Stack_Default(
             header: Header_Stack(context, widget.name),
             content: [

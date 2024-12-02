@@ -297,7 +297,7 @@ impl StateManager {
 
         Ok(serde_json::to_string(&json!({
             "name": profile.name,
-            "about_me": profile.abt_me,
+            "abt_me": profile.abt_me,
             "did": profile.did,
             "profile_picture": profile.pfp_path,
             "address": address,
@@ -309,9 +309,11 @@ impl StateManager {
             call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await? // Needs to get for users address
         } else {String::new()};
 
+        log::info!("users profile::::::  {:?}", profile.clone());
+
         Ok(serde_json::to_string(&json!({
             "name": profile.name,
-            "about_me": profile.abt_me,
+            "abt_me": profile.abt_me,
             "did": profile.did,
             "profile_picture": profile.pfp_path,
             "address": address,

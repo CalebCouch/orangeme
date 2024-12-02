@@ -13,6 +13,7 @@ class CustomButton extends StatefulWidget {
     final VoidCallback onTap;
     final VoidCallback? onDis;
     final bool enabled;
+    final String? color;
 
     const CustomButton({
             super.key, 
@@ -24,6 +25,7 @@ class CustomButton extends StatefulWidget {
             required this.txt,
             required this.onTap, 
             this.enabled = true, 
+            this.color,
         }
     );
 
@@ -56,7 +58,7 @@ class _ButtonState extends State<CustomButton> {
     getColors() {
         setState(() => status = widget.enabled ? 'enabled' : 'disabled');
         text = buttonColors[widget.variant][status].text;
-        fill = customize_color[buttonColors[widget.variant][status].fill]!;
+        fill = customize_color[widget.color ?? buttonColors[widget.variant][status].fill]!;
     }
 
     Widget buildButton() {
@@ -143,4 +145,59 @@ class BoxDecorations {
         ),
         borderRadius: BorderRadius.circular(24),
     );
+}
+
+
+// CUSTOM BUTTONS //
+
+class CopyButton extends CustomButton {
+  final String textToCopy;
+
+  CopyButton({required this.textToCopy, Key? key})
+      : super(
+          txt: 'Copy',
+          variant: 'secondary',
+          size: 'md',
+          expand: false,
+          icon: 'copy',
+          onTap: () {},
+          color: 'bg', // Default color
+        );
+
+  @override
+  _CopyButtonState createState() => _CopyButtonState();
+}
+
+class _CopyButtonState extends State<CopyButton> {
+  String buttonText = 'Copy';
+  String buttonColor = 'bg'; 
+
+  copyDid() async {
+    HapticFeedback.heavyImpact();
+    await Clipboard.setData(ClipboardData(text: widget.textToCopy));
+
+    setState(() {
+      buttonText = 'Copied';
+      buttonColor = 'bg_secondary';
+    });
+
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      buttonText = 'Copy';
+      buttonColor = 'bg'; 
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomButton(
+      txt: buttonText,
+      variant: 'secondary',
+      size: 'md',
+      expand: false,
+      icon: 'copy',
+      onTap: copyDid,
+      color: buttonColor, 
+    );
+  }
 }
