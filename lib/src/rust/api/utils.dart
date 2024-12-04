@@ -7,10 +7,6 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pub_structs.dart';
 
-
-            
-
-            Future<(String,bool,int)> updateAmount({required String amount , required KeyPress key }) => RustLib.instance.api.crateApiUtilsUpdateAmount(amount: amount, key: key);
-
-            
-            
+Future<(String, bool, int)> updateAmount(
+        {required String amount, required KeyPress key}) =>
+    RustLib.instance.api.crateApiUtilsUpdateAmount(amount: amount, key: key);

@@ -144,6 +144,10 @@ impl StateManager {
     }
 
     pub async fn test(&self) -> Result<String, Error> {
+        // SETTIN THE STATE WITH FAKE PROFILES -- FOR TESTING
+        let users = self.create_fake_profiles().await?; //
+        self.state.set(Field::Users(Some(users))).await?;
+
         let count = self.state.get_or_default::<u64>(&Field::Test(None)).await?;
         self.state.set(Field::Test(Some(count+1))).await?;
         Ok(format!("{{\"count\": {}}}", count/10))
@@ -281,14 +285,13 @@ impl StateManager {
     }
 
     pub async fn scan_qr(&self) -> Result<String, Error> {
-        Ok(serde_json::to_string(&json!({
-        }))?)
+        Ok(serde_json::to_string(&json!({}))?)
     }
 
     /*      Messages Home        */
 
     pub async fn my_profile(&self, init: bool) -> Result<String, Error> {
-        let profile = self.state.get::<Profile>(&Field::Profile(None)).await?;
+        let profile = self.state.get_or_default::<Profile>(&Field::Profile(None)).await?;
         let address = if init {
             let adr = call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await?;
             self.state.set(Field::ProfileAddress(Some(adr.clone()))).await?;
@@ -305,11 +308,10 @@ impl StateManager {
     }
 
     pub async fn user_profile(&self, init: bool, profile: DartProfile) -> Result<String, Error> {
+        log::info!("USER PROFILE {:?}", profile.clone());
         let address = if init {
             call_thread(Threads::Wallet(WalletMethod::GetNewAddress)).await? // Needs to get for users address
         } else {String::new()};
-
-        log::info!("users profile::::::  {:?}", profile.clone());
 
         Ok(serde_json::to_string(&json!({
             "name": profile.name,
@@ -368,6 +370,7 @@ impl StateManager {
         let record = if record.is_empty() {
 
             // Collect the members as Web5 Profiles from DartProfiles
+            log::info!("ALL THE ----------- MEMBERS::: {:?}", members.clone());
             let chosen_members = members.into_iter().map(|dart_profile| Profile {
                 name: dart_profile.name,
                 did: Did::from_str(dart_profile.did.as_str()).unwrap(),
@@ -413,6 +416,7 @@ impl StateManager {
         // Get the members and messages out of this_conversation
         let members = this_conversation.members.clone();
         let messages = this_conversation.messages.clone();
+        log::info!("ALL  MEMBERS::: {:?}", members.clone());
     
         Ok(serde_json::to_string(&json!({
             "room_id": record,
@@ -432,8 +436,7 @@ impl StateManager {
     }
 
     pub async fn choose_recipient(&self) -> Result<String, Error> {
-        let users = self.create_fake_profiles().await?; //
-        self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
+        let users = self.state.get_or_default::<Vec<Profile>>(&Field::Users(None)).await?;
         Ok(serde_json::to_string(&json!({
             "users": users.into_iter().map(|profile| {
                 DartProfile{

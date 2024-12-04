@@ -46,7 +46,7 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
                     sender: DartProfile(
                         name: json['sender']['name'] as String,
                         did: json['sender']['did'] as String,
-                        abtMe: json['sender']['about_me'] as String?,
+                        abtMe: json['sender']['abt_me'] as String?,
                         pfpPath: json['sender']['pfp_path'] as String?,
                     ),
                     message: json['message'] as String,
@@ -61,7 +61,7 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
             (json) => DartProfile(
                 name: json['name'] as String,
                 did: json['did'] as String,
-                abtMe: json['about_me'] as String?,
+                abtMe: json['abt_me'] as String?,
                 pfpPath: json['pfp_path'] as String?,
             )
         ));

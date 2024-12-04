@@ -34,7 +34,7 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
             (json) => DartProfile(
                 name: json['name'] as String,
                 did: json['did'] as String,
-                abtMe: json['about_me'] as String?,
+                abtMe: json['abt_me'] as String?,
                 pfpPath: json['pfp_path'] as String?,
             )
         ));

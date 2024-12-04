@@ -26,7 +26,7 @@ Widget ProfilePhoto (BuildContext context, {String? pfp, double size = ProfileSi
         child: pfp == null || isGroup ? SvgPicture.asset(
             height: _getIconSize(size),
             width: _getIconSize(size),
-            isGroup ? ThemeIcon.group : ThemeIcon.profile,
+            isGroup ? icon['group']! : icon['profile']!,
             colorFilter: const ColorFilter.mode(ThemeColor.textSecondary, BlendMode.srcIn),
         ) : null,
     );

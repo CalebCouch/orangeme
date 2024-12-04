@@ -22,7 +22,7 @@ ThemeData theme() {
 
 Widget Logo(String size) {
     return SvgPicture.asset(
-        ThemeIcon.logo,
+        icon['logo']!,
         width: logo_size[size],
         height: logo_size[size],
     );

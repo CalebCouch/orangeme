@@ -38,15 +38,15 @@ class UserProfileState extends GenericState<UserProfile> {
 
     @override
     void unpack_state(Map<String, dynamic> json) {
-            widget.init = false;
-            widget.sendMessage = false;
-            widget.sendBitcoin = false;
+        widget.init = false;
+        widget.sendMessage = false;
+        widget.sendBitcoin = false;
 
-            widget.address = json['address'] as String;
-            widget.name = json['name'] as String;
-            widget.did = json['did'] as String;
-            widget.abtMe = json['abt_me'] as String?;
-            widget.photo = json['profile_picture'] as String?;
+        widget.address = json['address'] as String;
+        widget.name = json['name'] as String;
+        widget.did = json['did'] as String;
+        widget.abtMe = json['abt_me'] as String?;
+        widget.photo = json['profile_picture'] as String?;
     }
 
     sendMessage() { setState(() => widget.sendMessage = true); }
