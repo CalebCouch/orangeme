@@ -26,7 +26,7 @@ Future<void> main() async {
     // await initNotifications();
     if (global.platform_isDesktop) {
         first_load_desktop = true;
-        WindowManager.instance.setMinimumSize(const Size(1280, 900));
+        //WindowManager.instance.setMinimumSize(const Size(1280, 900));
     } else {
         first_load_desktop = false;
     }
