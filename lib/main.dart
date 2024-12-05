@@ -3,13 +3,15 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:workmanager/workmanager.dart';
 import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/flows/multi_device/connect_computer.dart';
+import 'package:orange/flows/multi_device/pair_computer/connect_computer.dart';
 import 'package:orange/test.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
 import 'package:flutter/services.dart';
 import 'dart:ui';
 
+
+bool first_load_desktop = true;
 
 Future<void> main() async {
     await RustLib.init();
@@ -18,10 +20,10 @@ Future<void> main() async {
     global.startRust();
     // await initNotifications();
     if (global.platform_isDesktop) {
-        bool first_load_desktop = true;
+        first_load_desktop = true;
         WindowManager.instance.setMinimumSize(const Size(1280, 832));
     } else {
-        bool first_load_desktop = false;
+        first_load_desktop = false;
     }
     FlutterError.onError = (details) {
         FlutterError.presentError(details);

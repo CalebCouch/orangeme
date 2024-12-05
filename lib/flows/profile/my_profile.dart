@@ -121,7 +121,7 @@ class MyProfileState extends GenericState<MyProfile> {
             return DataItem(
                 title: 'Connect to a Computer',
                 subtitle: 'Connect this device to a laptop or desktop computer to back up accounts or create a savings wallet',
-                buttons: [CustomButton(variant: 'secondary', size: 'md', expand: false, txt: 'Connect Computer', onTap: () {navigateTo(ConnectComputer());}, icon: 'link')],
+                buttons: [CustomButton(variant: 'secondary', size: 'md', expand: false, txt: 'Connect Computer', onTap: () {navigateTo(DownloadDesktop());}, icon: 'link')],
             );
         }
 
