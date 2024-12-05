@@ -29,7 +29,7 @@ Future<void> main() async {
         first_load_desktop = false;
         WindowManager.instance.setMinimumSize(const Size(1280, 950));
         WindowOptions windowOptions = WindowOptions(
-            size: Size(1280, 950), 
+            size: Size(1280, 850), 
             title: "orange",
             center: true,
         );
