@@ -16,7 +16,7 @@ class ConnectComputerState extends State<ConnectComputer> {
         return Root_Takeover(
             header: Header_Takeover(context, "Download desktop app"),
             content: Content(alignment: Alignment.center, [
-                QRCode('Connection Code'),
+                QRCode('Connection Code: 2IU3IGSHPAw3S5G3SvgsgrjKPKtwaMG1bZ2h8C2e'),
                 CustomTextSpan('Scan with the orange mobile app'),
                 CustomText(variant: 'text', txt: 'Scan this QR code with your phone to connect your phone with this laptop or desktop computer', font_size: 'md'),
                 CustomText(variant: 'text', txt: 'or', font_size: 'md', text_color: 'text_secondary'),
