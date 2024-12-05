@@ -24,7 +24,7 @@ class DownloadDesktopState extends State<DownloadDesktop> {
                     text_decoration: TextDecoration.underline
                 )
             ],
-            bumper: SizedBox(),
+            bumper: Bumper(context, content: [CustomButton(txt: 'Continue', onTap: () {navigateTo(context, ScanQR());})]),
             alignment: Alignment.center,
             scroll: false,
         );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orange/theme/logo.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/components/qr_code/custom_qr_generator.dart';
 import 'package:orange/components/qr_code/options/options.dart';

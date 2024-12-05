@@ -22,7 +22,7 @@ class ConnectComputerState extends State<ConnectComputer> {
                 CustomText(variant: 'text', txt: 'or', font_size: 'md', text_color: 'text_secondary'),
                 CustomButton(txt: 'Download Mobile App', onTap: () {}, variant: 'secondary', expand: false),
             ],
-            bumper: Bumper(context, content: [CustomButton(txt: 'Continue', onTap: () {navigateTo(context, ScanQR());})]),
+            bumper: SizedBox(),
             alignment: Alignment.center,
             scroll: false,
         );
