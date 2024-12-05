@@ -3,6 +3,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:workmanager/workmanager.dart';
 import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/multi_device/connect_computer.dart';
 import 'package:orange/test.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/global.dart' as global;
@@ -15,10 +16,13 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await global.getAppData();
     global.startRust();
-//     await initNotifications();
-//     if (global.platform_isDesktop) {
-//         WindowManager.instance.setMinimumSize(const Size(1280, 832));
-//    }
+    // await initNotifications();
+    if (global.platform_isDesktop) {
+        bool first_load_desktop = true;
+        WindowManager.instance.setMinimumSize(const Size(1280, 832));
+    } else {
+        bool first_load_desktop = false;
+    }
     FlutterError.onError = (details) {
         FlutterError.presentError(details);
         global.throwError(details.toString());
@@ -110,7 +114,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             navigatorKey: global.navigation.navkey,
             title: 'orange',
             theme: theme(),
-            home: BitcoinHome(),
+            home: first_load_desktop ? ConnectComputer() : BitcoinHome(),
             //home: Test(),
         );
     }

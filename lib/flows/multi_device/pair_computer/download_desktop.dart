@@ -3,15 +3,14 @@ import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orange/flows/multi_device/pair_computer/scan_qr.dart';
 
-class ConnectComputer extends StatefulWidget {
-    ConnectComputer({super.key});
+class DownloadDesktop extends StatefulWidget {
+    DownloadDesktop({super.key});
 
     @override
-    ConnectComputerState createState() => ConnectComputerState();
+    DownloadDesktopState createState() => DownloadDesktopState();
 }
 
-class ConnectComputerState extends State<ConnectComputer> {
-
+class DownloadDesktopState extends State<DownloadDesktop> {
     @override
     Widget build(BuildContext context) {
         return Stack_Default(

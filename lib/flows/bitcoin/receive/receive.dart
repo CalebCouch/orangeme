@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/qr_code/options/options.dart';
-import 'package:orange/components/qr_code/options/shapes.dart';
-import 'package:orange/components/qr_code/qr_painter.dart';
-import 'package:orange/components/qr_code/shapes/pixel_shape.dart';
+import 'package:orange/components/qr_code/qr_code.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:share_plus/share_plus.dart';
@@ -56,40 +53,4 @@ class ReceiveState extends GenericState<Receive> {
             scroll: false,
         );
     }
-}
-
-//The following widgets can ONLY be used in this file
-
-Widget QRCode(String address) {
-    return Stack(
-        alignment: Alignment.center,
-        children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CustomPaint(
-                    size: const Size(312, 312),
-                    painter: QrPainter(
-                        data: address,
-                        options: const QrOptions(
-                            shapes: QrShapes(
-                                darkPixel: QrPixelShapeCircle(),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            Positioned(
-                child: Logo('xxl'),
-            ),
-        ],
-    );
-}
-
-Widget Instructions() {
-    return CustomText(
-        variant: 'text', 
-        font_size: 'md', 
-        text_color: 'text_secondary', 
-        txt: 'Scan to receive bitcoin.'
-    );
 }
