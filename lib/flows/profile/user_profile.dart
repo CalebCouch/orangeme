@@ -60,9 +60,9 @@ class UserProfileState extends GenericState<UserProfile> {
             header: Header_Stack(context, widget.name),
             content: [
                 ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
-                aboutMeItem(context, widget.abtMe ?? "This profile is still a mystery."),
-                didItem(context, widget.did),
-                addressItem(context, widget.address),
+                AboutMeItem(context, widget.abtMe ?? "This profile is still a mystery."),
+                DidItem(context, widget.did),
+                AddressItem(context, widget.address),
             ],
             bumper: Bumper(context, content: [
                 CustomButton(txt: 'Message', onTap: sendMessage),

@@ -41,7 +41,7 @@ Widget UniBackButton(BuildContext context, Widget destination) {
 Widget ExitButton(BuildContext context, Widget home) {
     return CustomIconButton(
         () { resetNavTo(context, home); }, 
-        icon: 'close',
+        icon: 'exit',
     );
 }
 

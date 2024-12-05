@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/components/result.dart';
 import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
@@ -33,7 +34,7 @@ class SuccessState extends GenericState<Success> {
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Send confirmed", Container(), ExitButton(context, BitcoinHome())),
-            content: [Result()],
+            content: [Result(message: 'You sent ${widget.amount_usd}')],
             bumper: Bumper(context, content: [
                 CustomButton(
                     txt: 'Done', 
@@ -43,18 +44,6 @@ class SuccessState extends GenericState<Success> {
             ]),
             alignment: Alignment.center,
             scroll: false,
-        );
-    }
-
-    Widget Result() {
-        return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-                CustomIcon(icon: 'bitcoin', size: 'xxl'),
-                const Spacing(16),
-                CustomText(variant:'heading', font_size: 'h3', txt: 'You sent ${widget.amount_usd}'),
-            ],
         );
     }
 }

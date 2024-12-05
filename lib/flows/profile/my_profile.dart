@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/generic.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orange/flows/multi_device/pair_computer/download_desktop.dart';
 //import 'package:orange/global.dart' as global;
 
 class MyProfile extends GenericWidget {
@@ -116,14 +117,23 @@ class MyProfileState extends GenericState<MyProfile> {
             );
         }
 
+        Widget ConnectComputerItem() {
+            return DataItem(
+                title: 'Connect to a Computer',
+                subtitle: 'Connect this device to a laptop or desktop computer to back up accounts or create a savings wallet',
+                buttons: [CustomButton(variant: 'secondary', size: 'md', expand: false, txt: 'Connect Computer', onTap: () {navigateTo(ConnectComputer());}, icon: 'link')],
+            );
+        }
+
         return Stack_Default(
             header: Header_Stack(context, "My profile"),
             content: [
                 EditPhoto(),
                 EditName(),
                 EditDesc(),
-                didItem(context, widget.did),
-                addressItem(context, widget.address),
+                DidItem(context, widget.did),
+                AddressItem(context, widget.address),
+                ConnectComputerItem(),
             ],
             bumper: Bumper(context, content: [CustomButton(txt: 'Save', onTap: saveInfo, enabled: save)]),
         );

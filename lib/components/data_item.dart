@@ -22,7 +22,7 @@ class DataItem extends StatelessWidget {
 
     @override
     Widget build(BuildContext context) {
-        return SizedBox(
+        return Container(
             width: MediaQuery.sizeOf(context).width - 48,
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -38,13 +38,13 @@ class DataItem extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                     CustomText(variant: 'heading', font_size: 'h5', txt: title, alignment: TextAlign.left),
-                                    if (subtitle != null || helperText != null || buttons != null || content != null) const Spacing(16),
-                                    if (subtitle != null) CustomText(variant: 'text', font_size: 'md', txt: subtitle!, alignment: TextAlign.left),
-                                    if (subtitle != null) const Spacing(16),
-                                    if (helperText != null) CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: helperText!, alignment: TextAlign.left),
+                                    if (subtitle != null || helperText != null || buttons != null || content != null) const Spacing(8),
+                                    if (subtitle != null) CustomText(text_color: 'secondary', variant: 'text', font_size: 'md', txt: subtitle!, alignment: TextAlign.left),
                                     if (helperText != null) const Spacing(16),
-                                    if (content != null) content!,
+                                    if (helperText != null) CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: helperText!, alignment: TextAlign.left),
                                     if (content != null) const Spacing(16),
+                                    if (content != null) content!,
+                                    if (buttons != null) const Spacing(16),
                                     if (buttons != null) CustomRow(buttons!, 10),
                                 ],
                             ),
@@ -73,49 +73,27 @@ class DataItem extends StatelessWidget {
     }
 }
 
-Widget aboutMeItem(BuildContext context, String aboutMe) {
+Widget AboutMeItem(BuildContext context, String aboutMe) {
     return DataItem(
         title: 'About me',
-        content: CustomText(
-            variant: 'text', 
-            font_size: 'md', 
-            text_color: 'secondary', 
-            txt: aboutMe, 
-            alignment: TextAlign.start
-        ),
+        subtitle: aboutMe,
     );
 }
 
-Widget addressItem(BuildContext context, String address) {
+Widget AddressItem(BuildContext context, String address) {
     return DataItem(
         title: 'Bitcoin Address',
-        content: CustomText(
-            txt: address,
-            variant: 'text',
-            font_size: 'md',
-            text_color: 'secondary',
-            alignment: TextAlign.start,
-        ),
-        buttons: [
-            CopyButton(textToCopy: address),
-        ],
+        subtitle: address,
+        buttons: [CopyButton(textToCopy: address)],
     );
 }
 
 
-Widget didItem(BuildContext context, String did) {
+Widget DidItem(BuildContext context, String did) {
     return DataItem(
         title: 'Digital ID',
-        content: CustomText(
-            txt: did,
-            variant: 'text',
-            font_size: 'md',
-            text_color: 'secondary',
-            alignment: TextAlign.start,
-        ),
-        buttons: [
-            CopyButton(textToCopy: did),
-        ],
+        subtitle: did,
+        buttons: [CopyButton(textToCopy: did)],
     );
 }
 

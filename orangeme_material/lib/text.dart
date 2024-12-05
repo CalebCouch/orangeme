@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orangeme_material/color.dart';
+import 'package:orangeme_material/icon.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomText extends StatefulWidget {
     final String variant;
@@ -82,4 +84,35 @@ String EllipsisText(String input){
     final startLength = (maxLength / 2).floor();
     final endLength = maxLength - startLength - 3; 
     return '${input.substring(0, startLength)}...${input.substring(input.length - endLength)}';
+}
+
+Widget CustomTextSpan(String inputText){
+    final parts = inputText.split('orange');
+
+    final List<InlineSpan> spans = [];
+    for (int i = 0; i < parts.length; i++) {
+        if (parts[i].isNotEmpty) {
+            spans.add(TextSpan(text: parts[i], style: TextStyle(
+                color: ThemeColor.heading, 
+                fontWeight: FontWeight.w700, 
+                fontSize: 24.0,
+                fontFamily: 'Outfit', 
+            )));
+        }
+        if (i < parts.length - 1) {
+            spans.add(WidgetSpan(
+                baseline: TextBaseline.alphabetic,
+                alignment: PlaceholderAlignment.baseline,
+                child: Transform.translate(
+                    offset: Offset(0, 5),
+                    child: SvgPicture.asset(icon['wordmark']!, width: 80),
+                )
+            ));
+        }
+    }
+
+    return RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(children: spans),
+    );
 }

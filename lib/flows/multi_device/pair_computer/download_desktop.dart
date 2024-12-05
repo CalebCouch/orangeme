@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orangeme_material/navigation.dart';
+import 'package:orange/flows/multi_device/pair_computer/scan_qr.dart';
+
+class ConnectComputer extends StatefulWidget {
+    ConnectComputer({super.key});
+
+    @override
+    ConnectComputerState createState() => ConnectComputerState();
+}
+
+class ConnectComputerState extends State<ConnectComputer> {
+
+    @override
+    Widget build(BuildContext context) {
+        return Stack_Default(
+            header: Header_Stack(context, "Download desktop app"),
+            content: [
+                CustomTextSpan('Install the orange desktop app on your laptop or desktop computer'),
+                CustomText(
+                    txt: 'desktop.orange.me', 
+                    font_size: 'h4', 
+                    variant: 'heading', 
+                    text_decoration: TextDecoration.underline
+                )
+            ],
+            bumper: Bumper(context, content: [CustomButton(txt: 'Continue', onTap: () {navigateTo(context, ScanQR());})]),
+            alignment: Alignment.center,
+            scroll: false,
+        );
+    }
+}
