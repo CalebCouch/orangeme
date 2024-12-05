@@ -9,7 +9,7 @@ Widget Bumper( BuildContext context, {
     bool vertical = false,
 }) {
     return Container(
-        constraints: const BoxConstraints(maxWidth: 426),
+        constraints: const BoxConstraints(maxWidth: 700),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
