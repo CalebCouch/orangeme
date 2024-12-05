@@ -20,7 +20,7 @@ class ConnectComputerState extends State<ConnectComputer> {
                 CustomTextSpan('Scan with the orange mobile app'),
                 CustomText(variant: 'text', txt: 'Scan this QR code with your phone to connect your phone with this laptop or desktop computer', font_size: 'md'),
                 CustomText(variant: 'text', txt: 'or', font_size: 'md', text_color: 'text_secondary'),
-                CustomButton(txt: 'Download Mobile App', onTap: () {}, variant: 'secondary', expand: false),
+                CustomButton(txt: 'Download Mobile App', onTap: () {}, variant: 'secondary', expand: false, size: 'md'),
             ],
             bumper: SizedBox(),
             alignment: Alignment.center,

@@ -6,7 +6,7 @@ import 'package:orange/components/qr_code/options/shapes.dart';
 import 'package:orange/components/qr_code/qr_painter.dart';
 import 'package:orange/components/qr_code/shapes/pixel_shape.dart';
 
-Widget QRCode(String address) {
+Widget QRCode(String encode) {
     return Stack(
         alignment: Alignment.center,
         children: [
@@ -15,7 +15,7 @@ Widget QRCode(String address) {
                 child: CustomPaint(
                     size: const Size(312, 312),
                     painter: QrPainter(
-                        data: address,
+                        data: encode,
                         options: const QrOptions(
                             shapes: QrShapes(
                                 darkPixel: QrPixelShapeCircle(),
