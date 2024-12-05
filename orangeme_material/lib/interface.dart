@@ -9,6 +9,7 @@ Widget Bumper( BuildContext context, {
     bool vertical = false,
 }) {
     return Container(
+        constraints: const BoxConstraints(maxWidth: 396),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
@@ -40,18 +41,15 @@ class Content extends StatelessWidget {
 }
 
 Widget Interface(bool scroll, Widget child) {
-  return PopScope(
-    canPop: false,
-    child: Scaffold(
-      resizeToAvoidBottomInset: scroll,
-      body: SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 512), 
-          child: child,
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+            resizeToAvoidBottomInset: scroll,
+            body: SafeArea(
+                child: child,
+            ),
         ),
-      ),
-    ),
-  );
+    );
 }
 
 
