@@ -21,11 +21,11 @@ Future<void> main() async {
     await global.getAppData();
     global.startRust();
     // await initNotifications();
-    await windowManager.ensureInitialized();
     if (global.platform_isDesktop) {
-        WindowManager.instance.setMinimumSize(const Size(1280, 950));
+        await windowManager.ensureInitialized();
+        WindowManager.instance.setMinimumSize(const Size(1280, 750));
         WindowOptions windowOptions = WindowOptions(
-            size: Size(1280, 850), 
+            size: Size(1280, 750), 
             title: "orange",
             center: true,
         );
