@@ -17,7 +17,7 @@ class ConnectComputerState extends State<ConnectComputer> {
             header: Header_Stack(context, "Download desktop app"),
             content: [
                 QRCode('Connection Code'),
-                CustomTextSpan('Scan with the orange mobile app')
+                CustomTextSpan('Scan with the orange mobile app'),
                 CustomText(variant: 'text', txt: 'Scan this QR code with your phone to connect your phone with this laptop or desktop computer', font_size: 'md'),
                 CustomText(variant: 'text', txt: 'or', font_size: 'md', text_color: 'text_secondary'),
                 CustomButton(txt: 'Download Mobile App', onTap: () {}, variant: 'secondary', expand: false),

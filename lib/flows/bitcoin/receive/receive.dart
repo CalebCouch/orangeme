@@ -44,7 +44,7 @@ class ReceiveState extends GenericState<Receive> {
             header: Header_Stack(context, "Receive bitcoin"),
             content: [
                 QRCode(widget.address),
-                Instructions(),
+                CustomText(variant: 'text', font_size: 'md', text_color: 'text_secondary', txt: 'Scan to receive bitcoin.'),
             ],
             bumper: Bumper(context, 
                 content: [CustomButton(txt: 'Share', variant: 'primary', size: 'lg', onTap: onShare)]

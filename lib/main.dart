@@ -1,14 +1,19 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+// import 'package:workmanager/workmanager.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:orangeme_material/orangeme_material.dart';
+
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
-//import 'package:workmanager/workmanager.dart';
+import 'package:orange/global.dart' as global;
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/multi_device/pair_computer/connect_computer.dart';
 import 'package:orange/test.dart';
-import 'package:orangeme_material/orangeme_material.dart';
-import 'package:orange/global.dart' as global;
-import 'package:flutter/services.dart';
-import 'dart:ui';
 
 
 bool first_load_desktop = true;
