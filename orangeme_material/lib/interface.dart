@@ -67,7 +67,7 @@ Widget Root_Home({
 }) {
     return Interface(
         scroll,
-        child: Column(
+        Column(
             children: [
                 header,
                 !scroll ? Expanded( 
@@ -91,7 +91,7 @@ Widget Root_Home({
 Widget Root_Takeover({ required Widget header, required Widget content}) {
     return Interface(
         false,
-        child: Column(
+        Column(
             children: [
                 header,
                 Expanded(
@@ -111,7 +111,7 @@ Widget Stack_Default({
 }) {
     return Interface(
         scroll,
-        child: Column(
+        Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
                 header,
@@ -138,7 +138,7 @@ Widget Stack_Scroll({
 }) {
     return Interface(
         false,
-        child: SingleChildScrollView(
+        SingleChildScrollView(
             child: Column(
                 children: [
                     header,
@@ -160,7 +160,7 @@ Widget Stack_Chat({
 }) {
     return Interface(
         false,
-        child: Column(
+        Column(
             children: [
                 header,
                 if (content[0]) Expanded(
