@@ -24,9 +24,20 @@ Future<void> main() async {
     await global.getAppData();
     global.startRust();
     // await initNotifications();
+    await windowManager.ensureInitialized();
     if (global.platform_isDesktop) {
         first_load_desktop = true;
-        //WindowManager.instance.setMinimumSize(const Size(1280, 900));
+        WindowManager.instance.setMinimumSize(const Size(1280, 900));
+        WindowOptions windowOptions = WindowOptions(
+            size: Size(1280, 900), 
+            title: "orange",
+            center: true,
+        );
+
+        windowManager.waitUntilReadyToShow(windowOptions, () async {
+            await windowManager.show();
+            await windowManager.focus();
+        });
     } else {
         first_load_desktop = false;
     }
