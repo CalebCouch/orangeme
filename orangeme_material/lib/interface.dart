@@ -9,7 +9,7 @@ Widget Bumper( BuildContext context, {
     bool vertical = false,
 }) {
     return Container(
-        constraints: const BoxConstraints(maxWidth: 700),
+        constraints: const BoxConstraints(maxWidth: 396),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
@@ -30,7 +30,7 @@ class Content extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return Container(
-            constraints: const BoxConstraints(maxWidth: 396),
+            constraints: const BoxConstraints(maxWidth: 600),
             padding: const EdgeInsets.all(24),
             child: Container(
                 alignment: alignment,
