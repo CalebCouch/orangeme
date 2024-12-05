@@ -93,7 +93,7 @@ Widget Root_Takeover({ required Widget header, required Widget content}) {
             children: [
                 header,
                 Expanded( 
-                    child: content,
+                    child: Center(child: content),
                 )
             ],
         ),
