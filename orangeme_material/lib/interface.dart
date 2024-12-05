@@ -39,6 +39,21 @@ class Content extends StatelessWidget {
     }
 }
 
+Widget Interface({required bool scroll, required Widget child}) {
+  return PopScope(
+    canPop: false,
+    child: Scaffold(
+      resizeToAvoidBottomInset: scroll,
+      body: SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 512), 
+          child: child,
+        ),
+      ),
+    ),
+  );
+}
+
 
 // INTERFACES //
 
@@ -50,48 +65,39 @@ Widget Root_Home({
   Alignment alignment = Alignment.topCenter,
   bool scroll = true,
 }) {
-    return PopScope(
-        canPop: false,
-        child: Scaffold(
-        resizeToAvoidBottomInset: scroll,
-            body: SafeArea(
-                child: Column(
-                    children: [
-                        header,
-                        !scroll ? Expanded( 
-                            child: Content(
-                                content, 
-                                alignment: alignment
-                             )
-                        ) : Expanded(
-                            child: SingleChildScrollView(
-                                child: Content(content),
-                            ),
-                        ),
-                        bumper,
-                        tabNav,
-                    ],
+    return Interface(
+        scroll,
+        child: Column(
+            children: [
+                header,
+                !scroll ? Expanded( 
+                    child: Content(
+                        content, 
+                        alignment: alignment
+                        )
+                ) : Expanded(
+                    child: SingleChildScrollView(
+                        child: Content(content),
+                    ),
                 ),
-            ),
+                bumper,
+                tabNav,
+            ],
         ),
     );
 }
 
 
 Widget Root_Takeover({ required Widget header, required Widget content}) {
-    return PopScope(
-        canPop: false,
-        child: Scaffold(
-            body: SafeArea(
-                child: Column(
-                    children: [
-                        header,
-                        Expanded(
-                            child: content,
-                        ),
-                    ],
+    return Interface(
+        false,
+        child: Column(
+            children: [
+                header,
+                Expanded(
+                    child: content,
                 ),
-            ),
+            ],
         ),
     );
 }
@@ -103,29 +109,24 @@ Widget Stack_Default({
   Alignment alignment = Alignment.topCenter,
   bool scroll = true,
 }) {
-    return PopScope(
-        canPop: false,
-        child: Scaffold(
-            resizeToAvoidBottomInset: scroll,
-            body: SafeArea(
-                child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                        header,
-                        !scroll ? Expanded(
-                            child: Content(
-                                content, 
-                                alignment: alignment
-                            )
-                        ) : Expanded(
-                            child: SingleChildScrollView(
-                                child: Content(content),
-                            ),
-                        ),
-                        bumper,
-                    ],
+    return Interface(
+        scroll,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+                header,
+                !scroll ? Expanded(
+                    child: Content(
+                        content, 
+                        alignment: alignment
+                    )
+                ) : Expanded(
+                    child: SingleChildScrollView(
+                        child: Content(content),
+                    ),
                 ),
-            ),
+                bumper,
+            ],
         ),
     );
 }
@@ -135,21 +136,17 @@ Widget Stack_Scroll({
     required Widget header,
     required List<Widget> content,
 }) {
-    return PopScope(
-        canPop: false,
-        child: Scaffold(
-            body: SafeArea(
-                child: SingleChildScrollView(
-                    child: Column(
-                        children: [
-                            header,
-                            Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 24),
-                                child: CustomColumn(content, 24),
-                            ),
-                        ],
+    return Interface(
+        false,
+        child: SingleChildScrollView(
+            child: Column(
+                children: [
+                    header,
+                    Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: CustomColumn(content, 24),
                     ),
-                ),
+                ],
             ),
         ),
     );
@@ -161,32 +158,28 @@ Widget Stack_Chat({
     required List<dynamic> content,
     required Widget bumper,
 }) {
-    return PopScope(
-        canPop: false,
-        child: Scaffold(
-            body: SafeArea(
-                child: Column(
-                    children: [
-                        header,
-                        if (content[0]) Expanded(
-                            child: Container(
-                                padding: const EdgeInsets.all(24),
-                                child: content[1],
-                            ),
-                        ) else const Expanded(
-                            child: Center(
-                                child: CustomText(
-                                    variant: 'text',
-                                    font_size: 'md',
-                                    text_color: 'text_secondary',
-                                    txt: 'No messages yet.',
-                                ),
-                            ),
+    return Interface(
+        false,
+        child: Column(
+            children: [
+                header,
+                if (content[0]) Expanded(
+                    child: Container(
+                        padding: const EdgeInsets.all(24),
+                        child: content[1],
+                    ),
+                ) else const Expanded(
+                    child: Center(
+                        child: CustomText(
+                            variant: 'text',
+                            font_size: 'md',
+                            text_color: 'text_secondary',
+                            txt: 'No messages yet.',
                         ),
-                        bumper,
-                    ],
+                    ),
                 ),
-            ),
+                bumper,
+            ],
         ),
     );
 }

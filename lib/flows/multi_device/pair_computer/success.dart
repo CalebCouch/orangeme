@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orange/flows/bitcoin/home.dart';
-import 'package:orange/navigation.dart';
+import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
@@ -17,7 +17,6 @@ class Success extends StatefulWidget {
 class SuccessState extends State<Success> {
 
     Widget build(BuildContext context) {
-        print()
         return Stack_Default(
             header: Header_Stack(context, "Connection success", Container(), ExitButton(context, MyProfile())),
             content: [Result(message: 'Your computer has been connected to this device', icon: 'checkmark')],
@@ -25,7 +24,7 @@ class SuccessState extends State<Success> {
                 CustomButton(
                     txt: 'Done', 
                     variant: 'secondary', 
-                    onTap: () {resetNavTo(MyProfile());},
+                    onTap: () {resetNavTo(context, MyProfile());},
                 ),
             ]),
             alignment: Alignment.center,
