@@ -15,13 +15,13 @@ class ConnectComputerState extends State<ConnectComputer> {
     Widget build(BuildContext context) {
         return Root_Takeover(
             header: Header_Takeover(context, "Download desktop app"),
-            content: [
+            content: Content(children: [
                 QRCode('Connection Code'),
                 CustomTextSpan('Scan with the orange mobile app'),
                 CustomText(variant: 'text', txt: 'Scan this QR code with your phone to connect your phone with this laptop or desktop computer', font_size: 'md'),
                 CustomText(variant: 'text', txt: 'or', font_size: 'md', text_color: 'text_secondary'),
                 CustomButton(txt: 'Download Mobile App', onTap: () {}, variant: 'secondary', expand: false, size: 'md'),
-            ],
+            ]),
         );
     }
 }
