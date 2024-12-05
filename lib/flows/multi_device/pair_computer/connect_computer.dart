@@ -13,8 +13,8 @@ class ConnectComputer extends StatefulWidget {
 class ConnectComputerState extends State<ConnectComputer> {
     @override
     Widget build(BuildContext context) {
-        return Stack_Default(
-            header: Header_Stack(context, "Download desktop app"),
+        return Root_Takeover(
+            header: Header_Takeover(context, "Download desktop app"),
             content: [
                 QRCode('Connection Code'),
                 CustomTextSpan('Scan with the orange mobile app'),
@@ -22,9 +22,6 @@ class ConnectComputerState extends State<ConnectComputer> {
                 CustomText(variant: 'text', txt: 'or', font_size: 'md', text_color: 'text_secondary'),
                 CustomButton(txt: 'Download Mobile App', onTap: () {}, variant: 'secondary', expand: false, size: 'md'),
             ],
-            bumper: SizedBox(),
-            alignment: Alignment.center,
-            scroll: false,
         );
     }
 }

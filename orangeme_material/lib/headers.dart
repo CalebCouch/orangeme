@@ -50,6 +50,14 @@ Widget Header_Home(BuildContext context, String title, String? profile_picture, 
     );
 }
 
+Widget Header_Takeover(BuildContext context, String title) {
+    return Header(
+        SizedBox(),
+        CustomText(variant: 'heading', font_size:'h3', txt: title),
+        SizedBox(),
+    );
+}
+
 Widget Header_Stack(BuildContext context, String title, [Widget? right, Widget? left]) {
     return Header(
         left ?? CustomBackButton(context),
