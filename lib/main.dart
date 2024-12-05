@@ -26,7 +26,6 @@ Future<void> main() async {
     // await initNotifications();
     await windowManager.ensureInitialized();
     if (global.platform_isDesktop) {
-        first_load_desktop = true;
         WindowManager.instance.setMinimumSize(const Size(1280, 950));
         WindowOptions windowOptions = WindowOptions(
             size: Size(1280, 850), 
@@ -37,8 +36,6 @@ Future<void> main() async {
             await windowManager.show();
             await windowManager.focus();
         });
-    } else {
-        first_load_desktop = false;
     }
     FlutterError.onError = (details) {
         FlutterError.presentError(details);
@@ -131,7 +128,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             navigatorKey: global.navigation.navkey,
             title: 'orange',
             theme: theme(),
-            home: first_load_desktop ? ConnectComputer() : BitcoinHome(),
+            home: ConnectComputer(), //first_load_desktop ? ConnectComputer() : BitcoinHome(),
             //home: Test(),
         );
     }
