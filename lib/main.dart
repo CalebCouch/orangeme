@@ -15,9 +15,6 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/multi_device/pair_computer/connect_computer.dart';
 import 'package:orange/test.dart';
 
-
-bool first_load_desktop = true;
-
 Future<void> main() async {
     await RustLib.init();
     WidgetsFlutterBinding.ensureInitialized();
