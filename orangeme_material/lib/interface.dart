@@ -39,7 +39,7 @@ class Content extends StatelessWidget {
     }
 }
 
-Widget Interface({required bool scroll, required Widget child}) {
+Widget Interface(bool scroll, Widget child) {
   return PopScope(
     canPop: false,
     child: Scaffold(
