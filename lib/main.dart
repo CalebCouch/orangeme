@@ -23,13 +23,13 @@ Future<void> main() async {
     // await initNotifications();
     if (global.platform_isDesktop) {
         await windowManager.ensureInitialized();
-        WindowManager.instance.setMinimumSize(const Size(1280, 750));
         WindowOptions windowOptions = WindowOptions(
             size: Size(1280, 750), 
             title: "orange",
             center: true,
         );
         windowManager.waitUntilReadyToShow(windowOptions, () async {
+            await windowManager.setMinimumSize(const Size(1280, 750));
             await windowManager.show();
             await windowManager.focus();
         });
