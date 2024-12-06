@@ -37,6 +37,13 @@ const DUMMY_ADDRESS: &str = "bc1qxma2dwmutht4vxyl6u395slew5ectfpn35ug9l";
 
 pub type Transactions = BTreeMap<Txid, Transaction>;
 
+// List of Wallets
+// Get Wallet from Wallets
+//    - Send / Receive
+// Create a wallet
+// Name wallet
+// Rename wallet
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Seed{
     pub inner: Vec<u8>
