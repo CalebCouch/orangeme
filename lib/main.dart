@@ -125,7 +125,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             navigatorKey: global.navigation.navkey,
             title: 'orange',
             theme: theme(),
-            home: ConnectComputer(), //first_load_desktop ? ConnectComputer() : BitcoinHome(),
+            home: global.platform_isDesktop ? ConnectComputer() : BitcoinHome(),
             //home: Test(),
         );
     }

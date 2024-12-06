@@ -36,6 +36,8 @@ const Map<String, String> icon = {
   'instagram': 'assets/icons/instagram.svg',
   'googleplay': 'assets/icons/google-play.svg',
   'radioFilled': 'assets/icons/radio-filled.svg',
+  'download-apple': 'assets/icons/download-apple.svg',
+  'download-google': 'assets/icons/download-google.svg',
 };
 
 
@@ -59,16 +61,16 @@ class CustomIcon extends StatefulWidget {
 }
 
 class CustomIconState extends State<CustomIcon> {
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      icon[widget.icon] ?? icon['logo']!,
-      width: icon_size[widget.size],
-      height: icon_size[widget.size],
-      colorFilter: ColorFilter.mode(
-        (widget.color != null ? customize_color[widget.color] : ThemeColor.secondary)!,
-        BlendMode.srcIn,
-      ),
-    );
-  }
+    @override
+    Widget build(BuildContext context) {
+        return SvgPicture.asset(
+            icon[widget.icon] ?? icon['logo']!,
+            width: icon_size[widget.size],
+            height: icon_size[widget.size],
+            colorFilter: ColorFilter.mode(
+                (widget.color != null ? customize_color[widget.color] : ThemeColor.secondary)!,
+                BlendMode.srcIn,
+            ),
+        );
+    }
 }

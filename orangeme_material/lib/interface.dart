@@ -86,12 +86,12 @@ Widget Root_Home({
 }
 
 
-Widget Root_Takeover({ required Widget header, required Widget content}) {
+Widget Root_Takeover({Widget? header, required Widget content}) {
     return Interface(
         false,
         Column(
             children: [
-                header,
+                header ?? SizedBox(),
                 Expanded( 
                     child: Center(child: content),
                 )
