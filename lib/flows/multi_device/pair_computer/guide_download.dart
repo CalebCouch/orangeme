@@ -19,7 +19,7 @@ class GuideDownloadState extends State<GuideDownload> {
         return Stack_Default(
             header: Header_Stack(context, "Connect phone"),
             content: [
-                ConstrainedBox(constraints: BoxConstraints(maxWidth: 250), child:Image.asset('assets/mockups/ConnectGuideDownload.png')),
+                ConstrainedBox(constraints: BoxConstraints(maxWidth: 200), child:Image.asset('assets/mockups/ConnectGuideDownload.png')),
                 CustomTextSpan('On the orange mobile app, confirm you have the mobile app by pressing "Continue"'),
             ],
             bumper: Bumper(context, content: [CustomButton(variant: 'secondary', txt: 'Done', onTap: () {navigateTo(context, ConnectComputer());})]),

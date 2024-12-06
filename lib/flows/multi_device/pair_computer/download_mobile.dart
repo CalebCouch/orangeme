@@ -16,7 +16,7 @@ class DownloadMobileState extends State<DownloadMobile> {
         return Stack_Default(
             header: Header_Stack(context, "Get the mobile app"),
             content: [
-                ConstrainedBox(constraints: BoxConstraints(maxWidth: 300), child:Image.asset('assets/mockups/MultiDevice.png')),
+                ConstrainedBox(constraints: BoxConstraints(maxWidth: 350), child:Image.asset('assets/mockups/MultiDevice.png')),
                 CustomTextSpan('The orange mobile app works with the desktop app to keep your friends and money safe'),
                 CustomText(txt: 'mobile.orange.me', font_size: 'h4', variant: 'heading', text_decoration: TextDecoration.underline)
             ],
