@@ -19,7 +19,7 @@ class GuideProfileState extends State<GuideProfile> {
         return Stack_Default(
             header: Header_Stack(context, "Connect phone"),
             content: [
-                Image.asset('assets/mockups/ConnectGuideProfile.png'),
+                ConstrainedBox(constraints: BoxConstraints(maxWidth: 200), child:Image.asset('assets/mockups/ConnectGuideProfile.png')),
                 CustomTextSpan('On the orange mobile app, open your profile. Press "Connect Computer"'),
             ],
             bumper: Bumper(context, content: [CustomButton(txt: 'Continue', onTap: () {navigateTo(context, GuideDownload());})]),
