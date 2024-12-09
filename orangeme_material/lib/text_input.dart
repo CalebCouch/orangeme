@@ -103,7 +103,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                                         cursorWidth: 2.0,
                                         cursorColor: ThemeColor.textSecondary,
                                         style: TextStyle(color: textColor),
-                                        onChanged: (String text) => widget.onChanged,
+                                        onChanged: widget.onChanged,
                                         onSubmitted: widget.onSubmitted,
                                         onEditingComplete: widget.onEditingComplete,
                                         textInputAction: TextInputAction.done,

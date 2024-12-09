@@ -4,6 +4,7 @@ import 'package:orangeme_material/color.dart';
 
 const Map<String, String> icon = {
   'up': 'assets/icons/up.svg',
+  'add': 'assets/icons/add.svg',
   'back': 'assets/icons/back.svg',
   'copy': 'assets/icons/copy.svg',
   'down': 'assets/icons/down.svg',

@@ -79,7 +79,7 @@ class ConfirmState extends GenericState<Confirm> {
 
 
     ConfirmAddress() {
-        changeAddress() {resetNavTo(context, Send(address: widget.address, amount: widget.amount));}
+        changeAddress() {resetNavTo(context, 3);}
 
         return DataItem(
             title: "Confirm Address",
@@ -93,8 +93,8 @@ class ConfirmState extends GenericState<Confirm> {
     }
 
     ConfirmAmount() {
-        changeAmount() {resetNavTo(context, Amount(widget.address, amount: widget.amount));}
-        changeSpeed() {resetNavTo(context, Speed(widget.address, widget.amount_sats));}
+        changeAmount() {resetNavTo(context, 2);}
+        changeSpeed() {resetNavTo(context, 1);}
 
         return DataItem(
             title: "Confirm Amount",

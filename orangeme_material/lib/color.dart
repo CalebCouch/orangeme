@@ -100,7 +100,6 @@ class ThemeColor {
     static const Color disabled = Tapa.shade900;
     static const Color labelSecondary = Tapa.shade800;
     static const Color labelDisabled = Tapa.shade1000;
-
 }
 
 final Map<String, Color> customize_color = {

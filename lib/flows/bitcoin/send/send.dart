@@ -58,7 +58,7 @@ class SendState extends GenericState<Send> {
     Widget build_with_state(BuildContext context) {
         //print(widget.addressValid);
         return Stack_Default(
-            header: Header_Stack(context, "Bitcoin address", null, UniBackButton(context, BitcoinHome())),
+            header: Header_Stack(context, "Bitcoin address", left: UniBackButton(context, BitcoinHome())),
             content: [
                 AddressInput(),
                 ButtonTips(),

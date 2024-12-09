@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/components/banner.dart';
 import 'package:orange/components/tab_navigator.dart';
+import 'package:orange/flows/multi_device/create_wallet/add_wallet.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/view_transaction.dart';
@@ -50,11 +51,13 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     onSend() {navigateTo(Send());}
     toProfile() {navigateTo(MyProfile());}
 
+    int walletCount = 1;
+
     @override
     Widget build_with_state(BuildContext context) {
         bool noTransactions = widget.transactions.isEmpty;
         return Root_Home(
-            header: Header_Home(context, "Wallet", widget.profile_picture, toProfile),
+            header: Header_Home(context, "Wallet", widget.profile_picture, toProfile, NewWallet()),
             content: [
                 BalanceDisplay(),
                 InternetBanner(super.isConnected()),
@@ -130,5 +133,10 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
             subR: "Details",
             caret: false,
         );
+    }
+
+    Widget NewWallet(){
+        if(walletCount == 1) {return CreateWalletButton(context, AddWallet());}
+        return SizedBox();
     }
 }

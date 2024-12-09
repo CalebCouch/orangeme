@@ -37,6 +37,9 @@ class ScanQRState extends State<ScanQR> {
 
     void _onQRViewCreated(BuildContext context, QRViewController controller) {
         this.controller = controller;
-        controller.scannedDataStream.listen((scanData) {navigateTo(context, Success());});
+        controller.scannedDataStream.listen((scanData) {
+            controller.dispose();
+            navigateTo(context, Success());
+        });
     }
 }

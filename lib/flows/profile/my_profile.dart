@@ -104,17 +104,9 @@ class MyProfileState extends GenericState<MyProfile> {
 
         Widget EditPhoto() {
             return CustomColumn([
-                    ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
-                    CustomButton(
-                        txt: 'Photo', 
-                        variant: 'secondary', 
-                        size: 'md', 
-                        expand: false, 
-                        icon: 'edit', 
-                        onTap: onPhotoChange,
-                    ),
-                ], AppPadding.header,
-            );
+                ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
+                CustomButton(txt: 'Photo', variant: 'secondary', size: 'md', expand: false, icon: 'edit', onTap: onPhotoChange,),
+            ], AppPadding.header);
         }
 
         Widget ConnectComputerItem() {

@@ -33,15 +33,9 @@ class SuccessState extends GenericState<Success> {
 
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
-            header: Header_Stack(context, "Send confirmed", Container(), ExitButton(context, BitcoinHome())),
+            header: Header_Stack(context, "Send confirmed", left: ExitButton(context, 4)),
             content: [Result(message: 'You sent ${widget.amount_usd}')],
-            bumper: Bumper(context, content: [
-                CustomButton(
-                    txt: 'Done', 
-                    variant: 'secondary', 
-                    onTap: () {resetNavTo(context, BitcoinHome());},
-                ),
-            ]),
+            bumper: Bumper(context, content: [CustomButton(txt: 'Done', variant: 'secondary', onTap: () {resetNavTo(context, 4);})]),
             alignment: Alignment.center,
             scroll: false,
         );

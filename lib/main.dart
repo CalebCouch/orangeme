@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 // import 'package:workmanager/workmanager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:orangeme_material/orangeme_material.dart';
+import 'package:orangeme_material/navigation.dart';
 
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
@@ -125,7 +126,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             navigatorKey: global.navigation.navkey,
             title: 'orange',
             theme: theme(),
-            home: global.platform_isDesktop ? ConnectComputer() : BitcoinHome(),
+            home: BitcoinHome(),
+            //home: ConnectComputer(),
+            // home: global.platform_isDesktop ? ConnectComputer() : BitcoinHome(),
             //home: Test(),
         );
     }

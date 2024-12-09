@@ -38,15 +38,19 @@ Widget UniBackButton(BuildContext context, Widget destination) {
     );
 }
 
-Widget ExitButton(BuildContext context, Widget home) {
+Widget ExitButton(BuildContext context, int index) {
     return CustomIconButton(
-        () { resetNavTo(context, home); }, 
+        () { resetNavTo(context, index); }, 
         icon: 'exit',
     );
 }
 
 Widget InfoButton(BuildContext context, Widget page) {
     return CustomIconButton(() { navigateTo(context, page); }, icon: 'info');
+}
+
+Widget CreateWalletButton(BuildContext context, Widget page) {
+    return CustomIconButton(() { navigateTo(context, page); }, icon: 'add');
 }
 
 Widget NumberButton(BuildContext context, String number) {

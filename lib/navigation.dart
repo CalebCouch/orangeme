@@ -44,17 +44,13 @@ class Navigation {
       );
     }
 
-    resetNavTo(Widget widget) {
-      var context = this.navkey.currentContext!;
-      Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => widget,
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
-          (route) => false);
+    void resetNavTo(Widget targetPage) {
+        var context = this.navkey.currentContext!;
+        Navigator.popUntil(context, (route) {
+            return route.settings.name == targetPage.runtimeType.toString();
+        });
     }
+
 }
 
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange/components/radio.dart';
 import 'package:orange/flows/bitcoin/send/confirm.dart';
 // import 'package:orangeme_material/navigation.dart';
 import 'package:orangeme_material/orangeme_material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
+import 'package:tuple/tuple.dart';
 
 
 class Speed extends GenericWidget {
@@ -56,7 +58,7 @@ class SpeedState extends GenericState<Speed> {
     Widget build_with_state(BuildContext context) {
         return Stack_Default(
             header: Header_Stack(context, "Transaction speed"),
-            content: [SpeedSelector(widget.standard_f, widget.priority_f)],
+            content: [SpeedSelector()],
             bumper: Bumper(context, content: [
                 CustomButton( txt: 'Continue', onTap: onContinue)
             ]),
@@ -64,72 +66,16 @@ class SpeedState extends GenericState<Speed> {
         );
     }
 
-    //The following widgets can ONLY be used in this file
-
-    Widget SpeedSelector(String standard, String priority) {
-        return CustomColumn([
-            RadioButton(
-                title: "Standard",
-                subtitle: "Arrives in ~2 hours\n${standard} bitcoin network fee",
-                isEnabled: index == 0,
-                onTap: () {
-                    HapticFeedback.heavyImpact();
-                    setState(() {
-                        index = 0;
-                    });
-                },
-            ),
-            RadioButton(
-                title: "Priority",
-                subtitle: "Arrives in ~30 minutes\n${priority} bitcoin network fee",
-                isEnabled: index == 1,
-                onTap: () {
-                    HapticFeedback.heavyImpact();
-                    setState(() {
-                        index = 1;
-                    });
-                },
-            )
-        ]);
+    Widget SpeedSelector(){
+        return ListSelector(
+            one: Tuple2("Standard", "Arrives in ~2 hours\n${widget.standard_f} bitcoin network fee"), 
+            two: Tuple2("Priority", "Arrives in ~30 minutes\n${widget.priority_f} bitcoin network fee"),
+            currentIndex: index,
+            onIndexChanged: (newIndex) {
+                setState(() {
+                    index = newIndex;
+                });
+            },
+        );
     }
-}
-
-Widget RadioButton({required String title, required String subtitle, required bool isEnabled, required onTap}) {
-    return InkWell(
-        onTap: onTap,
-        child: Container(
-            color: Colors.transparent,
-            width: double.infinity,
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                    CustomIcon(
-                        icon: isEnabled ? 'radioFilled' : 'radio', 
-                        size: 'lg', 
-                        key: UniqueKey()
-                    ),
-                    const Spacing(16),
-                    Container(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: CustomColumn([
-                            CustomText(
-                                variant: 'heading', 
-                                font_size: 'h5', 
-                                txt: title, 
-                                alignment: TextAlign.left
-                            ),
-                            CustomText(
-                                variant: 'text',
-                                font_size: 'sm',
-                                text_color: 'text_secondary', 
-                                txt: subtitle, 
-                                alignment: TextAlign.left
-                            ),
-                        ], 8, true, false),
-                    ),
-                ],
-            ),
-        ),
-    );
 }

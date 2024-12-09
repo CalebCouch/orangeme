@@ -58,7 +58,7 @@ Widget Header_Takeover(BuildContext context, String title) {
     );
 }
 
-Widget Header_Stack(BuildContext context, String title, [Widget? right, Widget? left]) {
+Widget Header_Stack(BuildContext context, String title, {Widget? right, Widget? left}) {
     return Header(
         left ?? CustomBackButton(context),
         CustomText(variant: 'heading', font_size:'h4', txt: title),
