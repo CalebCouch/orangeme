@@ -4,6 +4,7 @@ import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/profile/my_profile.dart';
 import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
+import 'package:orange/flows/bitcoin/multi_wallet/home.dart';
 import 'package:orange/flows/messages/conversation/conversation.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
@@ -31,6 +32,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     @override
     void unpack_state(Map<String, dynamic> json) {
         widget.profile_picture = json["profile_picture"];
+        widget.multiWallet = json["multi_wallet"] as bool;
         widget.conversations = List<ShorthandConversation>.from(json['conversations'].map(
             (json) => ShorthandConversation(
                 roomName: json['room_name'] as String,
@@ -75,7 +77,7 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     Widget ConversationItem(photo, isGroup, roomName, subtext, onTap) {
         return ListItem(
             onTap: onTap,
-            visual: ProfilePhoto(context, pfp: photo, isGroup: isGroup),
+            visual: isGroup ? ProfilePhoto(display_icon: 'group') : ProfilePhoto(profile_picture: photo),
             title: roomName,
             desc: subtext,
         );
@@ -87,7 +89,10 @@ class MessagesHomeState extends GenericState<MessagesHome> {
             header: Header_Home(context, "Messages", widget.profile_picture, toProfile),
             content: [widget.noConversations ? NoConversations() : ConversationsList()],
             bumper: Bumper(context, content: [CustomButton(txt: 'New Message', onTap: createNewMessage)]),
-            tabNav: TabNav(1, [ TabInfo(BitcoinHome(), 'wallet'), TabInfo(MessagesHome(), 'message')]),
+            tabNav: TabNav(1, [ 
+                TabInfo(widget.multiWallet ? MultiWallet() : BitcoinHome(), 'wallet'), 
+                TabInfo(MessagesHome(), 'message')
+            ]),
             alignment: widget.noConversations ? Alignment.center : Alignment.topCenter,
             scroll: !widget.noConversations,
         );

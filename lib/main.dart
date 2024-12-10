@@ -13,6 +13,7 @@ import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 import 'package:orange/global.dart' as global;
 import 'package:orange/flows/bitcoin/home.dart';
+import 'package:orange/flows/bitcoin/multi_wallet/home.dart';
 import 'package:orange/flows/multi_device/pair_computer/connect_computer.dart';
 import 'package:orange/test.dart';
 
@@ -121,12 +122,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     @override
     Widget build(BuildContext context) {
+        int walletCount = 2;
         return MaterialApp(
             debugShowCheckedModeBanner: false,
             navigatorKey: global.navigation.navkey,
             title: 'orange',
             theme: theme(),
-            home: BitcoinHome(),
+            home: walletCount > 1 ? MultiWallet() : BitcoinHome(),
             //home: ConnectComputer(),
             // home: global.platform_isDesktop ? ConnectComputer() : BitcoinHome(),
             //home: Test(),

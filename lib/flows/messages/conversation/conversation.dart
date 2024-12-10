@@ -88,7 +88,7 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
         return CustomColumn([
             widget.isGroup 
             ? ProfilePhotoStack(context, widget.members) 
-            : ProfilePhoto(context, pfp: widget.members[0].pfpPath, size: ProfileSize.md),
+            : ProfilePhoto(profile_picture: widget.members[0].pfpPath, size: 'md'),
             CustomText( 
                 variant: 'heading', 
                 font_size: 'h5', 
@@ -163,7 +163,7 @@ Widget ProfilePhotoStack(BuildContext context, List<DartProfile> contacts) {
             itemBuilder: (BuildContext context, int index) {
                 return Align(
                     widthFactor: 0.75,
-                    child: ProfilePhoto(context, pfp: contacts[index].pfpPath, size: ProfileSize.md, outline: true),
+                    child: ProfilePhoto(display_icon: 'group', size: 'md'),
                 );
             },
         ),

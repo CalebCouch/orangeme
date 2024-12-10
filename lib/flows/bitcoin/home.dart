@@ -5,6 +5,7 @@ import 'package:orange/components/banner.dart';
 import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/multi_device/create_wallet/add_wallet.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
+import 'package:orange/flows/bitcoin/multi_wallet/home.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/view_transaction.dart';
 import 'package:orange/flows/profile/my_profile.dart';
@@ -36,6 +37,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
         widget.profile_picture = json["profile_picture"] as String?;
         widget.balance_usd = json["balance_usd"] as String;
         widget.balance_btc = json["balance_btc"] as String;
+        widget.multiWallet = json["multi_wallet"] as bool;
 
         widget.transactions = List<ShorthandTransaction>.from(json['transactions'].map(
             (json) => ShorthandTransaction(
@@ -57,7 +59,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
     Widget build_with_state(BuildContext context) {
         bool noTransactions = widget.transactions.isEmpty;
         return Root_Home(
-            header: Header_Home(context, "Wallet", widget.profile_picture, toProfile, NewWallet()),
+            header: Header_Home(context, "Wallet", widget.profile_picture, toProfile, NewWallet(), BackButton()),
             content: [
                 BalanceDisplay(),
                 InternetBanner(super.isConnected()),
@@ -67,7 +69,10 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                 CustomButton(txt: 'Receive', onTap: onReceive, enabled: super.isConnected()),
                 CustomButton(txt: 'Send', onTap: onSend, enabled: super.isConnected()),
             ]),
-            tabNav: TabNav(0, [TabInfo(BitcoinHome(), 'wallet'), TabInfo(MessagesHome(), 'message')]),
+            tabNav: TabNav(0, [
+                TabInfo(widget.multiWallet ? MultiWallet() : BitcoinHome(), 'wallet'), 
+                TabInfo(MessagesHome(), 'message')
+            ]),
             alignment: noTransactions && super.isConnected() ? Alignment.center : Alignment.topCenter,
             scroll: !noTransactions,
         );

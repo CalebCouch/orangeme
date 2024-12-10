@@ -43,7 +43,7 @@ Widget Header_Home(BuildContext context, String title, String? profile_picture, 
     return Header(
         InkWell( onTap: onTap, child: Container( 
             padding: EdgeInsets.symmetric(horizontal: 16), 
-            child: ProfilePhoto(context, pfp: profile_picture, size: ProfileSize.md),
+            child: ProfilePhoto(profile_picture: profile_picture, size: 'md'),
         )),
         CustomText(variant: 'heading', font_size: 'h3', txt: title), 
         right ?? Container()

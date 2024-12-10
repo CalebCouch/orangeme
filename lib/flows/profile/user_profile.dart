@@ -59,7 +59,7 @@ class UserProfileState extends GenericState<UserProfile> {
         return Stack_Default(
             header: Header_Stack(context, widget.name),
             content: [
-                ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
+                ProfilePhoto(profile_picture: widget.photo, size: 'xxl'),
                 AboutMeItem(context, widget.abtMe ?? "This profile is still a mystery."),
                 DidItem(context, widget.did),
                 AddressItem(context, widget.address),

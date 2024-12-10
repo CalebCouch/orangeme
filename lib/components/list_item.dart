@@ -12,6 +12,7 @@ class ListItem extends StatelessWidget {
     final String? subR;
     final VoidCallback? onTap;
     final bool caret;
+    final bool subR_underline;
 
     const ListItem({
         super.key,
@@ -23,6 +24,7 @@ class ListItem extends StatelessWidget {
         this.subR,
         this.onTap,
         this.caret = true,
+        this.subR_underline = true,
   });
 
     @override
@@ -78,7 +80,7 @@ class ListItem extends StatelessWidget {
                                 variant: 'text',
                                 font_size: 'sm', 
                                 txt: subR!, 
-                                text_decoration: TextDecoration.underline,
+                                text_decoration: subR_underline ? TextDecoration.underline : TextDecoration.none,
                                 alignment: TextAlign.right,
                             ),
                         ]),
@@ -94,7 +96,7 @@ class ListItem extends StatelessWidget {
 Widget ContactItem(BuildContext context, DartProfile contact, onTap) {
     return ListItem(
         onTap: onTap,
-        visual: ProfilePhoto(context, pfp: contact.pfpPath, size: ProfileSize.lg),
+        visual: ProfilePhoto(profile_picture: contact.pfpPath),
         title: contact.name,
         sub: EllipsisText(contact.did),
         caret: false,
