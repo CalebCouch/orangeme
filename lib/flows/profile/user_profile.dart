@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/data_item.dart';
 // import 'package:orange/flows/messages/conversation/exchange.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/generic.dart';
 //import 'package:orange/global.dart' as global;
 
@@ -59,7 +58,7 @@ class UserProfileState extends GenericState<UserProfile> {
         return Stack_Default(
             header: Header_Stack(context, widget.name),
             content: [
-                ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
+                ProfilePhoto(profile_picture: widget.photo, size: 'xxl'),
                 aboutMeItem(context, widget.abtMe ?? "This profile is still a mystery."),
                 didItem(context, widget.did),
                 addressItem(context, widget.address),

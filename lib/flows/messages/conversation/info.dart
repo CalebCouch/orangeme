@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/list_item.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/flows/profile/user_profile.dart';
 import 'package:orange/generic.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';

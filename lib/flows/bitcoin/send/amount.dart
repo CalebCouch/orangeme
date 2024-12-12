@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/components/numeric_keypad.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
-import 'package:orangeme_material/navigation.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/navigation.dart';
+import 'package:material/material.dart';
 import 'package:vibration/vibration.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/src/rust/api/utils.dart';

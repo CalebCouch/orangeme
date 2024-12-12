@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';

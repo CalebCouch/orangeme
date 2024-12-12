@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/profile/my_profile.dart';
-import 'package:orange/components/list_item.dart';
 import 'package:orange/flows/messages/new_message/choose_recipient.dart';
 import 'package:orange/flows/messages/conversation/conversation.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/generic.dart';
 
 class MessagesHome extends GenericWidget {
@@ -75,9 +73,11 @@ class MessagesHomeState extends GenericState<MessagesHome> {
     Widget ConversationItem(photo, isGroup, roomName, subtext, onTap) {
         return ListItem(
             onTap: onTap,
-            visual: ProfilePhoto(context, pfp: photo, isGroup: isGroup),
             title: roomName,
             desc: subtext,
+            visual: isGroup 
+                ? ProfilePhoto(display_icon: 'group') 
+                : ProfilePhoto(profile_picture: photo),
         );
     }
 

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/tabular.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/send/success.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/speed.dart';
-import 'package:orange/components/data_item.dart';
-import 'package:orangeme_material/navigation.dart';
+import 'package:material/navigation.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 
 class Confirm extends GenericWidget {
     String address;

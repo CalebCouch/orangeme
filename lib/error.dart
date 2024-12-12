@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/global.dart' as global;
 

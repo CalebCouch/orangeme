@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/flows/bitcoin/send/amount.dart';
 import 'package:orange/flows/bitcoin/send/scan_qr.dart';
-import 'package:orangeme_material/navigation.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/navigation.dart';
+import 'package:material/material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
 

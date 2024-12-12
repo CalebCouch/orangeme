@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:orange/components/message_bubble.dart';
 import 'package:orange/flows/messages/conversation/info.dart';
 import 'package:orange/flows/profile/user_profile.dart';
 import 'package:orange/flows/messages/home.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
 // import 'package:orange/global.dart' as global;
@@ -88,7 +87,7 @@ class CurrentConversationState extends GenericState<CurrentConversation> {
         return CustomColumn([
             widget.isGroup 
             ? ProfilePhotoStack(context, widget.members) 
-            : ProfilePhoto(context, pfp: widget.members[0].pfpPath, size: ProfileSize.md),
+            : ProfilePhoto(profile_picture: widget.members[0].pfpPath, size: 'md'),
             CustomText( 
                 variant: 'heading', 
                 font_size: 'h5', 
@@ -163,7 +162,7 @@ Widget ProfilePhotoStack(BuildContext context, List<DartProfile> contacts) {
             itemBuilder: (BuildContext context, int index) {
                 return Align(
                     widthFactor: 0.75,
-                    child: ProfilePhoto(context, pfp: contacts[index].pfpPath, size: ProfileSize.md, outline: true),
+                    child: ProfilePhoto(profile_picture: contacts[index].pfpPath, size: 'md'),
                 );
             },
         ),

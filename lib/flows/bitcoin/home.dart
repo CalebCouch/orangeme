@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/components/list_item.dart';
-import 'package:orange/components/banner.dart';
-import 'package:orange/components/tab_navigator.dart';
 import 'package:orange/flows/bitcoin/receive/receive.dart';
 import 'package:orange/flows/bitcoin/send/send.dart';
 import 'package:orange/flows/bitcoin/view_transaction.dart';
 import 'package:orange/flows/profile/my_profile.dart';
 import 'package:orange/flows/messages/home.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/generic.dart';
 

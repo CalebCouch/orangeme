@@ -4,7 +4,7 @@ import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:workmanager/workmanager.dart';
 import 'package:orange/flows/bitcoin/home.dart';
 import 'package:orange/test.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/global.dart' as global;
 import 'package:flutter/services.dart';
 import 'dart:ui';

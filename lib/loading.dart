@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 
 class Loading extends StatelessWidget {
     @override

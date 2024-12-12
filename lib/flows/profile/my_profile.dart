@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orange/components/data_item.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:orangeme_material/orangeme_material.dart';
+import 'package:material/material.dart';
 import 'package:orange/generic.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 //import 'package:orange/global.dart' as global;
@@ -103,7 +102,7 @@ class MyProfileState extends GenericState<MyProfile> {
 
         Widget EditPhoto() {
             return CustomColumn([
-                    ProfilePhoto(context, pfp: widget.photo, size: ProfileSize.xxl),
+                    ProfilePhoto(profile_picture: widget.photo, size: 'xxl'),
                     CustomButton(
                         txt: 'Photo', 
                         variant: 'secondary', 
