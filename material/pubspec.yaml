@@ -24,17 +24,17 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/icons/
-    - assets/images/
+    - ../assets/icons/
+    - ../assets/images/
 
   fonts:
       - family: Outfit
         fonts:
-          - asset: assets/fonts/Outfit-Regular.ttf
+          - asset: ../assets/fonts/Outfit-Regular.ttf
             weight: 400
-          - asset: assets/fonts/Outfit-Medium.ttf
+          - asset: ../assets/fonts/Outfit-Medium.ttf
             weight: 500
-          - asset: assets/fonts/Outfit-Bold.ttf
+          - asset: ../assets/fonts/Outfit-Bold.ttf
             weight: 700
-          - asset: assets/fonts/Outfit-Black.ttf
+          - asset: ../assets/fonts/Outfit-Black.ttf
             weight: 900

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orange/src/rust/api/simple.dart';
 import 'package:orange/src/rust/frb_generated.dart';
 //import 'package:workmanager/workmanager.dart';
-import 'package:orange/flows/bitcoin/home.dart';
+import 'package:flow_bitcoin/flow_bitcoin.dart';
 import 'package:orange/test.dart';
 import 'package:material/material.dart';
 import 'package:orange/global.dart' as global;

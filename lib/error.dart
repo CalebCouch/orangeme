@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material/material.dart';
-import 'package:orange/flows/bitcoin/home.dart';
+import 'package:flow_bitcoin/flow_bitcoin.dart';
 import 'package:orange/global.dart' as global;
 
 class ErrorPage extends StatefulWidget {

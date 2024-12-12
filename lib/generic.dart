@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:async/async.dart';
 
 import 'package:orange/global.dart' as global;
-import 'package:orange/flows/bitcoin/home.dart';
+import 'package:flow_bitcoin/flow_bitcoin.dart';
 import 'package:orange/src/rust/api/pub_structs.dart';
 import 'package:orange/src/rust/api/simple.dart';
 

@@ -1,5 +1,12 @@
 library material;
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:orange/src/rust/api/pub_structs.dart';
+import 'package:orange/src/rust/api/utils.dart';
+import 'package:orange/generic.dart';
+
 export 'icon.dart';
 export 'text.dart';
 export 'color.dart';
@@ -20,3 +27,10 @@ export 'list_selector.dart';
 export 'tab_navigator.dart';
 export 'notifications.dart';
 export 'message_bubble.dart';
+
+export 'package:flutter/services.dart';
+export 'package:flutter/material.dart';
+
+export 'package:orange/src/rust/api/pub_structs.dart';
+export 'package:orange/src/rust/api/utils.dart';
+export 'package:orange/generic.dart';
