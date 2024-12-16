@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material/material.dart';
 import 'dart:io';
@@ -82,3 +81,28 @@ Widget _buildIconVariant(
         ),
     );
 }
+
+
+const Map<String, double> profileSize = {
+    'xxl': 96,
+    'xl': 64,
+    'lg': 48,
+    'md': 32,
+    'sm': 24,
+};
+
+const Map<String, double> profileIconSize = {
+    'xxl': 74,
+    'xl': 48,
+    'lg': 36,
+    'md': 24,
+    'sm': 18,
+};
+
+const Map<String, double> borderThickness = {
+    'xxl': 2.0,
+    'xl': 1.5,
+    'lg': 1.0,
+    'md': 0.75,
+    'sm': 0.50,
+};

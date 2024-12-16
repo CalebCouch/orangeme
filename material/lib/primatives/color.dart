@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:material/material.dart';
 
 class Tapa {
     static const Color shade0 = Color(0xFFFFFFFF);
@@ -72,6 +72,26 @@ class Lightning {
     static const Color shade900 = Color(0xFF78420F);
     static const Color shade950 = Color(0xFF452203);
 }
+
+    // Currently not using these colors
+    
+    // pub fn gold_drop() -> Self {
+    //     Colors {
+    //         shade0: hex("ffffff"),
+    //         shade50: hex("fff8ed"),
+    //         shade100: hex("feefd6"),
+    //         shade200: hex("fcdcac"),
+    //         shade300: hex("fac177"),
+    //         shade400: hex("f79c40"),
+    //         shade500: hex("f58727"),
+    //         shade600: hex("e66510"),
+    //         shade700: hex("be4d10"),
+    //         shade800: hex("873c15"),
+    //         shade900: hex("7a3414"),
+    //         shade950: hex("421808"),
+    //         shade1000: hex("000000"),
+    //     }
+    // }
 
 class Shade {
     static const Color darken_1 = Color(0x14000000);

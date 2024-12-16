@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:material/material.dart';
 import 'package:material/navigation.dart';
 
@@ -113,6 +111,10 @@ class BoxDecorations {
     );
 }
 
+final Map<String, double> button_size = {
+    'lg': 48,
+    'md': 32,
+};
 
 // CUSTOM BUTTONS //
 

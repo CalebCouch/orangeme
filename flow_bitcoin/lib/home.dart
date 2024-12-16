@@ -95,7 +95,7 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
 
     Widget InternetBanner(bool internet) {
         return internet ? SizedBox() : CustomBanner(
-            'You are not connected to the internet.\norange requires an internet connection.',
+          'You are not connected to the internet.\norange requires an internet connection.',
         );
     }
 

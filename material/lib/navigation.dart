@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:material/material.dart';
 
 Future<void> navigateTo(BuildContext context, Widget widget) async {

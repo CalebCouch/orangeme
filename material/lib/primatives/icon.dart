@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material/material.dart';
 
@@ -61,3 +60,11 @@ class CustomIconState extends State<CustomIcon> {
         );
     }
 }
+
+final Map<String, double> icon_size = {
+    'xxl': 128,
+    'xl': 48,
+    'lg': 32,
+    'md': 20,
+};
+
