@@ -60,9 +60,8 @@ class ScanQRState extends GenericState<ScanQR> {
                     ScanBox(),
                     const Spacing(12),
                     const CustomText(
-                        variant: 'text',
+                        variant: 'secondary',
                         font_size: 'md',
-                        text_color: 'text_secondary', 
                         txt: 'Scan a bitcoin QR code',
                     ),
                 ],
@@ -75,7 +74,7 @@ class ScanQRState extends GenericState<ScanQR> {
             height: 300,
             width: 300,
             decoration: BoxDecoration(
-                border: Border.all(color: ThemeColor.bg, width: 4),
+                border: Border.all(color: Display.bg_primary, width: 4),
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
         );

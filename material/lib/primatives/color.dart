@@ -17,7 +17,7 @@ class Tapa {
     static const Color shade1000 = Color(0xFF000000);
 }
 
-class Torch {
+class TorchRed {
     static const Color shade50 = Color(0xFFFEF2F2);
     static const Color shade100 = Color(0xFFFEE2E3);
     static const Color shade200 = Color(0xFFFDCBCD);
@@ -73,100 +73,74 @@ class Lightning {
     static const Color shade950 = Color(0xFF452203);
 }
 
-    // Currently not using these colors
-    
-    // pub fn gold_drop() -> Self {
-    //     Colors {
-    //         shade0: hex("ffffff"),
-    //         shade50: hex("fff8ed"),
-    //         shade100: hex("feefd6"),
-    //         shade200: hex("fcdcac"),
-    //         shade300: hex("fac177"),
-    //         shade400: hex("f79c40"),
-    //         shade500: hex("f58727"),
-    //         shade600: hex("e66510"),
-    //         shade700: hex("be4d10"),
-    //         shade800: hex("873c15"),
-    //         shade900: hex("7a3414"),
-    //         shade950: hex("421808"),
-    //         shade1000: hex("000000"),
-    //     }
-    // }
 
-class Shade {
-    static const Color darken_1 = Color(0x14000000);
-    static const Color darken_2 = Color(0x40000000);
-    static const Color lighten_1 = Color(0x14FFFFFF);
-    static const Color lighten_2 = Color(0x40FFFFFF);
+class Transparent {
+    static const Color shade0 = Color(0x00FFFFFF);
+    static const Color shade50 = Color(0x15FFFDEB);
+    static const Color shade100 = Color(0x2AFEFAC7);
+    static const Color shade200 = Color(0x40FDF48A);
+    static const Color shade300 = Color(0x55FCE94D);
+    static const Color shade400 = Color(0x6AFBD924);
+    static const Color shade500 = Color(0x80F5BD14);
+    static const Color shade600 = Color(0x95D99106);
+    static const Color shade700 = Color(0xAAB46809);
+    static const Color shade800 = Color(0xC092500E);
+    static const Color shade900 = Color(0xD578420F);
+    static const Color shade950 = Color(0xEA452203);
+    static const Color shade1000 = Color(0xFFFFFFF);
 }
 
-class ThemeColor {
-    /// Display ///
-    static const Color bg = Tapa.shade1000;
-    static const Color bgSecondary = Tapa.shade950;
-    static const Color border = Tapa.shade700;
-    static const Color outline = Tapa.shade700;
-    static const Color heading = Tapa.shade0;
-    static const Color text = Tapa.shade100;
-    static const Color textSecondary = Tapa.shade300;
-    static const Color success = Malachite.shade500;
-    static const Color warning = Lightning.shade500;
-    static const Color danger = Torch.shade500;
+class Display {
+    static const Color bg_primary = Tapa.shade1000;
+    static const Color bg_secondary = Tapa.shade950;
 
-    /// Interactive ///
-    static const Color primary = Torch.shade500;
-    static const Color label = Tapa.shade0;
-    static const Color secondary = Tapa.shade0;
-    static const Color disabled = Tapa.shade900;
-    static const Color labelSecondary = Tapa.shade800;
-    static const Color labelDisabled = Tapa.shade1000;
+    static const Color outline_primary = Tapa.shade0;
+    static const Color outline_secondary = Tapa.shade700;
+    static const Color outline_tint = Tapa.shade300;
 
+    static const Color text_heading = Tapa.shade0;
+    static const Color text_primary = Tapa.shade100;
+    static const Color text_secondary = Tapa.shade300;
+
+    static const Color status_success = Malachite.shade500;
+    static const Color status_warning = Lightning.shade500;
+    static const Color status_danger = TorchRed.shade500;
+
+    static const Color brand_primary = TorchRed.shade500;
+    static const Color brand_secondary = Tapa.shade0;
 }
 
-final Map<String, Color> customize_color = {
-    'bg': ThemeColor.bg,
-    'bg_secondary': ThemeColor.bgSecondary,
-    'border': ThemeColor.border,
-    'outline': ThemeColor.outline,
-    'heading': ThemeColor.heading,
-    'text': ThemeColor.text,
-    'text_secondary': ThemeColor.textSecondary,
-    'primary': ThemeColor.primary,
-    'secondary': ThemeColor.secondary,
-    'handle': ThemeColor.labelSecondary,
-    'color_handle': ThemeColor.label,
-    'brand': ThemeColor.primary,
-    'success': ThemeColor.success,
-    'warning': ThemeColor.warning,
-    'danger': ThemeColor.danger,
-    'primary_hover': ThemeColor.primary,
-};
-
+class IconColor {
+    static const Color enabled = Tapa.shade0;
+    static const Color inactive = Tapa.shade300;
+    static const Color disabled = Tapa.shade950;
+}
 
 class ButtonColor {
-    final String fill;
-    final String text;
+    final Color background;
+    final Color label;
+    final Color outline;
 
-    const ButtonColor(this.fill, this.text);
+    const ButtonColor(this.background, this.label, this.outline);
 }
 
 Map buttonColors = {
     'primary': {
-        'enabled': const ButtonColor('primary', 'color_handle'),
-        'hovering': const ButtonColor('primary_hover', 'color_handle'),
-        'disabled': const ButtonColor('text_secondary', 'handle'),
-        'selected': const ButtonColor('primary', 'color_handle'),
+        ButtonState.enabled: const ButtonColor( TorchRed.shade500, Tapa.shade0, Transparent.shade0 ),
+        ButtonState.hover: const ButtonColor( TorchRed.shade600, Tapa.shade0, Transparent.shade0 ),
+        ButtonState.disabled: const ButtonColor( Tapa.shade500, Tapa.shade1000, Transparent.shade0 ),
+        ButtonState.selected: const ButtonColor( TorchRed.shade700, Tapa.shade0, Transparent.shade0 ),
     },
     'secondary': {
-        'enabled': const ButtonColor('bg', 'color_handle'),
-        'hovering': const ButtonColor('bg_secondary', 'color_handle'),
-        'disabled': const ButtonColor('bg', 'text_secondary'),
-        'selected': const ButtonColor('bg_secondary', 'color_handle'),
+        ButtonState.enabled: const ButtonColor( Transparent.shade0, Tapa.shade0, Tapa.shade700 ),
+        ButtonState.hover: const ButtonColor( Tapa.shade950, Tapa.shade0, Tapa.shade700 ),
+        ButtonState.disabled: const ButtonColor( Tapa.shade500, Tapa.shade1000, Tapa.shade700 ),
+        ButtonState.selected: const ButtonColor( Transparent.shade0, Tapa.shade0, Tapa.shade700 ),
     },
     'ghost': {
-        'enabled': const ButtonColor('bg', 'color_handle'),
-        'hovering': const ButtonColor('bg_secondary', 'color_handle'),
-        'disabled': const ButtonColor('bg', 'text_secondary'),
-        'selected': const ButtonColor('bg_secondary', 'color_handle'),
+        ButtonState.enabled: const ButtonColor( Transparent.shade0, Tapa.shade0, Transparent.shade0 ),
+        ButtonState.hover: const ButtonColor( Transparent.shade100, Tapa.shade0, Transparent.shade0 ),
+        ButtonState.disabled: const ButtonColor( Transparent.shade0, Tapa.shade500, Transparent.shade0 ),
+        ButtonState.selected: const ButtonColor( Tapa.shade950, Tapa.shade0, Transparent.shade0 ),
     },
 };

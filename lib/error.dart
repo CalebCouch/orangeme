@@ -39,17 +39,17 @@ class ErrorPageState extends State<ErrorPage> {
                     constraints: const BoxConstraints(maxHeight: 400, maxWidth: 400),
                     decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: ThemeColor.bgSecondary,
+                        color: Display.bg_secondary,
                     ),
                     child: SvgPicture.asset('assets/images/dodo.svg'),
                 ),
                 const CustomText(
                     variant: 'heading',
                     font_size: 'h3',
-                    text_color: 'heading', 
+                    text_color: Display.text_heading,
                     txt: 'Uh-oh!\nSomething went wrong.'
                 ),
-                Container(height: 1, width: 400, color: ThemeColor.bgSecondary),
+                Container(height: 1, width: 400, color:  Display.bg_secondary),
                 CustomButton(
                     txt: showError ? 'Hide Error' : 'Show Error', 
                     variant: 'secondary',
@@ -76,15 +76,15 @@ class ErrorPageState extends State<ErrorPage> {
 Widget error(message) {
     return Container(
         decoration: BoxDecoration(
-            color: ThemeColor.bgSecondary,
-            border: Border.all(color: ThemeColor.border),
+            color:  Display.bg_secondary,
+            border: Border.all(color:  Display.outline_secondary),
             borderRadius: const BorderRadius.all(Radius.circular(8)),
         ),
         padding: const EdgeInsets.all(12),
         child: CustomText(
             variant: 'text',
             font_size: 'lg',
-            text_color: 'heading', 
+            text_color: Display.text_heading, 
             txt: message
         ),
     );

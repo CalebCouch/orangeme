@@ -87,9 +87,8 @@ class ViewTransactionState extends GenericState<ViewTransaction> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [CustomText(
-                                variant: 'text',
+                                variant: 'secondary',
                                 font_size: 'lg',
-                                text_color: 'text_secondary',
                                 txt: widget.amount_btc
                                 ),
                             ],

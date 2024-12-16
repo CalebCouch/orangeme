@@ -32,8 +32,8 @@ class CustomTextInput extends StatefulWidget {
 
 class CustomTextInputState extends State<CustomTextInput> {
     late TextEditingController controller;
-    var borderColor = ThemeColor.outline;
-    var textColor = ThemeColor.secondary;
+    var borderColor = Display.outline_secondary;
+    var textColor = Display.text_heading;
     var isFocused = false;
     var focusNode = FocusNode();
 
@@ -56,10 +56,10 @@ class CustomTextInputState extends State<CustomTextInput> {
     void _onFocusChange() {
         setState(() {
             isFocused = focusNode.hasFocus;
-            borderColor = isFocused ? ThemeColor.secondary : ThemeColor.outline;
-            textColor = ThemeColor.secondary;
+            borderColor = isFocused ? Display.outline_secondary : Display.outline_primary;
+            textColor = Display.text_primary;
             if (!isFocused && controller.text.isEmpty) {
-                borderColor = ThemeColor.outline;
+                borderColor = Display.outline_secondary;
             }
         });
     }
@@ -98,7 +98,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                                         controller: controller,
                                         focusNode: focusNode,
                                         cursorWidth: 2.0,
-                                        cursorColor: ThemeColor.textSecondary,
+                                        cursorColor: Display.text_secondary,
                                         style: TextStyle(color: textColor),
                                         onChanged: (String text) => widget.onChanged,
                                         onSubmitted: widget.onSubmitted,
@@ -106,10 +106,10 @@ class CustomTextInputState extends State<CustomTextInput> {
                                         textInputAction: TextInputAction.done,
                                         decoration: InputDecoration(
                                             hintText: widget.hint,
-                                            hintStyle: const TextStyle(color: ThemeColor.outline),
+                                            hintStyle: const TextStyle(color: Display.outline_primary),
                                             border: InputBorder.none,
                                             filled: true,
-                                            fillColor: ThemeColor.bg,
+                                            fillColor: Display.bg_primary,
                                         ),
                                     ),
                                 ),
@@ -120,7 +120,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                 ),
                 widget.error == '' ? Container () : Padding(
                     padding: const EdgeInsets.only(left: 20.0),
-                    child: CustomText(variant:'text', font_size: 'sm',  text_color: 'danger', txt: widget.error),
+                    child: CustomText(variant:'text', font_size: 'sm', text_color: Display.status_danger, txt: widget.error),
                 )
             ],
         );

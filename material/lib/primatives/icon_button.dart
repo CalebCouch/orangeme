@@ -1,7 +1,7 @@
 import 'package:material/material.dart';
 import 'package:material/navigation.dart';
 
-Widget CustomIconButton(onTap, {required String icon, String size = 'lg', String color = 'secondary'}) {
+Widget CustomIconButton(onTap, {required String icon, String size = 'lg', Color color = IconColor.enabled}) {
     return InkWell(
         onTap: () {
             HapticFeedback.heavyImpact();
@@ -47,7 +47,7 @@ Widget InfoButton(BuildContext context, Widget page) {
 }
 
 Widget NumberButton(BuildContext context, String number) {
-    return CustomText(variant: 'label', font_size: 'lg', text_color: 'secondary', txt: number);
+    return CustomText(variant: 'label', font_size: 'lg', txt: number);
 }
 
 Widget DeleteButton(BuildContext context) {

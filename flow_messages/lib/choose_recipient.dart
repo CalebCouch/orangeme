@@ -110,9 +110,8 @@ class ChooseRecipientState extends GenericState<ChooseRecipient> {
 
     Widget NoUsers(){
         return const CustomText(
-            variant: 'text',
+            variant: 'secondary',
             font_size: 'md',
-            text_color: 'text_secondary', 
             txt: "There's no one here!",
         );
     }

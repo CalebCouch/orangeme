@@ -6,14 +6,14 @@ import 'package:orange/src/rust/api/pub_structs.dart';
 Widget bubble(Message message) {
     return Container(
         decoration: ShapeDecoration(
-            color: message.isIncoming ? ThemeColor.bgSecondary : ThemeColor.primary,
+            color: message.isIncoming ?  Display.bg_secondary : Display.brand_primary,
             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: CustomText(
             variant: 'text',
             font_size: 'md',
-            text_color: 'heading',
+            text_color: Display.brand_secondary,
             txt: message.message,
             alignment: TextAlign.left
         ),
@@ -25,15 +25,15 @@ Widget details(Message m, [bool showTimeOnly = false]) {
         return Row(
             mainAxisAlignment: m.isIncoming ? MainAxisAlignment.start : MainAxisAlignment.end,
             children: [
-                CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: m.sender.name),
-                CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: '${String.fromCharCodes([0x0020])}·${String.fromCharCodes([0x0020])}'),
-                CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: m.time),
+                CustomText(variant: 'secondary', font_size: 'sm', txt: m.sender.name),
+                CustomText(variant: 'secondary', font_size: 'sm', txt: '${String.fromCharCodes([0x0020])}·${String.fromCharCodes([0x0020])}'),
+                CustomText(variant: 'secondary', font_size: 'sm', txt: m.time),
             ],
         );
     } else {
         return Row(
             mainAxisAlignment: m.isIncoming ? MainAxisAlignment.start : MainAxisAlignment.end,
-            children: [CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: m.time)],
+            children: [CustomText(variant: 'secondary', font_size: 'sm', txt: m.time)],
         );
     }
 }

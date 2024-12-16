@@ -3,17 +3,17 @@ import 'package:material/material.dart';
 
 ThemeData theme() {
     return ThemeData(
-        scaffoldBackgroundColor: ThemeColor.bg,
+        scaffoldBackgroundColor: Display.bg_primary,
         fontFamily: "Outfit",
         highlightColor: Colors.transparent,
         hoverColor: Colors.transparent,
         splashColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,
-        progressIndicatorTheme: const ProgressIndicatorThemeData(color: ThemeColor.primary),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(color: Display.brand_primary),
         textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: ThemeColor.secondary,
+            cursorColor: Display.brand_secondary,
             selectionColor: Color.fromARGB(109, 243, 71, 77),
-            selectionHandleColor: ThemeColor.primary,
+            selectionHandleColor: Display.brand_primary,
         ),
     );
 }

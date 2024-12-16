@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 
 class CustomText extends StatefulWidget {
     final String variant;
-    final String? text_color;
+    final Color? text_color;
     final String? font_size;
     final String txt;
     final TextDecoration text_decoration;
@@ -30,7 +30,7 @@ class CustomText extends StatefulWidget {
 class _CustomTextState extends State<CustomText> {
     @override
     Widget build(BuildContext context) {
-        var dec_color = widget.text_color != null ? customize_color[widget.text_color] : std_color[widget.variant];
+        var dec_color = widget.text_color != null ? widget.text_color : std_color[widget.variant];
         return Text(
             widget.txt,
             textAlign: widget.alignment,
@@ -80,15 +80,17 @@ final Map<String, double> textMarkSize = {
 };
 
 final Map<String, Color> std_color = {
-    'heading': ThemeColor.secondary,
-    'text': ThemeColor.text,
-    'label': ThemeColor.secondary,
+    'heading': Display.text_heading,
+    'text': Display.text_primary,
+    'label': Display.text_heading,
+    'secondary': Display.text_secondary,
 };
 
 final Map<String, FontWeight> weight = {
     'heading': FontWeight.w700,
     'text': FontWeight.w400,
     'label': FontWeight.w700,
+    'secondary': FontWeight.w400,
 };
 
 String EllipsisText(String input){
@@ -108,7 +110,7 @@ Widget CustomTextSpan(String inputText, {font_size = 'h6'}) {
       spans.add(TextSpan(
         text: parts[i],
         style: TextStyle(
-          color: ThemeColor.heading,
+          color: Display.text_heading,
           fontWeight: FontWeight.w700,
           fontSize: size[font_size],
           fontFamily: 'Outfit',

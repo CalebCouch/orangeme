@@ -77,9 +77,8 @@ class BitcoinHomeState extends GenericState<BitcoinHome> {
                         txt: widget.balance_usd,
                     ),
                     CustomText(
-                        variant: 'text',
+                        variant: 'secondary',
                         font_size: 'lg',
-                        text_color: 'text_secondary',
                         txt: widget.balance_btc,
                     ) 
                 ], AppPadding.valueDisplaySep),

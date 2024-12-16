@@ -107,7 +107,7 @@ class AmountState extends GenericState<Amount> {
                                             CustomText(
                                                 variant: 'heading', 
                                                 font_size: 'title', 
-                                                text_color: 'text_secondary', 
+                                                text_color: Display.text_secondary, 
                                                 txt:convert(widget.needed_placeholders)
                                             ),
                                         ],
@@ -120,22 +120,21 @@ class AmountState extends GenericState<Amount> {
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: widget.err == null ? [
                                              CustomText(
-                                                variant: 'text',
+                                                variant: 'secondary',
                                                 font_size: 'lg',
-                                                text_color: 'text_secondary',
                                                 txt: widget.amount_btc,
                                             ),
                                         ] : [
                                             const CustomIcon(
                                                 icon: 'error',
                                                 size: 'md',
-                                                color: 'danger',
+                                                color: Display.status_danger,
                                             ),
                                             const Spacing(8),
                                             CustomText(
                                                 variant: 'text',
                                                 font_size: 'lg',
-                                                text_color: 'danger',
+                                                text_color: Display.status_danger,
                                                 txt: widget.err!,
                                             ),
                                         ],

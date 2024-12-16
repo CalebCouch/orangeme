@@ -61,9 +61,8 @@ Widget RadioButton({required String title, required String subtitle, required bo
                                 alignment: TextAlign.left
                             ),
                             CustomText(
-                                variant: 'text',
+                                variant: 'secondary',
                                 font_size: 'sm',
-                                text_color: 'text_secondary', 
                                 txt: subtitle, 
                                 alignment: TextAlign.left
                             ),

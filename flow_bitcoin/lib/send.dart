@@ -92,9 +92,8 @@ class SendState extends GenericState<Send> {
                     onTap: onPaste,
                 ),
                 const CustomText(
-                    variant: 'text',
+                    variant: 'secondary',
                     font_size: 'sm',
-                    text_color: 'text_secondary', 
                     txt: 'or'
                 ),
                  CustomButton(

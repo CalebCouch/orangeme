@@ -57,7 +57,7 @@ Widget loadingCircle() {
     return const Center(
         child: CircularProgressIndicator(
             strokeCap: StrokeCap.round,
-            backgroundColor: ThemeColor.bgSecondary,
+            backgroundColor: Display.bg_secondary,
         ),
     );
 }

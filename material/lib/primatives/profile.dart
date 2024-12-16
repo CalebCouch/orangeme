@@ -19,19 +19,19 @@ Widget ProfilePhoto({
       return _buildIconVariant(
         display_icon, 
         size, 
-        borderColor: ThemeColor.heading,
-        backgroundColor: ThemeColor.primary,
+        borderColor: Display.outline_primary,
+        backgroundColor: Display.brand_primary,
         iconFallback: 'wallet',
-        iconColor: ThemeColor.heading,
+        iconColor: IconColor.enabled,
       );
     default:
       return _buildIconVariant(
         display_icon, 
         size, 
         borderColor: Colors.transparent,
-        backgroundColor: ThemeColor.bgSecondary,
+        backgroundColor: Display.bg_secondary,
         iconFallback: 'profile',
-        iconColor: ThemeColor.textSecondary,
+        iconColor: Display.text_secondary,
       );
   }
 }
@@ -44,7 +44,7 @@ Widget _buildPhotoVariant(String profile_picture, String size) {
         width: profileSize[size],
         decoration: BoxDecoration(
             border: Border.all(
-                color: ThemeColor.bg, 
+                color: Display.bg_primary,
                 width: borderThickness[size]!,
             ),
             shape: BoxShape.circle,

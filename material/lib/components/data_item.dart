@@ -39,7 +39,7 @@ class DataItem extends StatelessWidget {
                                     if (subtitle != null || helperText != null || buttons != null || content != null) const Spacing(16),
                                     if (subtitle != null) CustomText(variant: 'text', font_size: 'md', txt: subtitle!, alignment: TextAlign.left),
                                     if (subtitle != null) const Spacing(16),
-                                    if (helperText != null) CustomText(variant: 'text', font_size: 'sm', text_color: 'text_secondary', txt: helperText!, alignment: TextAlign.left),
+                                    if (helperText != null) CustomText(variant: 'secondary', font_size: 'sm',  txt: helperText!, alignment: TextAlign.left),
                                     if (helperText != null) const Spacing(16),
                                     if (content != null) content!,
                                     if (content != null) const Spacing(16),
@@ -60,7 +60,7 @@ class DataItem extends StatelessWidget {
             width: 32,
             decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: ThemeColor.bgSecondary,
+                color:  Display.bg_secondary,
             ),
             child: CustomText(
                 variant: 'heading', 
@@ -75,9 +75,8 @@ Widget aboutMeItem(BuildContext context, String aboutMe) {
     return DataItem(
         title: 'About me',
         content: CustomText(
-            variant: 'text', 
+            variant: 'secondary', 
             font_size: 'md', 
-            text_color: 'secondary', 
             txt: aboutMe, 
             alignment: TextAlign.start
         ),
@@ -89,9 +88,8 @@ Widget addressItem(BuildContext context, String address) {
         title: 'Bitcoin Address',
         content: CustomText(
             txt: address,
-            variant: 'text',
+            variant: 'secondary',
             font_size: 'md',
-            text_color: 'secondary',
             alignment: TextAlign.start,
         ),
         buttons: [ CopyButton(textToCopy: address) ],
@@ -104,9 +102,8 @@ Widget didItem(BuildContext context, String did) {
         title: 'Digital ID',
         content: CustomText(
             txt: did,
-            variant: 'text',
+            variant: 'secondary',
             font_size: 'md',
-            text_color: 'secondary',
             alignment: TextAlign.start,
         ),
         buttons: [ CopyButton(textToCopy: did) ],

@@ -54,9 +54,8 @@ class ListItem extends StatelessWidget {
                                         alignment: TextAlign.left
                                     ),
                                     if (desc != null) CustomText(
-                                        variant: 'text', 
+                                        variant: 'secondary', 
                                         font_size: 'sm', 
-                                        text_color: 'text_secondary', 
                                         txt: desc!, 
                                         alignment: TextAlign.left
                                     ),

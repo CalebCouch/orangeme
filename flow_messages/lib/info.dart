@@ -33,9 +33,8 @@ class ConversationInfoState extends GenericState<ConversationInfo> {
 
     Widget Information() {
         return CustomText(
-            variant: 'text', 
-            font_size: 'md', 
-            text_color: 'text_secondary', 
+            variant: 'secondary', 
+            font_size: 'md',
             txt: 'This group has ${widget.members.length} members'
         );
     }

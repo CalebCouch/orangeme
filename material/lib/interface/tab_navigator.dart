@@ -49,7 +49,7 @@ class _TabNavState extends State<TabNav> {
                     child: CustomIcon(
                         icon: widget.tabs[i].icon,
                         size: 'lg',
-                        color: widget.index == i ? 'secondary' : 'text_secondary',
+                        color: widget.index == i ? IconColor.enabled : IconColor.inactive,
                     ),
                 ),
             ),

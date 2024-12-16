@@ -174,9 +174,8 @@ Widget Stack_Chat({
                         ) else const Expanded(
                             child: Center(
                                 child: CustomText(
-                                    variant: 'text',
+                                    variant: 'secondary',
                                     font_size: 'md',
-                                    text_color: 'text_secondary',
                                     txt: 'No messages yet.',
                                 ),
                             ),

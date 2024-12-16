@@ -33,13 +33,18 @@ class CustomButton extends StatefulWidget {
 class _ButtonState extends State<CustomButton> {
     late Color fill;
     late String text;
-    late String status;
+    late ButtonState status = ButtonState.enabled;
 
-    Widget _displayIcon() {
-        return Container(
-            padding: EdgeInsets.only(right: widget.size == 'md' ? 8 : 12),
-            child: CustomIcon(icon: widget.icon!, size: widget.size),
-        );
+    checkState(){ 
+        setState(() {
+            if(status != ButtonState.hover) status = widget.enabled ? ButtonState.enabled : ButtonState.disabled;
+        }); 
+    }
+
+    hover(bool hovering){
+        setState(() {
+            if (hovering && status == ButtonState.enabled) status = ButtonState.hover;
+        });
     }
 
     buzz() {
@@ -52,41 +57,48 @@ class _ButtonState extends State<CustomButton> {
         widget.onTap();
     }
 
-    getColors() {
-        setState(() => status = widget.enabled ? 'enabled' : 'disabled');
-        text = buttonColors[widget.variant][status].text;
-        fill = customize_color[widget.color ?? buttonColors[widget.variant][status].fill]!;
+    tapped(){ status == ButtonState.disabled ? buzz : action; }
+    getColors(){ return buttonColors[widget.variant][status]; }   
+    width(){ return widget.expand ? double.infinity : null; }
+    height(){ return widget.size == 'lg' ? 48.0 : 32.0; }
+    padding(){ return EdgeInsets.symmetric(horizontal: h_padding[widget.size]!); }
+
+    Widget _displayIcon() {
+        return Container(
+            padding: EdgeInsets.only(right: i_padding[widget.size]!),
+            child: CustomIcon(icon: widget.icon!, size: widget.size),
+        );
     }
 
     Widget buildButton() {
-        getColors();
+        checkState();
+        var colors = getColors();
+
         return InkWell(
-            onHighlightChanged: (hovering) {
-                setState(() {
-                    if (hovering) {
-                        if (widget.enabled) fill = customize_color[buttonColors[widget.variant]['hovering']!.fill]!;
-                    } else {
-                        fill = customize_color[buttonColors[widget.variant][status].fill]!;
-                    }
-                });
-            },
-            onTap: status == 'disabled' ? buzz : action,
+            onHighlightChanged: (hovering) => hover(hovering),
+            onTap: tapped,
             child: Container(
                 key: UniqueKey(),
-                height: button_size[widget.size],
-                width: widget.expand  ? double.infinity : null,
+
+                padding: padding(),
+                height: height(),
+                width: width(),
+
                 decoration: ShapeDecoration(
-                    color: fill,
-                    shape: widget.variant == 'secondary' ? BoxDecorations.buttonOutlined : BoxDecorations.button,
+                    color: colors.background,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1, color: colors.outline),
+                        borderRadius: BorderRadius.all(Radius.circular(24)),
+                    )
                 ),
-                padding: EdgeInsets.symmetric(horizontal: widget.size == 'md' ? 12 : 16),
+                
                 child: Row(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                         widget.icon == null ? Container() : _displayIcon(),
-                        CustomText(txt: widget.txt, variant: 'label', font_size: widget.size, text_color: text),
+                        CustomText(txt: widget.txt, variant: 'label', font_size: widget.size, text_color: colors.label),
                     ],
                 ),
             ),
@@ -99,22 +111,22 @@ class _ButtonState extends State<CustomButton> {
     }
 }
 
-
-class BoxDecorations {
-    static const BorderRadius _radius = BorderRadius.all(Radius.circular(24));
-
-    static RoundedRectangleBorder button = RoundedRectangleBorder(borderRadius: _radius);
-    
-    static RoundedRectangleBorder buttonOutlined = RoundedRectangleBorder(
-        side: const BorderSide(width: 1, color: ThemeColor.outline),
-        borderRadius: _radius,
-    );
-}
-
-final Map<String, double> button_size = {
-    'lg': 48,
-    'md': 32,
+final Map<String, double> h_padding = {
+    'lg' : 16,
+    'md' : 12,
 };
+
+final Map<String, double> i_padding = {
+    'lg' : 12,
+    'md' : 8,
+};
+
+enum ButtonState {
+    enabled,
+    selected,
+    hover,
+    disabled,
+}
 
 // CUSTOM BUTTONS //
 

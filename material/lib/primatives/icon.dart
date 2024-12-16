@@ -38,7 +38,7 @@ const Map<String, String> icon = {
 class CustomIcon extends StatefulWidget {
     final String size;
     final String icon;
-    final String? color;
+    final Color? color;
 
     const CustomIcon({super.key, required this.icon, required this.size, this.color});
 
@@ -54,7 +54,7 @@ class CustomIconState extends State<CustomIcon> {
             width: icon_size[widget.size],
             height: icon_size[widget.size],
             colorFilter: ColorFilter.mode(
-                (widget.color != null ? customize_color[widget.color] : ThemeColor.secondary)!,
+                (widget.color != null ? widget.color : IconColor.enabled)!,
                 BlendMode.srcIn,
             ),
         );

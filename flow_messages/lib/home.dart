@@ -43,9 +43,8 @@ class MessagesHomeState extends GenericState<MessagesHome> {
 
     Widget NoConversations() {
         return const CustomText(
-            variant:'text',
+            variant: 'secondary',
             font_size: 'md',
-            text_color: 'text_secondary', 
             txt: 'No messages yet.\nGet started by messaging a friend.'
         );
     }
