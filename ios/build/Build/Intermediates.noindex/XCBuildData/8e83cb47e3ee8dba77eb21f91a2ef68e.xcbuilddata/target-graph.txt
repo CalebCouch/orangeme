@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'wgpu_mobile' in project 'wgpu_mobile'
-➜ Explicit dependency on target 'cargo_ios' in project 'wgpu_mobile'
-Target 'cargo_ios' in project 'wgpu_mobile' (no dependencies)

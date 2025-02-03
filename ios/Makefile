@@ -1,4 +1,4 @@
-.PHONY: xcodebuild run install boot-sim generate clean
+.PHONY: run clean
 
 DEVICE = ${DEVICE_ID}
 ifndef DEVICE_ID
@@ -6,20 +6,22 @@ ifndef DEVICE_ID
 endif
 
 run: install
-	xcrun simctl launch --console $(DEVICE) org.bevyengine.mobile
-
-boot-sim:
-	xcrun simctl boot $(DEVICE) || true
-
-install: xcodebuild-simulator boot-sim
-	xcrun simctl install $(DEVICE) build/Build/Products/Debug-iphonesimulator/wgpu_mobile.app
-
-xcodebuild-simulator:
-	IOS_TARGETS=x86_64-apple-ios xcodebuild -scheme wgpu_mobile -configuration Debug -derivedDataPath build -destination "id=$(DEVICE)"
-
-xcodebuild-iphone:
-	IOS_TARGETS=aarch64-apple-ios xcodebuild -scheme wgpu_mobile -configuration Debug -derivedDataPath build -arch arm64
+	xcrun simctl launch --console $(DEVICE) org.template.mobile
+	
+install: 
+	xcrun simctl install $(DEVICE) build/Build/Products/Debug-iphonesimulator/ios.app
 
 clean:
 	rm -r build
 	cargo clean
+
+
+# cd ios
+
+# xcrun simctl list devices
+
+# ## -- copy device ID (e.g. iPhone 16 Pro is 7AE14C1C-EE77-47D2-A166-A7DEE4364143)
+
+# xcrun simctl install 7AE14C1C-EE77-47D2-A166-A7DEE4364143 build/Build/Products/Debug-iphonesimulator/ios.app
+
+# xcrun simctl launch --console 7AE14C1C-EE77-47D2-A166-A7DEE4364143 org.template.mobile

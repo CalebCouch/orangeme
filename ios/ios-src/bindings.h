@@ -1,1 +1,1 @@
-void main_rs(void);
+void ios_main(void);
