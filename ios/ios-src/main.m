@@ -1,6 +1,6 @@
 #import "bindings.h"
 
 int main(void) {
-    main_rs();
+    ios_main();
     return 0;
 }
