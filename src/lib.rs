@@ -1,59 +1,51 @@
+//use rust_on_rails::prelude::*;
+
+//  pub struct MyApp;
+
+//  impl App for MyApp {
+//      async fn new() -> Self {
+//          MyApp
+//      }
+
+//      async fn root(
+//          &mut self, ctx: &Context, canvas_ctx: &mut CanvasContext<'_>, width: u32, height: u32
+//      ) -> Box<dyn ComponentBuilder> {
+//          Box::new(Column(vec![
+//              Box::new(Text(
+//                  "HELLO", "outfit_bold.ttf", "eb343a", 48, 60,
+//              )),
+//              Box::new(Text(
+//                  "WORLD", "outfit_bold.ttf", "eb343a", 48, 60,
+//              ))
+//          ], 20))
+//      }
+//  }
+
+//  create_entry_points!(MyApp);
+
 use rust_on_rails::*;
-use std::collections::HashMap;
 
-pub struct MyApp {
-    image: image::RgbaImage,
-    image2: image::RgbaImage,
-    fonts: HashMap<&'static str, Vec<u8>>
-}
+pub struct MyApp;
 
-impl App for MyApp {
+impl CanvasAppTrait for MyApp {
     async fn new() -> Self {
-        MyApp{
-            image: image::load_from_memory(include_bytes!("../assets/images/pfp.png")).unwrap().to_rgba8(),
-            image2: image::load_from_memory(include_bytes!("../assets/images/pfp2.png")).unwrap().to_rgba8(),
-            fonts: HashMap::from([
-                ("Bold", include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec()),
-                ("Regular", include_bytes!("../assets/fonts/outfit_regular.ttf").to_vec())
-            ])
-        }
+        MyApp
     }
 
-    async fn draw(&mut self, ctx: &mut Context<'_>, width: u32, height: u32) -> Vec<Mesh> {
-        let bound = (0, 0, width, height);
+    async fn draw<'a: 'b, 'b>(&'a mut self, ctx: &'b mut CanvasAtlas, width: u32, height: u32) -> Vec<CanvasItem> {
+        let font = include_bytes!("../assets/fonts/outfit_bold.ttf");
+        let key = ctx.add_font(font.to_vec());
         vec![
-            Mesh{
-                mesh_type: MeshType::Shape(Shape::Rectangle(510, 510), "0f0f0f"),
-                offset: (95, 95),
-                z_index: 2,
-                bound
-            },
-            Mesh{
-                mesh_type: MeshType::Image(Shape::Rectangle(100, 100), self.image.clone()),
-                offset: (100, 100),
-                z_index: 1,
-                bound
-            },
-            Mesh{
-                mesh_type: MeshType::Image(Shape::Circle(150), self.image2.clone()),
-                offset: (200, 200),
-                z_index: 1,
-                bound
-            },
-            Mesh{
-                mesh_type: MeshType::Shape(Shape::Rectangle(300, (48.0+12.48) as u32), "0000ff"),
-                offset: (100, 110),
-                z_index: 0,
-                bound
-            },
-            Mesh{
-                mesh_type: MeshType::Text("eb343a", None, "TenTwenty", self.fonts.get("Regular").unwrap(), 48.0, 48.0 * 1.25),
-                offset: (0, 0),
-                z_index: 1,
-                bound
-            }
+            CanvasItem(
+                ItemType::Shape(Shape::Rectangle(100, 100), "eb343a", None),
+                1, (100, 100), (0, 0, 180, 200)
+            ),
+            CanvasItem(
+                ItemType::Text(Text::new("HELLO_WORLD", "eb343a", None, 48, 60, key)),
+                0, (100, 200), (0, 0, 180, 300)
+            )
         ]
     }
 }
 
-create_entry_points!(CanvasApp::<MyApp>);
+create_canvas_entry_points!(MyApp);
