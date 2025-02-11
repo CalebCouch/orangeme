@@ -939,8 +939,6 @@ dependencies = [
 [[package]]
 name = "glyphat"
 version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0524f2bec4c4c29faf8b9c31bf7e5aa77ab009268dfbbff81741bd3703ad098c"
 dependencies = [
  "glyphon",
  "hex",
@@ -2178,9 +2176,7 @@ checksum = "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
 
 [[package]]
 name = "rust_on_rails"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "316153f07fdce1a2cab5bb9e59e8fdff97d122b99c43f148bb82e9d36e276367"
+version = "1.0.0"
 dependencies = [
  "android_logger",
  "console_error_panic_hook",
@@ -3082,11 +3078,10 @@ dependencies = [
 [[package]]
 name = "wgpu_canvas"
 version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7eb430773e22408d106354cfb7989585a0cd041d2b819344ff86af228c2c3145"
 dependencies = [
  "glyphat",
  "hex",
+ "log",
  "lyon_path",
  "lyon_tessellation",
  "wgpu",
@@ -3097,8 +3092,6 @@ dependencies = [
 [[package]]
 name = "wgpu_cyat"
 version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8cb68a00b5f34e42eea6cdfc453973a8285be42b0ca7aeaacb07ab9dee5541f8"
 dependencies = [
  "bytemuck",
  "cyat",

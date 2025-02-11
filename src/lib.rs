@@ -43,6 +43,10 @@ impl CanvasAppTrait for MyApp {
             CanvasItem(
                 ItemType::Text(Text::new("HELLO_WORLD", "eb343a", None, 48, 60, key)),
                 0, (100, 200), (0, 0, 180, 300)
+            ),
+            CanvasItem(
+                ItemType::Shape(Shape::Rectangle(width, 48), "eb343a", None),
+                1, (0, height-48), (0, 0, width, height)
             )
         ]
     }
