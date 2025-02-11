@@ -939,6 +939,8 @@ dependencies = [
 [[package]]
 name = "glyphat"
 version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0524f2bec4c4c29faf8b9c31bf7e5aa77ab009268dfbbff81741bd3703ad098c"
 dependencies = [
  "glyphon",
  "hex",
@@ -1212,6 +1214,12 @@ name = "khronos_api"
 version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
+
+[[package]]
+name = "lazy_static"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
 name = "lebe"
@@ -1793,6 +1801,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ordered-float"
+version = "4.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7bb71e1b3fa6ca1c61f383464aaf2bb0e2f8e772a1f01d486832464de363b951"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "owned_ttf_parser"
 version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2182,6 +2199,7 @@ dependencies = [
  "console_error_panic_hook",
  "console_log",
  "env_logger",
+ "lazy_static",
  "log",
  "tokio",
  "wasm-bindgen",
@@ -2960,6 +2978,7 @@ name = "webgpu"
 version = "0.1.0"
 dependencies = [
  "image",
+ "lazy_static",
  "rust_on_rails",
 ]
 
@@ -3077,11 +3096,10 @@ dependencies = [
 
 [[package]]
 name = "wgpu_canvas"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "glyphat",
  "hex",
- "log",
  "lyon_path",
  "lyon_tessellation",
  "wgpu",
@@ -3095,6 +3113,7 @@ version = "1.0.0"
 dependencies = [
  "bytemuck",
  "cyat",
+ "ordered-float",
  "wgpu",
  "wgpu_dyn_buffer",
 ]
