@@ -642,9 +642,9 @@ checksum = "96a6ac251f4a2aca6b3f91340350eab87ae57c3f127ffeb585e92bd336717991"
 
 [[package]]
 name = "cyat"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a20e7ee406a6274ce8a27f867a09251619e165f2c3cbea2f36c54a9aa522f45"
+checksum = "86dbf371869bf2630c4983c8317203345116323f4b9d10541e504978907a414d"
 dependencies = [
  "bytemuck",
  "lyon_path",
@@ -916,6 +916,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "glob"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8d1add55171497b4705a648c6b583acafb01d58050a51727785f0b2c8e0a2b2"
+
+[[package]]
 name = "glow"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -938,7 +944,9 @@ dependencies = [
 
 [[package]]
 name = "glyphat"
-version = "1.0.0"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ff54e690f16fa7b91a3e30f1c45fc7a4d96969546caafb11ebf8bcdcc2a43aae"
 dependencies = [
  "glyphon",
  "hex",
@@ -1112,6 +1120,26 @@ name = "imgref"
 version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0263a3d970d5c054ed9312c0057b4f3bde9c0b33836d3637361d4a9e6e7a408"
+
+[[package]]
+name = "include_dir"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "923d117408f1e49d914f1a379a309cffe4f18c05cf4e3d12e613a15fc81bd0dd"
+dependencies = [
+ "glob",
+ "include_dir_macros",
+]
+
+[[package]]
+name = "include_dir_macros"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7cab85a7ed0bd5f0e76d93846e0147172bed2e2d3f859bcc33a8d9699cad1a75"
+dependencies = [
+ "proc-macro2",
+ "quote",
+]
 
 [[package]]
 name = "indexmap"
@@ -1793,6 +1821,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ordered-float"
+version = "4.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7bb71e1b3fa6ca1c61f383464aaf2bb0e2f8e772a1f01d486832464de363b951"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "owned_ttf_parser"
 version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2176,12 +2213,13 @@ checksum = "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
 
 [[package]]
 name = "rust_on_rails"
-version = "1.0.0"
+version = "1.2.0"
 dependencies = [
  "android_logger",
  "console_error_panic_hook",
  "console_log",
  "env_logger",
+ "include_dir",
  "log",
  "tokio",
  "wasm-bindgen",
@@ -2960,6 +2998,7 @@ name = "webgpu"
 version = "0.1.0"
 dependencies = [
  "image",
+ "log",
  "rust_on_rails",
 ]
 
@@ -3077,11 +3116,10 @@ dependencies = [
 
 [[package]]
 name = "wgpu_canvas"
-version = "2.0.0"
+version = "2.1.2"
 dependencies = [
  "glyphat",
  "hex",
- "log",
  "lyon_path",
  "lyon_tessellation",
  "wgpu",
@@ -3091,10 +3129,13 @@ dependencies = [
 
 [[package]]
 name = "wgpu_cyat"
-version = "1.0.0"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf5acbb13cb12335b174c8e8fbe94a586a3eb4d62c6876b13cc639bd2ccd8c07"
 dependencies = [
  "bytemuck",
  "cyat",
+ "ordered-float",
  "wgpu",
  "wgpu_dyn_buffer",
 ]
@@ -3110,9 +3151,9 @@ dependencies = [
 
 [[package]]
 name = "wgpu_image"
-version = "2.0.0"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "548cbba6edfae582072a93764dcd83f9f49a8916cd7c3d1812fa40551f383967"
+checksum = "168f4c8c935449c625faba2711cf18ede3168dd4407b085e12f2d5a4a610ef95"
 dependencies = [
  "bytemuck",
  "cyat",
@@ -3384,9 +3425,9 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winit"
-version = "0.30.8"
+version = "0.30.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5d74280aabb958072864bff6cfbcf9025cf8bfacdde5e32b5e12920ef703b0f"
+checksum = "a809eacf18c8eca8b6635091543f02a5a06ddf3dad846398795460e6e0ae3cc0"
 dependencies = [
  "ahash",
  "android-activity",
