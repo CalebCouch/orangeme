@@ -55,68 +55,84 @@
 //          }
 //      }
 
-//      async fn get(&self, ctx: &mut Context<'_>, width: u32, height: u32) -> &dyn ComponentBuilder {
-//          &self.root
-//      }
+//      async fn get_root(&self) -> &dyn ComponentBuilder {&self.root}
 //  }
 
 //  create_entry_points!(MyApp);
 
 
-use rust_on_rails::prelude::*;
+    use rust_on_rails::prelude::*;
 
-pub struct MyApp{
-    items: Vec<CanvasItem>,
-    font: FontKey,
-}
+    pub struct MyApp{
+        items: Vec<CanvasItem>,
+        font: FontKey,
+        x: u32,
+        y: u32
+    }
 
-impl CanvasAppTrait for MyApp {
-    async fn new(ctx: &mut Context) -> Self {
-        let font = include_bytes!("../assets/fonts/outfit_bold.ttf");
-        let key = ctx.assets().add_font(font.to_vec());
-        MyApp{
-            items: vec![
-                CanvasItem(
-                    ItemType::Shape(Shape::Rectangle(100, 100), "eb343a", None),
-                    (100, 400), None
+    impl CanvasAppTrait for MyApp {
+        async fn new(ctx: &mut Context) -> Self {
+            let font = include_bytes!("../assets/fonts/outfit_bold.ttf");
+            let key = ctx.atlas.add_font(font.to_vec());
+            MyApp{
+                items: vec![
+                  //CanvasItem(
+                  //    ItemType::Shape(Shape::Rectangle(100, 100), "eb343a", None),
+                  //    (100, 400), None
+                  //),
+                ],
+                font: key,
+                x: 0,
+                y: 0
+            }
+        }
+
+        async fn draw(&mut self, ctx: &mut Context) {
+            ctx.clear("ffffff");
+          //let delta = self.items.get_mut(0).unwrap().1.1;
+          //self.items.get_mut(0).unwrap().1.1 = (delta+1) % 1000;
+            self.items.iter().for_each(|c| ctx.draw(c.clone()));
+        }
+
+        async fn on_click(&mut self, _ctx: &mut Context) {
+            self.items.push(CanvasItem(
+                ItemType::Shape(
+                  //Shape::Draw(0, 0, vec![
+                  //    DrawCommand::QuadraticBezierTo(100, 0, 50, 100),
+                  //]), "ffffff", Some(500)
+
+                    Shape::Draw(20, 0, vec![
+                        DrawCommand::LineTo(100, 0),
+                        DrawCommand::LineTo(100, 100),
+                        DrawCommand::LineTo(0, 100),
+                        DrawCommand::LineTo(0, 20),
+                        DrawCommand::QuadraticBezierTo(20, 0, 0, 0),
+                    ]), ((self.x%9).to_string()+"000ff").leak(), Some(500)
+
+                  //Shape::Circle(40), ((x%9).to_string()+"000ff").leak(), None
                 ),
-            ],
-            font: key,
+                (self.x.max(40)-40, self.y.max(40)-40), None
+            ));
+        }
+
+        async fn on_move(&mut self, ctx: &mut Context) {
+            self.x = ctx.position.0;
+            self.y = ctx.position.1;
+            //self.on_click(_ctx);
+          //self.items.push(CanvasItem(
+          //    ItemType::Shape(Shape::Rectangle(20, 20), "ff0000", None),
+          //    (x.max(10)-10, y.max(10)-10), None
+          //));
+        }
+
+        async fn on_press(&mut self, _ctx: &mut Context, t: String) {
+            self.items.push(CanvasItem(
+                ItemType::Text(
+                    Text::new(t.leak(), ((self.x%9).to_string()+"000ff").leak(), None, 48, 60, self.font)
+                ),
+                (self.x.max(20)-20, self.y.max(30)-30), None
+            ));
         }
     }
 
-    async fn draw(&mut self, ctx: &mut Context) {
-        ctx.clear("ffffff");
-        let delta = self.items.get_mut(0).unwrap().1.1;
-        self.items.get_mut(0).unwrap().1.1 = (delta+1) % 1000;
-        self.items.iter().for_each(|c| ctx.draw(c.clone()));
-      //ctx.draw(
-      //    ItemType::Text(Text::new("HELLO_WORLD", "eb343a", None, 48, 60, self.font)),
-      //    (100, 200), (0, 0, 180, 300)
-      //);
-      //ctx.draw(
-      //    ItemType::Shape(Shape::Rectangle(width, 48), "eb343a", None),
-      //    (0, height-48), (0, 0, width, height)
-      //)
-    }
-
-    fn on_click(&mut self, x: u32, y: u32) {
-        self.items.push(CanvasItem(
-            ItemType::Shape(Shape::Rectangle(20, 20), ((x%9).to_string()+"000ff").leak(), None),
-            (x.max(10)-10, y.max(10)-10), None
-        ));
-    }
-
-    fn on_move(&mut self, x: u32, y: u32) {
-        self.items.push(CanvasItem(
-            ItemType::Shape(Shape::Rectangle(20, 20), "ff0000", None),
-            (x.max(10)-10, y.max(10)-10), None
-        ));
-    }
-
-    fn on_press(&mut self, t: String) {
-
-    }
-}
-
-create_canvas_entry_points!(MyApp);
+    create_canvas_entry_points!(MyApp);
