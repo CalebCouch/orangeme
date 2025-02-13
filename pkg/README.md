@@ -75,7 +75,10 @@ Update "Library Search Paths" to include where your .a file is located
 
 Build and run your app on an IOS device or IOS simulator
 
+## IOS Updated
 
+cd ios
 
+make clean
 
-
+make run

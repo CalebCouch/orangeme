@@ -6,7 +6,8 @@ edition = "2021"
 
 [dependencies]
 image = "0.25.5"
-rust_on_rails = {path="../rust_on_rails"}
+rust_on_rails = "3.0.0"
+#rust_on_rails = {path="../rust_on_rails"}
 
 [lib]
 name="main"
