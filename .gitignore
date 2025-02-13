@@ -1,3 +1,7 @@
 /target
 *.sw*
 /src/*.sw*
+/pkg/*
+/ios/*
+/ios/build/*
+/ios/build/Logs/*
