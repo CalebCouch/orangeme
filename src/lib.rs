@@ -5,19 +5,41 @@ pub struct MyApp;
 impl App for MyApp {
     async fn new(ctx: &mut Context<'_>) -> Box<dyn ComponentBuilder> {
         ctx.include_assets(include_assets!("./assets"));
-        let font = ctx.load_font("fonts/outfit_bold.ttf").unwrap();
-        let ofont = ctx.load_font("fonts/outfit_regular.ttf").unwrap();
-        let image = ctx.load_image("icons/pfp.png").unwrap();
-        Box::new(Column!(20,
-            // Text::new("HELLO", "eb343a", 48, font.clone()),
-            // FText::new("WORLD", "eb343a", 48, font, ofont),
-            // FShape::new(ShapeType::Rectangle(100, 100), "00ff00", None),
-            // FShape::new(ShapeType::Rectangle(100, 100), "00ff00", Some(500)),
-            Image(ShapeType::Rectangle(8, 8), image),
-            Button::primary("Continue", Size::Large, Width::Expand),
-            Row!(32, Button::secondary("Continue", Size::Medium, Width::Hug),
-            Button::primary("Continue", Size::Large, Width::Hug))
-            // Stack!(Button::primary("Continue", Size::Large), Button::secondary("Continue", Size::Medium))
+        Box::new(Column!(24, Alignment::Left,
+            Row!(24, Alignment::Left,
+                Button::Primary("Continue", Size::Large, Width::Hug, Some("pfp")),
+                Button::Secondary("Continue", Size::Large, Width::Hug, None),
+                Button::Ghost("Continue", Size::Large, Width::Hug, None)
+            ),
+            Row!(24, Alignment::Left,
+                Button::Primary("Continue", Size::Medium, Width::Hug, Some("pfp")),
+                Button::Secondary("Continue", Size::Medium, Width::Hug, None),
+                Button::Ghost("Continue", Size::Medium, Width::Hug, None)
+            ),
+            // Row!(24, Alignment::Left,
+            //     CircleIcon::Icon("profile", 48),
+            //     CircleIcon::Brand("profile", 48),
+            //     CircleIcon::Photo("profile", 48)
+            // ),
+            // Row!(24, Alignment::Left,
+            //     MessageBubble::You("Hey! What's up?"),
+            //     MessageBubble::ContactGroup("Hey! What's up?"),
+            //     MessageBubble::Rooms("Hey! What's up?")
+            // ),
+            Row!(24, Alignment::Left,
+                TextMessage(MessageType::You, vec!["Hey! What's up?", "Hey! What's up?"]),
+                TextMessage(MessageType::Contact, vec!["Hey! What's up?", "Hey! What's up?"]),
+                TextMessage(MessageType::Group, vec!["Hey! What's up?", "Hey! What's up?"]),
+                TextMessage(MessageType::Rooms, vec!["Hey! What's up?", "Hey! What's up?"])
+            ),
+            Row!(24, Alignment::Left,
+                ListItem::conversation("Ella Couch", "Hey, are we planning on meeting?"),
+                ListItem::transaction("$10.00", "Yesterday", true, false),
+                ListItem::user("Ella Couch", "nym::idd::74628363829")
+            ),
+            Row!(24, Alignment::Left,
+                Card::room("Ella Couch's Room", "243 members", "A room for all of Ella Couch's friends")
+            )
         ))
     }
 }
