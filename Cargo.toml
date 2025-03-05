@@ -6,8 +6,8 @@ edition = "2021"
 
 [dependencies]
 image = "0.25.5"
-rust_on_rails = "3.0.0"
-#rust_on_rails = {path="../rust_on_rails"}
+#rust_on_rails = "3.0.0"
+rust_on_rails = {path="../rust_on_rails"}
 
 [lib]
 name="main"
@@ -30,11 +30,3 @@ min_sdk_version = 33
 target_sdk_version = 33
 
 label = "Application Name"
-
-# See https://developer.android.com/guide/topics/manifest/meta-data-element
-#
-# Note: there can be several .meta_data entries.
-# Note: the `resource` attribute is currently not supported.
-#   [[package.metadata.android.application.meta_data]]
-#   name = "com.samsung.android.vr.application.mode"
-#   value = "vr_only"

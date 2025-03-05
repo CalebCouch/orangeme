@@ -607,17 +607,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96a6ac251f4a2aca6b3f91340350eab87ae57c3f127ffeb585e92bd336717991"
 
 [[package]]
-name = "cyat"
-version = "1.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22741a97f610604337c7a5472bc699b2f72c49ceebca70cac2a26a91a3bfc7d3"
-dependencies = [
- "bytemuck",
- "lyon_path",
- "lyon_tessellation",
-]
-
-[[package]]
 name = "dispatch"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -750,12 +739,6 @@ dependencies = [
  "crc32fast",
  "miniz_oxide",
 ]
-
-[[package]]
-name = "float_next_after"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8bf7cc16383c4b8d58b9905a8509f02926ce3058053c056376248d958c9df1e8"
 
 [[package]]
 name = "foldhash"
@@ -895,17 +878,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2c4ee00b289aba7a9e5306d57c2d05499b2e5dc427f84ac708bd2c090212cf3e"
 dependencies = [
  "gl_generator",
-]
-
-[[package]]
-name = "glyphat"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88b8ab4c4bb59732f2b22c70044f3f448123be5429584388092130a21be6e672"
-dependencies = [
- "glyphon",
- "hex",
- "wgpu",
 ]
 
 [[package]]
@@ -1273,38 +1245,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "234cf4f4a04dc1f57e24b96cc0cd600cf2af460d4161ac5ecdd0af8e1f3b2a38"
 
 [[package]]
-name = "lyon_geom"
-version = "1.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8af69edc087272df438b3ee436c4bb6d7c04aa8af665cfd398feae627dbd8570"
-dependencies = [
- "arrayvec",
- "euclid",
- "num-traits",
-]
-
-[[package]]
-name = "lyon_path"
-version = "1.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e0b8aec2f58586f6eef237985b9a9b7cb3a3aff4417c575075cf95bf925252e"
-dependencies = [
- "lyon_geom",
- "num-traits",
-]
-
-[[package]]
-name = "lyon_tessellation"
-version = "1.0.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "579d42360a4b09846eff2feef28f538696c7d6c7439bfa65874ff3cbe0951b2c"
-dependencies = [
- "float_next_after",
- "lyon_path",
- "num-traits",
-]
-
-[[package]]
 name = "malloc_buf"
 version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1500,7 +1440,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
- "libm",
 ]
 
 [[package]]
@@ -2154,13 +2093,12 @@ checksum = "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
 [[package]]
 name = "rust_on_rails"
 version = "3.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86a44ef3055d4accc38d745f0806d40f146fb9200c07986fbd09f2999a5e97ae"
 dependencies = [
  "android_logger",
  "console_error_panic_hook",
  "console_log",
  "env_logger",
+ "hex",
  "include_dir",
  "log",
  "tokio",
@@ -3092,27 +3030,11 @@ dependencies = [
 [[package]]
 name = "wgpu_canvas"
 version = "3.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e7afb09b0dbdb63dd74617280699c6afaa3ef8ec4722cb728f0cadc09ddc016"
-dependencies = [
- "glyphat",
- "hex",
- "lyon_path",
- "lyon_tessellation",
- "wgpu",
- "wgpu_cyat",
- "wgpu_image",
-]
-
-[[package]]
-name = "wgpu_cyat"
-version = "1.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "622d3475137027f06b633dc90b55fd17a7d28ca00ab2ac5de750366d0daa4e88"
 dependencies = [
  "bytemuck",
- "cyat",
- "ordered-float",
+ "glyphon",
+ "hex",
+ "image",
  "wgpu",
  "wgpu_dyn_buffer",
 ]
@@ -3124,19 +3046,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4c1c9e94b023d276cd29e0e42b8d0494c599540ecf14e3164f616cd258b84bb"
 dependencies = [
  "wgpu",
-]
-
-[[package]]
-name = "wgpu_image"
-version = "2.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e67b40e54f1322ddfdbc2ef244182dcac84faccd4b9cf58fb2dc83d075735512"
-dependencies = [
- "bytemuck",
- "cyat",
- "image",
- "wgpu",
- "wgpu_dyn_buffer",
 ]
 
 [[package]]
