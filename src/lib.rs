@@ -8,9 +8,13 @@ pub struct MyApp{
 impl App for MyApp {
     async fn new(ctx: &mut Context) -> Self {
         let font = ctx.add_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-        let image = ctx.add_image(image::load_from_memory(include_bytes!("../assets/icons/pfp3.png")).unwrap().to_rgba8());
+        let image = ctx.add_image(image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().to_rgba8());
         MyApp{
             items: vec![
+                CanvasItem::Text(
+                    Area((100, 500), None),
+                    Text::new("Heading", "eb343a", 255, None, 48, 60, font.clone())
+                ),
                 CanvasItem::Image(
                     Area((100, 400), None),
                     Shape::Ellipse(0, (100, 100)),
@@ -34,7 +38,7 @@ impl App for MyApp {
                 CanvasItem::Shape(
                     Area((400, 400), None),
                     Shape::Ellipse(0, (100, 100)),
-                    "ff00ff", 255
+                    "EB343A", 255
                 ),
                 CanvasItem::Shape(
                     Area((500, 400), None),
@@ -43,8 +47,8 @@ impl App for MyApp {
                 ),
                 CanvasItem::Shape(
                     Area((600, 400), None),
-                    Shape::RoundedRectangle(0, (100, 100), 20),
-                    "ff00ff", 255
+                    Shape::RoundedRectangle(2, (100, 48), 24),
+                    "585250", 255
                 ),
                 CanvasItem::Shape(
                     Area((0, 100), None),
@@ -53,8 +57,8 @@ impl App for MyApp {
                 ),
                 CanvasItem::Shape(
                     Area((0, 400), None),
-                    Shape::RoundedRectangle(20, (50, 50), 25),
-                    "ff00ff", 255
+                    Shape::RoundedRectangle(1, (50, 50), 25),
+                    "0033ff", 255
                 ),
                 CanvasItem::Shape(
                     Area((0, 200), None),
@@ -66,6 +70,11 @@ impl App for MyApp {
                     Shape::RoundedRectangle(20, (50, 90), 30),
                     "ff00ff", 255
                 ),
+                CanvasItem::Shape(
+                    Area((500, 100), None),
+                    Shape::Ellipse(20, (50, 90)),
+                    "ff00ff", 255
+                ),
             ],
             font
         }
@@ -73,8 +82,8 @@ impl App for MyApp {
 
     async fn draw(&mut self, ctx: &mut Context) {
         ctx.clear("ffffff");
-        let delta = self.items.get_mut(0).unwrap().area().0.1;
-        self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
+        // let delta = self.items.get_mut(0).unwrap().area().0.1;
+        // self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
         self.items.iter().for_each(|c| ctx.draw(*c));
     }
 
@@ -87,11 +96,11 @@ impl App for MyApp {
     }
 
     async fn on_move(&mut self, ctx: &mut Context) {
-        self.items.push(CanvasItem::Shape(
-            Area((ctx.position.0.max(10)-10, ctx.position.1.max(10)-10), None),
-            Shape::Ellipse(0, (20, 20)),
-            "ff0000", 255
-        ));
+        // self.items.push(CanvasItem::Shape(
+        //     Area((ctx.position.0.max(10)-10, ctx.position.1.max(10)-10), None),
+        //     Shape::Ellipse(0, (20, 20)),
+        //     "ff0000", 255
+        // ));
     }
 
     async fn on_press(&mut self, ctx: &mut Context, t: String) {

@@ -8,6 +8,7 @@ edition = "2021"
 image = "0.25.5"
 #rust_on_rails = "3.0.0"
 rust_on_rails = {path="../rust_on_rails"}
+#pelican_ui = {path="../pelican_ui"}
 
 [lib]
 name="main"

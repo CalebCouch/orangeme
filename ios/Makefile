@@ -6,7 +6,7 @@ ifndef DEVICE_ID
 endif
 
 run: install
-	xcrun simctl launch --console $(DEVICE) org.template.mobile
+	xcrun simctl launch --console $(DEVICE) org.ramp.mobile
 	
 install: 
 	xcrun simctl install $(DEVICE) build/Build/Products/Debug-iphonesimulator/ios.app

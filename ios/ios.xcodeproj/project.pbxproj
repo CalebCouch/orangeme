@@ -13,6 +13,9 @@
 		55B7188F81C3C4183F81D3AE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A39528EB2CCB182F5328223A /* libc++.tbd */; };
 		57CD6306253C7A940098CD4A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57CD6305253C7A940098CD4A /* AudioToolbox.framework */; };
 		880CA76C2D4984A700B00E38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1B41978FA53999AA836D0F /* Security.framework */; };
+		88B03F722D78C81E0013AA60 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F712D78C81E0013AA60 /* QuartzCore.framework */; };
+		88B03F742D78CA080013AA60 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F732D78CA080013AA60 /* CoreFoundation.framework */; };
+		88B03F762D78CD600013AA60 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F752D78CD600013AA60 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +32,9 @@
 		160DB77300A3F1806F024D47 /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		55EAC02897847195D2F44C15 /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57CD6305253C7A940098CD4A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		88B03F712D78C81E0013AA60 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		88B03F732D78CA080013AA60 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		88B03F752D78CD600013AA60 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8EE7F1E3B0303533925D7E33 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		96A1E5B62F48B379829E8A0D /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		9F1B41978FA53999AA836D0F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -42,11 +48,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88B03F742D78CA080013AA60 /* CoreFoundation.framework in Frameworks */,
 				880CA76C2D4984A700B00E38 /* Security.framework in Frameworks */,
 				134866208A035F8615C99114 /* Metal.framework in Frameworks */,
+				88B03F722D78C81E0013AA60 /* QuartzCore.framework in Frameworks */,
 				2604C99FAB5A8322EDCABB9F /* UIKit.framework in Frameworks */,
 				55B7188F81C3C4183F81D3AE /* libc++.tbd in Frameworks */,
 				57CD6306253C7A940098CD4A /* AudioToolbox.framework in Frameworks */,
+				88B03F762D78CD600013AA60 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +92,9 @@
 		EB028409C2D0655412DA6E44 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				88B03F752D78CD600013AA60 /* Foundation.framework */,
+				88B03F732D78CA080013AA60 /* CoreFoundation.framework */,
+				88B03F712D78C81E0013AA60 /* QuartzCore.framework */,
 				57CD6305253C7A940098CD4A /* AudioToolbox.framework */,
 				A39528EB2CCB182F5328223A /* libc++.tbd */,
 				96A1E5B62F48B379829E8A0D /* Metal.framework */,
@@ -293,7 +305,7 @@
 					"-lmain",
 					"-lc++abi",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.template.mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ramp.mobile;
 				PRODUCT_NAME = ios;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -405,7 +417,7 @@
 					"-lmain",
 					"-lc++abi",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.template.mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ramp.mobile;
 				PRODUCT_NAME = ios;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
