@@ -1,6 +1,8 @@
 use rust_on_rails::prelude::*;
 use rand::prelude::*;
 
+use fast_image_resize::{IntoImageView, Resizer, ResizeOptions};
+
 pub struct MyApp{
     items: Vec<CanvasItem>,
     font: FontKey
@@ -10,23 +12,40 @@ impl App for MyApp {
     async fn new(ctx: &mut Context) -> Self {
         println!("START APP");
         let font = ctx.add_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-      //let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().to_rgba8();
+        let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap();
+
+        let mut dst_image = image::DynamicImage::new(
+            200, 200, image::ColorType::Rgba8
+        );
+
+        let mut resizer = Resizer::new();
+        resizer.resize(&image, &mut dst_image, &None).unwrap();
+
+        let image = ctx.add_image(dst_image.into());
+        
       //let image = ctx.add_image(image::imageops::resize(
       //    &image, 200, 200, image::imageops::FilterType::CatmullRom
       //));
-      //let shape = ctx.add_shape(Ellipse{color: (255, 255, 0, 255), stroke: 20, size: (100, 100)});
-
         let mut items = vec![];
+
+        items.push(CanvasItem::Image(Area((0, 0), None), image));
+
+        let shape = ctx.add_shape(Ellipse{color: (0, 0, 0, 255), stroke: 0, size: (50, 100)});
+
         let mut rng = rand::rng();
 
-        let width = 900/20;
-        let height = 900/20;
-        for x in 0..20 {
-            for y in 0..20 {
-                let shape = ctx.add_shape(Ellipse{color: (rng.random::<u8>(), rng.random::<u8>(), rng.random::<u8>(), 255), stroke: 20, size: (10+(rng.random::<u32>()%(width-10)), 10+(rng.random::<u32>()%(height-10)))});
-                items.push(CanvasItem::Shape(Area((x*width, y*height), None), shape));
-            }
-        }
+        items.push(CanvasItem::Shape(Area((200, 200), None), shape));
+
+        items.push(CanvasItem::Text(Area((0, 200), None), Text::new("HELLO", "eb343a", 255, None, 48, 60, font.clone())));
+
+      //let width = 900/20;
+      //let height = 900/20;
+      //for x in 0..20 {
+      //    for y in 0..20 {
+      //        let shape = ctx.add_shape(Ellipse{color: (rng.random::<u8>(), rng.random::<u8>(), rng.random::<u8>(), 255), stroke: 20, size: (10+(rng.random::<u32>()%(width-10)), 10+(rng.random::<u32>()%(height-10)))});
+      //        items.push(CanvasItem::Shape(Area((x*width, y*height), None), shape));
+      //    }
+      //}
 
         MyApp{
             items,
