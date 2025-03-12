@@ -1,4 +1,5 @@
 use rust_on_rails::prelude::*;
+use rand::prelude::*;
 
 pub struct MyApp{
     items: Vec<CanvasItem>,
@@ -7,91 +8,32 @@ pub struct MyApp{
 
 impl App for MyApp {
     async fn new(ctx: &mut Context) -> Self {
+        println!("START APP");
         let font = ctx.add_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-        let image = ctx.add_image(image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().to_rgba8());
+      //let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().to_rgba8();
+      //let image = ctx.add_image(image::imageops::resize(
+      //    &image, 200, 200, image::imageops::FilterType::CatmullRom
+      //));
+      //let shape = ctx.add_shape(Ellipse{color: (255, 255, 0, 255), stroke: 20, size: (100, 100)});
+
+        let mut items = vec![];
+        let mut rng = rand::rng();
+
+        let width = 900/20;
+        let height = 900/20;
+        for x in 0..20 {
+            for y in 0..20 {
+                let shape = ctx.add_shape(Ellipse{color: (rng.random::<u8>(), rng.random::<u8>(), rng.random::<u8>(), 255), stroke: 20, size: (10+(rng.random::<u32>()%(width-10)), 10+(rng.random::<u32>()%(height-10)))});
+                items.push(CanvasItem::Shape(Area((x*width, y*height), None), shape));
+            }
+        }
+
         MyApp{
-            items: vec![
-                CanvasItem::Image(
-                    Area((100, 200), None),
-                    Shape::Rectangle(0, (500, 400)),
-                    image
-                ),
-              //CanvasItem::Image(
-              //    Area((100, 600), None),
-              //    Shape::Rectangle(0, (400, 400)),
-              //    image
-              //),
-              //CanvasItem::Image(
-              //    Area((0, 0), None),
-              //    Shape::Rectangle(0, (100, 100)),
-              //    image
-              //),
-              //CanvasItem::Image(
-              //    Area((0, 100), None),
-              //    Shape::Rectangle(0, (100, 100)),
-              //    image
-              //),
-              //CanvasItem::Image(
-              //    Area((0, 200), None),
-              //    Shape::Rectangle(0, (100, 100)),
-              //    image
-              //),
-              //CanvasItem::Image(
-              //    Area((0, 300), None),
-              //    Shape::Rectangle(0, (100, 100)),
-              //    image
-              //),
-              //CanvasItem::Shape(
-              //    Area((200, 400), None),
-              //    Shape::Ellipse(1, (400, 400)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 0), None),
-              //    Shape::Ellipse(1, (10, 50)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 50), None),
-              //    Shape::Ellipse(20, (10, 50)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 100), None),
-              //    Shape::Ellipse(20, (100, 100)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 200), None),
-              //    Shape::Ellipse(20, (100, 100)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 300), None),
-              //    Shape::Ellipse(20, (100, 150)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 450), None),
-              //    Shape::Ellipse(1, (100, 200)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 650), None),
-              //    Shape::Ellipse(10, (200, 100)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 750), None),
-              //    Shape::Ellipse(10, (200, 100)),
-              //    "ff00ff", 255
-              //),
-              //CanvasItem::Shape(
-              //    Area((0, 850), None),
-              //    Shape::Ellipse(10, (200, 100)),
-              //    "ff00ff", 255
-              //)
-            ],
+            items,
+          //items: vec![
+          //    CanvasItem::Image(Area((5, 5), None), image),
+          //    CanvasItem::Shape(Area((500, 500), None), shape),
+          //],
             font
         }
     }
@@ -104,11 +46,11 @@ impl App for MyApp {
     }
 
     async fn on_click(&mut self, ctx: &mut Context) {
-        self.items.push(CanvasItem::Shape(
-            Area((ctx.position.0.max(20)-20, ctx.position.1.max(20)-20), None),
-            Shape::RoundedRectangle(10, (80, 40), 20),
-            ((ctx.position.0%9).to_string()+"000ff").leak(), 255
-        ));
+      //self.items.push(CanvasItem::Shape(
+      //    Area((ctx.position.0.max(20)-20, ctx.position.1.max(20)-20), None),
+      //    Shape::RoundedRectangle(10, (80, 40), 20),
+      //    ((ctx.position.0%9).to_string()+"000ff").leak(), 255
+      //));
     }
 
     async fn on_move(&mut self, ctx: &mut Context) {
