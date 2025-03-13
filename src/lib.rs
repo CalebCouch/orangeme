@@ -30,7 +30,7 @@ impl App for MyApp {
 
         items.push(CanvasItem::Image(Area((0, 0), None), image));
 
-        let shape = ctx.add_shape(Ellipse{color: (0, 0, 0, 255), stroke: 0, size: (100, 200)});
+        let shape = ctx.add_shape(Ellipse{color: (0, 0, 0, 255), stroke: 1, size: (100, 200)});
 
         let mut rng = rand::rng();
 
