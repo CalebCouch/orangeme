@@ -33,7 +33,7 @@ impl App for MyApp {
         //let shape = CanvasItem::Shape(Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
         //let rectangle = CanvasItem::Image(Shape::Rectangle(0, (1000, 1000)), image.clone());
         let circle = CanvasItem::Image(Shape::Ellipse(20, (100, 100)), image.clone());
-        let circle2 = CanvasItem::Image(Shape::Ellipse(20, (200, 100)), image.clone());
+        let circle2 = CanvasItem::Image(Shape::Ellipse(1, (200, 100)), image.clone());
         let circle3 = CanvasItem::Image(Shape::Ellipse(20, (200, 400)), image);
 
         //items.push((Area((0, 0), None), text));
