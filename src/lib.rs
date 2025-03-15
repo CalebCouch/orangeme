@@ -1,42 +1,62 @@
 use rust_on_rails::prelude::*;
 use rand::prelude::*;
 
+use std::time::Instant;
+
 use fast_image_resize::{IntoImageView, Resizer, ResizeOptions};
 
 pub struct MyApp{
-    items: Vec<CanvasItem>,
-    font: FontKey
+    items: Vec<(Area, CanvasItem)>,
+    font: Font
 }
 
 impl App for MyApp {
     async fn new(ctx: &mut Context) -> Self {
         println!("START APP");
-        let font = ctx.add_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-        let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap();
+      //let font = ctx.add_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
+      //let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap();
 
-        let mut dst_image = image::DynamicImage::new(
-            200, 200, image::ColorType::Rgba8
-        );
+      //let mut dst_image = image::DynamicImage::new(
+      //    200, 200, image::ColorType::Rgba8
+      //);
 
-        let mut resizer = Resizer::new();
-        resizer.resize(&image, &mut dst_image, &None).unwrap();
+      //let mut resizer = Resizer::new();
+      //resizer.resize(&image, &mut dst_image, &None).unwrap();
 
-        let image = ctx.add_image(dst_image.into());
-        
+      //let image = ctx.add_image(dst_image.into());
+      //
       //let image = ctx.add_image(image::imageops::resize(
       //    &image, 200, 200, image::imageops::FilterType::CatmullRom
       //));
         let mut items = vec![];
 
-        items.push(CanvasItem::Image(Area((0, 0), None), image));
+        let font = ctx.new_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
+        let image = ctx.new_image(image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
 
-        let shape = ctx.add_shape(Ellipse{color: (0, 0, 0, 255), stroke: 1, size: (100, 200)});
+        let time = Instant::now();
 
-        let mut rng = rand::rng();
+        let text = CanvasItem::text(ctx, "HELLO WORLD", "eb343a", 255, None, 48, 60, font.clone());
+        println!("text: {}", time.elapsed().as_millis());
+        let shape = CanvasItem::shape(ctx, Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
+        println!("shape: {}", time.elapsed().as_millis());
+        let image = CanvasItem::image(ctx, Shape::Rectangle(0, (200, 200)), image);
+        println!("image: {}", time.elapsed().as_millis());
 
-        items.push(CanvasItem::Shape(Area((200, 200), None), shape));
+        //panic!("built");
 
-        items.push(CanvasItem::Text(Area((0, 200), None), Text::new("HELLO", "eb343a", 255, None, 48, 60, font.clone())));
+        items.push((Area((0, 0), None), text));
+        items.push((Area((200, 200), None), shape));
+        items.push((Area((200, 400), None), image));
+
+      //items.push(CanvasItem::Image(Area((0, 0), None), image));
+
+      //let shape = ctx.add_shape(Ellipse{color: (0, 0, 0, 255), stroke: 0, size: (100, 200)});
+
+      //let mut rng = rand::rng();
+
+      //items.push(CanvasItem::Shape(Area((200, 200), None), shape));
+
+      //items.push(CanvasItem::Text(Area((0, 200), None), Text::new("HELLO", "eb343a", 255, None, 48, 60, font.clone())));
 
       //let width = 900/20;
       //let height = 900/20;
@@ -61,7 +81,7 @@ impl App for MyApp {
         ctx.clear("ffffff");
       //let delta = self.items.get_mut(0).unwrap().area().0.1;
       //self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
-        self.items.iter().for_each(|c| ctx.draw(*c));
+        self.items.iter().for_each(|(area, c)| ctx.draw(*area, c.clone()));
     }
 
     async fn on_click(&mut self, ctx: &mut Context) {

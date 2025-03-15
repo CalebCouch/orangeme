@@ -2155,6 +2155,7 @@ dependencies = [
  "console_log",
  "env_logger",
  "hex",
+ "image",
  "include_dir",
  "log",
  "tokio",
