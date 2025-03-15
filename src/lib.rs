@@ -39,9 +39,9 @@ impl App for MyApp {
         //items.push((Area((0, 0), None), text));
         //items.push((Area((200, 200), None), shape));
         //items.push((Area((0, 0), None), rectangle));
-        items.push((Area((200, 500), Some((200, 500, 100, 100))), circle));
-        items.push((Area((0, 300), None), circle2));
-        items.push((Area((0, 500), None), circle3));
+        items.push((Area((210, 500), Some((200, 500, 100, 100))), circle));
+        items.push((Area((5, 300), None), circle2));
+        items.push((Area((5, 500), None), circle3));
 
       //items.push(CanvasItem::Image(Area((0, 0), None), image));
 
