@@ -13,40 +13,35 @@ pub struct MyApp{
 impl App for MyApp {
     async fn new(ctx: &mut Context) -> Self {
         println!("START APP");
-      //let font = ctx.add_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-      //let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap();
-
-      //let mut dst_image = image::DynamicImage::new(
-      //    200, 200, image::ColorType::Rgba8
-      //);
-
-      //let mut resizer = Resizer::new();
-      //resizer.resize(&image, &mut dst_image, &None).unwrap();
-
-      //let image = ctx.add_image(dst_image.into());
-      //
-      //let image = ctx.add_image(image::imageops::resize(
-      //    &image, 200, 200, image::imageops::FilterType::CatmullRom
-      //));
         let mut items = vec![];
 
         let font = ctx.new_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-        let image = ctx.new_image(image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
+
+        let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap();
+
+        let mut dst_image = image::DynamicImage::new(
+            200, 200, image::ColorType::Rgba8
+        );
+        let mut resizer = Resizer::new();
+        resizer.resize(&image, &mut dst_image, &None).unwrap();
+
+        let image = ctx.new_image(dst_image.into());
 
         let time = Instant::now();
 
-        let text = CanvasItem::text(ctx, "HELLO WORLD", "eb343a", 255, None, 48, 60, font.clone());
-        println!("text: {}", time.elapsed().as_millis());
-        let shape = CanvasItem::shape(ctx, Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
-        println!("shape: {}", time.elapsed().as_millis());
-        let image = CanvasItem::image(ctx, Shape::Rectangle(0, (200, 200)), image);
-        println!("image: {}", time.elapsed().as_millis());
-
-        //panic!("built");
+        let text = CanvasItem::Text(Text::new("HELLO WORLD", "eb343a", 255, None, 48, 60, font.clone()));
+        let shape = CanvasItem::Shape(Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
+        let rectangle = CanvasItem::Image(Shape::Rectangle(20, (100, 100)), image.clone());
+        let circle = CanvasItem::Image(Shape::Ellipse(20, (100, 100)), image.clone());
+        let circle2 = CanvasItem::Image(Shape::Ellipse(20, (200, 100)), image.clone());
+        let circle3 = CanvasItem::Image(Shape::Ellipse(20, (200, 400)), image);
 
         items.push((Area((0, 0), None), text));
         items.push((Area((200, 200), None), shape));
-        items.push((Area((200, 400), None), image));
+        items.push((Area((200, 400), Some((200, 400, 500, 1000))), rectangle));
+        items.push((Area((200, 500), Some((200, 500, 100, 100))), circle));
+        items.push((Area((0, 300), None), circle2));
+        items.push((Area((0, 500), None), circle3));
 
       //items.push(CanvasItem::Image(Area((0, 0), None), image));
 
