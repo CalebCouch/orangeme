@@ -32,9 +32,11 @@ impl App for MyApp {
         let text = CanvasItem::Text(Text::new("HELLO WORLD", "eb343a", 255, None, 48, 60, font.clone()));
         //let shape = CanvasItem::Shape(Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
         //let rectangle = CanvasItem::Image(Shape::Rectangle(0, (1000, 1000)), image.clone());
-        let circle = CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 20), image.clone());
-        let circle2 = CanvasItem::Image(Shape::RoundedRectangle(0, (200, 100), 50), image.clone());
-        let circle3 = CanvasItem::Image(Shape::RoundedRectangle(0, (200, 400), 0), image);
+        let circle = CanvasItem::Image(Shape::RoundedRectangle(2, (100, 100), 20), image.clone());
+        let circle2 = CanvasItem::Image(Shape::RoundedRectangle(4, (200, 100), 50), image.clone());
+        let circle3 = CanvasItem::Image(Shape::RoundedRectangle(2, (200, 400), 0), image.clone());
+        let circle4 = CanvasItem::Image(Shape::RoundedRectangle(20, (200, 400), 5), image.clone());
+        let circle5 = CanvasItem::Image(Shape::RoundedRectangle(0, (200, 400), 50), image);
 
         //items.push((Area((0, 0), None), text));
         //items.push((Area((200, 200), None), shape));
@@ -42,6 +44,8 @@ impl App for MyApp {
         items.push((Area((210, 500), Some((200, 500, 100, 100))), circle));
         items.push((Area((5, 300), None), circle2));
         items.push((Area((5, 500), None), circle3));
+        items.push((Area((500, 500), None), circle4));
+        items.push((Area((300, 0), None), circle5));
 
       //items.push(CanvasItem::Image(Area((0, 0), None), image));
 
