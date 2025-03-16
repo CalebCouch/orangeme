@@ -34,9 +34,9 @@ impl App for MyApp {
         //let rectangle = CanvasItem::Image(Shape::Rectangle(0, (1000, 1000)), image.clone());
         let circle = CanvasItem::Shape(Shape::Ellipse(2, (100, 100)), "ff00ff", 255);
         let circle2 = CanvasItem::Shape(Shape::Rectangle(4, (200, 100)), "00ff00", 255);
-        let circle3 = CanvasItem::Shape(Shape::RoundedRectangle(2, (200, 400), 0), "000000", 128);
+        let circle3 = CanvasItem::Shape(Shape::RoundedRectangle(2, (200, 400), 0), "ffffff", 128);
         let circle4 = CanvasItem::Shape(Shape::RoundedRectangle(20, (200, 400), 5), "ff0000", 200);
-        let circle5 = CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 400), 50), "000000", 20);
+        let circle5 = CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 400), 50), "ffffff", 20);
 
         //items.push((Area((0, 0), None), text));
         //items.push((Area((200, 200), None), shape));
@@ -77,7 +77,7 @@ impl App for MyApp {
     }
 
     async fn draw(&mut self, ctx: &mut Context) {
-        ctx.clear("ffffff");
+        ctx.clear("aaaaaa");
       //let delta = self.items.get_mut(0).unwrap().area().0.1;
       //self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
         self.items.iter().for_each(|(area, c)| ctx.draw(*area, c.clone()));
