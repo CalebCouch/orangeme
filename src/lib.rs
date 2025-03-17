@@ -1,13 +1,8 @@
 use rust_on_rails::prelude::*;
-use rand::prelude::*;
-
-use std::time::Instant;
-
-use fast_image_resize::{IntoImageView, Resizer, ResizeOptions};
 
 pub struct MyApp{
     items: Vec<(Area, CanvasItem)>,
-    font: Font
+    //font: Font
 }
 
 impl App for MyApp {
@@ -15,68 +10,34 @@ impl App for MyApp {
         println!("START APP");
         let mut items = vec![];
 
-        let font = ctx.new_font(include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
+        //let font = Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
+        let image = ctx.new_image(image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
 
-        let image = image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap();
-
-        let mut dst_image = image::DynamicImage::new(
-            200, 200, image::ColorType::Rgba8
-        );
-        let mut resizer = Resizer::new();
-        resizer.resize(&image, &mut dst_image, &None).unwrap();
-
-        let image = ctx.new_image(dst_image.into());
-
-        let time = Instant::now();
-
-        let text = CanvasItem::Text(Text::new("HELLO WORLD", "eb343a", 255, None, 48, 60, font.clone()));
+        //let text = CanvasItem::Text(Text::new("HELLO WORLD", "eb343a", 255, None, 48, 60, font.clone()));
         //let shape = CanvasItem::Shape(Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
         //let rectangle = CanvasItem::Image(Shape::Rectangle(0, (1000, 1000)), image.clone());
-        let circle = CanvasItem::Shape(Shape::Ellipse(2, (100, 100)), "ff00ff", 255);
-        let circle2 = CanvasItem::Shape(Shape::Rectangle(4, (200, 100)), "00ff00", 255);
-        let circle3 = CanvasItem::Shape(Shape::RoundedRectangle(2, (200, 400), 0), "ffffff", 128);
-        let circle4 = CanvasItem::Shape(Shape::RoundedRectangle(20, (200, 400), 5), "ff0000", 200);
-        let circle5 = CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 400), 50), "ffffff", 20);
+      //let circle = CanvasItem::Shape(Shape::Ellipse(2, (100, 100)), "ff00ff", 255);
+      //let circle2 = CanvasItem::Shape(Shape::Rectangle(4, (200, 100)), "00ff00", 255);
+      //let circle3 = CanvasItem::Shape(Shape::RoundedRectangle(2, (200, 400), 0), "ffffff", 128);
+      //let circle4 = CanvasItem::Shape(Shape::RoundedRectangle(20, (200, 400), 5), "ff0000", 200);
+        let circle5 = CanvasItem::Image(Shape::RoundedRectangle(0, (400, 400), 50), image);
 
         //items.push((Area((0, 0), None), text));
         //items.push((Area((200, 200), None), shape));
         //items.push((Area((0, 0), None), rectangle));
-        items.push((Area((210, 500), Some((200, 500, 100, 100))), circle));
-        items.push((Area((5, 300), None), circle2));
-        items.push((Area((5, 500), None), circle3));
-        items.push((Area((500, 500), None), circle4));
+      //items.push((Area((210, 500), Some((200, 500, 100, 100))), circle));
+      //items.push((Area((5, 300), None), circle2));
+      //items.push((Area((5, 500), None), circle3));
+      //items.push((Area((500, 500), None), circle4));
         items.push((Area((300, 0), None), circle5));
-
-      //items.push(CanvasItem::Image(Area((0, 0), None), image));
-
-      //let shape = ctx.add_shape(Ellipse{color: (0, 0, 0, 255), stroke: 0, size: (100, 200)});
-
-      //let mut rng = rand::rng();
-
-      //items.push(CanvasItem::Shape(Area((200, 200), None), shape));
-
-      //items.push(CanvasItem::Text(Area((0, 200), None), Text::new("HELLO", "eb343a", 255, None, 48, 60, font.clone())));
-
-      //let width = 900/20;
-      //let height = 900/20;
-      //for x in 0..20 {
-      //    for y in 0..20 {
-      //        let shape = ctx.add_shape(Ellipse{color: (rng.random::<u8>(), rng.random::<u8>(), rng.random::<u8>(), 255), stroke: 20, size: (10+(rng.random::<u32>()%(width-10)), 10+(rng.random::<u32>()%(height-10)))});
-      //        items.push(CanvasItem::Shape(Area((x*width, y*height), None), shape));
-      //    }
-      //}
 
         MyApp{
             items,
-          //items: vec![
-          //    CanvasItem::Image(Area((5, 5), None), image),
-          //    CanvasItem::Shape(Area((500, 500), None), shape),
-          //],
-            font
+            //font
         }
     }
 
-    async fn draw(&mut self, ctx: &mut Context) {
+    async fn on_tick(&mut self, ctx: &mut Context) {
         ctx.clear("aaaaaa");
       //let delta = self.items.get_mut(0).unwrap().area().0.1;
       //self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
