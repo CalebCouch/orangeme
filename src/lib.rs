@@ -9,10 +9,11 @@ impl App for MyApp {
     async fn new(ctx: &mut Context) -> Self {
         println!("START APP");
 
-        //let font = Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-        let image = ctx.new_image(image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
+        let font = Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
+        let image = Image::new(ctx, image::load_from_memory(include_bytes!("../assets/icons/pfp3.png")).unwrap().into());
+        let svg = Image::svg(ctx, include_bytes!("../assets/icons/qr_code.svg"), 8.0);
 
-        //let text = CanvasItem::Text(Text::new("HELLO WORLD", "eb343a", 255, None, 48, 60, font.clone()));
+        let text = CanvasItem::Text(Text::new("HELLO WORLD", Color::from_hex("eb343a", 255), None, 48, 60, font.clone()));
         //let shape = CanvasItem::Shape(Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
         //let rectangle = CanvasItem::Image(Shape::Rectangle(0, (1000, 1000)), image.clone());
       //let circle = CanvasItem::Shape(Shape::Ellipse(2, (100, 100)), "ff00ff", 255);
@@ -30,15 +31,18 @@ impl App for MyApp {
 
         MyApp{
             items: vec![
-                (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), image)),
-                (Area((0, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 100), 20), "ffabe3", 255))
+                (Area((300, 300), None), text),
+                (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), image, None)),
+                //(Area((300, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (100, 100), 50), Color::from_hex("000000", 255))),
+                (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), svg, Some(Color::from_hex("eb343a", 255)))),
+                (Area((0, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 100), 20), Color::from_hex("ffabe3", 255)))
             ],
             //font
         }
     }
 
     async fn on_tick(&mut self, ctx: &mut Context) {
-        ctx.clear("aaaaaa");
+        ctx.clear(Color::from_hex("ffffff", 255));
       //let delta = self.items.get_mut(0).unwrap().area().0.1;
       //self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
         self.items.iter().for_each(|(area, c)| ctx.draw(*area, c.clone()));
