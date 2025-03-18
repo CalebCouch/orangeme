@@ -8,7 +8,6 @@ pub struct MyApp{
 impl App for MyApp {
     async fn new(ctx: &mut Context) -> Self {
         println!("START APP");
-        let mut items = vec![];
 
         //let font = Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
         let image = ctx.new_image(image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
@@ -20,7 +19,6 @@ impl App for MyApp {
       //let circle2 = CanvasItem::Shape(Shape::Rectangle(4, (200, 100)), "00ff00", 255);
       //let circle3 = CanvasItem::Shape(Shape::RoundedRectangle(2, (200, 400), 0), "ffffff", 128);
       //let circle4 = CanvasItem::Shape(Shape::RoundedRectangle(20, (200, 400), 5), "ff0000", 200);
-        let circle5 = CanvasItem::Image(Shape::RoundedRectangle(0, (400, 400), 50), image);
 
         //items.push((Area((0, 0), None), text));
         //items.push((Area((200, 200), None), shape));
@@ -29,10 +27,12 @@ impl App for MyApp {
       //items.push((Area((5, 300), None), circle2));
       //items.push((Area((5, 500), None), circle3));
       //items.push((Area((500, 500), None), circle4));
-        items.push((Area((300, 0), None), circle5));
 
         MyApp{
-            items,
+            items: vec![
+                (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), image)),
+                (Area((0, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 100), 20), "ffabe3", 255))
+            ],
             //font
         }
     }
