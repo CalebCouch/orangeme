@@ -1,19 +1,23 @@
 use rust_on_rails::prelude::*;
+use pelican_ui::prelude::*;
 
-pub struct MyApp{
-    items: Vec<(Area, CanvasItem)>,
-    //font: Font
-}
+// pub struct MyApp{
+//     items: Vec<(Area, CanvasItem)>,
+//     //font: Font
+// }
+
+pub struct MyApp;
 
 impl App for MyApp {
-    async fn new(ctx: &mut Context) -> Self {
+    async fn new(ctx: &mut Context<'_>) -> Box<dyn ComponentBuilder> {
+        PelicanContext.init(ctx);
         println!("START APP");
 
-        let font = Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-        let image = Image::new(ctx, image::load_from_memory(include_bytes!("../assets/icons/pfp3.png")).unwrap().into());
-        let svg = Image::svg(ctx, include_bytes!("../assets/icons/qr_code.svg"), 8.0);
+        let font = resources::Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
+        let image = resources::Image::new(ctx, image::load_from_memory(include_bytes!("../assets/icons/pfp3.png")).unwrap().into());
+        let svg = resources::Image::svg(ctx, include_bytes!("../assets/icons/qr_code.svg"), 8.0);
 
-        let text = CanvasItem::Text(Text::new("HELLO WORLD", Color::from_hex("eb343a", 255), None, 48, 60, font.clone()));
+        let text = Text("HELLO WORLD", Color::from_hex("eb343a", 255), None, 48, 60, font.clone());
         //let shape = CanvasItem::Shape(Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
         //let rectangle = CanvasItem::Image(Shape::Rectangle(0, (1000, 1000)), image.clone());
       //let circle = CanvasItem::Shape(Shape::Ellipse(2, (100, 100)), "ff00ff", 255);
@@ -29,47 +33,49 @@ impl App for MyApp {
       //items.push((Area((5, 500), None), circle3));
       //items.push((Area((500, 500), None), circle4));
 
-        MyApp{
-            items: vec![
-                (Area((300, 300), None), text),
-                (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), image, None)),
-                //(Area((300, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (100, 100), 50), Color::from_hex("000000", 255))),
-                (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), svg, Some(Color::from_hex("eb343a", 255)))),
-                (Area((0, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 100), 20), Color::from_hex("ffabe3", 255)))
-            ],
-            //font
-        }
+        // MyApp{
+        //     items: vec![
+        //         (Area((300, 300), None), text),
+        //         (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), image, None)),
+        //         //(Area((300, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (100, 100), 50), Color::from_hex("000000", 255))),
+        //         (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), svg, Some(Color::from_hex("eb343a", 255)))),
+        //         (Area((0, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 100), 20), Color::from_hex("ffabe3", 255)))
+        //     ],
+        //     //font
+        // }
+
+        Box::new(Icon::new(ctx, IconName::Door, "ffffff", 48))
     }
 
-    async fn on_tick(&mut self, ctx: &mut Context) {
-        ctx.clear(Color::from_hex("ffffff", 255));
-      //let delta = self.items.get_mut(0).unwrap().area().0.1;
-      //self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
-        self.items.iter().for_each(|(area, c)| ctx.draw(*area, c.clone()));
-    }
+    // async fn on_tick(&mut self, ctx: &mut Context) {
+    //     ctx.clear(Color::from_hex("ffffff", 255));
+    //   //let delta = self.items.get_mut(0).unwrap().area().0.1;
+    //   //self.items.get_mut(0).unwrap().area().0.1 = (delta+1) % 1000;
+    //     self.items.iter().for_each(|(area, c)| ctx.draw(*area, c.clone()));
+    // }
 
-    async fn on_click(&mut self, ctx: &mut Context) {
-      //self.items.push(CanvasItem::Shape(
-      //    Area((ctx.position.0.max(20)-20, ctx.position.1.max(20)-20), None),
-      //    Shape::RoundedRectangle(10, (80, 40), 20),
-      //    ((ctx.position.0%9).to_string()+"000ff").leak(), 255
-      //));
-    }
+    // async fn on_click(&mut self, ctx: &mut Context) {
+    //   //self.items.push(CanvasItem::Shape(
+    //   //    Area((ctx.position.0.max(20)-20, ctx.position.1.max(20)-20), None),
+    //   //    Shape::RoundedRectangle(10, (80, 40), 20),
+    //   //    ((ctx.position.0%9).to_string()+"000ff").leak(), 255
+    //   //));
+    // }
 
-    async fn on_move(&mut self, ctx: &mut Context) {
-      //self.items.push(CanvasItem::Shape(
-      //    Area((ctx.position.0.max(10)-10, ctx.position.1.max(10)-10), None),
-      //    Shape::Ellipse(0, (20, 20)),
-      //    "ff0000", 255
-      //));
-    }
+    // async fn on_move(&mut self, ctx: &mut Context) {
+    //   //self.items.push(CanvasItem::Shape(
+    //   //    Area((ctx.position.0.max(10)-10, ctx.position.1.max(10)-10), None),
+    //   //    Shape::Ellipse(0, (20, 20)),
+    //   //    "ff0000", 255
+    //   //));
+    // }
 
-    async fn on_press(&mut self, ctx: &mut Context, t: String) {
-      //self.items.push(CanvasItem::Text(
-      //    Area((ctx.position.0, ctx.position.1), None),
-      //    Text::new(t.leak(), "eb343a", 255, None, 48, 60, self.font.clone())
-      //));
-    }
+    // async fn on_press(&mut self, ctx: &mut Context, t: String) {
+    //   //self.items.push(CanvasItem::Text(
+    //   //    Area((ctx.position.0, ctx.position.1), None),
+    //   //    Text::new(t.leak(), "eb343a", 255, None, 48, 60, self.font.clone())
+    //   //));
+    // }
 }
 
 create_entry_points!(MyApp);
