@@ -1,5 +1,6 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
+use pelican_ui::custom::*;
 
 // pub struct MyApp{
 //     items: Vec<(Area, CanvasItem)>,
@@ -9,42 +10,114 @@ use pelican_ui::prelude::*;
 pub struct MyApp;
 
 impl App for MyApp {
-    async fn new(ctx: &mut Context<'_>) -> Box<dyn ComponentBuilder> {
-        PelicanContext.init(ctx);
-        println!("START APP");
+    async fn new(ctx: &mut Context<'_>) -> Box<dyn Component> {
+        let mut plugin = PelicanUI::init(ctx);
+        // let mut theme = Theme::default(ctx);
+        
+        // let colors = ColorResources::new(
+        //     BackgroundColor::default(),
+        //     OutlineColor::default(),
+        //     StatusColor::default(),
+        //     TextColor::default(),
+        //     BrandColor {
+        //         primary: Color::from_hex("3598FC", 255),
+        //         secondary: Color::from_hex("ffffff", 255)
+        //     },
+        //     ShadesColor::default()
+        // );
 
-        let font = resources::Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
-        let image = resources::Image::new(ctx, image::load_from_memory(include_bytes!("../assets/icons/pfp3.png")).unwrap().into());
-        let svg = resources::Image::svg(ctx, include_bytes!("../assets/icons/qr_code.svg"), 8.0);
+        // ctx.include_assets(include_assets!("./assets"));
 
-        let text = Text("HELLO WORLD", Color::from_hex("eb343a", 255), None, 48, 60, font.clone());
-        //let shape = CanvasItem::Shape(Shape::Ellipse(0, (200, 100)), "ff00bb", 255);
-        //let rectangle = CanvasItem::Image(Shape::Rectangle(0, (1000, 1000)), image.clone());
-      //let circle = CanvasItem::Shape(Shape::Ellipse(2, (100, 100)), "ff00ff", 255);
-      //let circle2 = CanvasItem::Shape(Shape::Rectangle(4, (200, 100)), "00ff00", 255);
-      //let circle3 = CanvasItem::Shape(Shape::RoundedRectangle(2, (200, 400), 0), "ffffff", 128);
-      //let circle4 = CanvasItem::Shape(Shape::RoundedRectangle(20, (200, 400), 5), "ff0000", 200);
+        // let fonts = FontResources::default(ctx).fonts;
+        // let heading = resources::Font::new(ctx, include_bytes!("../assets/fonts/limelight.ttf").to_vec());
 
-        //items.push((Area((0, 0), None), text));
-        //items.push((Area((200, 200), None), shape));
-        //items.push((Area((0, 0), None), rectangle));
-      //items.push((Area((210, 500), Some((200, 500, 100, 100))), circle));
-      //items.push((Area((5, 300), None), circle2));
-      //items.push((Area((5, 500), None), circle3));
-      //items.push((Area((500, 500), None), circle4));
+        // let fonts = FontResources::new(Fonts::new(heading, fonts.text, fonts.label), FontSize::default());
 
-        // MyApp{
-        //     items: vec![
-        //         (Area((300, 300), None), text),
-        //         (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), image, None)),
-        //         //(Area((300, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (100, 100), 50), Color::from_hex("000000", 255))),
-        //         (Area((300, 0), None), CanvasItem::Image(Shape::RoundedRectangle(0, (100, 100), 50), svg, Some(Color::from_hex("eb343a", 255)))),
-        //         (Area((0, 0), None), CanvasItem::Shape(Shape::RoundedRectangle(0, (200, 100), 20), Color::from_hex("ffabe3", 255)))
-        //     ],
-        //     //font
-        // }
+        // theme.icons.add_icon("toast", resources::Image::svg(ctx, &ctx.load_file("icons/toast.svg").unwrap(), 8.0));
+        // theme.icons.set_icon("search", resources::Image::svg(ctx, &ctx.load_file("icons/settings.svg").unwrap(), 8.0));
 
-        Box::new(Icon::new(ctx, IconName::Door, "ffffff", 48))
+        // theme.set_colors(colors);
+        // theme.set_fonts(fonts);
+
+        // plugin.set_theme(theme);
+        ctx.configure_plugin(plugin);
+
+        // println!("START APP");
+
+        // let font = resources::Font::new(ctx, include_bytes!("../assets/fonts/outfit_bold.ttf").to_vec());
+        // let image = resources::Image::new(ctx, image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
+        // let svg = resources::Image::svg(ctx, include_bytes!("../assets/icons/qr_code.svg"), 8.0);
+
+        // let theme = &ctx.get::<PelicanUI>().theme;
+
+        // let o = theme.colors.outline.primary;
+
+        // let a = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     Circle::outlined(50, theme.colors.background.primary, o),
+        //     Circle::outlined(50, theme.colors.background.secondary, o)
+        // ]);
+
+        // let b = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     Circle::outlined(50, theme.colors.brand.primary, o),
+        //     Circle::outlined(50, theme.colors.brand.secondary, o)
+        // ]);
+
+        // let c = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     Circle::outlined(50, theme.colors.outline.primary, o),
+        //     Circle::outlined(50, theme.colors.outline.secondary, o)
+        // ]);
+
+        // let d = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     Circle::outlined(50, theme.colors.text.heading, o),
+        //     Circle::outlined(50, theme.colors.text.primary, o),
+        //     Circle::outlined(50, theme.colors.text.secondary, o)
+        // ]);
+
+        // let e = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     Circle::outlined(50, theme.colors.status.success, o),
+        //     Circle::outlined(50, theme.colors.status.warning, o),
+        //     Circle::outlined(50, theme.colors.status.danger, o)
+        // ]);
+
+        // let f = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     ProfileImage::circle_outlined(50, image.clone(), theme.colors.outline.secondary),
+        //     ProfileImage::circle_outlined(50, image.clone(), o),
+        //     ProfileImage::circle_outlined(50, image.clone(), theme.colors.status.danger)
+        // ]);
+
+        // let g = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     Icon("group", theme.colors.text.heading, 48),
+        //     Icon("toast", theme.colors.text.heading, 48),
+        //     Icon("monitor", theme.colors.text.heading, 48),
+        //     Icon("search", theme.colors.text.heading, 48),
+        // ]);
+
+        // let h = pelican_ui::Row!(ZERO, 4, Align::Left, vec![
+        //     Icon("error", theme.colors.status.danger, 48),
+        //     Icon("warning", theme.colors.status.warning, 48),
+        //     Icon("checkmark", theme.colors.status.success, 48),
+        // ]);
+
+        // let i = pelican_ui::Column!(ZERO, 4, Align::Left,
+        //     RoundedRectangle::new((200, 48), 24, theme.colors.brand.primary),
+        //     RoundedRectangle::outlined((100, 32), 32 / 2, theme.colors.background.primary, 1, o),
+        //     RoundedRectangle::outlined((100, 32), 32 / 2, theme.colors.background.secondary, 1, o),
+        // );
+
+        // let j = pelican_ui::Column!(ZERO, 4, Align::Left,
+        //     Text(TextStyle::Heading, "Bitcoin received", 48),
+        //     Text(TextStyle::Primary, "Bitcoin received 🎂🎂🎂🎂", 24),
+        //     Text(TextStyle::Secondary, "Bitcoin received", 20),
+        //     Text(TextStyle::Error, "Bitcoin received", 20),
+        //     Text(TextStyle::White, "Bitcoin received", 24),
+        //     Text(TextStyle::Label, "Bitcoin received", 24),
+        // );
+
+        // Box::new(pelican_ui::Column!(ZERO, 4, Align::Left,
+        //     a, b, c, d, e, f, g, h, i, j
+        // ))
+
+        Box::new(CircleIcon(ProfileImage::Icon(CircleIconData("profile", CircleIconStyle::Secondary)), Some(CircleIconData("edit", CircleIconStyle::Secondary)), false))
     }
 
     // async fn on_tick(&mut self, ctx: &mut Context) {
@@ -57,7 +130,7 @@ impl App for MyApp {
     // async fn on_click(&mut self, ctx: &mut Context) {
     //   //self.items.push(CanvasItem::Shape(
     //   //    Area((ctx.position.0.max(20)-20, ctx.position.1.max(20)-20), None),
-    //   //    Shape::RoundedRectangle(10, (80, 40), 20),
+    //   //    Shape::Circle(10, (80, 40), 20),
     //   //    ((ctx.position.0%9).to_string()+"000ff").leak(), 255
     //   //));
     // }
