@@ -152,7 +152,7 @@ use resources::Font;
 //  }
 
 //  #[derive(Clone, Debug, Component)]
-//  pub struct Test(#[layout] Row, pub Option<Text>, pub Text, #[ignore] #[skip] u32, #[skip] i32);
+//  pub struct Test(Row, pub Option<Text>, pub Text, #[ignore] #[skip] u32, #[skip] i32);
 
 //  impl Test {
 //      pub fn new(font: Font, _font2: Font) -> Self {
@@ -199,7 +199,6 @@ impl Row {
         items.into_iter().reduce(|s, i| (s.0+i.0, s.1+i.1)).unwrap_or_default()
     }
 
-    //Size::Fit => items.into_iter().try_fold(0, |os, s| s.map(|s| os.max(s))),
     fn fit_height(items: Vec<(MinSize, MaxSize)>) -> (MinSize, MaxSize) {
         items.into_iter().reduce(|s, i| (s.0.max(i.0), s.1.max(i.1))).unwrap_or_default()
     }
@@ -272,15 +271,15 @@ impl Layout for Row {
         let height = self.2.get().unwrap_or_else(|| Row::fit_height(heights));
         let min_width = width.0 + padding;
         let max_width = width.1 + padding;
-        println!("Row: {:?},{:?}", min_width, max_width);
         SizeInfo::new(min_width, height.0, max_width, height.1)
     }
 }
 
 
 
-#[derive(Clone, Debug)]
-pub struct Bumper(Row, Button, Button, Button);
+#[derive(Clone, Debug, Component)]
+pub struct Bumper(Row, Button, Button, Button, Shape, Button, Shape);
+impl Events for Bumper {}
 
 impl Bumper {
     pub fn new(ctx: &mut Context, font: Font) -> Self {
@@ -289,19 +288,11 @@ impl Bumper {
             Button::new(ctx, "HELLO", font.clone(), ButtonSize::Large, ButtonWidth::Expand),
             Button::new(ctx, "HELLO", font.clone(), ButtonSize::Large, ButtonWidth::Expand),
             Button::new(ctx, "HELLOa", font.clone(), ButtonSize::Large, ButtonWidth::Expand),
-          //Shape(ShapeType::Ellipse(20, (70, 70)), Color(255, 0, 0, 255)),
-          //Button::new(ctx, "BUTTO", font, ButtonSize::Medium, ButtonWidth::Hug),
-          //Shape(ShapeType::Ellipse(1, (130, 10)), Color(255, 255, 0, 255)),
+            Shape(ShapeType::Ellipse(20, (70, 70)), Color(255, 0, 0, 255)),
+            Button::new(ctx, "TTO", font, ButtonSize::Medium, ButtonWidth::Expand),
+            Shape(ShapeType::Ellipse(1, (130, 10)), Color(255, 255, 0, 255)),
         )
     }
-}
-
-impl Events for Bumper {}
-
-impl Component for Bumper {
-    fn children_mut(&mut self) -> Vec<&mut dyn Drawable> {vec![&mut self.1, &mut self.2, &mut self.3]}
-    fn children(&self) -> Vec<&dyn Drawable> {vec![&self.1, &self.2, &self.3]}
-    fn layout(&self) -> &dyn Layout {&self.0}
 }
 
 
@@ -395,8 +386,8 @@ pub enum ButtonWidth {
     Expand,
 }
 
-#[derive(Clone, Debug)]
-pub struct Button(Stack, Shape, Text, u32, u32);
+#[derive(Clone, Debug, Component)]
+pub struct Button(Stack, Shape, Text, #[skip] u32, #[skip] u32);
 
 impl Button {
     pub fn new(ctx: &mut Context, text: &'static str, font: Font, size: ButtonSize, width: ButtonWidth) -> Self {
@@ -417,29 +408,23 @@ impl Button {
             Stack(Offset::Center, Offset::Center, width, Size::Fit),
             Shape(ShapeType::RoundedRectangle(0, (content_width.0, height), height/2), Color(0, 255, 255, 255)),
             text,
-            0, content_width.0
+            1, content_width.0
         )
     }
 }
 
 impl Events for Button {
     fn on_tick(&mut self, _ctx: &mut Context) {
-        //self.3 += 1;
+        self.3 += 1;
     }
     fn on_resize(&mut self, _ctx: &mut Context, size: (u32, u32)) {
-        //let nw = (self.3 % (size.0-self.4)) + self.4;
+        let nw = (self.3 % ((size.0+1)-self.4)) + self.4;
         if let ShapeType::RoundedRectangle(_, (w, _), _) = &mut self.1.0 {
-            *w = size.0;
+            //*w = size.0;
+            *w = nw;
         }
     }
 }
-
-impl Component for Button {
-    fn children_mut(&mut self) -> Vec<&mut dyn Drawable> {vec![&mut self.1, &mut self.2]}
-    fn children(&self) -> Vec<&dyn Drawable> {vec![&self.1, &self.2]}
-    fn layout(&self) -> &dyn Layout {&self.0}
-}
-
 
 pub struct MyApp;
 
