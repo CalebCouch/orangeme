@@ -387,7 +387,7 @@ pub enum ButtonWidth {
 }
 
 #[derive(Clone, Debug, Component)]
-pub struct Button(Stack, Shape, Text, #[skip] u32, #[skip] u32);
+pub struct Button(Stack, Vec<Shape>, Text, #[skip] u32, #[skip] u32);
 
 impl Button {
     pub fn new(ctx: &mut Context, text: &'static str, font: Font, size: ButtonSize, width: ButtonWidth) -> Self {
@@ -406,7 +406,7 @@ impl Button {
 
         Button(
             Stack(Offset::Center, Offset::Center, width, Size::Fit),
-            Shape(ShapeType::RoundedRectangle(0, (content_width.0, height), height/2), Color(0, 255, 255, 255)),
+            vec![Shape(ShapeType::RoundedRectangle(0, (content_width.0, height), height/2), Color(0, 255, 255, 255))],
             text,
             1, content_width.0
         )
@@ -418,11 +418,11 @@ impl Events for Button {
         self.3 += 1;
     }
     fn on_resize(&mut self, _ctx: &mut Context, size: (u32, u32)) {
-        let nw = (self.3 % ((size.0+1)-self.4)) + self.4;
-        if let ShapeType::RoundedRectangle(_, (w, _), _) = &mut self.1.0 {
-            //*w = size.0;
-            *w = nw;
-        }
+      //let nw = (self.3 % ((size.0+1)-self.4)) + self.4;
+      //if let ShapeType::RoundedRectangle(_, (w, _), _) = &mut self.1.0 {
+      //    //*w = size.0;
+      //    *w = nw;
+      //}
     }
 }
 
