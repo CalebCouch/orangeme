@@ -1,15 +1,15 @@
 use pelican_ui::prelude::*;
-use pelican_ui::prelude::Text;
+// use pelican_ui::prelude::Text;
 // use pelican_ui::custom::*;
 
 use rust_on_rails::prelude::*;
-use rust_on_rails::prelude::Text as BasicText;
+// use rust_on_rails::prelude::Text as BasicText;
 
 pub struct MyApp;
 
 impl App for MyApp {
     async fn new(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
-        let mut plugin = PelicanUI::init(ctx);
+        let plugin = PelicanUI::init(ctx);
         // let mut theme = Theme::default(ctx);
         
         // let colors = ColorResources::new(
@@ -40,10 +40,10 @@ impl App for MyApp {
         // plugin.set_theme(theme);
         ctx.configure_plugin(plugin);
 
-        let image = resources::Image::new(ctx, image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
+        // let image = resources::Image::new(ctx, image::load_from_memory(include_bytes!("../assets/icons/profile.png")).unwrap().into());
 
-        let color = ctx.get::<PelicanUI>().theme.colors.brand.secondary;
-        let font = &ctx.get::<PelicanUI>().theme.fonts.fonts.heading;
+        // let color = ctx.get::<PelicanUI>().theme.colors.brand.secondary;
+        // let font = &ctx.get::<PelicanUI>().theme.fonts.fonts.heading;
 
         // Box::new(Padding((24, 24), Box::new(Column!(24,
         //     // Button::primary("Continue"),
@@ -61,9 +61,9 @@ impl App for MyApp {
         // Box::new(Icon::new(ctx, "error", color, 128))
         // Box::new(CircleIcon::new(ctx, ProfileImage::Icon("wallet", CircleIconStyle::Brand), Some(("edit", CircleIconStyle::Secondary)), false, 128))
         // Box::new(CircleIconData::new(ctx, "wallet", CircleIconStyle::Brand, 128))
-        // Box::new(CircleIcon::new(ctx, CircleIconContent::Icon("profile", CircleIconStyle::Secondary), Some(("microphone", CircleIconStyle::Danger)), false, 128))
+        Box::new(Avatar::new(ctx, AvatarContent::Icon("profile", CircleIconStyle::Secondary), Some(("microphone", CircleIconStyle::Danger)), false, 128))
         // Box::new(Button::secondary(ctx, Some("paste"), "Paste", None, (|| println!("Pasting..."))))
-        Box::new(Button::primary(ctx, "wallet", (|| println!("Pasting..."))))
+        // Box::new(Button::primary(ctx, "wallet", (|| println!("Pasting..."))))
         // Box::new(BasicText::new("Continue", color, 48, 60, font.clone()))
         // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
     }
