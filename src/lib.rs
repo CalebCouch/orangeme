@@ -12,10 +12,10 @@ impl Events for Bumper {}
 impl Bumper {
     pub fn new(ctx: &mut Context) -> Self {
         Bumper(
-            Row(20, Offset::Center, Size::Fit),
+            Row(16, Offset::Center, Size::Fit),
             Button::new(
                 ctx,
-                Some(AvatarContent::Icon("profile", CircleIconStyle::Secondary)),
+                Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary)),
                 None,
                 Some("Paste"),
                 None,
@@ -27,7 +27,7 @@ impl Bumper {
             ),
             Button::new(
                 ctx,
-                Some(AvatarContent::Icon("profile", CircleIconStyle::Secondary)),
+                Some(AvatarContent::Icon("settings", AvatarIconStyle::Secondary)),
                 None,
                 Some("Paste"),
                 None,
@@ -51,14 +51,22 @@ impl App for MyApp {
       //let color = ctx.get::<PelicanUI>().theme.colors.brand.secondary;
       //Box::new(Icon::new(ctx, "error", color, 128))
         //Box::new(Shape(ShapeType::Ellipse(20, (50, 50)), Color(155, 255, 0, 255)))
-        // Box::new(CircleIcon::new(ctx, ProfileImage::Icon("wallet", CircleIconStyle::Brand), Some(("edit", CircleIconStyle::Secondary)), false, 128))
-        // Box::new(CircleIconData::new(ctx, "wallet", CircleIconStyle::Brand, 128))
-        //Box::new(Avatar::new(ctx, AvatarContent::Icon("profile", CircleIconStyle::Secondary), Some(("microphone", CircleIconStyle::Danger)), false, 128))
+        // Box::new(CircleIcon::new(ctx, ProfileImage::Icon("wallet", AvatarIconStyle::Brand), Some(("edit", AvatarIconStyle::Secondary)), false, 128))
+        // Box::new(CircleIconData::new(ctx, "wallet", AvatarIconStyle::Brand, 128))
+        //Box::new(Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("microphone", AvatarIconStyle::Danger)), false, 128))
         //Box::new(Button::secondary(ctx, Some("paste"), "Paste", None, ))
-        Box::new(Bumper::new(ctx))
+        // Box::new(Bumper::new(ctx))
+        // Box::new(IconButton::new(
+        //     ctx,
+        //     Some("close"),
+        //     ButtonSize::Large,
+        //     ButtonStyle::Secondary,
+        //     ButtonState::Default,
+        //     |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position)
+        // ))
       //Box::new(Button::new(
       //    ctx,
-      //    Some(AvatarContent::Icon("profile", CircleIconStyle::Secondary)),
+      //    Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary)),
       //    None,
       //    Some("Paste"),
       //    None,
@@ -71,6 +79,20 @@ impl App for MyApp {
         // Box::new(Button::primary(ctx, "wallet", (|| println!("Pasting..."))))
         // Box::new(BasicText::new("Continue", color, 48, 60, font.clone()))
         // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
+
+        Box::new(
+            TextInput::new(
+                ctx,
+                None,
+                None,
+                "Search names...",
+                Some(("close", |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position))),
+                None,
+                None
+            )
+        )
+
+        // Box::new(Alert::new(ctx, "You were booted from this room."))
     }
 }
 
