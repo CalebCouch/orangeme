@@ -45,21 +45,6 @@ impl Bumper {
     }
 }
 
-#[derive(Clone, Debug, Component)]
-pub struct RowTest(Column, Shape, Shape, Shape);
-impl Events for RowTest {}
-impl RowTest {
-    pub fn new() -> Self {
-        RowTest(Column(
-            10, Offset::End, Size::Fill(MinSize(0), MaxSize(u32::MAX)), Padding(10, 20, 50, 40)
-        ),
-            Shape(ShapeType::Rectangle(0, (100, 100)), Color(0, 0, 255, 255)),
-            Shape(ShapeType::Rectangle(0, (40, 20)), Color(255, 0, 255, 255)),
-            Shape(ShapeType::Rectangle(0, (29, 79)), Color(255, 0, 0, 255))
-        )
-    }
-}
-
 pub struct MyApp;
 
 impl App for MyApp {
@@ -67,16 +52,16 @@ impl App for MyApp {
         let plugin = PelicanUI::init(ctx);
         ctx.configure_plugin(plugin);
 
-        let theme = &ctx.get::<PelicanUI>().theme;
+        // let theme = &ctx.get::<PelicanUI>().theme;
         //Box::new(Icon::new(ctx, "error", color, 128))
         //Box::new(Shape(ShapeType::Ellipse(20, (50, 50)), Color(155, 255, 0, 255)))
         //Box::new(CircleIcon::new(ctx, ProfileImage::Icon("wallet", AvatarIconStyle::Brand), Some(("edit", AvatarIconStyle::Secondary)), false, 128))
         //Box::new(CircleIconData::new(ctx, "wallet", AvatarIconStyle::Brand, 128))
         // Box::new(Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("microphone", AvatarIconStyle::Danger)), false, 128))
         //Box::new(Button::secondary(ctx, Some("paste"), "Paste", None, ))
-        // let bumper = Bumper::new(ctx);
+        let bumper = Bumper::new(ctx);
         // let bumper = Image(ShapeType::Rectangle(0, (300, 300)), theme.brand.logo.wordmark.clone(), Some(Color::from_hex("ffffff", 255)));
-        // Box::new(bumper)
+        Box::new(bumper)
         // Box::new(IconButton::new(
         //     ctx,
         //     Some("close"),
@@ -101,17 +86,28 @@ impl App for MyApp {
         // Box::new(BasicText::new("Continue", color, 48, 60, font.clone()))
         // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
 
-        Box::new(
-            TextInput::new(
-                ctx,
-                None,
-                None,
-                "Search names...",
-                None,
-                None,
-                Some(("close", |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position))),
-            )
-        )
+        // Box::new(
+        //     TextInput::new(
+        //         ctx,
+        //         Some("Label"),
+        //         "Search names...",
+        //         Some("You're kinda stinky."),
+        //         Some("Not a valid bitcoin address."),
+        //         Some(("close", |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position))),
+        //     )
+        // )
+
+        // Box::new(
+        //     DataItem::new(
+        //         ctx, 
+        //         None,
+        //         "Confirm adress", 
+        //         Some("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"),
+        //         Some("Bitcoin sent to the wrong address can never be recovered."), 
+        //         None,
+        //         Some(vec![("edit", "Edit address", |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position))])
+        //     )
+        // )
 
         // Box::new(Alert::new(ctx, "You were booted from this room."))
         // Box::new(RowTest::new())
