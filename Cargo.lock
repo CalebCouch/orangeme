@@ -1960,7 +1960,6 @@ dependencies = [
  "once_cell",
  "qrcode",
  "rust_on_rails",
- "tokio",
 ]
 
 [[package]]
