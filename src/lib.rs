@@ -27,7 +27,7 @@ impl Bumper {
     pub fn new(ctx: &mut Context) -> Self {
         Bumper(
             Row(16, Offset::Center, Size::Fit, Padding(16, 16, 16, 16)),
-            Button::secondary(ctx, Some("paste"), "Paste", None, |_ctx: &mut Context, position: (u32, u32)| println!("BOTTETTTEN...: {:?}", position)),
+            Button::secondary(ctx, Some("paste"), "Paste", None, |_ctx: &mut Context| println!("BOTTETTTEN...")),
             Button::new(
                 ctx,
                 Some(AvatarContent::Icon("settings", AvatarIconStyle::Secondary)),
@@ -39,7 +39,7 @@ impl Bumper {
                 ButtonStyle::Secondary,
                 ButtonState::Default,
                 Offset::Center,
-                |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position)
+                |_ctx: &mut Context| println!("Pasting...")
             )
         )
     }
@@ -59,9 +59,9 @@ impl App for MyApp {
         //Box::new(CircleIconData::new(ctx, "wallet", AvatarIconStyle::Brand, 128))
         // Box::new(Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("microphone", AvatarIconStyle::Danger)), false, 128))
         //Box::new(Button::secondary(ctx, Some("paste"), "Paste", None, ))
-        let bumper = Bumper::new(ctx);
+        // let bumper = Bumper::new(ctx);
         // let bumper = Image(ShapeType::Rectangle(0, (300, 300)), theme.brand.logo.wordmark.clone(), Some(Color::from_hex("ffffff", 255)));
-        Box::new(bumper)
+        // Box::new(bumper)
         // Box::new(IconButton::new(
         //     ctx,
         //     Some("close"),
@@ -86,16 +86,15 @@ impl App for MyApp {
         // Box::new(BasicText::new("Continue", color, 48, 60, font.clone()))
         // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
 
-        // Box::new(
-        //     TextInput::new(
-        //         ctx,
-        //         Some("Label"),
-        //         "Search names...",
-        //         Some("You're kinda stinky."),
-        //         Some("Not a valid bitcoin address."),
-        //         Some(("close", |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position))),
-        //     )
-        // )
+        Box::new(
+            TextInput::new(
+                ctx,
+                Some("Label"),
+                "Search names...",
+                Some("You're kinda stinky."),
+                Some(("close", |_ctx: &mut Context, txt: &mut String| println!("Submitting: {:?}", txt))),
+            )
+        )
 
         // Box::new(
         //     DataItem::new(
