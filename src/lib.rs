@@ -19,7 +19,7 @@ use rust_on_rails::prelude::*;
 
 // use rust_on_rails::prelude::Text as BasicText;
 
-#[derive(Clone, Debug, Component)]
+#[derive(Debug, Component)]
 pub struct Bumper(Row, Button, Button);
 impl Events for Bumper {}
 
