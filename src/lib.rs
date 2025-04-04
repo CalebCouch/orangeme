@@ -1,33 +1,22 @@
-use pelican_ui::prelude::*;
-// use pelican_ui::prelude::Text;
-// use pelican_ui::custom::*;
-
 use rust_on_rails::prelude::*;
+use pelican_ui::prelude::*;
 
-//  impl<D: Drawable + Clone> Padding<D> {
-//      pub fn new(ctx: &mut Context, item: D, padding: (u32, u32, u32, u32)) -> Self {
-//          let size = item.size(ctx);
-//          let wp = padding.0+padding.2;
-//          let hp = padding.1+padding.3;
-//          Padding(Stack(
-//              Offset::Static(padding.0 as i32), Offset::Static(padding.1 as i32), 
-//              Size::Fill(size.min_width()+MinSize(padding.2), size.max_width()-MaxSize(padding.2)),
-//              Size::Fill(size.min_height()+MinSize(padding.3), size.max_height()-MaxSize(padding.3))
-//          ), item)
-//      }
-//  }
+use serde::{Serialize, Deserialize};
 
-// use rust_on_rails::prelude::Text as BasicText;
+#[derive(Serialize, Deserialize, Default, Debug)]
+pub struct Count(pub u32);
 
 #[derive(Debug, Component)]
-pub struct Bumper(Row, Button, Button);
-impl Events for Bumper {}
+pub struct Bumper(Row, pub Button, Button);
 
 impl Bumper {
     pub fn new(ctx: &mut Context) -> Self {
         Bumper(
             Row(16, Offset::Center, Size::Fit, Padding(16, 16, 16, 16)),
-            Button::secondary(ctx, Some("paste"), "Paste", None, |_ctx: &mut Context| println!("BOTTETTTEN...")),
+            Button::secondary(
+                ctx, Some("paste"), "Paste", None,
+                |ctx: &mut Context| ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0-1)).unwrap()
+            ),
             Button::new(
                 ctx,
                 Some(AvatarContent::Icon("settings", AvatarIconStyle::Secondary)),
@@ -39,16 +28,23 @@ impl Bumper {
                 ButtonStyle::Secondary,
                 ButtonState::Default,
                 Offset::Center,
-                |_ctx: &mut Context| println!("Pasting...")
+                |ctx: &mut Context| ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0+1)).unwrap()
             )
         )
+    }
+}
+
+impl Events for Bumper {
+    fn on_tick(&mut self, ctx: &mut Context) {
+        //ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0+1)).unwrap();
+        *self.1.2.3.as_mut().unwrap().value() = ctx.state().get::<Count>().unwrap().0.to_string();
     }
 }
 
 pub struct MyApp;
 
 impl App for MyApp {
-    async fn new(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
+    fn root(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
         let plugin = PelicanUI::init(ctx);
         ctx.configure_plugin(plugin);
 
@@ -86,6 +82,7 @@ impl App for MyApp {
         // Box::new(BasicText::new("Continue", color, 48, 60, font.clone()))
         // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
 
+        //Box::new(Bumper::new(ctx))
         Box::new(
             TextInput::new(
                 ctx,
