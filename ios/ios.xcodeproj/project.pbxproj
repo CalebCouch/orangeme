@@ -13,6 +13,7 @@
 		55B7188F81C3C4183F81D3AE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A39528EB2CCB182F5328223A /* libc++.tbd */; };
 		57CD6306253C7A940098CD4A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57CD6305253C7A940098CD4A /* AudioToolbox.framework */; };
 		880CA76C2D4984A700B00E38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1B41978FA53999AA836D0F /* Security.framework */; };
+		8826FE532DA1AEFA00588BC3 /* PlatformPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8826FE522DA1AEED00588BC3 /* PlatformPaths.swift */; };
 		88B03F722D78C81E0013AA60 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F712D78C81E0013AA60 /* QuartzCore.framework */; };
 		88B03F742D78CA080013AA60 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F732D78CA080013AA60 /* CoreFoundation.framework */; };
 		88B03F762D78CD600013AA60 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F752D78CD600013AA60 /* Foundation.framework */; };
@@ -32,6 +33,7 @@
 		160DB77300A3F1806F024D47 /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		55EAC02897847195D2F44C15 /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57CD6305253C7A940098CD4A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		8826FE522DA1AEED00588BC3 /* PlatformPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformPaths.swift; sourceTree = "<group>"; };
 		88B03F712D78C81E0013AA60 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		88B03F732D78CA080013AA60 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		88B03F752D78CD600013AA60 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -73,6 +75,7 @@
 		4F1D6F28B8A5D1927AB0ADED /* ios-src */ = {
 			isa = PBXGroup;
 			children = (
+				8826FE522DA1AEED00588BC3 /* PlatformPaths.swift */,
 				160DB77300A3F1806F024D47 /* bindings.h */,
 				8EE7F1E3B0303533925D7E33 /* Info.plist */,
 				AF7DE91055EBD05ED77E57F9 /* main.m */,
@@ -185,6 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				55892F1396056740E1AF9685 /* main.m in Sources */,
+				8826FE532DA1AEFA00588BC3 /* PlatformPaths.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

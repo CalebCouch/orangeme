@@ -34,12 +34,12 @@ impl Bumper {
     }
 }
 
-impl Events for Bumper {
-    fn on_tick(&mut self, ctx: &mut Context) {
-        //ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0+1)).unwrap();
-        *self.1.2.3.as_mut().unwrap().value() = ctx.state().get::<Count>().unwrap().0.to_string();
-    }
-}
+// impl Events for Bumper {
+//     fn on_tick(&mut self, ctx: &mut Context) {
+//         //ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0+1)).unwrap();
+//         *self.1.2.3.as_mut().unwrap().value() = ctx.state().get::<Count>().unwrap().0.to_string();
+//     }
+// }
 
 pub struct MyApp;
 
@@ -83,15 +83,15 @@ impl App for MyApp {
         // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
 
         //Box::new(Bumper::new(ctx))
-        Box::new(
-            TextInput::new(
-                ctx,
-                Some("Label"),
-                "Search names...",
-                Some("You're kinda stinky."),
-                Some(("close", |_ctx: &mut Context, txt: &mut String| println!("Submitting: {:?}", txt))),
-            )
-        )
+        // Box::new(
+        //     TextInput::new(
+        //         ctx,
+        //         Some("Label"),
+        //         "Search names...",
+        //         Some("You're kinda stinky."),
+        //         Some(("close", |_ctx: &mut Context, txt: &mut String| println!("Submitting: {:?}", txt))),
+        //     )
+        // )
 
         // Box::new(
         //     DataItem::new(
@@ -115,7 +115,7 @@ impl App for MyApp {
       //))
 
     //   Box::new(AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", Some("Not enough bitcoin")))
-
+        Box::new(MobileKeyboard::new(ctx))
         // Box::new(
         //     Card::new(
         //         ctx,
@@ -127,13 +127,13 @@ impl App for MyApp {
         //     )
         // )
 
-        Box::new(
-            ListItem::contact(ctx, 
-                AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
-                "Ella Couch", "did::nym::udc29i8soihOXIR8GXo2rloi", 
-                |_ctx: &mut Context| println!("CHOOSING MEMBER")
-            )
-        )
+        // Box::new(
+        //     ListItem::contact(ctx, 
+        //         AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
+        //         "Ella Couch", "did::nym::udc29i8soihOXIR8GXo2rloi", 
+        //         |_ctx: &mut Context| println!("CHOOSING MEMBER")
+        //     )
+        // )
 
     }
 }
