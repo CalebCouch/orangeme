@@ -48,7 +48,7 @@ impl Bumper {
 pub struct MyApp;
 
 impl App for MyApp {
-    async fn new(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
+    fn root(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
         let plugin = PelicanUI::init(ctx);
         ctx.configure_plugin(plugin);
 
@@ -86,16 +86,17 @@ impl App for MyApp {
         // Box::new(BasicText::new("Continue", color, 48, 60, font.clone()))
         // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
 
-        Box::new(
-            TextInput::new(
-                ctx,
-                Some("Label"),
-                "Search names...",
-                Some("You're kinda stinky."),
-                Some(("close", |_ctx: &mut Context, txt: &mut String| println!("Submitting: {:?}", txt))),
-            )
-        )
-
+        // Box::new(
+        //     TextInput::new(
+        //         ctx,
+        //         Some("Label"),
+        //         "Search names...",
+        //         Some("You're kinda stinky."),
+        //         Some(("close", |_ctx: &mut Context, txt: &mut String| println!("Submitting: {:?}", txt))),
+        //     )
+        // )
+        // Box::new(MobileKeyboard::new(ctx))
+        // let button = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| println!("BUTTON"));
         // Box::new(
         //     DataItem::new(
         //         ctx, 
@@ -104,7 +105,7 @@ impl App for MyApp {
         //         Some("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"),
         //         Some("Bitcoin sent to the wrong address can never be recovered."), 
         //         None,
-        //         Some(vec![("edit", "Edit address", |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position))])
+        //         Some(vec![button])
         //     )
         // )
 
@@ -126,9 +127,17 @@ impl App for MyApp {
         //         "Ella Couch's Room",
         //         "101 members",
         //         "A room for all of Ella Couch's friends.",
-        //         |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position)
+        //         |_ctx: &mut Context| println!("JOINING ROOM")
         //     )
         // )
+
+        Box::new(
+            ListItem::contact(ctx, 
+                AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
+                "Ella Couch", "did::nym::udc29i8soihOXIR8GXo2rloi", 
+                |_ctx: &mut Context| println!("CHOOSING MEMBER")
+            )
+        )
 
     }
 }
