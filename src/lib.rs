@@ -41,6 +41,7 @@ impl Bumper {
 //         *self.1.2.3.as_mut().unwrap().value() = ctx.state().get::<Count>().unwrap().0.to_string();
 //     }
 // }
+use pelican_ui::elements::images::Brand;
 
 pub struct MyApp;
 
@@ -49,7 +50,7 @@ impl App for MyApp {
         let plugin = PelicanUI::init(ctx);
         ctx.configure_plugin(plugin);
 
-        // let theme = &ctx.get::<PelicanUI>().theme;
+        let theme = &ctx.get::<PelicanUI>().theme;
         //Box::new(Icon::new(ctx, "error", color, 128))
         //Box::new(Shape(ShapeType::Ellipse(20, (50, 50)), Color(155, 255, 0, 255)))
         //Box::new(CircleIcon::new(ctx, ProfileImage::Icon("wallet", AvatarIconStyle::Brand), Some(("edit", AvatarIconStyle::Secondary)), false, 128))
@@ -151,6 +152,11 @@ impl App for MyApp {
                 page
             )
         )
+        // let wordmark = theme.brand.wordmark.clone();
+        // Box::new(Brand::new(ctx, wordmark, (81, 45)))
+        // ctx.include_assets(include_assets!("./assets"));
+
+        // Box::new(resources::Image::newsvg(ctx, "icons/wordmark.svg"))
     }
 }
 
