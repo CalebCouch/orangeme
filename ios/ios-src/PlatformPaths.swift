@@ -17,3 +17,12 @@ public func get_application_support_dir() -> UnsafePointer<CChar>? {
     appSupportPathCString = (path as NSString).utf8String
     return appSupportPathCString
 }
+
+import UIKit
+
+@_cdecl("trigger_haptic")
+public func trigger_haptic() {
+    let generator = UIImpactFeedbackGenerator(style: .medium)
+    generator.prepare()
+    generator.impactOccurred()
+}
