@@ -115,7 +115,7 @@ impl App for MyApp {
       //    Shape(ShapeType::Rectangle(0, (100, 100)), Color(0, 0, 255, 255))
       //))
 
-      Box::new(AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", Some("Not enough bitcoin")))
+    //   Box::new(AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", Some("Not enough bitcoin")))
         // Box::new(MobileKeyboard::new(ctx))
         // Box::new(
         //     Card::new(
@@ -135,22 +135,22 @@ impl App for MyApp {
         //         |_ctx: &mut Context| println!("CHOOSING MEMBER")
         //     )
         // )
-        // let header = Header::home(ctx, "Wallet");
-        // let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
-        // let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |_ctx: &mut Context| println!("View transaction..."));
-        // let content = Content::new(ctx, Child::new(amount_display), Child::new(transaction));
-        // let page = Page::new(
-        //     ctx,
-        //     header,
-        //     content,
-        //     None,
-        //     None,
-        // );
-        // Box::new(
-        //     Interface::new(ctx,
-        //         page
-        //     )
-        // )
+        let header = Header::home(ctx, "Wallet");
+        let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
+        let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |_ctx: &mut Context| println!("View transaction..."));
+        let content = Content::new(ctx, vec![Box::new(amount_display), Box::new(transaction)]);
+        let page = Page::new(
+            ctx,
+            header,
+            content,
+            None,
+            None,
+        );
+        Box::new(
+            Interface::new(ctx,
+                page
+            )
+        )
     }
 }
 
