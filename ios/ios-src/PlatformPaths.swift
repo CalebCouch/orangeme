@@ -26,3 +26,20 @@ public func trigger_haptic() {
     generator.prepare()
     generator.impactOccurred()
 }
+
+
+// MARK: - File-global variable to hold the array
+var insetsArray: [Double] = [0, 0, 0, 0]
+
+@_cdecl("get_safe_area_insets")
+public func get_safe_area_insets() -> UnsafePointer<Double> {
+    if let window = UIApplication.shared.windows.first {
+        let insets = window.safeAreaInsets
+        insetsArray[0] = Double(insets.top)
+        insetsArray[1] = Double(insets.bottom)
+        insetsArray[2] = Double(insets.left)
+        insetsArray[3] = Double(insets.right)
+    }
+
+    return insetsArray.withUnsafeBufferPointer { $0.baseAddress! }
+}
