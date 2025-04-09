@@ -14,53 +14,101 @@ impl BitcoinHome {
     pub fn new(ctx: &mut Context) -> Self {
         let send = Button::primary(ctx, "Send", |_ctx: &mut Context| println!("Send..."));
         let receive = Button::primary(ctx, "Receive", |_ctx: &mut Context| println!("Receive..."));
-        let bumper = Bumper::new(ctx, vec![Box::new(receive), Box::new(send)]);
+        let bumper = Bumper::new(vec![Box::new(receive), Box::new(send)]);
         
         let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |_ctx: &mut Context| println!("View transaction..."));
         let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
-        let content = Content::new(ctx, vec![Box::new(amount_display), Box::new(transaction)]);
+
+        let content = Content::new(Offset::Start, vec![
+            Box::new(amount_display), 
+            Box::new(transaction)
+        ]);
         
         let header = Header::home(ctx, "Wallet");
-        BitcoinHome(Page::new(ctx, header, content, Some(bumper)))
+        BitcoinHome(Page::new(header, content, Some(bumper)))
     }
 
     pub fn page(self) -> Page {self.0}
 }
 
-struct Address(AddressHome, ScanQR, SelectContact);
+pub struct Address(AddressHome, ScanQR, SelectContact);
 
 pub struct AddressHome(Page);
 
 impl AddressHome {
     pub fn new(ctx: &mut Context) -> Self {
         let continue_btn = Button::primary(ctx, "Continue", |_ctx: &mut Context| println!("Continue..."));
-        let bumper = Bumper::new(ctx, vec![Box::new(continue_btn)]);
+        let bumper = Bumper::new(vec![Box::new(continue_btn)]);
         
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let address_input = TextInput::new(ctx, None, "Bitcoin address...", None, icon_button);
 
-        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, |_ctx: &mut Context| println!("Paste..."));
+        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, |_ctx: &mut Context| println!("Paste... {}", crate::clipboard()));
         let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |_ctx: &mut Context| println!("Scan..."));
         let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, |_ctx: &mut Context| println!("Select Contact..."));
-        let quick_actions = QuickActions::new(ctx, vec![paste, scan_qr, contact]); // NEEDS WRAPPING
+        let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
 
-        let content = Content::new(ctx, vec![Box::new(address_input)]);
+        let content = Content::new(Offset::Start, vec![
+            Box::new(address_input), 
+            Box::new(quick_actions)
+        ]);
 
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| println!("Go Back!"));
+        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::stack(ctx, Some(back), "Send bitcoin", None);
-        AddressHome(Page::new(ctx, header, content, Some(bumper)))
+        AddressHome(Page::new(header, content, Some(bumper)))
     } // REMOVE TAB NAV - WE ARE IN A FLOW
 
     pub fn page(self) -> Page {self.0}
 }
 
-struct ScanQR(Page);
-struct SelectContact(Page);
-struct Amount(Page);
-struct Speed(Page);
-struct Confirm(Page);
-struct Success(Page);
+pub struct ScanQR(Page);
 
-struct Receive(Page);
+impl ScanQR {
+    pub fn new(ctx: &mut Context) -> Self {
+        // #[cfg(target_os = "ios")]
+        capture();
 
-struct ViewTransaction(Page);
+        let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
+        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
+        ScanQR(Page::new(header, content, None))
+    } 
+
+    pub fn page(self) -> Page {self.0}
+}
+
+pub struct SelectContact(Page);
+
+impl SelectContact {
+    pub fn new(ctx: &mut Context) -> Self {
+        let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
+        let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
+
+        let contacts = vec![
+            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |_ctx: &mut Context| println!("Select Contact...")),
+            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |_ctx: &mut Context| println!("Select Contact...")),
+            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |_ctx: &mut Context| println!("Select Contact...")),
+            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |_ctx: &mut Context| println!("Select Contact...")),
+            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |_ctx: &mut Context| println!("Select Contact..."))
+        ];
+
+        let contact_list = ListItemGroup::new(ctx, contacts);
+
+        let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(contact_list)]);
+
+        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let header = Header::stack(ctx, Some(back), "Send to contact", None);
+        SelectContact(Page::new(header, content, None))
+    } // REMOVE TAB NAV - WE ARE IN A FLOW
+
+    pub fn page(self) -> Page {self.0}
+}
+
+pub struct Amount(Page);
+pub struct Speed(Page);
+pub struct Confirm(Page);
+pub struct Success(Page);
+
+pub struct Receive(Page);
+
+pub struct ViewTransaction(Page);

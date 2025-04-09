@@ -18,7 +18,16 @@ public func get_application_support_dir() -> UnsafePointer<CChar>? {
     return appSupportPathCString
 }
 
+#if os(iOS)
 import UIKit
+
+@_cdecl("get_clipboard_string")
+public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
+    if let string = UIPasteboard.general.string {
+        return strdup(string)
+    }
+    return nil
+}
 
 @_cdecl("trigger_haptic")
 public func trigger_haptic() {
@@ -43,3 +52,4 @@ public func get_safe_area_insets() -> UnsafePointer<Double> {
 
     return insetsArray.withUnsafeBufferPointer { $0.baseAddress! }
 }
+#endif
