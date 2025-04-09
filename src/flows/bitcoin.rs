@@ -43,7 +43,9 @@ impl AddressHome {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let address_input = TextInput::new(ctx, None, "Bitcoin address...", None, icon_button);
 
-        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, |_ctx: &mut Context| println!("Paste... {}", crate::clipboard()));
+        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, |_ctx: &mut Context| { 
+            println!("Paste... {}",  read_clipboard().unwrap_or("Could not read clipboard.".to_string()))
+        });
         let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |_ctx: &mut Context| println!("Scan..."));
         let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, |_ctx: &mut Context| println!("Select Contact..."));
         let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
@@ -60,6 +62,22 @@ impl AddressHome {
 
     pub fn page(self) -> Page {self.0}
 }
+
+extern "C" {
+    fn get_clipboard_string() -> *const std::os::raw::c_char;
+}
+
+fn read_clipboard() -> Option<String> {
+    unsafe {
+        let ptr = get_clipboard_string();
+        if ptr.is_null() {
+            None
+        } else {
+            Some(std::ffi::CStr::from_ptr(ptr).to_string_lossy().into_owned())
+        }
+    }
+}
+
 
 pub struct ScanQR(Page);
 

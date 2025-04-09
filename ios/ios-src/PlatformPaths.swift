@@ -1,5 +1,10 @@
 import Foundation
 
+// xcrun --sdk macosx swiftc \
+//     -target arm64-apple-macos13 \
+//     ios/ios-src/PlatformPaths.swift
+
+
 // Static to hold a C-compatible path forever (not freed)
 fileprivate var appSupportPathCString: UnsafePointer<CChar>? = nil
 
@@ -18,22 +23,42 @@ public func get_application_support_dir() -> UnsafePointer<CChar>? {
     return appSupportPathCString
 }
 
+#if os(macOS)
+import AppKit
+
+@_cdecl("get_clipboard_string")
+public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
+    let pasteboard = NSPasteboard.general
+    
+    if let availableTypes = pasteboard.types {
+        if availableTypes.contains(NSPasteboard.PasteboardType("NSStringPboardType")) {
+            if let copiedString = pasteboard.string(forType: .string) {
+                return strdup(copiedString)
+            }
+        }
+    }
+    return nil
+}
+#endif
+
+//
+//
 #if os(iOS)
 import UIKit
 
 @_cdecl("get_clipboard_string")
 public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
-    if let string = UIPasteboard.general.string {
-        return strdup(string)
-    }
-    return nil
+   if let string = UIPasteboard.general.string {
+       return strdup(string)
+   }
+   return nil
 }
 
 @_cdecl("trigger_haptic")
 public func trigger_haptic() {
-    let generator = UIImpactFeedbackGenerator(style: .medium)
-    generator.prepare()
-    generator.impactOccurred()
+   let generator = UIImpactFeedbackGenerator(style: .medium)
+   generator.prepare()
+   generator.impactOccurred()
 }
 
 
