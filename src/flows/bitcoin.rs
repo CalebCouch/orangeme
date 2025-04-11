@@ -13,7 +13,7 @@ pub struct BitcoinHome(Page);
 impl BitcoinHome {
     pub fn new(ctx: &mut Context) -> Self {
         let send = Button::primary(ctx, "Send", |_ctx: &mut Context| println!("Send..."));
-        let receive = Button::primary(ctx, "Receive", |_ctx: &mut Context| println!("Receive..."));
+        let receive = Button::primary(ctx, "Receive", |_ctx: &mut Context| send_push("Received Bitcoin", "You received $10.00"));
         let bumper = Bumper::new(vec![Box::new(receive), Box::new(send)]);
         
         let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |_ctx: &mut Context| println!("View transaction..."));
@@ -29,6 +29,18 @@ impl BitcoinHome {
     }
 
     pub fn page(self) -> Page {self.0}
+}
+
+extern "C" {
+    fn trigger_push_notification(title: *const std::os::raw::c_char, body: *const std::os::raw::c_char);
+}
+
+fn send_push(title: &str, body: &str) {
+    let c_title = std::ffi::CString::new(title).unwrap();
+    let c_body = std::ffi::CString::new(body).unwrap();
+    unsafe {
+        trigger_push_notification(c_title.as_ptr(), c_body.as_ptr());
+    }
 }
 
 pub struct Address(AddressHome, ScanQR, SelectContact);
@@ -123,6 +135,28 @@ impl SelectContact {
 }
 
 pub struct Amount(Page);
+
+impl Amount {
+    pub fn new(ctx: &mut Context) -> Self {
+        let is_mobile = pelican_ui::config::IS_MOBILE;
+        let continue_btn = Button::primary(ctx, "Continue", |_ctx: &mut Context| println!("Continue..."));
+        let bumper = Bumper::new(vec![Box::new(continue_btn)]);
+        
+        let amount_display = AmountInput::new(ctx);
+        let numeric_keypad = NumericKeypad::new(ctx);
+
+        let mut content: Vec<Box<dyn Drawable>> = vec![Box::new(amount_display)];
+        is_mobile.then(|| content.push(Box::new(numeric_keypad)));
+        let content = Content::new(Offset::Center, content);
+
+        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let header = Header::stack(ctx, Some(back), "Bitcoin amount", None);
+        Amount(Page::new(header, content, Some(bumper)))
+    } // REMOVE TAB NAV - WE ARE IN A FLOW
+
+    pub fn page(self) -> Page {self.0}
+}
+
 pub struct Speed(Page);
 pub struct Confirm(Page);
 pub struct Success(Page);

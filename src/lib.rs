@@ -100,7 +100,7 @@ impl App for MyApp {
         // Box::new(text)
 
         // let flow = BitcoinFlow::Home(BitcoinHome::new(ctx));
-        let page = BitcoinHome::new(ctx).page();
+        let page = Amount::new(ctx).page();
         Box::new(Interface::new(ctx, page))
 
         // Box::new(Button::secondary(ctx, Some("edit"), "Edit Address", None, |_ctx: &mut Context| println!("Button")))
