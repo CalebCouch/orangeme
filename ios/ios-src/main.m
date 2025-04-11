@@ -4,4 +4,3 @@ int main(void) {
     ios_main();
     return 0;
 }
-

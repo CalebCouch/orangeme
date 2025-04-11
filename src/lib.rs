@@ -100,7 +100,7 @@ impl App for MyApp {
         // Box::new(text)
 
         // let flow = BitcoinFlow::Home(BitcoinHome::new(ctx));
-        let page = AddressHome::new(ctx).page();
+        let page = BitcoinHome::new(ctx).page();
         Box::new(Interface::new(ctx, page))
 
         // Box::new(Button::secondary(ctx, Some("edit"), "Edit Address", None, |_ctx: &mut Context| println!("Button")))
@@ -109,3 +109,9 @@ impl App for MyApp {
 }
 
 create_entry_points!(MyApp);
+
+#[no_mangle]
+pub extern "C" fn ios_background() {
+    println!("APP REFRESH CALLED FROM RUST");
+}
+

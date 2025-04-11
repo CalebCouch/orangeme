@@ -1,40 +1,34 @@
 #if os(iOS)
-
-import Foundation
-import AVFoundation
 import UIKit
+#else
+import AppKit
+#endif
+import AVFoundation
+import Foundation
 
-// Public enum for Camera Errors
 public enum CameraError: Error {
     case accessDenied
     case restricted
-    case waitingForAccess
     case unknown
+    case waitingForAccess
 }
 
-// Global variables to hold camera frame and status
 var latestFramePtr: UnsafeMutableRawPointer?
-var latestFrameSize: Int = 0
+var initialFrameSize: Int = 0
 var latestPixelBuffer: CVPixelBuffer?
 var cameraCaptureInstance: CameraCapture?
 
-// CameraCapture class for macOS using AVFoundation
 public class CameraCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private let session = AVCaptureSession()
-    
-    // Declare cameraAccessStatus as an internal member of CameraCapture
-    private(set) public var cameraAccessStatus: AVAuthorizationStatus = .notDetermined
 
     override init() {
         super.init()
         setupCamera()
     }
 
-    // Setup the camera for capture
     public func setupCamera() {
         guard let device = AVCaptureDevice.default(for: .video),
-              let input = try? AVCaptureDeviceInput(device: device)
-        else {
+              let input = try? AVCaptureDeviceInput(device: device) else {
             print("Failed to initialize camera.")
             return
         }
@@ -58,7 +52,6 @@ public class CameraCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
         session.startRunning()
     }
 
-    // Delegate method to process camera frames
     public func captureOutput(
         _ output: AVCaptureOutput,
         didOutput sampleBuffer: CMSampleBuffer,
@@ -66,23 +59,25 @@ public class CameraCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
     ) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
 
+        if initialFrameSize == 0 {
+            let width = CVPixelBufferGetWidth(pixelBuffer)
+            let height = CVPixelBufferGetHeight(pixelBuffer)
+            initialFrameSize = CVPixelBufferGetBytesPerRow(pixelBuffer) * height
+            print("First frame width: \(width), height: \(height)")
+        }
+
         CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
         guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else {
             CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
             return
         }
 
-        let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-        let height = CVPixelBufferGetHeight(pixelBuffer)
-        let size = bytesPerRow * height
-
-        // Update the global pointer if needed
-        if latestFramePtr == nil || latestFrameSize != size {
+        let size = initialFrameSize
+        if latestFramePtr == nil || initialFrameSize != size {
             if let ptr = latestFramePtr {
                 free(ptr)
             }
             latestFramePtr = malloc(size)
-            latestFrameSize = size
         }
 
         memcpy(latestFramePtr, baseAddress, size)
@@ -90,11 +85,10 @@ public class CameraCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
         CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
     }
 
-    // MARK: - Permission Handling
     public func checkCameraAccess() -> Result<String, CameraError> {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            return .success("Camera view enabled")
+            return .success("cameraEnabled")
         case .denied:
             return .failure(.accessDenied)
         case .restricted:
@@ -106,17 +100,11 @@ public class CameraCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
         }
     }
 
-    // Request camera access and update status
     public func requestCameraAccess() {
-        AVCaptureDevice.requestAccess(for: .video) { response in
-            DispatchQueue.main.async {
-                self.cameraAccessStatus = AVCaptureDevice.authorizationStatus(for: .video)
-            }
-        }
+        AVCaptureDevice.requestAccess(for: .video) { response in }
     }
 }
 
-// C Exports for Rust
 @_cdecl("start_camera_capture")
 public func start_camera_capture() {
     DispatchQueue.main.async {
@@ -127,14 +115,26 @@ public func start_camera_capture() {
     }
 }
 
+@_cdecl("get_initial_frame_width")
+public func get_initial_frame_width() -> Int {
+    guard let pixelBuffer = latestPixelBuffer else { return 0 }
+    return CVPixelBufferGetWidth(pixelBuffer)
+}
+
+@_cdecl("get_initial_frame_height")
+public func get_initial_frame_height() -> Int {
+    guard let pixelBuffer = latestPixelBuffer else { return 0 }
+    return CVPixelBufferGetHeight(pixelBuffer) 
+}
+
 @_cdecl("get_latest_frame")
 public func get_latest_frame() -> UnsafeMutableRawPointer? {
     return latestFramePtr
 }
 
-@_cdecl("get_latest_frame_size")
-public func get_latest_frame_size() -> Int {
-    return latestFrameSize
+@_cdecl("get_initial_frame_size")
+public func get_initial_frame_size() -> Int {
+    return initialFrameSize
 }
 
 @_cdecl("get_latest_frame_stride")
@@ -144,17 +144,13 @@ public func get_latest_frame_stride() -> Int {
 }
 
 @_cdecl("check_camera_access")
-public func check_camera_access() -> UnsafePointer<CChar>? {
+public func check_camera_access() -> UnsafeMutablePointer<CChar>? {
     let result: Result<String, CameraError> = cameraCaptureInstance?.checkCameraAccess() ?? .failure(.unknown)
-    
+
     switch result {
     case .success(let successMessage):
-        let cString = strdup(successMessage) // Get the C-style string (mutable)
-        return UnsafePointer(cString!) // Convert to an immutable pointer
+        return strdup(successMessage)
     case .failure(let error):
-        let errorMessage = "Error: \(error)"
-        let cString = strdup(errorMessage) // Get the C-style string (mutable)
-        return UnsafePointer(cString!) // Convert to an immutable pointer
+        return strdup("Error: \(error)")
     }
 }
-#endif

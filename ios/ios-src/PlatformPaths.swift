@@ -4,21 +4,15 @@ import Foundation
 //     -target arm64-apple-macos13 \
 //     ios/ios-src/PlatformPaths.swift
 
-
-// Static to hold a C-compatible path forever (not freed)
 fileprivate var appSupportPathCString: UnsafePointer<CChar>? = nil
 
 @_cdecl("get_application_support_dir")
 public func get_application_support_dir() -> UnsafePointer<CChar>? {
     let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
     guard let url = urls.first else { return nil }
-
-    // Ensure the directory exists
     try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
 
     let path = url.path
-
-    // Store the C string in a static so it stays alive
     appSupportPathCString = (path as NSString).utf8String
     return appSupportPathCString
 }
@@ -39,11 +33,8 @@ public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
     }
     return nil
 }
-#endif
 
-//
-//
-#if os(iOS)
+#elseif os(iOS)
 import UIKit
 
 @_cdecl("get_clipboard_string")
@@ -61,8 +52,6 @@ public func trigger_haptic() {
    generator.impactOccurred()
 }
 
-
-// MARK: - File-global variable to hold the array
 var insetsArray: [Double] = [0, 0, 0, 0]
 
 @_cdecl("get_safe_area_insets")

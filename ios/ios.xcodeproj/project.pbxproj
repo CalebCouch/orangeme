@@ -13,9 +13,10 @@
 		57CD6306253C7A940098CD4A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57CD6305253C7A940098CD4A /* AudioToolbox.framework */; };
 		880CA76C2D4984A700B00E38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1B41978FA53999AA836D0F /* Security.framework */; };
 		882603C62DA6BCAC00588BC3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826005F2DA6BC9D00588BC3 /* Cocoa.framework */; platformFilters = (macos, ); };
+		882605412DA6D36900588BC3 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882605402DA6D36700588BC3 /* Notifications.swift */; };
+		882605482DA9614200588BC3 /* ios.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 882605472DA9614200588BC3 /* ios.entitlements */; };
 		8826FE532DA1AEFA00588BC3 /* PlatformPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8826FE522DA1AEED00588BC3 /* PlatformPaths.swift */; };
-		8826FE552DA5A07C00588BC3 /* iOSCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8826FE542DA5A07700588BC3 /* iOSCamera.swift */; };
-		8826FE572DA5A09500588BC3 /* macOSCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8826FE562DA5A08F00588BC3 /* macOSCamera.swift */; };
+		8826FE572DA5A09500588BC3 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8826FE562DA5A08F00588BC3 /* Camera.swift */; };
 		8826FE592DA5A72000588BC3 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826FE582DA5A72000588BC3 /* AVFoundation.framework */; };
 		8826FE5B2DA5AAB800588BC3 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826FE5A2DA5AAB700588BC3 /* AVKit.framework */; };
 		8826FE5D2DA5AB0F00588BC3 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826FE5C2DA5AB0F00588BC3 /* CoreMedia.framework */; };
@@ -27,7 +28,6 @@
 		8826FE6F2DA5DD8B00588BC3 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826FE6E2DA5DD8B00588BC3 /* AppKit.framework */; platformFilters = (macos, ); };
 		8826FE712DA6BC6900588BC3 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826FE702DA6BC6900588BC3 /* ApplicationServices.framework */; platformFilters = (macos, ); };
 		88B03F722D78C81E0013AA60 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F712D78C81E0013AA60 /* QuartzCore.framework */; };
-		88B03F742D78CA080013AA60 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F732D78CA080013AA60 /* CoreFoundation.framework */; };
 		88B03F762D78CD600013AA60 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B03F752D78CD600013AA60 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -46,9 +46,11 @@
 		55EAC02897847195D2F44C15 /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57CD6305253C7A940098CD4A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8826005F2DA6BC9D00588BC3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		882605402DA6D36700588BC3 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		882605432DA6F34600588BC3 /* rust_bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rust_bindings.h; sourceTree = "<group>"; };
+		882605472DA9614200588BC3 /* ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ios.entitlements; sourceTree = "<group>"; };
 		8826FE522DA1AEED00588BC3 /* PlatformPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformPaths.swift; sourceTree = "<group>"; };
-		8826FE542DA5A07700588BC3 /* iOSCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSCamera.swift; sourceTree = "<group>"; };
-		8826FE562DA5A08F00588BC3 /* macOSCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSCamera.swift; sourceTree = "<group>"; };
+		8826FE562DA5A08F00588BC3 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		8826FE582DA5A72000588BC3 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8826FE5A2DA5AAB700588BC3 /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		8826FE5C2DA5AB0F00588BC3 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -86,7 +88,6 @@
 				8826FE5D2DA5AB0F00588BC3 /* CoreMedia.framework in Frameworks */,
 				8826FE5B2DA5AAB800588BC3 /* AVKit.framework in Frameworks */,
 				8826FE592DA5A72000588BC3 /* AVFoundation.framework in Frameworks */,
-				88B03F742D78CA080013AA60 /* CoreFoundation.framework in Frameworks */,
 				880CA76C2D4984A700B00E38 /* Security.framework in Frameworks */,
 				88B03F722D78C81E0013AA60 /* QuartzCore.framework in Frameworks */,
 				55B7188F81C3C4183F81D3AE /* libc++.tbd in Frameworks */,
@@ -109,10 +110,11 @@
 		4F1D6F28B8A5D1927AB0ADED /* ios-src */ = {
 			isa = PBXGroup;
 			children = (
+				882605402DA6D36700588BC3 /* Notifications.swift */,
 				8826FE522DA1AEED00588BC3 /* PlatformPaths.swift */,
 				160DB77300A3F1806F024D47 /* bindings.h */,
-				8826FE542DA5A07700588BC3 /* iOSCamera.swift */,
-				8826FE562DA5A08F00588BC3 /* macOSCamera.swift */,
+				882605432DA6F34600588BC3 /* rust_bindings.h */,
+				8826FE562DA5A08F00588BC3 /* Camera.swift */,
 				8EE7F1E3B0303533925D7E33 /* Info.plist */,
 				AF7DE91055EBD05ED77E57F9 /* main.m */,
 			);
@@ -125,6 +127,7 @@
 				4F1D6F28B8A5D1927AB0ADED /* ios-src */,
 				EB028409C2D0655412DA6E44 /* Frameworks */,
 				321F7D6A765B38E746C35105 /* Products */,
+				882605472DA9614200588BC3 /* ios.entitlements */,
 			);
 			sourceTree = "<group>";
 		};
@@ -223,6 +226,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				882605482DA9614200588BC3 /* ios.entitlements in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,9 +237,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8826FE572DA5A09500588BC3 /* macOSCamera.swift in Sources */,
+				8826FE572DA5A09500588BC3 /* Camera.swift in Sources */,
 				55892F1396056740E1AF9685 /* main.m in Sources */,
-				8826FE552DA5A07C00588BC3 /* iOSCamera.swift in Sources */,
+				882605412DA6D36900588BC3 /* Notifications.swift in Sources */,
 				8826FE532DA1AEFA00588BC3 /* PlatformPaths.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -327,6 +331,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGN_ENTITLEMENTS = ios.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 334FXZ5FM8;
@@ -368,6 +373,8 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "ios-src/rust_bindings.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -445,6 +452,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGN_ENTITLEMENTS = ios.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 334FXZ5FM8;
@@ -489,6 +497,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_OBJC_BRIDGING_HEADER[sdk=iphone*]" = "ios-src/rust_bindings.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
