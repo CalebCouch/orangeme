@@ -1,17 +1,20 @@
 [package]
-name = "webgpu"
+name = "orange"
 version = "0.1.0"
 edition = "2021"
+description = "nOrange"
+license = "BSD-3-Clause"
+repository = "https://github.com/CalebCouch/orangeme.git"
+authors = ["Caleb Couch <caleb@orange.me>"]
 
 
 [dependencies]
-fast_image_resize = {version="5.1.2", features=["image"]}
+chrono = { version = "0.4.40", features = ["serde"] }
 image = "0.25.5"
-nsvg = "0.5.1"
-rand = "0.9.0"
+log = "0.4.27"
 #rust_on_rails = "3.0.0"
 rust_on_rails = {path="../rust_on_rails"}
-pelican_ui = {path="../pelican_ui"}
+#pelican_ui = {path="../pelican_ui"}
 serde = { version = "1.0.219", features = ["derive"] }
 
 [lib]
@@ -35,3 +38,6 @@ min_sdk_version = 33
 target_sdk_version = 33
 
 label = "Application Name"
+
+[package.metadata.deb]
+maintainer-scripts = "debian/"

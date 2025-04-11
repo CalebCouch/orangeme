@@ -1,163 +1,93 @@
 use rust_on_rails::prelude::*;
-use pelican_ui::prelude::*;
 
 use serde::{Serialize, Deserialize};
+use std::time::{Instant, Duration};
+use chrono::{DateTime, Utc};
+use std::sync::Arc;
+use std::ops::Sub;
+
+//  #[derive(Serialize, Deserialize, Default, Debug)]
+//  pub struct Price(f64);
+
+//  async fn get_price() -> (Option<Duration>, Box<dyn FnOnce(&mut State) + Send>) {
+//      println!("getting_price");
+//      std::thread::sleep(Duration::from_secs(1));
+//      println!("got_price");
+//      let got_price = Price(1.0);
+//      (
+//          Some(Duration::from_secs(4)),
+//          Box::new(move |state: &mut State| state.set(&got_price))
+//      )
+//  }
+//async fn root(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
+//}
+//  ctx.schedule_task(Duration::from_secs(0), get_price);
+//      ctx.schedule_task(Duration::from_secs(5), async || {
+//          //std::thread::sleep(Duration::from_secs(5));
+//          println!("5 sec tick");
+//          (Some(Duration::from_secs(5)), Box::new(move |state: &mut State| {}) as Callback)
+//      });
+
 
 #[derive(Serialize, Deserialize, Default, Debug)]
-pub struct Count(pub u32);
+pub struct Timestamp(DateTime<Utc>);
+
+#[derive(Serialize, Deserialize, Default, Debug)]
+pub struct Count(u64);
 
 
-#[derive(Debug, Component)]
-pub struct Bumper(Row, pub Button, Button);
+#[derive(Serialize, Deserialize, Default, Debug)]
+pub struct CacheCount(u64);
 
-impl Bumper {
-    pub fn new(ctx: &mut Context) -> Self {
-        Bumper(
-            Row(16, Offset::Center, Size::Fit, Padding(16, 16, 16, 16)),
-            Button::secondary(
-                ctx, Some("paste"), "Paste", None,
-                |ctx: &mut Context| ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0-1)).unwrap()
-            ),
-            Button::new(
-                ctx,
-                Some(AvatarContent::Icon("settings", AvatarIconStyle::Secondary)),
-                None,
-                Some("Paste"),
-                None,
-                ButtonSize::Large,
-                ButtonWidth::Expand,
-                ButtonStyle::Secondary,
-                ButtonState::Default,
-                Offset::Center,
-                |ctx: &mut Context| ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0+1)).unwrap()
-            )
-        )
+pub struct MyBackgroundApp;
+
+impl BackgroundApp for MyBackgroundApp {
+    const LOG_LEVEL: log::Level = log::Level::Error;
+
+    async fn new(ctx: &mut AsyncContext) -> Self {
+        MyBackgroundApp
+    }
+    async fn on_tick(&mut self, ctx: &mut AsyncContext) {
+        println!("on_background");
+        if ctx.cache.get::<Timestamp>().await.0 < Utc::now().sub(Duration::from_secs(5)) {
+            ctx.cache.set(Timestamp(Utc::now())).await;
+            let count = ctx.cache.get::<CacheCount>().await.0;
+            println!("on_background+tick: {}", count+1);
+            ctx.cache.set(CacheCount(count+1)).await;
+        }
     }
 }
-
-// impl Events for Bumper {
-//     fn on_tick(&mut self, ctx: &mut Context) {
-//         //ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0+1)).unwrap();
-//         *self.1.2.3.as_mut().unwrap().value() = ctx.state().get::<Count>().unwrap().0.to_string();
-//     }
-// }
-use pelican_ui::elements::images::Brand;
 
 pub struct MyApp;
 
 impl App for MyApp {
-    fn root(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
-        let plugin = PelicanUI::init(ctx);
-        ctx.configure_plugin(plugin);
+    const LOG_LEVEL: log::Level = log::Level::Error;
 
-        let theme = &ctx.get::<PelicanUI>().theme;
-        //Box::new(Icon::new(ctx, "error", color, 128))
-        //Box::new(Shape(ShapeType::Ellipse(20, (50, 50)), Color(155, 255, 0, 255)))
-        //Box::new(CircleIcon::new(ctx, ProfileImage::Icon("wallet", AvatarIconStyle::Brand), Some(("edit", AvatarIconStyle::Secondary)), false, 128))
-        //Box::new(CircleIconData::new(ctx, "wallet", AvatarIconStyle::Brand, 128))
-        // Box::new(Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("microphone", AvatarIconStyle::Danger)), false, 128))
-        //Box::new(Button::secondary(ctx, Some("paste"), "Paste", None, ))
-        // let bumper = Bumper::new(ctx);
-        // let bumper = Image(ShapeType::Rectangle(0, (300, 300)), theme.brand.logo.wordmark.clone(), Some(Color::from_hex("ffffff", 255)));
-        // Box::new(bumper)
-        // Box::new(IconButton::new(
-        //     ctx,
-        //     Some("close"),
-        //     ButtonSize::Large,
-        //     ButtonStyle::Secondary,
-        //     ButtonState::Default,
-        //     |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position)
-        // ))
-      //Box::new(Button::new(
-      //    ctx,
-      //    Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary)),
-      //    None,
-      //    Some("Paste"),
-      //    None,
-      //    ButtonSize::Large,
-      //    ButtonWidth::Expand,
-      //    ButtonStyle::Primary,
-      //    ButtonState::Default,
-      //    |_ctx: &mut Context, position: (u32, u32)| println!("Pasting...: {:?}", position)
-      //))
-        // Box::new(Button::primary(ctx, "wallet", (|| println!("Pasting..."))))
-        // Box::new(BasicText::new("Continue", color, 48, 60, font.clone()))
-        // Box::new(Text::new(ctx, "Continue", TextStyle::Label(color), 48))
+    async fn new(ctx: &mut Context) -> Self {MyApp}
 
-        //Box::new(Bumper::new(ctx))
-        // Box::new(
-        //     TextInput::new(
-        //         ctx,
-        //         Some("Label"),
-        //         "Search names...",
-        //         Some("You're kinda stinky."),
-        //         Some(("close", |_ctx: &mut Context, txt: &mut String| println!("Submitting: {:?}", txt))),
-        //     )
-        // )
-
-        // Box::new(
-        //     DataItem::new(
-        //         ctx, 
-        //         None,
-        //         "Confirm adress", 
-        //         Some("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"),
-        //         Some("Bitcoin sent to the wrong address can never be recovered."), 
-        //         None,
-        //         Some(vec![button])
-        //     )
-        // )
-
-        // Box::new(Alert::new(ctx, "You were booted from this room."))
-        // Box::new(RowTest::new())
-
-      //Box::new(Bin(Stack(
-      //    Offset::End, Offset::End, Size::Fill(MinSize(0), MaxSize(u32::MAX)), Size::Fill(MinSize(0), MaxSize(u32::MAX)), Padding(10, 20, 50, 100)
-      //),
-      //    Shape(ShapeType::Rectangle(0, (100, 100)), Color(0, 0, 255, 255))
-      //))
-
-    //   Box::new(AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", Some("Not enough bitcoin")))
-        // Box::new(MobileKeyboard::new(ctx))
-        // Box::new(
-        //     Card::new(
-        //         ctx,
-        //         AvatarContent::Icon("door", AvatarIconStyle::Secondary),
-        //         "Ella Couch's Room",
-        //         "101 members",
-        //         "A room for all of Ella Couch's friends.",
-        //         |_ctx: &mut Context| println!("JOINING ROOM")
-        //     )
-        // )
-
-        // Box::new(
-        //     ListItem::contact(ctx, 
-        //         AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
-        //         "Ella Couch", "did::nym::udc29i8soihOXIR8GXo2rloi", 
-        //         |_ctx: &mut Context| println!("CHOOSING MEMBER")
-        //     )
-        // )
-        let header = Header::home(ctx, "Wallet");
-        let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
-        let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |_ctx: &mut Context| println!("View transaction..."));
-        let content = Content::new(ctx, vec![Box::new(amount_display), Box::new(transaction)]);
-        let page = Page::new(
-            ctx,
-            header,
-            content,
-            None,
-            None,
-        );
-        Box::new(
-            Interface::new(ctx,
-                page
-            )
-        )
-        // let wordmark = theme.brand.wordmark.clone();
-        // Box::new(Brand::new(ctx, wordmark, (81, 45)))
-        // ctx.include_assets(include_assets!("./assets"));
-
-        // Box::new(resources::Image::newsvg(ctx, "icons/wordmark.svg"))
+    async fn on_resume<W: HasWindowHandle + HasDisplayHandle>(
+        &mut self, ctx: &mut Context, window: Arc<W>, width: u32, height: u32, scale_factor: f64
+    ) {
+        println!("Resumed");
     }
+
+    async fn on_async_tick(ctx: &mut AsyncContext) -> Callback {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+        let cache_count = ctx.cache.get::<CacheCount>().await.0;
+        println!("Async Tick 1 secs apart, cache_count: {}", cache_count);
+        Box::new(move |state: &mut State| {
+            let count = state.get::<Count>().0;
+            state.set(&CacheCount(cache_count));
+            state.set(&Count(count + 1));
+        })
+    }
+
+    fn on_pause(&mut self, ctx: &mut Context) {println!("Paused");}
+    fn on_close(self, ctx: &mut Context) {println!("Closed");}
+
+    fn on_tick(&mut self, ctx: &mut Context) {println!("Tick: {}, Cache: {}", ctx.state.get::<Count>().0, ctx.state.get::<CacheCount>().0);}
+
+    fn on_event(&mut self, ctx: &mut Context, event: Event) {}
 }
 
-create_entry_points!(MyApp);
+create_entry_points!(MyApp, MyBackgroundApp);
