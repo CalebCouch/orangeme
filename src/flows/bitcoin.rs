@@ -1,5 +1,7 @@
 use rust_on_rails::prelude::*;
+use rust_on_rails::prelude::Text as BasicText;
 use pelican_ui::prelude::*;
+use pelican_ui::prelude::Text;
 
 pub enum BitcoinFlow {
     Home(BitcoinHome),
@@ -158,9 +160,121 @@ impl Amount {
 }
 
 pub struct Speed(Page);
+
+impl Speed {
+    pub fn new(ctx: &mut Context) -> Self {
+        let continue_btn = Button::primary(ctx, "Continue", |_ctx: &mut Context| println!("Continue..."));
+        let bumper = Bumper::new(vec![Box::new(continue_btn)]);
+        
+        let speed_selector = ListItemSelector::new(ctx,
+            ("Standard", "Arrives in ~2 hours", "$0.18 Bitcoin network fee"),
+            ("Priority", "Arrives in ~30 minutes", "$0.35 Bitcoin network fee"),
+            None, None
+        );
+
+        let content = Content::new(Offset::Start, vec![Box::new(speed_selector)]);
+
+        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let header = Header::stack(ctx, Some(back), "Transaction speed", None);
+        Speed(Page::new(header, content, Some(bumper)))
+    } // REMOVE TAB NAV - WE ARE IN A FLOW
+
+    pub fn page(self) -> Page {self.0}
+}
+
 pub struct Confirm(Page);
+
+impl Confirm {
+    pub fn new(ctx: &mut Context) -> Self {
+        let continue_btn = Button::primary(ctx, "Continue", |_ctx: &mut Context| println!("Continue..."));
+        let bumper = Bumper::new(vec![Box::new(continue_btn)]);
+
+        let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, |_ctx: &mut Context| println!("Edit amount..."));
+        let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |_ctx: &mut Context| println!("Edit speed..."));
+        let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |_ctx: &mut Context| println!("Edit address..."));
+
+        let confirm_amount = DataItem::new(ctx,
+            None, //Some("2"),
+            "Confirm amount",
+            None,
+            None,
+            Some(vec![
+                ("Amount sent (BTC)", "0.00001234 BTC"),
+                ("Send speed", "Standard (2 hours)"),
+                ("Amount sent", "$10.00"),
+                ("Transaction fee", "$0.18"),
+                ("Transaction total", "$10.18")
+            ]),
+            Some(vec![edit_amount, edit_speed])
+        );
+
+        let confirm_address = DataItem::new(ctx,
+            None, // Some("1"),
+            "Confirm address",
+            Some("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"),
+            Some("Bitcoin sent to the wrong address can never be recovered."),
+            None,
+            Some(vec![edit_address])
+        );
+
+        let content = Content::new(Offset::Start, vec![Box::new(confirm_address), Box::new(confirm_amount)]);
+
+        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let header = Header::stack(ctx, Some(back), "Confirm send", None);
+        Confirm(Page::new(header, content, Some(bumper)))
+    } // REMOVE TAB NAV - WE ARE IN A FLOW
+
+    pub fn page(self) -> Page {self.0}
+}
+
 pub struct Success(Page);
 
+impl Success {
+    pub fn new(ctx: &mut Context) -> Self {
+        let contact = None; //Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary));
+
+        let theme = &ctx.get::<PelicanUI>().theme;
+        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+
+        let continue_btn = Button::close(ctx, "Continue", |_ctx: &mut Context| println!("Continue..."));
+        let bumper = Bumper::new(vec![Box::new(continue_btn)]);
+
+        let (text, splash) = if let Some(c) = contact {
+            ("You sent $10.00 to Ella Couch", Box::new(Avatar::new(ctx, c, None, false, 96)) as Box<dyn Drawable>)
+        } else {
+            ("You sent $10.00", Box::new(Icon::new(ctx, "bitcoin", color, 96)) as Box<dyn Drawable>)
+        };
+
+        let text = Text::new(ctx, text, TextStyle::Heading, text_size);
+        let content = Content::new(Offset::Center, vec![splash, Box::new(text)]);
+
+        let close = IconButton::close(ctx, |_ctx: &mut Context| println!("Close, Go Home!"));
+        let header = Header::stack(ctx, Some(close), "Send confirmed", None);
+        Success(Page::new(header, content, Some(bumper)))
+    } // REMOVE TAB NAV - WE ARE IN A FLOW
+
+    pub fn page(self) -> Page {self.0}
+}
+
 pub struct Receive(Page);
+
+impl Receive {
+    pub fn new(ctx: &mut Context) -> Self {
+        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
+        let share_btn = Button::close(ctx, "Share", |_ctx: &mut Context| println!("Sharing..."));
+        let bumper = Bumper::new(vec![Box::new(share_btn)]);
+
+        let qr_code = QRCode::new(ctx, "children are a little bit stinky sometimes. if we're being honest");
+
+        let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size);
+        let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]);
+
+        let close = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
+        Receive(Page::new(header, content, Some(bumper)))
+    } // REMOVE TAB NAV - WE ARE IN A FLOW
+
+    pub fn page(self) -> Page {self.0}
+}
 
 pub struct ViewTransaction(Page);
