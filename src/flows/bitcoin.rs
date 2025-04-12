@@ -142,7 +142,7 @@ impl Amount {
         let continue_btn = Button::primary(ctx, "Continue", |_ctx: &mut Context| println!("Continue..."));
         let bumper = Bumper::new(vec![Box::new(continue_btn)]);
         
-        let amount_display = AmountInput::new(ctx);
+        let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
         let numeric_keypad = NumericKeypad::new(ctx);
 
         let mut content: Vec<Box<dyn Drawable>> = vec![Box::new(amount_display)];
