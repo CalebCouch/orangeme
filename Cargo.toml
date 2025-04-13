@@ -16,7 +16,6 @@ log = "0.4.27"
 rust_on_rails = {path="../rust_on_rails"}
 pelican_ui = {path="../pelican_ui"}
 serde = { version = "1.0.219", features = ["derive"] }
-log = "0.4.27"
 
 [lib]
 name="main"

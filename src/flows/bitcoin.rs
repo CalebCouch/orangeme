@@ -264,10 +264,10 @@ impl Receive {
         let share_btn = Button::close(ctx, "Share", |_ctx: &mut Context| println!("Sharing..."));
         let bumper = Bumper::new(vec![Box::new(share_btn)]);
 
-        // let qr_code = QRCode::new(ctx, "children are a little bit stinky sometimes. if we're being honest children are a little bit stinky sometimes. if we're being honest children are a little bit stinky sometimes. if we're being honest children are a little bit stinky sometimes. if we're being honest ");
+        let qr_code = QRCode::new(ctx, "children are a little bit stinky sometimes. if we're being honest children are a little bit stinky sometimes. if we're being honest children are a little bit stinky sometimes. if we're being honest children are a little bit stinky sometimes. if we're being honest ");
 
         let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size);
-        let content = Content::new(Offset::Center, vec![Box::new(text)]); //Box::new(qr_code), Box::new(text)
+        let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]); //Box::new(qr_code), Box::new(text)
 
         let close = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
