@@ -9,7 +9,7 @@ run: install
 	xcrun simctl launch --console $(DEVICE) org.ramp.mobile
 	
 install: 
-	xcrun simctl install $(DEVICE) build/Build/Products/Debug-iphonesimulator/ios.app
+	xcrun simctl install $(DEVICE) build/Build/Products/Debug-iphonesimulator/apple.app
 
 clean:
 	rm -r build

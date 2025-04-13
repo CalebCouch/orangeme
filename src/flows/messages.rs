@@ -55,15 +55,15 @@ impl SelectRecipients {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
 
-        let contacts = vec![
-            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| ctx.trigger_event(AddContactEvent("Anne Eave"))),
-            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| ctx.trigger_event(AddContactEvent("Bob David"))),
-            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| ctx.trigger_event(AddContactEvent("Charlie Charles"))),
-            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| ctx.trigger_event(AddContactEvent("Danielle Briebs"))),
-            ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan Hayes", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| ctx.trigger_event(AddContactEvent("Ethan Hayes")))
+        let recipients = vec![
+            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan Hayes", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln")
         ];
 
-        let quick_deselect = QuickDeselect::new(ctx, contacts);
+        let quick_deselect = QuickDeselect::new(ctx, recipients);
 
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(quick_deselect)]);
 

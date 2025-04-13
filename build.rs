@@ -1,8 +1,8 @@
 fn main() {
     #[cfg(target_os="macos")]
     {
-        let swift_file_a = "ios/ios-src/Notifications.swift";
-        let swift_file_b = "ios/ios-src/Camera.swift";
+        let swift_file_a = "apple/apple-src/Notifications.swift";
+        let swift_file_b = "apple/apple-src/Camera.swift";
 
         let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
         let lib_path = out_dir.join("libmain.dylib");
