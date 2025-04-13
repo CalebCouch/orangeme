@@ -265,7 +265,7 @@ impl Receive {
         let share_btn = Button::primary(ctx, "Share", |_ctx: &mut Context| println!("Sharing..."));
         let bumper = Bumper::new(vec![Box::new(share_btn)]);
 
-        let qr_code = QRCode::new(ctx, "children are a little bit stinky sometimes. if bit stinky sometimes. if we're being honest ");
+        let qr_code = QRCode::new(ctx, "children are a little bit stinky sometimes. if bit stinky sometimes. if we're being honest i hate caleb he really smells like a small child that you found at apark and it has a full diaper and no one is changing the child and you hate the kid but he follows you everywhere. he pooped on the slide");
 
         let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size);
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]); //Box::new(qr_code), Box::new(text)
