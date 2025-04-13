@@ -2,9 +2,36 @@ use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 
 use serde::{Serialize, Deserialize};
+use std::time::Duration;
 
 #[derive(Serialize, Deserialize, Default, Debug)]
-pub struct Count(pub u32);
+pub struct Count(u64);
+
+#[derive(Serialize, Deserialize, Default, Debug)]
+pub struct CacheCount(u64);
+
+pub struct MyBackgroundApp{}
+
+impl MyBackgroundApp {
+    async fn tick5(&mut self, ctx: &mut AsyncContext) {
+        let count = ctx.cache.get::<CacheCount>().await.0;
+        println!("on_background+tick: {}", count+1);
+        ctx.cache.set(CacheCount(count+1)).await;
+    }
+}
+
+impl BackgroundApp for MyBackgroundApp {
+    const LOG_LEVEL: log::Level = log::Level::Error;
+    async fn new(ctx: &mut AsyncContext) -> Self {
+        MyBackgroundApp{}
+    }
+
+    async fn register_tasks(&mut self, ctx: &mut AsyncContext) -> BackgroundTasks {
+        vec![
+            background_task!(Duration::from_secs(5), MyBackgroundApp::tick5)
+        ]
+    }
+}
 
 
 #[derive(Debug, Component)]
@@ -16,7 +43,7 @@ impl Bumper {
             Row(16, Offset::Center, Size::Fit, Padding(16, 16, 16, 16)),
             Button::secondary(
                 ctx, Some("paste"), "Paste", None,
-                |ctx: &mut Context| ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0-1)).unwrap()
+                |ctx: &mut Context| {let count = ctx.state().get::<Count>().0-1; ctx.state().set(&Count(count));}
             ),
             Button::new(
                 ctx,
@@ -29,7 +56,7 @@ impl Bumper {
                 ButtonStyle::Secondary,
                 ButtonState::Default,
                 Offset::Center,
-                |ctx: &mut Context| ctx.state().set(&Count(ctx.state().get::<Count>().unwrap().0+1)).unwrap()
+                |ctx: &mut Context| {let count = ctx.state().get::<Count>().0+1; ctx.state().set(&Count(count));}
             )
         )
     }
@@ -45,8 +72,26 @@ use pelican_ui::elements::images::Brand;
 
 pub struct MyApp;
 
+impl MyApp {
+    async fn async_tick(ctx: &mut AsyncContext) -> Callback {
+        let cache_count = ctx.cache.get::<CacheCount>().await.0;
+        println!("Async Tick 1 secs apart, cache_count: {}", cache_count);
+        Box::new(move |state: &mut State| {
+            let count = state.get::<Count>().0;
+            state.set(&CacheCount(cache_count));
+            state.set(&Count(count + 1));
+        })
+    }
+}
+
 impl App for MyApp {
-    fn root(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
+    async fn register_tasks() -> AsyncTasks {
+        vec![
+            async_task!(Duration::from_secs(1), MyApp::async_tick)
+        ]
+    }
+
+    async fn root(ctx: &mut Context<'_, '_>) -> Box<dyn Drawable> {
         let plugin = PelicanUI::init(ctx);
         ctx.configure_plugin(plugin);
 
@@ -160,4 +205,4 @@ impl App for MyApp {
     }
 }
 
-create_entry_points!(MyApp);
+create_entry_points!(MyApp, MyBackgroundApp);

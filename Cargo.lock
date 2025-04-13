@@ -2442,6 +2442,7 @@ dependencies = [
  "log",
  "nsvg",
  "proc",
+ "raw-window-handle",
  "rusqlite",
  "serde",
  "serde_json",
@@ -3310,6 +3311,7 @@ version = "0.1.0"
 dependencies = [
  "fast_image_resize",
  "image 0.25.6",
+ "log",
  "nsvg",
  "pelican_ui",
  "rand 0.9.0",
