@@ -1,3 +1,4 @@
 mod bitcoin;
 pub use bitcoin::*;
-// mod messages;
+mod messages;
+pub use messages::*;

@@ -17,24 +17,7 @@ public func get_application_support_dir() -> UnsafePointer<CChar>? {
     return appSupportPathCString
 }
 
-#if os(macOS)
-import AppKit
-
-@_cdecl("get_clipboard_string")
-public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
-    let pasteboard = NSPasteboard.general
-    
-    if let availableTypes = pasteboard.types {
-        if availableTypes.contains(NSPasteboard.PasteboardType("NSStringPboardType")) {
-            if let copiedString = pasteboard.string(forType: .string) {
-                return strdup(copiedString)
-            }
-        }
-    }
-    return nil
-}
-
-#elseif os(iOS)
+#if os(iOS)
 import UIKit
 
 @_cdecl("get_clipboard_string")
@@ -66,4 +49,24 @@ public func get_safe_area_insets() -> UnsafePointer<Double> {
 
     return insetsArray.withUnsafeBufferPointer { $0.baseAddress! }
 }
+
+#else
+
+import AppKit
+
+@_cdecl("get_clipboard_string")
+public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
+    let pasteboard = NSPasteboard.general
+    
+    if let availableTypes = pasteboard.types {
+        if availableTypes.contains(NSPasteboard.PasteboardType("NSStringPboardType")) {
+            if let copiedString = pasteboard.string(forType: .string) {
+                return strdup(copiedString)
+            }
+        }
+    }
+    return nil
+}
+
+
 #endif

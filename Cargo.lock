@@ -2470,6 +2470,7 @@ dependencies = [
  "log",
  "nsvg",
  "proc",
+ "raw-window-handle",
  "rusqlite",
  "serde",
  "serde_json",
