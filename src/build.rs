@@ -1,6 +1,4 @@
 fn main() {
-    #[cfg(target_os="macos")]
-    {
         let swift_file_a = "apple/apple-src/Notifications.swift";
         let swift_file_b = "apple/apple-src/Camera.swift";
         let swift_file_c = "apple/apple-src/PlatformPaths.swift";
@@ -32,5 +30,5 @@ fn main() {
 
         println!("cargo:rerun-if-changed={}", swift_file_a);
         println!("cargo:rerun-if-changed={}", swift_file_b);
-    }
+    
 }
