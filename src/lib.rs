@@ -96,7 +96,7 @@ impl App for MyApp {
         // Box::new(text)
 
         // let flow = BitcoinFlow::Home(BitcoinHome::new(ctx));
-        let page = SelectRecipients::new(ctx).page();
+        let page = ScanQR::new(ctx).page();
         Box::new(Interface::new(ctx, page))
 
         // Box::new(Button::secondary(ctx, Some("edit"), "Edit Address", None, |_ctx: &mut Context| println!("Button")))

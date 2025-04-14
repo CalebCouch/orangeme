@@ -11,10 +11,13 @@
 		55B7188F81C3C4183F81D3AE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A39528EB2CCB182F5328223A /* libc++.tbd */; };
 		57CD6306253C7A940098CD4A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57CD6305253C7A940098CD4A /* AudioToolbox.framework */; };
 		880CA76C2D4984A700B00E38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1B41978FA53999AA836D0F /* Security.framework */; };
-		88141E2D2DAC5A6500A08D1D /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E292DAC5A6500A08D1D /* Notifications.swift */; };
-		88141E2E2DAC5A6500A08D1D /* PlatformPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E2A2DAC5A6500A08D1D /* PlatformPaths.swift */; };
-		88141E2F2DAC5A6500A08D1D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E262DAC5A6500A08D1D /* Camera.swift */; };
 		88141E302DAC5A6500A08D1D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 88141E282DAC5A6500A08D1D /* main.m */; };
+		88141E332DAC8BCD00A08D1D /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E322DAC8BCD00A08D1D /* Notifications.swift */; };
+		88141E342DAC8BCD00A08D1D /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E322DAC8BCD00A08D1D /* Notifications.swift */; };
+		88141E372DAC8BE900A08D1D /* PlatformPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E362DAC8BE900A08D1D /* PlatformPaths.swift */; };
+		88141E382DAC8BE900A08D1D /* PlatformPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E362DAC8BE900A08D1D /* PlatformPaths.swift */; };
+		88141E3A2DAC8BF900A08D1D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E392DAC8BF900A08D1D /* Camera.swift */; };
+		88141E3B2DAC8BF900A08D1D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88141E392DAC8BF900A08D1D /* Camera.swift */; };
 		882603C62DA6BCAC00588BC3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826005F2DA6BC9D00588BC3 /* Cocoa.framework */; platformFilters = (macos, ); };
 		882605482DA9614200588BC3 /* ios.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 882605472DA9614200588BC3 /* ios.entitlements */; };
 		8826FE592DA5A72000588BC3 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8826FE582DA5A72000588BC3 /* AVFoundation.framework */; };
@@ -45,12 +48,13 @@
 		55EAC02897847195D2F44C15 /* apple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = apple.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57CD6305253C7A940098CD4A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		88141E252DAC5A6500A08D1D /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
-		88141E262DAC5A6500A08D1D /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		88141E272DAC5A6500A08D1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		88141E282DAC5A6500A08D1D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		88141E292DAC5A6500A08D1D /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
-		88141E2A2DAC5A6500A08D1D /* PlatformPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformPaths.swift; sourceTree = "<group>"; };
 		88141E2B2DAC5A6500A08D1D /* rust_bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rust_bindings.h; sourceTree = "<group>"; };
+		88141E322DAC8BCD00A08D1D /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		88141E352DAC8BCF00A08D1D /* cargo_apple-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "cargo_apple-Bridging-Header.h"; sourceTree = "<group>"; };
+		88141E362DAC8BE900A08D1D /* PlatformPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformPaths.swift; sourceTree = "<group>"; };
+		88141E392DAC8BF900A08D1D /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		8826005F2DA6BC9D00588BC3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		882605472DA9614200588BC3 /* ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ios.entitlements; sourceTree = "<group>"; };
 		8826FE582DA5A72000588BC3 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -111,12 +115,13 @@
 			isa = PBXGroup;
 			children = (
 				88141E252DAC5A6500A08D1D /* bindings.h */,
-				88141E262DAC5A6500A08D1D /* Camera.swift */,
 				88141E272DAC5A6500A08D1D /* Info.plist */,
 				88141E282DAC5A6500A08D1D /* main.m */,
-				88141E292DAC5A6500A08D1D /* Notifications.swift */,
-				88141E2A2DAC5A6500A08D1D /* PlatformPaths.swift */,
+				88141E322DAC8BCD00A08D1D /* Notifications.swift */,
+				88141E392DAC8BF900A08D1D /* Camera.swift */,
+				88141E362DAC8BE900A08D1D /* PlatformPaths.swift */,
 				88141E2B2DAC5A6500A08D1D /* rust_bindings.h */,
+				88141E352DAC8BCF00A08D1D /* cargo_apple-Bridging-Header.h */,
 			);
 			path = "apple-src";
 			sourceTree = "<group>";
@@ -203,6 +208,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					D08AEBE0B1A9C9A7B8C7B33F = {
+						LastSwiftMigration = 1620;
+					};
+				};
 			};
 			buildConfigurationList = 9D43D41707A5C30B227B83F9 /* Build configuration list for PBXProject "apple" */;
 			compatibilityVersion = "Xcode 10.0";
@@ -237,10 +247,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88141E2D2DAC5A6500A08D1D /* Notifications.swift in Sources */,
-				88141E2E2DAC5A6500A08D1D /* PlatformPaths.swift in Sources */,
-				88141E2F2DAC5A6500A08D1D /* Camera.swift in Sources */,
+				88141E3A2DAC8BF900A08D1D /* Camera.swift in Sources */,
+				88141E342DAC8BCD00A08D1D /* Notifications.swift in Sources */,
 				88141E302DAC5A6500A08D1D /* main.m in Sources */,
+				88141E372DAC8BE900A08D1D /* PlatformPaths.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +258,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88141E332DAC8BCD00A08D1D /* Notifications.swift in Sources */,
+				88141E382DAC8BE900A08D1D /* PlatformPaths.swift in Sources */,
+				88141E3B2DAC8BF900A08D1D /* Camera.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +449,7 @@
 		8265913A25816D964A847F1B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -443,6 +457,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rust.cargo-ios";
 				PRODUCT_NAME = cargo_apple;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "apple-src/cargo_apple-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -506,6 +523,7 @@
 		FEA9B18D9236F9F6DC6DF799 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -513,6 +531,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rust.cargo-ios";
 				PRODUCT_NAME = cargo_apple;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "apple-src/cargo_apple-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
