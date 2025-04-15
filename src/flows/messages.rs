@@ -1,93 +1,134 @@
 use rust_on_rails::prelude::*;
-use rust_on_rails::prelude::Text as BasicText;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 
-pub struct MessagesHome(Page);
+pub fn messages_home(ctx: &mut Context) -> Page {
+    let new_message = Button::primary(ctx, "New Message", |_ctx: &mut Context| println!("New..."));
+    let bumper = Bumper::new(vec![Box::new(new_message)]);
 
-impl MessagesHome {
-    pub fn new(ctx: &mut Context) -> Self {
-        let new_message = Button::primary(ctx, "New Message", |_ctx: &mut Context| println!("New..."));
-        let bumper = Bumper::new(vec![Box::new(new_message)]);
+    // let messages = vec![
+    //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ella Couch", "How has it been being so dang dum", |_: &mut Context|()),
+    //     ListItem::group_message(ctx, vec!["Evan Mcmaine", "Ethan Hayes", "Marge Margarine", "Ella Couch"], |_: &mut Context|()),
+    //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Marge Margarine", "How has it been being so dang dum", |_: &mut Context|()),
+    //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Robert H.", "How has it been being so dang dum", |_: &mut Context|()),
+    // ];
 
-        // let messages = vec![
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ella Couch", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::group_message(ctx, vec!["Evan Mcmaine", "Ethan Hayes", "Marge Margarine", "Ella Couch"], |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Marge Margarine", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Robert H.", "How has it been being so dang dum", |_: &mut Context|()),
-        // ];
+    let messages = Vec::new();
+    let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
+    let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size);
 
-        let messages = Vec::new();
-        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size);
-    
-        let content = if messages.len() > 0 {
-            let messages_group = ListItemGroup::new(ctx, messages);
-            Content::new(Offset::Start, vec![Box::new(messages_group)])
-        } else {
-            Content::new(Offset::Center, vec![Box::new(instructions)])
-        };
+    let content = if messages.len() > 0 {
+        let messages_group = ListItemGroup::new(messages);
+        Content::new(Offset::Start, vec![Box::new(messages_group)])
+    } else {
+        Content::new(Offset::Center, vec![Box::new(instructions)])
+    };
 
-        let header = Header::home(ctx, "Messages");
-        MessagesHome(Page::new(header, content, Some(bumper)))
-    }
-
-    pub fn page(self) -> Page {self.0}
+    let header = Header::home(ctx, "Messages");
+    Page::new(header, content, Some(bumper))
 }
 
 
-// struct NewMessageFlow(SelectRecipients, Option<DirectMessageFlow>, Option<GroupMessageFlow>);
+pub fn select_recipients(ctx: &mut Context) -> Page {
+    let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
+    let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
 
-// impl NewMessageFlow {
-//     pub fn new(is_group: bool) -> Self {
-//         let (direct, group) = match is_group {
-//             true => (None, Some(GroupMessageFlow::new())),
-//             false => (Some(DirectMessageFlow::new(), None))
-//         };
-//         NewMessageFlow(direct, group)
-//     }
-// }
+    let recipients = vec![
+        ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+        ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+        ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+        ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
+        ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan Hayes", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln")
+    ];
 
-pub struct SelectRecipients(Page);
+    let quick_deselect = QuickDeselect::new(recipients);
 
-impl SelectRecipients {
-    pub fn new(ctx: &mut Context) -> Self {
-        let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
+    let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(quick_deselect)]);
 
-        let recipients = vec![
-            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
-            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
-            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
-            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
-            ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan Hayes", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln")
-        ];
+    let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+    let header = Header::stack(ctx, Some(back), "Send to contact", None);
+    Page::new(header, content, None)
+} 
 
-        let quick_deselect = QuickDeselect::new(ctx, recipients);
+pub fn direct_message(ctx: &mut Context) -> Page {
+    let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+    let bumper = Bumper::new(vec![Box::new(input)]);
 
-        let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(quick_deselect)]);
+    let contact = Profile {
+        name: "Marge Margarine",
+        nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+        about: "Probably butter.",
+        avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+    };
 
-        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
-        let header = Header::stack(ctx, Some(back), "Send to contact", None);
-        SelectRecipients(Page::new(header, content, None))
-    } // REMOVE TAB NAV - WE ARE IN A FLOW
+    let messages = vec![
+        "Did you go to the market on Saturday?",
+        "Hello!?",
+        "I need butter from the market that was on Saturday, but I couldn't go!",
+        "Do you have butter?"
+    ];
 
-    pub fn page(self) -> Page {self.0}
+    let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
+
+    let content = Content::new(Offset::End, vec![Box::new(message)]);
+
+    let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+    let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
+    Page::new(header, content, None)
 }
 
-// struct DirectMessageFlow(DirectMessage);
+
+pub fn group_message(ctx: &mut Context) -> Page {
+    let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+    let bumper = Bumper::new(vec![Box::new(input)]);
+
+    let contact = Profile {
+        name: "Marge Margarine",
+        nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+        about: "Probably butter.",
+        avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+    };
+
+    let messages = vec![
+        "Did you go to the market on Saturday?",
+        "Hello!?",
+        "I need butter from the market that was on Saturday, but I couldn't go!",
+        "Do you have butter?"
+    ];
+
+    let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
+
+    let content = Content::new(Offset::End, vec![Box::new(message)]);
+
+    let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+    let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
+    Page::new(header, content, None)
+}
 
 
-pub struct DirectMessage(Page);
+pub fn group_info(ctx: &mut Context) -> Page {
+    let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+    let bumper = Bumper::new(vec![Box::new(input)]);
 
+    let contact = Profile {
+        name: "Marge Margarine",
+        nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+        about: "Probably butter.",
+        avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+    };
 
+    let messages = vec![
+        "Did you go to the market on Saturday?",
+        "Hello!?",
+        "I need butter from the market that was on Saturday, but I couldn't go!",
+        "Do you have butter?"
+    ];
 
-// struct GroupMessageFlow(GroupMessage, GroupMessageInfo);
+    let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
 
+    let content = Content::new(Offset::End, vec![Box::new(message)]);
 
-pub struct GroupMessage(Page);
-
-
-
-pub struct GroupMessageInfo(Page);
-
+    let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+    let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
+    Page::new(header, content, None)
+}

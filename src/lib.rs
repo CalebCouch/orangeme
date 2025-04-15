@@ -85,22 +85,8 @@ impl App for MyApp {
         let plugin = PelicanUI::init(ctx);
         ctx.configure_plugin(plugin);
 
-        // let theme = &ctx.get::<PelicanUI>().theme;      
-        
-        // scan_qr();
-        
-
-        // let flow = OrangeFlow::Bitcoin(BitcoinFlow::Home(page));
-        // let text = pelican_ui::prelude::Text::new(ctx, "Test Text", TextStyle::Primary, 48);
-        // let size = Size::max()
-        // Box::new(text)
-
-        // let flow = BitcoinFlow::Home(BitcoinHome::new(ctx));
-        let page = ScanQR::new(ctx).page();
-        Box::new(Interface::new(ctx, page))
-
-        // Box::new(Button::secondary(ctx, Some("edit"), "Edit Address", None, |_ctx: &mut Context| println!("Button")))
-
+        let page = AppPage::BitcoinHome.build_screen(ctx);
+        Box::new(Interface::<AppPage>::new(ctx, page))
     }
 }
 
