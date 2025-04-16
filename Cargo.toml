@@ -36,8 +36,8 @@ build_targets = [ "aarch64-linux-android" ]
 name = "android.permission.INTERNET"
 
 [package.metadata.android.sdk]
-min_sdk_version = 33
-target_sdk_version = 33
+min_sdk_version = 36
+target_sdk_version = 36
 
 label = "Application Name"
 
