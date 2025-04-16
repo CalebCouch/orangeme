@@ -20,7 +20,7 @@ impl PageName for BitcoinHome {
         ]);
         
         let header = Header::home(ctx, "Wallet");
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), true)
     }
 }
 
@@ -49,7 +49,7 @@ impl PageName for Address {
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send bitcoin", None);
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 
@@ -63,7 +63,7 @@ impl PageName for ScanQR {
         let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
-        Page::new(header, content, None)
+        Page::new(header, content, None, false)
     } 
 }
 
@@ -89,7 +89,7 @@ impl PageName for SelectContact {
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
-        Page::new(header, content, None)
+        Page::new(header, content, None, false)
     }
 }
 
@@ -111,7 +111,7 @@ impl PageName for Amount {
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Bitcoin amount", None);
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 
@@ -133,7 +133,7 @@ impl PageName for Speed {
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Amount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Transaction speed", None);
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 
@@ -177,7 +177,7 @@ impl PageName for Confirm {
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Speed.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Confirm send", None);
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     } 
 }
 
@@ -205,7 +205,7 @@ impl PageName for Success {
 
         let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Send confirmed", None);
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 
@@ -225,7 +225,7 @@ impl PageName for Receive {
 
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context|  BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 
@@ -263,7 +263,7 @@ impl PageName for ViewTransaction {
 
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context|  BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), title, None);
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 

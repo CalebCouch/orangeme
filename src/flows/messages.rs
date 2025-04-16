@@ -29,7 +29,7 @@ impl PageName for MessagesHome {
         };
 
         let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), true)
     }
 }
 
@@ -56,7 +56,7 @@ impl PageName for SelectRecipients {
 
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
-        Page::new(header, content, None)
+        Page::new(header, content, None, false)
     }
 }
 
@@ -88,7 +88,7 @@ impl PageName for DirectMessage {
 
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
-        Page::new(header, content, None)
+        Page::new(header, content, None, false)
     }
 }
 
@@ -120,7 +120,7 @@ impl PageName for GroupMessage {
 
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
-        Page::new(header, content, None)
+        Page::new(header, content, None, false)
     }
 }
 
@@ -152,6 +152,6 @@ impl PageName for GroupInfo {
 
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
-        Page::new(header, content, None)
+        Page::new(header, content, None, false)
     }
 }

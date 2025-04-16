@@ -29,7 +29,7 @@ impl PageName for MyProfile {
         };
 
         let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), true)
     }
 }
 
@@ -60,7 +60,7 @@ impl PageName for UserProfile {
         };
 
         let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 
@@ -91,7 +91,7 @@ impl PageName for BlockUser {
         };
 
         let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
 
@@ -122,6 +122,6 @@ impl PageName for UserBlocked {
         };
 
         let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper))
+        Page::new(header, content, Some(bumper), false)
     }
 }
