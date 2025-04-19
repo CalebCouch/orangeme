@@ -19,7 +19,7 @@ impl PageName for MessagesHome {
 
         let messages = Vec::new();
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size);
+        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, TextAlign::Center);
 
         let content = if messages.len() > 0 {
             let messages_group = ListItemGroup::new(messages);
