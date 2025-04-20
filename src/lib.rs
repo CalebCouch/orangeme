@@ -149,6 +149,8 @@ impl Plugin for BDKPlugin {
     }
 }
 
+mod flows;
+use crate::flows::*;
 
 pub struct MyApp;
 
@@ -172,6 +174,16 @@ impl App for MyApp {
         
         Box::new(Interface::new(ctx, page))
         //Box::new(BasicText::new("Hello", Color(0, 0, 255, 255), None, 48.0, 60.0, font))
+      //let navigation = (0 as usize, vec![
+      //    ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+      //    ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+      //    // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+      //]);
+
+      //let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
+
+      //let page = BitcoinHome.build_page(ctx);
+      //Box::new(Interface::new(ctx, page, navigation, profile))
     }
 }
 

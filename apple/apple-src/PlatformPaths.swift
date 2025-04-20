@@ -2,7 +2,7 @@ import Foundation
 
 // xcrun --sdk macosx swiftc \
 //     -target arm64-apple-macos13 \
-//     ios/ios-src/PlatformPaths.swift
+//     apple/apple-src/PlatformPaths.swift
 
 fileprivate var appSupportPathCString: UnsafePointer<CChar>? = nil
 
