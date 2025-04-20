@@ -54,7 +54,7 @@ impl PageName for SelectRecipients {
 
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(quick_deselect)]);
 
-        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let back = IconButton::navigation(ctx, "left", None, |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
         Page::new(header, content, None, false)
     }
@@ -86,7 +86,7 @@ impl PageName for DirectMessage {
 
         let content = Content::new(Offset::End, vec![Box::new(message)]);
 
-        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let back = IconButton::navigation(ctx, "left", None, |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
         Page::new(header, content, None, false)
     }
@@ -118,7 +118,7 @@ impl PageName for GroupMessage {
 
         let content = Content::new(Offset::End, vec![Box::new(message)]);
 
-        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let back = IconButton::navigation(ctx, "left", None, |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
         Page::new(header, content, None, false)
     }
@@ -150,7 +150,7 @@ impl PageName for GroupInfo {
 
         let content = Content::new(Offset::End, vec![Box::new(message)]);
 
-        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
+        let back = IconButton::navigation(ctx, "left", None, |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
         Page::new(header, content, None, false)
     }
