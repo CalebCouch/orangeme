@@ -7,7 +7,7 @@ pub struct MessagesHome;
 
 impl PageName for MessagesHome {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", |_ctx: &mut Context| println!("New..."));
+        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
         let bumper = Bumper::new(vec![Box::new(new_message)]);
 
         // let messages = vec![
@@ -40,7 +40,7 @@ pub struct SelectRecipients;
 impl PageName for SelectRecipients {
     fn build_page(&self, ctx: &mut Context) -> Page {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
+        let searchbar = TextInput::new(ctx, None, "Profile name...", None, None, icon_button);
 
         let recipients = vec![
             ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
@@ -65,7 +65,7 @@ pub struct DirectMessage;
 
 impl PageName for DirectMessage {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+        let input = TextInput::new(ctx, None, "Message...", None, None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(vec![Box::new(input)]);
 
         let contact = Profile {
@@ -97,7 +97,7 @@ pub struct GroupMessage;
 
 impl PageName for GroupMessage {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+        let input = TextInput::new(ctx, None, "Message...", None, None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(vec![Box::new(input)]);
 
         let contact = Profile {
@@ -129,7 +129,7 @@ pub struct GroupInfo;
 
 impl PageName for GroupInfo {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+        let input = TextInput::new(ctx, None, "Message...", None, None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(vec![Box::new(input)]);
 
         let contact = Profile {
