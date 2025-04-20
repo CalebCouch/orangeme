@@ -15,8 +15,9 @@ image = "0.25.5"
 log = "0.4.27"
 #rust_on_rails = "3.0.0"
 rust_on_rails = {path="../rust_on_rails"}
-pelican_ui = {path="../pelican_ui"}
 serde = { version = "1.0.219", features = ["derive"] }
+bdk_wallet = "1.2.0"
+secp256k1 = {version="0.30.0", features = ["rand"] }
 
 [lib]
 name="main"
