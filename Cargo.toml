@@ -10,6 +10,7 @@ build = "src/build.rs"
 
 
 [dependencies]
+pelican_ui = { path = "../pelican_ui" }
 chrono = { version = "0.4.40", features = ["serde"] }
 image = "0.25.5"
 log = "0.4.27"
