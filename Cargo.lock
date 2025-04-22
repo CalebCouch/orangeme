@@ -2108,6 +2108,7 @@ version = "0.1.0"
 dependencies = [
  "bdk_wallet",
  "chrono",
+ "hex",
  "image 0.25.6",
  "log",
  "pelican_ui",
