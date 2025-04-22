@@ -19,7 +19,7 @@ impl PageName for MyProfile {
 
         let messages = Vec::new();
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, TextAlign::Left);
+        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
 
         let content = if messages.len() > 0 {
             let messages_group = ListItemGroup::new(messages);
@@ -50,7 +50,7 @@ impl PageName for UserProfile {
 
         let messages = Vec::new();
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, TextAlign::Left);
+        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
 
         let content = if messages.len() > 0 {
             let messages_group = ListItemGroup::new(messages);
@@ -81,7 +81,7 @@ impl PageName for BlockUser {
 
         let messages = Vec::new();
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, TextAlign::Left);
+        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
 
         let content = if messages.len() > 0 {
             let messages_group = ListItemGroup::new(messages);
@@ -112,7 +112,7 @@ impl PageName for UserBlocked {
 
         let messages = Vec::new();
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, TextAlign::Left);
+        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
 
         let content = if messages.len() > 0 {
             let messages_group = ListItemGroup::new(messages);

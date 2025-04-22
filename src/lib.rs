@@ -162,28 +162,32 @@ impl App for MyApp {
 
     async fn plugins(ctx: &mut Context<'_>, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
         let (plugin, tasks) = BDKPlugin::new(ctx, h_ctx).await;
+        let pelican = PelicanUI::new(ctx);
        
-        (std::collections::HashMap::from([(std::any::TypeId::of::<BDKPlugin>(), Box::new(plugin) as Box<dyn std::any::Any>)]), tasks)
+        (std::collections::HashMap::from([
+            (std::any::TypeId::of::<BDKPlugin>(), Box::new(plugin) as Box<dyn std::any::Any>),
+            (std::any::TypeId::of::<PelicanUI>(), Box::new(pelican) as Box<dyn std::any::Any>)
+        ]), tasks)
     }
 
     async fn new(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
         ctx.get::<BDKPlugin>().init();
-        let page = ScanQR::new(ctx).page();
-        let font = ctx.add_font(include_bytes!("../resources/fonts/outfit_regular.ttf"));
+        // let page = ScanQR::new(ctx).page();
+        // let font = ctx.add_font(include_bytes!("../resources/fonts/outfit_regular.ttf"));
 
         
-        Box::new(Interface::new(ctx, page))
+        // Box::new(Interface::new(ctx, page))
         //Box::new(BasicText::new("Hello", Color(0, 0, 255, 255), None, 48.0, 60.0, font))
-      //let navigation = (0 as usize, vec![
-      //    ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //    ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //    // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //]);
+      let navigation = (0 as usize, vec![
+         ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+         ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+         // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+      ]);
 
-      //let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
+      let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
 
-      //let page = BitcoinHome.build_page(ctx);
-      //Box::new(Interface::new(ctx, page, navigation, profile))
+      let page = BitcoinHome.build_page(ctx);
+      Box::new(Interface::new(ctx, page, navigation, profile))
     }
 }
 

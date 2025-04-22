@@ -60,8 +60,6 @@ pub struct ScanQR;
 
 impl PageName for ScanQR {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        Camera::capture();
-
         let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
         let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
@@ -203,7 +201,7 @@ impl PageName for Success {
             ("You sent $10.00", Box::new(Icon::new(ctx, "bitcoin", color, 96.0)) as Box<dyn Drawable>)
         };
 
-        let text = Text::new(ctx, text, TextStyle::Heading, text_size, TextAlign::Left);
+        let text = Text::new(ctx, text, TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![splash, Box::new(text)]);
 
         let close = IconButton::close(ctx, None, |ctx: &mut Context| BitcoinHome.navigate(ctx));
@@ -223,7 +221,7 @@ impl PageName for Receive {
 
         let qr_code = QRCode::new(ctx, "children are a little bit stinky sometimes. if bit stinky sometimes. if we're being honest i hate caleb he really smells like a small child that you found at apark and it has a full diaper and no one is changing the child and you hate the kid but he follows you everywhere. he pooped on the slide");
 
-        let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size, TextAlign::Left);
+        let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]); //Box::new(qr_code), Box::new(text)
 
         let close = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinHome.navigate(ctx));
