@@ -4,23 +4,25 @@ use pelican_ui::prelude::Text;
 
 #[derive(Debug, Clone, Copy)]
 pub struct BitcoinHome;
-
 impl PageName for BitcoinHome {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let send = Button::primary(ctx, "Send", None, |ctx: &mut Context| Address.navigate(ctx));
-        let receive = Button::primary(ctx, "Receive", None, |ctx: &mut Context| Receive.navigate(ctx));
-        let bumper = Bumper::new(vec![Box::new(receive), Box::new(send)]);
-        
+        let p = _BitcoinHome::new(ctx);
+        let content = Content::new(Offset::Start, vec![Box::new(p.1), Box::new(p.2)]);
+        let bumper = Bumper::new(vec![Box::new(p.3), Box::new(p.4)]);
+        Page::new(p.0, content, Some(bumper), p.5)
+    }
+}
+
+#[derive(Debug)]
+struct _BitcoinHome(Header, AmountDisplay, ListItem, Button, Button, bool);
+impl _BitcoinHome {
+    fn new(ctx: &mut Context) -> Self {
+        let send = Button::primary(ctx, "Send", |ctx: &mut Context| Address.navigate(ctx));
+        let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| Receive.navigate(ctx));
         let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |ctx: &mut Context|  ViewTransaction.navigate(ctx));
         let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
-    
-        let content = Content::new(Offset::Start, vec![
-            Box::new(amount_display), 
-            Box::new(transaction)
-        ]);
-        
         let header = Header::home(ctx, "Wallet");
-        Page::new(header, content, Some(bumper), true)
+        _BitcoinHome(header, /* Optional Alert, */ amount_display, transaction, send, receive, true)
     }
 }
 
@@ -29,29 +31,43 @@ pub struct Address;
 
 impl PageName for Address {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let id = ElementID::new();
-        let mut continue_btn = Button::disabled(ctx, "Continue", Some(id), |ctx: &mut Context| Amount.navigate(ctx));
+        let p = _Address::new(ctx);
+        let content = Content::new(Offset::Start, vec![Box::new(p.1), Box::new(p.2)]);
+        let bumper = Bumper::new(vec![Box::new(p.3)]);
+        Page::new(p.0, content, Some(bumper), p.4)
+    }
+}
 
-        let bumper = Bumper::new(vec![Box::new(continue_btn)]);
-        
+#[derive(Debug)]
+struct _Address(Header, TextInput, QuickActions, Button, bool);
+
+impl _Address {
+    fn new(ctx: &mut Context) -> Self {
+        let continue_btn = Button::disabled(ctx, "Continue", |ctx: &mut Context| Amount.navigate(ctx));
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let address_input = TextInput::new(ctx, None, "Bitcoin address...", None, Some(vec![id]), icon_button);
+        let address_input = TextInput::new(ctx, None, "Bitcoin address...", None, icon_button);
 
-        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, None, |_ctx: &mut Context| {
+        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, |_ctx: &mut Context| {
             println!("Paste... "); // read_clipboard().unwrap_or("Could not read clipboard.".to_string())
         });
-        let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, None, |ctx: &mut Context| ScanQR.navigate(ctx));
-        let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, None, |ctx: &mut Context| SelectContact.navigate(ctx));
-        let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
 
-        let content = Content::new(Offset::Start, vec![
-            Box::new(address_input),
-            Box::new(quick_actions)
-        ]);
+        let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |ctx: &mut Context| ScanQR.navigate(ctx));
+        let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, |ctx: &mut Context| SelectContact.navigate(ctx));
+        let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
 
         let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send bitcoin", None);
-        Page::new(header, content, Some(bumper), false)
+        _Address(header, address_input, quick_actions, continue_btn, false)
+    }
+}
+
+impl OnEvent for _Address {
+    fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+        if let Some(TickEvent) = event.downcast_ref() {
+            *self.3.status() = if *self.1.get_error() {ButtonState::Disabled} else {ButtonState::Default};
+            self.3.color(ctx);
+        }
+        true
     }
 }
 
@@ -73,7 +89,7 @@ pub struct SelectContact;
 impl PageName for SelectContact {
     fn build_page(&self, ctx: &mut Context) -> Page {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let searchbar = TextInput::new(ctx, None, "Profile name...", None, None, icon_button);
+        let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
 
         let contacts = vec![
             ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  Address.navigate(ctx)),
@@ -100,7 +116,7 @@ impl PageName for Amount {
     fn build_page(&self, ctx: &mut Context) -> Page {
         let is_mobile = pelican_ui::config::IS_MOBILE;
         let id = ElementID::new();
-        let continue_btn = Button::disabled(ctx, "Continue", Some(id), |ctx: &mut Context| Speed.navigate(ctx));
+        let continue_btn = Button::disabled(ctx, "Continue", |ctx: &mut Context| Speed.navigate(ctx));
         let bumper = Bumper::new(vec![Box::new(continue_btn)]);
         
         let amount_display = AmountInput::new(ctx, Some(vec![id]));
@@ -121,7 +137,7 @@ pub struct Speed;
 
 impl PageName for Speed {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let continue_btn = Button::primary(ctx, "Continue", None, |ctx: &mut Context| Confirm.navigate(ctx));
+        let continue_btn = Button::primary(ctx, "Continue", |ctx: &mut Context| Confirm.navigate(ctx));
         let bumper = Bumper::new(vec![Box::new(continue_btn)]);
         
         let speed_selector = ListItemSelector::new(ctx,
@@ -143,12 +159,12 @@ pub struct Confirm;
 
 impl PageName for Confirm {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let continue_btn = Button::primary(ctx, "Continue", None, |ctx: &mut Context| Success.navigate(ctx));
+        let continue_btn = Button::primary(ctx, "Continue", |ctx: &mut Context| Success.navigate(ctx));
         let bumper = Bumper::new(vec![Box::new(continue_btn)]);
 
-        let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, None, |ctx: &mut Context| Amount.navigate(ctx));
-        let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, None, |ctx: &mut Context| Speed.navigate(ctx));
-        let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, None, |ctx: &mut Context| Address.navigate(ctx));
+        let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, |ctx: &mut Context| Amount.navigate(ctx));
+        let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| Speed.navigate(ctx));
+        let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| Address.navigate(ctx));
 
         let confirm_amount = DataItem::new(ctx,
             None, //Some("2"),
@@ -192,7 +208,7 @@ impl PageName for Success {
         let theme = &ctx.get::<PelicanUI>().theme;
         let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
 
-        let continue_btn = Button::close(ctx, "Continue", None, |ctx: &mut Context| BitcoinHome.navigate(ctx));
+        let continue_btn = Button::close(ctx, "Continue", |ctx: &mut Context| BitcoinHome.navigate(ctx));
         let bumper = Bumper::new(vec![Box::new(continue_btn)]);
 
         let (text, splash) = if let Some(c) = contact {
@@ -216,7 +232,7 @@ pub struct Receive;
 impl PageName for Receive {
     fn build_page(&self, ctx: &mut Context) -> Page {
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let share_btn = Button::primary(ctx, "Share", None, |ctx: &mut Context| println!("Sharing..."));
+        let share_btn = Button::primary(ctx, "Share", |ctx: &mut Context| println!("Sharing..."));
         let bumper = Bumper::new(vec![Box::new(share_btn)]);
 
         let qr_code = QRCode::new(ctx, "children are a little bit stinky sometimes. if bit stinky sometimes. if we're being honest i hate caleb he really smells like a small child that you found at apark and it has a full diaper and no one is changing the child and you hate the kid but he follows you everywhere. he pooped on the slide");
@@ -237,7 +253,7 @@ impl PageName for ViewTransaction {
     fn build_page(&self, ctx: &mut Context) -> Page {
         let is_received = false;
 
-        let done_btn = Button::close(ctx, "Done", None, |ctx: &mut Context| BitcoinHome.navigate(ctx));
+        let done_btn = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinHome.navigate(ctx));
         let bumper = Bumper::new(vec![Box::new(done_btn)]);
 
         let (address, amount, title) = if is_received {

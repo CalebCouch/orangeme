@@ -7,7 +7,7 @@ pub struct MyProfile;
 
 impl PageName for MyProfile {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
+        let new_message = Button::primary(ctx, "New Message", |_ctx: &mut Context| println!("New..."));
         let bumper = Bumper::new(vec![Box::new(new_message)]);
 
         // let messages = vec![
@@ -38,7 +38,7 @@ pub struct UserProfile;
 
 impl PageName for UserProfile {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
+        let new_message = Button::primary(ctx, "New Message", |_ctx: &mut Context| println!("New..."));
         let bumper = Bumper::new(vec![Box::new(new_message)]);
 
         // let messages = vec![
@@ -69,7 +69,7 @@ pub struct BlockUser;
 
 impl PageName for BlockUser {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
+        let new_message = Button::primary(ctx, "New Message", |_ctx: &mut Context| println!("New..."));
         let bumper = Bumper::new(vec![Box::new(new_message)]);
 
         // let messages = vec![
@@ -100,7 +100,7 @@ pub struct UserBlocked;
 
 impl PageName for UserBlocked {
     fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
+        let new_message = Button::primary(ctx, "New Message", |_ctx: &mut Context| println!("New..."));
         let bumper = Bumper::new(vec![Box::new(new_message)]);
 
         // let messages = vec![
