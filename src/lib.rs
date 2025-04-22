@@ -47,7 +47,9 @@ impl App for MyApp {
     }
     async fn plugins(ctx: &mut Context<'_>, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
         let (plugin, tasks) = BDKPlugin::new(ctx, h_ctx).await;
-        (std::collections::HashMap::from([(std::any::TypeId::of::<BDKPlugin>(), Box::new(plugin) as Box<dyn std::any::Any>)]), tasks)
+        (std::collections::HashMap::from([
+            (std::any::TypeId::of::<BDKPlugin>(), Box::new(plugin) as Box<dyn std::any::Any>)
+        ]), tasks)
     }
     //END TODO
 
