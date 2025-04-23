@@ -9,6 +9,8 @@ use bdk_wallet::bitcoin::bip32::Xpriv;
 pub use bdk_wallet::bitcoin::{Amount, Network, Address};
 use bdk_wallet::{PersistedWallet, WalletPersister};
 use bdk_wallet::chain::Merge;
+use bdk_esplora::esplora_client::Builder;
+use bdk_esplora::EsploraExt;
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
@@ -103,8 +105,16 @@ impl Task for WalletSync {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(5))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        println!("syncing");
-      //let change_set = (*self.0.lock().unwrap()).clone();
-      //h_ctx.cache.set(&change_set).await;
+        let sync_request = self.0.start_sync_with_revealed_spks()
+        .inspect(|item, progress| {println!("items remaining: {:?}", progress.remaining());})
+        .build();
+
+        let builder = Builder::new("https://blockstream.info/api");
+        let blocking_client = builder.build_blocking();
+        let _ = blocking_client.sync(sync_request, 1).unwrap();
+        self.0.persist(&mut self.1).expect("write is okay");
+        let mut change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
+        change_set.merge(self.1.0.clone());
+        h_ctx.cache.set(&change_set).await;
     }
 }

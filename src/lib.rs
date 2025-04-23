@@ -12,26 +12,27 @@ pub use flows::*;
 mod bdk;
 use bdk::{BDKPlugin, Address, Amount};
 
-//  #[derive(Debug, Component)]
-//  pub struct ColorText(Stack, Shape, Shape); 
-//  impl OnEvent for ColorText {}
+#[derive(Debug, Component)]
+pub struct ColorText(DefaultStack, Shape, Shape); 
+impl OnEvent for ColorText {}
 
-//  #[derive(Debug, Component)]
-//  pub struct Background(Stack, Shape, ColorText); 
-//  impl OnEvent for Background {
-//      fn on_event(&mut self, ctx: &mut Context<'_>, event: &mut dyn Event) -> bool {
-//          true 
-//      }
-//  }
-
-
+#[derive(Debug, Component)]
+pub struct Background(DefaultStack, Shape, ColorText); 
+impl OnEvent for Background {
+    fn on_event(&mut self, ctx: &mut Context<'_>, event: &mut dyn Event) -> bool {
+        true 
+    }
+}
 
 #[derive(Debug, Clone, Component)]
 pub struct WalletText(DefaultStack, BasicText, #[skip] Option<Address>);
 impl WalletText {
     pub fn new(ctx: &mut Context<'_>) -> Self {
         let font = ctx.add_font(include_bytes!("../resources/fonts/outfit_regular.ttf"));
-        WalletText(DefaultStack, BasicText::new(ctx, "Hello", Color(0, 0, 255, 255), font, Align::Left, 48.0, 60.0, None), None)
+        WalletText(DefaultStack, BasicText::new(
+            Some((Cursor(1, 10), None)),
+            vec![Span::new("Hello", 48.0, 60.0, font, Color(0, 0, 255, 255))],
+        None, Align::Left), None)
     }
 }
 
@@ -40,10 +41,10 @@ impl OnEvent for WalletText {
         if event.downcast_ref::<TickEvent>().is_some() {
             let bdk = ctx.get::<BDKPlugin>();
             if let Some(address) = &self.2 {
-                *self.1.text() = format!("Address: {}", address);
+                self.1.spans[0].text = format!("Address: {}", address);
             } else {
                 let balance = bdk.get_balance();
-                *self.1.text() = format!("Balance: {}", balance);
+                self.1.spans[0].text = format!("Balance: {}", balance);
             }
         } else if let Some(event) = event.downcast_ref::<MouseEvent>() {
             if event.state == MouseState::Pressed {
@@ -85,11 +86,10 @@ impl App for MyApp {
       //Box::new(Background(
       //    Stack::center(),
       //    Shape{shape: ShapeType::RoundedRectangle(0.0, (400.0, 400.0), 20.0), color: Color(0, 255, 0, 255)},
-      //    ColorText(
-      //        Stack::center(),
-      //        Shape{shape: ShapeType::RoundedRectangle(0.0, (200.0, 200.0), 20.0), color: Color(0, 0, 255, 255)},
-      //        Shape{shape: ShapeType::Rectangle(0.0, (100.0, 48.0)), color: Color(255, 0, 0, 255)},
-      //    )
+      //Box::new(ColorText(
+      //    Stack::center(),
+      //    Shape{shape: ShapeType::RoundedRectangle(0.0, (200.0, 200.0), 20.0), color: Color(0, 0, 255, 255)},
+      //    Shape{shape: ShapeType::Rectangle(0.0, (100.0, 48.0)), color: Color(255, 0, 0, 255)},
       //))
 
 
@@ -97,7 +97,10 @@ impl App for MyApp {
 
         //let page = BitcoinHome.build_page(ctx);
         //Box::new(Interface::new(ctx, page, navigation, profile))
-        Box::new(WalletText::new(ctx))
+        //Box::new(WalletText::new(ctx))
+        Box::new(TextInput::new(ctx, None, "Placeholder", None, None,
+            Some(("send", |ctx: &mut Context, input: &mut String| {println!("sent: {input}");}))
+        ))
     }
 }
 
