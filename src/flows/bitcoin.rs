@@ -22,7 +22,7 @@ impl _BitcoinHome {
         let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |ctx: &mut Context|  ViewTransaction.navigate(ctx));
         let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
         let header = Header::home(ctx, "Wallet");
-        _BitcoinHome(header, /* Optional Alert, */ amount_display, transaction, send, receive, true)
+        _BitcoinHome(header, /* Optional Alert, */ amount_display, transaction, receive, send, true)
     }
 }
 
@@ -32,14 +32,14 @@ pub struct Address;
 impl PageName for Address {
     fn build_page(&self, ctx: &mut Context) -> Page {
         let p = _Address::new(ctx);
-        let content = Content::new(Offset::Start, vec![Box::new(p.1), Box::new(p.2)]);
-        let bumper = Bumper::new(vec![Box::new(p.3)]);
-        Page::new(p.0, content, Some(bumper), p.4)
+        let content = Content::new(Offset::Start, vec![Box::new(p.2), Box::new(p.3)]);
+        let bumper = Bumper::new(vec![Box::new(p.4)]);
+        Page::new(p.1, content, Some(bumper), p.5)
     }
 }
 
 #[derive(Debug)]
-struct _Address(Header, TextInput, QuickActions, Button, bool);
+struct _Address(Header, TextInput, QuickActions, Button, #[skip] bool);
 
 impl _Address {
     fn new(ctx: &mut Context) -> Self {
@@ -64,8 +64,9 @@ impl _Address {
 impl OnEvent for _Address {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
-            *self.3.status() = if *self.1.get_error() {ButtonState::Disabled} else {ButtonState::Default};
-            self.3.color(ctx);
+            println!(" on tick");
+            *self.4.status() = if *self.2.get_error() || self.2.get_value().is_empty() {ButtonState::Disabled} else {ButtonState::Default};
+            self.4.color(ctx);
         }
         true
     }

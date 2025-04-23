@@ -76,11 +76,11 @@ impl App for MyApp {
 
     async fn new(ctx: &mut Context<'_>) -> Box<dyn Drawable> {
       //ctx.get::<BDKPlugin>().init();
-      //let navigation = (0 as usize, vec![
-      //    ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //    ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //    // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //]);
+      let navigation = (0 as usize, vec![
+         ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+         ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+         // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+      ]);
 
       //Box::new(Background(
       //    Stack::center(),
@@ -93,11 +93,11 @@ impl App for MyApp {
       //))
 
 
-        //let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
+        let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
 
-        //let page = BitcoinHome.build_page(ctx);
-        //Box::new(Interface::new(ctx, page, navigation, profile))
-        Box::new(WalletText::new(ctx))
+        // let page = BitcoinHome.build_page(ctx);
+        Box::new(Interface::new(ctx, BitcoinHome, navigation, profile))
+        // Box::new(WalletText::new(ctx))
     }
 }
 
