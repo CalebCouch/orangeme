@@ -59,7 +59,7 @@ impl SelectRecipients {
         let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
         let quick_deselect = QuickDeselect::new(get_recipients(ctx));
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(quick_deselect)]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
         let continue_btn = Button::primary(ctx, "Continue", |ctx: &mut Context| MessagesFlow::GroupMessage.navigate(ctx));
         let bumper = Bumper::single_button(continue_btn);
@@ -92,7 +92,7 @@ impl DirectMessage {
         let bumper = Bumper::new(vec![Box::new(input)]);
         let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
         let content = Content::new(Offset::End, vec![Box::new(message)]);
-        let back = IconButton::navigation(ctx, "left", None, |_ctx: &mut Context| println!("Go Back!"));
+        let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
         DirectMessage(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
@@ -123,8 +123,8 @@ impl GroupMessage {
         let bumper = Bumper::new(vec![Box::new(input)]);
         let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
         let content = Content::new(Offset::End, vec![Box::new(message)]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
-        let info = IconButton::navigation(ctx, "info", None, |ctx: &mut Context| MessagesFlow::GroupInfo.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
+        let info = IconButton::navigation(ctx, "info", |ctx: &mut Context| MessagesFlow::GroupInfo.navigate(ctx));
         let header = Header::chat(ctx, Some(back), Some(info), vec![contact.avatar]);
         GroupMessage(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
@@ -137,28 +137,13 @@ impl AppPage for GroupInfo { fn get(&self) -> &Page {&self.1} }
 
 impl GroupInfo {
     pub fn new(ctx: &mut Context) -> Self {
-        let contact = Profile {
-            name: "Marge Margarine",
-            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
-            about: "Probably butter.",
-            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
-        };
-
-        let messages = vec![
-            "Did you go to the market on Saturday?",
-            "Hello!?",
-            "I need butter from the market that was on Saturday, but I couldn't go!",
-            "Do you have butter?"
-        ];
-
         let contacts = get_contacts(ctx);
-
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
         let members = format!("This group has {} members.", contacts.len());
         let members = Box::leak(members.into_boxed_str());
         let text = Text::new(ctx, members, TextStyle::Secondary, text_size, Align::Center);
         let content = Content::new(Offset::Start, vec![Box::new(text), Box::new(ListItemGroup::new(contacts))]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| MessagesFlow::GroupMessage.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::GroupMessage.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Group Message Info", None);
         GroupInfo(Stack::center(), Page::new(header, content, None, false))
     }

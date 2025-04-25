@@ -64,7 +64,7 @@ impl Address {
         let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |ctx: &mut Context| BitcoinFlow::ScanQR.navigate(ctx));
         let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, |ctx: &mut Context| BitcoinFlow::SelectContact.navigate(ctx));
         let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send bitcoin", None);
         let bumper = Bumper::single_button(continue_btn);
         let content = Content::new(Offset::Start, vec![Box::new(address_input), Box::new(quick_actions)]);
@@ -96,7 +96,7 @@ impl AppPage for ScanQR { fn get(&self) -> &Page {&self.1} }
 impl ScanQR {
     fn new(ctx: &mut Context) -> Self {
         let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
 
         ScanQR(Stack::default(), Page::new(header, content, None, false))
@@ -113,7 +113,7 @@ impl SelectContact {
         let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
         let contact_list = ListItemGroup::new(get_contacts(ctx));
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(contact_list)]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
         SelectContact(Stack::default(), Page::new(header, content, None, false))
     }
@@ -131,7 +131,7 @@ impl Amount {
         let mut content: Vec<Box<dyn Drawable>> = vec![Box::new(amount_display)];
         is_mobile.then(|| content.push(Box::new(numeric_keypad)));
         let content = Content::new(Offset::Center, content);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Bitcoin amount", None);
         Amount(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
@@ -167,7 +167,7 @@ impl Speed {
 
         let bumper = Bumper::single_button(Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Confirm.navigate(ctx)));
         let content = Content::new(Offset::Start, vec![Box::new(speed_selector)]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Transaction speed", None);
         Speed(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
@@ -201,7 +201,7 @@ impl Confirm {
         );
 
         let content = Content::new(Offset::Start, vec![Box::new(confirm_address), Box::new(confirm_amount)]);
-        let back = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Confirm send", None);
         Confirm(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
@@ -226,7 +226,7 @@ impl Success {
 
         let text = Text::new(ctx, text, TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![splash, Box::new(text)]);
-        let close = IconButton::close(ctx, None, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Send confirmed", None);
         Success(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
@@ -244,7 +244,7 @@ impl Receive {
         let qr_code = QRCode::new(ctx, address);
         let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]); //Box::new(qr_code), Box::new(text)
-        let close = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
         Receive(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
@@ -280,7 +280,7 @@ impl ViewTransaction {
         let details = DataItem::new(ctx, None, "Transaction details", None, None, Some(details), None);
         let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
         let content = Content::new(Offset::Center, vec![Box::new(amount_display), Box::new(details)]); //Box::new(qr_code), Box::new(text)
-        let close = IconButton::navigation(ctx, "left", None, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), title, None);
         ViewTransaction(Stack::default(), Page::new(header, content, Some(bumper), false))
     }

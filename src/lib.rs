@@ -92,7 +92,7 @@ impl App for MyApp {
       //    Shape{shape: ShapeType::Rectangle(0.0, (100.0, 48.0)), color: Color(255, 0, 0, 255)},
       //))
 
-        let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| {}) as Box<dyn FnMut(&mut Context)>);
+        let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| ProfilesFlow::Account.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
 
         let home = BitcoinHome::new(ctx);
         // Box::new(home.1)
