@@ -9,10 +9,10 @@ pub struct MyBackgroundTask;
 impl Task for MyBackgroundTask {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(1))}
     async fn run(&mut self, ctx: &mut HeadlessContext) {
-        println!("background tick");
         let Modify(modify) = ctx.cache.get::<Modify>().await;
+        println!("background tick: {modify}");
         let CacheCount(cc) = ctx.cache.get::<CacheCount>().await;
-        ctx.cache.set(CacheCount(cc+modify)).await;
+        ctx.cache.set(&CacheCount(cc+modify)).await;
     }
 }
 
@@ -45,7 +45,7 @@ impl Task for MyTask {
         println!("running task");
         let Modify(modify) = ctx.cache.get::<Modify>().await;
         let modify = modify + self.0.0.try_iter().sum::<i32>();
-        ctx.cache.set(Modify(modify)).await;
+        ctx.cache.set(&Modify(modify)).await;
         let CacheCount(cc) = ctx.cache.get::<CacheCount>().await;
         self.0.1.send(cc).unwrap();
     }
@@ -75,10 +75,12 @@ impl App for MyApp {
                 let text = format!("Count: {}", ctx.state().get::<Count>().0);
                 ctx.clear(Color(0, 0, 255, 255));
                 ctx.draw(Area((200.0, 200.0), None), CanvasItem::Shape(Shape::Rectangle(20.0, (ctx.size().0/2.0, ctx.size().1/2.0)), Color(255, 255, 0, 255)));
-                ctx.draw(Area((250.0, 250.0), None), CanvasItem::Text(Text::new(&text, Color(255, 0, 0, 255), self.font.clone(), 48.0, 60.0, None)));
+                ctx.draw(Area((250.0, 250.0), None), CanvasItem::Text(Text::new(
+                    None, vec![Span::new(&text, 48.0, 60.0, self.font.clone(), Color(255, 0, 0, 255))], None, Align::Left)
+                ));
             },
-            Event::Mouse{..} => self.channel.1.send(-1).unwrap(),
-            Event::Keyboard{..} => self.channel.1.send(1).unwrap(),
+            Event::Mouse{..} => self.channel.1.send(-10).unwrap(),
+            Event::Keyboard{..} => self.channel.1.send(100).unwrap(),
             _ => {}
         }
     }

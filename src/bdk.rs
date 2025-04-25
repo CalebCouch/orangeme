@@ -92,7 +92,7 @@ impl Plugin for BDKPlugin {
         tasks![WalletSync(wallet, persister)]
     }
 
-    async fn new(ctx: &mut Context<'_>, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
+    async fn new(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
         let (wallet, persister) = Self::get_wallet(&mut h_ctx.cache).await;
         let persister = Arc::new(Mutex::new(persister));
         (BDKPlugin{wallet, persister: persister.clone()}, tasks![CachePersister(persister)])
