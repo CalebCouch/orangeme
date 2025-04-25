@@ -2,126 +2,95 @@ use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 
-#[derive(Debug, Clone, Copy)]
-pub struct MyProfile;
+use crate::BDKPlugin;
 
-impl PageName for MyProfile {
-    fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
-        let bumper = Bumper::new(vec![Box::new(new_message)]);
+#[derive(Debug, Copy, Clone)]
+pub enum ProfilesFlow {
+    Account,
+    // UserProfile,
+    // BlockUser,
+    // UserBlocked
+    // UnblockUser
+    // UserUnblocked
+}
 
-        // let messages = vec![
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ella Couch", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::group_message(ctx, vec!["Evan Mcmaine", "Ethan Hayes", "Marge Margarine", "Ella Couch"], |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Marge Margarine", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Robert H.", "How has it been being so dang dum", |_: &mut Context|()),
-        // ];
-
-        let messages = Vec::new();
-        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
-
-        let content = if messages.len() > 0 {
-            let messages_group = ListItemGroup::new(messages);
-            Content::new(Offset::Start, vec![Box::new(messages_group)])
-        } else {
-            Content::new(Offset::Center, vec![Box::new(instructions)])
-        };
-
-        let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper), true)
+impl AppFlow for ProfilesFlow {
+    fn get_page(&self, ctx: &mut Context) -> Box<dyn AppPage> {
+        match self {
+            ProfilesFlow::Account => Box::new(Account::new(ctx)) as Box<dyn AppPage>,
+            // ProfilesFlow::UserProfile => Box::new(UserProfile::new(ctx)) as Box<dyn AppPage>,
+            // ProfilesFlow::BlockUser => Box::new(BlockUser::new(ctx)) as Box<dyn AppPage>,
+            // ProfilesFlow::UserBlocked => Box::new(UserBlocked::new(ctx)) as Box<dyn AppPage>,
+            // ProfilesFlow::UnblockUser => Box::new(UnblockUser::new(ctx)) as Box<dyn AppPage>,
+            // ProfilesFlow::UserUnblocked => Box::new(UserUnblocked::new(ctx)) as Box<dyn AppPage>,
+        }
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct UserProfile;
+#[derive(Debug, Component)]
+pub struct Account(Stack, Page);
+impl OnEvent for Account {}
+impl AppPage for Account { fn get(&self) -> &Page {&self.1} }
 
-impl PageName for UserProfile {
-    fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
-        let bumper = Bumper::new(vec![Box::new(new_message)]);
+impl Account {
+    pub fn new(ctx: &mut Context) -> Self {
+        let header = Header::home(ctx, "Account");
+        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("edit", AvatarIconStyle::Secondary)), false, 128.0);
+        let save = Button::disabled(ctx, "Save", |_ctx: &mut Context| println!("Save changes..."));
+        let bumper = Bumper::single_button(save);
+        let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
+        let name_input = TextInput::new(ctx, Some("Name"), "Account name...", None, icon_button);
+        let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
+        let about_input = TextInput::new(ctx, Some("About me"), "About me...", None, icon_button);
 
-        // let messages = vec![
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ella Couch", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::group_message(ctx, vec!["Evan Mcmaine", "Ethan Hayes", "Marge Margarine", "Ella Couch"], |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Marge Margarine", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Robert H.", "How has it been being so dang dum", |_: &mut Context|()),
-        // ];
+        let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
+        let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy_address]));
+        let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let nym = DataItem::new(ctx, None, "Orange NYM", Some("did::nym::38iKdailTwedpr92Daixx90et"), None, None, Some(vec![copy_nym]));
 
-        let messages = Vec::new();
-        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
+        let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(about_input), Box::new(nym), Box::new(address)]);
 
-        let content = if messages.len() > 0 {
-            let messages_group = ListItemGroup::new(messages);
-            Content::new(Offset::Start, vec![Box::new(messages_group)])
-        } else {
-            Content::new(Offset::Center, vec![Box::new(instructions)])
-        };
-
-        let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper), false)
+        Account(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct BlockUser;
+#[derive(Debug, Component)]
+pub struct UserProfile(Stack, Page);
+impl OnEvent for UserProfile {}
+impl AppPage for UserProfile { fn get(&self) -> &Page {&self.1} }
 
-impl PageName for BlockUser {
-    fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
-        let bumper = Bumper::new(vec![Box::new(new_message)]);
-
-        // let messages = vec![
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ella Couch", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::group_message(ctx, vec!["Evan Mcmaine", "Ethan Hayes", "Marge Margarine", "Ella Couch"], |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Marge Margarine", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Robert H.", "How has it been being so dang dum", |_: &mut Context|()),
-        // ];
-
-        let messages = Vec::new();
-        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
-
-        let content = if messages.len() > 0 {
-            let messages_group = ListItemGroup::new(messages);
-            Content::new(Offset::Start, vec![Box::new(messages_group)])
-        } else {
-            Content::new(Offset::Center, vec![Box::new(instructions)])
+impl UserProfile {
+    pub fn new(ctx: &mut Context) -> Self {
+        let user = Profile {
+            name: "Marge Margarine",
+            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+            about: "Probably butter.",
+            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
         };
 
-        let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper), false)
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| crate::BitcoinFlow::Address.navigate(ctx));
+        let header = Header::stack(ctx, Some(back), user.name, None);
+
+        let avatar = Avatar::new(ctx, user.avatar, None, false, 128.0);
+
+        let buttons = IconButtonRow::new(ctx, vec![
+            ("messages", Box::new(|ctx: &mut Context| crate::MessagesFlow::DirectMessage.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            ("bitcoin", Box::new(|ctx: &mut Context| crate::BitcoinFlow::Amount.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            // ("block", |ctx: &mut Context| ProfilesFlow::BlockUser.navigate(ctx))
+        ]);
+
+        let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
+        let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy_address]));
+
+        let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let nym = DataItem::new(ctx, None, "Orange NYM", Some(user.nym), None, None, Some(vec![copy_nym]));
+
+        let about_me = DataItem::new(ctx, None, "About me", Some(user.about), None, None, None);
+        let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(buttons), Box::new(about_me), Box::new(nym), Box::new(address)]);
+
+        UserProfile(Stack::center(), Page::new(header, content, None, false))
     }
 }
-
-#[derive(Debug, Clone, Copy)]
-pub struct UserBlocked;
-
-impl PageName for UserBlocked {
-    fn build_page(&self, ctx: &mut Context) -> Page {
-        let new_message = Button::primary(ctx, "New Message", None, |_ctx: &mut Context| println!("New..."));
-        let bumper = Bumper::new(vec![Box::new(new_message)]);
-
-        // let messages = vec![
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ella Couch", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::group_message(ctx, vec!["Evan Mcmaine", "Ethan Hayes", "Marge Margarine", "Ella Couch"], |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Marge Margarine", "How has it been being so dang dum", |_: &mut Context|()),
-        //     ListItem::direct_message(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Robert H.", "How has it been being so dang dum", |_: &mut Context|()),
-        // ];
-
-        let messages = Vec::new();
-        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Left);
-
-        let content = if messages.len() > 0 {
-            let messages_group = ListItemGroup::new(messages);
-            Content::new(Offset::Start, vec![Box::new(messages_group)])
-        } else {
-            Content::new(Offset::Center, vec![Box::new(instructions)])
-        };
-
-        let header = Header::home(ctx, "Messages");
-        Page::new(header, content, Some(bumper), false)
-    }
-}
+// Add an on-click for avatar's with flair

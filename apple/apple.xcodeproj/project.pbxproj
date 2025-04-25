@@ -55,6 +55,7 @@
 		88141E352DAC8BCF00A08D1D /* cargo_apple-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "cargo_apple-Bridging-Header.h"; sourceTree = "<group>"; };
 		88141E362DAC8BE900A08D1D /* PlatformPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformPaths.swift; sourceTree = "<group>"; };
 		88141E392DAC8BF900A08D1D /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		88141E3C2DBBE01700A08D1D /* liborange.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liborange.a; path = "../target/aarch64-apple-ios/debug/liborange.a"; sourceTree = "<group>"; };
 		8826005F2DA6BC9D00588BC3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		882605472DA9614200588BC3 /* ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ios.entitlements; sourceTree = "<group>"; };
 		8826FE582DA5A72000588BC3 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -139,6 +140,7 @@
 		EB028409C2D0655412DA6E44 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				88141E3C2DBBE01700A08D1D /* liborange.a */,
 				8826005F2DA6BC9D00588BC3 /* Cocoa.framework */,
 				8826FE702DA6BC6900588BC3 /* ApplicationServices.framework */,
 				8826FE6E2DA5DD8B00588BC3 /* AppKit.framework */,
