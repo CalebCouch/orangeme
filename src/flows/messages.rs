@@ -26,7 +26,7 @@ impl AppFlow for MessagesFlow {
 #[derive(Debug, Component)]
 pub struct MessagesHome(Stack, Page);
 impl OnEvent for MessagesHome {}
-impl AppPage for MessagesHome { fn get(&self) -> &Page {&self.1} }
+impl AppPage for MessagesHome {}
 
 impl MessagesHome {
     pub fn new(ctx: &mut Context) -> Self {
@@ -51,7 +51,7 @@ impl MessagesHome {
 #[derive(Debug, Component)]
 pub struct SelectRecipients(Stack, Page);
 impl OnEvent for SelectRecipients {}
-impl AppPage for SelectRecipients { fn get(&self) -> &Page {&self.1} }
+impl AppPage for SelectRecipients {}
 
 impl SelectRecipients {
     pub fn new(ctx: &mut Context) -> Self {
@@ -70,7 +70,7 @@ impl SelectRecipients {
 #[derive(Debug, Component)]
 pub struct DirectMessage(Stack, Page);
 impl OnEvent for DirectMessage {}
-impl AppPage for DirectMessage { fn get(&self) -> &Page {&self.1} }
+impl AppPage for DirectMessage {}
 
 impl DirectMessage {
     pub fn new(ctx: &mut Context) -> Self {
@@ -101,7 +101,7 @@ impl DirectMessage {
 #[derive(Debug, Component)]
 pub struct GroupMessage(Stack, Page);
 impl OnEvent for GroupMessage {}
-impl AppPage for GroupMessage { fn get(&self) -> &Page {&self.1} }
+impl AppPage for GroupMessage {}
 
 impl GroupMessage {
     pub fn new(ctx: &mut Context) -> Self {
@@ -133,7 +133,7 @@ impl GroupMessage {
 #[derive(Debug, Component)]
 pub struct GroupInfo(Stack, Page);
 impl OnEvent for GroupInfo {}
-impl AppPage for GroupInfo { fn get(&self) -> &Page {&self.1} }
+impl AppPage for GroupInfo {}
 
 impl GroupInfo {
     pub fn new(ctx: &mut Context) -> Self {
@@ -161,10 +161,10 @@ pub fn get_recipients(ctx: &mut Context) -> Vec<ListItem> {
 
 pub fn get_contacts(ctx: &mut Context) -> Vec<ListItem> {
     vec![
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  {}),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  {}),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| {}),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  {}),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| {})
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx))
     ]
 }

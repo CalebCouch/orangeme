@@ -5,7 +5,7 @@ edition = "2021"
 description = "nOrange"
 license = "BSD-3-Clause"
 repository = "https://github.com/CalebCouch/orangeme.git"
-authors = ["Caleb Couch <caleb@orange.me>"]
+authors = ["Caleb Couch <caleb@orange.me>", "Ella Couch <ella@orange.me>"]
 build = "src/build.rs"
 
 
@@ -23,7 +23,7 @@ hex = "0.4.3"
 bdk_esplora = "0.20.1"
 
 [lib]
-name="main"
+name="orange"
 crate-type=["staticlib", "cdylib", "rlib"]
 #crate-type=["cdylib"]
 

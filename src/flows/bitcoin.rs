@@ -2,6 +2,8 @@ use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 
+use crate::BDKPlugin;
+
 #[derive(Debug, Copy, Clone)]
 pub enum BitcoinFlow {
     BitcoinHome,
@@ -36,7 +38,7 @@ impl AppFlow for BitcoinFlow {
 #[derive(Debug, Component)]
 pub struct BitcoinHome(Stack, Page);
 impl OnEvent for BitcoinHome {}
-impl AppPage for BitcoinHome { fn get(&self) -> &Page {&self.1} }
+impl AppPage for BitcoinHome {}
 
 impl BitcoinHome {
     pub fn new(ctx: &mut Context) -> Self {
@@ -54,7 +56,7 @@ impl BitcoinHome {
 
 #[derive(Debug, Component)]
 struct Address(Stack, Page);
-impl AppPage for Address { fn get(&self) -> &Page {&self.1} }
+impl AppPage for Address {}
 impl Address {
     fn new(ctx: &mut Context) -> Self {
         let continue_btn = Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
@@ -92,7 +94,7 @@ impl OnEvent for Address {
 #[derive(Debug, Component)]
 struct ScanQR(Stack, Page);
 impl OnEvent for ScanQR {}
-impl AppPage for ScanQR { fn get(&self) -> &Page {&self.1} }
+impl AppPage for ScanQR {}
 impl ScanQR {
     fn new(ctx: &mut Context) -> Self {
         let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
@@ -106,7 +108,7 @@ impl ScanQR {
 #[derive(Debug, Component)]
 struct SelectContact(Stack, Page);
 impl OnEvent for SelectContact {}
-impl AppPage for SelectContact { fn get(&self) -> &Page {&self.1} }
+impl AppPage for SelectContact {}
 impl SelectContact {
     fn new(ctx: &mut Context) -> Self {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
@@ -121,7 +123,7 @@ impl SelectContact {
 
 #[derive(Debug, Component)]
 struct Amount(Stack, Page);
-impl AppPage for Amount { fn get(&self) -> &Page {&self.1} }
+impl AppPage for Amount {}
 impl Amount {
     fn new(ctx: &mut Context) -> Self {
         let is_mobile = pelican_ui::config::IS_MOBILE;
@@ -156,7 +158,7 @@ impl OnEvent for Amount {
 #[derive(Debug, Component)]
 struct Speed(Stack, Page);
 impl OnEvent for Speed {}
-impl AppPage for Speed { fn get(&self) -> &Page {&self.1} }
+impl AppPage for Speed {}
 impl Speed {
     fn new(ctx: &mut Context) -> Self {
         let speed_selector = ListItemSelector::new(ctx,
@@ -176,7 +178,7 @@ impl Speed {
 #[derive(Debug, Component)]
 struct Confirm(Stack, Page);
 impl OnEvent for Confirm {}
-impl AppPage for Confirm { fn get(&self) -> &Page {&self.1} }
+impl AppPage for Confirm {}
 impl Confirm {
     fn new(ctx: &mut Context) -> Self {
         let bumper = Bumper::single_button(Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Success.navigate(ctx)));
@@ -210,7 +212,7 @@ impl Confirm {
 #[derive(Debug, Component)]
 struct Success(Stack, Page);
 impl OnEvent for Success {}
-impl AppPage for Success { fn get(&self) -> &Page {&self.1} }
+impl AppPage for Success {}
 impl Success {
     fn new(ctx: &mut Context) -> Self {
         let contact = None; //Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary));
@@ -235,15 +237,15 @@ impl Success {
 #[derive(Debug, Component)]
 struct Receive(Stack, Page);
 impl OnEvent for Receive {}
-impl AppPage for Receive { fn get(&self) -> &Page {&self.1} }
+impl AppPage for Receive {}
 impl Receive {
     fn new(ctx: &mut Context) -> Self {
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
-        let address = "3du7i,d57id7d7oid7d5i7odc'clci05d,0id,0i";
+        let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();
         let bumper = Bumper::single_button(Button::primary(ctx, "Share", |ctx: &mut Context| println!("Sharing...")));
-        let qr_code = QRCode::new(ctx, address);
+        let qr_code = QRCode::new(ctx, Box::leak(adrs.into_boxed_str()));
         let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size, Align::Left);
-        let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]); //Box::new(qr_code), Box::new(text)
+        let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]);
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
         Receive(Stack::default(), Page::new(header, content, Some(bumper), false))
@@ -253,7 +255,7 @@ impl Receive {
 #[derive(Debug, Component)]
 struct ViewTransaction(Stack, Page);
 impl OnEvent for ViewTransaction {}
-impl AppPage for ViewTransaction { fn get(&self) -> &Page {&self.1} }
+impl AppPage for ViewTransaction {}
 impl ViewTransaction {
     fn new(ctx: &mut Context) -> Self {
         let is_received = false;

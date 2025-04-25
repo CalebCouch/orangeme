@@ -7,7 +7,7 @@ use crate::BDKPlugin;
 #[derive(Debug, Copy, Clone)]
 pub enum ProfilesFlow {
     Account,
-    // UserProfile,
+    UserProfile,
     // BlockUser,
     // UserBlocked
     // UnblockUser
@@ -18,7 +18,7 @@ impl AppFlow for ProfilesFlow {
     fn get_page(&self, ctx: &mut Context) -> Box<dyn AppPage> {
         match self {
             ProfilesFlow::Account => Box::new(Account::new(ctx)) as Box<dyn AppPage>,
-            // ProfilesFlow::UserProfile => Box::new(UserProfile::new(ctx)) as Box<dyn AppPage>,
+            ProfilesFlow::UserProfile => Box::new(UserProfile::new(ctx)) as Box<dyn AppPage>,
             // ProfilesFlow::BlockUser => Box::new(BlockUser::new(ctx)) as Box<dyn AppPage>,
             // ProfilesFlow::UserBlocked => Box::new(UserBlocked::new(ctx)) as Box<dyn AppPage>,
             // ProfilesFlow::UnblockUser => Box::new(UnblockUser::new(ctx)) as Box<dyn AppPage>,
@@ -30,7 +30,7 @@ impl AppFlow for ProfilesFlow {
 #[derive(Debug, Component)]
 pub struct Account(Stack, Page);
 impl OnEvent for Account {}
-impl AppPage for Account { fn get(&self) -> &Page {&self.1} }
+impl AppPage for Account {}
 
 impl Account {
     pub fn new(ctx: &mut Context) -> Self {
@@ -47,7 +47,7 @@ impl Account {
         let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
         let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy_address]));
         let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
-        let nym = DataItem::new(ctx, None, "Orange NYM", Some("did::nym::38iKdailTwedpr92Daixx90et"), None, None, Some(vec![copy_nym]));
+        let nym = DataItem::new(ctx, None, "Orange Identity", Some("did::nym::38iKdailTwedpr92Daixx90et"), None, None, Some(vec![copy_nym]));
 
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(about_input), Box::new(nym), Box::new(address)]);
 
@@ -58,7 +58,7 @@ impl Account {
 #[derive(Debug, Component)]
 pub struct UserProfile(Stack, Page);
 impl OnEvent for UserProfile {}
-impl AppPage for UserProfile { fn get(&self) -> &Page {&self.1} }
+impl AppPage for UserProfile {}
 
 impl UserProfile {
     pub fn new(ctx: &mut Context) -> Self {
@@ -77,7 +77,7 @@ impl UserProfile {
         let buttons = IconButtonRow::new(ctx, vec![
             ("messages", Box::new(|ctx: &mut Context| crate::MessagesFlow::DirectMessage.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
             ("bitcoin", Box::new(|ctx: &mut Context| crate::BitcoinFlow::Amount.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            // ("block", |ctx: &mut Context| ProfilesFlow::BlockUser.navigate(ctx))
+            // ("block", Box::new(|ctx: &mut Context| crate::ProfilesFlow::BlockUser.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
         ]);
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
@@ -85,7 +85,7 @@ impl UserProfile {
         let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy_address]));
 
         let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
-        let nym = DataItem::new(ctx, None, "Orange NYM", Some(user.nym), None, None, Some(vec![copy_nym]));
+        let nym = DataItem::new(ctx, None, "Orange Identity", Some(user.nym), None, None, Some(vec![copy_nym]));
 
         let about_me = DataItem::new(ctx, None, "About me", Some(user.about), None, None, None);
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(buttons), Box::new(about_me), Box::new(nym), Box::new(address)]);
