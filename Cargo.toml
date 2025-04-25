@@ -10,7 +10,6 @@ build = "src/build.rs"
 
 
 [dependencies]
-pelican_ui = { path = "../pelican_ui" }
 chrono = { version = "0.4.40", features = ["serde"] }
 image = "0.25.5"
 log = "0.4.27"
@@ -19,7 +18,9 @@ rust_on_rails = {path="../rust_on_rails"}
 serde = { version = "1.0.219", features = ["derive"] }
 bdk_wallet = "1.2.0"
 secp256k1 = {version="0.30.0", features = ["rand"] }
+pelican_ui = {path="../pelican_ui"}
 hex = "0.4.3"
+bdk_esplora = "0.20.1"
 
 [lib]
 name="orange"
