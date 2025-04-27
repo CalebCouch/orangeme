@@ -39,9 +39,9 @@ impl Account {
         let save = Button::disabled(ctx, "Save", |_ctx: &mut Context| println!("Save changes..."));
         let bumper = Bumper::single_button(save);
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let name_input = TextInput::new(ctx, Some("Name"), "Account name...", None, icon_button);
+        let name_input = TextInput::new(ctx, None, Some("Name"), "Account name...", None, icon_button);
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let about_input = TextInput::new(ctx, Some("About me"), "About me...", None, icon_button);
+        let about_input = TextInput::new(ctx, None, Some("About me"), "About me...", None, icon_button);
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));

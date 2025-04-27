@@ -4,7 +4,7 @@ fn main() {
     let swift_file_c = "apple/apple-src/PlatformPaths.swift";
 
     let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
-    let lib_path = out_dir.join("liborange.dylib");
+    let lib_path = out_dir.join("libmain.dylib");
 
     let status = std::process::Command::new("xcrun")
         .args([
@@ -26,7 +26,7 @@ fn main() {
     }
 
     println!("cargo:rustc-link-search=native={}", out_dir.display());
-    println!("cargo:rustc-link-lib=dylib=orange");
+    println!("cargo:rustc-link-lib=dylib=main");
 
     println!("cargo:rerun-if-changed={}", swift_file_a);
     println!("cargo:rerun-if-changed={}", swift_file_b);

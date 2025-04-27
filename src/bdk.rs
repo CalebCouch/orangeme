@@ -2,15 +2,22 @@ use rust_on_rails::prelude::*;
 use serde::{Serialize, Deserialize};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use std::str::FromStr;
 
-use bdk_wallet::{Wallet, KeychainKind, ChangeSet};
+use bdk_wallet::{Wallet, WalletTx, KeychainKind, ChangeSet};
 use bdk_wallet::descriptor::template::Bip86;
 use bdk_wallet::bitcoin::bip32::Xpriv;
+use bdk_wallet::bitcoin::FeeRate;
+use bdk_wallet::error::CreateTxError;
 pub use bdk_wallet::bitcoin::{Amount, Network, Address};
 use bdk_wallet::{PersistedWallet, WalletPersister};
 use bdk_wallet::chain::Merge;
 use bdk_esplora::esplora_client::Builder;
 use bdk_esplora::EsploraExt;
+
+use serde_json::Value; // for getting bitcoin price from coinbase.com
+
+const SATS: u64 = 1_000_000;
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
@@ -36,9 +43,26 @@ impl Task for CachePersister {
     }
 }
 
+pub struct GetPrice(Arc<Mutex<f32>>);
+#[async_trait]
+impl Task for GetPrice {
+    fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(10))}
+
+    async fn run(&mut self, h_ctx: &mut HeadlessContext) {
+        let url = "https://api.coinbase.com/v2/prices/spot?currency=USD";
+        let body = reqwest::get(url).await.expect("Could not get url").text().await.expect("Could not get text");
+        let json: Value = serde_json::from_str(&body).expect("Could not serde to string");
+        let price_str = json["data"]["amount"].as_str().expect("Could not serde to str");
+        let price: f32 = price_str.parse().expect("Could not parse as f32");
+        *self.0.lock().unwrap() = price;
+    }
+}
+
 pub struct BDKPlugin {
     wallet: PersistedWallet<MemoryPersister>,
-    persister: Arc<Mutex<MemoryPersister>>
+    persister: Arc<Mutex<MemoryPersister>>,
+    recipient_address: Arc<Mutex<Option<Address>>>,
+    price: Arc<Mutex<f32>>,
 }
 impl BDKPlugin {
     pub async fn init(&mut self) {//Include theme
@@ -75,8 +99,9 @@ impl BDKPlugin {
                 .expect("wallet"),
         }, db)
     }
+
     pub fn get_balance(&self) -> Amount {
-        self.wallet.balance().trusted_spendable()
+        self.wallet.balance().total()
     }
 
     pub fn get_new_address(&mut self) -> Address {
@@ -84,6 +109,58 @@ impl BDKPlugin {
         self.wallet.persist(&mut self.persister.lock().unwrap()).expect("write is okay");
         address
     }
+
+    pub fn get_price(&self) -> f32 {
+        *self.price.lock().unwrap()
+    }
+
+    pub fn set_recipient_address(&mut self, address: String) -> bool {
+        if let Some(add) = Address::from_str(&address).ok() {
+            *self.recipient_address.lock().unwrap() = add.require_network(Network::Bitcoin).ok();
+            true
+        } else { false }
+    }
+
+    pub fn get_recipient_address(&self) -> Option<Address> {
+        self.recipient_address.lock().unwrap().clone()
+    }
+
+    pub fn get_fees(&mut self, btc: f64) -> (f32, f32) {
+        println!("RUNNING GET FEES");
+        let address = self.get_recipient_address().expect("Address not found.");
+        println!("GOT ADDRESS");
+        let mut tx_builder = self.wallet.build_tx();
+        println!("BUILD TX BUILDER");
+        tx_builder
+            .add_recipient(address.script_pubkey(), Amount::from_btc(btc).expect("Could not parse"))
+            .fee_rate(FeeRate::from_sat_per_vb(5).expect("valid feerate"));
+        println!("BEFORE");
+        let psbt = tx_builder.finish().expect("HUh?");
+        println!("AFTER: psdbt {:?}", psbt);
+        (0.0, 0.0)
+    }
+
+    pub fn get_dust_limit(&self) -> f32 {(546 / SATS) as f32}
+    
+
+    // pub fn get_transactions(&self) -> Vec<WalletTx<'_>> {
+    //     self.wallet.transactions_sort_by(|tx1, tx2| {
+    //         tx1.chain_position.cmp(&tx2.chain_position)
+    //     })
+    // }
+
+    // get bitcoin price
+    // set recipient address
+    // get recipient address
+    // set send amount
+    // get send amount
+    // set priority
+    // get priority
+    // get_fee (priority) -> (f32, f32)
+    // build transaction
+    // submit transaction
+    // get all transactions
+
 }
 
 impl Plugin for BDKPlugin {
@@ -95,7 +172,13 @@ impl Plugin for BDKPlugin {
     async fn new(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
         let (wallet, persister) = Self::get_wallet(&mut h_ctx.cache).await;
         let persister = Arc::new(Mutex::new(persister));
-        (BDKPlugin{wallet, persister: persister.clone()}, tasks![CachePersister(persister)])
+        let price = Arc::new(Mutex::new(0.0));
+        (BDKPlugin{
+            wallet, 
+            persister: persister.clone(), 
+            price: price.clone(), 
+            recipient_address: Arc::new(Mutex::new(None)),
+        }, tasks![CachePersister(persister), GetPrice(price)])
     }
 }
 
@@ -105,16 +188,18 @@ impl Task for WalletSync {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(5))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        let sync_request = self.0.start_sync_with_revealed_spks()
-        .inspect(|item, progress| {println!("items remaining: {:?}", progress.remaining());})
+        let full_scan = self.0.start_full_scan()
+        .inspect(|item, i, sync| {println!("items: {:?} i: {:?} script: {:?}", item, i, sync);})
         .build();
-
+        println!("SYNC");
+        // println!("SYNC REQUESTTTTTT {:?}", sync_request.progress());
         let builder = Builder::new("https://blockstream.info/api");
         let blocking_client = builder.build_blocking();
-        let _ = blocking_client.sync(sync_request, 1).unwrap();
+        let _ = blocking_client.full_scan(full_scan, 100, 1).unwrap();
         self.0.persist(&mut self.1).expect("write is okay");
         let mut change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
         change_set.merge(self.1.0.clone());
         h_ctx.cache.set(&change_set).await;
     }
 }
+

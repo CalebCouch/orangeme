@@ -56,7 +56,7 @@ impl AppPage for SelectRecipients {}
 impl SelectRecipients {
     pub fn new(ctx: &mut Context) -> Self {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
+        let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
         let quick_deselect = QuickDeselect::new(get_recipients(ctx));
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(quick_deselect)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
@@ -88,7 +88,7 @@ impl DirectMessage {
             "Do you have butter?"
         ];
 
-        let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+        let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(vec![Box::new(input)]);
         let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
         let content = Content::new(Offset::End, vec![Box::new(message)]);
@@ -119,7 +119,7 @@ impl GroupMessage {
             "Do you have butter?"
         ];
 
-        let input = TextInput::new(ctx, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+        let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(vec![Box::new(input)]);
         let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
         let content = Content::new(Offset::End, vec![Box::new(message)]);

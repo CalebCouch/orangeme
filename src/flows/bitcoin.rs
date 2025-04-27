@@ -37,32 +37,69 @@ impl AppFlow for BitcoinFlow {
 
 #[derive(Debug, Component)]
 pub struct BitcoinHome(Stack, Page);
-impl OnEvent for BitcoinHome {}
 impl AppPage for BitcoinHome {}
 
 impl BitcoinHome {
     pub fn new(ctx: &mut Context) -> Self {
         let send = Button::primary(ctx, "Send", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx) );
         let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| BitcoinFlow::Receive.navigate(ctx) );
-        let transaction = ListItem::bitcoin(ctx, true, 10.00, "Saturday", |ctx: &mut Context| BitcoinFlow::ViewTransaction.navigate(ctx) );
-        let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
         let header = Header::home(ctx, "Wallet");
         let bumper = Bumper::double_button(receive, send);
-        let content = Content::new(Offset::Start, vec![Box::new(amount_display), Box::new(transaction)]);
+        let mut content = vec![Box::new(AmountDisplay::new(ctx)) as Box<dyn Drawable>];
 
+        let transactions = Vec::new();
+        //  ctx.get::<BDKPlugin>().get_transactions().into_iter().map(|tx| {
+        //     // ListItem::bitcoin(ctx, is_received, amount, "Saturday", |ctx: &mut Context| {
+        //     //     BitcoinFlow::ViewTransaction.navigate(ctx) 
+        //     // });
+        // }).collect();
+
+        let offset = if !transactions.is_empty() {
+            content.push(Box::new(ListItemGroup::new(transactions)));
+            Offset::Start
+        } else { Offset::Center };
+
+        let content = Content::new(offset, content);
         BitcoinHome(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
 }
 
+impl OnEvent for BitcoinHome {
+    fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+        if let Some(TickEvent) = event.downcast_ref() {
+            let bdk = ctx.get::<BDKPlugin>();
+            let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
+            let item = &mut *self.1.content().items()[0];
+            let display: &mut AmountDisplay = item.as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
+            println!("btc, price: {} {}", btc, price);
+            *display.usd() = format!("${:.2}", btc*price);
+            *display.btc() = format!("{:.8} BTC", btc);
+        }
+        true
+    }
+}
+
 #[derive(Debug, Component)]
-struct Address(Stack, Page);
+struct Address(Stack, Page, #[skip] ButtonState);
 impl AppPage for Address {}
 impl Address {
     fn new(ctx: &mut Context) -> Self {
+        let address = ctx.get::<BDKPlugin>().get_recipient_address();
         let continue_btn = Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let address_input = TextInput::new(ctx, None, "Bitcoin address...", None, icon_button);
-        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, |_ctx: &mut Context| {});
+
+        let address_string = address.map(|add| add.to_string());
+        let address_ref: Option<&'static str> = address_string
+            .as_ref()
+            .map(|s| Box::leak(s.clone().into_boxed_str()) as &'static str);
+
+        let address_input = TextInput::new(ctx, address_ref, None, "Bitcoin address...", None, icon_button);
+
+        let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, move |ctx: &mut Context| {
+            let data = ctx.get_clipboard();
+            ctx.trigger_event(SetActiveInput(Box::leak(data.into_boxed_str())))
+        });
+
         let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |ctx: &mut Context| BitcoinFlow::ScanQR.navigate(ctx));
         let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, |ctx: &mut Context| BitcoinFlow::SelectContact.navigate(ctx));
         let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
@@ -71,20 +108,28 @@ impl Address {
         let bumper = Bumper::single_button(continue_btn);
         let content = Content::new(Offset::Start, vec![Box::new(address_input), Box::new(quick_actions)]);
 
-        Address(Stack::default(), Page::new(header, content, Some(bumper), false))
+        Address(Stack::default(), Page::new(header, content, Some(bumper), false), ButtonState::Default)
     }
 }
 
 impl OnEvent for Address {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+        let bdk = ctx.get::<BDKPlugin>();
         if let Some(TickEvent) = event.downcast_ref() {
             let item = &mut *self.1.content().items()[0];
             let input: &mut TextInput = item.as_any_mut().downcast_mut::<TextInput>().unwrap();
-            let disable = (*input.get_error() || input.get_value().is_empty());
 
+            let input_address = input.get_value();
+            let is_valid = bdk.set_recipient_address(input_address.to_string());
+
+            let error = (*input.get_error() || input.get_value().is_empty() || !is_valid);
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
             let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
-            *button.status() = if disable { ButtonState::Disabled } else { ButtonState::Default };
+            let disabled = *button.status() == ButtonState::Disabled;
+
+            if !disabled { self.2 = *button.status(); }
+            if error && !disabled { *button.status() = ButtonState::Disabled; }
+            if !error { *button.status() = self.2; }
             button.color(ctx);
         }
         true
@@ -112,7 +157,7 @@ impl AppPage for SelectContact {}
 impl SelectContact {
     fn new(ctx: &mut Context) -> Self {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let searchbar = TextInput::new(ctx, None, "Profile name...", None, icon_button);
+        let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
         let contact_list = ListItemGroup::new(get_contacts(ctx));
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(contact_list)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
@@ -122,7 +167,7 @@ impl SelectContact {
 }
 
 #[derive(Debug, Component)]
-struct Amount(Stack, Page);
+struct Amount(Stack, Page, #[skip] ButtonState);
 impl AppPage for Amount {}
 impl Amount {
     fn new(ctx: &mut Context) -> Self {
@@ -135,19 +180,37 @@ impl Amount {
         let content = Content::new(Offset::Center, content);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Bitcoin amount", None);
-        Amount(Stack::default(), Page::new(header, content, Some(bumper), false))
+        Amount(Stack::default(), Page::new(header, content, Some(bumper), false), ButtonState::Default)
     }
 }
 
 impl OnEvent for Amount {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
-            let item = &mut *self.1.content().items()[0];
-            let disable = *item.as_any_mut().downcast_mut::<AmountInput>().unwrap().has_error();
+            let bdk = ctx.get::<BDKPlugin>();
+            let price = bdk.get_price();
 
+            let item = &mut *self.1.content().items()[0];
+            let amount = item.as_any_mut().downcast_mut::<AmountInput>().unwrap();
+            let balance = bdk.get_balance().to_btc() as f32;
+            let dust_limit = bdk.get_dust_limit();
+
+            amount.set_price(price);
+            amount.set_max((balance+dust_limit)*price);
+
+            if *amount.btc() > dust_limit && *amount.btc() < balance {
+                let fee = bdk.get_fees(*amount.btc() as f64).0;
+                amount.set_min(fee*price);
+            }
+
+            let error = *amount.error();
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
             let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
-            *button.status() = if disable { ButtonState::Disabled } else { ButtonState::Default };
+            let disabled = *button.status() == ButtonState::Disabled;
+
+            if !disabled { self.2 = *button.status(); }
+            if error && !disabled { *button.status() = ButtonState::Disabled; }
+            if !error { *button.status() = self.2; }
             button.color(ctx);
         }
         true
@@ -242,10 +305,17 @@ impl Receive {
     fn new(ctx: &mut Context) -> Self {
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();
-        let bumper = Bumper::single_button(Button::primary(ctx, "Share", |ctx: &mut Context| println!("Sharing...")));
-        let qr_code = QRCode::new(ctx, Box::leak(adrs.into_boxed_str()));
+        let qr_code = QRCode::new(ctx, Box::leak(adrs.clone().into_boxed_str()));
         let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]);
+
+        let button = if pelican_ui::config::IS_MOBILE {
+            Button::primary(ctx, "Share", |ctx: &mut Context| println!("Sharing...")) 
+        } else {
+            Button::primary(ctx, "Copy Address", move |ctx: &mut Context| ctx.set_clipboard(adrs.clone()) )
+        };
+
+        let bumper = Bumper::single_button(button);
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
         Receive(Stack::default(), Page::new(header, content, Some(bumper), false))
@@ -280,8 +350,8 @@ impl ViewTransaction {
         (!is_received).then(|| details.push(("Total", "$10.18")));
 
         let details = DataItem::new(ctx, None, "Transaction details", None, None, Some(details), None);
-        let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
-        let content = Content::new(Offset::Center, vec![Box::new(amount_display), Box::new(details)]); //Box::new(qr_code), Box::new(text)
+        // let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
+        let content = Content::new(Offset::Center, vec![ Box::new(details)]); //Box::new(qr_code), Box::new(text)
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), title, None);
         ViewTransaction(Stack::default(), Page::new(header, content, Some(bumper), false))
