@@ -202,9 +202,14 @@ impl Task for WalletSync {
         .inspect(|item, sync| {println!("items: {:?}, script: {:?}", item, sync);})
         .build();
 
+
+        let mut scan_request = self.0.start_full_scan().build();
+
         let builder = Builder::new("https://blockstream.info/api");
         let blocking_client = builder.build_blocking();
-        let _ = blocking_client.sync(sync_request, 1).unwrap();
+        //let res = blocking_client.sync(sync_request, 1).unwrap();
+        let res = blocking_client.full_scan(scan_request, 10, 1).unwrap();
+        println!("res: {:?}", res);
         self.0.persist(&mut self.1).expect("write is okay");
         let change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
         self.1.0.merge(change_set);
