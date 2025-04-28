@@ -37,8 +37,13 @@ impl Task for CachePersister {
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
         println!("persisting");
-        let mut change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
-        change_set.merge(self.0.lock().unwrap().0.clone());
+        let mut change_set = h_ctx.cache.get::<MemoryPersister>().await;
+        {
+            let mut amcs = self.0.lock().unwrap();
+            amcs.0.merge(change_set.0);
+            change_set = (*amcs).clone();
+        }
+        println!("chang_set: {:?}", change_set.0.indexer);
         h_ctx.cache.set(&change_set).await;
     }
 }
@@ -82,6 +87,7 @@ impl BDKPlugin {
 
     pub async fn get_wallet(cache: &mut Cache) -> (PersistedWallet<MemoryPersister>, MemoryPersister) {
         let mut db = cache.get::<MemoryPersister>().await; 
+        println!("db_index: {:?}", db.0.indexer);
         let (ext, int) = Self::get_descriptors(cache).await;
         let network = Network::Bitcoin;
         let wallet_opt = Wallet::load()
@@ -93,10 +99,13 @@ impl BDKPlugin {
             .expect("wallet");
         (match wallet_opt {
             Some(wallet) => wallet,
-            None => Wallet::create(ext, int)
+            None => {
+                println!("created: {:?}", db.0.indexer);
+                Wallet::create(ext, int)
                 .network(network)
                 .create_wallet(&mut db)
-                .expect("wallet"),
+                .expect("wallet")
+            }
         }, db)
     }
 
@@ -105,9 +114,10 @@ impl BDKPlugin {
     }
 
     pub fn get_new_address(&mut self) -> Address {
-        let address = self.wallet.reveal_next_address(KeychainKind::External).address;
+        let address = self.wallet.reveal_next_address(KeychainKind::External);
+        println!("a: {:?}", address);
         self.wallet.persist(&mut self.persister.lock().unwrap()).expect("write is okay");
-        address
+        address.address
     }
 
     pub fn get_price(&self) -> f32 {
@@ -188,14 +198,13 @@ impl Task for WalletSync {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(5))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        let full_scan = self.0.start_full_scan()
-        .inspect(|item, i, sync| {println!("items: {:?} i: {:?} script: {:?}", item, i, sync);})
+        let mut sync_request = self.0.start_sync_with_revealed_spks()
+        .inspect(|item, sync| {println!("items: {:?}, script: {:?}", item, sync);})
         .build();
-        println!("SYNC");
-        // println!("SYNC REQUESTTTTTT {:?}", sync_request.progress());
+
         let builder = Builder::new("https://blockstream.info/api");
         let blocking_client = builder.build_blocking();
-        let _ = blocking_client.full_scan(full_scan, 100, 1).unwrap();
+        let _ = blocking_client.sync(sync_request, 1).unwrap();
         self.0.persist(&mut self.1).expect("write is okay");
         let mut change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
         change_set.merge(self.1.0.clone());
