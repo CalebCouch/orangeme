@@ -112,17 +112,14 @@ impl BlockUser {
         let theme = &ctx.get::<PelicanUI>().theme;
         let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
-        let confirm = Button::close(ctx, "Block", |ctx: &mut Context| ProfilesFlow::UserBlocked.navigate(ctx));
+        let confirm = Button::primary(ctx, "Block", |ctx: &mut Context| ProfilesFlow::UserBlocked.navigate(ctx));
         let bumper = Bumper::double_button(cancel, confirm);
-        let avatar = Avatar::new(ctx,AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
-            Some(("block", AvatarIconStyle::Danger)), 
-            false, 96.0
-        );
-        let msg = format!("Are you sure you want to block {}", user.name);
+        let avatar = Avatar::new(ctx, user.avatar, Some(("block", AvatarIconStyle::Danger)), false, 96.0);
+        let msg = format!("Are you sure you want to block {}?", user.name);
         let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
-        let header = Header::stack(ctx, Some(close), "Send confirmed", None);
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
+        let header = Header::stack(ctx, Some(back), "Block user", None);
         BlockUser(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
 }
@@ -149,8 +146,8 @@ impl UserBlocked {
         let msg = format!("{} has been blocked", user.name);
         let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
-        let header = Header::stack(ctx, Some(close), "Send confirmed", None);
+        let close = IconButton::close(ctx, |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
+        let header = Header::stack(ctx, Some(close), "User blocked", None);
         UserBlocked(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
 }

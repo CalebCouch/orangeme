@@ -85,6 +85,7 @@ impl DirectMessage {
             "Did you go to the market on Saturday?",
             "Hello!?",
             "I need butter from the market that was on Saturday, but I couldn't go!",
+            "🧈 🧈 🧈",
             "Do you have butter?"
         ];
 

@@ -206,9 +206,9 @@ impl Task for WalletSync {
         let blocking_client = builder.build_blocking();
         let _ = blocking_client.sync(sync_request, 1).unwrap();
         self.0.persist(&mut self.1).expect("write is okay");
-        let mut change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
-        change_set.merge(self.1.0.clone());
-        h_ctx.cache.set(&change_set).await;
+        let change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
+        self.1.0.merge(change_set);
+        h_ctx.cache.set(&self.1.0).await;
     }
 }
 
