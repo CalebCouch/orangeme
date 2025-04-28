@@ -43,7 +43,7 @@ impl Task for CachePersister {
             amcs.0.merge(change_set.0);
             change_set = (*amcs).clone();
         }
-        println!("chang_set: {:?}", change_set.0.indexer);
+        println!("chang_set: {:?}", change_set.0);
         h_ctx.cache.set(&change_set).await;
     }
 }
@@ -213,6 +213,7 @@ impl Task for WalletSync {
         self.0.persist(&mut self.1).expect("write is okay");
         let change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
         self.1.0.merge(change_set);
+        println!("{:?}", self.1.0);
         h_ctx.cache.set(&self.1.0).await;
     }
 }

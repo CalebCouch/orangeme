@@ -69,6 +69,7 @@ impl OnEvent for BitcoinHome {
         if let Some(TickEvent) = event.downcast_ref() {
             let bdk = ctx.get::<BDKPlugin>();
             let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
+            println!("BTC {:?}, price {:?}", btc, price);
             let item = &mut *self.1.content().items()[0];
             let display: &mut AmountDisplay = item.as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
             *display.usd() = format!("${:.2}", btc*price);
