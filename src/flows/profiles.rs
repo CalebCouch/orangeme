@@ -3,13 +3,14 @@ use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 
 use crate::BDKPlugin;
+use crate::BitcoinFlow;
 
 #[derive(Debug, Copy, Clone)]
 pub enum ProfilesFlow {
     Account,
     UserProfile,
-    // BlockUser,
-    // UserBlocked
+    BlockUser,
+    UserBlocked
     // UnblockUser
     // UserUnblocked
 }
@@ -19,8 +20,8 @@ impl AppFlow for ProfilesFlow {
         match self {
             ProfilesFlow::Account => Box::new(Account::new(ctx)) as Box<dyn AppPage>,
             ProfilesFlow::UserProfile => Box::new(UserProfile::new(ctx)) as Box<dyn AppPage>,
-            // ProfilesFlow::BlockUser => Box::new(BlockUser::new(ctx)) as Box<dyn AppPage>,
-            // ProfilesFlow::UserBlocked => Box::new(UserBlocked::new(ctx)) as Box<dyn AppPage>,
+            ProfilesFlow::BlockUser => Box::new(BlockUser::new(ctx)) as Box<dyn AppPage>,
+            ProfilesFlow::UserBlocked => Box::new(UserBlocked::new(ctx)) as Box<dyn AppPage>,
             // ProfilesFlow::UnblockUser => Box::new(UnblockUser::new(ctx)) as Box<dyn AppPage>,
             // ProfilesFlow::UserUnblocked => Box::new(UserUnblocked::new(ctx)) as Box<dyn AppPage>,
         }
@@ -77,7 +78,7 @@ impl UserProfile {
         let buttons = IconButtonRow::new(ctx, vec![
             ("messages", Box::new(|ctx: &mut Context| crate::MessagesFlow::DirectMessage.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
             ("bitcoin", Box::new(|ctx: &mut Context| crate::BitcoinFlow::Amount.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            // ("block", Box::new(|ctx: &mut Context| crate::ProfilesFlow::BlockUser.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            ("block", Box::new(|ctx: &mut Context| crate::ProfilesFlow::BlockUser.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
         ]);
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
@@ -94,3 +95,62 @@ impl UserProfile {
     }
 }
 // Add an on-click for avatar's with flair
+
+#[derive(Debug, Component)]
+struct BlockUser(Stack, Page);
+impl OnEvent for BlockUser {}
+impl AppPage for BlockUser {}
+impl BlockUser {
+    fn new(ctx: &mut Context) -> Self {
+        let user = Profile {
+            name: "Marge Margarine",
+            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+            about: "Probably butter.",
+            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+        };
+
+        let theme = &ctx.get::<PelicanUI>().theme;
+        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
+        let confirm = Button::close(ctx, "Block", |ctx: &mut Context| ProfilesFlow::UserBlocked.navigate(ctx));
+        let bumper = Bumper::double_button(cancel, confirm);
+        let avatar = Avatar::new(ctx,AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
+            Some(("block", AvatarIconStyle::Danger)), 
+            false, 96.0
+        );
+        let msg = format!("Are you sure you want to block {}", user.name);
+        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+        let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
+        let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let header = Header::stack(ctx, Some(close), "Send confirmed", None);
+        BlockUser(Stack::default(), Page::new(header, content, Some(bumper), false))
+    }
+}
+
+#[derive(Debug, Component)]
+struct UserBlocked(Stack, Page);
+impl OnEvent for UserBlocked {}
+impl AppPage for UserBlocked {}
+impl UserBlocked {
+    fn new(ctx: &mut Context) -> Self {
+        let user = Profile {
+            name: "Marge Margarine",
+            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+            about: "Probably butter.",
+            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+        };
+
+        let theme = &ctx.get::<PelicanUI>().theme;
+        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let bumper = Bumper::single_button(Button::close(ctx, "Done", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx)));
+        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
+            Some(("block", AvatarIconStyle::Danger)), false, 96.0
+        );
+        let msg = format!("{} has been blocked", user.name);
+        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+        let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
+        let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let header = Header::stack(ctx, Some(close), "Send confirmed", None);
+        UserBlocked(Stack::default(), Page::new(header, content, Some(bumper), false))
+    }
+}
