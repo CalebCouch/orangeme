@@ -151,7 +151,61 @@ impl BDKPlugin {
     }
 
     pub fn get_dust_limit(&self) -> f32 {(546 / SATS) as f32}
-    
+
+    pub fn add_password(&self, password: &str) {
+        use objc2_core_foundation::CFDictionary;
+        use objc2_core_foundation::CFString;
+        use objc2_core_foundation::CFData;
+        use objc2_core_foundation::CFType;
+        use objc2_security::SecItemAdd;
+        use objc2_security::SecItemDelete;
+        use objc2_security::kSecAttrService;
+        use objc2_security::kSecValueData;
+        use objc2_security::kSecClassGenericPassword;
+        use objc2_security::kSecAttrAccount;
+        use objc2_security::kSecClass;
+
+        use std::ptr;
+        let account_cf = CFString::new("did::nym::happyduckyforeverrrrrr");
+        let service_cf = CFString::new("orange.me");
+        let password_data = CFData::from_buffer(password.as_bytes());
+        let keys: [&CFType; 4] = unsafe { [
+            kSecClass.as_ref(),
+            kSecAttrAccount.as_ref(),
+            kSecAttrService.as_ref(),
+            kSecValueData.as_ref(),
+        ]};
+
+        let values: [&CFType; 4] = unsafe { [
+            kSecClassGenericPassword.as_ref(),
+            account_cf.as_ref(),
+            service_cf.as_ref(),
+            password_data.as_ref(),
+        ] };
+
+        let key_callbacks = ptr::null();
+        let value_callbacks = ptr::null();
+
+        let query = unsafe {
+            CFDictionary::new(
+                None,
+                keys.as_ptr() as *mut *const std::ffi::c_void,
+                values.as_ptr() as *mut *const std::ffi::c_void,
+                keys.len() as isize,
+                key_callbacks,
+                value_callbacks,
+            )
+        };
+
+        if let Some(query_dict) = query {
+            unsafe { SecItemDelete(query_dict.as_ref()) };
+            let status = unsafe { SecItemAdd(query_dict.as_ref(), std::ptr::null_mut()) };
+            // println!("OSStatus: {}", status);
+            
+        } else {
+            println!("Failed to create CFDictionary.");
+        }
+    }
 
     // pub fn get_transactions(&self) -> Vec<WalletTx<'_>> {
     //     self.wallet.transactions_sort_by(|tx1, tx2| {

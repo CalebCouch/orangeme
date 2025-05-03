@@ -55,7 +55,7 @@ impl BitcoinHome {
         // }).collect();
 
         let offset = if !transactions.is_empty() {
-            content.push(Box::new(ListItemGroup::new(transactions)));
+            content.push(Box::new(VerticalScrollable::new(transactions)));
             Offset::Start
         } else { Offset::Center };
 
@@ -69,7 +69,8 @@ impl OnEvent for BitcoinHome {
         if let Some(TickEvent) = event.downcast_ref() {
             let bdk = ctx.get::<BDKPlugin>();
             let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
-            println!("BTC {:?}, price {:?}", btc, price);
+            // println!("BTC {:?}, price {:?}", btc, price);
+            // bdk.add_password("lilbaby-secret-passcode");
             let item = &mut *self.1.content().items()[0];
             let display: &mut AmountDisplay = item.as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
             *display.usd() = format!("${:.2}", btc*price);
@@ -158,7 +159,7 @@ impl SelectContact {
     fn new(ctx: &mut Context) -> Self {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
-        let contact_list = ListItemGroup::new(get_contacts(ctx));
+        let contact_list = VerticalScrollable::new(get_contacts(ctx));
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(contact_list)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
@@ -358,12 +359,13 @@ impl ViewTransaction {
     }
 }
 
-pub fn get_contacts(ctx: &mut Context) -> Vec<ListItem> {
-    vec![
+pub fn get_contacts(ctx: &mut Context) -> Vec<Box<dyn Drawable>> {
+    let i = vec![
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx))
-    ]
+    ];
+    i.into_iter().map(|l| Box::new(l) as Box<dyn Drawable>).collect()
 }

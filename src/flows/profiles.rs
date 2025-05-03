@@ -70,7 +70,7 @@ impl UserProfile {
             avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
         };
 
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| crate::BitcoinFlow::Address.navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| crate::MessagesFlow::GroupInfo.navigate(ctx));
         let header = Header::stack(ctx, Some(back), user.name, None);
 
         let avatar = Avatar::new(ctx, user.avatar, None, false, 128.0);
