@@ -10,9 +10,9 @@ pub enum ProfilesFlow {
     Account,
     UserProfile,
     BlockUser,
-    UserBlocked
-    // UnblockUser
-    // UserUnblocked
+    UserBlocked,
+    UnblockUser,
+    UserUnblocked,
 }
 
 impl AppFlow for ProfilesFlow {
@@ -22,8 +22,8 @@ impl AppFlow for ProfilesFlow {
             ProfilesFlow::UserProfile => Box::new(UserProfile::new(ctx)) as Box<dyn AppPage>,
             ProfilesFlow::BlockUser => Box::new(BlockUser::new(ctx)) as Box<dyn AppPage>,
             ProfilesFlow::UserBlocked => Box::new(UserBlocked::new(ctx)) as Box<dyn AppPage>,
-            // ProfilesFlow::UnblockUser => Box::new(UnblockUser::new(ctx)) as Box<dyn AppPage>,
-            // ProfilesFlow::UserUnblocked => Box::new(UserUnblocked::new(ctx)) as Box<dyn AppPage>,
+            ProfilesFlow::UnblockUser => Box::new(UnblockUser::new(ctx)) as Box<dyn AppPage>,
+            ProfilesFlow::UserUnblocked => Box::new(UserUnblocked::new(ctx)) as Box<dyn AppPage>,
         }
     }
 }
@@ -78,7 +78,7 @@ impl UserProfile {
         let buttons = IconButtonRow::new(ctx, vec![
             ("messages", Box::new(|ctx: &mut Context| crate::MessagesFlow::DirectMessage.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
             ("bitcoin", Box::new(|ctx: &mut Context| crate::BitcoinFlow::Amount.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            ("block", Box::new(|ctx: &mut Context| crate::ProfilesFlow::BlockUser.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            ("unblock", Box::new(|ctx: &mut Context| crate::ProfilesFlow::UnblockUser.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
         ]);
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
@@ -149,5 +149,61 @@ impl UserBlocked {
         let close = IconButton::close(ctx, |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "User blocked", None);
         UserBlocked(Stack::default(), Page::new(header, content, Some(bumper), false))
+    }
+}
+
+#[derive(Debug, Component)]
+struct UnblockUser(Stack, Page);
+impl OnEvent for UnblockUser {}
+impl AppPage for UnblockUser {}
+impl UnblockUser {
+    fn new(ctx: &mut Context) -> Self {
+        let user = Profile {
+            name: "Marge Margarine",
+            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+            about: "Probably butter.",
+            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+        };
+
+        let theme = &ctx.get::<PelicanUI>().theme;
+        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
+        let confirm = Button::primary(ctx, "Unblock", |ctx: &mut Context| ProfilesFlow::UserUnblocked.navigate(ctx));
+        let bumper = Bumper::double_button(cancel, confirm);
+        let avatar = Avatar::new(ctx, user.avatar, Some(("unblock", AvatarIconStyle::Success)), false, 96.0);
+        let msg = format!("Are you sure you want to unblock {}?", user.name);
+        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+        let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
+        let header = Header::stack(ctx, Some(back), "Unblock user", None);
+        UnblockUser(Stack::default(), Page::new(header, content, Some(bumper), false))
+    }
+}
+
+#[derive(Debug, Component)]
+struct UserUnblocked(Stack, Page);
+impl OnEvent for UserUnblocked {}
+impl AppPage for UserUnblocked {}
+impl UserUnblocked {
+    fn new(ctx: &mut Context) -> Self {
+        let user = Profile {
+            name: "Marge Margarine",
+            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+            about: "Probably butter.",
+            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+        };
+
+        let theme = &ctx.get::<PelicanUI>().theme;
+        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let bumper = Bumper::single_button(Button::close(ctx, "Done", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx)));
+        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
+            Some(("unblock", AvatarIconStyle::Success)), false, 96.0
+        );
+        let msg = format!("{} has been unblocked", user.name);
+        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+        let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
+        let close = IconButton::close(ctx, |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
+        let header = Header::stack(ctx, Some(close), "User unblocked", None);
+        UserUnblocked(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
 }

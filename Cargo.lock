@@ -2953,6 +2953,7 @@ dependencies = [
  "nsvg",
  "once_cell",
  "qrcode",
+ "quircs",
  "rust_on_rails",
  "uuid",
 ]
@@ -3167,6 +3168,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4ce8c88de324ff838700f36fb6ab86c96df0e3c4ab6ef3a9b2044465cce1369"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "quircs"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec3fec90fc7a119692a6244ed4404d152878a47f0bf3f90f34dc79bb7a339d24"
+dependencies = [
+ "num-derive 0.4.2",
+ "num-traits",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
