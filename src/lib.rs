@@ -85,6 +85,7 @@ impl App for MyApp {
 
         let home = BitcoinHome::new(ctx);
         Box::new(Interface::new(ctx, home, navigation, profile))
+        // Box::new(pelican_ui::prelude::Text::new_with_edit(ctx, "Editable text example\nelpmaxe txet elbatidE", TextStyle::Heading, 20.0, Align::Left))
         // let bdk = ctx.get::<BDKPlugin>();
         // println!("Getting price");
         // bdk.get_price().await;
