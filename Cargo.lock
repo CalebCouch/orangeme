@@ -5173,6 +5173,7 @@ dependencies = [
  "glyphon",
  "hex",
  "image 0.25.6",
+ "unicode-segmentation",
  "wgpu",
  "wgpu_dyn_buffer",
 ]
