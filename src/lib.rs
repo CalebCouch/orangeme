@@ -1,16 +1,10 @@
 use rust_on_rails::prelude::*;
-use rust_on_rails::prelude::Text as BasicText;
 use pelican_ui::prelude::*;
-use serde::{Serialize, Deserialize};
-use std::sync::mpsc::{channel, Sender, Receiver};
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
 
- mod flows;
- pub use flows::*;
-
+mod flows;
+pub use flows::*;
 mod bdk;
-use bdk::{BDKPlugin, Address, Amount};
+use bdk::BDKPlugin;
 
 // #[derive(Debug, Clone, Component)]
 // pub struct WalletText(DefaultStack, BasicText, #[skip] Option<Address>);
@@ -42,7 +36,7 @@ use bdk::{BDKPlugin, Address, Amount};
 //         }
 //         true
 //     }
-// }
+// 
 
 pub struct MyApp;
 
@@ -52,8 +46,8 @@ impl App for MyApp {
         BDKPlugin::background_tasks(ctx).await
     }
     async fn plugins(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
-        let (plugin, mut tasks) = BDKPlugin::new(ctx, h_ctx).await;
-        let (pelican, p_tasks) = PelicanUI::new(ctx, h_ctx).await;
+        let (plugin, tasks) = BDKPlugin::new(ctx, h_ctx).await;
+        let (pelican, _p_tasks) = PelicanUI::new(ctx, h_ctx).await;
         //tasks.extend(p_tasks);
         
         (std::collections::HashMap::from([
@@ -65,7 +59,7 @@ impl App for MyApp {
 
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
         //ctx.get::<BDKPlugin>().init();
-        let navigation = (0 as usize, vec![
+        let navigation = (0_usize, vec![
             ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
             ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
             // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),

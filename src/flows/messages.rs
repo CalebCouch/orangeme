@@ -37,8 +37,8 @@ impl MessagesHome {
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
         let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Center);
 
-        let content = if messages.len() > 0 {
-            let messages_group = VerticalScrollable::new(messages);
+        let content = if !messages.is_empty() {
+            let messages_group = ListItemGroup::new(messages);
             Content::new(Offset::Start, vec![Box::new(messages_group)])
         } else {
             Content::new(Offset::Center, vec![Box::new(instructions)])
@@ -144,31 +144,29 @@ impl GroupInfo {
         let members = format!("This group has {} members.", contacts.len());
         let members = Box::leak(members.into_boxed_str());
         let text = Text::new(ctx, members, TextStyle::Secondary, text_size, Align::Center);
-        let content = Content::new(Offset::Start, vec![Box::new(text), Box::new(VerticalScrollable::new(contacts))]);
+        let content = Content::new(Offset::Start, vec![Box::new(text), Box::new(ListItemGroup::new(contacts))]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::GroupMessage.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Group Message Info", None);
         GroupInfo(Stack::center(), Page::new(header, content, None, false))
     }
 }
 
-pub fn get_recipients(ctx: &mut Context) -> Vec<Box<dyn Drawable>> {
-    let i = vec![
+pub fn get_recipients(ctx: &mut Context) -> Vec<ListItem> {
+    vec![
         ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
         ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
         ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
         ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln"),
         ListItem::recipient(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan Hayes", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln")
-    ];
-    i.into_iter().map(|l| Box::new(l) as Box<dyn Drawable>).collect()
+    ]
 }
 
-pub fn get_contacts(ctx: &mut Context) -> Vec<Box<dyn Drawable>> {
-    let i = vec![
+pub fn get_contacts(ctx: &mut Context) -> Vec<ListItem> {
+    vec![
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
         ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx))
-    ];
-    i.into_iter().map(|l| Box::new(l) as Box<dyn Drawable>).collect()
+    ]
 }

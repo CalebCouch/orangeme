@@ -4,11 +4,10 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::str::FromStr;
 
-use bdk_wallet::{Wallet, WalletTx, KeychainKind, ChangeSet};
+use bdk_wallet::{Wallet, KeychainKind, ChangeSet};
 use bdk_wallet::descriptor::template::Bip86;
 use bdk_wallet::bitcoin::bip32::Xpriv;
 use bdk_wallet::bitcoin::FeeRate;
-use bdk_wallet::error::CreateTxError;
 pub use bdk_wallet::bitcoin::{Amount, Network, Address};
 use bdk_wallet::{PersistedWallet, WalletPersister};
 use bdk_wallet::chain::Merge;
@@ -27,7 +26,7 @@ pub struct MemoryPersister(ChangeSet);
 impl WalletPersister for MemoryPersister {
     type Error = ();
     fn initialize(persister: &mut Self) -> Result<ChangeSet, Self::Error> {Ok(persister.0.clone())}
-    fn persist(persister: &mut Self, changeset: &ChangeSet) -> Result<(), Self::Error> {Ok(persister.0.merge(changeset.clone()))}
+    fn persist(persister: &mut Self, changeset: &ChangeSet) -> Result<(), Self::Error> {persister.0.merge(changeset.clone()); Ok(())}
 }
 
 pub struct CachePersister(Arc<Mutex<MemoryPersister>>);
@@ -53,7 +52,7 @@ pub struct GetPrice(Arc<Mutex<f32>>);
 impl Task for GetPrice {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(10))}
 
-    async fn run(&mut self, h_ctx: &mut HeadlessContext) {
+    async fn run(&mut self, _h_ctx: &mut HeadlessContext) {
         let url = "https://api.coinbase.com/v2/prices/spot?currency=USD";
         let body = reqwest::get(url).await.expect("Could not get url").text().await.expect("Could not get text");
         let json: Value = serde_json::from_str(&body).expect("Could not serde to string");
@@ -70,7 +69,7 @@ pub struct BDKPlugin {
     price: Arc<Mutex<f32>>,
 }
 impl BDKPlugin {
-    pub async fn init(&mut self) {//Include theme
+    pub async fn _init(&mut self) {//Include theme
         println!("Initialized BDK");
     }
 
@@ -80,8 +79,8 @@ impl BDKPlugin {
             Xpriv::new_master(Network::Bitcoin, &secp256k1::SecretKey::new(&mut secp256k1::rand::thread_rng()).secret_bytes()).unwrap()
         );
         println!("key: {}", hex::encode(key.private_key.secret_bytes()));
-        cache.set(&WalletKey(Some(key.clone()))).await;
-        (Bip86(key.clone(), KeychainKind::External), 
+        cache.set(&WalletKey(Some(key))).await;
+        (Bip86(key, KeychainKind::External), 
          Bip86(key, KeychainKind::Internal))
     }
 
@@ -125,7 +124,7 @@ impl BDKPlugin {
     }
 
     pub fn set_recipient_address(&mut self, address: String) -> bool {
-        if let Some(add) = Address::from_str(&address).ok() {
+        if let Ok(add) = Address::from_str(&address) {
             *self.recipient_address.lock().unwrap() = add.require_network(Network::Bitcoin).ok();
             true
         } else { false }
@@ -152,12 +151,12 @@ impl BDKPlugin {
 
     pub fn get_dust_limit(&self) -> f32 {(546 / SATS) as f32}
 
-    pub fn add_password(&self, password: &str) {
+    pub fn _add_password(&self, password: &str) {
         use objc2_core_foundation::CFDictionary;
         use objc2_core_foundation::CFString;
         use objc2_core_foundation::CFData;
         use objc2_core_foundation::CFType;
-        use objc2_security::SecItemAdd;
+        // use objc2_security::SecItemAdd;
         use objc2_security::SecItemDelete;
         use objc2_security::kSecAttrService;
         use objc2_security::kSecValueData;
@@ -166,9 +165,9 @@ impl BDKPlugin {
         use objc2_security::kSecClass;
 
         use std::ptr;
-        let account_cf = CFString::new("did::nym::happyduckyforeverrrrrr");
-        let service_cf = CFString::new("orange.me");
-        let password_data = CFData::from_buffer(password.as_bytes());
+        let account_cf = CFString::from_str("did::nym::happyduckyforeverrrrrr");
+        let service_cf = CFString::from_str("orange.me");
+        let password_data = CFData::from_bytes(password.as_bytes());
         let keys: [&CFType; 4] = unsafe { [
             kSecClass.as_ref(),
             kSecAttrAccount.as_ref(),
@@ -199,9 +198,6 @@ impl BDKPlugin {
 
         if let Some(query_dict) = query {
             unsafe { SecItemDelete(query_dict.as_ref()) };
-            let status = unsafe { SecItemAdd(query_dict.as_ref(), std::ptr::null_mut()) };
-            // println!("OSStatus: {}", status);
-            
         } else {
             println!("Failed to create CFDictionary.");
         }
@@ -233,7 +229,7 @@ impl Plugin for BDKPlugin {
         tasks![WalletSync(wallet, persister)]
     }
 
-    async fn new(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
+    async fn new(_ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
         let (wallet, persister) = Self::get_wallet(&mut h_ctx.cache).await;
         let persister = Arc::new(Mutex::new(persister));
         let price = Arc::new(Mutex::new(0.0));
@@ -252,12 +248,12 @@ impl Task for WalletSync {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(5))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        let mut sync_request = self.0.start_sync_with_revealed_spks()
+        let _sync_request = self.0.start_sync_with_revealed_spks()
         .inspect(|item, sync| {println!("items: {:?}, script: {:?}", item, sync);})
         .build();
 
 
-        let mut scan_request = self.0.start_full_scan().build();
+        let scan_request = self.0.start_full_scan().build();
 
         let builder = Builder::new("https://blockstream.info/api");
         let blocking_client = builder.build_blocking();
