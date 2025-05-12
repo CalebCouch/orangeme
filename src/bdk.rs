@@ -4,7 +4,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::str::FromStr;
 
-use bdk_wallet::{Wallet, KeychainKind, ChangeSet};
+use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams};
 use bdk_wallet::descriptor::template::Bip86;
 use bdk_wallet::bitcoin::bip32::Xpriv;
 use bdk_wallet::bitcoin::FeeRate;
@@ -36,14 +36,13 @@ impl Task for CachePersister {
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
         println!("persisting");
-        let mut change_set = h_ctx.cache.get::<MemoryPersister>().await;
+        let mut persister = h_ctx.cache.get::<MemoryPersister>().await;
         {
             let mut amcs = self.0.lock().unwrap();
-            amcs.0.merge(change_set.0);
-            change_set = (*amcs).clone();
+            amcs.0.merge(persister.0);
+            persister = (*amcs).clone();
         }
-        println!("chang_set: {:?}", change_set.0);
-        h_ctx.cache.set(&change_set).await;
+        h_ctx.cache.set(&persister).await;
     }
 }
 
@@ -63,7 +62,6 @@ impl Task for GetPrice {
 }
 
 pub struct BDKPlugin {
-    wallet: PersistedWallet<MemoryPersister>,
     persister: Arc<Mutex<MemoryPersister>>,
     recipient_address: Arc<Mutex<Option<Address>>>,
     price: Arc<Mutex<f32>>,
@@ -84,9 +82,13 @@ impl BDKPlugin {
          Bip86(key, KeychainKind::Internal))
     }
 
-    pub async fn get_wallet(cache: &mut Cache) -> (PersistedWallet<MemoryPersister>, MemoryPersister) {
+    pub fn get_wallet(&mut self) -> PersistedWallet<MemoryPersister> {
+        let mut db = self.persister.lock().unwrap();
+        PersistedWallet::load(&mut *db, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.")
+    }
+
+    pub async fn create_wallet(cache: &mut Cache) -> MemoryPersister {
         let mut db = cache.get::<MemoryPersister>().await; 
-        println!("db_index: {:?}", db.0.indexer);
         let (ext, int) = Self::get_descriptors(cache).await;
         let network = Network::Bitcoin;
         let wallet_opt = Wallet::load()
@@ -96,7 +98,7 @@ impl BDKPlugin {
             .check_network(network)
             .load_wallet(&mut db)
             .expect("wallet");
-        (match wallet_opt {
+        match wallet_opt {
             Some(wallet) => wallet,
             None => {
                 println!("created: {:?}", db.0.indexer);
@@ -105,17 +107,21 @@ impl BDKPlugin {
                 .create_wallet(&mut db)
                 .expect("wallet")
             }
-        }, db)
+        };
+        db
     }
 
-    pub fn get_balance(&self) -> Amount {
-        self.wallet.balance().total()
+    pub fn get_balance(&mut self) -> Amount {
+        let b = self.get_wallet().balance();
+        println!("MY Balance: {:?}", b);
+        b.total()
     }
 
     pub fn get_new_address(&mut self) -> Address {
-        let address = self.wallet.reveal_next_address(KeychainKind::External);
+        let mut wallet = self.get_wallet();
+        let address = wallet.reveal_next_address(KeychainKind::External);
         println!("a: {:?}", address);
-        self.wallet.persist(&mut self.persister.lock().unwrap()).expect("write is okay");
+        wallet.persist(&mut self.persister.lock().unwrap()).expect("write is okay");
         address.address
     }
 
@@ -135,17 +141,18 @@ impl BDKPlugin {
     }
 
     pub fn get_fees(&mut self, btc: f64) -> (f32, f32) {
-        println!("RUNNING GET FEES");
-        let address = self.get_recipient_address().expect("Address not found.");
-        println!("GOT ADDRESS");
-        let mut tx_builder = self.wallet.build_tx();
-        println!("BUILD TX BUILDER");
-        tx_builder
-            .add_recipient(address.script_pubkey(), Amount::from_btc(btc).expect("Could not parse"))
-            .fee_rate(FeeRate::from_sat_per_vb(5).expect("valid feerate"));
-        println!("BEFORE");
-        let psbt = tx_builder.finish().expect("HUh?");
-        println!("AFTER: psdbt {:?}", psbt);
+        // println!("RUNNING GET FEES");
+        // let address = self.get_recipient_address().expect("Address not found.");
+        // println!("GOT ADDRESS");
+        // let mut wallet = self.get_wallet();
+        // let mut tx_builder = wallet.build_tx();
+        // println!("BUILD TX BUILDER");
+        // tx_builder
+        //     .add_recipient(address.script_pubkey(), Amount::from_btc(btc).expect("Could not parse"))
+        //     .fee_rate(FeeRate::from_sat_per_vb(5).expect("valid feerate"));
+        // println!("BEFORE");
+        // let psbt = tx_builder.finish().expect("HUh?");
+        // println!("AFTER: psdbt {:?}", psbt);
         (0.0, 0.0)
     }
 
@@ -225,16 +232,15 @@ impl BDKPlugin {
 
 impl Plugin for BDKPlugin {
     async fn background_tasks(ctx: &mut HeadlessContext) -> Tasks {
-        let (wallet, persister) = Self::get_wallet(&mut ctx.cache).await;
-        tasks![WalletSync(wallet, persister)]
+        let persister = Self::create_wallet(&mut ctx.cache).await;
+        tasks![WalletSync(persister)]
     }
 
     async fn new(_ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
-        let (wallet, persister) = Self::get_wallet(&mut h_ctx.cache).await;
+        let persister = Self::create_wallet(&mut h_ctx.cache).await;
         let persister = Arc::new(Mutex::new(persister));
         let price = Arc::new(Mutex::new(0.0));
         (BDKPlugin{
-            wallet, 
             persister: persister.clone(), 
             price: price.clone(), 
             recipient_address: Arc::new(Mutex::new(None)),
@@ -242,29 +248,26 @@ impl Plugin for BDKPlugin {
     }
 }
 
-pub struct WalletSync(PersistedWallet<MemoryPersister>, MemoryPersister);
+pub struct WalletSync(MemoryPersister);
 #[async_trait]
 impl Task for WalletSync {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(5))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        let _sync_request = self.0.start_sync_with_revealed_spks()
-        .inspect(|item, sync| {println!("items: {:?}, script: {:?}", item, sync);})
-        .build();
+        let mut persister = h_ctx.cache.get::<MemoryPersister>().await;
+        let mut wallet = PersistedWallet::load(&mut persister, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.");
 
-
-        let scan_request = self.0.start_full_scan().build();
+        let scan_request = wallet.start_full_scan().build();
 
         let builder = Builder::new("https://blockstream.info/api");
         let blocking_client = builder.build_blocking();
-        //let res = blocking_client.sync(sync_request, 1).unwrap();
         let res = blocking_client.full_scan(scan_request, 10, 1).unwrap();
-        println!("res: {:?}", res);
-        self.0.persist(&mut self.1).expect("write is okay");
-        let change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
-        self.1.0.merge(change_set);
-        println!("{:?}", self.1.0);
-        h_ctx.cache.set(&self.1.0).await;
+        wallet.apply_update(Update::from(res)).unwrap();
+
+        wallet.persist(&mut persister).expect("write is okay");
+        let persister2 = h_ctx.cache.get::<MemoryPersister>().await;
+        self.0.0.merge(persister2.0);
+        h_ctx.cache.set(&persister).await;
     }
 }
 
