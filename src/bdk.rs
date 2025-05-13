@@ -1,10 +1,10 @@
 use rust_on_rails::prelude::*;
 use serde::{Serialize, Deserialize};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::str::FromStr;
 
-use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams};
+use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams, WalletTx};
 use bdk_wallet::descriptor::template::Bip86;
 use bdk_wallet::bitcoin::bip32::Xpriv;
 use bdk_wallet::bitcoin::FeeRate;
@@ -17,6 +17,8 @@ use bdk_esplora::EsploraExt;
 use serde_json::Value; // for getting bitcoin price from coinbase.com
 
 const SATS: u64 = 1_000_000;
+
+// store price in the cache, pull it out on startup
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
@@ -64,6 +66,7 @@ impl Task for GetPrice {
 pub struct BDKPlugin {
     persister: Arc<Mutex<MemoryPersister>>,
     recipient_address: Arc<Mutex<Option<Address>>>,
+    wallet: Arc<Mutex<Option<PersistedWallet<MemoryPersister>>>>,
     price: Arc<Mutex<f32>>,
 }
 impl BDKPlugin {
@@ -82,11 +85,20 @@ impl BDKPlugin {
          Bip86(key, KeychainKind::Internal))
     }
 
-    pub fn get_wallet(&mut self) -> PersistedWallet<MemoryPersister> {
-        let mut db = self.persister.lock().unwrap();
-        PersistedWallet::load(&mut *db, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.")
-    }
-
+    pub fn get_wallet(&self) -> MutexGuard<Option<PersistedWallet<MemoryPersister>>> {
+        let mut wallet_guard = self.wallet.lock().unwrap();
+    
+        if wallet_guard.is_none() {
+            println!("Wallet was none");
+            let mut db = self.persister.lock().unwrap();
+            let wallet = PersistedWallet::load(&mut *db, LoadParams::new())
+                .expect("Could not load wallet")
+                .expect("Wallet was none.");
+            *wallet_guard = Some(wallet);
+        }
+    
+        wallet_guard
+    }    
     pub async fn create_wallet(cache: &mut Cache) -> MemoryPersister {
         let mut db = cache.get::<MemoryPersister>().await; 
         let (ext, int) = Self::get_descriptors(cache).await;
@@ -111,17 +123,82 @@ impl BDKPlugin {
         db
     }
 
+    pub fn get_transactions(&mut self) {
+        use chrono::NaiveDateTime;
+        use std::collections::HashSet;
+
+        let mut wallet = self.get_wallet();
+        let wallet = wallet.as_mut().unwrap();
+
+        let txs = wallet.transactions_sort_by(|tx1, tx2| tx2.chain_position.cmp(&tx1.chain_position));
+
+        for canonical_tx in txs {
+            let tx_node = canonical_tx.tx_node;
+            let txid = tx_node.txid;
+            let tx = &tx_node.tx;
+
+            // Calculate received amount by checking which outputs are ours
+            let received: u64 = tx
+                .output
+                .iter()
+                .filter(|out| wallet.is_mine(out.script_pubkey.clone()))
+                .map(|out| out.value.to_sat())
+                .sum();
+
+            let mut input_sum = 0;
+            for input in &tx.input {
+                if let Some(prevout) = wallet.get_utxo(input.previous_output) {
+                    input_sum += prevout.txout.value.to_sat();
+                }
+            }
+    
+            let sent = if received <= input_sum {
+                input_sum - received
+            } else {
+                0 // Self-transfer or edge case
+            };
+    
+            let fee = if input_sum > 0 && tx.output.iter().map(|o| o.value.to_sat()).sum::<u64>() < input_sum {
+                Some(input_sum - tx.output.iter().map(|o| o.value.to_sat()).sum::<u64>())
+            } else {
+                None
+            };
+
+            // if let Some(last_seen) = tx_node.last_seen_unconfirmed {
+            //     println!("Last seen as unconfirmed at Unix timestamp: {}", last_seen);
+            // } else {
+            //     println!("Transaction not seen as unconfirmed");
+            // }
+    
+            let direction = if sent > 0 && received == 0 {
+                "Sent"
+            } else if received > 0 && sent == 0 {
+                "Received"
+            } else {
+                "Self-transfer or mixed"
+            };
+    
+            // println!("TXID: {}", txid);
+            // // println!("Date/time: {:?}", timestamp);
+            // println!("Direction: {}", direction);
+            // println!("Received: {} sats", received);
+            // println!("Sent: {} sats", sent);
+            // println!("Fee: {:?}", fee.map(|f| format!("{} sats", f)));
+            // println!("-----------------------------");
+        }
+    }
+
+
     pub fn get_balance(&mut self) -> Amount {
-        let b = self.get_wallet().balance();
-        println!("MY Balance: {:?}", b);
-        b.total()
+        let mut wallet = self.get_wallet();
+        wallet.as_mut().unwrap().balance().total()
     }
 
     pub fn get_new_address(&mut self) -> Address {
-        let mut wallet = self.get_wallet();
+        let mut persister = self.persister.lock().unwrap();
+        let mut wallet: PersistedWallet<MemoryPersister> = self.wallet.lock().unwrap().take().expect("wallet was none");
         let address = wallet.reveal_next_address(KeychainKind::External);
-        println!("a: {:?}", address);
-        wallet.persist(&mut self.persister.lock().unwrap()).expect("write is okay");
+        wallet.persist(&mut persister).expect("write is okay");
         address.address
     }
 
@@ -244,6 +321,7 @@ impl Plugin for BDKPlugin {
             persister: persister.clone(), 
             price: price.clone(), 
             recipient_address: Arc::new(Mutex::new(None)),
+            wallet: Arc::new(Mutex::new(None)),
         }, tasks![CachePersister(persister), GetPrice(price)])
     }
 }

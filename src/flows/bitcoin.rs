@@ -69,6 +69,7 @@ impl OnEvent for BitcoinHome {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
             let bdk = ctx.get::<BDKPlugin>();
+            bdk.get_transactions();
             let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
             // println!("BTC {:?}, price {:?}", btc, price);
             // bdk.add_password("lilbaby-secret-passcode");
