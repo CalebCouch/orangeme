@@ -1,9 +1,7 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
-
 use crate::BDKPlugin;
-use crate::BitcoinFlow;
 
 #[derive(Debug, Copy, Clone)]
 pub enum ProfilesFlow {
@@ -45,9 +43,9 @@ impl Account {
         let about_input = TextInput::new(ctx, None, Some("About me"), "About me...", None, icon_button);
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
-        let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy_address]));
-        let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let nym = DataItem::new(ctx, None, "Orange Identity", Some("did::nym::38iKdailTwedpr92Daixx90et"), None, None, Some(vec![copy_nym]));
 
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(about_input), Box::new(nym), Box::new(address)]);
@@ -82,10 +80,10 @@ impl UserProfile {
         ]);
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
-        let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy_address]));
 
-        let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |ctx: &mut Context| println!("Copy"));
+        let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let nym = DataItem::new(ctx, None, "Orange Identity", Some(user.nym), None, None, Some(vec![copy_nym]));
 
         let about_me = DataItem::new(ctx, None, "About me", Some(user.about), None, None, None);
@@ -110,7 +108,7 @@ impl BlockUser {
         };
 
         let theme = &ctx.get::<PelicanUI>().theme;
-        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let text_size = theme.fonts.size.h4;
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
         let confirm = Button::primary(ctx, "Block", |ctx: &mut Context| ProfilesFlow::UserBlocked.navigate(ctx));
         let bumper = Bumper::double_button(cancel, confirm);
@@ -138,7 +136,7 @@ impl UserBlocked {
         };
 
         let theme = &ctx.get::<PelicanUI>().theme;
-        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let text_size = theme.fonts.size.h4;
         let bumper = Bumper::single_button(Button::close(ctx, "Done", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx)));
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
             Some(("block", AvatarIconStyle::Danger)), false, 96.0

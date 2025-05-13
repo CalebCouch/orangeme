@@ -3010,17 +3010,12 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "pelican_ui"
-version = "0.1.0"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f5a8618b7cf646f0b9a4454e500f0845a28c48b8fd6da36967afef0c326635e"
 dependencies = [
- "bdk_wallet",
- "downcast-rs 2.0.1",
  "dyn-clone",
- "fast_image_resize",
- "image 0.25.6",
- "nsvg",
- "once_cell",
  "qrcode",
- "quircs",
  "rust_on_rails",
  "uuid",
 ]
@@ -3150,20 +3145,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8cf8e6a8aa66ce33f63993ffc4ea4271eb5b0530a9002db8455ea6050c77bfa"
 
 [[package]]
-name = "proc"
-version = "0.1.0"
-dependencies = [
- "proc-macro2 1.0.95",
- "quote 1.0.40",
- "syn 2.0.100",
-]
-
-[[package]]
 name = "proc-macro-crate"
-version = "3.3.0"
+version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "edce586971a4dfaa28950c6f18ed55e0406c1ab88bbce2c6f6293a7aaba73d35"
+checksum = "b00f26d3400549137f92511a46ac1cd8ce37cb5598a96d382381458b992a5d24"
 dependencies = [
+ "toml_datetime",
  "toml_edit",
 ]
 
@@ -3235,17 +3222,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4ce8c88de324ff838700f36fb6ab86c96df0e3c4ab6ef3a9b2044465cce1369"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "quircs"
-version = "0.10.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec3fec90fc7a119692a6244ed4404d152878a47f0bf3f90f34dc79bb7a339d24"
-dependencies = [
- "num-derive 0.4.2",
- "num-traits",
- "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -3580,7 +3556,9 @@ dependencies = [
 
 [[package]]
 name = "rust_on_rails"
-version = "3.1.0"
+version = "4.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f76975bc3288993c258ca155f57d087275f75f26eacd2017a985c0e9b21ef0b0"
 dependencies = [
  "android_logger",
  "async-trait",
@@ -3595,9 +3573,9 @@ dependencies = [
  "jni",
  "log",
  "nsvg",
- "proc",
  "raw-window-handle",
  "rusqlite",
+ "rust_on_rails_proc",
  "serde",
  "serde_json",
  "tokio",
@@ -3607,6 +3585,17 @@ dependencies = [
  "wgpu",
  "wgpu_canvas",
  "winit",
+]
+
+[[package]]
+name = "rust_on_rails_proc"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8706e771282560a96b1ccdd65726a2ba8eb22cbab1770e84306d68a91ecd1d2"
+dependencies = [
+ "proc-macro2 1.0.95",
+ "quote 1.0.40",
+ "syn 2.0.100",
 ]
 
 [[package]]
@@ -4431,9 +4420,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.8.20"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd87a5cdd6ffab733b2f74bc4fd7ee5fff6634124999ac278c35fc78c6120148"
+checksum = "185d8ab0dfbb35cf1399a6344d8484209c088f75f8f68230da55d48d95d43e3d"
 dependencies = [
  "serde",
  "serde_spanned",
@@ -4443,18 +4432,18 @@ dependencies = [
 
 [[package]]
 name = "toml_datetime"
-version = "0.6.8"
+version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0dd7358ecb8fc2f8d014bf86f6f638ce72ba252a2c3a2572f2a795f1d23efb41"
+checksum = "7cda73e2f1397b1262d6dfdcef8aafae14d1de7748d66822d3bfeeb6d03e5e4b"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "toml_edit"
-version = "0.22.24"
+version = "0.20.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17b4795ff5edd201c7cd6dca065ae59972ce77d1b80fa0a84d94950ece7d1474"
+checksum = "396e4d48bbb2b7554c944bde63101b5ae446cff6ec4a24227428f15eb72ef338"
 dependencies = [
  "indexmap",
  "serde",
@@ -5178,13 +5167,16 @@ dependencies = [
 
 [[package]]
 name = "wgpu_canvas"
-version = "3.1.0"
+version = "4.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "920d6daa94df05f9177138f8919bcfd554d1de2f8fa39f81cb093cb158dc987c"
 dependencies = [
  "bytemuck",
  "fast_image_resize",
  "glyphon",
  "hex",
  "image 0.25.6",
+ "unicode-segmentation",
  "wgpu",
  "wgpu_dyn_buffer",
 ]
@@ -5713,9 +5705,9 @@ dependencies = [
 
 [[package]]
 name = "winnow"
-version = "0.7.7"
+version = "0.5.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6cb8234a863ea0e8cd7284fcdd4f145233eb00fee02bbdd9861aec44e6477bc5"
+checksum = "f593a95398737aeed53e489c785df13f3618e41dbcd6718c6addbf1395aa6876"
 dependencies = [
  "memchr",
 ]

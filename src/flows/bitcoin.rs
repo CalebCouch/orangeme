@@ -3,6 +3,7 @@ use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 
 use crate::BDKPlugin;
+use crate::get_contacts;
 
 #[derive(Debug, Copy, Clone)]
 pub enum BitcoinFlow {
@@ -55,7 +56,7 @@ impl BitcoinHome {
         // }).collect();
 
         let offset = if !transactions.is_empty() {
-            content.push(Box::new(VerticalScrollable::new(transactions)));
+            content.push(Box::new(ListItemGroup::new(transactions)));
             Offset::Start
         } else { Offset::Center };
 
@@ -68,6 +69,7 @@ impl OnEvent for BitcoinHome {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
             let bdk = ctx.get::<BDKPlugin>();
+            bdk.get_transactions();
             let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
             // println!("BTC {:?}, price {:?}", btc, price);
             // bdk.add_password("lilbaby-secret-passcode");
@@ -123,7 +125,7 @@ impl OnEvent for Address {
             let input_address = input.get_value();
             let is_valid = bdk.set_recipient_address(input_address.to_string());
 
-            let error = (*input.get_error() || input.get_value().is_empty() || !is_valid);
+            let error = *input.get_error() || input.get_value().is_empty() || !is_valid;
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
             let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
             let disabled = *button.status() == ButtonState::Disabled;
@@ -159,7 +161,7 @@ impl SelectContact {
     fn new(ctx: &mut Context) -> Self {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
-        let contact_list = VerticalScrollable::new(get_contacts(ctx));
+        let contact_list = ListItemGroup::new(get_contacts(ctx));
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(contact_list)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
@@ -311,7 +313,7 @@ impl Receive {
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]);
 
         let button = if pelican_ui::config::IS_MOBILE {
-            Button::primary(ctx, "Share", |ctx: &mut Context| println!("Sharing...")) 
+            Button::primary(ctx, "Share", |_ctx: &mut Context| println!("Sharing...")) 
         } else {
             Button::primary(ctx, "Copy Address", move |ctx: &mut Context| ctx.set_clipboard(adrs.clone()) )
         };
@@ -357,15 +359,4 @@ impl ViewTransaction {
         let header = Header::stack(ctx, Some(close), title, None);
         ViewTransaction(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
-}
-
-pub fn get_contacts(ctx: &mut Context) -> Vec<Box<dyn Drawable>> {
-    let i = vec![
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context|  BitcoinFlow::Address.navigate(ctx))
-    ];
-    i.into_iter().map(|l| Box::new(l) as Box<dyn Drawable>).collect()
 }
