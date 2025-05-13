@@ -25,7 +25,7 @@ security-framework = "3.2.0"
 objc2-security = { version = "0.3.1", features = ["SecBase"] }
 objc2-core-foundation = "0.3.1"
 rust_on_rails = "4.0.1"
-pelican_ui = "1.0.3"
+pelican_ui = "1.0.4"
 
 [lib]
 name="main"

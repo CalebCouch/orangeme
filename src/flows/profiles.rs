@@ -34,7 +34,7 @@ impl AppPage for Account {}
 impl Account {
     pub fn new(ctx: &mut Context) -> Self {
         let header = Header::home(ctx, "Account");
-        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("edit", AvatarIconStyle::Secondary)), false, 128.0);
+        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("edit", AvatarIconStyle::Secondary)), false, 128.0, None);
         let save = Button::disabled(ctx, "Save", |_ctx: &mut Context| println!("Save changes..."));
         let bumper = Bumper::single_button(save);
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
@@ -71,7 +71,7 @@ impl UserProfile {
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| crate::MessagesFlow::GroupInfo.navigate(ctx));
         let header = Header::stack(ctx, Some(back), user.name, None);
 
-        let avatar = Avatar::new(ctx, user.avatar, None, false, 128.0);
+        let avatar = Avatar::new(ctx, user.avatar, None, false, 128.0, None);
 
         let buttons = IconButtonRow::new(ctx, vec![
             ("messages", Box::new(|ctx: &mut Context| crate::MessagesFlow::DirectMessage.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
@@ -112,7 +112,7 @@ impl BlockUser {
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx));
         let confirm = Button::primary(ctx, "Block", |ctx: &mut Context| ProfilesFlow::UserBlocked.navigate(ctx));
         let bumper = Bumper::double_button(cancel, confirm);
-        let avatar = Avatar::new(ctx, user.avatar, Some(("block", AvatarIconStyle::Danger)), false, 96.0);
+        let avatar = Avatar::new(ctx, user.avatar, Some(("block", AvatarIconStyle::Danger)), false, 96.0, None);
         let msg = format!("Are you sure you want to block {}?", user.name);
         let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
@@ -139,7 +139,7 @@ impl UserBlocked {
         let text_size = theme.fonts.size.h4;
         let bumper = Bumper::single_button(Button::close(ctx, "Done", |ctx: &mut Context| ProfilesFlow::UserProfile.navigate(ctx)));
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
-            Some(("block", AvatarIconStyle::Danger)), false, 96.0
+            Some(("block", AvatarIconStyle::Danger)), false, 96.0, None
         );
         let msg = format!("{} has been blocked", user.name);
         let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);

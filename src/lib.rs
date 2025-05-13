@@ -78,7 +78,7 @@ impl App for MyApp {
         let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| ProfilesFlow::Account.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
 
         let home = BitcoinHome::new(ctx);
-        Box::new(Interface::new(ctx, home, navigation, profile))
+        Box::new(Interface::new(ctx, home, Some(navigation), Some(profile)))
         // Box::new(pelican_ui::prelude::Text::new_with_edit(ctx, "Editable text example\nelpmaxe txet elbatidE", TextStyle::Heading, 20.0, Align::Left))
         // let bdk = ctx.get::<BDKPlugin>();
         // println!("Getting price");

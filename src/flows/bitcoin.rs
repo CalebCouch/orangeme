@@ -228,8 +228,8 @@ impl AppPage for Speed {}
 impl Speed {
     fn new(ctx: &mut Context) -> Self {
         let speed_selector = ListItemSelector::new(ctx,
-            ("Standard", "Arrives in ~2 hours", "$0.18 Bitcoin network fee"),
-            ("Priority", "Arrives in ~30 minutes", "$0.35 Bitcoin network fee"),
+            ("Standard", "Arrives in ~2 hours", Some("$0.18 Bitcoin network fee")),
+            ("Priority", "Arrives in ~30 minutes", Some("$0.35 Bitcoin network fee")),
             None, None
         );
 
@@ -287,7 +287,7 @@ impl Success {
         let bumper = Bumper::single_button(Button::close(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx)));
 
         let (text, splash) = if let Some(c) = contact {
-            ("You sent $10.00 to Ella Couch", Box::new(Avatar::new(ctx, c, None, false, 96.0)) as Box<dyn Drawable>)
+            ("You sent $10.00 to Ella Couch", Box::new(Avatar::new(ctx, c, None, false, 96.0, None)) as Box<dyn Drawable>)
         } else {
             ("You sent $10.00", Box::new(Icon::new(ctx, "bitcoin", color, 96.0)) as Box<dyn Drawable>)
         };
