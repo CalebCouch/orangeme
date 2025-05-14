@@ -6,6 +6,8 @@ pub use flows::*;
 mod bdk;
 use bdk::BDKPlugin;
 
+use ucp_rust::UCPPlugin;
+
 // #[derive(Debug, Clone, Component)]
 // pub struct WalletText(DefaultStack, BasicText, #[skip] Option<Address>);
 // impl WalletText {
@@ -48,16 +50,21 @@ impl App for MyApp {
     async fn plugins(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
         let (plugin, tasks) = BDKPlugin::new(ctx, h_ctx).await;
         let (pelican, _p_tasks) = PelicanUI::new(ctx, h_ctx).await;
+        let (ucp, tasks) = UCPPlugin::new(ctx, h_ctx).await;
+        
         //tasks.extend(p_tasks);
         
         (std::collections::HashMap::from([
             (std::any::TypeId::of::<BDKPlugin>(), Box::new(plugin) as Box<dyn std::any::Any>),
-            (std::any::TypeId::of::<PelicanUI>(), Box::new(pelican) as Box<dyn std::any::Any>)
+            (std::any::TypeId::of::<PelicanUI>(), Box::new(pelican) as Box<dyn std::any::Any>),
+            (std::any::TypeId::of::<UCPPlugin>(), Box::new(ucp) as Box<dyn std::any::Any>)
         ]), tasks)
     }
     //END TODO
 
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
+        ctx.include_assets(include_assets!("./resources/images"));
+
         //ctx.get::<BDKPlugin>().init();
         let navigation = (0_usize, vec![
             ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
@@ -75,7 +82,7 @@ impl App for MyApp {
       //))
 
 
-        let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| ProfilesFlow::Account.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
+        let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| AccountsFlow::Account.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
 
         let home = BitcoinHome::new(ctx);
         Box::new(Interface::new(ctx, home, Some(navigation), Some(profile)))

@@ -45,7 +45,7 @@ impl BitcoinHome {
         let send = Button::primary(ctx, "Send", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx) );
         let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| BitcoinFlow::Receive.navigate(ctx) );
         let header = Header::home(ctx, "Wallet");
-        let bumper = Bumper::double_button(receive, send);
+        let bumper = Bumper::double_button(ctx, receive, send);
         let mut content = vec![Box::new(AmountDisplay::new(ctx)) as Box<dyn Drawable>];
 
         let transactions = Vec::new();
@@ -93,8 +93,7 @@ impl Address {
 
         let address_string = address.map(|add| add.to_string());
         let address_ref: Option<&'static str> = address_string
-            .as_ref()
-            .map(|s| Box::leak(s.clone().into_boxed_str()) as &'static str);
+            .as_ref().map(|s| Box::leak(s.clone().into_boxed_str()) as &'static str);
 
         let address_input = TextInput::new(ctx, address_ref, None, "Bitcoin address...", None, icon_button);
 
@@ -108,7 +107,7 @@ impl Address {
         let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send bitcoin", None);
-        let bumper = Bumper::single_button(continue_btn);
+        let bumper = Bumper::single_button(ctx, continue_btn);
         let content = Content::new(Offset::Start, vec![Box::new(address_input), Box::new(quick_actions)]);
 
         Address(Stack::default(), Page::new(header, content, Some(bumper), false), ButtonState::Default)
@@ -175,7 +174,8 @@ impl AppPage for Amount {}
 impl Amount {
     fn new(ctx: &mut Context) -> Self {
         let is_mobile = pelican_ui::config::IS_MOBILE;
-        let bumper = Bumper::single_button(Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx)));
+        let button = Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
+        let bumper = Bumper::single_button(ctx, button);
         let amount_display = AmountInput::new(ctx);
         let numeric_keypad = NumericKeypad::new(ctx);
         let mut content: Vec<Box<dyn Drawable>> = vec![Box::new(amount_display)];
@@ -233,7 +233,8 @@ impl Speed {
             None, None
         );
 
-        let bumper = Bumper::single_button(Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Confirm.navigate(ctx)));
+        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Confirm.navigate(ctx));
+        let bumper = Bumper::single_button(ctx, button);
         let content = Content::new(Offset::Start, vec![Box::new(speed_selector)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Transaction speed", None);
@@ -247,7 +248,8 @@ impl OnEvent for Confirm {}
 impl AppPage for Confirm {}
 impl Confirm {
     fn new(ctx: &mut Context) -> Self {
-        let bumper = Bumper::single_button(Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Success.navigate(ctx)));
+        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Success.navigate(ctx));
+        let bumper = Bumper::single_button(ctx, button);
         let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
@@ -284,7 +286,8 @@ impl Success {
         let contact = None; //Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary));
         let theme = &ctx.get::<PelicanUI>().theme;
         let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
-        let bumper = Bumper::single_button(Button::close(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx)));
+        let button = Button::close(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let bumper = Bumper::single_button(ctx, button);
 
         let (text, splash) = if let Some(c) = contact {
             ("You sent $10.00 to Ella Couch", Box::new(Avatar::new(ctx, c, None, false, 96.0, None)) as Box<dyn Drawable>)
@@ -318,7 +321,7 @@ impl Receive {
             Button::primary(ctx, "Copy Address", move |ctx: &mut Context| ctx.set_clipboard(adrs.clone()) )
         };
 
-        let bumper = Bumper::single_button(button);
+        let bumper = Bumper::single_button(ctx, button);
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
         Receive(Stack::default(), Page::new(header, content, Some(bumper), false))
@@ -333,7 +336,7 @@ impl ViewTransaction {
     fn new(ctx: &mut Context) -> Self {
         let is_received = false;
         let done_btn = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
-        let bumper = Bumper::new(vec![Box::new(done_btn)]);
+        let bumper = Bumper::single_button(ctx, done_btn);
 
         let (address, amount, title) = if is_received {
             ("Received at address", "Amount received", "Received bitcoin")

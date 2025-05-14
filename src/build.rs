@@ -10,7 +10,7 @@ fn main() {
         .args([
             "--sdk", "macosx",
             "swiftc",
-            "-target", "arm64-apple-macos13",
+            "-target", "aarch64-apple-macos13",
             "-emit-library",
             "-o", lib_path.to_str().unwrap(),
             "-framework", "AppKit",

@@ -196,7 +196,9 @@ impl BDKPlugin {
 
     pub fn get_new_address(&mut self) -> Address {
         let mut persister = self.persister.lock().unwrap();
-        let mut wallet: PersistedWallet<MemoryPersister> = self.wallet.lock().unwrap().take().expect("wallet was none");
+        let mut wallet = self.get_wallet();
+        let mut wallet = wallet.as_mut().unwrap();
+        // let mut wallet: PersistedWallet<MemoryPersister> = self.wallet.lock().unwrap().take().expect("wallet was none");
         let address = wallet.reveal_next_address(KeychainKind::External);
         wallet.persist(&mut persister).expect("write is okay");
         address.address

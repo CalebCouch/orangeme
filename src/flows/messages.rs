@@ -32,7 +32,7 @@ impl MessagesHome {
     pub fn new(ctx: &mut Context) -> Self {
         let header = Header::home(ctx, "Messages");
         let new_message = Button::primary(ctx, "New Message", |ctx: &mut Context| MessagesFlow::SelectRecipients.navigate(ctx));
-        let bumper = Bumper::single_button(new_message);
+        let bumper = Bumper::single_button(ctx, new_message);
         let messages = Vec::new();
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
         let instructions = Text::new(ctx, "No messages yet.\nGet started by messaging a friend.", TextStyle::Secondary, text_size, Align::Center);
@@ -62,7 +62,7 @@ impl SelectRecipients {
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
         let continue_btn = Button::primary(ctx, "Continue", |ctx: &mut Context| MessagesFlow::GroupMessage.navigate(ctx));
-        let bumper = Bumper::single_button(continue_btn);
+        let bumper = Bumper::single_button(ctx, continue_btn);
         SelectRecipients(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
 }
@@ -85,12 +85,12 @@ impl DirectMessage {
             "Did you go to the market on Saturday?",
             "Hello!?",
             "I need butter from the market that was on Saturday, but I couldn't go!",
-            "🧈 🧈 🧈",
+            "😁😁😁",
             "Do you have butter?"
         ];
 
         let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
-        let bumper = Bumper::new(vec![Box::new(input)]);
+        let bumper = Bumper::new(ctx, vec![Box::new(input)]);
         let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
         let content = Content::new(Offset::End, vec![Box::new(message)]);
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
@@ -117,12 +117,12 @@ impl GroupMessage {
             "Did you go to the market on Saturday?",
             "Hello!?",
             "I need butter from the market that was on Saturday, but I couldn't go!",
-            "🧈 🧈 🧈",
+            "😁😁😁",
             "Do you have butter?"
         ];
 
         let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
-        let bumper = Bumper::new(vec![Box::new(input)]);
+        let bumper = Bumper::new(ctx, vec![Box::new(input)]);
         let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
         let content = Content::new(Offset::End, vec![Box::new(message)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
@@ -163,10 +163,10 @@ pub fn get_recipients(ctx: &mut Context) -> Vec<ListItem> {
 
 pub fn get_contacts(ctx: &mut Context) -> Vec<ListItem> {
     vec![
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::ProfilesFlow::UserProfile.navigate(ctx))
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
+        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx))
     ]
 }
