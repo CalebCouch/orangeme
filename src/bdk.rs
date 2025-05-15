@@ -13,10 +13,9 @@ use bdk_wallet::{PersistedWallet, WalletPersister};
 use bdk_wallet::chain::{Merge, ChainPosition, Anchor};
 use bdk_esplora::esplora_client::Builder;
 use bdk_esplora::EsploraExt;
-use chrono::{TimeZone, Utc};
+use chrono::{Datelike, DateTime, Local, Utc, NaiveDateTime, TimeZone, Timelike, Weekday};
 use serde_json::Value; // for getting bitcoin price from coinbase.com
 use reqwest::Client;
-use chrono::NaiveDateTime;
 const SATS: u64 = 1_000_000;
 
 // store price in the cache, pull it out on startup
@@ -263,24 +262,14 @@ impl Task for GetTransactions {
 
             let (confirmation_time, btc_price) = match &canonical_tx.chain_position {
                 ChainPosition::Confirmed { anchor, .. } => {
-                    let block_id = anchor.anchor_block();
-                    let hash = block_id.hash.to_string();
-            
-                    let unix_timestamp = match get_block_time(&hash).await {
-                        Ok(ts) => ts,
-                        Err(_) => 0,
-                    };
+                    let unix_timestamp = get_block_time(&anchor.anchor_block().hash.to_string()).await.unwrap_or(0);
 
-                    println!("Getting price");
                     let dt = Utc.timestamp_opt(unix_timestamp as i64, 0).unwrap();
                     let timestamp = dt.format("%Y-%m-%d %H:%M:%S").to_string();
 
                     let btc_price = get_btc_price_at(&timestamp).await.expect("Expected some dang money!");
-                    println!("F^$: {:?}", btc_price);
 
-                    let confirmation_time = format!("Confirmed at UNIX time: {}", timestamp);
-            
-                    (confirmation_time, btc_price)
+                    (format_friendly_date(&dt.with_timezone(&Local)), btc_price)
                 }
                 _ => {
                     println!("NOT CONFIRMED"); // Get current price
@@ -288,48 +277,28 @@ impl Task for GetTransactions {
                 }
             };
             
-            let received: u64 = tx
-                .output
-                .iter()
-                .filter(|out| wallet.is_mine(out.script_pubkey.clone()))
-                .map(|out| out.value.to_sat())
-                .sum();
-
-            let input_sum: u64 = tx
-                .input
-                .iter()
-                .filter_map(|input| wallet.get_utxo(input.previous_output))
-                .map(|utxo| utxo.txout.value.to_sat())
-                .sum();
-
+            let received: u64 = tx.output.iter().filter(|out| wallet.is_mine(out.script_pubkey.clone())).map(|out| out.value.to_sat()).sum();
+            let input_sum: u64 = tx.input.iter().filter_map(|input| wallet.get_utxo(input.previous_output)).map(|utxo| utxo.txout.value.to_sat()).sum();
             let sent = input_sum.saturating_sub(received);
-
-            let fee = if input_sum > 0 {
-                Some(input_sum.saturating_sub(tx.output.iter().map(|o| o.value.to_sat()).sum()))
-            } else {
-                None
-            };
-
+            let fee = (input_sum > 0).then(|| input_sum.saturating_sub(tx.output.iter().map(|o| o.value.to_sat()).sum()));
             let is_received = received > sent;
 
-            let address = if is_received {
-                tx.output
-                    .iter()
-                    .find_map(|out| {
-                        if wallet.is_mine(out.script_pubkey.clone()) {
-                            Address::from_script(&out.script_pubkey, wallet.network()).ok()
-                        } else {
-                            None
+            let address = match is_received {
+                true => { 
+                    tx.output.iter().find_map(|out| {
+                        match wallet.is_mine(out.script_pubkey.clone()) {
+                            true => Address::from_script(&out.script_pubkey, wallet.network()).ok(),
+                            false => None
                         }
                     })
-            } else {
-                tx.input
-                    .iter()
-                    .find_map(|input| {
+                }
+                false => {
+                    tx.input.iter().find_map(|input| {
                         wallet.get_utxo(input.previous_output).and_then(|utxo| {
                             Address::from_script(&utxo.txout.script_pubkey, wallet.network()).ok()
                         })
                     })
+                }
             };
 
             transactions.push(BDKTransaction {
@@ -413,6 +382,40 @@ pub struct BDKTransaction {
     pub fee: Option<Amount>,
     pub address: Option<Address>
 }
+
+pub fn format_friendly_date(dt: &DateTime<Local>) -> String {
+    let now = Local::now();
+
+    let today = now.date_naive();
+    let date = dt.date_naive();
+
+    if date == today {
+        let hour = dt.hour();
+        let minute = dt.minute();
+        let (hour12, am_pm) = if hour == 0 {
+            (12, "AM")
+        } else if hour < 12 {
+            (hour, "AM")
+        } else if hour == 12 {
+            (12, "PM")
+        } else {
+            (hour - 12, "PM")
+        };
+        format!("{:02}:{:02} {}", hour12, minute, am_pm)
+    } else if date == today.pred_opt().unwrap_or(today) {
+        "Yesterday".to_string()
+    } else if date.iso_week() == today.iso_week() {
+        // Same week, return weekday name like "Saturday"
+        format!("{}", dt.format("%A"))
+    } else if date.year() == today.year() {
+        // Same year, return "July 17"
+        format!("{}", dt.format("%B %-d"))
+    } else {
+        // Older, return "12/23/24"
+        format!("{}", dt.format("%m/%d/%y"))
+    }
+}
+
 
 // pub struct DateTime {
 //     pub date: &'static str,

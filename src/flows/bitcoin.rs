@@ -68,31 +68,31 @@ impl BitcoinHome {
 impl OnEvent for BitcoinHome {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
-            let transactions = ctx.get::<BDKPlugin>().get_transactions();
+            let bdk = ctx.get::<BDKPlugin>();
+            let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
+            let transactions = bdk.get_transactions();
             let content = &mut self.1.content();
 
             if !transactions.is_empty() {
                 *content.offset() = Offset::Start;
-                let items = &mut content.items();
                 let transaction_items = transactions.into_iter().map(|t| {
-                    ListItem::bitcoin(ctx, t.is_received, t.amount_btc.to_btc() as f32, "Saturday", |ctx: &mut Context| {
-                        // Set current transaction, then navigate.
-                        BitcoinFlow::ViewTransaction.navigate(ctx) 
-                    })
+                    ListItem::bitcoin(
+                        ctx, 
+                        t.is_received, 
+                        (t.amount_btc.to_btc() as f32) * price, 
+                        Box::leak(t.confirmation_time.clone().into_boxed_str()), 
+                        |ctx: &mut Context| BitcoinFlow::ViewTransaction.navigate(ctx)
+                    )
                 }).collect();
         
+                let items = &mut content.items();
                 let new_group = ListItemGroup::new(transaction_items);
-
                 match items.get_mut(1).and_then(|item| item.as_any_mut().downcast_mut::<ListItemGroup>()) {
                     Some(existing_group) => *existing_group = new_group,
                     None => items.push(Box::new(new_group)),
                 }
             }
-
-            let bdk = ctx.get::<BDKPlugin>();
-            let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
-            // println!("BTC {:?}, price {:?}", btc, price);
-            // bdk.add_password("lilbaby-secret-passcode");
+            
             let item = &mut *self.1.content().items()[0];
             let display: &mut AmountDisplay = item.as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
             *display.usd() = format!("${:.2}", btc*price);
