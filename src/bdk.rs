@@ -78,6 +78,7 @@ pub struct BDKPlugin {
     recipient_address: Arc<Mutex<Option<Address>>>,
     wallet: Arc<Mutex<Option<PersistedWallet<MemoryPersister>>>>,
     transactions: Arc<Mutex<Vec<BDKTransaction>>>,
+    current_transaction: Arc<Mutex<Option<BDKTransaction>>>,
     price: Arc<Mutex<f32>>,
 }
 impl BDKPlugin {
@@ -141,6 +142,15 @@ impl BDKPlugin {
         txs
     }
 
+    pub fn current_transaction(&mut self) -> Option<BDKTransaction> {
+        self.current_transaction.lock().unwrap().clone()
+    }
+
+    pub fn set_transaction(&mut self, txid: Txid) {
+        let tx = self.transactions.lock().unwrap().iter().find(|tx| tx.txid == txid).cloned();
+        *self.current_transaction.lock().unwrap() = tx;
+    }
+    
     pub fn get_balance(&mut self) -> Amount {
         let mut wallet = self.get_wallet();
         let balance = wallet.as_mut().unwrap().balance().total();
@@ -222,6 +232,7 @@ impl Plugin for BDKPlugin {
             price: price.clone(), 
             recipient_address: Arc::new(Mutex::new(None)),
             wallet: Arc::new(Mutex::new(None)),
+            current_transaction: Arc::new(Mutex::new(None)),
             transactions: transactions.clone(),
         }, tasks![CachePersister(persister), GetPrice(price), GetTransactions(transactions)])
     }

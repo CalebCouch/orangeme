@@ -46,22 +46,39 @@ impl BitcoinHome {
         let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| BitcoinFlow::Receive.navigate(ctx) );
         let header = Header::home(ctx, "Wallet");
         let bumper = Bumper::double_button(ctx, receive, send);
-        let mut content = vec![Box::new(AmountDisplay::new(ctx)) as Box<dyn Drawable>];
-
-        let transactions = Vec::new();
-        //  ctx.get::<BDKPlugin>().get_transactions().into_iter().map(|tx| {
-        //     // ListItem::bitcoin(ctx, is_received, amount, "Saturday", |ctx: &mut Context| {
-        //     //     BitcoinFlow::ViewTransaction.navigate(ctx) 
-        //     // });
-        // }).collect();
-
-        let offset = if !transactions.is_empty() {
-            content.push(Box::new(ListItemGroup::new(transactions)));
-            Offset::Start
-        } else { Offset::Center };
-
-        let content = Content::new(offset, content);
+        let content = Content::new(Offset::Center, vec![Box::new(AmountDisplay::new(ctx)) as Box<dyn Drawable>]);
         BitcoinHome(Stack::center(), Page::new(header, content, Some(bumper), false))
+    }
+
+    fn update_transactions(&mut self, ctx: &mut Context) {
+        let bdk = ctx.get::<BDKPlugin>();
+        let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
+        let transactions = bdk.get_transactions();
+        let content = &mut self.1.content();
+
+        if !transactions.is_empty() {
+            *content.offset() = Offset::Start;
+            let transactions = transactions.into_iter().map(|t| {
+                let txid = t.txid.clone();
+                ListItem::bitcoin(
+                    ctx, 
+                    t.is_received, 
+                    (t.amount_btc.to_btc() as f32) * price, 
+                    &t.confirmation_time, 
+                    move |ctx: &mut Context| {
+                        ctx.get::<BDKPlugin>().set_transaction(txid);
+                        BitcoinFlow::ViewTransaction.navigate(ctx)
+                    }
+                )
+            }).collect();
+
+            let items = &mut content.items();
+            let new_group = ListItemGroup::new(transactions);
+            match items.get_mut(1).and_then(|item| item.as_any_mut().downcast_mut::<ListItemGroup>()) {
+                Some(existing_group) => *existing_group = new_group,
+                None => items.push(Box::new(new_group)),
+            }
+        }
     }
 }
 
@@ -70,33 +87,11 @@ impl OnEvent for BitcoinHome {
         if let Some(TickEvent) = event.downcast_ref() {
             let bdk = ctx.get::<BDKPlugin>();
             let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
-            let transactions = bdk.get_transactions();
-            let content = &mut self.1.content();
-
-            if !transactions.is_empty() {
-                *content.offset() = Offset::Start;
-                let transaction_items = transactions.into_iter().map(|t| {
-                    ListItem::bitcoin(
-                        ctx, 
-                        t.is_received, 
-                        (t.amount_btc.to_btc() as f32) * price, 
-                        &t.confirmation_time, 
-                        |ctx: &mut Context| BitcoinFlow::ViewTransaction.navigate(ctx)
-                    )
-                }).collect();
-        
-                let items = &mut content.items();
-                let new_group = ListItemGroup::new(transaction_items);
-                match items.get_mut(1).and_then(|item| item.as_any_mut().downcast_mut::<ListItemGroup>()) {
-                    Some(existing_group) => *existing_group = new_group,
-                    None => items.push(Box::new(new_group)),
-                }
-            }
-
-            let item = &mut *self.1.content().items()[0];
-            let display: &mut AmountDisplay = item.as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
+            let items = &mut *self.1.content().items();
+            let display: &mut AmountDisplay = items[0].as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
             *display.usd() = format!("${:.2}", btc*price);
             *display.btc() = format!("{:.8} BTC", btc);
+            self.update_transactions(ctx);
         }
         true
     }
