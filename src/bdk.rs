@@ -18,8 +18,6 @@ use serde_json::Value; // for getting bitcoin price from coinbase.com
 use reqwest::Client;
 const SATS: u64 = 1_000_000;
 
-// store price in the cache, pull it out on startup
-
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
 
@@ -62,6 +60,17 @@ impl Task for GetPrice {
         let price: f32 = price_str.parse().expect("Could not parse as f32");
         *self.0.lock().unwrap() = price;
     }
+}
+
+#[derive(Debug, Clone)]
+pub struct BDKTransaction {
+    pub confirmation_time: String,
+    pub txid: Txid,
+    pub is_received: bool,
+    pub amount_btc: Amount,
+    pub price: f64,
+    pub fee: Option<Amount>,
+    pub address: Option<Address>
 }
 
 pub struct BDKPlugin {
@@ -248,50 +257,37 @@ impl Task for GetTransactions {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(10))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        println!("Running transactinos");
         let mut persister = h_ctx.cache.get::<MemoryPersister>().await;
         let mut wallet = PersistedWallet::load(&mut persister, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.");
-
-        let txs = wallet.transactions_sort_by(|tx1, tx2| tx2.chain_position.cmp(&tx1.chain_position));
         let mut transactions = Vec::new();
 
-        for canonical_tx in txs {
+        for canonical_tx in wallet.transactions_sort_by(|tx1, tx2| tx2.chain_position.cmp(&tx1.chain_position)) {
             let tx_node = &canonical_tx.tx_node;
-            let txid = tx_node.txid;
             let tx = &tx_node.tx;
 
             let (confirmation_time, btc_price) = match &canonical_tx.chain_position {
                 ChainPosition::Confirmed { anchor, .. } => {
                     let unix_timestamp = get_block_time(&anchor.anchor_block().hash.to_string()).await.unwrap_or(0);
-
                     let dt = Utc.timestamp_opt(unix_timestamp as i64, 0).unwrap();
-                    let timestamp = dt.format("%Y-%m-%d %H:%M:%S").to_string();
-
-                    let btc_price = get_btc_price_at(&timestamp).await.expect("Expected some dang money!");
-
+                    let btc_price = get_btc_price_at(&dt.format("%Y-%m-%d %H:%M:%S").to_string()).await.unwrap_or(0.0);
                     (format_friendly_date(&dt.with_timezone(&Local)), btc_price)
                 }
-                _ => {
-                    println!("NOT CONFIRMED"); // Get current price
-                    ("Unconfirmed".to_string(), 0.0)
-                }
+                _ => ("-".to_string(), 0.0)
             };
             
             let received: u64 = tx.output.iter().filter(|out| wallet.is_mine(out.script_pubkey.clone())).map(|out| out.value.to_sat()).sum();
             let input_sum: u64 = tx.input.iter().filter_map(|input| wallet.get_utxo(input.previous_output)).map(|utxo| utxo.txout.value.to_sat()).sum();
             let sent = input_sum.saturating_sub(received);
-            let fee = (input_sum > 0).then(|| input_sum.saturating_sub(tx.output.iter().map(|o| o.value.to_sat()).sum()));
+            let fee = (input_sum > 0).then(|| input_sum.saturating_sub(tx.output.iter().map(|o| o.value.to_sat()).sum())); // this has to be wrong...
             let is_received = received > sent;
 
             let address = match is_received {
                 true => { 
                     tx.output.iter().find_map(|out| {
-                        match wallet.is_mine(out.script_pubkey.clone()) {
-                            true => Address::from_script(&out.script_pubkey, wallet.network()).ok(),
-                            false => None
-                        }
-                    })
-                }
+                        wallet.is_mine(out.script_pubkey.clone())
+                            .then(|| Address::from_script(&out.script_pubkey, wallet.network()).ok()).flatten()
+                    })                    
+                },
                 false => {
                     tx.input.iter().find_map(|input| {
                         wallet.get_utxo(input.previous_output).and_then(|utxo| {
@@ -302,7 +298,7 @@ impl Task for GetTransactions {
             };
 
             transactions.push(BDKTransaction {
-                txid,
+                txid: tx_node.txid,
                 confirmation_time,
                 is_received,
                 amount_btc: Amount::from_sat(received.max(sent)),
@@ -316,23 +312,10 @@ impl Task for GetTransactions {
     }
 }
 
-#[derive(Debug, Deserialize)]
-struct BlockResponse {
-    timestamp: u64,
-    height: u32,
-    id: String,
-}
-
 async fn get_block_time(block_hash: &str) -> Result<u64, Box<dyn std::error::Error>> {
     let url = format!("https://mempool.space/api/block/{}", block_hash);
-    let res: BlockResponse = Client::new()
-        .get(&url)
-        .send()
-        .await?
-        .json()
-        .await?;
-
-    Ok(res.timestamp)
+    let res: Value = Client::new().get(&url).send().await?.json().await?;
+    Ok(res["timestamp"].as_u64().ok_or("Missing or invalid timestamp field")?)
 }
 
 async fn get_btc_price_at(timestamp: &String) -> Result<f64, Box<dyn std::error::Error>> {
@@ -342,21 +325,10 @@ async fn get_btc_price_at(timestamp: &String) -> Result<f64, Box<dyn std::error:
     let from = target_timestamp - 300;
     let to = target_timestamp + 300;
 
-    // Construct the API URL
-    let url = format!(
-        "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from={}&to={}",
-        from, to
-    );
+    let url = format!("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from={from}&to={to}");
+    let val: Value = reqwest::get(&url).await?.json().await?;
+    let prices = val["prices"].as_array().ok_or("Missing 'prices' array in response")?;
 
-    // Send the GET request
-    let resp: Value = reqwest::get(&url).await?.json().await?;
-
-    // Extract the prices array
-    let prices = resp["prices"]
-        .as_array()
-        .ok_or("Missing 'prices' array in response")?;
-
-    // Find the price closest to the target timestamp
     let closest_price = prices
         .iter()
         .filter_map(|entry| {
@@ -372,47 +344,26 @@ async fn get_btc_price_at(timestamp: &String) -> Result<f64, Box<dyn std::error:
     Ok(closest_price)
 }
 
-#[derive(Debug, Clone)]
-pub struct BDKTransaction {
-    pub confirmation_time: String,
-    pub txid: Txid,
-    pub is_received: bool,
-    pub amount_btc: Amount,
-    pub price: f64,
-    pub fee: Option<Amount>,
-    pub address: Option<Address>
-}
-
 pub fn format_friendly_date(dt: &DateTime<Local>) -> String {
-    let now = Local::now();
-
-    let today = now.date_naive();
+    let today = Local::now().date_naive();
     let date = dt.date_naive();
 
-    if date == today {
-        let hour = dt.hour();
-        let minute = dt.minute();
-        let (hour12, am_pm) = if hour == 0 {
-            (12, "AM")
-        } else if hour < 12 {
-            (hour, "AM")
-        } else if hour == 12 {
-            (12, "PM")
-        } else {
-            (hour - 12, "PM")
-        };
-        format!("{:02}:{:02} {}", hour12, minute, am_pm)
-    } else if date == today.pred_opt().unwrap_or(today) {
-        "Yesterday".to_string()
-    } else if date.iso_week() == today.iso_week() {
-        // Same week, return weekday name like "Saturday"
-        format!("{}", dt.format("%A"))
-    } else if date.year() == today.year() {
-        // Same year, return "July 17"
-        format!("{}", dt.format("%B %-d"))
-    } else {
-        // Older, return "12/23/24"
-        format!("{}", dt.format("%m/%d/%y"))
+    match date == today {
+        true => {
+            let hour = dt.hour();
+            let minute = dt.minute();
+            let (hour12, am_pm) = match hour == 0 {
+                true => (12, "AM"),
+                false if hour < 12 => (hour, "AM"),
+                false if hour == 12 => (12, "PM"),
+                false => (hour - 12, "PM")
+            };
+            format!("{:02}:{:02} {}", hour12, minute, am_pm)
+        },
+        false if date == today.pred_opt().unwrap_or(today) => "Yesterday".to_string(),
+        false if date.iso_week() == today.iso_week() => format!("{}", dt.format("%A")),
+        false if date.year() == today.year() => format!("{}", dt.format("%B %-d")),
+        false => format!("{}", dt.format("%m/%d/%y"))
     }
 }
 

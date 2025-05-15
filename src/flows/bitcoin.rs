@@ -80,7 +80,7 @@ impl OnEvent for BitcoinHome {
                         ctx, 
                         t.is_received, 
                         (t.amount_btc.to_btc() as f32) * price, 
-                        Box::leak(t.confirmation_time.clone().into_boxed_str()), 
+                        &t.confirmation_time, 
                         |ctx: &mut Context| BitcoinFlow::ViewTransaction.navigate(ctx)
                     )
                 }).collect();
@@ -92,7 +92,7 @@ impl OnEvent for BitcoinHome {
                     None => items.push(Box::new(new_group)),
                 }
             }
-            
+
             let item = &mut *self.1.content().items()[0];
             let display: &mut AmountDisplay = item.as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
             *display.usd() = format!("${:.2}", btc*price);
