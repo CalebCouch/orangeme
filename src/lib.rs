@@ -50,14 +50,14 @@ impl App for MyApp {
     async fn plugins(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
         let (plugin, tasks) = BDKPlugin::new(ctx, h_ctx).await;
         let (pelican, _p_tasks) = PelicanUI::new(ctx, h_ctx).await;
-        let (ucp, tasks) = UCPPlugin::new(ctx, h_ctx).await;
+        // let (ucp, tasks) = UCPPlugin::new(ctx, h_ctx).await;
         
         //tasks.extend(p_tasks);
         
         (std::collections::HashMap::from([
             (std::any::TypeId::of::<BDKPlugin>(), Box::new(plugin) as Box<dyn std::any::Any>),
             (std::any::TypeId::of::<PelicanUI>(), Box::new(pelican) as Box<dyn std::any::Any>),
-            (std::any::TypeId::of::<UCPPlugin>(), Box::new(ucp) as Box<dyn std::any::Any>)
+            // (std::any::TypeId::of::<UCPPlugin>(), Box::new(ucp) as Box<dyn std::any::Any>)
         ]), tasks)
     }
     //END TODO
@@ -66,11 +66,11 @@ impl App for MyApp {
         ctx.include_assets(include_assets!("./resources/images"));
 
         //ctx.get::<BDKPlugin>().init();
-        let navigation = (0_usize, vec![
+        let navigation = vec![
             ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
             ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
             // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-        ]);
+        ];
 
       //Box::new(Background(
       //    Stack::center(),
@@ -85,7 +85,7 @@ impl App for MyApp {
         let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| AccountsFlow::Account.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
 
         let home = BitcoinHome::new(ctx);
-        Box::new(Interface::new(ctx, home, Some(navigation), Some(profile)))
+        Box::new(Interface::new(ctx, home, Some(0_usize), Some(navigation), Some(profile)))
         // Box::new(pelican_ui::prelude::Text::new_with_edit(ctx, "Editable text example\nelpmaxe txet elbatidE", TextStyle::Heading, 20.0, Align::Left))
         // let bdk = ctx.get::<BDKPlugin>();
         // println!("Getting price");
