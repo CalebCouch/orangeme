@@ -1,7 +1,7 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
-
+use chrono::{Local, DateTime, Datelike, Timelike};
 use crate::BDKPlugin;
 use crate::get_contacts;
 
@@ -46,7 +46,7 @@ impl BitcoinHome {
         let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| BitcoinFlow::Receive.navigate(ctx) );
         let header = Header::home(ctx, "Wallet");
         let bumper = Bumper::double_button(ctx, receive, send);
-        let content = Content::new(Offset::Center, vec![Box::new(AmountDisplay::new(ctx)) as Box<dyn Drawable>]);
+        let content = Content::new(Offset::Center, vec![Box::new(AmountDisplay::new(ctx, "$0.00", "0.00000000 BTC")) as Box<dyn Drawable>]);
         BitcoinHome(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
 
@@ -63,8 +63,8 @@ impl BitcoinHome {
                 ListItem::bitcoin(
                     ctx, 
                     t.is_received, 
-                    (t.amount_btc.to_btc() as f32) * price, 
-                    &t.confirmation_time, 
+                    (t.amount.to_btc() as f32) * price,
+                    &t.datetime.map(|dt| format_date(&dt).to_string()).unwrap_or("-".to_string()),  
                     move |ctx: &mut Context| {
                         ctx.get::<BDKPlugin>().set_transaction(txid);
                         BitcoinFlow::ViewTransaction.navigate(ctx)
@@ -349,32 +349,95 @@ impl OnEvent for ViewTransaction {}
 impl AppPage for ViewTransaction {}
 impl ViewTransaction {
     fn new(ctx: &mut Context) -> Self {
-        let is_received = false;
-        let done_btn = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
-        let bumper = Bumper::single_button(ctx, done_btn);
+        let tx = ctx.get::<BDKPlugin>().current_transaction().unwrap();
+        let button = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let bumper = Bumper::single_button(ctx, button);
 
-        let (address, amount, title) = if is_received {
-            ("Received at address", "Amount received", "Received bitcoin")
-        } else {("Send to address", "Amount sent", "Sent bitcoin")};
-        let btc = format!("{} (BTC)", amount);
+        let (address_t, amount_t, title) = match tx.is_received {
+            true => ("Received at address", "Amount received", "Received bitcoin"),
+            false => ("Send to address", "Amount sent", "Sent bitcoin")
+        };
 
-        let mut details = vec![
-            ("Date", "11/2/25"),
-            ("Time", "11:27 PM"),
-            (address, "7ElaxC8...x1l"),
-            (Box::leak(btc.into_boxed_str()), "0.00001234 BTC"),
-            ("Bitcoin price", "$85,989.66"),
-            (amount, "$10.00"),
+
+        let address = tx.address.map(|a| {
+            let a = a.to_string();
+            format!("{}...{}", &a[..7], &a[a.len().saturating_sub(3)..])
+        }).unwrap_or("unknown".to_string());
+
+        let (date, time): (String, String) = tx.datetime.map(|dt| {
+            (dt.format("%-m/%-d/%y").to_string(), dt.format("%-I:%M %p").to_string())
+        }).unwrap_or(("-".to_string(), "-".to_string()));
+
+        let btc = tx.amount.to_btc() as f64;
+        let usd = format!("${:.2}", btc * tx.price);
+        let btc = format!("{:.8} BTC", btc);
+        let price = format_thousand(tx.price);
+
+        let btc = static_from(btc);
+        let usd = static_from(usd);
+
+        let mut details: Vec<(&'static str, &'static str)> = vec![
+            ("Date", static_from(date)),
+            ("Time", static_from(time)),
+            (address_t, static_from(address)),
+            (static_from(format!("{} (BTC)", amount_t)), btc),
+            ("Bitcoin price", static_from(price)),
+            (amount_t, usd),
         ];
 
-        (!is_received).then(|| details.push(("Network fee", "$0.18")));
-        (!is_received).then(|| details.push(("Total", "$10.18")));
+        // (!tx.is_received).then(|| tx.fee.map(|fee| {
+        //     let fee = (fee.to_btc() as f64)*tx.price;
+        //     details.push(("Network fee", static_from(format!("${:.2}", fee))));
+        //     details.push(("Total", static_from(format_thousand(fee+usd_a))));
+        // }));
 
         let details = DataItem::new(ctx, None, "Transaction details", None, None, Some(details), None);
-        // let amount_display = AmountDisplay::new(ctx, "$10.00", "0.00001234 BTC", None);
-        let content = Content::new(Offset::Center, vec![ Box::new(details)]); //Box::new(qr_code), Box::new(text)
+        let amount_display = AmountDisplay::new(ctx, usd, btc);
+        let content = Content::new(Offset::Center, vec![Box::new(amount_display), Box::new(details)]); //Box::new(qr_code), Box::new(text)
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), title, None);
         ViewTransaction(Stack::default(), Page::new(header, content, Some(bumper), false))
     }
+}
+
+pub fn format_date(dt: &DateTime<Local>) -> String {
+    // let dt = dt.format("%Y-%m-%d %H:%M:%S");
+    let today = Local::now().date_naive();
+    let date = dt.date_naive();
+
+    match date == today {
+        true => {
+            let hour = dt.hour();
+            let minute = dt.minute();
+            let (hour12, am_pm) = match hour == 0 {
+                true => (12, "AM"),
+                false if hour < 12 => (hour, "AM"),
+                false if hour == 12 => (12, "PM"),
+                false => (hour - 12, "PM")
+            };
+            format!("{:02}:{:02} {}", hour12, minute, am_pm)
+        },
+        false if date == today.pred_opt().unwrap_or(today) => "Yesterday".to_string(),
+        false if date.iso_week() == today.iso_week() => format!("{}", dt.format("%A")),
+        false if date.year() == today.year() => format!("{}", dt.format("%B %-d")),
+        false => format!("{}", dt.format("%m/%d/%y"))
+    }
+}
+
+pub fn static_from(s: String) -> &'static str {
+    Box::leak(s.into_boxed_str())
+}
+
+pub fn format_thousand(t: f64) -> String {
+    let dollars = t.trunc() as u64;
+    let cents = (t.fract() * 100.0).round() as u64;
+
+    let mut dollar_str = dollars.to_string();
+    let mut chars = dollar_str.chars().rev().collect::<Vec<_>>();
+    for i in (3..chars.len()).step_by(3) {
+        chars.insert(i, ',');
+    }
+    let formatted_dollars = chars.into_iter().rev().collect::<String>();
+
+    format!("${}.{:02}", formatted_dollars, cents)
 }

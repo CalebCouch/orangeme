@@ -64,10 +64,10 @@ impl Task for GetPrice {
 
 #[derive(Debug, Clone)]
 pub struct BDKTransaction {
-    pub confirmation_time: String,
+    pub datetime: Option<DateTime<Local>>,
     pub txid: Txid,
     pub is_received: bool,
-    pub amount_btc: Amount,
+    pub amount: Amount,
     pub price: f64,
     pub fee: Option<Amount>,
     pub address: Option<Address>
@@ -276,14 +276,14 @@ impl Task for GetTransactions {
             let tx_node = &canonical_tx.tx_node;
             let tx = &tx_node.tx;
 
-            let (confirmation_time, btc_price) = match &canonical_tx.chain_position {
+            let (datetime, btc_price) = match &canonical_tx.chain_position {
                 ChainPosition::Confirmed { anchor, .. } => {
                     let unix_timestamp = get_block_time(&anchor.anchor_block().hash.to_string()).await.unwrap_or(0);
-                    let dt = Utc.timestamp_opt(unix_timestamp as i64, 0).unwrap();
-                    let btc_price = get_btc_price_at(&dt.format("%Y-%m-%d %H:%M:%S").to_string()).await.unwrap_or(0.0);
-                    (format_friendly_date(&dt.with_timezone(&Local)), btc_price)
+                    let utc = Utc.timestamp_opt(unix_timestamp as i64, 0).unwrap();
+                    let btc_price = get_btc_price_at(&utc.format("%Y-%m-%d %H:%M:%S").to_string()).await.unwrap_or(0.0);
+                    (Some(utc.with_timezone(&Local)), btc_price)
                 }
-                _ => ("-".to_string(), 0.0)
+                _ => (None, 0.0)
             };
             
             let received: u64 = tx.output.iter().filter(|out| wallet.is_mine(out.script_pubkey.clone())).map(|out| out.value.to_sat()).sum();
@@ -310,9 +310,9 @@ impl Task for GetTransactions {
 
             transactions.push(BDKTransaction {
                 txid: tx_node.txid,
-                confirmation_time,
+                datetime,
                 is_received,
-                amount_btc: Amount::from_sat(received.max(sent)),
+                amount: Amount::from_sat(received.max(sent)),
                 price: btc_price,
                 fee: fee.map(Amount::from_sat),
                 address,
@@ -355,28 +355,6 @@ async fn get_btc_price_at(timestamp: &String) -> Result<f64, Box<dyn std::error:
     Ok(closest_price)
 }
 
-pub fn format_friendly_date(dt: &DateTime<Local>) -> String {
-    let today = Local::now().date_naive();
-    let date = dt.date_naive();
-
-    match date == today {
-        true => {
-            let hour = dt.hour();
-            let minute = dt.minute();
-            let (hour12, am_pm) = match hour == 0 {
-                true => (12, "AM"),
-                false if hour < 12 => (hour, "AM"),
-                false if hour == 12 => (12, "PM"),
-                false => (hour - 12, "PM")
-            };
-            format!("{:02}:{:02} {}", hour12, minute, am_pm)
-        },
-        false if date == today.pred_opt().unwrap_or(today) => "Yesterday".to_string(),
-        false if date.iso_week() == today.iso_week() => format!("{}", dt.format("%A")),
-        false if date.year() == today.year() => format!("{}", dt.format("%B %-d")),
-        false => format!("{}", dt.format("%m/%d/%y"))
-    }
-}
 
 
 // pub struct DateTime {
