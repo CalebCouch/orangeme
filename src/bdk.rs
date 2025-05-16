@@ -16,10 +16,37 @@ use bdk_esplora::EsploraExt;
 use chrono::{Datelike, DateTime, Local, Utc, NaiveDateTime, TimeZone, Timelike, Weekday};
 use serde_json::Value; // for getting bitcoin price from coinbase.com
 use reqwest::Client;
-const SATS: u64 = 1_000_000;
+const SATS: f64 = 1_000_000.0;
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
+
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct SendAddress(Option<String>);
+
+impl SendAddress {
+    pub fn new(new: String) -> Self {
+        let address = Address::from_str(&new).ok()
+            .and_then(|a| a.require_network(Network::Bitcoin).ok())
+            .map(|a| a.to_string());
+
+        SendAddress(address)
+    }
+
+    pub fn is_valid(&self) -> bool { self.0.is_some() }
+    pub fn get(&self) -> &Option<String> { &self.0 }
+}
+
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct SendAmount(Option<Amount>); // btc
+
+impl SendAmount {
+    pub fn set(&mut self, new: f64) -> Self {
+        SendAmount(Amount::from_btc((new * SATS).round() / SATS).ok())
+    }
+
+    pub fn get(&self) -> &Option<Amount> { &self.0 }
+}
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct MemoryPersister(ChangeSet);
@@ -62,17 +89,6 @@ impl Task for GetPrice {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct BDKTransaction {
-    pub datetime: Option<DateTime<Local>>,
-    pub txid: Txid,
-    pub is_received: bool,
-    pub amount: Amount,
-    pub price: f64,
-    pub fee: Option<Amount>,
-    pub address: Option<Address>
-}
-
 pub struct BDKPlugin {
     persister: Arc<Mutex<MemoryPersister>>,
     recipient_address: Arc<Mutex<Option<Address>>>,
@@ -81,6 +97,7 @@ pub struct BDKPlugin {
     current_transaction: Arc<Mutex<Option<BDKTransaction>>>,
     price: Arc<Mutex<f32>>,
 }
+
 impl BDKPlugin {
     pub async fn _init(&mut self) {//Include theme
         println!("Initialized BDK");
@@ -171,17 +188,6 @@ impl BDKPlugin {
         *self.price.lock().unwrap()
     }
 
-    pub fn set_recipient_address(&mut self, address: String) -> bool {
-        if let Ok(add) = Address::from_str(&address) {
-            *self.recipient_address.lock().unwrap() = add.require_network(Network::Bitcoin).ok();
-            true
-        } else { false }
-    }
-
-    pub fn get_recipient_address(&self) -> Option<Address> {
-        self.recipient_address.lock().unwrap().clone()
-    }
-
     pub fn get_fees(&mut self, btc: f64) -> (f32, f32) {
         // println!("RUNNING GET FEES");
         // let address = self.get_recipient_address().expect("Address not found.");
@@ -198,7 +204,7 @@ impl BDKPlugin {
         (0.0, 0.0)
     }
 
-    pub fn get_dust_limit(&self) -> f32 {(546 / SATS) as f32}
+    pub fn get_dust_limit(&self) -> f32 {(546.0 / SATS) as f32}
 
     // get bitcoin price
     // set recipient address
@@ -355,7 +361,16 @@ async fn get_btc_price_at(timestamp: &String) -> Result<f64, Box<dyn std::error:
     Ok(closest_price)
 }
 
-
+#[derive(Debug, Clone)]
+pub struct BDKTransaction {
+    pub datetime: Option<DateTime<Local>>,
+    pub txid: Txid,
+    pub is_received: bool,
+    pub amount: Amount,
+    pub price: f64,
+    pub fee: Option<Amount>,
+    pub address: Option<Address>
+}
 
 // pub struct DateTime {
 //     pub date: &'static str,

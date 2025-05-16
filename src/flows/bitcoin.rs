@@ -2,7 +2,7 @@ use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 use chrono::{Local, DateTime, Datelike, Timelike};
-use crate::BDKPlugin;
+use crate::bdk::{BDKPlugin, SendAddress, SendAmount};
 use crate::get_contacts;
 
 #[derive(Debug, Copy, Clone)]
@@ -102,14 +102,11 @@ struct Address(Stack, Page, #[skip] ButtonState);
 impl AppPage for Address {}
 impl Address {
     fn new(ctx: &mut Context) -> Self {
-        let address = ctx.get::<BDKPlugin>().get_recipient_address();
         let continue_btn = Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
 
-        let address_string = address.map(|add| add.to_string());
-        let address_ref: Option<&'static str> = address_string
-            .as_ref().map(|s| Box::leak(s.clone().into_boxed_str()) as &'static str);
-
+        let mut address = ctx.state().get::<SendAddress>(); // optional string
+        let address_ref: Option<&'static str> = address.get().as_ref().map(|s| Box::leak(s.clone().into_boxed_str()) as &'static str);
         let address_input = TextInput::new(ctx, address_ref, None, "Bitcoin address...", None, icon_button);
 
         let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, move |ctx: &mut Context| {
@@ -131,15 +128,23 @@ impl Address {
 
 impl OnEvent for Address {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
-        let bdk = ctx.get::<BDKPlugin>();
         if let Some(TickEvent) = event.downcast_ref() {
             let item = &mut *self.1.content().items()[0];
             let input: &mut TextInput = item.as_any_mut().downcast_mut::<TextInput>().unwrap();
-
             let input_address = input.get_value();
-            let is_valid = bdk.set_recipient_address(input_address.to_string());
 
-            let error = *input.get_error() || input.get_value().is_empty() || !is_valid;
+            if !input_address.is_empty() {
+                let address = SendAddress::new(input_address.to_string());
+
+                match address.is_valid() {
+                    true => *input.error() = false,
+                    false => input.set_error(ctx, "Address is not valid.")
+                }
+
+                ctx.state().set(&address);
+            }
+
+            let error = *input.error() || input.get_value().is_empty();
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
             let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
             let disabled = *button.status() == ButtonState::Disabled;
@@ -191,7 +196,10 @@ impl Amount {
         let is_mobile = pelican_ui::config::IS_MOBILE;
         let button = Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let bumper = Bumper::single_button(ctx, button);
-        let amount_display = AmountInput::new(ctx);
+        
+        let mut amount_display = AmountInput::new(ctx);
+        *amount_display.price() = ctx.get::<BDKPlugin>().get_price();
+
         let numeric_keypad = NumericKeypad::new(ctx);
         let mut content: Vec<Box<dyn Drawable>> = vec![Box::new(amount_display)];
         is_mobile.then(|| content.push(Box::new(numeric_keypad)));
@@ -213,14 +221,12 @@ impl OnEvent for Amount {
             let balance = bdk.get_balance().to_btc() as f32;
             let dust_limit = bdk.get_dust_limit();
 
-            let usd = amount.usd().trim_start_matches('$').parse::<f32>().unwrap();
-            *amount.btc() = usd/price;
-            amount.set_max((balance+dust_limit)*price);
+            let (max, min) = bdk.get_fees(*amount.btc() as f64);
 
-            if *amount.btc() > dust_limit && *amount.btc() < balance {
-                let fee = bdk.get_fees(*amount.btc() as f64).0;
-                amount.set_min(fee*price);
-            }
+            amount.set_max(((balance+dust_limit)*price)-max);
+            amount.set_min(min);
+
+            ctx.state().set(&SendAmount(*amount.btc() as f64));
 
             let error = *amount.error();
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
@@ -270,9 +276,16 @@ impl Confirm {
         let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
 
+        let address = ctx.state().get::<SendAddress>();
+        let amount = ctx.state().get::<SendAmount>();
+
+        println!("ADdress: {:?}", address.get());
+        let btc = amount.get().unwrap().to_btc() as f64;
+
+
         let confirm_amount = DataItem::new(ctx, None, "Confirm amount", None, None,
             Some(vec![
-                ("Amount sent (BTC)", "0.00001234 BTC"),
+                ("Amount sent (BTC)", static_from(format!("{:.8} BTC", btc))),
                 ("Send speed", "Standard (2 hours)"),
                 ("Amount sent", "$10.00"),
                 ("Network fee", "$0.18"),
@@ -281,7 +294,7 @@ impl Confirm {
         );
 
         let confirm_address = DataItem::new(ctx, None, "Confirm address",
-            Some("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"),
+            Some(static_from(address.get().as_ref().unwrap().to_string())),
             Some("Bitcoin sent to the wrong address can never be recovered."),
             None, Some(vec![edit_address])
         );
