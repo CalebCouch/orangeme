@@ -52,7 +52,7 @@ impl BitcoinHome {
 
     fn update_transactions(&mut self, ctx: &mut Context) {
         let bdk = ctx.get::<BDKPlugin>();
-        let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
+        let btc = bdk.get_balance().to_btc() as f32;
         let transactions = bdk.get_transactions();
         let content = &mut self.1.content();
 
@@ -63,7 +63,7 @@ impl BitcoinHome {
                 ListItem::bitcoin(
                     ctx, 
                     t.is_received, 
-                    (t.amount.to_btc() as f32) * price,
+                    ((t.amount.to_btc() as f64) * t.price) as f32,
                     &t.datetime.map(|dt| format_date(&dt).to_string()).unwrap_or("-".to_string()),  
                     move |ctx: &mut Context| {
                         ctx.get::<BDKPlugin>().set_transaction(txid);
@@ -213,7 +213,8 @@ impl OnEvent for Amount {
             let balance = bdk.get_balance().to_btc() as f32;
             let dust_limit = bdk.get_dust_limit();
 
-            amount.set_price(price);
+            let usd = amount.usd().trim_start_matches('$').parse::<f32>().unwrap();
+            *amount.btc() = usd/price;
             amount.set_max((balance+dust_limit)*price);
 
             if *amount.btc() > dust_limit && *amount.btc() < balance {
@@ -358,7 +359,6 @@ impl ViewTransaction {
             false => ("Send to address", "Amount sent", "Sent bitcoin")
         };
 
-
         let address = tx.address.map(|a| {
             let a = a.to_string();
             format!("{}...{}", &a[..7], &a[a.len().saturating_sub(3)..])
@@ -368,12 +368,11 @@ impl ViewTransaction {
             (dt.format("%-m/%-d/%y").to_string(), dt.format("%-I:%M %p").to_string())
         }).unwrap_or(("-".to_string(), "-".to_string()));
 
-        let btc = tx.amount.to_btc() as f64;
-        let usd = format!("${:.2}", btc * tx.price);
-        let btc = format!("{:.8} BTC", btc);
+        let btc_a = tx.amount.to_btc() as f64;
+        let usd_a = btc_a * tx.price;
+        let usd = format!("${:.2}", usd_a);
         let price = format_thousand(tx.price);
-
-        let btc = static_from(btc);
+        let btc = static_from(format!("{:.8} BTC", btc_a));
         let usd = static_from(usd);
 
         let mut details: Vec<(&'static str, &'static str)> = vec![
@@ -385,11 +384,11 @@ impl ViewTransaction {
             (amount_t, usd),
         ];
 
-        // (!tx.is_received).then(|| tx.fee.map(|fee| {
-        //     let fee = (fee.to_btc() as f64)*tx.price;
-        //     details.push(("Network fee", static_from(format!("${:.2}", fee))));
-        //     details.push(("Total", static_from(format_thousand(fee+usd_a))));
-        // }));
+        (!tx.is_received).then(|| tx.fee.map(|fee| {
+            let fee = (fee.to_btc() as f64)*tx.price;
+            details.push(("Network fee", static_from(format!("${:.2}", fee))));
+            details.push(("Total", static_from(format_thousand(fee+usd_a))));
+        }));
 
         let details = DataItem::new(ctx, None, "Transaction details", None, None, Some(details), None);
         let amount_display = AmountDisplay::new(ctx, usd, btc);
