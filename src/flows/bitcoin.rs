@@ -2,7 +2,7 @@ use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 use chrono::{Local, DateTime, Datelike, Timelike};
-use crate::bdk::{BDKPlugin, SendAddress, SendAmount};
+use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee};
 use crate::get_contacts;
 
 #[derive(Debug, Copy, Clone)]
@@ -52,18 +52,17 @@ impl BitcoinHome {
 
     fn update_transactions(&mut self, ctx: &mut Context) {
         let bdk = ctx.get::<BDKPlugin>();
-        let btc = bdk.get_balance().to_btc() as f32;
         let transactions = bdk.get_transactions();
         let content = &mut self.1.content();
 
         if !transactions.is_empty() {
             *content.offset() = Offset::Start;
             let transactions = transactions.into_iter().map(|t| {
-                let txid = t.txid.clone();
+                let txid = t.txid;
                 ListItem::bitcoin(
                     ctx, 
                     t.is_received, 
-                    ((t.amount.to_btc() as f64) * t.price) as f32,
+                    (t.amount.to_btc() * t.price) as f32,
                     &t.datetime.map(|dt| format_date(&dt).to_string()).unwrap_or("-".to_string()),  
                     move |ctx: &mut Context| {
                         ctx.get::<BDKPlugin>().set_transaction(txid);
@@ -105,7 +104,7 @@ impl Address {
         let continue_btn = Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
 
-        let mut address = ctx.state().get::<SendAddress>(); // optional string
+        let address = ctx.state().get::<SendAddress>(); // optional string
         let address_ref: Option<&'static str> = address.get().as_ref().map(|s| Box::leak(s.clone().into_boxed_str()) as &'static str);
         let address_input = TextInput::new(ctx, address_ref, None, "Bitcoin address...", None, icon_button);
 
@@ -199,6 +198,7 @@ impl Amount {
         
         let mut amount_display = AmountInput::new(ctx);
         *amount_display.price() = ctx.get::<BDKPlugin>().get_price();
+        ctx.state().set(&SendAmount::new(0.0));
 
         let numeric_keypad = NumericKeypad::new(ctx);
         let mut content: Vec<Box<dyn Drawable>> = vec![Box::new(amount_display)];
@@ -221,12 +221,20 @@ impl OnEvent for Amount {
             let balance = bdk.get_balance().to_btc() as f32;
             let dust_limit = bdk.get_dust_limit();
 
-            let (max, min) = bdk.get_fees(*amount.btc() as f64);
+            amount.set_max(balance-dust_limit*price);
 
-            amount.set_max(((balance+dust_limit)*price)-max);
-            amount.set_min(min);
+            ctx.state().set(&SendAmount::new(*amount.btc()));
 
-            ctx.state().set(&SendAmount(*amount.btc() as f64));
+            let address = ctx.state().get::<SendAddress>().as_address();
+            let btc = ctx.state().get::<SendAmount>();
+
+            if *amount.btc() > dust_limit {
+                let (standard, priority) = ctx.get::<BDKPlugin>().estimate_fees(*btc.get(), address);
+                let standard = standard.to_btc().to_string().parse::<f32>().unwrap();
+                let priority = priority.to_btc().to_string().parse::<f32>().unwrap();
+                amount.set_max(((balance-dust_limit)-priority)*price);
+                amount.set_min(standard*price);
+            }
 
             let error = *amount.error();
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
@@ -245,13 +253,22 @@ impl OnEvent for Amount {
 
 #[derive(Debug, Component)]
 struct Speed(Stack, Page);
-impl OnEvent for Speed {}
 impl AppPage for Speed {}
 impl Speed {
     fn new(ctx: &mut Context) -> Self {
+        let price = ctx.get::<BDKPlugin>().get_price();
+        let address = ctx.state().get::<SendAddress>().as_address();
+        let btc = ctx.state().get::<SendAmount>();
+
+        let (standard, priority) = ctx.get::<BDKPlugin>().estimate_fees(*btc.get(), address);
+        ctx.state().set(&SendFee::new(standard, priority, false));
+
+        let standard = standard.to_btc().to_string().parse::<f32>().unwrap() * price;
+        let priority = priority.to_btc().to_string().parse::<f32>().unwrap() * price;
+
         let speed_selector = ListItemSelector::new(ctx,
-            ("Standard", "Arrives in ~2 hours", Some("$0.18 Bitcoin network fee")),
-            ("Priority", "Arrives in ~30 minutes", Some("$0.35 Bitcoin network fee")),
+            ("Standard", "Arrives in ~2 hours", Some(static_from(format!("${:.2} Bitcoin network fee", standard)))),
+            ("Priority", "Arrives in ~30 minutes", Some(static_from(format!("${:.2} Bitcoin network fee", priority)))),
             None, None
         );
 
@@ -261,6 +278,21 @@ impl Speed {
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Transaction speed", None);
         Speed(Stack::default(), Page::new(header, content, Some(bumper), false))
+    }
+}
+
+impl OnEvent for Speed {
+    fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+        if let Some(TickEvent) = event.downcast_ref() {
+            let item = &mut *self.1.content().items()[0];
+            let selector = item.as_any_mut().downcast_mut::<ListItemSelector>().unwrap();
+            match selector.index() {
+                Some(0) => ctx.state().get::<SendFee>().set_priority(false),
+                Some(1) => ctx.state().get::<SendFee>().set_priority(true),
+                _ => {}
+            }
+        }
+        true
     }
 }
 
@@ -276,20 +308,30 @@ impl Confirm {
         let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
 
+        let price = ctx.get::<BDKPlugin>().get_price();
+
         let address = ctx.state().get::<SendAddress>();
         let amount = ctx.state().get::<SendAmount>();
 
-        println!("ADdress: {:?}", address.get());
-        let btc = amount.get().unwrap().to_btc() as f64;
+        let btc = amount.get().to_btc().to_string().parse::<f32>().unwrap();
+        let usd = btc * price;
 
+        let speed = match ctx.state().get::<SendFee>().is_priority() {
+            false => "Standard (~2 hours)",
+            true => "Priority (~30 minutes)"
+        };
+
+        let fee = ctx.state().get::<SendFee>();
+        println!("FEE {:?}", fee);
+        let fee = fee.get_fee().to_btc().to_string().parse::<f32>().unwrap() * price;
 
         let confirm_amount = DataItem::new(ctx, None, "Confirm amount", None, None,
             Some(vec![
                 ("Amount sent (BTC)", static_from(format!("{:.8} BTC", btc))),
-                ("Send speed", "Standard (2 hours)"),
-                ("Amount sent", "$10.00"),
-                ("Network fee", "$0.18"),
-                ("Total", "$10.18")
+                ("Send speed", speed),
+                ("Amount sent", static_from(format_thousand(usd as f64))),
+                ("Network fee", static_from(format!("${:.2}", fee))),
+                ("Total", static_from(format_thousand((usd+fee) as f64)))
             ]), Some(vec![edit_amount, edit_speed])
         );
 
@@ -381,7 +423,7 @@ impl ViewTransaction {
             (dt.format("%-m/%-d/%y").to_string(), dt.format("%-I:%M %p").to_string())
         }).unwrap_or(("-".to_string(), "-".to_string()));
 
-        let btc_a = tx.amount.to_btc() as f64;
+        let btc_a = tx.amount.to_btc();
         let usd_a = btc_a * tx.price;
         let usd = format!("${:.2}", usd_a);
         let price = format_thousand(tx.price);
@@ -398,7 +440,7 @@ impl ViewTransaction {
         ];
 
         (!tx.is_received).then(|| tx.fee.map(|fee| {
-            let fee = (fee.to_btc() as f64)*tx.price;
+            let fee = fee.to_btc()*tx.price;
             details.push(("Network fee", static_from(format!("${:.2}", fee))));
             details.push(("Total", static_from(format_thousand(fee+usd_a))));
         }));
@@ -444,7 +486,7 @@ pub fn format_thousand(t: f64) -> String {
     let dollars = t.trunc() as u64;
     let cents = (t.fract() * 100.0).round() as u64;
 
-    let mut dollar_str = dollars.to_string();
+    let dollar_str = dollars.to_string();
     let mut chars = dollar_str.chars().rev().collect::<Vec<_>>();
     for i in (3..chars.len()).step_by(3) {
         chars.insert(i, ',');

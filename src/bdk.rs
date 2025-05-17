@@ -8,15 +8,15 @@ use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams};
 use bdk_wallet::descriptor::template::Bip86;
 use bdk_wallet::bitcoin::bip32::Xpriv;
 // use bdk_wallet::bitcoin::FeeRate;
-pub use bdk_wallet::bitcoin::{Amount, Network, Address, Txid};
+pub use bdk_wallet::bitcoin::{Amount, Network, Address, Txid, FeeRate};
 use bdk_wallet::{PersistedWallet, WalletPersister};
 use bdk_wallet::chain::{Merge, ChainPosition, Anchor};
 use bdk_esplora::esplora_client::Builder;
 use bdk_esplora::EsploraExt;
-use chrono::{Datelike, DateTime, Local, Utc, NaiveDateTime, TimeZone, Timelike, Weekday};
+use chrono::{DateTime, Local, Utc, NaiveDateTime, TimeZone};
 use serde_json::Value; // for getting bitcoin price from coinbase.com
 use reqwest::Client;
-const SATS: f64 = 1_000_000.0;
+const SATS: f32 = 100_000_000.0;
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
@@ -35,17 +35,39 @@ impl SendAddress {
 
     pub fn is_valid(&self) -> bool { self.0.is_some() }
     pub fn get(&self) -> &Option<String> { &self.0 }
+
+    pub fn as_address(&self) -> Address {
+        Address::from_str(self.0.as_ref().unwrap()).unwrap().require_network(Network::Bitcoin).unwrap()
+    }
 }
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
-pub struct SendAmount(Option<Amount>); // btc
+pub struct SendAmount(Amount); // btc
 
 impl SendAmount {
-    pub fn set(&mut self, new: f64) -> Self {
-        SendAmount(Amount::from_btc((new * SATS).round() / SATS).ok())
+    pub fn new(new: f32) -> Self {
+        SendAmount(Amount::from_sat((new * SATS).round() as u64))
     }
 
-    pub fn get(&self) -> &Option<Amount> { &self.0 }
+    pub fn get(&self) -> &Amount { &self.0 }
+}
+
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct SendFee(Amount, Amount, bool); // min, max, is_priority
+
+impl SendFee {
+    pub fn new(standard: Amount, priority: Amount, is_priority: bool) -> Self {
+        SendFee(standard, priority, is_priority)
+    }
+
+    pub fn get_fee(&self) -> &Amount { 
+        match self.2 {
+            false => &self.0,
+            true => &self.1
+        }
+    }
+    pub fn is_priority(&self) -> &bool { &self.2 }
+    pub fn set_priority(&mut self, new: bool) { self.2 = new }
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
@@ -91,7 +113,6 @@ impl Task for GetPrice {
 
 pub struct BDKPlugin {
     persister: Arc<Mutex<MemoryPersister>>,
-    recipient_address: Arc<Mutex<Option<Address>>>,
     wallet: Arc<Mutex<Option<PersistedWallet<MemoryPersister>>>>,
     transactions: Arc<Mutex<Vec<BDKTransaction>>>,
     current_transaction: Arc<Mutex<Option<BDKTransaction>>>,
@@ -178,7 +199,7 @@ impl BDKPlugin {
     pub fn get_new_address(&mut self) -> Address {
         let mut persister = self.persister.lock().unwrap();
         let mut wallet = self.get_wallet();
-        let mut wallet = wallet.as_mut().unwrap();
+        let wallet = wallet.as_mut().unwrap();
         let address = wallet.reveal_next_address(KeychainKind::External);
         wallet.persist(&mut persister).expect("write is okay");
         address.address
@@ -188,23 +209,37 @@ impl BDKPlugin {
         *self.price.lock().unwrap()
     }
 
-    pub fn get_fees(&mut self, btc: f64) -> (f32, f32) {
-        // println!("RUNNING GET FEES");
-        // let address = self.get_recipient_address().expect("Address not found.");
-        // println!("GOT ADDRESS");
-        // let mut wallet = self.get_wallet();
-        // let mut tx_builder = wallet.build_tx();
-        // println!("BUILD TX BUILDER");
-        // tx_builder
-        //     .add_recipient(address.script_pubkey(), Amount::from_btc(btc).expect("Could not parse"))
-        //     .fee_rate(FeeRate::from_sat_per_vb(5).expect("valid feerate"));
-        // println!("BEFORE");
-        // let psbt = tx_builder.finish().expect("HUh?");
-        // println!("AFTER: psdbt {:?}", psbt);
-        (0.0, 0.0)
-    }
+    pub fn estimate_fees(&mut self, sats: Amount, address: Address) -> (Amount, Amount) {
+        println!("SATS: {:?}", sats);
+        let mut wallet = self.get_wallet();
+        let wallet = wallet.as_mut().unwrap();
+    
+        let standard_rate = FeeRate::from_sat_per_vb(3).unwrap();
+        let priority_rate = FeeRate::from_sat_per_vb(5).unwrap();
+    
+        let mut builder_std = wallet.build_tx();
+        builder_std.add_recipient(address.script_pubkey(), sats);
+        builder_std.fee_rate(standard_rate);
+        let psbt_std = builder_std.finish().unwrap();
 
-    pub fn get_dust_limit(&self) -> f32 {(546.0 / SATS) as f32}
+        let tx_std = psbt_std.clone().extract_tx().unwrap();
+        let tx_size_std = tx_std.weight().to_vbytes_ceil(); // vbytes = weight / 4
+        let standard_fee = tx_size_std * standard_rate.to_sat_per_vb_floor();
+
+        let mut builder_prio = wallet.build_tx();
+        builder_prio.add_recipient(address.script_pubkey(), sats);
+        builder_prio.fee_rate(priority_rate);
+        let psbt_prio = builder_prio.finish().unwrap();
+
+        let tx_prio = psbt_prio.clone().extract_tx().unwrap();
+        let tx_size_prio = tx_prio.weight().to_vbytes_ceil();
+        let priority_fee = tx_size_prio * priority_rate.to_sat_per_vb_floor();
+    
+        (Amount::from_sat(standard_fee), Amount::from_sat(priority_fee))
+    }
+    
+
+    pub fn get_dust_limit(&self) -> f32 { 0.000005462 }
 
     // get bitcoin price
     // set recipient address
@@ -236,7 +271,6 @@ impl Plugin for BDKPlugin {
         (BDKPlugin{
             persister: persister.clone(), 
             price: price.clone(), 
-            recipient_address: Arc::new(Mutex::new(None)),
             wallet: Arc::new(Mutex::new(None)),
             current_transaction: Arc::new(Mutex::new(None)),
             transactions: transactions.clone(),
@@ -275,7 +309,7 @@ impl Task for GetTransactions {
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
         let mut persister = h_ctx.cache.get::<MemoryPersister>().await;
-        let mut wallet = PersistedWallet::load(&mut persister, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.");
+        let wallet = PersistedWallet::load(&mut persister, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.");
         let mut transactions = Vec::new();
 
         for canonical_tx in wallet.transactions_sort_by(|tx1, tx2| tx2.chain_position.cmp(&tx1.chain_position)) {
@@ -335,7 +369,7 @@ async fn get_block_time(block_hash: &str) -> Result<u64, Box<dyn std::error::Err
     Ok(res["timestamp"].as_u64().ok_or("Missing or invalid timestamp field")?)
 }
 
-async fn get_btc_price_at(timestamp: &String) -> Result<f64, Box<dyn std::error::Error>> {
+async fn get_btc_price_at(timestamp: &str) -> Result<f64, Box<dyn std::error::Error>> {
     let datetime = NaiveDateTime::parse_from_str(timestamp, "%Y-%m-%d %H:%M:%S")?;
     let target_timestamp = Utc.from_utc_datetime(&datetime).timestamp();
 

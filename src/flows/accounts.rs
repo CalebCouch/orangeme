@@ -71,7 +71,7 @@ impl AppPage for GetCredentials {}
 
 impl GetCredentials {
     pub fn new(ctx: &mut Context) -> Self {
-        let ucp = ctx.get::<UCPPlugin>().set_back(Box::new(|ctx: &mut Context| AccountsFlow::GetCredentials.navigate(ctx)));
+        ctx.get::<UCPPlugin>().set_back(Box::new(|ctx: &mut Context| AccountsFlow::GetCredentials.navigate(ctx)));
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| AccountsFlow::Account.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Get credentials", None);
         
@@ -101,7 +101,7 @@ impl AppPage for SophtronPolicy {}
 
 impl SophtronPolicy {
     pub fn new(ctx: &mut Context) -> Self {
-        let ucp = ctx.get::<UCPPlugin>().set_on_return(Box::new(|ctx: &mut Context| AccountsFlow::Account.navigate(ctx))); // success
+        ctx.get::<UCPPlugin>().set_on_return(Box::new(|ctx: &mut Context| AccountsFlow::Account.navigate(ctx))); // success
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| AccountsFlow::GetCredentials.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Get credentials", None);
@@ -234,8 +234,7 @@ impl UnblockUser {
             avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
         };
 
-        let theme = &ctx.get::<PelicanUI>().theme;
-        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.h4;
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let confirm = Button::primary(ctx, "Unblock", |ctx: &mut Context| AccountsFlow::UserUnblocked.navigate(ctx));
         let bumper = Bumper::double_button(ctx, cancel, confirm);
@@ -262,8 +261,7 @@ impl UserUnblocked {
             avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
         };
 
-        let theme = &ctx.get::<PelicanUI>().theme;
-        let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
+        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.h4;
         let close = Button::close(ctx, "Done", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let bumper = Bumper::single_button(ctx, close);
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
