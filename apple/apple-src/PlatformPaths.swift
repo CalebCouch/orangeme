@@ -1,72 +1,88 @@
-import Foundation
+// import Foundation
 
-// xcrun --sdk macosx swiftc \
-//     -target arm64-apple-macos13 \
-//     apple/apple-src/PlatformPaths.swift
+// // xcrun --sdk macosx swiftc \
+// //     -target arm64-apple-macos13 \
+// //     apple/apple-src/PlatformPaths.swift
 
-fileprivate var appSupportPathCString: UnsafePointer<CChar>? = nil
+// fileprivate var appSupportPathCString: UnsafePointer<CChar>? = nil
 
-@_cdecl("get_application_support_dir")
-public func get_application_support_dir() -> UnsafePointer<CChar>? {
-    let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-    guard let url = urls.first else { return nil }
-    try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+// @_cdecl("get_application_support_dir")
+// public func get_application_support_dir() -> UnsafePointer<CChar>? {
+//     let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+//     guard let url = urls.first else { return nil }
+//     try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
 
-    let path = url.path
-    appSupportPathCString = (path as NSString).utf8String
-    return appSupportPathCString
-}
+//     let path = url.path
+//     appSupportPathCString = (path as NSString).utf8String
+//     return appSupportPathCString
+// }
 
-#if os(iOS)
-import UIKit
+// #if os(iOS)
+// import UIKit
 
-@_cdecl("get_clipboard_string")
-public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
-   if let string = UIPasteboard.general.string {
-       return strdup(string)
-   }
-   return nil
-}
+// @_cdecl("get_clipboard_string")
+// public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
+//    if let string = UIPasteboard.general.string {
+//        return strdup(string)
+//    }
+//    return nil
+// }
 
-@_cdecl("trigger_haptic")
-public func trigger_haptic() {
-   let generator = UIImpactFeedbackGenerator(style: .medium)
-   generator.prepare()
-   generator.impactOccurred()
-}
+// @_cdecl("trigger_haptic")
+// public func trigger_haptic() {
+//    let generator = UIImpactFeedbackGenerator(style: .medium)
+//    generator.prepare()
+//    generator.impactOccurred()
+// }
 
-var insetsArray: [Double] = [0, 0, 0, 0]
+// var insetsArray: [Double] = [0, 0, 0, 0]
 
-@_cdecl("get_safe_area_insets")
-public func get_safe_area_insets() -> UnsafePointer<Double> {
-    if let window = UIApplication.shared.windows.first {
-        let insets = window.safeAreaInsets
-        insetsArray[0] = Double(insets.top)
-        insetsArray[1] = Double(insets.bottom)
-        insetsArray[2] = Double(insets.left)
-        insetsArray[3] = Double(insets.right)
-    }
+// @_cdecl("get_safe_area_insets")
+// public func get_safe_area_insets() -> UnsafePointer<Double> {
+//     if let window = UIApplication.shared.windows.first {
+//         let insets = window.safeAreaInsets
+//         insetsArray[0] = Double(insets.top)
+//         insetsArray[1] = Double(insets.bottom)
+//         insetsArray[2] = Double(insets.left)
+//         insetsArray[3] = Double(insets.right)
+//     }
 
-    return insetsArray.withUnsafeBufferPointer { $0.baseAddress! }
-}
+//     return insetsArray.withUnsafeBufferPointer { $0.baseAddress! }
+// }
 
-#else
+// #else
 
-import AppKit
+// import AppKit
 
-@_cdecl("get_clipboard_string")
-public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
-    let pasteboard = NSPasteboard.general
+// @_cdecl("get_clipboard_string")
+// public func get_clipboard_string() -> UnsafeMutablePointer<CChar>? {
+//     let pasteboard = NSPasteboard.general
     
-    if let availableTypes = pasteboard.types {
-        if availableTypes.contains(NSPasteboard.PasteboardType("NSStringPboardType")) {
-            if let copiedString = pasteboard.string(forType: .string) {
-                return strdup(copiedString)
-            }
-        }
-    }
-    return nil
-}
+//     if let availableTypes = pasteboard.types {
+//         if availableTypes.contains(NSPasteboard.PasteboardType("NSStringPboardType")) {
+//             if let copiedString = pasteboard.string(forType: .string) {
+//                 return strdup(copiedString)
+//             }
+//         }
+//     }
+//     return nil
+// }
 
 
-#endif
+// #endif
+// // pelican_ui interface.rs
+// //let insets = safe_area_insets();
+
+
+// //get_clipboard_string nothing currently so dont worry about it
+
+
+// //trigger_haptics
+// // buttons.rs
+// //  #[cfg(target_os = "ios")]
+// // crate::vibrate();
+
+
+// //get_application_support_dir
+// //base.rs inside rust_on_rails
+// //let ptr = unsafe {$crate::get_application_support_dir()};

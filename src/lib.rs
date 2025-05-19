@@ -53,23 +53,23 @@ impl App for MyApp {
     }
     async fn plugins(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
         let (plugin, mut tasks) = BDKPlugin::new(ctx, h_ctx).await;
-        //let (pelican, p_tasks) = PelicanUI::new(ctx, h_ctx).await;
+        let (pelican, p_tasks) = PelicanUI::new(ctx, h_ctx).await;
         //tasks.extend(p_tasks);
         
         (std::collections::HashMap::from([
             (std::any::TypeId::of::<BDKPlugin>(), Box::new(plugin) as Box<dyn std::any::Any>),
-            //(std::any::TypeId::of::<PelicanUI>(), Box::new(pelican) as Box<dyn std::any::Any>)
+            (std::any::TypeId::of::<PelicanUI>(), Box::new(pelican) as Box<dyn std::any::Any>)
         ]), tasks)
     }
     //END TODO
 
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
       //ctx.get::<BDKPlugin>().init();
-      //let navigation = (0 as usize, vec![
-      //    ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //    ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //    // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-      //]);
+      let navigation = (0 as usize, vec![
+         ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+         ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+         // ("profile", "My Profile", Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+      ]);
 
       //Box::new(Background(
       //    Stack::center(),
@@ -81,11 +81,11 @@ impl App for MyApp {
       //))
 
 
-        //let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| MyProfile.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
+        let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| ProfilesFlow::Account.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
 
-        //let page = BitcoinHome.build_page(ctx);
-        //Box::new(Interface::new(ctx, page, navigation, profile))
-        Box::new(WalletText::new(ctx))
+        let page = BitcoinHome::new(ctx);
+        Box::new(Interface::new(ctx, page, navigation, profile))
+       // Box::new(WalletText::new(ctx))
         //Box::new(TextInput::new(ctx, None, "Placeholder", None, None,
         //    Some(("send", |ctx: &mut Context, input: &mut String| {println!("sent: {input}");}))
         //))

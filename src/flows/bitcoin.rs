@@ -97,7 +97,9 @@ impl OnEvent for ScanQR {}
 impl AppPage for ScanQR {}
 impl ScanQR {
     fn new(ctx: &mut Context) -> Self {
+  
         let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
+
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
 
