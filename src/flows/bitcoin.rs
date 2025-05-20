@@ -1,9 +1,10 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
-use chrono::{Local, DateTime, Datelike, Timelike};
-use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee};
+use chrono::{Local, DateTime, Datelike, Timelike, TimeZone};
+use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee, NANS};
 use crate::get_contacts;
+use crate::bdk::parse_btc_uri;
 
 #[derive(Debug, Copy, Clone)]
 pub enum BitcoinFlow {
@@ -62,8 +63,8 @@ impl BitcoinHome {
                 ListItem::bitcoin(
                     ctx, 
                     t.is_received, 
-                    (t.amount.to_btc() * t.price) as f32,
-                    &t.datetime.map(|dt| format_date(&dt).to_string()).unwrap_or("-".to_string()),  
+                    format_usd(t.amount.to_btc() * t.price),
+                    t.datetime.map(|dt| Timestamp::new(dt).friendly()).unwrap_or("-"),
                     move |ctx: &mut Context| {
                         ctx.get::<BDKPlugin>().set_transaction(txid);
                         BitcoinFlow::ViewTransaction.navigate(ctx)
@@ -85,11 +86,11 @@ impl OnEvent for BitcoinHome {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
             let bdk = ctx.get::<BDKPlugin>();
-            let (btc, price) = (bdk.get_balance().to_btc() as f32, bdk.get_price());
+            let (btc, price) = (bdk.get_balance().to_btc(), bdk.get_price());
             let items = &mut *self.1.content().items();
             let display: &mut AmountDisplay = items[0].as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
-            *display.usd() = format!("${:.2}", btc*price);
-            *display.btc() = format!("{:.8} BTC", btc);
+            *display.usd() = format_usd(btc*price as f64).to_string();
+            *display.btc() = format_nano_btc(btc*NANS).to_string();
             self.update_transactions(ctx);
         }
         true
@@ -130,10 +131,13 @@ impl OnEvent for Address {
         if let Some(TickEvent) = event.downcast_ref() {
             let item = &mut *self.1.content().items()[0];
             let input: &mut TextInput = item.as_any_mut().downcast_mut::<TextInput>().unwrap();
-            let input_address = input.get_value();
+            let input_address = input.get_value().clone();
 
             if !input_address.is_empty() {
-                let address = SendAddress::new(input_address.to_string());
+                let (address, amount) = parse_btc_uri(&input_address);
+                *input.get_value() = address.to_string();
+                let address = SendAddress::new(address.to_string());
+                if let Some(b) = amount { ctx.state().set(&SendAmount::new(b)) }
 
                 match address.is_valid() {
                     true => *input.error() = false,
@@ -159,7 +163,6 @@ impl OnEvent for Address {
 
 #[derive(Debug, Component)]
 struct ScanQR(Stack, Page);
-impl OnEvent for ScanQR {}
 impl AppPage for ScanQR {}
 impl ScanQR {
     fn new(ctx: &mut Context) -> Self {
@@ -168,6 +171,16 @@ impl ScanQR {
         let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
 
         ScanQR(Stack::default(), Page::new(header, content, None, false))
+    }
+}
+
+impl OnEvent for ScanQR {
+    fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+        if let Some(QRCodeScannedEvent(data)) = event.downcast_ref::<QRCodeScannedEvent>() {
+            ctx.state().set(&SendAddress::new(data.to_string()));
+            BitcoinFlow::Address.navigate(ctx)
+        }
+        true
     }
 }
 
@@ -192,18 +205,47 @@ struct Amount(Stack, Page, #[skip] ButtonState);
 impl AppPage for Amount {}
 impl Amount {
     fn new(ctx: &mut Context) -> Self {
-        let is_mobile = pelican_ui::config::IS_MOBILE;
-        let button = Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
-        let bumper = Bumper::single_button(ctx, button);
-        
-        let mut amount_display = AmountInput::new(ctx);
-        *amount_display.price() = ctx.get::<BDKPlugin>().get_price();
-        ctx.state().set(&SendAmount::new(0.0));
+
+        let price = ctx.get::<BDKPlugin>().get_price();
+        let amount = ctx.state().get::<SendAmount>();
+        let btc = amount.get().to_btc().to_string().parse::<f64>().unwrap();
+        let nano_btc = btc*NANS;
+        let usd = btc*price as f64;
+
+        let mut amount_display = AmountInput::new(ctx, Some((usd, format_nano_btc(nano_btc))));
+        *amount_display.price() = price;
+        let bdk = ctx.get::<BDKPlugin>();
+        let balance = bdk.get_balance().to_btc() as f32;
+        let dust_limit = bdk.get_dust_limit();
+
+        amount_display.set_max((balance-dust_limit)*price);
+
+        ctx.state().set(&SendAmount::new(*amount_display.btc() as f64));
+
+        let address = ctx.state().get::<SendAddress>().as_address();
+        let amount = ctx.state().get::<SendAmount>();
+
+        if *amount_display.btc() > dust_limit {
+            let (standard, priority) = ctx.get::<BDKPlugin>().estimate_fees(*amount.get(), address);
+            let standard = standard.to_btc().to_string().parse::<f32>().unwrap();
+            let priority = priority.to_btc().to_string().parse::<f32>().unwrap();
+            amount_display.set_max(((balance-dust_limit)-priority)*price);
+            amount_display.set_min(standard*price);
+        }
+
+        amount_display.validate(ctx);
+
+        let button = match *amount_display.error() {
+            true => Button::disabled(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx)),
+            false => Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx))
+        };
 
         let numeric_keypad = NumericKeypad::new(ctx);
         let mut content: Vec<Box<dyn Drawable>> = vec![Box::new(amount_display)];
-        is_mobile.then(|| content.push(Box::new(numeric_keypad)));
+        pelican_ui::config::IS_MOBILE.then(|| content.push(Box::new(numeric_keypad)));
         let content = Content::new(Offset::Center, content);
+
+        let bumper = Bumper::single_button(ctx, button);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Bitcoin amount", None);
         Amount(Stack::default(), Page::new(header, content, Some(bumper), false), ButtonState::Default)
@@ -213,29 +255,9 @@ impl Amount {
 impl OnEvent for Amount {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
-            let bdk = ctx.get::<BDKPlugin>();
-            let price = bdk.get_price();
-
             let item = &mut *self.1.content().items()[0];
             let amount = item.as_any_mut().downcast_mut::<AmountInput>().unwrap();
-            let balance = bdk.get_balance().to_btc() as f32;
-            let dust_limit = bdk.get_dust_limit();
-
-            amount.set_max(balance-dust_limit*price);
-
-            ctx.state().set(&SendAmount::new(*amount.btc()));
-
-            let address = ctx.state().get::<SendAddress>().as_address();
-            let btc = ctx.state().get::<SendAmount>();
-
-            if *amount.btc() > dust_limit {
-                let (standard, priority) = ctx.get::<BDKPlugin>().estimate_fees(*btc.get(), address);
-                let standard = standard.to_btc().to_string().parse::<f32>().unwrap();
-                let priority = priority.to_btc().to_string().parse::<f32>().unwrap();
-                amount.set_max(((balance-dust_limit)-priority)*price);
-                amount.set_min(standard*price);
-            }
-
+            ctx.state().set(&SendAmount::new(*amount.btc() as f64));
             let error = *amount.error();
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
             let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
@@ -302,38 +324,32 @@ impl OnEvent for Confirm {}
 impl AppPage for Confirm {}
 impl Confirm {
     fn new(ctx: &mut Context) -> Self {
-        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::Success.navigate(ctx));
-        let bumper = Bumper::single_button(ctx, button);
         let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
 
-        let price = ctx.get::<BDKPlugin>().get_price();
-
+        let price = ctx.get::<BDKPlugin>().get_price() as f64;
         let address = ctx.state().get::<SendAddress>();
         let amount = ctx.state().get::<SendAmount>();
 
-        let btc = amount.get().to_btc().to_string().parse::<f32>().unwrap();
-        let usd = btc * price;
+        let fee = ctx.state().get::<SendFee>();
+        let fee = fee.get_fee().to_btc().to_string().parse::<f64>().unwrap() * price;
+        let btc = amount.get().to_btc().to_string().parse::<f64>().unwrap();
 
         let speed = match ctx.state().get::<SendFee>().is_priority() {
             false => "Standard (~2 hours)",
             true => "Priority (~30 minutes)"
         };
 
-        let fee = ctx.state().get::<SendFee>();
-        println!("FEE {:?}", fee);
-        let fee = fee.get_fee().to_btc().to_string().parse::<f32>().unwrap() * price;
+        let details = vec![
+            ("Amount sent", format_usd(btc*price)),
+            ("Bitcoin sent", format_nano_btc(btc*NANS)),
+            ("Send speed", speed),
+            ("Network fee", format_usd(fee)),
+            ("Total", format_usd((btc*price)+fee))
+        ];
 
-        let confirm_amount = DataItem::new(ctx, None, "Confirm amount", None, None,
-            Some(vec![
-                ("Amount sent (BTC)", static_from(format!("{:.8} BTC", btc))),
-                ("Send speed", speed),
-                ("Amount sent", static_from(format_thousand(usd as f64))),
-                ("Network fee", static_from(format!("${:.2}", fee))),
-                ("Total", static_from(format_thousand((usd+fee) as f64)))
-            ]), Some(vec![edit_amount, edit_speed])
-        );
+        let confirm_amount = DataItem::new(ctx, None, "Confirm amount", None, None, Some(details), Some(vec![edit_amount, edit_speed]));
 
         let confirm_address = DataItem::new(ctx, None, "Confirm address",
             Some(static_from(address.get().as_ref().unwrap().to_string())),
@@ -341,6 +357,15 @@ impl Confirm {
             None, Some(vec![edit_address])
         );
 
+        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| {
+            let address = ctx.state().get::<SendAddress>().as_address();
+            let amount = ctx.state().get::<SendAmount>();
+            let fee_rate = ctx.state().get::<SendFee>().as_rate();
+            ctx.get::<BDKPlugin>().broadcast_transaction(address, *amount.get(), fee_rate);
+            BitcoinFlow::Success.navigate(ctx)
+        });
+        
+        let bumper = Bumper::single_button(ctx, button);
         let content = Content::new(Offset::Start, vec![Box::new(confirm_address), Box::new(confirm_amount)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Confirm send", None);
@@ -354,7 +379,7 @@ impl OnEvent for Success {}
 impl AppPage for Success {}
 impl Success {
     fn new(ctx: &mut Context) -> Self {
-        let contact = None; //Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary));
+        let contact = None; //Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary)); // Don't forget arrow when sending to contact.
         let theme = &ctx.get::<PelicanUI>().theme;
         let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
         let button = Button::close(ctx, "Continue", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
@@ -409,44 +434,50 @@ impl ViewTransaction {
         let button = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let bumper = Bumper::single_button(ctx, button);
 
-        let (address_t, amount_t, title) = match tx.is_received {
-            true => ("Received at address", "Amount received", "Received bitcoin"),
-            false => ("Send to address", "Amount sent", "Sent bitcoin")
+        let address = tx.address.map(format_address).unwrap_or("unknown");
+        let timestamp = tx.datetime.map(Timestamp::new).unwrap_or(Timestamp::pending());
+        let btc = tx.amount.to_btc();
+        let nano_btc = format_nano_btc(btc * NANS);
+        let usd_amt = btc * tx.price;
+        let usd = format_usd(usd_amt);
+        let price = format_usd(tx.price);
+
+        let (title, details): (&'static str, Vec<(&'static str, &'static str)>) = match tx.is_received {
+            true => {
+                (
+                    "Received bitcoin",
+                    vec![
+                        ("Date", timestamp.date()),
+                        ("Time", timestamp.time()),
+                        ("Amount received", usd),
+                        ("Bitcoin received", nano_btc),
+                        ("Bitcoin price", price),
+                        ("Received at address", address),
+                    ]
+                )
+            },
+            false => {
+                let fee = tx.fee.unwrap().to_btc()*tx.price;
+                let total = format_usd(fee+usd_amt);
+                (
+                    "Sent bitcoin",
+                    vec![
+                        ("Date", timestamp.date()),
+                        ("Time", timestamp.time()),
+                        ("Amount sent", usd),
+                        ("Bitcoin sent", nano_btc),
+                        ("Bitcoin price", price),
+                        ("Sent to address", address),
+                        ("", ""), // temp spacer
+                        ("Network fee", format_usd(fee)),
+                        ("Total", total)
+                    ]
+                )
+            }
         };
 
-        let address = tx.address.map(|a| {
-            let a = a.to_string();
-            format!("{}...{}", &a[..7], &a[a.len().saturating_sub(3)..])
-        }).unwrap_or("unknown".to_string());
-
-        let (date, time): (String, String) = tx.datetime.map(|dt| {
-            (dt.format("%-m/%-d/%y").to_string(), dt.format("%-I:%M %p").to_string())
-        }).unwrap_or(("-".to_string(), "-".to_string()));
-
-        let btc_a = tx.amount.to_btc();
-        let usd_a = btc_a * tx.price;
-        let usd = format!("${:.2}", usd_a);
-        let price = format_thousand(tx.price);
-        let btc = static_from(format!("{:.8} BTC", btc_a));
-        let usd = static_from(usd);
-
-        let mut details: Vec<(&'static str, &'static str)> = vec![
-            ("Date", static_from(date)),
-            ("Time", static_from(time)),
-            (address_t, static_from(address)),
-            (static_from(format!("{} (BTC)", amount_t)), btc),
-            ("Bitcoin price", static_from(price)),
-            (amount_t, usd),
-        ];
-
-        (!tx.is_received).then(|| tx.fee.map(|fee| {
-            let fee = fee.to_btc()*tx.price;
-            details.push(("Network fee", static_from(format!("${:.2}", fee))));
-            details.push(("Total", static_from(format_thousand(fee+usd_a))));
-        }));
-
         let details = DataItem::new(ctx, None, "Transaction details", None, None, Some(details), None);
-        let amount_display = AmountDisplay::new(ctx, usd, btc);
+        let amount_display = AmountDisplay::new(ctx, usd, nano_btc);
         let content = Content::new(Offset::Center, vec![Box::new(amount_display), Box::new(details)]); //Box::new(qr_code), Box::new(text)
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), title, None);
@@ -454,37 +485,18 @@ impl ViewTransaction {
     }
 }
 
-pub fn format_date(dt: &DateTime<Local>) -> String {
-    // let dt = dt.format("%Y-%m-%d %H:%M:%S");
-    let today = Local::now().date_naive();
-    let date = dt.date_naive();
-
-    match date == today {
-        true => {
-            let hour = dt.hour();
-            let minute = dt.minute();
-            let (hour12, am_pm) = match hour == 0 {
-                true => (12, "AM"),
-                false if hour < 12 => (hour, "AM"),
-                false if hour == 12 => (12, "PM"),
-                false => (hour - 12, "PM")
-            };
-            format!("{:02}:{:02} {}", hour12, minute, am_pm)
-        },
-        false if date == today.pred_opt().unwrap_or(today) => "Yesterday".to_string(),
-        false if date.iso_week() == today.iso_week() => format!("{}", dt.format("%A")),
-        false if date.year() == today.year() => format!("{}", dt.format("%B %-d")),
-        false => format!("{}", dt.format("%m/%d/%y"))
-    }
-}
-
 pub fn static_from(s: String) -> &'static str {
     Box::leak(s.into_boxed_str())
 }
 
-pub fn format_thousand(t: f64) -> String {
-    let dollars = t.trunc() as u64;
-    let cents = (t.fract() * 100.0).round() as u64;
+pub fn format_usd(t: f64) -> &'static str {
+    let mut dollars = t.trunc() as u64;
+    let mut cents = (t.fract() * 100.0).round() as u64;
+
+    if cents == 100 {
+        dollars += 1;
+        cents = 0;
+    }
 
     let dollar_str = dollars.to_string();
     let mut chars = dollar_str.chars().rev().collect::<Vec<_>>();
@@ -493,5 +505,72 @@ pub fn format_thousand(t: f64) -> String {
     }
     let formatted_dollars = chars.into_iter().rev().collect::<String>();
 
-    format!("${}.{:02}", formatted_dollars, cents)
+    static_from(format!("${}.{:02}", formatted_dollars, cents))
+}
+
+
+pub fn format_nano_btc(nb: f64) -> &'static str {
+    let rounded = nb.round() as u64;
+    let formatted = rounded.to_string().chars().rev().enumerate()
+        .flat_map(|(i, c)| {if i != 0 && i % 3 == 0 {vec![',', c]} else {vec![c]}})
+        .collect::<Vec<_>>().into_iter().rev().collect::<String>();
+
+    static_from(format!("{} nb", formatted))
+}
+
+
+pub fn format_address(address: bdk_wallet::bitcoin::Address) -> &'static str {
+    let a = address.to_string();
+    static_from(format!("{}...{}", &a[..7], &a[a.len().saturating_sub(3)..]))
+}
+
+pub struct Timestamp(&'static str, &'static str); // date, time (move to pelican)
+
+impl Timestamp {
+    pub fn new(dt: DateTime<Local>) -> Self {
+        Timestamp(
+            static_from(dt.format("%-m/%-d/%y").to_string()), 
+            static_from(dt.format("%-I:%M %p").to_string())
+        )
+    }
+
+    pub fn pending() -> Self {
+        Timestamp("-", "-")
+    }
+
+    pub fn to_datetime(&self) -> DateTime<Local> {
+        let combined = format!("{} {}", self.date(), self.time());
+        let format = "%m/%d/%y %I:%M %p";
+        let naive = chrono::NaiveDateTime::parse_from_str(&combined, format).expect("Could not parse time");
+        Local.from_local_datetime(&naive).unwrap()
+    }
+
+    pub fn friendly(&self) -> &'static str {
+        let dt = self.to_datetime();
+        let today = Local::now().date_naive();
+        let date = dt.date_naive();
+
+        let result = match date == today {
+            true => {
+                let hour = dt.hour();
+                let minute = dt.minute();
+                let (hour12, am_pm) = match hour == 0 {
+                    true => (12, "AM"),
+                    false if hour < 12 => (hour, "AM"),
+                    false if hour == 12 => (12, "PM"),
+                    false => (hour - 12, "PM")
+                };
+                format!("{:02}:{:02} {}", hour12, minute, am_pm)
+            },
+            false if date == today.pred_opt().unwrap_or(today) => "Yesterday".to_string(),
+            false if date.iso_week() == today.iso_week() => format!("{}", dt.format("%A")),
+            false if date.year() == today.year() => format!("{}", dt.format("%B %-d")),
+            false => format!("{}", dt.format("%m/%d/%y"))
+        };
+
+        static_from(result)
+    }
+
+    pub fn date(&self) -> &'static str {self.0}
+    pub fn time(&self) -> &'static str {self.1}
 }

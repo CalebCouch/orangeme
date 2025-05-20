@@ -2982,7 +2982,9 @@ name = "pelican_ui"
 version = "1.0.6"
 dependencies = [
  "dyn-clone",
+ "image 0.25.6",
  "qrcode",
+ "quircs",
  "rust_on_rails",
  "uuid",
 ]
@@ -3197,6 +3199,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "331e97a1af0bf59823e6eadffe373d7b27f485be8748f71471c662c1f269b7fb"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "quircs"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec3fec90fc7a119692a6244ed4404d152878a47f0bf3f90f34dc79bb7a339d24"
+dependencies = [
+ "num-derive 0.4.2",
+ "num-traits",
+ "thiserror 1.0.69",
 ]
 
 [[package]]

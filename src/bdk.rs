@@ -7,68 +7,21 @@ use std::str::FromStr;
 use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams};
 use bdk_wallet::descriptor::template::Bip86;
 use bdk_wallet::bitcoin::bip32::Xpriv;
-// use bdk_wallet::bitcoin::FeeRate;
-pub use bdk_wallet::bitcoin::{Amount, Network, Address, Txid, FeeRate};
+use bdk_wallet::bitcoin::{Amount, Network, Address, Txid, FeeRate};
 use bdk_wallet::{PersistedWallet, WalletPersister};
 use bdk_wallet::chain::{Merge, ChainPosition, Anchor};
 use bdk_esplora::esplora_client::Builder;
 use bdk_esplora::EsploraExt;
+
 use chrono::{DateTime, Local, Utc, NaiveDateTime, TimeZone};
-use serde_json::Value; // for getting bitcoin price from coinbase.com
+use serde_json::Value;
 use reqwest::Client;
+
 const SATS: f32 = 100_000_000.0;
+pub const NANS: f64 = 1_000_000_000.0;
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
-
-#[derive(Serialize, Deserialize, Default, Clone, Debug)]
-pub struct SendAddress(Option<String>);
-
-impl SendAddress {
-    pub fn new(new: String) -> Self {
-        let address = Address::from_str(&new).ok()
-            .and_then(|a| a.require_network(Network::Bitcoin).ok())
-            .map(|a| a.to_string());
-
-        SendAddress(address)
-    }
-
-    pub fn is_valid(&self) -> bool { self.0.is_some() }
-    pub fn get(&self) -> &Option<String> { &self.0 }
-
-    pub fn as_address(&self) -> Address {
-        Address::from_str(self.0.as_ref().unwrap()).unwrap().require_network(Network::Bitcoin).unwrap()
-    }
-}
-
-#[derive(Serialize, Deserialize, Default, Clone, Debug)]
-pub struct SendAmount(Amount); // btc
-
-impl SendAmount {
-    pub fn new(new: f32) -> Self {
-        SendAmount(Amount::from_sat((new * SATS).round() as u64))
-    }
-
-    pub fn get(&self) -> &Amount { &self.0 }
-}
-
-#[derive(Serialize, Deserialize, Default, Clone, Debug)]
-pub struct SendFee(Amount, Amount, bool); // min, max, is_priority
-
-impl SendFee {
-    pub fn new(standard: Amount, priority: Amount, is_priority: bool) -> Self {
-        SendFee(standard, priority, is_priority)
-    }
-
-    pub fn get_fee(&self) -> &Amount { 
-        match self.2 {
-            false => &self.0,
-            true => &self.1
-        }
-    }
-    pub fn is_priority(&self) -> &bool { &self.2 }
-    pub fn set_priority(&mut self, new: bool) { self.2 = new }
-}
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct MemoryPersister(ChangeSet);
@@ -115,7 +68,7 @@ pub struct BDKPlugin {
     persister: Arc<Mutex<MemoryPersister>>,
     wallet: Arc<Mutex<Option<PersistedWallet<MemoryPersister>>>>,
     transactions: Arc<Mutex<Vec<BDKTransaction>>>,
-    current_transaction: Arc<Mutex<Option<BDKTransaction>>>,
+    current_transaction: Arc<Mutex<Option<BDKTransaction>>>, // move to state
     price: Arc<Mutex<f32>>,
 }
 
@@ -181,7 +134,7 @@ impl BDKPlugin {
     }
 
     pub fn current_transaction(&mut self) -> Option<BDKTransaction> {
-        self.current_transaction.lock().unwrap().clone()
+        self.current_transaction.lock().unwrap().clone() // move to state
     }
 
     pub fn set_transaction(&mut self, txid: Txid) {
@@ -191,9 +144,7 @@ impl BDKPlugin {
     
     pub fn get_balance(&mut self) -> Amount {
         let mut wallet = self.get_wallet();
-        let balance = wallet.as_mut().unwrap().balance().total();
-        // println!("balance: {:?}", balance);
-        balance
+        wallet.as_mut().unwrap().balance().total()
     }
 
     pub fn get_new_address(&mut self) -> Address {
@@ -223,7 +174,7 @@ impl BDKPlugin {
         let psbt_std = builder_std.finish().unwrap();
 
         let tx_std = psbt_std.clone().extract_tx().unwrap();
-        let tx_size_std = tx_std.weight().to_vbytes_ceil(); // vbytes = weight / 4
+        let tx_size_std = tx_std.weight().to_vbytes_ceil();
         let standard_fee = tx_size_std * standard_rate.to_sat_per_vb_floor();
 
         let mut builder_prio = wallet.build_tx();
@@ -238,21 +189,33 @@ impl BDKPlugin {
         (Amount::from_sat(standard_fee), Amount::from_sat(priority_fee))
     }
     
-
     pub fn get_dust_limit(&self) -> f32 { 0.000005462 }
 
-    // get bitcoin price
-    // set recipient address
-    // get recipient address
-    // set send amount
-    // get send amount
-    // set priority
-    // get priority
-    // get_fee (priority) -> (f32, f32)
+    pub fn broadcast_transaction(&self, address: Address, amount: Amount, fee_rate: FeeRate) {
+        let mut wallet = self.get_wallet();
+        let wallet = wallet.as_mut().unwrap();
+
+        let mut builder = wallet.build_tx();
+        builder.add_recipient(address.script_pubkey(), amount).fee_rate(fee_rate);
+
+        let mut psbt = builder.finish().expect("Could not build transaction");
+
+        wallet.sign(&mut psbt, bdk_wallet::SignOptions::default()).expect("could not sign transaction");
+
+        println!("PSBT: {:?}", psbt);
+
+        let finalized_tx = psbt.extract_tx().unwrap();
+
+        println!("FINALIZED TX: {:?}", finalized_tx);
+
+        let client = Builder::new("https://blockstream.info/api").build_blocking();
+        client.broadcast(&finalized_tx).expect("ERROR BROADCASTING");
+
+        // Ok(tx_details)
+    }
+
     // build transaction
     // submit transaction
-    // get all transactions
-
 }
 
 impl Plugin for BDKPlugin {
@@ -262,12 +225,11 @@ impl Plugin for BDKPlugin {
     }
 
     async fn new(_ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
-        println!("Creating new bdk plugin");
         let persister = Self::create_wallet(&mut h_ctx.cache).await;
         let persister = Arc::new(Mutex::new(persister));
         let price = Arc::new(Mutex::new(0.0));
         let transactions = Arc::new(Mutex::new(Vec::new()));
-        println!("Created variables");
+
         (BDKPlugin{
             persister: persister.clone(), 
             price: price.clone(), 
@@ -284,7 +246,6 @@ impl Task for WalletSync {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(5))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        println!("Syncing...");
         let mut persister = h_ctx.cache.get::<MemoryPersister>().await;
         let mut wallet = PersistedWallet::load(&mut persister, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.");
 
@@ -363,6 +324,65 @@ impl Task for GetTransactions {
     }
 }
 
+
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct SendAddress(Option<String>);
+
+impl SendAddress {
+    pub fn new(new: String) -> Self {
+        let address = Address::from_str(&new).ok()
+            .and_then(|a| a.require_network(Network::Bitcoin).ok())
+            .map(|a| a.to_string());
+
+        SendAddress(address)
+    }
+
+    pub fn is_valid(&self) -> bool { self.0.is_some() }
+    pub fn get(&self) -> &Option<String> { &self.0 }
+
+    pub fn as_address(&self) -> Address { // this cause you can't store address because it doesn't implement deserialize
+        Address::from_str(self.0.as_ref().unwrap()).unwrap().require_network(Network::Bitcoin).unwrap()
+    }
+}
+
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct SendAmount(Amount); // btc
+
+impl SendAmount {
+    pub fn new(new: f64) -> Self {
+        // SendAmount(Amount::from_btc(new).unwrap())
+        SendAmount(Amount::from_sat((new as f32 * SATS).round() as u64))
+    }
+
+    pub fn get(&self) -> &Amount { &self.0 }
+}
+
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct SendFee(Amount, Amount, bool); // min, max, is_priority
+
+impl SendFee {
+    pub fn new(standard: Amount, priority: Amount, is_priority: bool) -> Self {
+        SendFee(standard, priority, is_priority)
+    }
+
+    pub fn get_fee(&self) -> &Amount { 
+        match self.2 {
+            false => &self.0,
+            true => &self.1
+        }
+    }
+
+    pub fn as_rate(&self) -> FeeRate { 
+        match self.2 {
+            false => FeeRate::from_sat_per_vb(3).unwrap(),
+            true => FeeRate::from_sat_per_vb(5).unwrap()
+        }
+    }
+
+    pub fn is_priority(&self) -> &bool { &self.2 } // make these one function priority() returns mutable
+    pub fn set_priority(&mut self, new: bool) { self.2 = new }
+}
+
 async fn get_block_time(block_hash: &str) -> Result<u64, Box<dyn std::error::Error>> {
     let url = format!("https://mempool.space/api/block/{}", block_hash);
     let res: Value = Client::new().get(&url).send().await?.json().await?;
@@ -384,7 +404,7 @@ async fn get_btc_price_at(timestamp: &str) -> Result<f64, Box<dyn std::error::Er
         .iter()
         .filter_map(|entry| {
             let arr = entry.as_array()?;
-            let ts = arr[0].as_f64()? as i64 / 1000; // Convert ms to seconds
+            let ts = arr[0].as_f64()? as i64 / 1000;
             let price = arr[1].as_f64()?;
             Some((ts, price))
         })
@@ -393,6 +413,23 @@ async fn get_btc_price_at(timestamp: &str) -> Result<f64, Box<dyn std::error::Er
         .ok_or("No price data found in the specified range")?;
 
     Ok(closest_price)
+}
+
+pub fn parse_btc_uri(input: &str) -> (&str, Option<f64>) {
+    let mut parts = input.strip_prefix("bitcoin:").unwrap_or(input).splitn(2, '?');
+    let address = parts.next().unwrap_or("");
+
+    let amount = parts.next().and_then(|q| {
+        q.split('&').find_map(|kv| {
+            let (key, val) = kv.split_once('=')?;
+            match key == "amount" {
+                true => val.parse::<f64>().ok(),
+                false => None
+            }
+        })
+    });
+
+    (address, amount)
 }
 
 #[derive(Debug, Clone)]
@@ -405,24 +442,6 @@ pub struct BDKTransaction {
     pub fee: Option<Amount>,
     pub address: Option<Address>
 }
-
-// pub struct DateTime {
-//     pub date: &'static str,
-//     pub time: &'static str,
-// }
-
-// impl DateTime {
-//     pub fn from_unix(time: &Unix) -> Self {
-//         DateTime {
-//             date: "11/15/24",
-//             time: "11:48pm",
-//         }
-//     }
-
-//     pub fn shorthand(&self) -> str {
-//         "Yesterday"
-//     }
-// }
 
 // pub fn _add_password(&self, password: &str) {
 //     use objc2_core_foundation::CFDictionary;

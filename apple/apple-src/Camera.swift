@@ -34,7 +34,8 @@ public class CameraCapture: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
         }
 
         session.beginConfiguration()
-        session.sessionPreset = .medium
+        session.sessionPreset = .high
+        session.commitConfiguration()
 
         if session.canAddInput(input) {
             session.addInput(input)
