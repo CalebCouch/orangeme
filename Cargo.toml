@@ -23,7 +23,8 @@ ureq = { version = "3.0.11", default-features = true }
 security-framework = "3.2.0"
 objc2-security = { version = "0.3.1", features = ["SecBase"] }
 objc2-core-foundation = "0.3.1"
-rust_on_rails = "4.0.1"
+#rust_on_rails = "4.0.1"
+rust_on_rails = {path="../rust_on_rails"}
 pelican_ui = {path = "../pelican_ui" }
 ucp_rust = { path = "../ucp_rust" }
 reqwest = { version = "0.12.15", features = ["json"] }

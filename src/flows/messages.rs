@@ -94,7 +94,7 @@ impl DirectMessage {
         let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
         let content = Content::new(Offset::End, vec![Box::new(message)]);
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
-        let header = Header::chat(ctx, Some(back), None, vec![contact.avatar]);
+        let header = Header::chat(ctx, Some(back), None, vec![contact]);
         DirectMessage(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
 }
@@ -106,28 +106,56 @@ impl AppPage for GroupMessage {}
 
 impl GroupMessage {
     pub fn new(ctx: &mut Context) -> Self {
-        let contact = Profile {
+
+        use image::RgbaImage;
+        use image::load_from_memory;
+
+        let img = &ctx.load_file("profile.png").unwrap();
+        let image: RgbaImage = load_from_memory(&img).expect("Could not load from memory.").into();
+        let img = ctx.add_image(image.clone());
+
+        let marge = AvatarContent::Image(img.clone());
+        let billy = AvatarContent::Image(img);
+
+        let contact_a = Profile {
             name: "Marge Margarine",
             nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
             about: "Probably butter.",
-            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+            avatar: marge,
+        };
+
+        let contact_b = Profile {
+            name: "Billy Butter",
+            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
+            about: "Can't believe I'm not butter.",
+            avatar: billy,
         };
 
         let messages = vec![
             "Did you go to the market on Saturday?",
             "Hello!?",
             "I need butter from the market that was on Saturday, but I couldn't go!",
-            "😁😁😁",
+            "🧈🧈🧈",
             "Do you have butter?"
+        ];
+
+        let messages_1 = vec![
+            "Did you go to the market on Friday?",
+            "HEY!?",
+            "I need margarine from the market that was on Friday!! but I couldn't go!",
+            "🧈 + 🌱",
+            "Do you have margarine?"
         ];
 
         let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(ctx, vec![Box::new(input)]);
-        let message = Message::new(ctx, MessageType::Contact, messages, contact.clone(), "6:24 AM");
-        let content = Content::new(Offset::End, vec![Box::new(message)]);
+        let message = Message::new(ctx, MessageType::Group, messages, contact_a.clone(), "6:24 AM");
+        let message_1 = Message::new(ctx, MessageType::Group, messages_1, contact_b.clone(), "6:54 PM");
+        let content = Content::new(Offset::Start, vec![Box::new(message), Box::new(message_1)]);
+        // content.set_scroll(Scroll::End);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
         let info = IconButton::navigation(ctx, "info", |ctx: &mut Context| MessagesFlow::GroupInfo.navigate(ctx));
-        let header = Header::chat(ctx, Some(back), Some(info), vec![contact.avatar]);
+        let header = Header::chat(ctx, Some(back), Some(info), vec![contact_a, contact_b]);
         GroupMessage(Stack::center(), Page::new(header, content, Some(bumper), false))
     }
 }

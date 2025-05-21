@@ -338,6 +338,7 @@ impl SendAddress {
     }
 
     pub fn is_valid(&self) -> bool { self.0.is_some() }
+
     pub fn get(&self) -> &Option<String> { &self.0 }
 
     pub fn as_address(&self) -> Address { // this cause you can't store address because it doesn't implement deserialize
@@ -350,7 +351,6 @@ pub struct SendAmount(Amount); // btc
 
 impl SendAmount {
     pub fn new(new: f64) -> Self {
-        // SendAmount(Amount::from_btc(new).unwrap())
         SendAmount(Amount::from_sat((new as f32 * SATS).round() as u64))
     }
 
@@ -379,8 +379,9 @@ impl SendFee {
         }
     }
 
-    pub fn is_priority(&self) -> &bool { &self.2 } // make these one function priority() returns mutable
-    pub fn set_priority(&mut self, new: bool) { self.2 = new }
+    pub fn priority(&mut self) -> &mut bool { &mut self.2 }
+    pub fn priority_fee(&self) -> &Amount { &self.0 }
+    pub fn standard_fee(&self) -> &Amount { &self.1 }
 }
 
 async fn get_block_time(block_hash: &str) -> Result<u64, Box<dyn std::error::Error>> {

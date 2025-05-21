@@ -162,7 +162,6 @@ impl UserAccount {
         UserAccount(Stack::center(), Page::new(header, content, None, false))
     }
 }
-// Add an on-click for avatar's with flair
 
 #[derive(Debug, Component)]
 struct BlockUser(Stack, Page);

@@ -135,7 +135,7 @@ impl OnEvent for Address {
 
             if !input_address.is_empty() {
                 let (address, amount) = parse_btc_uri(&input_address);
-                *input.get_value() = address.to_string();
+                input.set_value(address.to_string());
                 let address = SendAddress::new(address.to_string());
                 if let Some(b) = amount { ctx.state().set(&SendAmount::new(b)) }
 
@@ -308,9 +308,10 @@ impl OnEvent for Speed {
         if let Some(TickEvent) = event.downcast_ref() {
             let item = &mut *self.1.content().items()[0];
             let selector = item.as_any_mut().downcast_mut::<ListItemSelector>().unwrap();
+            let current = ctx.state().get::<SendFee>();
             match selector.index() {
-                Some(0) => ctx.state().get::<SendFee>().set_priority(false),
-                Some(1) => ctx.state().get::<SendFee>().set_priority(true),
+                Some(0) => ctx.state().set(&SendFee::new(*current.standard_fee(), *current.priority_fee(), false)),
+                Some(1) => ctx.state().set(&SendFee::new(*current.standard_fee(), *current.priority_fee(), true)),
                 _ => {}
             }
         }
@@ -324,19 +325,15 @@ impl OnEvent for Confirm {}
 impl AppPage for Confirm {}
 impl Confirm {
     fn new(ctx: &mut Context) -> Self {
-        let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
-        let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
-        let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
-
         let price = ctx.get::<BDKPlugin>().get_price() as f64;
         let address = ctx.state().get::<SendAddress>();
         let amount = ctx.state().get::<SendAmount>();
 
-        let fee = ctx.state().get::<SendFee>();
-        let fee = fee.get_fee().to_btc().to_string().parse::<f64>().unwrap() * price;
+        let mut send_fee = ctx.state().get::<SendFee>();
+        let fee = send_fee.get_fee().to_btc().to_string().parse::<f64>().unwrap() * price;
         let btc = amount.get().to_btc().to_string().parse::<f64>().unwrap();
 
-        let speed = match ctx.state().get::<SendFee>().is_priority() {
+        let speed = match send_fee.priority() {
             false => "Standard (~2 hours)",
             true => "Priority (~30 minutes)"
         };
@@ -349,6 +346,9 @@ impl Confirm {
             ("Total", format_usd((btc*price)+fee))
         ];
 
+        let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
+        let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
+        let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let confirm_amount = DataItem::new(ctx, None, "Confirm amount", None, None, Some(details), Some(vec![edit_amount, edit_speed]));
 
         let confirm_address = DataItem::new(ctx, None, "Confirm address",
@@ -357,7 +357,7 @@ impl Confirm {
             None, Some(vec![edit_address])
         );
 
-        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| {
+        let button = Button::primary(ctx, "Confirm & Send", |ctx: &mut Context| {
             let address = ctx.state().get::<SendAddress>().as_address();
             let amount = ctx.state().get::<SendAmount>();
             let fee_rate = ctx.state().get::<SendFee>().as_rate();
