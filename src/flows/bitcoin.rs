@@ -2,7 +2,7 @@ use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 use chrono::{Local, DateTime, Datelike, Timelike, TimeZone};
-use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee, NANS};
+use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee, NANS, CurrentTransaction};
 use crate::get_contacts;
 use crate::bdk::parse_btc_uri;
 
@@ -66,7 +66,8 @@ impl BitcoinHome {
                     format_usd(t.amount.to_btc() * t.price),
                     t.datetime.map(|dt| Timestamp::new(dt).friendly()).unwrap_or("-"),
                     move |ctx: &mut Context| {
-                        ctx.get::<BDKPlugin>().set_transaction(txid);
+                        let tx = ctx.get::<BDKPlugin>().find_transaction(txid).unwrap();
+                        ctx.state().set(&CurrentTransaction::new(tx));
                         BitcoinFlow::ViewTransaction.navigate(ctx)
                     }
                 )
@@ -430,7 +431,8 @@ impl OnEvent for ViewTransaction {}
 impl AppPage for ViewTransaction {}
 impl ViewTransaction {
     fn new(ctx: &mut Context) -> Self {
-        let tx = ctx.get::<BDKPlugin>().current_transaction().unwrap();
+        let current = ctx.state().get::<CurrentTransaction>().get();
+        let tx = current.unwrap();
         let button = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let bumper = Bumper::single_button(ctx, button);
 
@@ -485,10 +487,6 @@ impl ViewTransaction {
     }
 }
 
-pub fn static_from(s: String) -> &'static str {
-    Box::leak(s.into_boxed_str())
-}
-
 pub fn format_usd(t: f64) -> &'static str {
     let mut dollars = t.trunc() as u64;
     let mut cents = (t.fract() * 100.0).round() as u64;
@@ -519,58 +517,6 @@ pub fn format_nano_btc(nb: f64) -> &'static str {
 }
 
 
-pub fn format_address(address: bdk_wallet::bitcoin::Address) -> &'static str {
-    let a = address.to_string();
+pub fn format_address(a: String) -> &'static str {
     static_from(format!("{}...{}", &a[..7], &a[a.len().saturating_sub(3)..]))
-}
-
-pub struct Timestamp(&'static str, &'static str); // date, time (move to pelican)
-
-impl Timestamp {
-    pub fn new(dt: DateTime<Local>) -> Self {
-        Timestamp(
-            static_from(dt.format("%-m/%-d/%y").to_string()), 
-            static_from(dt.format("%-I:%M %p").to_string())
-        )
-    }
-
-    pub fn pending() -> Self {
-        Timestamp("-", "-")
-    }
-
-    pub fn to_datetime(&self) -> DateTime<Local> {
-        let combined = format!("{} {}", self.date(), self.time());
-        let format = "%m/%d/%y %I:%M %p";
-        let naive = chrono::NaiveDateTime::parse_from_str(&combined, format).expect("Could not parse time");
-        Local.from_local_datetime(&naive).unwrap()
-    }
-
-    pub fn friendly(&self) -> &'static str {
-        let dt = self.to_datetime();
-        let today = Local::now().date_naive();
-        let date = dt.date_naive();
-
-        let result = match date == today {
-            true => {
-                let hour = dt.hour();
-                let minute = dt.minute();
-                let (hour12, am_pm) = match hour == 0 {
-                    true => (12, "AM"),
-                    false if hour < 12 => (hour, "AM"),
-                    false if hour == 12 => (12, "PM"),
-                    false => (hour - 12, "PM")
-                };
-                format!("{:02}:{:02} {}", hour12, minute, am_pm)
-            },
-            false if date == today.pred_opt().unwrap_or(today) => "Yesterday".to_string(),
-            false if date.iso_week() == today.iso_week() => format!("{}", dt.format("%A")),
-            false if date.year() == today.year() => format!("{}", dt.format("%B %-d")),
-            false => format!("{}", dt.format("%m/%d/%y"))
-        };
-
-        static_from(result)
-    }
-
-    pub fn date(&self) -> &'static str {self.0}
-    pub fn time(&self) -> &'static str {self.1}
 }

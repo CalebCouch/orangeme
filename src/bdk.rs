@@ -20,6 +20,7 @@ use reqwest::Client;
 const SATS: f32 = 100_000_000.0;
 pub const NANS: f64 = 1_000_000_000.0;
 
+
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
 
@@ -68,7 +69,6 @@ pub struct BDKPlugin {
     persister: Arc<Mutex<MemoryPersister>>,
     wallet: Arc<Mutex<Option<PersistedWallet<MemoryPersister>>>>,
     transactions: Arc<Mutex<Vec<BDKTransaction>>>,
-    current_transaction: Arc<Mutex<Option<BDKTransaction>>>, // move to state
     price: Arc<Mutex<f32>>,
 }
 
@@ -127,19 +127,12 @@ impl BDKPlugin {
         db
     }
 
+    pub fn find_transaction(&mut self, txid: Txid) -> Option<BDKTransaction> {
+        self.transactions.lock().unwrap().iter().find(|tx| tx.txid == txid).cloned()
+    }
+
     pub fn get_transactions(&mut self) -> Vec<BDKTransaction> {
-        let txs = self.transactions.lock().unwrap().to_vec();
-        println!("transactions {:?}", txs);
-        txs
-    }
-
-    pub fn current_transaction(&mut self) -> Option<BDKTransaction> {
-        self.current_transaction.lock().unwrap().clone() // move to state
-    }
-
-    pub fn set_transaction(&mut self, txid: Txid) {
-        let tx = self.transactions.lock().unwrap().iter().find(|tx| tx.txid == txid).cloned();
-        *self.current_transaction.lock().unwrap() = tx;
+        self.transactions.lock().unwrap().to_vec()
     }
     
     pub fn get_balance(&mut self) -> Amount {
@@ -234,7 +227,6 @@ impl Plugin for BDKPlugin {
             persister: persister.clone(), 
             price: price.clone(), 
             wallet: Arc::new(Mutex::new(None)),
-            current_transaction: Arc::new(Mutex::new(None)),
             transactions: transactions.clone(),
         }, tasks![CachePersister(persister), GetPrice(price), GetTransactions(transactions)])
     }
@@ -316,14 +308,13 @@ impl Task for GetTransactions {
                 amount: Amount::from_sat(received.max(sent)),
                 price: btc_price,
                 fee: fee.map(Amount::from_sat),
-                address,
+                address: address.map(|a| a.to_string()),
             });
         }
 
         *self.0.lock().unwrap() = transactions;
     }
 }
-
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct SendAddress(Option<String>);
@@ -384,6 +375,17 @@ impl SendFee {
     pub fn standard_fee(&self) -> &Amount { &self.1 }
 }
 
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct CurrentTransaction(Option<BDKTransaction>);
+
+impl CurrentTransaction {
+    pub fn new(new: BDKTransaction) -> Self {
+        CurrentTransaction(Some(new))
+    }
+
+    pub fn get(&self) -> Option<BDKTransaction> { self.0.clone() }
+}
+
 async fn get_block_time(block_hash: &str) -> Result<u64, Box<dyn std::error::Error>> {
     let url = format!("https://mempool.space/api/block/{}", block_hash);
     let res: Value = Client::new().get(&url).send().await?.json().await?;
@@ -433,7 +435,7 @@ pub fn parse_btc_uri(input: &str) -> (&str, Option<f64>) {
     (address, amount)
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BDKTransaction {
     pub datetime: Option<DateTime<Local>>,
     pub txid: Txid,
@@ -441,7 +443,7 @@ pub struct BDKTransaction {
     pub amount: Amount,
     pub price: f64,
     pub fee: Option<Amount>,
-    pub address: Option<Address>
+    pub address: Option<String>
 }
 
 // pub fn _add_password(&self, password: &str) {
