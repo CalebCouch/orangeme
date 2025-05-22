@@ -1,11 +1,9 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
-use pelican_ui_profiles::prelude::*;
 use pelican_ui_bitcoin::prelude::*;
 use pelican_ui_messages::prelude::*;
 
-use chrono::{Local, DateTime, Datelike, Timelike, TimeZone};
 use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee, CurrentTransaction};
 use crate::bdk::parse_btc_uri;
 use crate::MSGPlugin;
@@ -439,14 +437,13 @@ impl ViewTransaction {
         let timestamp = tx.datetime.map(Timestamp::new).unwrap_or(Timestamp::pending());
         let btc = tx.amount.to_btc().to_string().parse::<f64>().unwrap();
 
-        let fee = tx.fee.unwrap().to_btc()*tx.price;
-
         let (title, data_item) = match tx.is_received {
             true => {
                 let data_item = DataItem::received_tx(ctx, timestamp, btc, tx.price, &address);
                 ("Received bitcoin", data_item)
             }
             false => {
+                let fee = tx.fee.unwrap().to_btc().to_string().parse::<f64>().unwrap()*tx.price;
                 let data_item = DataItem::sent_tx(ctx, timestamp, btc, tx.price, fee, &address);
                 ("Sent bitcoin", data_item)
             }

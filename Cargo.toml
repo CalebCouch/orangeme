@@ -30,8 +30,8 @@ reqwest = { version = "0.12.15", features = ["json"] }
 
 pelican_ui = {path = "../pelican_ui" }
 pelican_ui_bitcoin = {path = "../pelican_ui_bitcoin" }
-pelican_ui_messages = {path = "../pelican_ui_messages" }
-pelican_ui_profiles = {path = "../pelican_ui_profiles" }
+pelican_ui_messages = {path = "../messages" }
+pelican_ui_profiles = {path = "../profiles" }
 
 [lib]
 name="main"

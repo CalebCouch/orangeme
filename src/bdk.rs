@@ -4,10 +4,7 @@ use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::str::FromStr;
 
-use pelican_ui_profiles::prelude::*;
-use pelican_ui_messages::prelude::*;
 use pelican_ui_bitcoin::prelude::*;
-
 
 use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams};
 use bdk_wallet::descriptor::template::Bip86;
@@ -18,7 +15,7 @@ use bdk_wallet::chain::{Merge, ChainPosition, Anchor};
 use bdk_esplora::esplora_client::Builder;
 use bdk_esplora::EsploraExt;
 
-use chrono::{DateTime, Local, Utc, NaiveDateTime, TimeZone};
+use chrono::{Local, Utc, NaiveDateTime, TimeZone};
 use serde_json::Value;
 use reqwest::Client;
 

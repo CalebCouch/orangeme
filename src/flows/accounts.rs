@@ -3,8 +3,6 @@ use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 
 use pelican_ui_profiles::prelude::*;
-use pelican_ui_bitcoin::prelude::*;
-use pelican_ui_messages::prelude::*;
 
 use ucp_rust::screens::*;
 use crate::BDKPlugin;

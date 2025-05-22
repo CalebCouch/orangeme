@@ -48,14 +48,14 @@ impl MSGPlugin {
 // )
 
 impl Plugin for MSGPlugin {
-    async fn background_tasks(ctx: &mut HeadlessContext) -> Tasks {
+    async fn background_tasks(_ctx: &mut HeadlessContext) -> Tasks {
         vec![]
     }
 
-    async fn new(_ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
+    async fn new(_ctx: &mut Context, _h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
         let rooms = Arc::new(Mutex::new(Vec::new()));
         let profiles = Arc::new(Mutex::new(Vec::new()));
-        let (sender, receiver) = channel();
+        let (_sender, receiver) = channel();
         (MSGPlugin{
             rooms: rooms.clone(),
             profiles: profiles.clone(),
@@ -69,7 +69,7 @@ pub struct GetRooms(Arc<Mutex<Vec<Room>>>);
 impl Task for GetRooms {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(10))}
 
-    async fn run(&mut self, h_ctx: &mut HeadlessContext) {
+    async fn run(&mut self, _h_ctx: &mut HeadlessContext) {
         // Get Rooms
         let rooms = fake_rooms();
         *self.0.lock().unwrap() = rooms;
@@ -81,7 +81,7 @@ pub struct GetProfiles(Arc<Mutex<Vec<Profile>>>);
 impl Task for GetProfiles {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(10))}
 
-    async fn run(&mut self, h_ctx: &mut HeadlessContext) {
+    async fn run(&mut self, _h_ctx: &mut HeadlessContext) {
         // Get Profiles
         let profiles = fake_profiles();
         *self.0.lock().unwrap() = profiles;

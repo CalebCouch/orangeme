@@ -1,6 +1,5 @@
 fn main() {
     let swift_file_a = "apple/apple-src/Notifications.swift";
-    let swift_file_b = "apple/apple-src/Camera.swift";
     let swift_file_c = "apple/apple-src/PlatformPaths.swift";
 
     let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
@@ -15,7 +14,6 @@ fn main() {
             "-o", lib_path.to_str().unwrap(),
             "-framework", "AppKit",
             swift_file_a,
-            swift_file_b,
             swift_file_c
         ])
         .status()
@@ -29,5 +27,4 @@ fn main() {
     println!("cargo:rustc-link-lib=dylib=main");
 
     println!("cargo:rerun-if-changed={}", swift_file_a);
-    println!("cargo:rerun-if-changed={}", swift_file_b);
 }

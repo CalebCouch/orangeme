@@ -1,10 +1,8 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
-
-use pelican_ui_profiles::prelude::*;
-use pelican_ui_bitcoin::prelude::*;
 use pelican_ui_messages::prelude::*;
+
 use::chrono::{DateTime, Local, Utc};
 
 use crate::MSGPlugin;
@@ -214,7 +212,7 @@ impl GroupInfo {
                 AvatarIconStyle::Secondary), 
                 &p.user_name.clone(), 
                 &p.identifier.clone(), 
-                |ctx: &mut Context| {
+                |_ctx: &mut Context| {
                     // set current contact
                     // go to contacts page
                 }
