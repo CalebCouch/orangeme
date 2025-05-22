@@ -1,6 +1,11 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
+
+use pelican_ui_profiles::prelude::*;
+use pelican_ui_bitcoin::prelude::*;
+use pelican_ui_messages::prelude::*;
+
 use ucp_rust::screens::*;
 use crate::BDKPlugin;
 use crate::UCPPlugin;
@@ -18,16 +23,16 @@ pub enum AccountsFlow {
 }
 
 impl AppFlow for AccountsFlow {
-    fn get_page(&self, ctx: &mut Context) -> Box<dyn AppPage> {
+    fn get_page(&self, ctx: &mut Context) -> (Box<dyn AppPage>, bool) {
         match self {
-            AccountsFlow::Account => Box::new(Account::new(ctx)) as Box<dyn AppPage>,
-            AccountsFlow::GetCredentials => Box::new(GetCredentials::new(ctx)) as Box<dyn AppPage>,
-            AccountsFlow::SophtronPolicy => Box::new(SophtronPolicy::new(ctx)) as Box<dyn AppPage>,
-            AccountsFlow::UserAccount => Box::new(UserAccount::new(ctx)) as Box<dyn AppPage>,
-            AccountsFlow::BlockUser => Box::new(BlockUser::new(ctx)) as Box<dyn AppPage>,
-            AccountsFlow::UserBlocked => Box::new(UserBlocked::new(ctx)) as Box<dyn AppPage>,
-            AccountsFlow::UnblockUser => Box::new(UnblockUser::new(ctx)) as Box<dyn AppPage>,
-            AccountsFlow::UserUnblocked => Box::new(UserUnblocked::new(ctx)) as Box<dyn AppPage>,
+            AccountsFlow::Account => (Box::new(Account::new(ctx)) as Box<dyn AppPage>, true),
+            AccountsFlow::GetCredentials => (Box::new(GetCredentials::new(ctx)) as Box<dyn AppPage>, false),
+            AccountsFlow::SophtronPolicy => (Box::new(SophtronPolicy::new(ctx)) as Box<dyn AppPage>, false),
+            AccountsFlow::UserAccount => (Box::new(UserAccount::new(ctx)) as Box<dyn AppPage>, false),
+            AccountsFlow::BlockUser => (Box::new(BlockUser::new(ctx)) as Box<dyn AppPage>, false),
+            AccountsFlow::UserBlocked => (Box::new(UserBlocked::new(ctx)) as Box<dyn AppPage>, false),
+            AccountsFlow::UnblockUser => (Box::new(UnblockUser::new(ctx)) as Box<dyn AppPage>, false),
+            AccountsFlow::UserUnblocked => (Box::new(UserUnblocked::new(ctx)) as Box<dyn AppPage>, false),
         }
     }
 }
@@ -51,7 +56,7 @@ impl Account {
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
-        let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy]));
+        let address = DataItem::new(ctx, None, "Bitcoin address", Some(&adrs), None, None, Some(vec![copy]));
         let copy = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let identity = DataItem::new(ctx, None, "Orange Identity", Some("did::nym::38iKdailTwedpr92Daixx90et"), None, None, Some(vec![copy]));
 
@@ -60,7 +65,7 @@ impl Account {
 
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(about_input), Box::new(credentials), Box::new(identity), Box::new(address)]);
 
-        Account(Stack::center(), Page::new(header, content, Some(bumper), false))
+        Account(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -90,7 +95,7 @@ impl GetCredentials {
 
         let content = Content::new(Offset::Start, vec![Box::new(instructions), Box::new(credentials)]);
 
-        GetCredentials(Stack::center(), Page::new(header, content, Some(bumper), false))
+        GetCredentials(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -120,7 +125,7 @@ impl SophtronPolicy {
         let bullet_c = BulletedText::new(ctx, "Sophtron will never use or sell your data even in an anonymized form.", TextStyle::Primary, text_size.md, Align::Left);
         let content = Content::new(Offset::Start, vec![Box::new(image), Box::new(instructions), Box::new(bullet_a), Box::new(bullet_b), Box::new(bullet_c)]);
 
-        SophtronPolicy(Stack::center(), Page::new(header, content, Some(bumper), false))
+        SophtronPolicy(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -132,16 +137,16 @@ impl AppPage for UserAccount {}
 impl UserAccount {
     pub fn new(ctx: &mut Context) -> Self {
         let user = Profile {
-            name: "Marge Margarine",
-            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
-            about: "Probably butter.",
-            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+            user_name: "Marge Margarine".to_string(),
+            identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
+            biography: "Probably butter.".to_string(),
+            blocked_dids: Vec::new()
         };
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| crate::MessagesFlow::GroupInfo.navigate(ctx));
-        let header = Header::stack(ctx, Some(back), user.name, None);
+        let header = Header::stack(ctx, Some(back), &user.user_name, None);
 
-        let avatar = Avatar::new(ctx, user.avatar, None, false, 128.0, None);
+        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), None, false, 128.0, None);
 
         let buttons = IconButtonRow::new(ctx, vec![
             ("messages", Box::new(|ctx: &mut Context| crate::MessagesFlow::DirectMessage.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
@@ -151,15 +156,15 @@ impl UserAccount {
 
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
-        let address = DataItem::new(ctx, None, "Bitcoin address", Some(Box::leak(adrs.into_boxed_str())), None, None, Some(vec![copy_address]));
+        let address = DataItem::new(ctx, None, "Bitcoin address", Some(&adrs), None, None, Some(vec![copy_address]));
 
         let copy_nym = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
-        let nym = DataItem::new(ctx, None, "Orange Identity", Some(user.nym), None, None, Some(vec![copy_nym]));
+        let nym = DataItem::new(ctx, None, "Orange Identity", Some(&user.identifier), None, None, Some(vec![copy_nym]));
 
-        let about_me = DataItem::new(ctx, None, "About me", Some(user.about), None, None, None);
+        let about_me = DataItem::new(ctx, None, "About me", Some(&user.biography), None, None, None);
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(buttons), Box::new(about_me), Box::new(nym), Box::new(address)]);
 
-        UserAccount(Stack::center(), Page::new(header, content, None, false))
+        UserAccount(Stack::center(), Page::new(header, content, None))
     }
 }
 
@@ -170,10 +175,10 @@ impl AppPage for BlockUser {}
 impl BlockUser {
     fn new(ctx: &mut Context) -> Self {
         let user = Profile {
-            name: "Marge Margarine",
-            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
-            about: "Probably butter.",
-            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+            user_name: "Marge Margarine".to_string(),
+            identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
+            biography: "Probably butter.".to_string(),
+            blocked_dids: Vec::new()
         };
 
         let theme = &ctx.get::<PelicanUI>().theme;
@@ -181,13 +186,17 @@ impl BlockUser {
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let confirm = Button::primary(ctx, "Block", |ctx: &mut Context| AccountsFlow::UserBlocked.navigate(ctx));
         let bumper = Bumper::double_button(ctx, cancel, confirm);
-        let avatar = Avatar::new(ctx, user.avatar, Some(("block", AvatarIconStyle::Danger)), false, 96.0, None);
-        let msg = format!("Are you sure you want to block {}?", user.name);
-        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+
+        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
+            Some(("block", AvatarIconStyle::Danger)), false, 96.0, None
+        );
+
+        let msg = format!("Are you sure you want to block {}?", user.user_name);
+        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Block user", None);
-        BlockUser(Stack::default(), Page::new(header, content, Some(bumper), false))
+        BlockUser(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -198,25 +207,27 @@ impl AppPage for UserBlocked {}
 impl UserBlocked {
     fn new(ctx: &mut Context) -> Self {
         let user = Profile {
-            name: "Marge Margarine",
-            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
-            about: "Probably butter.",
-            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+            user_name: "Marge Margarine".to_string(),
+            identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
+            biography: "Probably butter.".to_string(),
+            blocked_dids: Vec::new()
         };
 
         let theme = &ctx.get::<PelicanUI>().theme;
         let text_size = theme.fonts.size.h4;
         let close = Button::close(ctx, "Done", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let bumper = Bumper::single_button(ctx, close);
+
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
             Some(("block", AvatarIconStyle::Danger)), false, 96.0, None
         );
-        let msg = format!("{} has been blocked", user.name);
-        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+
+        let msg = format!("{} has been blocked", user.user_name);
+        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let close = IconButton::close(ctx, |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "User blocked", None);
-        UserBlocked(Stack::default(), Page::new(header, content, Some(bumper), false))
+        UserBlocked(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -227,23 +238,25 @@ impl AppPage for UnblockUser {}
 impl UnblockUser {
     fn new(ctx: &mut Context) -> Self {
         let user = Profile {
-            name: "Marge Margarine",
-            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
-            about: "Probably butter.",
-            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+            user_name: "Marge Margarine".to_string(),
+            identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
+            biography: "Probably butter.".to_string(),
+            blocked_dids: Vec::new()
         };
 
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.h4;
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let confirm = Button::primary(ctx, "Unblock", |ctx: &mut Context| AccountsFlow::UserUnblocked.navigate(ctx));
         let bumper = Bumper::double_button(ctx, cancel, confirm);
-        let avatar = Avatar::new(ctx, user.avatar, Some(("unblock", AvatarIconStyle::Success)), false, 96.0, None);
-        let msg = format!("Are you sure you want to unblock {}?", user.name);
-        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
+            Some(("unblock", AvatarIconStyle::Success)), false, 96.0, None
+        );        
+        let msg = format!("Are you sure you want to unblock {}?", user.user_name);
+        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Unblock user", None);
-        UnblockUser(Stack::default(), Page::new(header, content, Some(bumper), false))
+        UnblockUser(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -254,23 +267,23 @@ impl AppPage for UserUnblocked {}
 impl UserUnblocked {
     fn new(ctx: &mut Context) -> Self {
         let user = Profile {
-            name: "Marge Margarine",
-            nym: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln",
-            about: "Probably butter.",
-            avatar: AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+            user_name: "Marge Margarine".to_string(),
+            identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
+            biography: "Probably butter.".to_string(),
+            blocked_dids: Vec::new()
         };
-
+        
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.h4;
         let close = Button::close(ctx, "Done", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let bumper = Bumper::single_button(ctx, close);
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
             Some(("unblock", AvatarIconStyle::Success)), false, 96.0, None
         );
-        let msg = format!("{} has been unblocked", user.name);
-        let text = Text::new(ctx, Box::leak(msg.into_boxed_str()), TextStyle::Heading, text_size, Align::Left);
+        let msg = format!("{} has been unblocked", user.user_name);
+        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let close = IconButton::close(ctx, |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "User unblocked", None);
-        UserUnblocked(Stack::default(), Page::new(header, content, Some(bumper), false))
+        UserUnblocked(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }

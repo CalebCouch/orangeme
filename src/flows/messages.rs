@@ -2,10 +2,13 @@ use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
 
-use::chrono::{DateTime, Local};
+use pelican_ui_profiles::prelude::*;
+use pelican_ui_bitcoin::prelude::*;
+use pelican_ui_messages::prelude::*;
+use::chrono::{DateTime, Local, Utc};
 
 use crate::MSGPlugin;
-use crate::msg::{CurrentRoom, Room};
+use crate::msg::{CurrentRoom};
 
 #[derive(Debug, Copy, Clone)]
 pub enum MessagesFlow {
@@ -17,13 +20,13 @@ pub enum MessagesFlow {
 }
 
 impl AppFlow for MessagesFlow {
-    fn get_page(&self, ctx: &mut Context) -> Box<dyn AppPage> {
+    fn get_page(&self, ctx: &mut Context) -> (Box<dyn AppPage>, bool) {
         match self {
-            MessagesFlow::MessagesHome => Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>,
-            MessagesFlow::SelectRecipients => Box::new(SelectRecipients::new(ctx)) as Box<dyn AppPage>,
-            MessagesFlow::DirectMessage => Box::new(DirectMessage::new(ctx)) as Box<dyn AppPage>,
-            MessagesFlow::GroupMessage => Box::new(GroupMessage::new(ctx)) as Box<dyn AppPage>,
-            MessagesFlow::GroupInfo => Box::new(GroupInfo::new(ctx)) as Box<dyn AppPage>,
+            MessagesFlow::MessagesHome => (Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>, true),
+            MessagesFlow::SelectRecipients => (Box::new(SelectRecipients::new(ctx)) as Box<dyn AppPage>, false),
+            MessagesFlow::DirectMessage => (Box::new(DirectMessage::new(ctx)) as Box<dyn AppPage>, false),
+            MessagesFlow::GroupMessage => (Box::new(GroupMessage::new(ctx)) as Box<dyn AppPage>, false),
+            MessagesFlow::GroupInfo => (Box::new(GroupInfo::new(ctx)) as Box<dyn AppPage>, false),
         }
     }
 }
@@ -51,7 +54,7 @@ impl MessagesHome {
                 },
                 false => {
                     let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
-                    ListItem::direct_message(ctx, avatar, r.profiles[0].user_name.clone(), r.messages.last().unwrap().message.clone(), |ctx: &mut Context| MessagesFlow::DirectMessage.navigate(ctx))
+                    ListItem::direct_message(ctx, avatar, &r.profiles[0].user_name.clone(), &r.messages.last().unwrap().message.clone(), |ctx: &mut Context| MessagesFlow::DirectMessage.navigate(ctx))
                 }
             }
         }).collect::<Vec<ListItem>>();
@@ -63,20 +66,35 @@ impl MessagesHome {
             false => Content::new(Offset::Center, vec![Box::new(instructions)])
         };
 
-        MessagesHome(Stack::center(), Page::new(header, content, Some(bumper), false))
+        MessagesHome(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 }
+
+// impl OnEvent for BitcoinHome {
+//     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+//         if let Some(TickEvent) = event.downcast_ref() {
+//             let bdk = ctx.get::<BDKPlugin>();
+//             let (btc, price) = (bdk.get_balance().to_btc(), bdk.get_price());
+//             let items = &mut *self.1.content().items();
+//             let display: &mut AmountDisplay = items[0].as_any_mut().downcast_mut::<AmountDisplay>().unwrap();
+//             *display.usd() = format_usd(btc*price as f64).to_string();
+//             *display.btc() = format_nano_btc(btc*NANS).to_string();
+//             self.update_transactions(ctx);
+//         }
+//         true
+//     }
+// }
 
 // pub fn direct_message(
 //     ctx: &mut Context,
 //     data: AvatarContent,
-//     name: &'static str,
-//     recent: &'static str,
+//     name: &str,
+//     recent: &str,
 //     on_click: impl FnMut(&mut Context) + 'Static
 
 // pub fn group_message(
 //     ctx: &mut Context,
-//     names: Vec<&'static str>,
+//     names: Vec<&str>,
 //     on_click: impl FnMut(&mut Context) + 'static
 
 #[derive(Debug, Component)]
@@ -91,7 +109,7 @@ impl SelectRecipients {
         let profiles = ctx.get::<MSGPlugin>().get_profiles();
         let recipients = profiles.iter().map(|p| {
             let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
-            ListItem::recipient(ctx, avatar, p.user_name.clone(), p.identifier.clone())
+            ListItem::recipient(ctx, avatar, p.clone())
         }).collect::<Vec<ListItem>>();
 
         let content = match recipients.is_empty() {
@@ -105,11 +123,30 @@ impl SelectRecipients {
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), content]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
-        let continue_btn = Button::primary(ctx, "Continue", |ctx: &mut Context| MessagesFlow::GroupMessage.navigate(ctx));
-        let bumper = Bumper::single_button(ctx, continue_btn);
-        SelectRecipients(Stack::center(), Page::new(header, content, Some(bumper), false))
+        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| {
+            let current_room = ctx.state().get::<CurrentRoom>();
+            let profiles = current_room.get().as_ref().unwrap().profiles.clone();
+            ctx.get::<MSGPlugin>().create_room(profiles);
+            MessagesFlow::GroupMessage.navigate(ctx)
+        });
+        let bumper = Bumper::single_button(ctx, button);
+        SelectRecipients(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 }
+
+
+// impl OnEvent for Speed {
+//     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+//         if let Some(TickEvent) = event.downcast_ref() {
+//             let item = &mut *self.1.content().items()[1];
+//             if let Some(selector) = item.as_any_mut().downcast_mut::<QuickDeselect>() {
+//                 let members = selector.get_profiles();
+//                 ctx.state().set(CurrentRoom::new(Room::new(members, Vec::new())));
+//             }
+//         }
+//         true
+//     }
+// }
 
 #[derive(Debug, Component)]
 pub struct DirectMessage(Stack, Page);
@@ -122,12 +159,12 @@ impl DirectMessage {
 
         let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(ctx, vec![Box::new(input)]);
-        let dt1: DateTime<Local> = "2025-05-19T15:20:11".parse::<DateTime<Local>>().unwrap();
-        let message = Message::new(ctx, MessageType::Contact, message, ("Marge".to_string(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary)), Timestamp::new(dt1));
+        let dt1 = "2025-05-19T15:20:11Z".parse::<DateTime<Utc>>().unwrap().with_timezone(&Local);
+        let message = TextMessage::new(ctx, MessageType::Contact, &message, ("Marge".to_string(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary)), Timestamp::new(dt1));
         let content = Content::new(Offset::End, vec![Box::new(message)]);
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![("Marge Margarine".to_string(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary))]);
-        DirectMessage(Stack::center(), Page::new(header, content, Some(bumper), false))
+        DirectMessage(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -145,7 +182,7 @@ impl GroupMessage {
             let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
             let auth = msg.author.clone();
             let author = (auth.user_name, avatar);
-            Box::new(Message::new(ctx, MessageType::Group, msg.message.clone(), author, msg.timestamp.clone())) as Box<dyn Drawable>
+            Box::new(TextMessage::new(ctx, MessageType::Group, &msg.message.clone(), author, msg.timestamp.clone())) as Box<dyn Drawable>
         }).collect::<Vec<Box<dyn Drawable>>>();
 
         let profile_info = current_room.profiles.iter().map(|p| (p.user_name.clone(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary))).collect::<Vec<_>>();
@@ -158,7 +195,7 @@ impl GroupMessage {
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx));
         let info = IconButton::navigation(ctx, "info", |ctx: &mut Context| MessagesFlow::GroupInfo.navigate(ctx));
         let header = Header::chat(ctx, Some(back), Some(info), profile_info);
-        GroupMessage(Stack::center(), Page::new(header, content, Some(bumper), false))
+        GroupMessage(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -169,25 +206,27 @@ impl AppPage for GroupInfo {}
 
 impl GroupInfo {
     pub fn new(ctx: &mut Context) -> Self {
-        let contacts = get_contacts(ctx);
+        let current_room = ctx.state().get::<CurrentRoom>();
+        let current_room = current_room.get().as_ref().unwrap();
+        let contacts = current_room.profiles.iter().map(|p| {
+            ListItem::contact(ctx, 
+                AvatarContent::Icon("profile", 
+                AvatarIconStyle::Secondary), 
+                &p.user_name.clone(), 
+                &p.identifier.clone(), 
+                |ctx: &mut Context| {
+                    // set current contact
+                    // go to contacts page
+                }
+            )
+        }).collect::<Vec<ListItem>>();
+
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
         let members = format!("This group has {} members.", contacts.len());
-        let members = Box::leak(members.into_boxed_str());
-        let text = Text::new(ctx, members, TextStyle::Secondary, text_size, Align::Center);
+        let text = Text::new(ctx, &members, TextStyle::Secondary, text_size, Align::Center);
         let content = Content::new(Offset::Start, vec![Box::new(text), Box::new(ListItemGroup::new(contacts))]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesFlow::GroupMessage.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Group Message Info", None);
-        GroupInfo(Stack::center(), Page::new(header, content, None, false))
+        GroupInfo(Stack::center(), Page::new(header, content, None))
     }
-}
-
-
-pub fn get_contacts(ctx: &mut Context) -> Vec<ListItem> {
-    vec![
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Anne Eave", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Bob David", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Charlie Charles", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Danielle Briebs", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx)),
-        ListItem::contact(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), "Ethan A.", "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln", |ctx: &mut Context| crate::AccountsFlow::UserAccount.navigate(ctx))
-    ]
 }

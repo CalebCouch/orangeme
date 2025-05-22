@@ -25,9 +25,13 @@ objc2-security = { version = "0.3.1", features = ["SecBase"] }
 objc2-core-foundation = "0.3.1"
 #rust_on_rails = "4.0.1"
 rust_on_rails = {path="../rust_on_rails"}
-pelican_ui = {path = "../pelican_ui" }
 ucp_rust = { path = "../ucp_rust" }
 reqwest = { version = "0.12.15", features = ["json"] }
+
+pelican_ui = {path = "../pelican_ui" }
+pelican_ui_bitcoin = {path = "../pelican_ui_bitcoin" }
+pelican_ui_messages = {path = "../pelican_ui_messages" }
+pelican_ui_profiles = {path = "../pelican_ui_profiles" }
 
 [lib]
 name="main"

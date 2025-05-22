@@ -2901,6 +2901,9 @@ dependencies = [
  "objc2-core-foundation",
  "objc2-security",
  "pelican_ui",
+ "pelican_ui_bitcoin",
+ "pelican_ui_messages",
+ "pelican_ui_profiles",
  "reqwest 0.12.15",
  "rust_on_rails",
  "secp256k1 0.30.0",
@@ -2989,6 +2992,39 @@ dependencies = [
  "rust_on_rails",
  "serde",
  "uuid",
+]
+
+[[package]]
+name = "pelican_ui_bitcoin"
+version = "0.1.0"
+dependencies = [
+ "bdk_wallet",
+ "chrono",
+ "image 0.25.6",
+ "pelican_ui",
+ "qrcode",
+ "quircs",
+ "rust_on_rails",
+ "serde",
+]
+
+[[package]]
+name = "pelican_ui_messages"
+version = "0.1.0"
+dependencies = [
+ "pelican_ui",
+ "pelican_ui_profiles",
+ "rust_on_rails",
+ "serde",
+]
+
+[[package]]
+name = "pelican_ui_profiles"
+version = "0.1.0"
+dependencies = [
+ "pelican_ui",
+ "rust_on_rails",
+ "serde",
 ]
 
 [[package]]

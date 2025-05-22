@@ -1,13 +1,18 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
+use pelican_ui_profiles::prelude::*;
+use pelican_ui_messages::prelude::*;
+
 use std::sync::{Mutex, Arc};
 use std::time::Duration;
 use serde::{Serialize, Deserialize};
-use chrono::{DateTime, Local}; // temp
+use chrono::{DateTime, Local, Utc}; // temp
+use std::sync::mpsc::{channel, Receiver};
 
 pub struct MSGPlugin {
     rooms: Arc<Mutex<Vec<Room>>>,
     profiles: Arc<Mutex<Vec<Profile>>>,
+    receiver: Receiver<String>,
 }
 
 impl MSGPlugin {
@@ -23,6 +28,10 @@ impl MSGPlugin {
         self.profiles.lock().unwrap().to_vec()
     }
 
+    pub fn create_room(&mut self, profiles: Vec<Profile>) {
+        self.rooms.lock().unwrap().to_vec().push(Room::new(profiles, Vec::new()));
+    }
+
     // get all profiles
     // create room (members shared with?)
     // read room (room) -> (Vec<Message>)
@@ -32,6 +41,12 @@ impl MSGPlugin {
     // read user Profile
 }
 
+// let (sender, receiver) = mpsc::channel();
+// (
+//     Some(IconButton::input(ctx, icon, move |_| {sender.send(0).unwrap();})),
+//     Some((receiver, Box::new(on_click) as SubmitCallback)),
+// )
+
 impl Plugin for MSGPlugin {
     async fn background_tasks(ctx: &mut HeadlessContext) -> Tasks {
         vec![]
@@ -40,39 +55,13 @@ impl Plugin for MSGPlugin {
     async fn new(_ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
         let rooms = Arc::new(Mutex::new(Vec::new()));
         let profiles = Arc::new(Mutex::new(Vec::new()));
+        let (sender, receiver) = channel();
         (MSGPlugin{
             rooms: rooms.clone(),
             profiles: profiles.clone(),
+            receiver,
         }, tasks![GetRooms(rooms), GetProfiles(profiles)])
     }
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Room {
-    pub profiles: Vec<Profile>,
-    pub messages: Vec<Message>
-}
-
-impl Room {
-    pub fn new(profiles: Vec<Profile>, messages: Vec<Message>) -> Self {
-        Room { profiles, messages }
-    }
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Profile {
-    pub user_name: String,
-    pub biography: String,
-    pub identifier: String, // orange identity
-    pub blocked_dids: Vec<String>,
-    // Bitcoin Wallet Associated???
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Message {
-    pub message: String,
-    pub timestamp: Timestamp,
-    pub author: Profile,
 }
 
 pub struct GetRooms(Arc<Mutex<Vec<Room>>>);
@@ -127,20 +116,62 @@ fn fake_profiles() -> Vec<Profile> {
             user_name: "Marge Margarine".to_string(),
             biography: "Probably butter.".to_string(),
             identifier: "did::id::12345".to_string(),
-            blocked_dids: Vec::new()
+            blocked_dids: Vec::new(),
         },
         Profile {
             user_name: "Billy Butter".to_string(),
             biography: "Can't believe I'm not butter.".to_string(),
             identifier: "did::id::12345".to_string(),
-            blocked_dids: Vec::new()
+            blocked_dids: Vec::new(),
         },
         Profile {
             user_name: "Olive Oool".to_string(),
             biography: "Better than butter.".to_string(),
             identifier: "did::id::12345".to_string(),
-            blocked_dids: Vec::new()
-        }
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Clarence Cream".to_string(),
+            biography: "Spreadable and dependable.".to_string(),
+            identifier: "did::id::67890".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Sunny Spread".to_string(),
+            biography: "Shines on toast.".to_string(),
+            identifier: "did::id::23456".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Lana Lard".to_string(),
+            biography: "Old-fashioned but flavorful.".to_string(),
+            identifier: "did::id::34567".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Ghee Goldstein".to_string(),
+            biography: "Clarified and classy.".to_string(),
+            identifier: "did::id::45678".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Patti Plant-Based".to_string(),
+            biography: "Vegan and proud.".to_string(),
+            identifier: "did::id::56789".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Rico Ricotta".to_string(),
+            biography: "Spreading love and cheese on rice. sorta.".to_string(),
+            identifier: "did::id::67891".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Benny Brunch".to_string(),
+            biography: "Where butter meets eggs.".to_string(),
+            identifier: "did::id::78901".to_string(),
+            blocked_dids: Vec::new(),
+        },
     ]
 }
 
@@ -163,9 +194,9 @@ fn fake_rooms() -> Vec<Room> {
 
 fn fake_messages() -> Vec<Message> {
     let authors = fake_profiles();
-    let dt1: DateTime<Local> = "2025-05-19T08:12:45".parse::<DateTime<Local>>().unwrap();
-    let dt2: DateTime<Local> = "2025-05-19T10:34:02".parse::<DateTime<Local>>().unwrap();
-    let dt3: DateTime<Local> = "2025-05-19T12:55:19".parse::<DateTime<Local>>().unwrap();
+    let dt1 = "2025-05-19T08:12:45Z".parse::<DateTime<Utc>>().unwrap().with_timezone(&Local);
+    let dt2 = "2025-05-19T10:34:02Z".parse::<DateTime<Utc>>().unwrap().with_timezone(&Local);
+    let dt3 = "2025-05-19T12:55:19Z".parse::<DateTime<Utc>>().unwrap().with_timezone(&Local);   
 
     vec![
         Message {

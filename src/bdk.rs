@@ -4,6 +4,11 @@ use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::str::FromStr;
 
+use pelican_ui_profiles::prelude::*;
+use pelican_ui_messages::prelude::*;
+use pelican_ui_bitcoin::prelude::*;
+
+
 use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams};
 use bdk_wallet::descriptor::template::Bip86;
 use bdk_wallet::bitcoin::bip32::Xpriv;
@@ -18,8 +23,6 @@ use serde_json::Value;
 use reqwest::Client;
 
 const SATS: f32 = 100_000_000.0;
-pub const NANS: f64 = 1_000_000_000.0;
-
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct WalletKey(Option<Xpriv>);
@@ -271,9 +274,9 @@ impl Task for GetTransactions {
 
             let (datetime, btc_price) = match &canonical_tx.chain_position {
                 ChainPosition::Confirmed { anchor, .. } => {
-                    let unix_timestamp = get_block_time(&anchor.anchor_block().hash.to_string()).await.unwrap_or(0);
+                    let unix_timestamp = get_block_time(anchor.anchor_block().hash.to_string()).await.unwrap_or(0);
                     let utc = Utc.timestamp_opt(unix_timestamp as i64, 0).unwrap();
-                    let btc_price = get_btc_price_at(&utc.format("%Y-%m-%d %H:%M:%S").to_string()).await.unwrap_or(0.0);
+                    let btc_price = get_btc_price_at(utc.format("%Y-%m-%d %H:%M:%S").to_string()).await.unwrap_or(0.0);
                     (Some(utc.with_timezone(&Local)), btc_price)
                 }
                 _ => (None, 0.0)
@@ -386,14 +389,14 @@ impl CurrentTransaction {
     pub fn get(&self) -> Option<BDKTransaction> { self.0.clone() }
 }
 
-async fn get_block_time(block_hash: &str) -> Result<u64, Box<dyn std::error::Error>> {
+async fn get_block_time(block_hash: String) -> Result<u64, Box<dyn std::error::Error>> {
     let url = format!("https://mempool.space/api/block/{}", block_hash);
     let res: Value = Client::new().get(&url).send().await?.json().await?;
     Ok(res["timestamp"].as_u64().ok_or("Missing or invalid timestamp field")?)
 }
 
-async fn get_btc_price_at(timestamp: &str) -> Result<f64, Box<dyn std::error::Error>> {
-    let datetime = NaiveDateTime::parse_from_str(timestamp, "%Y-%m-%d %H:%M:%S")?;
+async fn get_btc_price_at(timestamp: String) -> Result<f64, Box<dyn std::error::Error>> {
+    let datetime = NaiveDateTime::parse_from_str(&timestamp, "%Y-%m-%d %H:%M:%S")?;
     let target_timestamp = Utc.from_utc_datetime(&datetime).timestamp();
 
     let from = target_timestamp - 300;
@@ -418,8 +421,8 @@ async fn get_btc_price_at(timestamp: &str) -> Result<f64, Box<dyn std::error::Er
     Ok(closest_price)
 }
 
-pub fn parse_btc_uri(input: &str) -> (&str, Option<f64>) {
-    let mut parts = input.strip_prefix("bitcoin:").unwrap_or(input).splitn(2, '?');
+pub fn parse_btc_uri(input: String) -> (String, Option<f64>) {
+    let mut parts = input.strip_prefix("bitcoin:").unwrap_or(&input).splitn(2, '?');
     let address = parts.next().unwrap_or("");
 
     let amount = parts.next().and_then(|q| {
@@ -432,21 +435,11 @@ pub fn parse_btc_uri(input: &str) -> (&str, Option<f64>) {
         })
     });
 
-    (address, amount)
+    (address.to_string(), amount)
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct BDKTransaction {
-    pub datetime: Option<DateTime<Local>>,
-    pub txid: Txid,
-    pub is_received: bool,
-    pub amount: Amount,
-    pub price: f64,
-    pub fee: Option<Amount>,
-    pub address: Option<String>
-}
 
-// pub fn _add_password(&self, password: &str) {
+// pub fn _add_password(&self, password: String) {
 //     use objc2_core_foundation::CFDictionary;
 //     use objc2_core_foundation::CFString;
 //     use objc2_core_foundation::CFData;

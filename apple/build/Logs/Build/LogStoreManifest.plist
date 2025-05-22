@@ -10,7 +10,7 @@
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
-			<key>documentTypeString</key>
+			<key>documentType&str</key>
 			<string>&lt;nil&gt;</string>
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>

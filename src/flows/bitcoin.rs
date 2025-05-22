@@ -1,10 +1,14 @@
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
 use pelican_ui::prelude::Text;
+use pelican_ui_profiles::prelude::*;
+use pelican_ui_bitcoin::prelude::*;
+use pelican_ui_messages::prelude::*;
+
 use chrono::{Local, DateTime, Datelike, Timelike, TimeZone};
-use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee, NANS, CurrentTransaction};
-use crate::get_contacts;
+use crate::bdk::{BDKPlugin, SendAddress, SendAmount, SendFee, CurrentTransaction};
 use crate::bdk::parse_btc_uri;
+use crate::MSGPlugin;
 
 #[derive(Debug, Copy, Clone)]
 pub enum BitcoinFlow {
@@ -21,18 +25,18 @@ pub enum BitcoinFlow {
 }
 
 impl AppFlow for BitcoinFlow {
-    fn get_page(&self, ctx: &mut Context) -> Box<dyn AppPage> {
+    fn get_page(&self, ctx: &mut Context) -> (Box<dyn AppPage>, bool) {
         match self {
-            BitcoinFlow::BitcoinHome => Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::Receive => Box::new(Receive::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::Address => Box::new(Address::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::ScanQR => Box::new(ScanQR::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::SelectContact => Box::new(SelectContact::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::Amount => Box::new(Amount::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::Speed => Box::new(Speed::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::Confirm => Box::new(Confirm::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::Success => Box::new(Success::new(ctx)) as Box<dyn AppPage>,
-            BitcoinFlow::ViewTransaction => Box::new(ViewTransaction::new(ctx)) as Box<dyn AppPage>,
+            BitcoinFlow::BitcoinHome => (Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>, true),
+            BitcoinFlow::Receive => (Box::new(Receive::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::Address => (Box::new(Address::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::ScanQR => (Box::new(ScanQR::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::SelectContact => (Box::new(SelectContact::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::Amount => (Box::new(Amount::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::Speed => (Box::new(Speed::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::Confirm => (Box::new(Confirm::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::Success => (Box::new(Success::new(ctx)) as Box<dyn AppPage>, false),
+            BitcoinFlow::ViewTransaction => (Box::new(ViewTransaction::new(ctx)) as Box<dyn AppPage>, false),
         }
     }
 }
@@ -48,7 +52,7 @@ impl BitcoinHome {
         let header = Header::home(ctx, "Wallet");
         let bumper = Bumper::double_button(ctx, receive, send);
         let content = Content::new(Offset::Center, vec![Box::new(AmountDisplay::new(ctx, "$0.00", "0.00000000 BTC")) as Box<dyn Drawable>]);
-        BitcoinHome(Stack::center(), Page::new(header, content, Some(bumper), false))
+        BitcoinHome(Stack::center(), Page::new(header, content, Some(bumper)))
     }
 
     fn update_transactions(&mut self, ctx: &mut Context) {
@@ -60,17 +64,24 @@ impl BitcoinHome {
             *content.offset() = Offset::Start;
             let transactions = transactions.into_iter().map(|t| {
                 let txid = t.txid;
-                ListItem::bitcoin(
-                    ctx, 
-                    t.is_received, 
-                    format_usd(t.amount.to_btc() * t.price),
-                    t.datetime.map(|dt| Timestamp::new(dt).friendly()).unwrap_or("-"),
-                    move |ctx: &mut Context| {
-                        let tx = ctx.get::<BDKPlugin>().find_transaction(txid).unwrap();
-                        ctx.state().set(&CurrentTransaction::new(tx));
-                        BitcoinFlow::ViewTransaction.navigate(ctx)
-                    }
-                )
+                match t.datetime {
+                    Some(stamp) => ListItem::bitcoin(
+                        ctx, t.is_received, t.amount.to_btc(), t.price, Timestamp::new(stamp),
+                        move |ctx: &mut Context| {
+                            let tx = ctx.get::<BDKPlugin>().find_transaction(txid).unwrap();
+                            ctx.state().set(&CurrentTransaction::new(tx));
+                            BitcoinFlow::ViewTransaction.navigate(ctx)
+                        }
+                    ),
+                    None => ListItem::bitcoin_sending(
+                        ctx, t.amount.to_btc(), t.price, 
+                        move |ctx: &mut Context| {
+                            let tx = ctx.get::<BDKPlugin>().find_transaction(txid).unwrap();
+                            ctx.state().set(&CurrentTransaction::new(tx));
+                            BitcoinFlow::ViewTransaction.navigate(ctx)
+                        }
+                    )
+                }
             }).collect();
 
             let items = &mut content.items();
@@ -107,12 +118,12 @@ impl Address {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
 
         let address = ctx.state().get::<SendAddress>(); // optional string
-        let address_ref: Option<&'static str> = address.get().as_ref().map(|s| Box::leak(s.clone().into_boxed_str()) as &'static str);
+        let address_ref: Option<&str> = address.get().as_ref().map(|x| x.as_str());
         let address_input = TextInput::new(ctx, address_ref, None, "Bitcoin address...", None, icon_button);
 
         let paste = Button::secondary(ctx, Some("paste"), "Paste Clipboard", None, move |ctx: &mut Context| {
             let data = ctx.get_clipboard();
-            ctx.trigger_event(SetActiveInput(Box::leak(data.into_boxed_str())))
+            ctx.trigger_event(SetActiveInput(data))
         });
 
         let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |ctx: &mut Context| BitcoinFlow::ScanQR.navigate(ctx));
@@ -123,7 +134,7 @@ impl Address {
         let bumper = Bumper::single_button(ctx, continue_btn);
         let content = Content::new(Offset::Start, vec![Box::new(address_input), Box::new(quick_actions)]);
 
-        Address(Stack::default(), Page::new(header, content, Some(bumper), false), ButtonState::Default)
+        Address(Stack::default(), Page::new(header, content, Some(bumper)), ButtonState::Default)
     }
 }
 
@@ -135,7 +146,7 @@ impl OnEvent for Address {
             let input_address = input.get_value().clone();
 
             if !input_address.is_empty() {
-                let (address, amount) = parse_btc_uri(&input_address);
+                let (address, amount) = parse_btc_uri(input_address);
                 input.set_value(address.to_string());
                 let address = SendAddress::new(address.to_string());
                 if let Some(b) = amount { ctx.state().set(&SendAmount::new(b)) }
@@ -171,7 +182,7 @@ impl ScanQR {
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
 
-        ScanQR(Stack::default(), Page::new(header, content, None, false))
+        ScanQR(Stack::default(), Page::new(header, content, None))
     }
 }
 
@@ -193,11 +204,16 @@ impl SelectContact {
     fn new(ctx: &mut Context) -> Self {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
-        let contact_list = ListItemGroup::new(get_contacts(ctx));
+        let profiles = ctx.get::<MSGPlugin>().get_profiles();
+        let contacts = profiles.iter().map(|p| {
+            let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
+            ListItem::recipient(ctx, avatar, p.clone())
+        }).collect::<Vec<ListItem>>();
+        let contact_list = ListItemGroup::new(contacts);
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(contact_list)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
-        SelectContact(Stack::default(), Page::new(header, content, None, false))
+        SelectContact(Stack::default(), Page::new(header, content, None))
     }
 }
 
@@ -213,7 +229,7 @@ impl Amount {
         let nano_btc = btc*NANS;
         let usd = btc*price as f64;
 
-        let mut amount_display = AmountInput::new(ctx, Some((usd, format_nano_btc(nano_btc))));
+        let mut amount_display = AmountInput::new(ctx, Some((usd, &format_nano_btc(nano_btc))));
         *amount_display.price() = price;
         let bdk = ctx.get::<BDKPlugin>();
         let balance = bdk.get_balance().to_btc() as f32;
@@ -249,7 +265,7 @@ impl Amount {
         let bumper = Bumper::single_button(ctx, button);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Bitcoin amount", None);
-        Amount(Stack::default(), Page::new(header, content, Some(bumper), false), ButtonState::Default)
+        Amount(Stack::default(), Page::new(header, content, Some(bumper)), ButtonState::Default)
     }
 }
 
@@ -290,8 +306,8 @@ impl Speed {
         let priority = priority.to_btc().to_string().parse::<f32>().unwrap() * price;
 
         let speed_selector = ListItemSelector::new(ctx,
-            ("Standard", "Arrives in ~2 hours", Some(static_from(format!("${:.2} Bitcoin network fee", standard)))),
-            ("Priority", "Arrives in ~30 minutes", Some(static_from(format!("${:.2} Bitcoin network fee", priority)))),
+            ("Standard", "Arrives in ~2 hours", Some(&format!("${:.2} Bitcoin network fee", standard))),
+            ("Priority", "Arrives in ~30 minutes", Some(&format!("${:.2} Bitcoin network fee", priority))),
             None, None
         );
 
@@ -300,7 +316,7 @@ impl Speed {
         let content = Content::new(Offset::Start, vec![Box::new(speed_selector)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Transaction speed", None);
-        Speed(Stack::default(), Page::new(header, content, Some(bumper), false))
+        Speed(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -334,28 +350,14 @@ impl Confirm {
         let fee = send_fee.get_fee().to_btc().to_string().parse::<f64>().unwrap() * price;
         let btc = amount.get().to_btc().to_string().parse::<f64>().unwrap();
 
-        let speed = match send_fee.priority() {
-            false => "Standard (~2 hours)",
-            true => "Priority (~30 minutes)"
-        };
+        let confirm_address = DataItem::confirm_address(
+            ctx, &address.get().as_ref().unwrap().to_string(), |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx)
+        );
 
-        let details = vec![
-            ("Amount sent", format_usd(btc*price)),
-            ("Bitcoin sent", format_nano_btc(btc*NANS)),
-            ("Send speed", speed),
-            ("Network fee", format_usd(fee)),
-            ("Total", format_usd((btc*price)+fee))
-        ];
-
-        let edit_amount = Button::secondary(ctx, Some("edit"), "Edit Amount", None, |ctx: &mut Context| BitcoinFlow::Amount.navigate(ctx));
-        let edit_speed = Button::secondary(ctx, Some("edit"), "Edit Speed", None, |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
-        let edit_address = Button::secondary(ctx, Some("edit"), "Edit Address", None, |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx));
-        let confirm_amount = DataItem::new(ctx, None, "Confirm amount", None, None, Some(details), Some(vec![edit_amount, edit_speed]));
-
-        let confirm_address = DataItem::new(ctx, None, "Confirm address",
-            Some(static_from(address.get().as_ref().unwrap().to_string())),
-            Some("Bitcoin sent to the wrong address can never be recovered."),
-            None, Some(vec![edit_address])
+        let confirm_amount = DataItem::confirm_amount(
+            ctx, btc, price, fee, *send_fee.priority(), 
+            |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx),
+            |ctx: &mut Context| BitcoinFlow::Address.navigate(ctx),
         );
 
         let button = Button::primary(ctx, "Confirm & Send", |ctx: &mut Context| {
@@ -370,7 +372,7 @@ impl Confirm {
         let content = Content::new(Offset::Start, vec![Box::new(confirm_address), Box::new(confirm_amount)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::Speed.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Confirm send", None);
-        Confirm(Stack::default(), Page::new(header, content, Some(bumper), false))
+        Confirm(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -396,7 +398,7 @@ impl Success {
         let content = Content::new(Offset::Center, vec![splash, Box::new(text)]);
         let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Send confirmed", None);
-        Success(Stack::default(), Page::new(header, content, Some(bumper), false))
+        Success(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -408,7 +410,7 @@ impl Receive {
     fn new(ctx: &mut Context) -> Self {
         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.md;
         let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();
-        let qr_code = QRCode::new(ctx, Box::leak(adrs.clone().into_boxed_str()));
+        let qr_code = QRCode::new(ctx, &adrs);
         let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]);
 
@@ -421,7 +423,7 @@ impl Receive {
         let bumper = Bumper::single_button(ctx, button);
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
-        Receive(Stack::default(), Page::new(header, content, Some(bumper), false))
+        Receive(Stack::default(), Page::new(header, content, Some(bumper)))
     }
 }
 
@@ -433,90 +435,31 @@ impl ViewTransaction {
     fn new(ctx: &mut Context) -> Self {
         let current = ctx.state().get::<CurrentTransaction>().get();
         let tx = current.unwrap();
-        let button = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
-        let bumper = Bumper::single_button(ctx, button);
-
-        let address = tx.address.map(format_address).unwrap_or("unknown");
+        let address = tx.address.map(format_address).unwrap_or("unknown".to_string());
         let timestamp = tx.datetime.map(Timestamp::new).unwrap_or(Timestamp::pending());
-        let btc = tx.amount.to_btc();
-        let nano_btc = format_nano_btc(btc * NANS);
-        let usd_amt = btc * tx.price;
-        let usd = format_usd(usd_amt);
-        let price = format_usd(tx.price);
+        let btc = tx.amount.to_btc().to_string().parse::<f64>().unwrap();
 
-        let (title, details): (&'static str, Vec<(&'static str, &'static str)>) = match tx.is_received {
+        let fee = tx.fee.unwrap().to_btc()*tx.price;
+
+        let (title, data_item) = match tx.is_received {
             true => {
-                (
-                    "Received bitcoin",
-                    vec![
-                        ("Date", timestamp.date()),
-                        ("Time", timestamp.time()),
-                        ("Amount received", usd),
-                        ("Bitcoin received", nano_btc),
-                        ("Bitcoin price", price),
-                        ("Received at address", address),
-                    ]
-                )
-            },
+                let data_item = DataItem::received_tx(ctx, timestamp, btc, tx.price, &address);
+                ("Received bitcoin", data_item)
+            }
             false => {
-                let fee = tx.fee.unwrap().to_btc()*tx.price;
-                let total = format_usd(fee+usd_amt);
-                (
-                    "Sent bitcoin",
-                    vec![
-                        ("Date", timestamp.date()),
-                        ("Time", timestamp.time()),
-                        ("Amount sent", usd),
-                        ("Bitcoin sent", nano_btc),
-                        ("Bitcoin price", price),
-                        ("Sent to address", address),
-                        ("", ""), // temp spacer
-                        ("Network fee", format_usd(fee)),
-                        ("Total", total)
-                    ]
-                )
+                let data_item = DataItem::sent_tx(ctx, timestamp, btc, tx.price, fee, &address);
+                ("Sent bitcoin", data_item)
             }
         };
 
-        let details = DataItem::new(ctx, None, "Transaction details", None, None, Some(details), None);
-        let amount_display = AmountDisplay::new(ctx, usd, nano_btc);
-        let content = Content::new(Offset::Center, vec![Box::new(amount_display), Box::new(details)]); //Box::new(qr_code), Box::new(text)
+        let nano_btc = &format_nano_btc(btc * NANS);
+        let usd_fmt = format_usd(btc*tx.price);
+        let amount_display = AmountDisplay::new(ctx, &usd_fmt, nano_btc);
+        let content = Content::new(Offset::Center, vec![Box::new(amount_display), Box::new(data_item)]);
         let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
         let header = Header::stack(ctx, Some(close), title, None);
-        ViewTransaction(Stack::default(), Page::new(header, content, Some(bumper), false))
+        let button = Button::close(ctx, "Done", |ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx));
+        let bumper = Bumper::single_button(ctx, button);
+        ViewTransaction(Stack::default(), Page::new(header, content, Some(bumper)))
     }
-}
-
-pub fn format_usd(t: f64) -> &'static str {
-    let mut dollars = t.trunc() as u64;
-    let mut cents = (t.fract() * 100.0).round() as u64;
-
-    if cents == 100 {
-        dollars += 1;
-        cents = 0;
-    }
-
-    let dollar_str = dollars.to_string();
-    let mut chars = dollar_str.chars().rev().collect::<Vec<_>>();
-    for i in (3..chars.len()).step_by(3) {
-        chars.insert(i, ',');
-    }
-    let formatted_dollars = chars.into_iter().rev().collect::<String>();
-
-    static_from(format!("${}.{:02}", formatted_dollars, cents))
-}
-
-
-pub fn format_nano_btc(nb: f64) -> &'static str {
-    let rounded = nb.round() as u64;
-    let formatted = rounded.to_string().chars().rev().enumerate()
-        .flat_map(|(i, c)| {if i != 0 && i % 3 == 0 {vec![',', c]} else {vec![c]}})
-        .collect::<Vec<_>>().into_iter().rev().collect::<String>();
-
-    static_from(format!("{} nb", formatted))
-}
-
-
-pub fn format_address(a: String) -> &'static str {
-    static_from(format!("{}...{}", &a[..7], &a[a.len().saturating_sub(3)..]))
 }
