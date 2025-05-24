@@ -46,7 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		55EAC02897847195D2F44C15 /* apple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = apple.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		55EAC02897847195D2F44C15 /* orange.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = orange.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57CD6305253C7A940098CD4A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		88141E252DAC5A6500A08D1D /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		88141E272DAC5A6500A08D1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -110,7 +110,7 @@
 		321F7D6A765B38E746C35105 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				55EAC02897847195D2F44C15 /* apple.app */,
+				55EAC02897847195D2F44C15 /* orange.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -171,10 +171,10 @@
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
-		D08AEBE0B1A9C9A7B8C7B33F /* cargo_apple */ = {
+		D08AEBE0B1A9C9A7B8C7B33F /* cargo_orange */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = build_rust_deps.sh;
-			buildConfigurationList = AA00A0CFDB11F37F2BA3FC2E /* Build configuration list for PBXLegacyTarget "cargo_apple" */;
+			buildConfigurationList = AA00A0CFDB11F37F2BA3FC2E /* Build configuration list for PBXLegacyTarget "cargo_orange" */;
 			buildPhases = (
 				FE045B3D04D57B713A565FF8 /* Sources */,
 			);
@@ -182,16 +182,16 @@
 			buildWorkingDirectory = .;
 			dependencies = (
 			);
-			name = cargo_apple;
+			name = cargo_orange;
 			passBuildSettingsInEnvironment = 1;
 			productName = cargo_ios;
 		};
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		3BDB8152E4962373181B4FE5 /* apple */ = {
+		3BDB8152E4962373181B4FE5 /* orange */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E714A1AEAAE517C348B5BD27 /* Build configuration list for PBXNativeTarget "apple" */;
+			buildConfigurationList = E714A1AEAAE517C348B5BD27 /* Build configuration list for PBXNativeTarget "orange" */;
 			buildPhases = (
 				9F13800790AD9DBC2BC0F116 /* Sources */,
 				D5A822CB2D6847BA8800BE4C /* Frameworks */,
@@ -202,9 +202,9 @@
 			dependencies = (
 				19D4B9C22ADC6705B5132B4C /* PBXTargetDependency */,
 			);
-			name = apple;
+			name = orange;
 			productName = main;
-			productReference = 55EAC02897847195D2F44C15 /* apple.app */;
+			productReference = 55EAC02897847195D2F44C15 /* orange.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -221,7 +221,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9D43D41707A5C30B227B83F9 /* Build configuration list for PBXProject "apple" */;
+			buildConfigurationList = 9D43D41707A5C30B227B83F9 /* Build configuration list for PBXProject "orange" */;
 			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -232,8 +232,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3BDB8152E4962373181B4FE5 /* apple */,
-				D08AEBE0B1A9C9A7B8C7B33F /* cargo_apple */,
+				3BDB8152E4962373181B4FE5 /* orange */,
+				D08AEBE0B1A9C9A7B8C7B33F /* cargo_orange */,
 			);
 		};
 /* End PBXProject section */
@@ -278,7 +278,7 @@
 		19D4B9C22ADC6705B5132B4C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
-			target = D08AEBE0B1A9C9A7B8C7B33F /* cargo_apple */;
+			target = D08AEBE0B1A9C9A7B8C7B33F /* cargo_orange */;
 			targetProxy = 26BF2C4863C966DABAB40DC8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -391,7 +391,7 @@
 					"-lc++abi",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.ramp.orange;
-				PRODUCT_NAME = apple;
+				PRODUCT_NAME = orange;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = NO;
 				SDKROOT = iphoneos;
@@ -467,7 +467,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rust.cargo-ios";
-				PRODUCT_NAME = cargo_apple;
+				PRODUCT_NAME = cargo_orange;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "apple-src/cargo_apple-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -524,7 +524,7 @@
 					"-lc++abi",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.ramp.orange;
-				PRODUCT_NAME = apple;
+				PRODUCT_NAME = orange;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = NO;
 				SDKROOT = iphoneos;
@@ -545,7 +545,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rust.cargo-ios";
-				PRODUCT_NAME = cargo_apple;
+				PRODUCT_NAME = cargo_orange;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "apple-src/cargo_apple-Bridging-Header.h";
 				SWIFT_VERSION = 6.0;
@@ -556,7 +556,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9D43D41707A5C30B227B83F9 /* Build configuration list for PBXProject "apple" */ = {
+		9D43D41707A5C30B227B83F9 /* Build configuration list for PBXProject "orange" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4AD7BC6FDD56FF18FA6DA7D7 /* Debug */,
@@ -565,7 +565,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		AA00A0CFDB11F37F2BA3FC2E /* Build configuration list for PBXLegacyTarget "cargo_apple" */ = {
+		AA00A0CFDB11F37F2BA3FC2E /* Build configuration list for PBXLegacyTarget "cargo_orange" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8265913A25816D964A847F1B /* Debug */,
@@ -574,7 +574,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E714A1AEAAE517C348B5BD27 /* Build configuration list for PBXNativeTarget "apple" */ = {
+		E714A1AEAAE517C348B5BD27 /* Build configuration list for PBXNativeTarget "orange" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A2D5B73DD30D562B6F366526 /* Debug */,

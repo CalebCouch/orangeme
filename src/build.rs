@@ -1,6 +1,6 @@
 fn main() {
-    let swift_file_a = "apple/apple-src/Notifications.swift";
-    let swift_file_c = "apple/apple-src/PlatformPaths.swift";
+    let swift_file_a = "orange/apple-src/Notifications.swift";
+    let swift_file_c = "orange/apple-src/PlatformPaths.swift";
 
     let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
     let lib_path = out_dir.join("libmain.dylib");
