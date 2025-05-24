@@ -5,8 +5,9 @@ use pelican_ui_messages::prelude::*;
 
 use::chrono::{DateTime, Local, Utc};
 
+use crate::AccountsFlow;
 use crate::MSGPlugin;
-use crate::msg::{CurrentRoom};
+use crate::msg::{CurrentRoom, CurrentProfile};
 
 #[derive(Debug, Copy, Clone)]
 pub enum MessagesFlow {
@@ -207,14 +208,15 @@ impl GroupInfo {
         let current_room = ctx.state().get::<CurrentRoom>();
         let current_room = current_room.get().as_ref().unwrap();
         let contacts = current_room.profiles.iter().map(|p| {
+            let new_profile = p.clone();
             ListItem::contact(ctx, 
                 AvatarContent::Icon("profile", 
                 AvatarIconStyle::Secondary), 
-                &p.user_name.clone(), 
-                &p.identifier.clone(), 
-                |_ctx: &mut Context| {
-                    // set current contact
-                    // go to contacts page
+                &new_profile.user_name.clone(), 
+                &new_profile.identifier.clone(), 
+                move |ctx: &mut Context| {
+                    ctx.state().set(&CurrentProfile::new(new_profile.clone()));
+                    AccountsFlow::UserAccount.navigate(ctx);
                 }
             )
         }).collect::<Vec<ListItem>>();

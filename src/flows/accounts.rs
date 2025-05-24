@@ -5,6 +5,7 @@ use pelican_ui::prelude::Text;
 use pelican_ui_profiles::prelude::*;
 
 use ucp_rust::screens::*;
+use crate::msg::CurrentProfile;
 use crate::BDKPlugin;
 use crate::UCPPlugin;
 
@@ -134,12 +135,8 @@ impl AppPage for UserAccount {}
 
 impl UserAccount {
     pub fn new(ctx: &mut Context) -> Self {
-        let user = Profile {
-            user_name: "Marge Margarine".to_string(),
-            identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
-            biography: "Probably butter.".to_string(),
-            blocked_dids: Vec::new()
-        };
+        let user = ctx.state().get::<CurrentProfile>();
+        let user = user.get().clone().unwrap();
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| crate::MessagesFlow::GroupInfo.navigate(ctx));
         let header = Header::stack(ctx, Some(back), &user.user_name, None);
@@ -190,7 +187,7 @@ impl BlockUser {
         );
 
         let msg = format!("Are you sure you want to block {}?", user.user_name);
-        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
+        let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Block user", None);
@@ -221,7 +218,7 @@ impl UserBlocked {
         );
 
         let msg = format!("{} has been blocked", user.user_name);
-        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
+        let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let close = IconButton::close(ctx, |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "User blocked", None);
@@ -250,7 +247,7 @@ impl UnblockUser {
             Some(("unblock", AvatarIconStyle::Success)), false, 96.0, None
         );        
         let msg = format!("Are you sure you want to unblock {}?", user.user_name);
-        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
+        let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(back), "Unblock user", None);
@@ -278,7 +275,7 @@ impl UserUnblocked {
             Some(("unblock", AvatarIconStyle::Success)), false, 96.0, None
         );
         let msg = format!("{} has been unblocked", user.user_name);
-        let text = Text::new(ctx, &msg, TextStyle::Heading, text_size, Align::Left);
+        let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
         let close = IconButton::close(ctx, |ctx: &mut Context| AccountsFlow::UserAccount.navigate(ctx));
         let header = Header::stack(ctx, Some(close), "User unblocked", None);
