@@ -8,7 +8,7 @@ use bdk::BDKPlugin;
 mod msg;
 use msg::MSGPlugin;
 
-use ucp_rust::UCPPlugin;
+// use ucp_rust::UCPPlugin;
 
 pub struct MyApp;
 
@@ -36,15 +36,16 @@ impl App for MyApp {
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
         ctx.include_assets(include_assets!("./resources/images"));
 
+        let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
+
         let navigation = vec![
-            ("wallet", "Bitcoin", Box::new(|ctx: &mut Context| BitcoinFlow::BitcoinHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            ("messages", "Messages", Box::new(|ctx: &mut Context| MessagesFlow::MessagesHome.navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            ("wallet", "Bitcoin", None, Box::new(|ctx: &mut Context| BitcoinHome::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            ("messages", "Messages", None, Box::new(|ctx: &mut Context| MessagesHome::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| Account::navigate(ctx)) as Box<dyn FnMut(&mut Context)>)
         ];
 
-        let profile = ("My Profile", AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Box::new(|ctx: &mut Context| AccountsFlow::Account.navigate(ctx)) as Box<dyn FnMut(&mut Context)>);
-
         let home = BitcoinHome::new(ctx);
-        Box::new(Interface::new(ctx, home, Some(0_usize), Some(navigation), Some(profile)))
+        Box::new(Interface::new(ctx, home, Some((0_usize, navigation))))
     }
 }
 
