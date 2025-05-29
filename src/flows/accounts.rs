@@ -13,14 +13,27 @@ use crate::GroupInfo;
 use crate::DirectMessage;
 use crate::Amount;
 
+use std::sync::{Arc, Mutex};
+use std::sync::mpsc::{self, Receiver, Sender};
+
 #[derive(Debug, Component, AppPage)]
-pub struct Account(Stack, Page, #[skip] bool);
-impl OnEvent for Account {}
+pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<Vec<u8>>);
 
 impl Account {
     pub fn new(ctx: &mut Context) -> Self {
         let header = Header::home(ctx, "Account");
-        let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), Some(("edit", AvatarIconStyle::Secondary)), false, 128.0, None);
+        let (sender, receiver) = mpsc::channel();
+
+        let avatar = Avatar::new(
+            ctx,
+            AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
+            Some(("edit", AvatarIconStyle::Secondary)),
+            false,
+            128.0,
+            Some(Box::new(move |ctx: &mut Context| {
+                ctx.open_photo_picker(sender.clone());
+            })),
+        );
         
         let save = Button::disabled(ctx, "Save", |_ctx: &mut Context| println!("Save changes..."));
         let bumper = Bumper::single_button(ctx, save);
@@ -40,9 +53,32 @@ impl Account {
 
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(about_input), Box::new(identity), Box::new(address)]);
 
-        Account(Stack::center(), Page::new(header, content, Some(bumper)), true)
+        Account(Stack::center(), Page::new(header, content, Some(bumper)), true, receiver)
     }
 }
+
+impl OnEvent for Account {
+    fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+        if let Some(TickEvent) = event.downcast_ref() {
+            if let Ok(bytes) = self.3.try_recv() {
+                let item = &mut *self.1.content().items()[0];
+                if let Some(avatar) = item.as_any_mut().downcast_mut::<Avatar>() {
+                    // println!("bytes {:?}", bytes);
+                    if let Ok(dynamic) = image::load_from_memory(&bytes) {
+                        let rgba_image = dynamic.to_rgba8();
+                        let image = image::imageops::rotate90(&rgba_image);
+                        let image = ctx.add_image(image);
+                        avatar.set_content(AvatarContent::Image(image));
+                    } else {
+                        println!("Invalid Bytes");
+                    }
+                }
+            }
+        }
+        true
+    }
+}
+
 
 // #[derive(Debug, Component)]
 // pub struct GetCredentials(Stack, Page);

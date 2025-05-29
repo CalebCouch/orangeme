@@ -33,6 +33,7 @@
 		88E18C472DDFFAD200C824BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E18C462DDFFAD200C824BD /* Assets.xcassets */; };
 		88E18C4A2DDFFB3900C824BD /* LaunchScreenDesktop.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 88E18C492DDFFB3900C824BD /* LaunchScreenDesktop.storyboard */; platformFilters = (macos, ); };
 		88E18C4C2DE004E700C824BD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 88E18C4B2DE004E700C824BD /* LaunchScreen.storyboard */; platformFilter = ios; };
+		88EDBAA72DE6668D00C999C7 /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88EDBAA62DE6668D00C999C7 /* PhotosUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 		88E18C462DDFFAD200C824BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		88E18C492DDFFB3900C824BD /* LaunchScreenDesktop.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreenDesktop.storyboard; sourceTree = "<group>"; };
 		88E18C4B2DE004E700C824BD /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		88EDBAA62DE6668D00C999C7 /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
 		96A1E5B62F48B379829E8A0D /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		9F1B41978FA53999AA836D0F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A39528EB2CCB182F5328223A /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
@@ -84,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88EDBAA72DE6668D00C999C7 /* PhotosUI.framework in Frameworks */,
 				882603C62DA6BCAC00588BC3 /* Cocoa.framework in Frameworks */,
 				8826FE712DA6BC6900588BC3 /* ApplicationServices.framework in Frameworks */,
 				8826FE6F2DA5DD8B00588BC3 /* AppKit.framework in Frameworks */,
@@ -145,6 +148,7 @@
 		EB028409C2D0655412DA6E44 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				88EDBAA62DE6668D00C999C7 /* PhotosUI.framework */,
 				88141E3C2DBBE01700A08D1D /* liborange.a */,
 				8826005F2DA6BC9D00588BC3 /* Cocoa.framework */,
 				8826FE702DA6BC6900588BC3 /* ApplicationServices.framework */,

@@ -26,6 +26,8 @@
 	<string>1</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app uses the camera to scan QR codes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to your photo library to choose a new avatar.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

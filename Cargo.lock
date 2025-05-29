@@ -3283,12 +3283,14 @@ dependencies = [
  "pelican_ui_bitcoin",
  "pelican_ui_messages",
  "pelican_ui_profiles",
+ "pollster",
  "reqwest 0.12.15",
  "rust_on_rails",
  "secp256k1 0.30.0",
  "security-framework 3.2.0",
  "serde",
  "serde_json",
+ "tokio",
  "ureq",
 ]
 
@@ -3512,6 +3514,12 @@ dependencies = [
  "tracing",
  "windows-sys 0.59.0",
 ]
+
+[[package]]
+name = "pollster"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f3a9f18d041e6d0e102a0a46750538147e5e8992d3b4873aaafee2520b00ce3"
 
 [[package]]
 name = "portable-atomic"
@@ -4011,6 +4019,7 @@ version = "4.0.2"
 dependencies = [
  "android_logger",
  "async-trait",
+ "block",
  "cli-clipboard",
  "console_error_panic_hook",
  "console_log",

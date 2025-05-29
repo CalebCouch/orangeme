@@ -381,7 +381,7 @@ impl Receive {
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]);
 
         let button = if pelican_ui::config::IS_MOBILE {
-            Button::primary(ctx, "Share", |_ctx: &mut Context| println!("Sharing...")) 
+            Button::primary(ctx, "Share", move |ctx: &mut Context| ctx.share(&adrs.clone())) 
         } else {
             Button::primary(ctx, "Copy Address", move |ctx: &mut Context| ctx.set_clipboard(adrs.clone()) )
         };
