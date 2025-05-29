@@ -1,6 +1,7 @@
+#![allow(dead_code)]
+
 use rust_on_rails::prelude::*;
 use pelican_ui::prelude::*;
-use pelican_ui::prelude::Text;
 
 use pelican_ui_profiles::prelude::*;
 
@@ -13,8 +14,7 @@ use crate::GroupInfo;
 use crate::DirectMessage;
 use crate::Amount;
 
-use std::sync::{Arc, Mutex};
-use std::sync::mpsc::{self, Receiver, Sender};
+use std::sync::mpsc::{self, Receiver};
 
 #[derive(Debug, Component, AppPage)]
 pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<Vec<u8>>);

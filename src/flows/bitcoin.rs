@@ -379,9 +379,8 @@ impl Receive {
         let qr_code = QRCode::new(ctx, &adrs);
         let text = Text::new(ctx, "Scan to receive bitcoin.", TextStyle::Secondary, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![Box::new(qr_code), Box::new(text)]);
-
         let button = if pelican_ui::config::IS_MOBILE {
-            Button::primary(ctx, "Share", move |ctx: &mut Context| ctx.share(&adrs.clone())) 
+            Button::primary(ctx, "Share", move |ctx: &mut Context| ctx.share(&adrs.clone())) // ctx.share(&adrs.clone(), &image_bytes) 
         } else {
             Button::primary(ctx, "Copy Address", move |ctx: &mut Context| ctx.set_clipboard(adrs.clone()) )
         };

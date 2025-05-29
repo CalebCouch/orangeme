@@ -44,7 +44,7 @@ impl App for MyApp {
             ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| Account::navigate(ctx)) as Box<dyn FnMut(&mut Context)>)
         ];
 
-        let home = Error::new(ctx);
+        let home = BitcoinHome::new(ctx);
         Box::new(Interface::new(ctx, home, Some((0_usize, navigation))))
     }
 }
