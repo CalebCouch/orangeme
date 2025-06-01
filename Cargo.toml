@@ -6,7 +6,6 @@ description = "nOrange"
 license = "BSD-3-Clause"
 repository = "https://github.com/CalebCouch/orangeme.git"
 authors = ["Caleb Couch <caleb@orange.me>", "Ella Couch <ella@orange.me>"]
-build = "src/build.rs"
 
 
 [dependencies]
