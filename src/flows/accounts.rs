@@ -66,7 +66,7 @@ impl OnEvent for Account {
                     // println!("bytes {:?}", bytes);
                     if let Ok(dynamic) = image::load_from_memory(&bytes) {
                         let image = dynamic.to_rgba8();
-                        let image = rotate_image_from(image::DynamicImage::ImageRgba8(image), orientation);
+                        let image = orientation.apply_to(image::DynamicImage::ImageRgba8(image));
                         let image = ctx.add_image(image.into());
                         avatar.set_content(AvatarContent::Image(image));
                     } else {
