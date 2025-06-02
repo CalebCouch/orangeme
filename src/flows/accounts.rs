@@ -17,7 +17,7 @@ use crate::Amount;
 use std::sync::mpsc::{self, Receiver};
 
 #[derive(Debug, Component, AppPage)]
-pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<Vec<u8>>);
+pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<(Vec<u8>, ImageOrientation)>);
 
 impl Account {
     pub fn new(ctx: &mut Context) -> Self {
@@ -60,14 +60,14 @@ impl Account {
 impl OnEvent for Account {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref() {
-            if let Ok(bytes) = self.3.try_recv() {
+            if let Ok((bytes, orientation)) = self.3.try_recv() {
                 let item = &mut *self.1.content().items()[0];
                 if let Some(avatar) = item.as_any_mut().downcast_mut::<Avatar>() {
                     // println!("bytes {:?}", bytes);
                     if let Ok(dynamic) = image::load_from_memory(&bytes) {
-                        let rgba_image = dynamic.to_rgba8();
-                        let image = image::imageops::rotate90(&rgba_image);
-                        let image = ctx.add_image(image);
+                        let image = dynamic.to_rgba8();
+                        let image = rotate_image_from(image::DynamicImage::ImageRgba8(image), orientation);
+                        let image = ctx.add_image(image.into());
                         avatar.set_content(AvatarContent::Image(image));
                     } else {
                         println!("Invalid Bytes");

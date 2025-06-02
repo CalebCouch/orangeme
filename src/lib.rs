@@ -34,6 +34,7 @@ impl App for MyApp {
     }
 
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
+        // launch_background_thread();
         ctx.include_assets(include_assets!("./resources/images"));
 
         let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
@@ -50,3 +51,26 @@ impl App for MyApp {
 }
 
 create_entry_points!(MyApp);
+
+// use std::thread;
+// use std::time::Duration;
+// use dispatch2::DispatchQueue;
+// use dispatch2::DispatchQueueAttr;
+// use dispatch2::DispatchObject;
+
+// fn background_task() {
+//     println!("Running background task...");
+//     thread::sleep(Duration::from_secs(3));
+//     println!("Background task completed!");
+// }
+
+// pub fn launch_background_thread() {
+//     let attr = DispatchQueueAttr::new_initially_inactive(None);
+//     let queue = DispatchQueue::new("RustBackgroundQueue", Some(&attr));
+    
+//     queue.exec_async(|| {
+//         background_task();
+//     });
+
+//     queue.activate();
+// }

@@ -32,6 +32,8 @@ pelican_ui_bitcoin = {path = "../pelican_ui_bitcoin" }
 pelican_ui_messages = {path = "../messages" }
 pelican_ui_profiles = {path = "../profiles" }
 pollster = "0.4.0"
+dispatch2 = "0.3.0"
+objc2-ui-kit = { version = "0.3.1", features = ["UIGraphicsImageRenderer"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "sync", "time", "net"] }
