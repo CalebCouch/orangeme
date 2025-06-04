@@ -1,7 +1,7 @@
-use rust_on_rails::prelude::*;
-use pelican_ui::prelude::*;
-use pelican_ui_profiles::prelude::*;
-use pelican_ui_messages::prelude::*;
+use messages::{Room, Message};
+use profiles::Profile;
+use pelican_ui_std::Timestamp;
+use pelican_ui::{Context, Plugin};
 
 use std::sync::{Mutex, Arc};
 use std::time::Duration;
@@ -10,7 +10,7 @@ use chrono::{DateTime, Local, Utc}; // temp
 use std::sync::mpsc::{channel, Receiver};
 
 pub struct MSGPlugin {
-    rooms: Arc<Mutex<Vec<Room>>>,
+    // rooms: Arc<Mutex<Vec<Room>>>,
     profiles: Arc<Mutex<Vec<Profile>>>,
     receiver: Receiver<String>,
 }
@@ -20,16 +20,16 @@ impl MSGPlugin {
         println!("Initialized MSG");
     }
 
-    pub fn get_rooms(&mut self) -> Vec<Room> {
-        self.rooms.lock().unwrap().to_vec()
-    }
+    // pub fn get_rooms(&mut self) -> Vec<Room> {
+    //     self.rooms.lock().unwrap().to_vec()
+    // }
+
+    // pub fn create_room(&mut self, profiles: Vec<Profile>) {
+    //     self.rooms.lock().unwrap().to_vec().push(Room::new(profiles, Vec::new()));
+    // }
 
     pub fn get_profiles(&mut self) -> Vec<Profile> {
         self.profiles.lock().unwrap().to_vec()
-    }
-
-    pub fn create_room(&mut self, profiles: Vec<Profile>) {
-        self.rooms.lock().unwrap().to_vec().push(Room::new(profiles, Vec::new()));
     }
 
     // get all profiles
@@ -53,14 +53,15 @@ impl Plugin for MSGPlugin {
     }
 
     async fn new(_ctx: &mut Context, _h_ctx: &mut HeadlessContext) -> (Self, Tasks) {
-        let rooms = Arc::new(Mutex::new(Vec::new()));
+        // let rooms = Arc::new(Mutex::new(Vec::new()));
         let profiles = Arc::new(Mutex::new(Vec::new()));
         let (_sender, receiver) = channel();
         (MSGPlugin{
-            rooms: rooms.clone(),
+            // rooms: rooms.clone(),
             profiles: profiles.clone(),
             receiver,
-        }, tasks![GetRooms(rooms), GetProfiles(profiles)])
+        // }, tasks![GetRooms(rooms), GetProfiles(profiles)])
+        }, tasks![GetProfiles(profiles)])
     }
 }
 
@@ -76,6 +77,18 @@ impl Task for GetRooms {
     }
 }
 
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub struct CurrentRoom(Option<Room>);
+
+impl CurrentRoom {
+    pub fn new(new: Room) -> Self {
+        CurrentRoom(Some(new))
+    }
+
+    pub fn get(&self) -> &Option<Room> { &self.0 }
+}
+
+
 pub struct GetProfiles(Arc<Mutex<Vec<Profile>>>);
 #[async_trait]
 impl Task for GetProfiles {
@@ -86,17 +99,6 @@ impl Task for GetProfiles {
         let profiles = fake_profiles();
         *self.0.lock().unwrap() = profiles;
     }
-}
-
-#[derive(Serialize, Deserialize, Default, Clone, Debug)]
-pub struct CurrentRoom(Option<Room>);
-
-impl CurrentRoom {
-    pub fn new(new: Room) -> Self {
-        CurrentRoom(Some(new))
-    }
-
-    pub fn get(&self) -> &Option<Room> { &self.0 }
 }
 
 #[derive(Serialize, Deserialize, Default, Clone, Debug)]

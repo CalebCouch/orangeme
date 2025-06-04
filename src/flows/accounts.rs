@@ -1,13 +1,27 @@
 #![allow(dead_code)]
 
-use rust_on_rails::prelude::*;
-use pelican_ui::prelude::*;
+use pelican_ui::events::{Event, OnEvent, Key, NamedKey, KeyboardState, KeyboardEvent, TickEvent};
+use pelican_ui::drawable::{Drawable, Component, Align, Span, Image};
+use pelican_ui::layout::{Area, SizeRequest, Layout};
+use pelican_ui::{Context, Component, ImageOrientation};
+use profiles::Profile;
 
-use pelican_ui_profiles::prelude::*;
+use pelican_ui_std::{
+    AppPage, Stack, Page,
+    Header, IconButton,
+    Avatar, AvatarContent,
+    AvatarIconStyle,
+    ExpandableText,
+    TextStyle, Content,
+    Offset, TextInput,
+    Button, DataItem,
+    Bumper, IconButtonRow,
+    NavigateEvent,
+};
 
 // use ucp_rust::screens::*;
-use crate::msg::CurrentProfile;
-use crate::BDKPlugin;
+// use crate::msg::CurrentProfile;
+// use crate::BDKPlugin;
 // use crate::UCPPlugin;
 
 use crate::GroupInfo;
@@ -31,7 +45,7 @@ impl Account {
             false,
             128.0,
             Some(Box::new(move |ctx: &mut Context| {
-                ctx.open_photo_picker(sender.clone());
+                // ctx.open_photo_picker(sender.clone());
             })),
         );
         
@@ -42,7 +56,7 @@ impl Account {
         let name_input = TextInput::new(ctx, None, Some("Name"), "Account name...", None, icon_button);
         let about_input = TextInput::new(ctx, None, Some("About me"), "About me...", None, icon_button);
 
-        let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
+        let adrs = String::new(); // ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let address = DataItem::new(ctx, None, "Bitcoin address", Some(&adrs), None, None, Some(vec![copy]));
         let copy = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
@@ -59,7 +73,7 @@ impl Account {
 
 impl OnEvent for Account {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
-        if let Some(TickEvent) = event.downcast_ref() {
+        if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
             if let Ok((bytes, orientation)) = self.3.try_recv() {
                 let item = &mut *self.1.content().items()[0];
                 if let Some(avatar) = item.as_any_mut().downcast_mut::<Avatar>() {
@@ -67,7 +81,7 @@ impl OnEvent for Account {
                     if let Ok(dynamic) = image::load_from_memory(&bytes) {
                         let image = dynamic.to_rgba8();
                         let image = orientation.apply_to(image::DynamicImage::ImageRgba8(image));
-                        let image = ctx.add_image(image.into());
+                        let image = ctx.assets.add_image(image.into());
                         avatar.set_content(AvatarContent::Image(image));
                     } else {
                         println!("Invalid Bytes");
@@ -101,7 +115,7 @@ impl OnEvent for Account {
 //             Credential::EighteenPlus.get(ctx)
 //         ]);
 
-//         let text_size = ctx.get::<PelicanUI>().theme.fonts.size.h5;
+//         let text_size = ctx.theme.fonts.size.h5;
 //         let instructions = ExpandableText::new(ctx, "Verify your information to add these verified credentials to your Orange profile:", TextStyle::Heading, text_size, Align::Center);
 
 //         let content = Content::new(Offset::Start, vec![Box::new(instructions), Box::new(credentials)]);
@@ -128,7 +142,7 @@ impl OnEvent for Account {
 //         let img = image::load_from_memory(&ctx.load_file("sophtron.png").unwrap()).unwrap();
 //         let image = Image{shape: ShapeType::Rectangle(0.0, (94.0, 94.0)), image: ctx.add_image(img.into()), color: None};
 
-//         let text_size = ctx.get::<PelicanUI>().theme.fonts.size;
+//         let text_size = ctx.theme.fonts.size;
 //         let instructions = ExpandableText::new(ctx, "Orange uses Sophtron to verify your credentials with your bank account.", TextStyle::Heading, text_size.h5, Align::Center);
 
 //         let bullet_a = BulletedText::new(ctx, "Sophtron never uses or shares your data with anyone else.", TextStyle::Primary, text_size.md, Align::Left);
@@ -146,8 +160,8 @@ impl OnEvent for UserAccount {}
 
 impl UserAccount {
     pub fn new(ctx: &mut Context) -> Self {
-        let user = ctx.state().get::<CurrentProfile>();
-        let user = user.get().clone().unwrap();
+        // let user = ctx.state().get::<CurrentProfile>();
+        let user = example_user(); // user.get().clone().unwrap();
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| GroupInfo::navigate(ctx));
         let header = Header::stack(ctx, Some(back), &user.user_name, None);
@@ -160,7 +174,7 @@ impl UserAccount {
             ("unblock", Box::new(|ctx: &mut Context| UnblockUser::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
         ]);
 
-        let adrs = ctx.get::<BDKPlugin>().get_new_address().to_string();        
+        let adrs = String::new(); //ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let address = DataItem::new(ctx, None, "Bitcoin address", Some(&adrs), None, None, Some(vec![copy_address]));
 
@@ -187,7 +201,7 @@ impl BlockUser {
             blocked_dids: Vec::new()
         };
 
-        let theme = &ctx.get::<PelicanUI>().theme;
+        let theme = &ctx.theme;
         let text_size = theme.fonts.size.h4;
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| UserAccount::navigate(ctx));
         let confirm = Button::primary(ctx, "Block", |ctx: &mut Context| UserBlocked::navigate(ctx));
@@ -219,7 +233,7 @@ impl UserBlocked {
             blocked_dids: Vec::new()
         };
 
-        let theme = &ctx.get::<PelicanUI>().theme;
+        let theme = &ctx.theme;
         let text_size = theme.fonts.size.h4;
         let close = Button::close(ctx, "Done", |ctx: &mut Context| UserAccount::navigate(ctx));
         let bumper = Bumper::single_button(ctx, close);
@@ -250,7 +264,7 @@ impl UnblockUser {
             blocked_dids: Vec::new()
         };
 
-        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.h4;
+        let text_size = ctx.theme.fonts.size.h4;
         let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| UserAccount::navigate(ctx));
         let confirm = Button::primary(ctx, "Unblock", |ctx: &mut Context| UserUnblocked::navigate(ctx));
         let bumper = Bumper::double_button(ctx, cancel, confirm);
@@ -279,7 +293,7 @@ impl UserUnblocked {
             blocked_dids: Vec::new()
         };
         
-        let text_size = ctx.get::<PelicanUI>().theme.fonts.size.h4;
+        let text_size = ctx.theme.fonts.size.h4;
         let close = Button::close(ctx, "Done", |ctx: &mut Context| UserAccount::navigate(ctx));
         let bumper = Bumper::single_button(ctx, close);
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
@@ -291,5 +305,14 @@ impl UserUnblocked {
         let close = IconButton::close(ctx, |ctx: &mut Context| UserAccount::navigate(ctx));
         let header = Header::stack(ctx, Some(close), "User unblocked", None);
         UserUnblocked(Stack::default(), Page::new(header, content, Some(bumper)), false)
+    }
+}
+
+fn example_user() -> Profile {
+    Profile {
+        user_name: "Marge Margarine".to_string(),
+        biography: "Probably butter.".to_string(),
+        identifier: "did::id::12345".to_string(),
+        blocked_dids: Vec::new(),
     }
 }

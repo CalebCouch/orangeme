@@ -1,41 +1,45 @@
-use rust_on_rails::prelude::*;
-use pelican_ui::prelude::*;
+use pelican_ui::{Context, Plugins, Services, maverick_start, start, Application, PelicanEngine, MaverickOS};
+use pelican_ui::drawable::Drawable;
+use pelican_ui_std::{AvatarIconStyle, AvatarContent, Interface, NavigateEvent};
 
 mod flows;
 pub use flows::*;
-mod bdk;
-use bdk::BDKPlugin;
-mod msg;
-use msg::MSGPlugin;
+// mod bdk;
+// use bdk::BDKPlugin;
+// mod msg;
+// use msg::MSGPlugin;
 
 // use ucp_rust::UCPPlugin;
 
 pub struct MyApp;
+impl Services for MyApp {}
 
-impl App for MyApp {
+impl Application for MyApp {
     //TODO: include_plugins![BDKPlugin]; || #[derive(Plugins[BDKPlugin])] || #[Plugins[BDKPlugin]]
-    async fn background_tasks(ctx: &mut HeadlessContext) -> Tasks {
-        BDKPlugin::background_tasks(ctx).await
-    }
-    async fn plugins(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
-        let (bdk_plugin, mut tasks) = BDKPlugin::new(ctx, h_ctx).await;
-        let (msg_plugin, msg_tasks) = MSGPlugin::new(ctx, h_ctx).await;
-        let (pel_plugin, _p_tasks) = PelicanUI::new(ctx, h_ctx).await;
-        // let (ucp, tasks) = UCPPlugin::new(ctx, h_ctx).await;
+    // async fn background_tasks(ctx: &mut HeadlessContext) -> Tasks {
+    //     // BDKPlugin::background_tasks(ctx).await
+    //     vec![]
+    // }
 
-        tasks.extend(msg_tasks);
+    // async fn plugins(ctx: &mut Context, h_ctx: &mut HeadlessContext) -> (Plugins, Tasks) {
+    //     // let (bdk_plugin, mut tasks) = BDKPlugin::new(ctx, h_ctx).await;
+    //     // let (msg_plugin, msg_tasks) = MSGPlugin::new(ctx, h_ctx).await;
+    //     // let (pel_plugin, _p_tasks) = PelicanUI::new(ctx, h_ctx).await;
+    //     // let (ucp, tasks) = UCPPlugin::new(ctx, h_ctx).await;
+
+    //     // tasks.extend(msg_tasks);
     
-        (std::collections::HashMap::from([
-            (std::any::TypeId::of::<BDKPlugin>(), Box::new(bdk_plugin) as Box<dyn std::any::Any>),
-            (std::any::TypeId::of::<MSGPlugin>(), Box::new(msg_plugin) as Box<dyn std::any::Any>),
-            (std::any::TypeId::of::<PelicanUI>(), Box::new(pel_plugin) as Box<dyn std::any::Any>),
-            // (std::any::TypeId::of::<UCPPlugin>(), Box::new(ucp) as Box<dyn std::any::Any>)
-        ]), tasks)
-    }
+    //     (std::collections::HashMap::from([
+    //         // (std::any::TypeId::of::<BDKPlugin>(), Box::new(bdk_plugin) as Box<dyn std::any::Any>),
+    //         // (std::any::TypeId::of::<MSGPlugin>(), Box::new(msg_plugin) as Box<dyn std::any::Any>),
+    //         // (std::any::TypeId::of::<PelicanUI>(), Box::new(pel_plugin) as Box<dyn std::any::Any>),
+    //         // (std::any::TypeId::of::<UCPPlugin>(), Box::new(ucp) as Box<dyn std::any::Any>)
+    //     ]), vec![])
+    // }
 
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
         // launch_background_thread();
-        ctx.include_assets(include_assets!("./resources/images"));
+        // ctx.include_assets(include_assets!("./resources/images"));
 
         let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
 
@@ -50,7 +54,7 @@ impl App for MyApp {
     }
 }
 
-create_entry_points!(MyApp);
+start!(MyApp);
 
 // use std::thread;
 // use std::time::Duration;

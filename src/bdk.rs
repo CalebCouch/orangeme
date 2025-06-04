@@ -1,10 +1,10 @@
-use rust_on_rails::prelude::*;
+use pelican_ui::{Context, Plugin};
+use bitcoin::BDKTransaction;
+
 use serde::{Serialize, Deserialize};
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::str::FromStr;
-
-use pelican_ui_bitcoin::prelude::*;
 
 use bdk_wallet::{Wallet, KeychainKind, ChangeSet, Update, LoadParams};
 use bdk_wallet::descriptor::template::Bip86;

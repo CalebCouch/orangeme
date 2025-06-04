@@ -23,14 +23,15 @@ security-framework = "3.2.0"
 objc2-security = { version = "0.3.1", features = ["SecBase"] }
 objc2-core-foundation = "0.3.1"
 #rust_on_rails = "4.0.1"
-rust_on_rails = {path="../rust_on_rails"}
+#rust_on_rails = {path="../rust_on_rails"}
 #ucp_rust = { path = "../ucp_rust" }
 reqwest = { version = "0.12.15", features = ["json"] }
 
 pelican_ui = {path = "../pelican_ui" }
-pelican_ui_bitcoin = {path = "../pelican_ui_bitcoin" }
-pelican_ui_messages = {path = "../messages" }
-pelican_ui_profiles = {path = "../profiles" }
+pelican_ui_std = { path = "../pelican_ui_std" }
+bitcoin = {path = "../bitcoin" }
+messages = {path = "../messages" }
+profiles = {path = "../profiles" }
 pollster = "0.4.0"
 dispatch2 = "0.3.0"
 objc2-ui-kit = { version = "0.3.1", features = ["UIGraphicsImageRenderer"] }
