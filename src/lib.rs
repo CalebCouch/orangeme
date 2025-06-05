@@ -33,7 +33,7 @@ impl Services for MyApp {
 
 impl Plugins for MyApp {
     fn plugins(ctx: &mut Context) -> Vec<Box<dyn Plugin>> {
-        vec![Box::new(ProfilePlugin)]
+        vec![Box::new(ProfilePlugin::new(ctx))]
     }
 }
 
@@ -64,11 +64,7 @@ impl Application for MyApp {
         // launch_background_thread();
         // ctx.include_assets(include_assets!("./resources/images"));
 
-        let my_name = ctx.state().get::<Name>().0;
-
-        // let mut profiles = state.get::<Profiles>().0;
-
-        println!("my name is {:?}", my_name);
+        
 
         let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
 
@@ -81,29 +77,11 @@ impl Application for MyApp {
         let home = BitcoinHome::new(ctx);
         Box::new(Interface::new(ctx, home, Some((0_usize, navigation))))
     }
+
+    // fn error(ctx: &mut Context, error: String) -> Box<dyn Drawable> {
+    //     let error_page = Error::new(ctx);
+    //     Box::new(Interface::new(ctx, error_page, None))
+    // }
 }
 
 start!(MyApp);
-
-// use std::thread;
-// use std::time::Duration;
-// use dispatch2::DispatchQueue;
-// use dispatch2::DispatchQueueAttr;
-// use dispatch2::DispatchObject;
-
-// fn background_task() {
-//     println!("Running background task...");
-//     thread::sleep(Duration::from_secs(3));
-//     println!("Background task completed!");
-// }
-
-// pub fn launch_background_thread() {
-//     let attr = DispatchQueueAttr::new_initially_inactive(None);
-//     let queue = DispatchQueue::new("RustBackgroundQueue", Some(&attr));
-    
-//     queue.exec_async(|| {
-//         background_task();
-//     });
-
-//     queue.activate();
-// }

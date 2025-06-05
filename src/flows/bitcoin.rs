@@ -139,11 +139,11 @@ impl OnEvent for Address {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
             let item = &mut *self.1.content().items()[0];
             let input: &mut TextInput = item.as_any_mut().downcast_mut::<TextInput>().unwrap();
-            let input_address = input.get_value().clone();
+            let input_address = input.value().clone();
 
             if !input_address.is_empty() {
                 // let (address, amount) = ("", None);// parse_btc_uri(input_address);
-                input.set_value("address".to_string());
+                *input.value() = "address".to_string();
                 // let address = SendAddress::new(address.to_string());
                 // if let Some(b) = amount { ctx.state().set(&SendAmount::new(b)) }
 
@@ -155,7 +155,7 @@ impl OnEvent for Address {
                 // ctx.state().set(&address);
             }
 
-            let error = *input.error() || input.get_value().is_empty();
+            let error = *input.error() || input_address.is_empty();
             let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
             let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
             let disabled = *button.status() == ButtonState::Disabled;

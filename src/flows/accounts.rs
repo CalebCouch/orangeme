@@ -4,7 +4,9 @@ use pelican_ui::events::{Event, OnEvent, Key, NamedKey, KeyboardState, KeyboardE
 use pelican_ui::drawable::{Drawable, Component, Align, Span, Image};
 use pelican_ui::layout::{Area, SizeRequest, Layout};
 use pelican_ui::{Context, Component, ImageOrientation};
-use profiles::Profile;
+use profiles::{Profile, generate_name};
+use profiles::service::{Name, Profiles};
+use profiles::plugin::{ProfilePlugin, ProfileRequest};
 
 use pelican_ui_std::{
     AppPage, Stack, Page,
@@ -35,6 +37,10 @@ pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<(Vec<u8>, ImageOr
 
 impl Account {
     pub fn new(ctx: &mut Context) -> Self {
+        let orange_name = ctx.state().get::<Name>().0.unwrap();
+        let profiles = ctx.state().get::<Profiles>();
+        let my_profile = profiles.0.get(&orange_name).unwrap();
+
         let header = Header::home(ctx, "Account");
         let (sender, receiver) = mpsc::channel();
 
@@ -59,8 +65,10 @@ impl Account {
         let adrs = String::new(); // ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
         let address = DataItem::new(ctx, None, "Bitcoin address", Some(&adrs), None, None, Some(vec![copy]));
+
+
         let copy = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
-        let identity = DataItem::new(ctx, None, "Orange Identity", Some("did::nym::38iKdailTwedpr92Daixx90et"), None, None, Some(vec![copy]));
+        let identity = DataItem::new(ctx, None, "Orange Name", Some(orange_name.to_string().as_str()), None, None, Some(vec![copy]));
 
         // let get = Button::secondary(ctx, Some("credential"), "Get Credentials", None, |ctx: &mut Context| GetCredentials::navigate(ctx));
         // let credentials = DataItem::new(ctx, None, "Verifable credentials", Some("Earn trust with badges that verify you're a real person, over 18, and more."), None, None, Some(vec![get]));
@@ -74,6 +82,27 @@ impl Account {
 impl OnEvent for Account {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
+            let orange_name = ctx.state().get::<Name>().0.unwrap();
+            let profiles = ctx.state().get::<Profiles>();
+            let my_profile = profiles.0.get(&orange_name).unwrap();
+            println!("MY PROFILE Contains {:?}", my_profile);
+            let my_user_name = match my_profile.get("name") {
+                Some(n) => n.to_string(),
+                None => {
+                    let name = generate_name(orange_name.to_string().as_str());
+                    println!("Your new name is {:?}", name);
+                    ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("name".to_string(), name.clone()));
+                    name
+                }
+            };
+
+            println!("User name is {:?}", my_user_name);
+                
+            let item = &mut *self.1.content().items()[1];
+            if let Some(input) = item.as_any_mut().downcast_mut::<TextInput>() {
+                *input.value() = my_user_name;
+                // println!("Input content is {:?}", input.value());
+            }
             if let Ok((bytes, orientation)) = self.3.try_recv() {
                 let item = &mut *self.1.content().items()[0];
                 if let Some(avatar) = item.as_any_mut().downcast_mut::<Avatar>() {
