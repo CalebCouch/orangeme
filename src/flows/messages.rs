@@ -4,7 +4,7 @@ use pelican_ui::layout::{Area, SizeRequest, Layout};
 use pelican_ui::{Context, Component};
 use profiles::Profile;
 
-use messages::components::{QuickDeselect, TextMessage, MessageType};
+use messages::components::{QuickDeselect, TextMessage, MessageType, ListItemMessages};
 
 use pelican_ui_std::{
     AppPage, Stack, Page,
@@ -101,11 +101,11 @@ impl SelectRecipients {
     pub fn new(ctx: &mut Context) -> Self {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
-        // let profiles = vec![]; //ctx.get::<MSGPlugin>().get_profiles();
-        let recipients: Vec<ListItem> = vec![]; // profiles.iter().map(|p| {
-        //     let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
-        //     ListItem::recipient(ctx, avatar, p.clone())
-        // }).collect::<Vec<ListItem>>();
+        let profiles = fake_profiles(); //ctx.get::<MSGPlugin>().get_profiles();
+        let recipients = profiles.iter().map(|p| {
+            let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
+            ListItemMessages::recipient(ctx, avatar, p.clone())
+        }).collect::<Vec<ListItem>>();
 
         let content = match recipients.is_empty() {
             true => {
@@ -222,4 +222,70 @@ impl GroupInfo {
         let header = Header::stack(ctx, Some(back), "Group Message Info", None);
         GroupInfo(Stack::center(), Page::new(header, content, None), false)
     }
+}
+
+
+fn fake_profiles() -> Vec<Profile> {
+    vec![
+        Profile {
+            user_name: "Marge Margarine".to_string(),
+            biography: "Probably butter.".to_string(),
+            identifier: "did::id::12345".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Billy Butter".to_string(),
+            biography: "Can't believe I'm not butter.".to_string(),
+            identifier: "did::id::12345".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Olive Oool".to_string(),
+            biography: "Better than butter.".to_string(),
+            identifier: "did::id::12345".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Clarence Cream".to_string(),
+            biography: "Spreadable and dependable.".to_string(),
+            identifier: "did::id::67890".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Sunny Spread".to_string(),
+            biography: "Shines on toast.".to_string(),
+            identifier: "did::id::23456".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Lana Lard".to_string(),
+            biography: "Old-fashioned but flavorful.".to_string(),
+            identifier: "did::id::34567".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Ghee Goldstein".to_string(),
+            biography: "Clarified and classy.".to_string(),
+            identifier: "did::id::45678".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Patti Plant-Based".to_string(),
+            biography: "Vegan and proud.".to_string(),
+            identifier: "did::id::56789".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Rico Ricotta".to_string(),
+            biography: "Spreading love and cheese on rice. sorta.".to_string(),
+            identifier: "did::id::67891".to_string(),
+            blocked_dids: Vec::new(),
+        },
+        Profile {
+            user_name: "Benny Brunch".to_string(),
+            biography: "Where butter meets eggs.".to_string(),
+            identifier: "did::id::78901".to_string(),
+            blocked_dids: Vec::new(),
+        },
+    ]
 }

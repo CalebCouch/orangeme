@@ -1,6 +1,12 @@
-use pelican_ui::{Context, Plugins, Services, maverick_start, start, Application, PelicanEngine, MaverickOS};
+use pelican_ui::{Context, Plugins, Plugin, Service, Services, ServiceList, maverick_start, start, Application, PelicanEngine, MaverickOS, HardwareContext};
 use pelican_ui::drawable::Drawable;
 use pelican_ui_std::{AvatarIconStyle, AvatarContent, Interface, NavigateEvent};
+use profiles::plugin::ProfilePlugin;
+use profiles::service::{Name, Profiles, ProfileService};
+use std::any::TypeId;
+use std::collections::BTreeMap;
+use std::pin::Pin;
+use std::future::Future;
 
 mod flows;
 pub use flows::*;
@@ -11,8 +17,25 @@ pub use flows::*;
 
 // use ucp_rust::UCPPlugin;
 
+fn service<'a>(ctx: &'a mut HardwareContext) -> Pin<Box<dyn Future<Output = Box<dyn Service>> + 'a >> {
+    Box::pin(async move {Box::new(ProfileService::new(ctx).await) as Box<dyn Service>})
+}
+
 pub struct MyApp;
-impl Services for MyApp {}
+impl Services for MyApp {
+    fn services() -> ServiceList {
+        BTreeMap::from([(
+            TypeId::of::<ProfileService>(), 
+            Box::new(service) as Box<dyn for<'a> FnOnce(&'a mut HardwareContext) -> Pin<Box<dyn Future<Output = Box<dyn Service>> + 'a>>>
+        )])
+    }
+}
+
+impl Plugins for MyApp {
+    fn plugins(ctx: &mut Context) -> Vec<Box<dyn Plugin>> {
+        vec![Box::new(ProfilePlugin)]
+    }
+}
 
 impl Application for MyApp {
     //TODO: include_plugins![BDKPlugin]; || #[derive(Plugins[BDKPlugin])] || #[Plugins[BDKPlugin]]
@@ -40,6 +63,12 @@ impl Application for MyApp {
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
         // launch_background_thread();
         // ctx.include_assets(include_assets!("./resources/images"));
+
+        let my_name = ctx.state().get::<Name>().0;
+
+        // let mut profiles = state.get::<Profiles>().0;
+
+        println!("my name is {:?}", my_name);
 
         let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
 

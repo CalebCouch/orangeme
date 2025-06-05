@@ -41,7 +41,10 @@ pub struct BitcoinHome(Stack, Page, #[skip] bool);
 impl BitcoinHome {
     pub fn new(ctx: &mut Context) -> Self {
         let send = Button::primary(ctx, "Send", |ctx: &mut Context| Address::navigate(ctx));
-        let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| Receive::navigate(ctx));
+        let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| {
+            println!("Presesed received");
+            Receive::navigate(ctx);
+        });
         let header = Header::home(ctx, "Wallet");
         let bumper = Bumper::double_button(ctx, receive, send);
         let content = Content::new(Offset::Center, vec![Box::new(AmountDisplay::new(ctx, "$0.00", "0 nb")) as Box<dyn Drawable>]);
