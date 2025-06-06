@@ -237,8 +237,8 @@ impl UserAccount {
         let user = example_user(); // user.get().clone().unwrap();
 
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
-            let page = GroupInfo::new(ctx);
-            ctx.trigger_event(NavigateEvent::new(page))
+            // let page = GroupInfo::new(ctx);
+            // ctx.trigger_event(NavigateEvent::new(page))
         });
 
         let header = Header::stack(ctx, Some(back), &user.user_name, None);

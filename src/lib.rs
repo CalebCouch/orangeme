@@ -12,7 +12,7 @@ mod flows;
 pub use flows::*;
 // mod bdk;
 // use bdk::BDKPlugin;
-// mod msg;
+mod msg;
 // use msg::MSGPlugin;
 
 // use ucp_rust::UCPPlugin;
