@@ -35,6 +35,7 @@ profiles = {path = "../profiles" }
 pollster = "0.4.0"
 dispatch2 = "0.3.0"
 objc2-ui-kit = { version = "0.3.1", features = ["UIGraphicsImageRenderer"] }
+base64 = "0.22.1"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "sync", "time", "net"] }

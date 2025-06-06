@@ -3418,6 +3418,7 @@ dependencies = [
 name = "orange"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "bdk_esplora",
  "bdk_wallet",
  "bitcoin 0.1.0",

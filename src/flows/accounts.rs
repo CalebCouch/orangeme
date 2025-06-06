@@ -4,6 +4,7 @@ use pelican_ui::events::{Event, OnEvent, Key, NamedKey, KeyboardState, KeyboardE
 use pelican_ui::drawable::{Drawable, Component, Align, Span, Image};
 use pelican_ui::layout::{Area, SizeRequest, Layout};
 use pelican_ui::{Context, Component, ImageOrientation};
+use profiles::events::UpdateProfileEvent;
 use profiles::{Profile, generate_name};
 use profiles::service::{Name, Profiles};
 use profiles::plugin::{ProfilePlugin, ProfileRequest};
@@ -19,6 +20,7 @@ use pelican_ui_std::{
     Button, DataItem,
     Bumper, IconButtonRow,
     NavigateEvent,
+    ButtonState,
 };
 
 // use ucp_rust::screens::*;
@@ -31,15 +33,34 @@ use crate::DirectMessage;
 use crate::Amount;
 
 use std::sync::mpsc::{self, Receiver};
+use base64::{engine::general_purpose, Engine as _};
 
 #[derive(Debug, Component, AppPage)]
-pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<(Vec<u8>, ImageOrientation)>);
+pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<(Vec<u8>, ImageOrientation)>, #[skip] ButtonState);
 
 impl Account {
     pub fn new(ctx: &mut Context) -> Self {
         let orange_name = ctx.state().get::<Name>().0.unwrap();
         let profiles = ctx.state().get::<Profiles>();
         let my_profile = profiles.0.get(&orange_name).unwrap();
+        // println!("MY PROFILE CONTAINS {:?}", my_profile);
+
+        let my_user_name = match my_profile.get("name") {
+            Some(n) => n.to_string(),
+            None => {
+                let name = generate_name(orange_name.to_string().as_str());
+                ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("name".to_string(), name.clone()));
+                name
+            }
+        };
+
+        let my_biography = match my_profile.get("biography") {
+            Some(b) => b.to_string(),
+            None => {
+                ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("biography".to_string(), String::new()));
+                String::new()
+            }
+        };
 
         let header = Header::home(ctx, "Account");
         let (sender, receiver) = mpsc::channel();
@@ -51,16 +72,15 @@ impl Account {
             false,
             128.0,
             Some(Box::new(move |ctx: &mut Context| {
-                // ctx.open_photo_picker(sender.clone());
+                ctx.hardware.open_photo_picker(sender.clone());
             })),
         );
         
-        let save = Button::disabled(ctx, "Save", |_ctx: &mut Context| println!("Save changes..."));
-        let bumper = Bumper::single_button(ctx, save);
+
 
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
-        let name_input = TextInput::new(ctx, None, Some("Name"), "Account name...", None, icon_button);
-        let about_input = TextInput::new(ctx, None, Some("About me"), "About me...", None, icon_button);
+        let name_input = TextInput::new(ctx, Some(&my_user_name), Some("Name"), "Account name...", None, icon_button);
+        let bio_input = TextInput::new(ctx, Some(&my_biography), Some("About me"), "About me...", None, icon_button);
 
         let adrs = String::new(); // ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
@@ -71,53 +91,69 @@ impl Account {
         let identity = DataItem::new(ctx, None, "Orange Name", Some(orange_name.to_string().as_str()), None, None, Some(vec![copy]));
 
         // let get = Button::secondary(ctx, Some("credential"), "Get Credentials", None, |ctx: &mut Context| GetCredentials::navigate(ctx));
-        // let credentials = DataItem::new(ctx, None, "Verifable credentials", Some("Earn trust with badges that verify you're a real person, over 18, and more."), None, None, Some(vec![get]));
+        // let credentials = DataItem::new(ctx, None, "Verifable credentials", Some("Earn trust with badges that verify you're a real person, over 18, and more."), None, None, Some(vec![get]));\\
 
-        let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(about_input), Box::new(identity), Box::new(address)]);
+        let save = Button::disabled(ctx, "Save", move |ctx: &mut Context| ctx.trigger_event(UpdateProfileEvent));
+        let bumper = Bumper::single_button(ctx, save);
 
-        Account(Stack::center(), Page::new(header, content, Some(bumper)), true, receiver)
+        let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(bio_input), Box::new(identity), Box::new(address)]);
+
+        Account(Stack::center(), Page::new(header, content, Some(bumper)), true, receiver, ButtonState::Default)
     }
 }
 
 impl OnEvent for Account {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
-        if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
-            let orange_name = ctx.state().get::<Name>().0.unwrap();
-            let profiles = ctx.state().get::<Profiles>();
-            let my_profile = profiles.0.get(&orange_name).unwrap();
-            println!("MY PROFILE Contains {:?}", my_profile);
-            let my_user_name = match my_profile.get("name") {
-                Some(n) => n.to_string(),
-                None => {
-                    let name = generate_name(orange_name.to_string().as_str());
-                    println!("Your new name is {:?}", name);
-                    ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("name".to_string(), name.clone()));
-                    name
-                }
-            };
+        let orange_name = ctx.state().get::<Name>().0.unwrap();
+        let profiles = ctx.state().get::<Profiles>();
+        let my_profile = profiles.0.get(&orange_name).unwrap();
+        let my_username = my_profile.get("name").unwrap_or(&String::new()).to_string();
+        let my_biography = my_profile.get("biography").unwrap_or(&String::new()).to_string();
 
-            println!("User name is {:?}", my_user_name);
-                
-            let item = &mut *self.1.content().items()[1];
-            if let Some(input) = item.as_any_mut().downcast_mut::<TextInput>() {
-                *input.value() = my_user_name;
-                // println!("Input content is {:?}", input.value());
-            }
+        let name_value = self.1.content().items()[1]
+            .as_any_mut().downcast_mut::<TextInput>().unwrap().value().to_string();
+        let bio_value = self.1.content().items()[2]
+            .as_any_mut().downcast_mut::<TextInput>().unwrap().value().to_string();
+        
+        if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
             if let Ok((bytes, orientation)) = self.3.try_recv() {
                 let item = &mut *self.1.content().items()[0];
                 if let Some(avatar) = item.as_any_mut().downcast_mut::<Avatar>() {
-                    // println!("bytes {:?}", bytes);
-                    if let Ok(dynamic) = image::load_from_memory(&bytes) {
-                        let image = dynamic.to_rgba8();
-                        let image = orientation.apply_to(image::DynamicImage::ImageRgba8(image));
-                        let image = ctx.assets.add_image(image.into());
-                        avatar.set_content(AvatarContent::Image(image));
-                    } else {
-                        println!("Invalid Bytes");
+                    match image::load_from_memory(&bytes) {
+                        Ok(dynamic) => {
+                            let image = dynamic.to_rgba8();
+                            let image = orientation.apply_to(image::DynamicImage::ImageRgba8(image));
+                            panic!("image {:?}", image);
+                            let encoded = String::from_utf8(bytes).unwrap();
+                            ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("avatar".to_string(), encoded));
+                            let image = ctx.assets.add_image(image.into());
+                            avatar.set_content(AvatarContent::Image(image));
+                        },
+                        Err(e) => println!("Failed {:?}", e)
                     }
                 }
             }
-        }
+
+            let button = self.1.bumper().as_mut().unwrap().items()[0]
+                .as_any_mut().downcast_mut::<Button>().unwrap();
+
+            let disabled = *button.status() == ButtonState::Disabled;
+            let has_changed = name_value != my_username || bio_value != my_biography;
+            if !disabled { self.4 = *button.status(); }
+            if !has_changed && !disabled { *button.status() = ButtonState::Disabled; }
+            if has_changed { *button.status() = self.4; }
+            button.color(ctx);
+        } else if let Some(UpdateProfileEvent) = event.downcast_ref::<UpdateProfileEvent>() {
+            println!("Saving...");
+            if name_value != my_username {
+                println!("Try to save name");
+                ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("name".to_string(), name_value));
+            }
+            if bio_value != my_biography {
+                println!("Try to save bio");
+                // ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("biography".to_string(), bio_value));
+            }
+        } 
         true
     }
 }
