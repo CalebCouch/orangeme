@@ -35,6 +35,8 @@ use crate::Amount;
 use std::sync::mpsc::{self, Receiver};
 use base64::{engine::general_purpose, Engine as _};
 
+use image::ImageFormat;
+
 #[derive(Debug, Component, AppPage)]
 pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<(Vec<u8>, ImageOrientation)>, #[skip] ButtonState);
 
@@ -65,19 +67,22 @@ impl Account {
         let header = Header::home(ctx, "Account");
         let (sender, receiver) = mpsc::channel();
 
-        let avatar = Avatar::new(
-            ctx,
-            AvatarContent::Icon("profile", AvatarIconStyle::Secondary),
-            Some(("edit", AvatarIconStyle::Secondary)),
-            false,
-            128.0,
+        let avatar_content = if let Some(my_avatar) = my_profile.get("avatar") {
+            let png_bytes = general_purpose::STANDARD.decode(my_avatar).unwrap();
+            let image = image::load_from_memory(&png_bytes).unwrap();
+            let image = ctx.assets.add_image(image.into());
+            AvatarContent::Image(image)
+        } else {
+            AvatarContent::Icon("profile", AvatarIconStyle::Secondary)
+        };
+
+        let avatar = Avatar::new(ctx, avatar_content,
+            Some(("edit", AvatarIconStyle::Secondary)), false, 128.0,
             Some(Box::new(move |ctx: &mut Context| {
                 ctx.hardware.open_photo_picker(sender.clone());
             })),
         );
         
-
-
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let name_input = TextInput::new(ctx, Some(&my_user_name), Some("Name"), "Account name...", None, icon_button);
         let bio_input = TextInput::new(ctx, Some(&my_biography), Some("About me"), "About me...", None, icon_button);
@@ -114,23 +119,23 @@ impl OnEvent for Account {
             .as_any_mut().downcast_mut::<TextInput>().unwrap().value().to_string();
         let bio_value = self.1.content().items()[2]
             .as_any_mut().downcast_mut::<TextInput>().unwrap().value().to_string();
+        let avatar = self.1.content().items()[0]
+            .as_any_mut().downcast_mut::<Avatar>().unwrap();
         
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
             if let Ok((bytes, orientation)) = self.3.try_recv() {
-                let item = &mut *self.1.content().items()[0];
-                if let Some(avatar) = item.as_any_mut().downcast_mut::<Avatar>() {
-                    match image::load_from_memory(&bytes) {
-                        Ok(dynamic) => {
-                            let image = dynamic.to_rgba8();
-                            let image = orientation.apply_to(image::DynamicImage::ImageRgba8(image));
-                            panic!("image {:?}", image);
-                            let encoded = String::from_utf8(bytes).unwrap();
-                            ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("avatar".to_string(), encoded));
-                            let image = ctx.assets.add_image(image.into());
-                            avatar.set_content(AvatarContent::Image(image));
-                        },
-                        Err(e) => println!("Failed {:?}", e)
-                    }
+                match image::load_from_memory(&bytes) {
+                    Ok(dynamic) => {
+                        let image = orientation.apply_to(image::DynamicImage::ImageRgba8(dynamic.to_rgba8()));
+                        let mut png_bytes = Vec::new();
+                        image.write_to(&mut std::io::Cursor::new(&mut png_bytes), ImageFormat::Png).unwrap();
+                        let base64_png = general_purpose::STANDARD.encode(&png_bytes);
+
+                        ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("avatar".to_string(), base64_png));
+                        let asset_image = ctx.assets.add_image(image.into());
+                        avatar.set_content(AvatarContent::Image(asset_image));
+                    },
+                    Err(e) => println!("Failed {:?}", e)
                 }
             }
 
