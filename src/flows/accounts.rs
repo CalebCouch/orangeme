@@ -38,10 +38,10 @@ use base64::{engine::general_purpose, Engine as _};
 use image::ImageFormat;
 
 #[derive(Debug, Component, AppPage)]
-pub struct Account(Stack, Page, #[skip] bool, #[skip] Receiver<(Vec<u8>, ImageOrientation)>, #[skip] ButtonState);
+pub struct Account(Stack, Page, #[skip] Receiver<(Vec<u8>, ImageOrientation)>, #[skip] ButtonState);
 
 impl Account {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
         let orange_name = ctx.state().get::<Name>().0.unwrap();
         let profiles = ctx.state().get::<Profiles>();
         let my_profile = profiles.0.get(&orange_name).unwrap();
@@ -64,9 +64,6 @@ impl Account {
             }
         };
 
-        let header = Header::home(ctx, "Account");
-        let (sender, receiver) = mpsc::channel();
-
         let avatar_content = if let Some(my_avatar) = my_profile.get("avatar") {
             let png_bytes = general_purpose::STANDARD.decode(my_avatar).unwrap();
             let image = image::load_from_memory(&png_bytes).unwrap();
@@ -76,6 +73,8 @@ impl Account {
             AvatarContent::Icon("profile", AvatarIconStyle::Secondary)
         };
 
+        let (sender, receiver) = mpsc::channel();
+
         let avatar = Avatar::new(ctx, avatar_content,
             Some(("edit", AvatarIconStyle::Secondary)), false, 128.0,
             Some(Box::new(move |ctx: &mut Context| {
@@ -83,6 +82,8 @@ impl Account {
             })),
         );
         
+
+        let header = Header::home(ctx, "Account");
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let name_input = TextInput::new(ctx, Some(&my_user_name), Some("Name"), "Account name...", None, icon_button);
         let bio_input = TextInput::new(ctx, Some(&my_biography), Some("About me"), "About me...", None, icon_button);
@@ -103,27 +104,24 @@ impl Account {
 
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(name_input), Box::new(bio_input), Box::new(identity), Box::new(address)]);
 
-        Account(Stack::center(), Page::new(header, content, Some(bumper)), true, receiver, ButtonState::Default)
+        (Account(Stack::center(), Page::new(header, content, Some(bumper)), receiver, ButtonState::Default), true)
     }
 }
 
 impl OnEvent for Account {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
-        let orange_name = ctx.state().get::<Name>().0.unwrap();
-        let profiles = ctx.state().get::<Profiles>();
-        let my_profile = profiles.0.get(&orange_name).unwrap();
-        let my_username = my_profile.get("name").unwrap_or(&String::new()).to_string();
-        let my_biography = my_profile.get("biography").unwrap_or(&String::new()).to_string();
-
-        let name_value = self.1.content().items()[1]
-            .as_any_mut().downcast_mut::<TextInput>().unwrap().value().to_string();
-        let bio_value = self.1.content().items()[2]
-            .as_any_mut().downcast_mut::<TextInput>().unwrap().value().to_string();
-        let avatar = self.1.content().items()[0]
-            .as_any_mut().downcast_mut::<Avatar>().unwrap();
-        
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
-            if let Ok((bytes, orientation)) = self.3.try_recv() {
+            let orange_name = ctx.state().get::<Name>().0.unwrap();
+            let profiles = ctx.state().get::<Profiles>();
+            let my_profile = profiles.0.get(&orange_name).unwrap();
+            let my_username = my_profile.get("name").unwrap_or(&String::new()).to_string();
+            let my_biography = my_profile.get("biography").unwrap_or(&String::new()).to_string();
+
+            let name_value = self.1.content().find_at::<TextInput>(1).unwrap().value().to_string();
+            let bio_value = self.1.content().find_at::<TextInput>(2).unwrap().value().to_string();
+            let avatar = self.1.content().find::<Avatar>().unwrap();
+
+            if let Ok((bytes, orientation)) = self.2.try_recv() {
                 match image::load_from_memory(&bytes) {
                     Ok(dynamic) => {
                         let image = orientation.apply_to(image::DynamicImage::ImageRgba8(dynamic.to_rgba8()));
@@ -139,25 +137,30 @@ impl OnEvent for Account {
                 }
             }
 
-            let button = self.1.bumper().as_mut().unwrap().items()[0]
-                .as_any_mut().downcast_mut::<Button>().unwrap();
-
+            let button = self.1.bumper().as_mut().unwrap().find::<Button>().unwrap();
             let disabled = *button.status() == ButtonState::Disabled;
             let has_changed = name_value != my_username || bio_value != my_biography;
-            if !disabled { self.4 = *button.status(); }
+            if !disabled { self.3 = *button.status(); }
             if !has_changed && !disabled { *button.status() = ButtonState::Disabled; }
-            if has_changed { *button.status() = self.4; }
+            if has_changed { *button.status() = self.3; }
             button.color(ctx);
         } else if let Some(UpdateProfileEvent) = event.downcast_ref::<UpdateProfileEvent>() {
+            let orange_name = ctx.state().get::<Name>().0.unwrap();
+            let profiles = ctx.state().get::<Profiles>();
+            let my_profile = profiles.0.get(&orange_name).unwrap();
+            let my_username = my_profile.get("name").unwrap_or(&String::new()).to_string();
+            let my_biography = my_profile.get("biography").unwrap_or(&String::new()).to_string();
+            let name_value = self.1.content().find_at::<TextInput>(1).unwrap().value().to_string();
+            let bio_value = self.1.content().find_at::<TextInput>(2).unwrap().value().to_string();
+
             println!("Saving...");
             if name_value != my_username {
-                println!("Try to save name");
                 ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("name".to_string(), name_value));
             }
             if bio_value != my_biography {
-                println!("Try to save bio");
-                // ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("biography".to_string(), bio_value));
+                ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("biography".to_string(), bio_value));
             }
+            println!("Profile saved...");
         } 
         true
     }
@@ -225,23 +228,36 @@ impl OnEvent for Account {
 // }
 
 #[derive(Debug, Component, AppPage)]
-pub struct UserAccount(Stack, Page, #[skip] bool);
+pub struct UserAccount(Stack, Page);
 impl OnEvent for UserAccount {}
 
 impl UserAccount {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
         // let user = ctx.state().get::<CurrentProfile>();
         let user = example_user(); // user.get().clone().unwrap();
 
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| GroupInfo::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = GroupInfo::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let header = Header::stack(ctx, Some(back), &user.user_name, None);
 
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), None, false, 128.0, None);
 
         let buttons = IconButtonRow::new(ctx, vec![
-            ("messages", Box::new(|ctx: &mut Context| DirectMessage::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            ("bitcoin", Box::new(|ctx: &mut Context| Amount::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            ("unblock", Box::new(|ctx: &mut Context| UnblockUser::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
+            ("messages", Box::new(|ctx: &mut Context| {
+                let page = DirectMessage::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page))
+            }) as Box<dyn FnMut(&mut Context)>),
+            ("bitcoin", Box::new(|ctx: &mut Context| {
+                let page = Amount::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page))
+            }) as Box<dyn FnMut(&mut Context)>),
+            ("unblock", Box::new(|ctx: &mut Context| {
+                let page = UnblockUser::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page))
+            }) as Box<dyn FnMut(&mut Context)>),
         ]);
 
         let adrs = String::new(); //ctx.get::<BDKPlugin>().get_new_address().to_string();        
@@ -254,16 +270,16 @@ impl UserAccount {
         let about_me = DataItem::new(ctx, None, "About me", Some(&user.biography), None, None, None);
         let content = Content::new(Offset::Start, vec![Box::new(avatar), Box::new(buttons), Box::new(about_me), Box::new(nym), Box::new(address)]);
 
-        UserAccount(Stack::center(), Page::new(header, content, None), false)
+        (UserAccount(Stack::center(), Page::new(header, content, None)), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-struct BlockUser(Stack, Page, #[skip] bool);
+struct BlockUser(Stack, Page);
 impl OnEvent for BlockUser {}
 
 impl BlockUser {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let user = Profile {
             user_name: "Marge Margarine".to_string(),
             identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
@@ -273,8 +289,16 @@ impl BlockUser {
 
         let theme = &ctx.theme;
         let text_size = theme.fonts.size.h4;
-        let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| UserAccount::navigate(ctx));
-        let confirm = Button::primary(ctx, "Block", |ctx: &mut Context| UserBlocked::navigate(ctx));
+        let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| {
+            let page = UserAccount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
+        let confirm = Button::primary(ctx, "Block", |ctx: &mut Context| {
+            let page = UserBlocked::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let bumper = Bumper::double_button(ctx, cancel, confirm);
 
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
@@ -284,18 +308,22 @@ impl BlockUser {
         let msg = format!("Are you sure you want to block {}?", user.user_name);
         let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| UserAccount::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = UserAccount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let header = Header::stack(ctx, Some(back), "Block user", None);
-        BlockUser(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (BlockUser(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-struct UserBlocked(Stack, Page, #[skip] bool);
+struct UserBlocked(Stack, Page);
 impl OnEvent for UserBlocked {}
 
 impl UserBlocked {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let user = Profile {
             user_name: "Marge Margarine".to_string(),
             identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
@@ -303,9 +331,14 @@ impl UserBlocked {
             blocked_dids: Vec::new()
         };
 
+        let go_close = |ctx: &mut Context| {
+            let page = UserAccount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        };
+
         let theme = &ctx.theme;
         let text_size = theme.fonts.size.h4;
-        let close = Button::close(ctx, "Done", |ctx: &mut Context| UserAccount::navigate(ctx));
+        let close = Button::close(ctx, "Done", go_close);
         let bumper = Bumper::single_button(ctx, close);
 
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
@@ -315,18 +348,19 @@ impl UserBlocked {
         let msg = format!("{} has been blocked", user.user_name);
         let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let close = IconButton::close(ctx, |ctx: &mut Context| UserAccount::navigate(ctx));
+        let close = IconButton::close(ctx, go_close);
+
         let header = Header::stack(ctx, Some(close), "User blocked", None);
-        UserBlocked(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (UserBlocked(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-struct UnblockUser(Stack, Page, #[skip] bool);
+struct UnblockUser(Stack, Page);
 impl OnEvent for UnblockUser {}
 
 impl UnblockUser {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let user = Profile {
             user_name: "Marge Margarine".to_string(),
             identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
@@ -335,8 +369,14 @@ impl UnblockUser {
         };
 
         let text_size = ctx.theme.fonts.size.h4;
-        let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| UserAccount::navigate(ctx));
-        let confirm = Button::primary(ctx, "Unblock", |ctx: &mut Context| UserUnblocked::navigate(ctx));
+        let cancel = Button::close(ctx, "Cancel", |ctx: &mut Context| {
+            let page = UserAccount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+        let confirm = Button::primary(ctx, "Unblock", |ctx: &mut Context| {
+            let page = UserUnblocked::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
         let bumper = Bumper::double_button(ctx, cancel, confirm);
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
             Some(("unblock", AvatarIconStyle::Success)), false, 96.0, None
@@ -344,27 +384,35 @@ impl UnblockUser {
         let msg = format!("Are you sure you want to unblock {}?", user.user_name);
         let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| UserAccount::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = UserAccount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
         let header = Header::stack(ctx, Some(back), "Unblock user", None);
-        UnblockUser(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (UnblockUser(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-struct UserUnblocked(Stack, Page, #[skip] bool);
+struct UserUnblocked(Stack, Page);
 impl OnEvent for UserUnblocked {}
 
 impl UserUnblocked {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let user = Profile {
             user_name: "Marge Margarine".to_string(),
             identifier: "did::nym::xiCoiaLi8Twaix29aiLatixohRiioNNln".to_string(),
             biography: "Probably butter.".to_string(),
             blocked_dids: Vec::new()
         };
+
+        let go_close = |ctx: &mut Context| {
+            let page = UserAccount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        };
         
         let text_size = ctx.theme.fonts.size.h4;
-        let close = Button::close(ctx, "Done", |ctx: &mut Context| UserAccount::navigate(ctx));
+        let close = Button::close(ctx, "Done", go_close);
         let bumper = Bumper::single_button(ctx, close);
         let avatar = Avatar::new(ctx, AvatarContent::Icon("profile", AvatarIconStyle::Secondary), 
             Some(("unblock", AvatarIconStyle::Success)), false, 96.0, None
@@ -372,9 +420,9 @@ impl UserUnblocked {
         let msg = format!("{} has been unblocked", user.user_name);
         let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let close = IconButton::close(ctx, |ctx: &mut Context| UserAccount::navigate(ctx));
+        let close = IconButton::close(ctx, go_close);
         let header = Header::stack(ctx, Some(close), "User unblocked", None);
-        UserUnblocked(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (UserUnblocked(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 

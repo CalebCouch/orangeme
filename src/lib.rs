@@ -69,12 +69,21 @@ impl Application for MyApp {
         let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
 
         let navigation = vec![
-            ("wallet", "Bitcoin", None, Box::new(|ctx: &mut Context| BitcoinHome::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            ("messages", "Messages", None, Box::new(|ctx: &mut Context| MessagesHome::navigate(ctx)) as Box<dyn FnMut(&mut Context)>),
-            ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| Account::navigate(ctx)) as Box<dyn FnMut(&mut Context)>)
+            ("wallet", "Bitcoin", None, Box::new(|ctx: &mut Context| {
+                let page = BitcoinHome::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page));
+            }) as Box<dyn FnMut(&mut Context)>),
+            ("messages", "Messages", None, Box::new(|ctx: &mut Context| {
+                let page = MessagesHome::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page));
+            }) as Box<dyn FnMut(&mut Context)>),
+            ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| {
+                let page = Account::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page));
+            }) as Box<dyn FnMut(&mut Context)>)
         ];
 
-        let home = BitcoinHome::new(ctx);
+        let home = BitcoinHome::new(ctx).0;
         Box::new(Interface::new(ctx, home, Some((0_usize, navigation))))
     }
 

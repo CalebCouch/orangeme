@@ -36,19 +36,22 @@ use pelican_ui_std::{
 // use crate::MSGPlugin;
 
 #[derive(Debug, Component, AppPage)]
-pub struct BitcoinHome(Stack, Page, #[skip] bool);
+pub struct BitcoinHome(Stack, Page);
 
 impl BitcoinHome {
-    pub fn new(ctx: &mut Context) -> Self {
-        let send = Button::primary(ctx, "Send", |ctx: &mut Context| Address::navigate(ctx));
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
+        let send = Button::primary(ctx, "Send", |ctx: &mut Context| {
+            let address = Address::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(address))
+        });
         let receive = Button::primary(ctx, "Receive", |ctx: &mut Context| {
-            println!("Presesed received");
-            Receive::navigate(ctx);
+            let receive = Receive::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(receive))
         });
         let header = Header::home(ctx, "Wallet");
         let bumper = Bumper::double_button(ctx, receive, send);
         let content = Content::new(Offset::Center, vec![Box::new(AmountDisplay::new(ctx, "$0.00", "0 nb")) as Box<dyn Drawable>]);
-        BitcoinHome(Stack::center(), Page::new(header, content, Some(bumper)), true)
+        (BitcoinHome(Stack::center(), Page::new(header, content, Some(bumper))), true)
     }
 
     fn update_transactions(&mut self, ctx: &mut Context) {
@@ -106,11 +109,15 @@ impl OnEvent for BitcoinHome {
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct Address(Stack, Page, #[skip] bool, #[skip] ButtonState);
+pub struct Address(Stack, Page, #[skip] ButtonState);
 
 impl Address {
-    fn new(ctx: &mut Context) -> Self {
-        let continue_btn = Button::disabled(ctx, "Continue", |ctx: &mut Context| Amount::navigate(ctx));
+    fn new(ctx: &mut Context) -> (Self, bool) {
+        let button = Button::disabled(ctx, "Continue", |ctx: &mut Context| {
+            let page = Amount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
 
         // let address = None; // ctx.state().get::<SendAddress>(); // optional string
@@ -122,23 +129,34 @@ impl Address {
             // ctx.trigger_event(SetActiveInput(data))
         });
 
-        let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |ctx: &mut Context| ScanQR::navigate(ctx));
-        let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, |ctx: &mut Context| SelectContact::navigate(ctx));
+        let scan_qr = Button::secondary(ctx, Some("qr_code"), "Scan QR Code", None, |ctx: &mut Context| {
+            let page = ScanQR::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
+        let contact = Button::secondary(ctx, Some("profile"), "Select Contact", None, |ctx: &mut Context|{
+            let page = SelectContact::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let quick_actions = QuickActions::new(vec![paste, scan_qr, contact]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinHome::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = BitcoinHome::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let header = Header::stack(ctx, Some(back), "Send bitcoin", None);
-        let bumper = Bumper::single_button(ctx, continue_btn);
+        let bumper = Bumper::single_button(ctx, button);
         let content = Content::new(Offset::Start, vec![Box::new(address_input), Box::new(quick_actions)]);
 
-        Address(Stack::default(), Page::new(header, content, Some(bumper)), false, ButtonState::Default)
+       ( Address(Stack::default(), Page::new(header, content, Some(bumper)), ButtonState::Default), false)
     }
 }
 
 impl OnEvent for Address {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
-            let item = &mut *self.1.content().items()[0];
-            let input: &mut TextInput = item.as_any_mut().downcast_mut::<TextInput>().unwrap();
+            let input = &mut *self.1.content().find::<TextInput>().unwrap();
             let input_address = input.value().clone();
 
             if !input_address.is_empty() {
@@ -156,13 +174,12 @@ impl OnEvent for Address {
             }
 
             let error = *input.error() || input_address.is_empty();
-            let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
-            let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
+            let button = self.1.bumper().as_mut().unwrap().find::<Button>().unwrap();
             let disabled = *button.status() == ButtonState::Disabled;
 
-            if !disabled { self.3 = *button.status(); }
+            if !disabled { self.2 = *button.status(); }
             if error && !disabled { *button.status() = ButtonState::Disabled; }
-            if !error { *button.status() = self.3; }
+            if !error { *button.status() = self.2; }
             button.color(ctx);
         }
         true
@@ -170,16 +187,19 @@ impl OnEvent for Address {
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct ScanQR(Stack, Page, #[skip] bool);
+pub struct ScanQR(Stack, Page);
 
 impl ScanQR {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         // let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
         let content = Content::new(Offset::Center, vec![Box::new(QRCodeScanner::new(ctx))]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Address::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = Address::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page));
+        });
         let header = Header::stack(ctx, Some(back), "Scan QR Code", None);
 
-        ScanQR(Stack::default(), Page::new(header, content, None), false)
+        (ScanQR(Stack::default(), Page::new(header, content, None)), false)
     }
 }
 
@@ -187,18 +207,19 @@ impl OnEvent for ScanQR {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(QRCodeScannedEvent(data)) = event.downcast_ref::<QRCodeScannedEvent>() {
             // ctx.state().set(&SendAddress::new(data.to_string()));
-            Address::navigate(ctx)
+            let page = Address::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page));
         }
         true
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct SelectContact(Stack, Page, #[skip] bool);
+pub struct SelectContact(Stack, Page);
 impl OnEvent for SelectContact {}
 
 impl SelectContact {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
         // let profiles = vec![]; //ctx.get::<MSGPlugin>().get_profiles();
@@ -208,17 +229,20 @@ impl SelectContact {
         // }).collect::<Vec<ListItem>>();
         let contact_list = ListItemGroup::new(contacts);
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), Box::new(contact_list)]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Address::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = Address::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page));
+        });
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
-        SelectContact(Stack::default(), Page::new(header, content, None), false)
+        (SelectContact(Stack::default(), Page::new(header, content, None)), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct Amount(Stack, Page, #[skip] bool, #[skip] ButtonState);
+pub struct Amount(Stack, Page, #[skip] ButtonState);
 
 impl Amount {
-    fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
 
         let price = 0.0; //ctx.get::<BDKPlugin>().get_price();
         // let amount = ctx.state().get::<SendAmount>();
@@ -249,9 +273,14 @@ impl Amount {
 
         amount_display.validate(ctx);
 
+        let on_click = |ctx: &mut Context| {
+            let page = Speed::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        };
+
         let button = match *amount_display.error() {
-            true => Button::disabled(ctx, "Continue", |ctx: &mut Context| Speed::navigate(ctx)),
-            false => Button::primary(ctx, "Continue", |ctx: &mut Context| Speed::navigate(ctx))
+            true => Button::disabled(ctx, "Continue", on_click),
+            false => Button::primary(ctx, "Continue", on_click)
         };
 
         let numeric_keypad = NumericKeypad::new(ctx);
@@ -260,26 +289,27 @@ impl Amount {
         let content = Content::new(Offset::Center, content);
 
         let bumper = Bumper::single_button(ctx, button);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Address::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = Address::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page));
+        });
         let header = Header::stack(ctx, Some(back), "Bitcoin amount", None);
-        Amount(Stack::default(), Page::new(header, content, Some(bumper)), false, ButtonState::Default)
+        (Amount(Stack::default(), Page::new(header, content, Some(bumper)), ButtonState::Default), false)
     }
 }
 
 impl OnEvent for Amount {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
-            let item = &mut *self.1.content().items()[0];
-            let amount = item.as_any_mut().downcast_mut::<AmountInput>().unwrap();
+            let amount = &mut *self.1.content().find::<AmountInput>().unwrap();
             // ctx.state().set(&SendAmount::new(*amount.btc() as f64));
             let error = *amount.error();
-            let item = &mut self.1.bumper().as_mut().unwrap().items()[0];
-            let button: &mut Button = item.as_any_mut().downcast_mut::<Button>().unwrap();
+            let button = &mut self.1.bumper().as_mut().unwrap().find::<Button>().unwrap();
             let disabled = *button.status() == ButtonState::Disabled;
 
-            if !disabled { self.3 = *button.status(); }
+            if !disabled { self.2 = *button.status(); }
             if error && !disabled { *button.status() = ButtonState::Disabled; }
-            if !error { *button.status() = self.3; }
+            if !error { *button.status() = self.2; }
             button.color(ctx);
         }
         true
@@ -288,10 +318,10 @@ impl OnEvent for Amount {
 
 
 #[derive(Debug, Component, AppPage)]
-pub struct Speed(Stack, Page, #[skip] bool);
+pub struct Speed(Stack, Page);
 
 impl Speed {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let price = 0.0; // ctx.get::<BDKPlugin>().get_price();
         let address = ""; //ctx.state().get::<SendAddress>().as_address();
         // let btc = ctx.state().get::<SendAmount>();
@@ -309,20 +339,27 @@ impl Speed {
             None, None
         );
 
-        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| Confirm::navigate(ctx));
+        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| {
+            let page = Confirm::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let bumper = Bumper::single_button(ctx, button);
         let content = Content::new(Offset::Start, vec![Box::new(speed_selector)]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Amount::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = Amount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let header = Header::stack(ctx, Some(back), "Transaction speed", None);
-        Speed(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (Speed(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 impl OnEvent for Speed {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
-            let item = &mut *self.1.content().items()[0];
-            let selector = item.as_any_mut().downcast_mut::<ListItemSelector>().unwrap();
+            let selector = self.1.content().find::<ListItemSelector>().unwrap();
             // let current = ctx.state().get::<SendFee>();
             // match selector.index() {
             //     Some(0) => ctx.state().set(&SendFee::new(*current.standard_fee(), *current.priority_fee(), false)),
@@ -335,11 +372,11 @@ impl OnEvent for Speed {
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct Confirm(Stack, Page, #[skip] bool);
+pub struct Confirm(Stack, Page);
 impl OnEvent for Confirm {}
 
 impl Confirm {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let price = 0.0; //ctx.get::<BDKPlugin>().get_price() as f64;
         // let address = ctx.state().get::<SendAddress>();
         // let amount = ctx.state().get::<SendAmount>();
@@ -349,13 +386,24 @@ impl Confirm {
         let btc = 0.0; // amount.get().to_btc().to_string().parse::<f64>().unwrap();
 
         let confirm_address = DataItemBitcoin::confirm_address(
-            ctx, "", /*&address.get().as_ref().unwrap().to_string(), */ |ctx: &mut Context| Address::navigate(ctx)
+            ctx, "", 
+            /*&address.get().as_ref().unwrap().to_string(), */ 
+            |ctx: &mut Context| {
+                let page = Address::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page))
+            }
         );
 
         let confirm_amount = DataItemBitcoin::confirm_amount(
             ctx, btc, price, fee, false, // *send_fee.priority(), 
-            |ctx: &mut Context| Speed::navigate(ctx),
-            |ctx: &mut Context| Address::navigate(ctx),
+            |ctx: &mut Context| {
+                let page = Speed::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page));
+            },
+            |ctx: &mut Context| {
+                let page = Address::new(ctx);
+                ctx.trigger_event(NavigateEvent::new(page));
+            },
         );
 
         let button = Button::primary(ctx, "Confirm & Send", |ctx: &mut Context| {
@@ -363,27 +411,37 @@ impl Confirm {
             // let amount = ctx.state().get::<SendAmount>();
             // let fee_rate = ctx.state().get::<SendFee>().as_rate();
             // ctx.get::<BDKPlugin>().broadcast_transaction(address, *amount.get(), fee_rate);
-            Success::navigate(ctx)
+            let page = Success::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
         });
         
         let bumper = Bumper::single_button(ctx, button);
         let content = Content::new(Offset::Start, vec![Box::new(confirm_address), Box::new(confirm_amount)]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| Speed::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = Speed::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
         let header = Header::stack(ctx, Some(back), "Confirm send", None);
-        Confirm(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (Confirm(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct Success(Stack, Page, #[skip] bool);
+pub struct Success(Stack, Page);
 impl OnEvent for Success {}
 
 impl Success {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let contact = None; //Some(AvatarContent::Icon("profile", AvatarIconStyle::Secondary)); // Don't forget arrow when sending to contact.
         let theme = &ctx.theme;
         let (color, text_size) = (theme.colors.text.heading, theme.fonts.size.h4);
-        let button = Button::close(ctx, "Continue", |ctx: &mut Context| BitcoinHome::navigate(ctx));
+
+        let go_home = |ctx: &mut Context| {
+            let page = BitcoinHome::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        };
+
+        let button = Button::close(ctx, "Continue", go_home);
         let bumper = Bumper::single_button(ctx, button);
 
         let (text, splash) = if let Some(c) = contact {
@@ -394,18 +452,18 @@ impl Success {
 
         let text = Text::new(ctx, text, TextStyle::Heading, text_size, Align::Left);
         let content = Content::new(Offset::Center, vec![splash, Box::new(text)]);
-        let close = IconButton::close(ctx, |ctx: &mut Context| BitcoinHome::navigate(ctx));
+        let close = IconButton::close(ctx, go_home);
         let header = Header::stack(ctx, Some(close), "Send confirmed", None);
-        Success(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (Success(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct Receive(Stack, Page, #[skip] bool);
+pub struct Receive(Stack, Page);
 impl OnEvent for Receive {}
 
 impl Receive {
-    fn new(ctx: &mut Context) -> Self {
+    fn new(ctx: &mut Context) -> (Self, bool) {
         let text_size = ctx.theme.fonts.size.md;
         let adrs = String::new(); //ctx.get::<BDKPlugin>().get_new_address().to_string();
         let qr_code = QRCode::new(ctx, &adrs);
@@ -418,14 +476,17 @@ impl Receive {
         };
 
         let bumper = Bumper::single_button(ctx, button);
-        let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| BitcoinHome::navigate(ctx));
+        let close = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = BitcoinHome::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
         let header = Header::stack(ctx, Some(close), "Receive bitcoin", None);
-        Receive(Stack::default(), Page::new(header, content, Some(bumper)), false)
+        (Receive(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 // #[derive(Debug, Component, AppPage)]
-// pub struct ViewTransaction(Stack, Page, #[skip] bool);
+// pub struct ViewTransaction(Stack, Page);
 // impl OnEvent for ViewTransaction {}
 
 // impl ViewTransaction {

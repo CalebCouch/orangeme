@@ -29,13 +29,16 @@ use crate::UserAccount;
 // use crate::msg::{CurrentRoom, CurrentProfile};
 
 #[derive(Debug, Component, AppPage)]
-pub struct MessagesHome(Stack, Page, #[skip] bool);
+pub struct MessagesHome(Stack, Page);
 impl OnEvent for MessagesHome {}
 
 impl MessagesHome {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
         let header = Header::home(ctx, "Messages");
-        let new_message = Button::primary(ctx, "New Message", |ctx: &mut Context| SelectRecipients::navigate(ctx));
+        let new_message = Button::primary(ctx, "New Message", |ctx: &mut Context| {
+            let page = SelectRecipients::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
         let bumper = Bumper::single_button(ctx, new_message);
         // let rooms = Vec::new(); //ctx.get::<MSGPlugin>().get_rooms();
         let messages: Vec<ListItem> = vec![]; //rooms.into_iter().map(|r| {
@@ -62,7 +65,7 @@ impl MessagesHome {
             false => Content::new(Offset::Center, vec![Box::new(instructions)])
         };
 
-        MessagesHome(Stack::center(), Page::new(header, content, Some(bumper)), true)
+        (MessagesHome(Stack::center(), Page::new(header, content, Some(bumper))), true)
     }
 }
 
@@ -94,11 +97,11 @@ impl MessagesHome {
 //     on_click: impl FnMut(&mut Context) + 'static
 
 #[derive(Debug, Component, AppPage)]
-pub struct SelectRecipients(Stack, Page, #[skip] bool);
+pub struct SelectRecipients(Stack, Page);
 impl OnEvent for SelectRecipients {}
 
 impl SelectRecipients {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
         let profiles = fake_profiles(); //ctx.get::<MSGPlugin>().get_profiles();
@@ -116,16 +119,22 @@ impl SelectRecipients {
         };
 
         let content = Content::new(Offset::Start, vec![Box::new(searchbar), content]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesHome::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = MessagesHome::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
         let button = Button::primary(ctx, "Continue", |ctx: &mut Context| {
             // let current_room = ctx.state().get::<CurrentRoom>();
             // let profiles = current_room.get().as_ref().unwrap().profiles.clone();
             // ctx.get::<MSGPlugin>().create_room(profiles);
-            GroupMessage::navigate(ctx)
+            let page = GroupMessage::new(ctx); // or dm
+            ctx.trigger_event(NavigateEvent::new(page))
         });
+
         let bumper = Bumper::single_button(ctx, button);
-        SelectRecipients(Stack::center(), Page::new(header, content, Some(bumper)), false)
+        (SelectRecipients(Stack::center(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
@@ -144,11 +153,11 @@ impl SelectRecipients {
 // }
 
 #[derive(Debug, Component, AppPage)]
-pub struct DirectMessage(Stack, Page, #[skip] bool);
+pub struct DirectMessage(Stack, Page);
 impl OnEvent for DirectMessage {}
 
 impl DirectMessage {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
         let message = "Did you go to the market on Saturday?".to_string();
 
         let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
@@ -158,16 +167,16 @@ impl DirectMessage {
         let content = Content::new(Offset::End, vec![Box::new(message)]);
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![("Marge Margarine".to_string(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary))]);
-        DirectMessage(Stack::center(), Page::new(header, content, Some(bumper)), false)
+        (DirectMessage(Stack::center(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct GroupMessage(Stack, Page, #[skip] bool);
+pub struct GroupMessage(Stack, Page);
 impl OnEvent for GroupMessage {}
 
 impl GroupMessage {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
         // let current_room = ctx.state().get::<CurrentRoom>();
         // let current_room = current_room.get().as_ref().unwrap();
 
@@ -185,19 +194,27 @@ impl GroupMessage {
        
         let content = Content::new(Offset::Start, messages);
         // content.set_scroll(Scroll::End);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| MessagesHome::navigate(ctx));
-        let info = IconButton::navigation(ctx, "info", |ctx: &mut Context| GroupInfo::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = MessagesHome::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
+        let info = IconButton::navigation(ctx, "info", |ctx: &mut Context| {
+            let page = GroupInfo::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
         let header = Header::chat(ctx, Some(back), Some(info), profile_info);
-        GroupMessage(Stack::center(), Page::new(header, content, Some(bumper)), false)
+        (GroupMessage(Stack::center(), Page::new(header, content, Some(bumper))), false)
     }
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct GroupInfo(Stack, Page, #[skip] bool);
+pub struct GroupInfo(Stack, Page);
 impl OnEvent for GroupInfo {}
 
 impl GroupInfo {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> (Self, bool) {
         // let current_room = ctx.state().get::<CurrentRoom>();
         // let current_room = current_room.get().as_ref().unwrap();
         let contacts = vec![]; //current_room.profiles.iter().map(|p| {
@@ -218,9 +235,13 @@ impl GroupInfo {
         let members = format!("This group has {} members.", contacts.len());
         let text = Text::new(ctx, &members, TextStyle::Secondary, text_size, Align::Center);
         let content = Content::new(Offset::Start, vec![Box::new(text), Box::new(ListItemGroup::new(contacts))]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| GroupMessage::navigate(ctx));
+        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
+            let page = GroupMessage::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+        
         let header = Header::stack(ctx, Some(back), "Group Message Info", None);
-        GroupInfo(Stack::center(), Page::new(header, content, None), false)
+        (GroupInfo(Stack::center(), Page::new(header, content, None)), false)
     }
 }
 
