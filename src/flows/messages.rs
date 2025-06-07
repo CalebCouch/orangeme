@@ -1,11 +1,12 @@
-use pelican_ui::events::{Event, OnEvent, Key, NamedKey, KeyboardState, KeyboardEvent};
+use pelican_ui::events::{Event, OnEvent, Key, NamedKey, KeyboardState, KeyboardEvent, TickEvent};
 use pelican_ui::drawable::{Drawable, Component, Align, Span, Image};
 use pelican_ui::layout::{Area, SizeRequest, Layout};
 use pelican_ui::{Context, Component};
-use profiles::Profile;
-use messages::Room;
+use profiles::service::{Profile, Profiles, Name};
+use profiles::components::AvatarContentProfiles;
 
-use messages::components::{QuickDeselect, TextMessage, MessageType, ListItemMessages};
+use messages::{Room, Rooms, Message};
+use messages::components::{QuickDeselect, TextMessage, MessageType, ListItemMessages, TextMessageGroup};
 
 use pelican_ui_std::{
     AppPage, Stack, Page,
@@ -26,7 +27,6 @@ use pelican_ui_std::{
 use::chrono::{DateTime, Local, Utc};
 
 use crate::UserAccount;
-use crate::msg::{AllRooms, AllProfiles, fake_profiles};
 
 // use crate::MSGPlugin;
 // use crate::msg::{CurrentRoom, CurrentProfile};
@@ -37,34 +37,29 @@ impl OnEvent for MessagesHome {}
 
 impl MessagesHome {
     pub fn new(ctx: &mut Context) -> (Self, bool) {
-        ctx.state().set(&AllRooms::new());
-        ctx.state().set(&AllProfiles::new());
 
         let header = Header::home(ctx, "Messages");
         let new_message = Button::primary(ctx, "New Message", |ctx: &mut Context| {
             let page = SelectRecipients::new(ctx);
             ctx.trigger_event(NavigateEvent::new(page))
         });
+
         let bumper = Bumper::single_button(ctx, new_message);
-        let rooms: &mut Vec<Room> = ctx.state().get::<AllRooms>().get();
-        let messages = rooms.iter_mut().map(|r| {
-            match r.profiles.len() > 1 {
+        let rooms = ctx.state().get::<Rooms>().0;
+        let messages = rooms.into_iter().map(|(id, room)| {
+            match room.authors.len() > 1 {
                 true => {
-                    let names = r.profiles.iter().map(|p| p.user_name.clone()).collect::<Vec<String>>();
-                    ListItemMessages::group_message(ctx, names, 
-                        |ctx: &mut Context| {
-                            let page = GroupMessage::new(ctx, r);
+                    ListItemMessages::group_message(ctx, &id, 
+                        move |ctx: &mut Context| {
+                            let page = GroupMessage::new(ctx, &id);
                             ctx.trigger_event(NavigateEvent::new(page));
                         }
                     )
                 },
                 false => {
-                    let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
-                    ListItemMessages::direct_message(ctx, avatar, 
-                        &r.profiles[0].user_name.clone(), 
-                        &r.messages.last().unwrap().message.clone(), 
-                        |ctx: &mut Context| {
-                            let page = DirectMessage::new(ctx);
+                    ListItemMessages::direct_message(ctx, &id,
+                        move |ctx: &mut Context| {
+                            let page = DirectMessage::new(ctx, &id);
                             ctx.trigger_event(NavigateEvent::new(page));
                         }
                     )
@@ -91,10 +86,10 @@ impl SelectRecipients {
     pub fn new(ctx: &mut Context) -> (Self, bool) {
         let icon_button = None::<(&'static str, fn(&mut Context, &mut String))>;
         let searchbar = TextInput::new(ctx, None, None, "Profile name...", None, icon_button);
-        let profiles = ctx.state().get::<AllProfiles>().0;
-        let recipients = profiles.iter().map(|p| {
+        let profiles = ctx.state().get::<Profiles>().0;
+        let recipients = profiles.iter().map(|(orange_name, profile)| {
             let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
-            ListItemMessages::recipient(ctx, avatar, p.clone())
+            ListItemMessages::recipient(ctx, orange_name)
         }).collect::<Vec<ListItem>>();
 
         let content = match recipients.is_empty() {
@@ -112,11 +107,12 @@ impl SelectRecipients {
         });
 
         let header = Header::stack(ctx, Some(back), "Send to contact", None);
-        let button = Button::primary(ctx, "Continue", |ctx: &mut Context| {
-            let new_room = Room::from(profiles);
-            let page = GroupMessage::new(ctx, &mut new_room);
-            ctx.state().get::<AllRooms>().add(new_room); // or dm
-            ctx.trigger_event(NavigateEvent::new(page))
+        let button = Button::primary(ctx, "Continue", move |ctx: &mut Context| {
+            // let profiles = ctx.state().get::<Profiles>().0; // get profiles from QuickDeseloct (this might need to be an event)
+            // let mut new_room = Room::from(profiles);
+            // let page = GroupMessage::new(ctx, &mut new_room);
+            // ctx.state().get::<Rooms>().add(new_room); // or dm
+            // ctx.trigger_event(NavigateEvent::new(page))
         });
 
         let bumper = Bumper::single_button(ctx, button);
@@ -129,14 +125,15 @@ pub struct DirectMessage(Stack, Page);
 impl OnEvent for DirectMessage {}
 
 impl DirectMessage {
-    pub fn new(ctx: &mut Context) -> (Self, bool) {
+    pub fn new(ctx: &mut Context, room_id: &uuid::Uuid) -> (Self, bool) {
         let message = "Did you go to the market on Saturday?".to_string();
 
         let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+        let other = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
         let bumper = Bumper::new(ctx, vec![Box::new(input)]);
-        let dt1 = "2025-05-19T15:20:11Z".parse::<DateTime<Utc>>().unwrap().with_timezone(&Local);
-        let message = TextMessage::new(ctx, MessageType::Contact, &message, ("Marge".to_string(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary)), Timestamp::new(dt1));
-        let content = Content::new(Offset::End, vec![Box::new(message)]);
+        // let dt1 = "2025-05-19T15:20:11Z".parse::<DateTime<Utc>>().unwrap().with_timezone(&Local);
+        // let message = TextMessage::new(ctx, MessageType::Contact, message);
+        let content = Content::new(Offset::End, vec![Box::new(other)]);
         let back = IconButton::navigation(ctx, "left", |_ctx: &mut Context| println!("Go Back!"));
         let header = Header::chat(ctx, Some(back), None, vec![("Marge Margarine".to_string(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary))]);
         (DirectMessage(Stack::center(), Page::new(header, content, Some(bumper))), false)
@@ -144,38 +141,74 @@ impl DirectMessage {
 }
 
 #[derive(Debug, Component, AppPage)]
-pub struct GroupMessage(Stack, Page);
-impl OnEvent for GroupMessage {}
+pub struct GroupMessage(Stack, Page, #[skip] uuid::Uuid);
 
 impl GroupMessage {
-    pub fn new(ctx: &mut Context, room: &mut Room) -> (Self, bool) {
+    pub fn new(ctx: &mut Context, room_id: &uuid::Uuid) -> (Self, bool) {
+        let rooms = ctx.state().get::<Rooms>();
+        let room = rooms.0.get(room_id).unwrap();
+        let room_id = room_id.clone();
 
         let messages = room.messages.iter().map(|msg| {
-            let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary);
-            let auth = msg.author.clone();
-            let author = (auth.user_name, avatar);
-            Box::new(TextMessage::new(ctx, MessageType::Group, &msg.message.clone(), author, msg.timestamp.clone())) as Box<dyn Drawable>
-        }).collect::<Vec<Box<dyn Drawable>>>();
+            TextMessage::new(ctx, MessageType::Group, msg.clone())
+        }).collect::<Vec<TextMessage>>();
 
-        let profile_info = room.profiles.iter().map(|p| (p.user_name.clone(), AvatarContent::Icon("profile", AvatarIconStyle::Secondary))).collect::<Vec<_>>();
+        let messages = TextMessageGroup::new(messages);
 
-        let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", |_: &mut Context, string: &mut String| println!("Message: {:?}", string))));
+        let profile_info = room.authors.iter().map(|orange_name| {
+            let profiles = ctx.state().get::<Profiles>();
+            let profile = profiles.0.get(orange_name).unwrap();
+            let username = profile.get("username").unwrap();
+            (username.to_string(), AvatarContentProfiles::from_orange_name(ctx, &orange_name))
+        }).collect::<Vec<_>>();
+
+        let input = TextInput::new(ctx, None, None, "Message...", None, Some(("send", 
+            move |ctx: &mut Context, string: &mut String| {
+                println!("Message: {:?}", string);
+                let mut rooms = ctx.state().get::<Rooms>();
+                let room = rooms.find(&room_id).unwrap();
+                let orange_name = ctx.state().get::<Name>().0.unwrap();
+                room.add_message(Message::from(string.to_string(), orange_name));
+            }
+        )));
+
         let bumper = Bumper::new(ctx, vec![Box::new(input)]);
        
-        let content = Content::new(Offset::Start, messages);
         // content.set_scroll(Scroll::End);
         let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
             let page = MessagesHome::new(ctx);
             ctx.trigger_event(NavigateEvent::new(page))
         });
 
-        let info = IconButton::navigation(ctx, "info", |ctx: &mut Context| {
-            let page = GroupInfo::new(ctx, room);
+        let info = IconButton::navigation(ctx, "info", move |ctx: &mut Context| {
+            let page = GroupInfo::new(ctx, &room_id);
             ctx.trigger_event(NavigateEvent::new(page))
         });
 
+        let content = Content::new(Offset::Start, vec![Box::new(messages)]);
         let header = Header::chat(ctx, Some(back), Some(info), profile_info);
-        (GroupMessage(Stack::center(), Page::new(header, content, Some(bumper))), false)
+        (GroupMessage(Stack::center(), Page::new(header, content, Some(bumper)), room_id), false)
+    }
+}
+
+impl OnEvent for GroupMessage {
+    fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
+        if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
+            let messages = &mut *self.1.content().find::<TextMessageGroup>().unwrap();
+            let mut rooms = ctx.state().get::<Rooms>();
+            let room = rooms.find(&self.2).unwrap();
+            // println!("Room ID {:?} and message length {:?}", room.room_id, room.messages.len()); 
+
+            if room.messages.len() != messages.messages().len() {
+                println!("changed");
+                let new_messages = room.messages.iter().map(|msg| {
+                    TextMessage::new(ctx, MessageType::Group, msg.clone())
+                }).collect::<Vec<TextMessage>>();
+
+                *messages = TextMessageGroup::new(new_messages);
+            }
+        }
+        true
     }
 }
 
@@ -184,19 +217,15 @@ pub struct GroupInfo(Stack, Page);
 impl OnEvent for GroupInfo {}
 
 impl GroupInfo {
-    pub fn new(ctx: &mut Context, room: &mut Room) -> (Self, bool) {
-        // let current_room = ctx.state().get::<CurrentRoom>();
-        // let current_room = current_room.get().as_ref().unwrap();
-        let contacts = room.profiles.iter().map(|p| {
-            let new_profile = p.clone();
-            ListItemMessages::contact(ctx, 
-                AvatarContent::Icon("profile", 
-                AvatarIconStyle::Secondary), 
-                &new_profile.user_name.clone(), 
-                &new_profile.identifier.clone(), 
+    pub fn new(ctx: &mut Context, room_id: &uuid::Uuid) -> (Self, bool) {
+        let mut rooms = ctx.state().get::<Rooms>();
+        let room = rooms.find(&room_id).unwrap();
+        let contacts = room.authors.iter().map(|orange_name| {
+            let new_profile = orange_name.clone();
+            ListItemMessages::contact(ctx, &orange_name,
                 move |ctx: &mut Context| {
                     // ctx.state().set(&CurrentProfile::new(new_profile.clone()));
-                    let page = UserAccount::new(ctx);
+                    let page = UserAccount::new(ctx, &new_profile.clone());
                     ctx.trigger_event(NavigateEvent::new(page))
                 }
             )
@@ -206,11 +235,13 @@ impl GroupInfo {
         let members = format!("This group has {} members.", contacts.len());
         let text = Text::new(ctx, &members, TextStyle::Secondary, text_size, Align::Center);
         let content = Content::new(Offset::Start, vec![Box::new(text), Box::new(ListItemGroup::new(contacts))]);
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
-            let page = GroupMessage::new(ctx, room);
+
+        let room_id = room_id.clone(); 
+        let back = IconButton::navigation(ctx, "left", move |ctx: &mut Context| {
+            let page = GroupMessage::new(ctx, &room_id);
             ctx.trigger_event(NavigateEvent::new(page))
         });
-        
+
         let header = Header::stack(ctx, Some(back), "Group Message Info", None);
         (GroupInfo(Stack::center(), Page::new(header, content, None)), false)
     }

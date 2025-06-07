@@ -82,6 +82,9 @@ impl Application for MyApp {
                 ctx.trigger_event(NavigateEvent::new(page));
             }) as Box<dyn FnMut(&mut Context)>)
         ];
+        
+        let rooms = messages::Rooms::new(ctx);
+        ctx.state().set(&rooms); // TEMP
 
         let home = BitcoinHome::new(ctx).0;
         Box::new(Interface::new(ctx, home, Some((0_usize, navigation))))
