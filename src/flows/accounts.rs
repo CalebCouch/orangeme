@@ -30,7 +30,9 @@ use crate::DirectMessage;
 use crate::Amount;
 
 use std::sync::mpsc::{self, Receiver};
+use std::sync::{Arc, Mutex};
 use base64::{engine::general_purpose, Engine as _};
+use serde_json::{json, Value};
 
 use image::ImageFormat;
 
@@ -42,9 +44,9 @@ impl Account {
         let orange_name = ctx.state().get::<Name>().0.unwrap();
         let profiles = ctx.state().get::<Profiles>();
         let my_profile = profiles.0.get(&orange_name).unwrap();
-        let my_user_name = my_profile.get("name").map(ToString::to_string).unwrap_or_else(|| {
+        let my_user_name = my_profile.get("username").map(ToString::to_string).unwrap_or_else(|| {
             let name = generate_name(&orange_name.to_string().as_str());
-            ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("name".into(), name.clone()));
+            ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("username".into(), name.clone()));
             name
         });
 
@@ -88,7 +90,8 @@ impl OnEvent for Account {
             let profiles = ctx.state().get::<Profiles>();
 
             let my_profile = profiles.0.get(&orange_name).unwrap();
-            let my_username = my_profile.get("name").unwrap_or(&String::new()).to_string();
+            // println!("MY PROFILE {:?}", my_profile);
+            let my_username = my_profile.get("username").unwrap_or(&String::new()).to_string();
             let my_biography = my_profile.get("biography").unwrap_or(&String::new()).to_string();
 
             if let Ok((bytes, orientation)) = self.2.try_recv() {
@@ -97,7 +100,7 @@ impl OnEvent for Account {
                         let image = orientation.apply_to(image::DynamicImage::ImageRgba8(dynamic.to_rgba8()));
                         let mut png_bytes = Vec::new();
                         image.write_to(&mut std::io::Cursor::new(&mut png_bytes), ImageFormat::Png).unwrap();
-                        let base64_png = general_purpose::STANDARD.encode(&png_bytes);
+                        let base64_png = general_purpose::STANDARD.encode(&png_bytes); 
 
                         ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("avatar".to_string(), base64_png));
                         let asset_image = ctx.assets.add_image(image.into());
@@ -118,14 +121,14 @@ impl OnEvent for Account {
             let bio_changed = bio_value != my_biography;
             let _ = (*bio_input.status() != InputState::Focus && !bio_changed).then(|| *bio_input.value() = my_biography.clone());
 
+            // println!("IS DISABLED {:?} < STATUS {:?}", not_disabled, button.status());
+
             let button = self.1.bumper().as_mut().unwrap().find::<Button>().unwrap();
-            let not_disabled = *button.status() == ButtonState::Disabled;
-            not_disabled.then(|| self.3 = *button.status());
+            let disabled = *button.status() == ButtonState::Disabled;
 
-            *button.status() = (name_changed || bio_changed).then_some(self.3)
-                .or_else(|| not_disabled.then_some(ButtonState::Disabled))
-                .unwrap_or_else(|| *button.status());
-
+            if !disabled { self.3 = *button.status(); }
+            if !bio_changed || !name_changed && !disabled { *button.status() = ButtonState::Disabled; }
+            if bio_changed || name_changed { *button.status() = self.3; }
             button.color(ctx);
 
         } else if let Some(UpdateProfileEvent) = event.downcast_ref::<UpdateProfileEvent>() {
@@ -133,7 +136,7 @@ impl OnEvent for Account {
             let profiles = ctx.state().get::<Profiles>();
 
             let my_profile = profiles.0.get(&orange_name).unwrap();
-            let my_username = my_profile.get("name").unwrap_or(&String::new()).to_string();
+            let my_username = my_profile.get("username").unwrap_or(&String::new()).to_string();
             let my_biography = my_profile.get("biography").unwrap_or(&String::new()).to_string();
 
             let name_value = self.1.content().find_at::<TextInput>(1).unwrap().value().to_string();
@@ -141,7 +144,7 @@ impl OnEvent for Account {
 
             println!("Saving...");
             if name_value != my_username {
-                ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("name".to_string(), name_value));
+                ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("username".to_string(), name_value));
             }
             if bio_value != my_biography {
                 ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("biography".to_string(), bio_value));
@@ -157,32 +160,53 @@ pub struct UserAccount(Stack, Page);
 impl OnEvent for UserAccount {}
 
 impl UserAccount {
-    pub fn new(ctx: &mut Context, orange_name: &OrangeName) -> (Self, bool) {
+    pub fn new(ctx: &mut Context, orange_name: &OrangeName, account_return: (Box<dyn AppPage>, bool)) -> (Self, bool) {
         let profiles = ctx.state().get::<Profiles>();
         let user = profiles.0.get(&orange_name).unwrap();
+        let user = profiles.0.get(&orange_name).unwrap();
+        let username = user.get("username").unwrap();
 
-        let back = IconButton::navigation(ctx, "left", |ctx: &mut Context| {
-            // let page = GroupInfo::new(ctx);
-            // ctx.trigger_event(NavigateEvent::new(page))
+        let my_orange_name = ctx.state().get::<Name>().0.unwrap();
+        let my_profile = profiles.0.get(&my_orange_name).unwrap();
+
+        let is_blocked = my_profile.get("blocked_orange_names")
+            .and_then(|s| serde_json::from_str::<Vec<String>>(s).ok())
+            .map_or(false, |n| n.contains(&orange_name.to_string()));
+
+        let mut account_return = Arc::new(Mutex::new(Some(account_return)));
+
+        let back_account_return = account_return.clone();
+        let back = IconButton::navigation(ctx, "left", move |ctx: &mut Context| {
+            let page = back_account_return.lock().unwrap().take().unwrap();
+            ctx.trigger_event(NavigateEvent(Some(page.0), page.1));
         });
 
-        let orange_name_for_block = orange_name.clone();
-        let orange_name_for_messages = orange_name.clone();
+        let block_orange_name = orange_name.clone();
+        let block_account_return = account_return.clone();
 
-        let buttons = IconButtonRow::new(ctx, vec![
-            ("messages", Box::new(move |ctx: &mut Context| {
-                // let page = DirectMessage::new(ctx, &orange_name_for_messages);
-                // ctx.trigger_event(NavigateEvent::new(page))
-            }) as Box<dyn FnMut(&mut Context)>),
-            ("bitcoin", Box::new(|ctx: &mut Context| {
-                let page = Amount::new(ctx);
+        let block = match is_blocked {
+            true => ("unblock", Box::new(move |ctx: &mut Context| {
+                let page = UnblockUser::new(ctx, &block_orange_name, block_account_return.lock().unwrap().take().unwrap());
                 ctx.trigger_event(NavigateEvent::new(page))
             }) as Box<dyn FnMut(&mut Context)>),
-            ("block", Box::new(move |ctx: &mut Context| {
-                let page = BlockUser::new(ctx, &orange_name_for_block);
+            false => ("block", Box::new(move |ctx: &mut Context| {
+                let page = BlockUser::new(ctx, &block_orange_name, block_account_return.lock().unwrap().take().unwrap());
                 ctx.trigger_event(NavigateEvent::new(page))
-            }) as Box<dyn FnMut(&mut Context)>),
-        ]);
+            }) as Box<dyn FnMut(&mut Context)>)
+        };
+
+        let messages = ("messages", Box::new(move |ctx: &mut Context| {
+            // find room between you and this person
+            // let (on_return, with_nav) = Self::new(ctx);
+            // let page = DirectMessage::new(ctx, &id, on_return.into_boxed(), with_nav);
+        }) as Box<dyn FnMut(&mut Context)>);
+
+        let bitcoin = ("bitcoin", Box::new(|ctx: &mut Context| {
+            let page = Amount::new(ctx);
+            ctx.trigger_event(NavigateEvent::new(page))
+        }) as Box<dyn FnMut(&mut Context)>);
+
+        let buttons = IconButtonRow::new(ctx, vec![messages, bitcoin, block]);
 
         let adrs = String::new(); //ctx.get::<BDKPlugin>().get_new_address().to_string();        
         let copy_address = Button::secondary(ctx, Some("copy"), "Copy", None, |_ctx: &mut Context| println!("Copy"));
@@ -209,27 +233,35 @@ struct BlockUser(Stack, Page);
 impl OnEvent for BlockUser {}
 
 impl BlockUser {
-    fn new(ctx: &mut Context, orange_name: &OrangeName) -> (Self, bool) {
+    fn new(ctx: &mut Context, orange_name: &OrangeName, account_return: (Box<dyn AppPage>, bool)) -> (Self, bool) {
         let profiles = ctx.state().get::<Profiles>();
         let user = profiles.0.get(&orange_name).unwrap();
 
         let theme = &ctx.theme;
         let text_size = theme.fonts.size.h4;
 
-        let account_orange_name = orange_name.clone();
-        let go_account = move |ctx: &mut Context| {
-            let page = UserAccount::new(ctx, &account_orange_name);
-            ctx.trigger_event(NavigateEvent::new(page))
-        };
+        let account_return = Arc::new(Mutex::new(Some(account_return)));
 
-        let block_orange_name = orange_name.clone();
+        let confirm_orange_name = orange_name.clone();
+        let confirm_account_return = account_return.clone();
         let confirm = Button::primary(ctx, "Block", move |ctx: &mut Context| {
-            let page = UserBlocked::new(ctx, &block_orange_name);
+            let page = UserBlocked::new(ctx, &confirm_orange_name, confirm_account_return.lock().unwrap().take().unwrap());
             ctx.trigger_event(NavigateEvent::new(page))
         });
 
-        let cancel = Button::close(ctx, "Cancel", go_account.clone());
-        let back = IconButton::navigation(ctx, "left", go_account);
+        let cancel_orange_name = orange_name.clone();
+        let cancel_account_return = account_return.clone();
+        let cancel = Button::close(ctx, "Cancel", move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &cancel_orange_name, cancel_account_return.lock().unwrap().take().unwrap());
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
+        let back_orange_name = orange_name.clone();
+        let back_account_return = account_return.clone();
+        let back = IconButton::navigation(ctx, "left", move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &back_orange_name, back_account_return.lock().unwrap().take().unwrap());
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
 
         let bumper = Bumper::double_button(ctx, cancel, confirm);
         let avatar = AvatarProfiles::new_with_block(ctx, orange_name);
@@ -248,28 +280,54 @@ struct UserBlocked(Stack, Page);
 impl OnEvent for UserBlocked {}
 
 impl UserBlocked {
-    fn new(ctx: &mut Context, orange_name: &OrangeName) -> (Self, bool) {
+    fn new(ctx: &mut Context, orange_name: &OrangeName, account_return: (Box<dyn AppPage>, bool)) -> (Self, bool) {
         let profiles = ctx.state().get::<Profiles>();
         let user = profiles.0.get(&orange_name).unwrap();
+        let my_orange_name = ctx.state().get::<Name>().0.unwrap();
+        let my_profile = profiles.0.get(&my_orange_name).unwrap();
+
+        let blocked = match my_profile.get("blocked_orange_names") {
+            Some(names) => {
+                match serde_json::from_str::<Value>(names) {
+                    Ok(Value::Array(mut list)) => {
+                        list.push(json!(orange_name));
+                        Value::Array(list)
+                    },
+                    _ => json!([orange_name])
+                }
+            },
+            None => {
+                json!([orange_name])
+            }
+        };
+
+        ctx.get::<ProfilePlugin>().request(ProfileRequest::InsertField("blocked_orange_names".into(), blocked.to_string()));
 
         let theme = &ctx.theme;
         let text_size = theme.fonts.size.h4;
+        let account_return = Arc::new(Mutex::new(Some(account_return)));
 
-        let close_orange_name = orange_name.clone();
-        let go_close = move |ctx: &mut Context| {
-            let page = UserAccount::new(ctx, &close_orange_name);
+        let button_orange_name = orange_name.clone();
+        let button_account_return = account_return.clone();
+        let button = Button::close(ctx, "Done",  move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &button_orange_name, button_account_return.lock().unwrap().take().unwrap());
             ctx.trigger_event(NavigateEvent::new(page))
-        };
+        });
 
-        let close = Button::close(ctx, "Done", go_close.clone());
-        let bumper = Bumper::single_button(ctx, close);
+        let bumper = Bumper::single_button(ctx, button);
         let avatar = AvatarProfiles::new_with_block(ctx, orange_name);
 
         let username = user.get("username").unwrap();
         let msg = format!("{} has been blocked", username);
         let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let close = IconButton::close(ctx, go_close);
+
+        let close_orange_name = orange_name.clone();
+        let close_account_return = account_return.clone();
+        let close = IconButton::close(ctx,  move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &close_orange_name, close_account_return.lock().unwrap().take().unwrap());
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
 
         let header = Header::stack(ctx, Some(close), "User blocked", None);
         (UserBlocked(Stack::default(), Page::new(header, content, Some(bumper))), false)
@@ -281,26 +339,34 @@ struct UnblockUser(Stack, Page);
 impl OnEvent for UnblockUser {}
 
 impl UnblockUser {
-    fn new(ctx: &mut Context, orange_name: &OrangeName) -> (Self, bool) {
+    fn new(ctx: &mut Context, orange_name: &OrangeName, account_return: (Box<dyn AppPage>, bool)) -> (Self, bool) {
         let profiles = ctx.state().get::<Profiles>();
         let user = profiles.0.get(&orange_name).unwrap();
 
         let text_size = ctx.theme.fonts.size.h4;
 
-        let account_orange_name = orange_name.clone();
-        let go_account = move |ctx: &mut Context| {
-            let page = UserAccount::new(ctx, &account_orange_name);
-            ctx.trigger_event(NavigateEvent::new(page))
-        };
+        let account_return = Arc::new(Mutex::new(Some(account_return)));
 
         let unblock_orange_name = orange_name.clone();
+        let unblock_account_return = account_return.clone();
         let confirm = Button::primary(ctx, "Unblock", move |ctx: &mut Context| {
-            let page = UserUnblocked::new(ctx, &unblock_orange_name);
+            let page = UserUnblocked::new(ctx, &unblock_orange_name, unblock_account_return.lock().unwrap().take().unwrap());
             ctx.trigger_event(NavigateEvent::new(page))
         });
 
-        let cancel = Button::close(ctx, "Cancel", go_account.clone());
-        let back = IconButton::navigation(ctx, "left", go_account);
+        let cancel_orange_name = orange_name.clone();
+        let cancel_account_return = account_return.clone();
+        let cancel = Button::close(ctx, "Cancel", move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &cancel_orange_name, cancel_account_return.lock().unwrap().take().unwrap());
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
+
+        let back_orange_name = orange_name.clone();
+        let back_account_return = account_return.clone();
+        let back = IconButton::navigation(ctx, "left", move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &back_orange_name, back_account_return.lock().unwrap().take().unwrap());
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
 
         let bumper = Bumper::double_button(ctx, cancel, confirm);
         let avatar = AvatarProfiles::new_with_unblock(ctx, orange_name); 
@@ -319,27 +385,34 @@ struct UserUnblocked(Stack, Page);
 impl OnEvent for UserUnblocked {}
 
 impl UserUnblocked {
-    fn new(ctx: &mut Context, orange_name: &OrangeName) -> (Self, bool) {
+    fn new(ctx: &mut Context, orange_name: &OrangeName, account_return: (Box<dyn AppPage>, bool)) -> (Self, bool) {
         let profiles = ctx.state().get::<Profiles>();
         let user = profiles.0.get(&orange_name).unwrap();
 
         let text_size = ctx.theme.fonts.size.h4;
+        let account_return = Arc::new(Mutex::new(Some(account_return)));
 
-        let close_orange_name = orange_name.clone();
-        let go_close = move |ctx: &mut Context| {
-            let page = UserAccount::new(ctx, &close_orange_name);
+        let button_orange_name = orange_name.clone();
+        let button_account_return = account_return.clone();
+        let button = Button::close(ctx, "Done", move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &button_orange_name, button_account_return.lock().unwrap().take().unwrap());
             ctx.trigger_event(NavigateEvent::new(page))
-        };
-        
-        let close = Button::close(ctx, "Done", go_close.clone());
-        let bumper = Bumper::single_button(ctx, close);
+        });
+
+        let bumper = Bumper::single_button(ctx, button);
         let avatar = AvatarProfiles::new_with_unblock(ctx, orange_name);
 
         let username = user.get("username").unwrap();
         let msg = format!("{} has been unblocked", username);
         let text = ExpandableText::new(ctx, &msg, TextStyle::Heading, text_size, Align::Center);
         let content = Content::new(Offset::Center, vec![Box::new(avatar), Box::new(text)]);
-        let close = IconButton::close(ctx, go_close);
+
+        let close_orange_name = orange_name.clone();
+        let close_account_return = account_return.clone();
+        let close = IconButton::close(ctx, move |ctx: &mut Context| {
+            let page = UserAccount::new(ctx, &close_orange_name, close_account_return.lock().unwrap().take().unwrap());
+            ctx.trigger_event(NavigateEvent::new(page))
+        });
         let header = Header::stack(ctx, Some(close), "User unblocked", None);
         (UserUnblocked(Stack::default(), Page::new(header, content, Some(bumper))), false)
     }

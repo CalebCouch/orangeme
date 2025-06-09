@@ -61,11 +61,6 @@ impl Application for MyApp {
     // }
 
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
-        // launch_background_thread();
-        // ctx.include_assets(include_assets!("./resources/images"));
-
-        
-
         let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
 
         let navigation = vec![
@@ -84,7 +79,7 @@ impl Application for MyApp {
         ];
         
         let rooms = messages::Rooms::new(ctx);
-        ctx.state().set(&rooms); // TEMP
+        ctx.state().set(&rooms); 
 
         let home = BitcoinHome::new(ctx).0;
         Box::new(Interface::new(ctx, home, Some((0_usize, navigation))))
