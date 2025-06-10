@@ -115,8 +115,7 @@ impl SelectRecipients {
             // let mut new_room = Room::from(profiles);
             // let page = GroupMessage::new(ctx, &mut new_room);
             // ctx.state().get::<Rooms>().add(new_room); // or dm
-            let room_id = uuid::Uuid::new_v4();
-            ctx.trigger_event(CreateMessageEvent(room_id));
+            ctx.trigger_event(CreateMessageEvent);
         });
 
         let bumper = Bumper::single_button(ctx, button);
@@ -135,25 +134,38 @@ impl OnEvent for SelectRecipients {
             if error && !disabled { *button.status() = ButtonState::Disabled; }
             if !error { *button.status() = self.2; }
             button.color(ctx);
-        } if let Some(CreateMessageEvent(id)) = event.downcast_ref::<CreateMessageEvent>() {
+        } if let Some(CreateMessageEvent) = event.downcast_ref::<CreateMessageEvent>() {
+            let id = uuid::Uuid::new_v4();
             let orange_names = self.1.content().find::<QuickDeselect>().unwrap().get_orange_names().unwrap();
             let mut rooms = ctx.state().get::<Rooms>();
-            rooms.add(Room::new(orange_names.clone()), *id);
-            ctx.state().set(&rooms);
 
+            if orange_names.len() == 1 {
+                for (id, room) in rooms.0.iter() {
+                    if room.authors.len() == 1 && room.authors[0] == orange_names[0] {
+                        let (on_return, with_nav) = MessagesHome::new(ctx);
+                        let page = DirectMessage::new(ctx, id, (on_return.into_boxed(), with_nav));
+                        ctx.trigger_event(NavigateEvent::new(page));
+                        return true;
+                    }
+                }
+            }
+
+            println!("create dm");
             let (page, with_nav) = match orange_names.len() > 1 { 
                 true => {
-                    let (page, with_nav) = GroupMessage::new(ctx, id);
+                    let (page, with_nav) = GroupMessage::new(ctx, &id);
                     (page.into_boxed(), with_nav) 
                 },
                 false => { 
                     let (on_return, with_nav) = MessagesHome::new(ctx);
-                    let (page, with_nav) = DirectMessage::new(ctx, id, (on_return.into_boxed(), with_nav));
+                    let (page, with_nav) = DirectMessage::new(ctx, &id, (on_return.into_boxed(), with_nav));
                     (page.into_boxed(), with_nav)
                 }
             };
 
-            ctx.trigger_event(NavigateEvent(Some(page), with_nav))
+            rooms.add(Room::new(orange_names.clone()), id);
+            ctx.state().set(&rooms);
+            ctx.trigger_event(NavigateEvent(Some(page), with_nav));
         }
         true
     }

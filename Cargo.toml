@@ -37,6 +37,7 @@ dispatch2 = "0.3.0"
 objc2-ui-kit = { version = "0.3.1", features = ["UIGraphicsImageRenderer"] }
 base64 = "0.22.1"
 uuid = { version = "1.17.0", features = ["v4", "serde"] }
+libc = "0.2.172"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "sync", "time", "net"] }
