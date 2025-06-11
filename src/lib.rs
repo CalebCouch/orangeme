@@ -69,11 +69,11 @@ impl Application for MyApp {
                 ctx.trigger_event(NavigateEvent::new(page));
             }) as Box<dyn FnMut(&mut Context)>),
             ("messages", "Messages", None, Box::new(|ctx: &mut Context| {
-                let page = MessagesHome::new(ctx);
+                let page = messages::pages::MessagesHome::new(ctx);
                 ctx.trigger_event(NavigateEvent::new(page));
             }) as Box<dyn FnMut(&mut Context)>),
             ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| {
-                let page = Account::new(ctx);
+                let page = profiles::pages::Account::new(ctx);
                 ctx.trigger_event(NavigateEvent::new(page));
             }) as Box<dyn FnMut(&mut Context)>)
         ];
