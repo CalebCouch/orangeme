@@ -1,6 +1,6 @@
 use pelican_ui::{Context, Plugins, Plugin, Service, Services, ServiceList, maverick_start, start, Application, PelicanEngine, MaverickOS, HardwareContext};
 use pelican_ui::drawable::Drawable;
-use pelican_ui_std::{AvatarIconStyle, AvatarContent, Interface, NavigateEvent};
+use pelican_ui_std::{AvatarIconStyle, AvatarContent, Interface, NavigateEvent, AppPage};
 use profiles::plugin::ProfilePlugin;
 use profiles::service::{Name, Profiles, ProfileService};
 use std::any::TypeId;
@@ -8,13 +8,16 @@ use std::collections::BTreeMap;
 use std::pin::Pin;
 use std::future::Future;
 
-mod flows;
-pub use flows::*;
+use bitcoin::pages::*;
+use messages::pages::*;
+use profiles::pages::*;
+
+// use tokio::time::{sleep, Duration};
+
 // mod bdk;
 // use bdk::BDKPlugin;
 mod msg;
 // use msg::MSGPlugin;
-
 // use ucp_rust::UCPPlugin;
 
 fn service<'a>(ctx: &'a mut HardwareContext) -> Pin<Box<dyn Future<Output = Box<dyn Service>> + 'a >> {
@@ -61,28 +64,21 @@ impl Application for MyApp {
     // }
 
     async fn new(ctx: &mut Context) -> Box<dyn Drawable> {
-        let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); //tpm
+        // sleep(Duration::from_secs(30)).await;
+
+        let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); // tmp
 
         let navigation = vec![
-            ("wallet", "Bitcoin", None, Box::new(|ctx: &mut Context| {
-                let page = BitcoinHome::new(ctx);
-                ctx.trigger_event(NavigateEvent::new(page));
-            }) as Box<dyn FnMut(&mut Context)>),
-            ("messages", "Messages", None, Box::new(|ctx: &mut Context| {
-                let page = messages::pages::MessagesHome::new(ctx);
-                ctx.trigger_event(NavigateEvent::new(page));
-            }) as Box<dyn FnMut(&mut Context)>),
-            ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| {
-                let page = profiles::pages::Account::new(ctx);
-                ctx.trigger_event(NavigateEvent::new(page));
-            }) as Box<dyn FnMut(&mut Context)>)
+            ("wallet", "Bitcoin", None, Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>),
+            ("messages", "Messages", None, Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>),
+            ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)
         ];
         
-        let rooms = messages::Rooms::new(ctx);
-        ctx.state().set(&rooms); 
-
-        let home = BitcoinHome::new(ctx).0;
-        Box::new(Interface::new(ctx, home, Some((0_usize, navigation))))
+        // let rooms = messages::Rooms::new(ctx);
+        // ctx.state().set(&rooms); 
+        let home = BitcoinHome::new(ctx);
+        // Some((0_usize, navigation))
+        Box::new(Interface::new(ctx, Box::new(home), Some((0_usize, navigation))))
     }
 
     // fn error(ctx: &mut Context, error: String) -> Box<dyn Drawable> {

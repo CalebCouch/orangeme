@@ -2432,6 +2432,7 @@ name = "maverick_os"
 version = "0.1.1"
 dependencies = [
  "air",
+ "android-activity",
  "async-trait",
  "block",
  "cli-clipboard",
@@ -3504,7 +3505,7 @@ dependencies = [
 
 [[package]]
 name = "pelican_ui"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "downcast-rs 2.0.1",
  "image 0.25.6",
@@ -3519,8 +3520,6 @@ dependencies = [
 [[package]]
 name = "pelican_ui_proc"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "144bbf9eba1c9d31c2d491e3a2e1a0dbe33f52b189ecd19ccd857ca8486e4cb3"
 dependencies = [
  "proc-macro2 1.0.95",
  "quote 1.0.40",
@@ -3529,7 +3528,7 @@ dependencies = [
 
 [[package]]
 name = "pelican_ui_std"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "chrono",
  "downcast-rs 2.0.1",
@@ -3839,6 +3838,8 @@ checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
 [[package]]
 name = "ramp-glyphon"
 version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "84ddf6e005bc6b61af0a2823719454ac64ce8712a3057bf6580a550d3f185303"
 dependencies = [
  "etagere",
  "lru",
@@ -5925,7 +5926,9 @@ dependencies = [
 
 [[package]]
 name = "wgpu_canvas"
-version = "4.0.1"
+version = "4.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a5874e27df14cb7662c2ce0395ce619071b397046780128374821a965b32386f"
 dependencies = [
  "bytemuck",
  "fast_image_resize",
