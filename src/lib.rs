@@ -1,6 +1,7 @@
-use pelican_ui::{Context, Plugins, Plugin, Service, Services, ServiceList, maverick_start, start, Application, PelicanEngine, MaverickOS, HardwareContext};
+use pelican_ui::{Context, Plugins, Plugin, maverick_start, start, Application, PelicanEngine, MaverickOS, HardwareContext};
 use pelican_ui::drawable::Drawable;
 use pelican_ui_std::{AvatarIconStyle, AvatarContent, Interface, NavigateEvent, AppPage};
+use pelican_ui::runtime::{Services, Service, ServiceList};
 use profiles::plugin::ProfilePlugin;
 use profiles::service::{Name, Profiles, ProfileService};
 use std::any::TypeId;
@@ -20,17 +21,12 @@ mod msg;
 // use msg::MSGPlugin;
 // use ucp_rust::UCPPlugin;
 
-fn service<'a>(ctx: &'a mut HardwareContext) -> Pin<Box<dyn Future<Output = Box<dyn Service>> + 'a >> {
-    Box::pin(async move {Box::new(ProfileService::new(ctx).await) as Box<dyn Service>})
-}
-
 pub struct MyApp;
 impl Services for MyApp {
     fn services() -> ServiceList {
-        BTreeMap::from([(
-            TypeId::of::<ProfileService>(), 
-            Box::new(service) as Box<dyn for<'a> FnOnce(&'a mut HardwareContext) -> Pin<Box<dyn Future<Output = Box<dyn Service>> + 'a>>>
-        )])
+        let mut services = ServiceList::default();
+        services.insert::<ProfileService>();
+        services
     }
 }
 
