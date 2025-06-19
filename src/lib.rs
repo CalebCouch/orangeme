@@ -65,9 +65,9 @@ impl Application for MyApp {
         let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); // tmp
 
         let navigation = vec![
-            ("wallet", "Bitcoin", None, Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>),
-            ("messages", "Messages", None, Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>),
-            ("profile", "My Profile", Some(avatar), Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)
+            ("wallet", "Bitcoin", None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
+            ("messages", "Messages", None, Some(Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
+            ("profile", "My Profile", Some(avatar), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
         ];
         
         // let rooms = messages::Rooms::new(ctx);
