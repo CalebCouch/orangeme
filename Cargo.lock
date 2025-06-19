@@ -329,7 +329,19 @@ version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4955734f97b2baed3f36d16ae7c203fdde31ae85391ac44ee3cbcaf0886db5ce"
 dependencies = [
- "bdk_core",
+ "bdk_core 0.4.1",
+ "bitcoin 0.32.6",
+ "miniscript",
+ "serde",
+]
+
+[[package]]
+name = "bdk_chain"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e7e7c062f2229a767fe85062b8932352a7b8c1df586f91fae1017fd3dd281ef"
+dependencies = [
+ "bdk_core 0.6.0",
  "bitcoin 0.32.6",
  "miniscript",
  "serde",
@@ -347,16 +359,39 @@ dependencies = [
 ]
 
 [[package]]
+name = "bdk_core"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "17698c25d2728afd6950d82069dce172147006f73960b9dc793a7e8dd7089016"
+dependencies = [
+ "bitcoin 0.32.6",
+ "hashbrown 0.14.5",
+ "serde",
+]
+
+[[package]]
 name = "bdk_esplora"
 version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d7fdf5efbebabc0c0bb46c0348ef0d4db505856c7d6c5d50cebba1e5eda5fe4"
 dependencies = [
  "async-trait",
- "bdk_core",
- "esplora-client",
+ "bdk_core 0.4.1",
+ "esplora-client 0.11.0",
  "futures",
  "miniscript",
+]
+
+[[package]]
+name = "bdk_esplora"
+version = "0.22.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1b9bf0bcfc01d6d67f2515b1fd4eab77b220726ed2ade09f9b6c90c286e0b767"
+dependencies = [
+ "async-trait",
+ "bdk_core 0.6.0",
+ "esplora-client 0.12.0",
+ "futures",
 ]
 
 [[package]]
@@ -365,7 +400,21 @@ version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "461b92c4e47b688a92740b204f4580e0a51775df16b67dde1d2db6ede1f0ba09"
 dependencies = [
- "bdk_chain",
+ "bdk_chain 0.21.1",
+ "bitcoin 0.32.6",
+ "miniscript",
+ "rand_core 0.6.4",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "bdk_wallet"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f278518ee6f2a17711fd4662dc34ce6153792a7a21575f05a9c8e2cb9ba36245"
+dependencies = [
+ "bdk_chain 0.23.0",
  "bitcoin 0.32.6",
  "miniscript",
  "rand_core 0.6.4",
@@ -404,7 +453,8 @@ checksum = "dc827186963e592360843fb5ba4b973e145841266c1357f7180c43526f2e5b61"
 name = "bitcoin"
 version = "0.1.0"
 dependencies = [
- "bdk_wallet",
+ "bdk_esplora 0.22.0",
+ "bdk_wallet 2.0.0",
  "chrono",
  "image 0.25.6",
  "imageproc",
@@ -412,7 +462,10 @@ dependencies = [
  "pelican_ui_std",
  "qrcode 0.14.1",
  "quircs",
+ "reqwest 0.12.20",
+ "secp256k1 0.31.0",
  "serde",
+ "serde_json",
  "tokio",
 ]
 
@@ -1065,6 +1118,21 @@ dependencies = [
  "log",
  "minreq",
  "reqwest 0.11.27",
+ "serde",
+ "tokio",
+]
+
+[[package]]
+name = "esplora-client"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "209cf00e44b979682b22be38672317d8bb48dd5ea2726e61b762d6b14b5842f2"
+dependencies = [
+ "bitcoin 0.32.6",
+ "hex-conservative 0.2.1",
+ "log",
+ "minreq",
+ "reqwest 0.12.20",
  "serde",
  "tokio",
 ]
@@ -3316,8 +3384,8 @@ name = "orange"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
- "bdk_esplora",
- "bdk_wallet",
+ "bdk_esplora 0.20.1",
+ "bdk_wallet 1.2.0",
  "bitcoin 0.1.0",
  "chrono",
  "dispatch2",
