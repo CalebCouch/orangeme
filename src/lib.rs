@@ -67,7 +67,13 @@ impl Application for MyApp {
         let navigation = vec![
             ("wallet", "Bitcoin", None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
             ("messages", "Messages", None, Some(Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
-            ("profile", "My Profile", Some(avatar), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
+            ("profile", "My Profile", Some(avatar), Some(Box::new(|ctx: &mut Context| {
+                loop {
+                    let name = ctx.state().get::<Name>().0;
+                    println!("name: {:?}", name);
+                    if name.is_some() { return Box::new(Account::new(ctx)) as Box<dyn AppPage>; }
+                }
+            }) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
         ];
         
         // let rooms = messages::Rooms::new(ctx);
