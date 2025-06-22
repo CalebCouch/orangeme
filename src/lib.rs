@@ -10,6 +10,8 @@ use std::collections::BTreeMap;
 use std::pin::Pin;
 use std::future::Future;
 
+use bitcoin::service::BDKService;
+
 use bitcoin::pages::*;
 use messages::pages::*;
 use profiles::pages::*;
@@ -29,6 +31,7 @@ impl Services for MyApp {
     fn services() -> ServiceList {
         let mut services = ServiceList::default();
         services.insert::<ProfileService>();
+        services.insert::<BDKService>();
         services
     }
 }
