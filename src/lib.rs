@@ -26,6 +26,8 @@ mod msg;
 // use msg::MSGPlugin;
 // use ucp_rust::UCPPlugin;
 
+use bitcoin::service::BDKService;
+
 pub struct MyApp;
 impl Services for MyApp {
     fn services() -> ServiceList {

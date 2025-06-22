@@ -265,7 +265,7 @@ impl Task for GetTransactions {
         let wallet = PersistedWallet::load(&mut persister, LoadParams::new()).expect("Could not load wallet").expect("Wallet was none.");
         let mut transactions = Vec::new();
 
-        for canonical_tx in wallet.transactions_sort_by(|tx1, tx2| tx2.chain_position.cmp(&tx1.chain_position)) {
+        for canonical_tx in wallet.transactions_sort_by(|tx1, tx2| tx2.chain_position.cmp(&tx1.chain_position)).into_iter().map(|tx| tx.clone()) {
             let tx_node = &canonical_tx.tx_node;
             let tx = &tx_node.tx;
 
