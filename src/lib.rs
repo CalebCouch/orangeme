@@ -5,12 +5,14 @@ use pelican_ui::runtime::{Services, Service, ServiceList};
 use profiles::plugin::ProfilePlugin;
 use profiles::service::{Name, Profiles, ProfileService};
 use profiles::components::AvatarContentProfiles;
+use messages::plugin::MessagesPlugin;
 use std::any::TypeId;
 use std::collections::BTreeMap;
 use std::pin::Pin;
 use std::future::Future;
 
 use bitcoin::service::BDKService;
+use messages::service::RoomsService;
 
 use bitcoin::pages::*;
 use messages::pages::*;
@@ -26,21 +28,20 @@ mod msg;
 // use msg::MSGPlugin;
 // use ucp_rust::UCPPlugin;
 
-use bitcoin::service::BDKService;
-
 pub struct MyApp;
 impl Services for MyApp {
     fn services() -> ServiceList {
         let mut services = ServiceList::default();
         services.insert::<ProfileService>();
         services.insert::<BDKService>();
+        services.insert::<RoomsService>();
         services
     }
 }
 
 impl Plugins for MyApp {
     fn plugins(ctx: &mut Context) -> Vec<Box<dyn Plugin>> {
-        vec![Box::new(ProfilePlugin::new(ctx))]
+        vec![Box::new(ProfilePlugin::new(ctx)), Box::new(MessagesPlugin::new(ctx))]
     }
 }
 
@@ -63,8 +64,8 @@ impl App {
             ("profile", "My Profile", Some(avatar), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
         ];
         
-        let rooms = messages::Rooms::new(ctx);
-        ctx.state().set(&rooms); 
+        let rooms = messages::FakeRooms::new(ctx);
+        ctx.state().set(rooms); 
         let home = BitcoinHome::new(ctx);
         Box::new(App(Stack::default(), Interface::new(ctx, Box::new(home), Some((0_usize, navigation)))))
     }
