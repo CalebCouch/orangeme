@@ -18,7 +18,7 @@ use bitcoin::pages::*;
 use messages::pages::*;
 use profiles::pages::*;
 
-use pelican_ui_std::{Stack};
+use pelican_ui_std::{Stack, Splash};
 use pelican_ui::layout::{Area, SizeRequest, Layout};
 use pelican_ui::events::{Event, OnEvent, TickEvent};
 
@@ -56,29 +56,34 @@ pub struct App(Stack, Interface);
 
 impl App {
     pub fn new(ctx: &mut Context) -> Box<Self> {
-        let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); // tmp
-
-        let navigation = vec![
-            ("wallet", "Bitcoin", None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
-            ("messages", "Messages", None, Some(Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
-            ("profile", "My Profile", Some(avatar), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
-        ];
-        
-        let rooms = messages::FakeRooms::new(ctx);
-        ctx.state().set(rooms); 
-        let home = BitcoinHome::new(ctx);
-        Box::new(App(Stack::default(), Interface::new(ctx, Box::new(home), Some((0_usize, navigation)))))
+        let start = Splash::new(ctx);
+        Box::new(App(Stack::default(), Interface::new(ctx, Box::new(start), None)))
     }
 }
 
 impl OnEvent for App {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
-            if let Some((orange_name, _)) = ProfilePlugin::me(ctx) {
-                self.1.desktop().as_mut().map(|d| d.navigator().as_mut().map(|nav| {
-                    nav.update_avatar(AvatarContentProfiles::from_orange_name(ctx, &orange_name))
-                }));
+            if let Some(_) = ctx.state().get::<Name>() {
+                let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); // tmp
+
+                let navigation = vec![
+                    ("wallet", "Bitcoin", None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
+                    ("messages", "Messages", None, Some(Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
+                    ("profile", "My Profile", Some(avatar), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
+                ];
+                let home = BitcoinHome::new(ctx);
+                self.1 = Interface::new(ctx, Box::new(home), Some((0_usize, navigation)));
+            } else {
+                println!("Name not found");
             }
+
+            // if self.2.is_none() {
+            //     self.1.desktop().as_mut().map(|d| d.navigator().as_mut().map(|nav| {
+            //         let me = ProfilePlugin::me(ctx).0;
+            //         nav.update_avatar(AvatarContentProfiles::from_orange_name(ctx, &me))
+            //     }));
+            // }
         }
         true
     }
