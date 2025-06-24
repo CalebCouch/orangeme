@@ -2,7 +2,7 @@ use pelican_ui::{Component, Context, Plugins, Plugin, maverick_start, start, App
 use pelican_ui::drawable::{Drawable, Component};
 use pelican_ui_std::{AvatarIconStyle, AvatarContent, Interface, NavigateEvent, AppPage};
 use pelican_ui::runtime::{Services, Service, ServiceList};
-use profiles::plugin::ProfilePlugin;
+use profiles::plugin::{ProfilePlugin, NameGenerator};
 use profiles::service::{Name, Profiles, ProfileService};
 use profiles::components::AvatarContentProfiles;
 use messages::plugin::MessagesPlugin;
@@ -52,38 +52,47 @@ impl Application for MyApp {
 start!(MyApp);
 
 #[derive(Debug, Component)]
-pub struct App(Stack, Interface);
+pub struct App(Stack, Interface, #[skip] bool);
 
 impl App {
     pub fn new(ctx: &mut Context) -> Box<Self> {
         let start = Splash::new(ctx);
-        Box::new(App(Stack::default(), Interface::new(ctx, Box::new(start), None)))
+        Box::new(App(Stack::default(), Interface::new(ctx, Box::new(start), None), false))
     }
 }
 
 impl OnEvent for App {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
-            if let Some(_) = ctx.state().get::<Name>() {
-                let avatar = AvatarContent::Icon("profile", AvatarIconStyle::Secondary); // tmp
+            if !self.2 {
+                if let Some(me) = ctx.state().get::<Name>() {
+                    let me = me.0.clone();
+                    let avatar = AvatarContentProfiles::from_orange_name(ctx, &me);
+                    let username = ProfilePlugin::get_username(ctx);
+                    let username = NameGenerator::display_name(username);
 
-                let navigation = vec![
-                    ("wallet", "Bitcoin", None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
-                    ("messages", "Messages", None, Some(Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
-                    ("profile", "My Profile", Some(avatar), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
-                ];
-                let home = BitcoinHome::new(ctx);
-                self.1 = Interface::new(ctx, Box::new(home), Some((0_usize, navigation)));
-            } else {
-                println!("Name not found");
+                    let navigation = vec![
+                        ("wallet", "Bitcoin".to_string(), None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
+                        ("messages", "Messages".to_string(), None, Some(Box::new(|ctx: &mut Context| Box::new(MessagesHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
+                        ("profile", username, Some(avatar), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
+                    ];
+
+                    let home = BitcoinHome::new(ctx);
+                    self.1 = Interface::new(ctx, Box::new(home), Some((0_usize, navigation)));
+                    self.2 = true;
+                }
             }
 
-            // if self.2.is_none() {
-            //     self.1.desktop().as_mut().map(|d| d.navigator().as_mut().map(|nav| {
-            //         let me = ProfilePlugin::me(ctx).0;
-            //         nav.update_avatar(AvatarContentProfiles::from_orange_name(ctx, &me))
-            //     }));
-            // }
+            if self.2 {
+                self.1.desktop().as_mut().map(|d| d.navigator().as_mut().map(|nav| {
+                    let me = ProfilePlugin::me(ctx).0;
+                    nav.update_avatar(AvatarContentProfiles::from_orange_name(ctx, &me));
+
+                    let username = ProfilePlugin::get_username(ctx);
+                    let username = NameGenerator::display_name(username);
+                    nav.update_username(username)
+                }));
+            }
         }
         true
     }
