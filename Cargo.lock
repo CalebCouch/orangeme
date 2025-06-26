@@ -2483,6 +2483,7 @@ dependencies = [
 name = "messages"
 version = "0.1.0"
 dependencies = [
+ "bitcoin 0.1.0",
  "chrono",
  "maverick_os",
  "pelican_ui",
