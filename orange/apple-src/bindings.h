@@ -1,1 +1,1 @@
-void ios_main(void);
+void maverick_main(void);
