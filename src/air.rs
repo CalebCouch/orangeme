@@ -25,14 +25,14 @@ impl Task for CachePersister {
     fn interval(&self) -> Option<Duration> {Some(Duration::from_secs(1))}
 
     async fn run(&mut self, h_ctx: &mut HeadlessContext) {
-        println!("persisting");
+        // println!("persisting");
         let mut change_set = h_ctx.cache.get::<MemoryPersister>().await;
         {
             let mut amcs = self.0.lock().unwrap();
             amcs.0.merge(change_set.0);
             change_set = (*amcs).clone();
         }
-        println!("chang_set: {:?}", change_set.0.indexer);
+        // println!("chang_set: {:?}", change_set.0.indexer);
         h_ctx.cache.set(&change_set).await;
     }
 }
@@ -45,7 +45,7 @@ pub struct BDKPlugin {
 }
 impl BDKPlugin {
     pub async fn init(&mut self) {//Include theme
-        println!("Initialized BDK");
+        // println!("Initialized BDK");
     }
 
     pub async fn get_descriptors(cache: &mut Cache) -> (Bip86<Xpriv>, Bip86<Xpriv>) {
@@ -53,7 +53,7 @@ impl BDKPlugin {
         let key = cache.get::<WalletKey>().await.0.unwrap_or(
             Xpriv::new_master(Network::Bitcoin, &secp256k1::SecretKey::new(&mut secp256k1::rand::thread_rng()).secret_bytes()).unwrap()
         );
-        println!("key: {}", hex::encode(key.private_key.secret_bytes()));
+        // println!("key: {}", hex::encode(key.private_key.secret_bytes()));
         cache.set(&WalletKey(Some(key.clone()))).await;
         (Bip86(key.clone(), KeychainKind::External), 
          Bip86(key, KeychainKind::Internal))
@@ -61,7 +61,7 @@ impl BDKPlugin {
 
     pub async fn get_wallet(cache: &mut Cache) -> (PersistedWallet<MemoryPersister>, MemoryPersister) {
         let mut db = cache.get::<MemoryPersister>().await; 
-        println!("db_index: {:?}", db.0.indexer);
+        // println!("db_index: {:?}", db.0.indexer);
         let (ext, int) = Self::get_descriptors(cache).await;
         let network = Network::Bitcoin;
         let wallet_opt = Wallet::load()
@@ -74,7 +74,7 @@ impl BDKPlugin {
         (match wallet_opt {
             Some(wallet) => wallet,
             None => {
-                println!("created: {:?}", db.0.indexer);
+                // println!("created: {:?}", db.0.indexer);
                 Wallet::create(ext, int)
                 .network(network)
                 .create_wallet(&mut db)
@@ -89,7 +89,7 @@ impl BDKPlugin {
 
     pub fn get_new_address(&mut self) -> Address {
         let address = self.wallet.reveal_next_address(KeychainKind::External);
-        println!("a: {:?}", address);
+        // println!("a: {:?}", address);
         self.wallet.persist(&mut self.persister.lock().unwrap()).expect("write is okay");
         address.address
     }
@@ -110,17 +110,17 @@ impl BDKPlugin {
     }
 
     pub fn get_fees(&mut self, btc: f64) -> (f32, f32) {
-        println!("RUNNING GET FEES");
+        // println!("RUNNING GET FEES");
         let address = self.get_recipient_address().expect("Address not found.");
-        println!("GOT ADDRESS");
+        // println!("GOT ADDRESS");
         let mut tx_builder = self.wallet.build_tx();
-        println!("BUILD TX BUILDER");
+        // println!("BUILD TX BUILDER");
         tx_builder
             .add_recipient(address.script_pubkey(), Amount::from_btc(btc).expect("Could not parse"))
             .fee_rate(FeeRate::from_sat_per_vb(5).expect("valid feerate"));
-        println!("BEFORE");
+        // println!("BEFORE");
         let psbt = tx_builder.finish().expect("HUh?");
-        println!("AFTER: psdbt {:?}", psbt);
+        // println!("AFTER: psdbt {:?}", psbt);
         (0.0, 0.0)
     }
 
@@ -183,7 +183,7 @@ impl Task for WalletSync {
         let blocking_client = builder.build_blocking();
         //let res = blocking_client.sync(sync_request, 1).unwrap();
         let res = blocking_client.full_scan(scan_request, 10, 1).unwrap();
-        println!("res: {:?}", res);
+        // println!("res: {:?}", res);
         self.0.persist(&mut self.1).expect("write is okay");
         let change_set = h_ctx.cache.get::<MemoryPersister>().await.0;
         self.1.0.merge(change_set);
