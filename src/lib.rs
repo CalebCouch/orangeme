@@ -12,7 +12,7 @@ use std::sync::{Arc, Mutex};
 use pelican_ui::hardware::ApplicationSupport;
 
 use bitcoin::service::BDKService;
-use messages::service::RoomsService;
+use messages::service::{RoomsService, Rooms};
 
 use bitcoin::pages::*;
 use bitcoin::components::IconButtonBitcoin;
@@ -72,6 +72,14 @@ impl App {
 impl OnEvent for App {
     fn on_event(&mut self, ctx: &mut Context, event: &mut dyn Event) -> bool {
         if let Some(TickEvent) = event.downcast_ref::<TickEvent>() {
+            let rooms = &ctx.state().get_or_default::<Rooms>().0;
+            let any_unread = rooms.iter().any(|r| r.1.2.iter().any(|m| !m.is_read()));
+            if let Some(mobile) = self.1.mobile() {
+                mobile.navigator().as_mut().map(|n| n.inner().buttons()[1].show_flair(any_unread));
+            } else if let Some(desktop) = self.1.desktop() {
+                desktop.navigator().as_mut().map(|n| n.buttons()[1].show_flair_left(any_unread));
+            }
+
             if ctx.state().get::<Name>().is_some() {
                 self.1.desktop().as_mut().map(|d| d.navigator().as_mut().map(|nav| {
                     let me = ProfilePlugin::me(ctx).0;
