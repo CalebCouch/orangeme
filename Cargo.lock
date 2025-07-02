@@ -3011,8 +3011,6 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 [[package]]
 name = "pelican_ui"
 version = "1.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f5a8618b7cf646f0b9a4454e500f0845a28c48b8fd6da36967afef0c326635e"
 dependencies = [
  "dyn-clone",
  "qrcode",
