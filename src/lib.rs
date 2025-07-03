@@ -8,8 +8,8 @@ use profiles::plugin::ProfilePlugin;
 use profiles::service::{Name, ProfileService};
 use profiles::components::AvatarContentProfiles;
 use messages::plugin::MessagesPlugin;
-use std::sync::{Arc, Mutex};
-use pelican_ui::hardware::ApplicationSupport;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 use bitcoin::service::BDKService;
 use messages::service::{RoomsService, Rooms};
@@ -55,7 +55,7 @@ pub struct App(Stack, Interface);
 
 impl App {
     pub fn new(ctx: &mut Context) -> Box<Self> {
-        let account_actions = Arc::new(Mutex::new(vec![IconButtonBitcoin::new(ctx), IconButtonMessages::new(ctx), IconButtonProfiles::block(ctx)]));
+        let account_actions = Rc::new(RefCell::new(vec![IconButtonBitcoin::new(ctx), IconButtonMessages::new(ctx), IconButtonProfiles::block(ctx)]));
 
         let navigation = vec![
             ("wallet", "Bitcoin".to_string(), None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
@@ -75,9 +75,9 @@ impl OnEvent for App {
             let rooms = &ctx.state().get_or_default::<Rooms>().0;
             let any_unread = rooms.iter().any(|r| r.1.2.iter().any(|m| !m.is_read()));
             if let Some(mobile) = self.1.mobile() {
-                mobile.navigator().as_mut().map(|n| n.inner().buttons()[1].show_flair(any_unread));
+                if let Some(n) = mobile.navigator().as_mut() { n.inner().buttons()[1].show_flair(any_unread); }
             } else if let Some(desktop) = self.1.desktop() {
-                desktop.navigator().as_mut().map(|n| n.buttons()[1].show_flair_left(any_unread));
+                if let Some(n) = desktop.navigator().as_mut() { n.buttons()[1].show_flair_left(any_unread); }
             }
 
             if ctx.state().get::<Name>().is_some() {
