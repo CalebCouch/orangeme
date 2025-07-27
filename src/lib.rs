@@ -61,11 +61,14 @@ impl App {
             ("wallet", "Bitcoin".to_string(), None, Some(Box::new(|ctx: &mut Context| Box::new(BitcoinHome::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
             ("messages", "Messages".to_string(), None, Some(Box::new(move |ctx: &mut Context| Box::new(MessagesHome::new(ctx, messages_actions.clone())) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
             // ("door", "Rooms".to_string(), None, Some(Box::new(move |ctx: &mut Context| Box::new(RoomsHome::new(ctx, account_actions.clone())) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>)),
+        ];
+
+        let navigation_b = vec![
             ("profile", "My Account".to_string(), Some(AvatarContentProfiles::default()), Some(Box::new(|ctx: &mut Context| Box::new(Account::new(ctx)) as Box<dyn AppPage>) as Box<dyn FnMut(&mut Context) -> Box<dyn AppPage>>))
         ];
 
         let home = BitcoinHome::new(ctx);
-        let interface = Interface::new(ctx, Box::new(home), Some((0_usize, navigation)));
+        let interface = Interface::new(ctx, Box::new(home), Some((0_usize, navigation, navigation_b)));
         Box::new(App(Stack::default(), interface))
     }
 }
