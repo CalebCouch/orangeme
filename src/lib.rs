@@ -68,7 +68,7 @@ impl App {
         ];
 
         let home = BitcoinHome::new(ctx);
-        let interface = Interface::new(ctx, Box::new(home), Some((0_usize, navigation, navigation_b)));
+        let interface = Interface::new(ctx, Box::new(home), Some((0_usize, navigation, navigation_b)), None);
         Box::new(App(Stack::default(), interface))
     }
 }

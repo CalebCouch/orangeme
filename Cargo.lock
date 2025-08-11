@@ -2427,6 +2427,7 @@ dependencies = [
  "env_logger",
  "hex",
  "image 0.25.6",
+ "imageproc",
  "jni",
  "libc",
  "log",
@@ -5748,7 +5749,6 @@ dependencies = [
  "fontdue",
  "hex",
  "image 0.25.6",
- "rand 0.9.1",
  "wgpu",
  "wgpu_dyn_buffer",
 ]
