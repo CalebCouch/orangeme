@@ -7,7 +7,6 @@ license = "BSD-3-Clause"
 repository = "https://github.com/CalebCouch/orangeme.git"
 authors = ["Caleb Couch <caleb@orange.me>", "Ella Couch <ella@orange.me>"]
 
-
 [dependencies]
 chrono = { version = "0.4.40", features = ["serde"] }
 image = "0.25.5"
@@ -30,11 +29,11 @@ objc2-ui-kit = { version = "0.3.1", features = ["UIGraphicsImageRenderer"] }
 base64 = "0.22.1"
 uuid = { version = "1.17.0", features = ["v4", "serde", "js"] }
 libc = "0.2.172"
-pelican_ui = "1.1.0"
-pelican_ui_std = "0.2.1"
-bitcoin = { package = "ramp-bitcoin", version = "0.1.2" }
-messages = { package = "ramp-messages", version = "0.2.1" }
-profiles = "0.1.2"
+pelican_ui = {path = "../pelican_ui"}
+pelican_ui_std = {path = "../pelican_ui_std"}
+bitcoin = {package = "ramp-bitcoin", path = "../ramp-bitcoin"}
+messages = {package = "ramp-messages", path = "../ramp_messages"}
+profiles = {path = "../profiles"}
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "sync", "time", "net"] }
