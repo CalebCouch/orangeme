@@ -2396,7 +2396,9 @@ dependencies = [
 
 [[package]]
 name = "maverick_os"
-version = "0.1.6"
+version = "0.1.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ebfc4ece540eee3cb5d07425d3d32acc2fbc5925d6c16078bc2f28ca0a4a735"
 dependencies = [
  "air",
  "android-activity",
@@ -2417,6 +2419,7 @@ dependencies = [
  "objc2 0.6.1",
  "objc2-app-kit 0.3.1",
  "objc2-av-foundation",
+ "objc2-core-graphics",
  "objc2-core-media",
  "objc2-core-video",
  "objc2-foundation 0.3.1",
@@ -3022,10 +3025,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "989c6c68c13021b5c2d6b71456ebb0f9dc78d752e86a98da7c716f4f9470f5a4"
 dependencies = [
  "bitflags 2.9.0",
+ "block2 0.6.1",
  "dispatch2",
+ "libc",
  "objc2 0.6.1",
  "objc2-core-foundation",
  "objc2-io-surface",
+ "objc2-metal 0.3.1",
 ]
 
 [[package]]
@@ -3475,7 +3481,9 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "pelican_ui"
-version = "1.1.0"
+version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc388cb941de101d2a83938bcda943ca935fd1ede18e601226ced3a8e3faf1f1"
 dependencies = [
  "downcast-rs 2.0.1",
  "image 0.25.6",
@@ -3500,7 +3508,9 @@ dependencies = [
 
 [[package]]
 name = "pelican_ui_std"
-version = "0.2.1"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e766b803a6a94910558827cfd9665250dfbaebc4ea496ca754ff46fcee09e55d"
 dependencies = [
  "base64 0.22.1",
  "chrono",
@@ -3691,7 +3701,9 @@ dependencies = [
 
 [[package]]
 name = "profiles"
-version = "0.1.2"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f436ad0c0464331796eaeac669830b4eafafb360001e89954cc88c0c1c0e5b2"
 dependencies = [
  "image 0.25.6",
  "log",
@@ -3808,7 +3820,9 @@ checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
 
 [[package]]
 name = "ramp-bitcoin"
-version = "0.1.2"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80b50947419f549a5a458bc6c64fb807d66e3052e94ce86b9df7d6dc0af30bf9"
 dependencies = [
  "bdk_esplora 0.22.1",
  "bdk_wallet 2.1.0",
@@ -3828,7 +3842,9 @@ dependencies = [
 
 [[package]]
 name = "ramp-messages"
-version = "0.2.1"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fad2bbc06026f8ccf07f5707dd1c555da2f5fa4322689d83457e63cba751609d"
 dependencies = [
  "chrono",
  "maverick_os",
@@ -5745,9 +5761,9 @@ dependencies = [
 
 [[package]]
 name = "wgpu_canvas"
-version = "4.1.0"
+version = "4.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb0c2da43105f97f4332a9c2d40047bc56dcb506358ec1e7fee6ec6c66b4be59"
+checksum = "c1c1fba5eda6b0fe9af105f63fccad62eca0bed18c11cca42cbf1a0bc7e1c735"
 dependencies = [
  "bytemuck",
  "fast_image_resize",
